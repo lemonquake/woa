@@ -65,8 +65,8 @@ func _layout() -> void:
 	var dawn_buildings := [
 		["ancient", "ancient", "", 0, Vector2(-5800, -5350)],
 		["fountain", "fountain", "", 0, fountains[0]],
-		["tower4", "tower4", "", 4, Vector2(-5300, -5550)],
-		["tower4", "tower4", "", 4, Vector2(-5950, -4900)],
+		["tower4", "tower4", "", 4, Vector2(-5050, -5700)],
+		["tower4", "tower4", "", 4, Vector2(-6150, -4600)],
 		["tower3", "tower3", "top", 3, Vector2(-6550, -4050)],
 		["melee_rax", "melee_rax", "top", 0, Vector2(-6900, -4550)],
 		["ranged_rax", "ranged_rax", "top", 0, Vector2(-6200, -4550)],

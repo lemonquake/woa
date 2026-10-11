@@ -75,8 +75,8 @@ func setup(u: SimUnit, terrain: TerrainBuilder) -> void:
 		SimConst.Kind.BARRACKS:
 			bar_height = 4.6
 		SimConst.Kind.ANCIENT:
-			s = 1.15
-			bar_height = 8.8
+			s = 0.78
+			bar_height = 7.2
 		SimConst.Kind.FILLER:
 			bar_height = 4.8
 		SimConst.Kind.FOUNTAIN:
@@ -86,9 +86,9 @@ func setup(u: SimUnit, terrain: TerrainBuilder) -> void:
 	var col := Color(1.0, 0.8, 0.45) if team == 0 else Color(1.0, 0.25, 0.25)
 	light = OmniLight3D.new()
 	light.light_color = col
-	light.light_energy = 2.2 if u.kind != SimConst.Kind.ANCIENT else 5.0
-	light.omni_range = 7.0 if u.kind != SimConst.Kind.ANCIENT else 14.0
-	light.position.y = 5.8 * s if u.kind == SimConst.Kind.TOWER else (4.8 if u.kind == SimConst.Kind.ANCIENT else 4.0)
+	light.light_energy = 1.6 if u.kind != SimConst.Kind.ANCIENT else 2.4
+	light.omni_range = 6.0 if u.kind != SimConst.Kind.ANCIENT else 9.0
+	light.position.y = 5.8 * s if u.kind == SimConst.Kind.TOWER else (4.6 * s if u.kind == SimConst.Kind.ANCIENT else 4.0)
 	light.shadow_enabled = false
 	add_child(light)
 

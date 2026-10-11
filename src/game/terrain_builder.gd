@@ -194,6 +194,18 @@ func _splat() -> Image:
 				stamp.call(road, a.lerp(b, float(s) / steps), 170.0, 0.75)
 	for t in map.trees:
 		stamp.call(forest, t.pos, 230.0, 1.0)
+	# paved plazas only around base buildings; open grass (Dawn) or ash (Dusk) between them
+	var plaza := PackedFloat32Array()
+	plaza.resize(N * N)
+	for b in map.buildings:
+		var def := SimData.unit(b.unit)
+		var r := float(def.hull) * 1.5 + 260.0
+		if b.unit == "fountain":
+			r = 1000.0
+		elif b.unit == "ancient":
+			r = 900.0
+		if map.level_at(b.pos) == SimMap.HIGH or b.unit == "fountain":
+			stamp.call(plaza, b.pos, r, 1.0)
 	var img := Image.create(N, N, false, Image.FORMAT_RGBA8)
 	var bn := FastNoiseLite.new()
 	bn.seed = 5
@@ -202,9 +214,7 @@ func _splat() -> Image:
 		for i in N:
 			var p := Vector2(-SimMap.HALF + (i + 0.5) * px, SimMap.HALF - (j + 0.5) * px)
 			var k := j * N + i
-			var base := 0.0
-			if map.level_at(p) == SimMap.HIGH or map.in_ramp(p) and map.level_at(p) >= SimMap.GROUND and (p.x + p.y) * signf(p.x + p.y) > 7000.0:
-				base = 1.0
+			var base := plaza[k]
 			var side := (p.x + p.y) / sqrt(2.0)
 			var blight := clampf((side - 500.0) / 3500.0, 0.0, 1.0)
 			blight = clampf(blight * 0.85 + bn.get_noise_2dv(p) * 0.35, 0.0, 1.0)
