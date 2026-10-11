@@ -80,6 +80,15 @@ func _portrait() -> void:
 func hero() -> SimUnit:
 	return game.world.get_unit(game.player_hero_id) if game and game.world else null
 
+## The hero the bottom panel shows: the selected hero (any team), otherwise your own.
+func shown() -> SimUnit:
+	if game == null or game.world == null:
+		return null
+	var s: SimUnit = game.world.get_unit(game.selected_id)
+	if s != null and s.is_hero():
+		return s
+	return hero()
+
 ## Portrait: a click selects your hero and centres the camera on it; holding it keeps the camera on the hero.
 func portrait_press() -> void:
 	_portrait_down = Time.get_ticks_msec() / 1000.0
@@ -127,7 +136,7 @@ func _process(dt: float) -> void:
 	tip.queue_redraw()
 
 func _update_portrait() -> void:
-	var h := hero()
+	var h := shown()
 	if h == null:
 		return
 	var v = game.views.get(h.id)
@@ -163,7 +172,7 @@ func _draw() -> void:
 func _unit_card() -> void:
 	var w: SimWorld = game.world
 	var sel: SimUnit = w.get_unit(game.selected_id)
-	if sel == null or sel.id == game.player_hero_id or not sel.alive:
+	if sel == null or sel.id == game.player_hero_id or not sel.alive or sel.is_hero():
 		return
 	var vs := get_viewport_rect().size
 	var r := Rect2(vs.x * 0.5 - 230, vs.y - BottomPanel.H - 92, 460, 80)
@@ -179,6 +188,22 @@ func _unit_card() -> void:
 	var dmg := "%d-%d" % [int(sel.dmg_min + sel.bonus_damage), int(sel.dmg_max + sel.bonus_damage)] if sel.can_attack_at_all() else "-"
 	U.text(self, "Damage %s   Armor %.0f   Range %d   Speed %d" % [dmg, sel.armor, int(sel.attack_range), int(sel.move_speed)],
 		r.position + Vector2(228, 50), 13, U.TEXT, "body")
+	var sx := r.position.x + 228.0
+	var shown := {}
+	for m in sel.modifiers:
+		var key := String(m.get("fx", ""))
+		if key == "" and float(m.get("slow", 0.0)) > 0.0:
+			key = "slow"
+		if key == "" or shown.has(key) or not UnitBars.STATUS_ICONS.has(key):
+			continue
+		shown[key] = true
+		var ic: Texture2D = U.icon(UnitBars.STATUS_ICONS[key])
+		if ic:
+			draw_texture_rect(ic, Rect2(sx, r.position.y + 58, 18, 18), false)
+			var left := float(m.get("expires", -1.0)) - w.time
+			if left > 0.0:
+				U.text(self, "%.0f" % ceilf(left), Vector2(sx + 20, r.position.y + 72), 11, U.TEXT_DIM, "bold")
+			sx += 44.0
 	if sel.is_building() and sel.is_invulnerable():
 		U.text(self, "Invulnerable", r.position + Vector2(228, 70), 12, Color(1.0, 0.75, 0.4), "bold")
 	elif sel.is_building() and sel.backdoor_active:
@@ -225,6 +250,8 @@ class BottomPanel extends Control:
 	var hud
 	var portrait_box: Control
 	var _abil_rects: Array = []
+	var _was_cooling := {}
+	var _ready_at := {}
 	var _learn_rects: Array = []
 	var _item_rects: Array = []
 	var _shop_rect := Rect2()
@@ -255,11 +282,12 @@ class BottomPanel extends Control:
 
 	func _draw() -> void:
 		_layout()
-		var h: SimUnit = hud.hero()
+		var h: SimUnit = hud.shown()
 		if h == null:
 			return
+		var mine: bool = h.id == hud.game.player_hero_id
 		var w: SimWorld = hud.game.world
-		U.panel(self, Rect2(0, 10, W, H - 10))
+		U.panel(self, Rect2(0, 10, W, H - 10), U.GOLD_DIM if mine or h.team == hud.game.player_team else Color(0.6, 0.22, 0.2))
 		# portrait frame and level ring
 		if portrait_box:
 			portrait_box.position = Vector2(14, 24)
@@ -272,10 +300,14 @@ class BottomPanel extends Control:
 		_abilities(h, w)
 		_bars(h)
 		_items(h, w)
-		_gold(h)
-		_tp_and_courier(h, w)
-		if not h.alive:
-			_buyback(h, w)
+		if mine:
+			_gold(h)
+			_tp_and_courier(h, w)
+			if not h.alive:
+				_buyback(h, w)
+		else:
+			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(960, 70), 15, U.TEXT_DIM, "bold")
+			U.text(self, "F1 or the portrait: back to your hero", Vector2(960, 94), 12, U.TEXT_DIM, "body")
 
 	func _level_ring(h: SimUnit, c: Vector2) -> void:
 		draw_circle(c, 20, Color(0.04, 0.04, 0.05, 0.95))
@@ -325,6 +357,7 @@ class BottomPanel extends Control:
 
 	func _abilities(h: SimUnit, w: SimWorld) -> void:
 		var m := get_local_mouse_position()
+		hud.game.input.hover_ability = ""
 		for i in mini(4, h.abilities.size()):
 			var aid: String = h.abilities[i]
 			var a := SimData.ability(aid)
@@ -345,6 +378,15 @@ class BottomPanel extends Control:
 				var total := float(a.cooldown[lv - 1])
 				if cd > 0.0 and total > 0.0:
 					U.cooldown(self, r, cd / total, cd)
+					_was_cooling[aid] = true
+				elif _was_cooling.get(aid, false):
+					_was_cooling[aid] = false
+					_ready_at[aid] = Time.get_ticks_msec() / 1000.0
+				var since := Time.get_ticks_msec() / 1000.0 - float(_ready_at.get(aid, -9.0))
+				if since < 0.45:
+					var k := 1.0 - since / 0.45
+					draw_rect(r, Color(1.0, 1.0, 0.9, 0.55 * k))
+					draw_rect(r.grow(3.0 * k), Color(1.0, 0.9, 0.5, k), false, 2.0)
 			if auto:
 				var t := Time.get_ticks_msec() / 1000.0
 				draw_rect(r.grow(1), Color(1.0, 0.85, 0.3, 0.6 + 0.4 * sin(t * 6.0)), false, 3.0)
@@ -363,6 +405,7 @@ class BottomPanel extends Control:
 				U.text_c(self, "+", lr.get_center() + Vector2(0, 8), 22, Color(0.1, 0.06, 0.0), "bold", false)
 			if r.has_point(m):
 				hud.show_tip(get_global_mouse_position(), _ability_tip(h, aid))
+				hud.game.input.hover_ability = aid
 
 	func _ability_tip(h: SimUnit, aid: String) -> Array:
 		var a := SimData.ability(aid)
@@ -484,6 +527,9 @@ class BottomPanel extends Control:
 		var p := mb.position
 		if mb.button_index == MOUSE_BUTTON_LEFT and Rect2(12, 22, 170, 174).has_point(p):
 			hud.portrait_press()
+			accept_event()
+			return
+		if hud.shown() != h:
 			accept_event()
 			return
 		if not h.alive and _buyback_rect.has_point(p):
@@ -683,12 +729,22 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 					col2 = Color(0.35, 1.0, 0.45)
 				draw_circle(p, 6.5, Color(0, 0, 0, 0.9))
 				draw_circle(p, 5.0, col2)
+				if u.team != team and w.vision.revealed_to(u, team):
+					draw_arc(p, 9.0, 0.0, TAU, 20, Color(0.75, 0.4, 1.0), 2.0)
 			elif u.team == C.NEUTRAL:
 				draw_rect(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), Color(0.95, 0.85, 0.35))
 			elif u.kind == K.WARD:
 				draw_circle(p, 3.0, Color(1.0, 0.9, 0.3))
 			else:
 				draw_rect(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), (U.DAWN if u.team == 0 else U.DUSK).lightened(0.1))
+		# pings: pulsing rings for three seconds
+		for pg in hud.game.input.pings:
+			var age: float = w.time - float(pg.t)
+			if age < 3.0:
+				var mp := _to_mm(pg.pos)
+				var k := fmod(age, 0.75) / 0.75
+				draw_arc(mp, 4.0 + k * 14.0, 0.0, TAU, 24, Color(1.0, 0.85, 0.3, 1.0 - k), 2.0)
+				draw_circle(mp, 3.0, Color(1.0, 0.85, 0.3))
 		# camera frame
 		var cam: CameraRig = hud.game.camera
 		var vs := get_viewport_rect().size
@@ -720,6 +776,10 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				hud.game.world.glyph(hud.game.player_team)
 				accept_event()
 				return
+			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed and mb.alt_pressed:
+				hud.game.input.ping(_from_mm(mb.position))
+				accept_event()
+				return
 			if mb.button_index == MOUSE_BUTTON_LEFT:
 				if mb.pressed and hud.game.input.targeting != "":
 					hud.game.input.target_point(_from_mm(mb.position), mb.shift_pressed)
@@ -743,12 +803,12 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 # ======================================================================================================================
 
 class TopBar extends Control:
-	const W := 640.0
+	const W := 1040.0
 	var hud
 
 	func _ready() -> void:
 		size = Vector2(W, 70)
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		mouse_filter = Control.MOUSE_FILTER_PASS
 
 	func _draw() -> void:
 		if hud.game == null or hud.game.world == null:
@@ -771,12 +831,49 @@ class TopBar extends Control:
 		U.text_c(self, str(kills[0]), Vector2(W * 0.5 - 130, 34), 26, U.TEXT, "bold")
 		U.text_c(self, "Dusk", Vector2(W * 0.5 + 140, 18), 13, U.DUSK, "title")
 		U.text_c(self, str(kills[1]), Vector2(W * 0.5 + 190, 34), 26, U.TEXT, "bold")
+		tiles.clear()
+		var slot := [0, 0]
 		for h in w.heroes:
-			var x := W * 0.5 - 175 if h.team == 0 else W * 0.5 + 145
+			var i: int = slot[h.team]
+			slot[h.team] += 1
+			var x := W * 0.5 - 300 - i * 72 if h.team == 0 else W * 0.5 + 236 + i * 72
+			var r := Rect2(x, 4, 64, 42)
+			tiles.append([r, h.id])
 			var col := U.DAWN if h.team == 0 else U.DUSK
-			draw_circle(Vector2(x, 34), 9, Color(0, 0, 0, 0.8))
-			draw_circle(Vector2(x, 34), 7, col if h.alive else Color(0.3, 0.3, 0.3))
-			U.text_c(self, str(h.level), Vector2(x, 38), 10, Color(0, 0, 0), "bold", false)
+			var seen: bool = h.team == hud.game.player_team or w.vision.sees(hud.game.player_team, h)
+			draw_rect(r.grow(2), Color(0, 0, 0, 0.85))
+			draw_rect(r, Color(0.08, 0.08, 0.1))
+			var ult: String = h.abilities[3] if h.abilities.size() > 3 else ""
+			var uic: Texture2D = U.ability_icon(ult) if ult != "" else null
+			if uic:
+				draw_texture_rect(uic, r.grow(-2), false, Color(1, 1, 1) if h.alive else Color(0.3, 0.3, 0.32))
+			draw_rect(r, col, false, 2.0)
+			# health under the tile (unknown in the fog)
+			var hb := Rect2(r.position.x, r.end.y + 3, r.size.x, 5)
+			draw_rect(hb, Color(0, 0, 0, 0.8))
+			if seen and h.alive:
+				draw_rect(Rect2(hb.position, Vector2(hb.size.x * h.hp / maxf(1.0, h.max_hp), hb.size.y)), Color(0.3, 0.85, 0.3) if h.team == hud.game.player_team else Color(0.9, 0.25, 0.2))
+			U.text(self, str(h.level), r.position + Vector2(3, 14), 13, Color(1, 1, 1), "bold")
+			if ult != "" and h.ability_level_of(ult) > 0 and w.abilities.cooldown_left(h, ult) <= 0.0 and h.alive:
+				draw_circle(r.position + Vector2(r.size.x - 7, 7), 4.5, Color(0, 0, 0, 0.8))
+				draw_circle(r.position + Vector2(r.size.x - 7, 7), 3.0, Color(1.0, 0.85, 0.35))
+			if not h.alive:
+				var left := maxf(0.0, h.respawn_at - w.time)
+				U.text_c(self, str(ceili(left)), r.get_center() + Vector2(0, 9), 22, Color(1, 0.9, 0.85), "bold")
+
+	var tiles: Array = []                   # [[rect, hero id]]
+
+	func _gui_input(e: InputEvent) -> void:
+		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+			for t in tiles:
+				if (t[0] as Rect2).has_point((e as InputEventMouseButton).position):
+					var h: SimUnit = hud.game.world.get_unit(t[1])
+					var w: SimWorld = hud.game.world
+					if h and h.alive and (h.team == hud.game.player_team or w.vision.sees(hud.game.player_team, h)):
+						hud.game.camera.focus(View.to3(h.pos, hud.game.terrain.height_at(h.pos)))
+						hud.game.input.select([h.id])
+					accept_event()
+					return
 
 # ======================================================================================================================
 

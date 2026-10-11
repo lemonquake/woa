@@ -11,7 +11,7 @@ const CHUNK := 2048.0                      # game units per chunk side
 const DAWN_TREES := [["CommonTree_1", 0.42, 0.52, 3], ["CommonTree_2", 0.42, 0.52, 3], ["CommonTree_3", 0.42, 0.52, 3],
 	["CommonTree_4", 0.42, 0.52, 2], ["CommonTree_5", 0.42, 0.52, 2], ["Pine_1", 0.48, 0.6, 2], ["Pine_3", 0.48, 0.6, 2],
 	["Pine_4", 0.48, 0.6, 1]]
-const DUSK_TREES := [["TwistedTree_1", 0.24, 0.3, 2], ["TwistedTree_2", 0.24, 0.3, 2], ["TwistedTree_4", 0.24, 0.3, 2],
+const DUSK_TREES := [["TwistedTree_1", 0.21, 0.26, 2], ["TwistedTree_2", 0.21, 0.26, 2], ["TwistedTree_4", 0.21, 0.26, 2],
 	["DeadTree_1", 0.36, 0.44, 2], ["DeadTree_3", 0.36, 0.44, 2], ["Pine_2", 0.46, 0.58, 3], ["Pine_5", 0.46, 0.58, 3],
 	["CommonTree_3", 0.42, 0.5, 1]]
 const DECOR := [["Grass_Common_Short", 0.55, 0.9, 10], ["Grass_Wispy_Short", 0.55, 0.9, 8], ["Grass_Common_Tall", 0.45, 0.7, 4],
@@ -68,8 +68,8 @@ func _game_material(src: Material, model: String) -> Material:
 		m.set_shader_parameter("sway_height", 1.0 if grass else 6.0)
 		m.set_shader_parameter("wind", 0.9 if grass else 1.0)
 		if model.begins_with("Twisted"):
-			m.set_shader_parameter("tint", Color(0.62, 0.36, 0.6))
-			m.set_shader_parameter("tint2", Color(0.42, 0.22, 0.4))
+			m.set_shader_parameter("tint", Color(0.95, 0.5, 0.55))
+			m.set_shader_parameter("tint2", Color(0.78, 0.36, 0.42))
 		elif model.begins_with("Pine"):
 			m.set_shader_parameter("tint", Color(0.82, 0.98, 0.86))
 			m.set_shader_parameter("tint2", Color(0.62, 0.82, 0.7))
@@ -84,6 +84,10 @@ func _game_material(src: Material, model: String) -> Material:
 	elif sm:
 		var b := sm.duplicate() as BaseMaterial3D
 		b.roughness = 0.9
+		# trunks near the camera dither away with the leaves
+		b.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER
+		b.distance_fade_min_distance = 5.5
+		b.distance_fade_max_distance = 8.5
 		if nm.begins_with("Bark"):
 			b.albedo_color = Color(0.92, 0.85, 0.78)
 		out = b
@@ -240,8 +244,16 @@ func fell_tree(index: int, from_pos: Vector2) -> void:
 	var s: Array = _tree_slot[index]
 	var mm: MultiMesh = s[0]
 	var xf: Transform3D = s[2]
-	var mi := MeshInstance3D.new()
-	mi.mesh = mm.mesh
+	# a one-tree multimesh keeps the per-instance colour and wind data the foliage shader reads
+	var one := MultiMesh.new()
+	one.transform_format = MultiMesh.TRANSFORM_3D
+	one.use_custom_data = true
+	one.mesh = mm.mesh
+	one.instance_count = 1
+	one.set_instance_transform(0, Transform3D.IDENTITY)
+	one.set_instance_custom_data(0, mm.get_instance_custom_data(int(s[1])))
+	var mi := MultiMeshInstance3D.new()
+	mi.multimesh = one
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	add_child(mi)
 	mi.transform = xf
@@ -258,9 +270,24 @@ func fell_tree(index: int, from_pos: Vector2) -> void:
 	tw.tween_property(mi, "position:y", origin.y - 2.5, 1.2)
 	tw.tween_callback(mi.queue_free)
 
-static func _tilt(a: float, mi: MeshInstance3D, axis: Vector3, base: Basis, origin: Vector3) -> void:
+static func _tilt(a: float, mi: Node3D, axis: Vector3, base: Basis, origin: Vector3) -> void:
 	if is_instance_valid(mi):
 		mi.transform = Transform3D(Basis(axis, a) * base, origin)
+
+var _fade_at := -1.0
+
+## Foreground canopies dither away: anything nearer the camera than ~70% of its distance to the ground it looks at.
+func set_near_fade(cam_distance: float) -> void:
+	var d := cam_distance * 0.8
+	if absf(d - _fade_at) < 0.05:
+		return
+	_fade_at = d
+	for m in _mats.values():
+		if m is ShaderMaterial:
+			(m as ShaderMaterial).set_shader_parameter("near_fade", d)
+		elif m is BaseMaterial3D and (m as BaseMaterial3D).distance_fade_mode != BaseMaterial3D.DISTANCE_FADE_DISABLED:
+			(m as BaseMaterial3D).distance_fade_max_distance = d
+			(m as BaseMaterial3D).distance_fade_min_distance = d - 3.0
 
 func set_tree_alive(index: int, alive: bool) -> void:
 	if not _tree_slot.has(index):

@@ -19,14 +19,14 @@ var _sigil_mat: ShaderMaterial
 func _ready() -> void:
 	name = "StatusFx"
 	var p := PrismMesh.new()
-	p.size = Vector3(0.09, 0.12, 0.02)
+	p.size = Vector3(0.17, 0.22, 0.04)
 	_star_mesh = p
 	_star_mat = StandardMaterial3D.new()
 	_star_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_star_mat.albedo_color = Color(1.0, 0.9, 0.45)
 	_star_mat.emission_enabled = true
 	_star_mat.emission = Color(1.0, 0.85, 0.4)
-	_star_mat.emission_energy_multiplier = 3.0
+	_star_mat.emission_energy_multiplier = 4.5
 	var sh := Shader.new()
 	sh.code = SIGIL_CODE
 	_sigil_mat = ShaderMaterial.new()
@@ -51,7 +51,16 @@ void fragment() {
 }
 """
 
+var _scan_i := 0
+
 func frame(dt: float) -> void:
+	_scan_i += 1
+	if _scan_i % 3 == 0:
+		_scan()
+	_follow(dt)
+
+## Which units need which visuals (every third frame: modifiers change at 30 Hz at most).
+func _scan() -> void:
 	var w: SimWorld = game.world
 	var seen_stun := {}
 	var seen_curse := {}
@@ -79,19 +88,30 @@ func frame(dt: float) -> void:
 			seen_stun[id] = true
 	_sync(_stun, seen_stun, _make_stun)
 	_sync(_curse, seen_curse, _make_curse)
-	_sync_taint(seen_taint)
-	_sync_aura(seen_aura, dt)
+	_want_taint = seen_taint
+	_want_aura = seen_aura
+
+var _want_taint := {}
+var _want_aura := {}
+
+func _follow(dt: float) -> void:
+	_sync_taint(_want_taint)
+	_sync_aura(_want_aura, dt)
 	var t := Time.get_ticks_msec() / 1000.0
 	for id in _stun:
 		var v: UnitView = game.views.get(id)
+		if not is_instance_valid(_stun[id]):
+			continue
 		var n: Node3D = _stun[id]
-		if v and is_instance_valid(n):
+		if v:
 			n.global_position = v.global_position + Vector3(0, v.bar_height * 0.88, 0)
 			n.rotation.y = t * 5.0
 	for id in _curse:
 		var v2: UnitView = game.views.get(id)
+		if not is_instance_valid(_curse[id]):
+			continue
 		var c: Node3D = _curse[id]
-		if v2 and is_instance_valid(c):
+		if v2:
 			var gp := v2.global_position
 			c.global_position = Vector3(gp.x, fx.ground_y(View.to2(gp)) + 0.07, gp.z)
 
@@ -115,7 +135,7 @@ func _make_stun(id: int) -> Node3D:
 		s.material_override = _star_mat
 		s.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var a := i * TAU / 4.0
-		s.position = Vector3(cos(a) * 0.32, sin(a * 2.0) * 0.04, sin(a) * 0.32)
+		s.position = Vector3(cos(a) * 0.42, sin(a * 2.0) * 0.05, sin(a) * 0.42)
 		s.rotation = Vector3(0, -a, 0)
 		n.add_child(s)
 		var tw := s.create_tween().set_loops()

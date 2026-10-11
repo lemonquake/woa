@@ -19,6 +19,7 @@ const HARD_STOP_HOLD := 0.35
 var game: Node
 var targeting := ""                         # "", "attack", ability id, or "item:<slot>"
 var hover_id := -1
+var hover_ability := ""                     # the ability button under the mouse (its radius is previewed)
 var drag_rect := Rect2()                    # the green selection box while dragging (screen space)
 var _last_f1 := 0.0
 var _press_at := Vector2.ZERO
@@ -26,6 +27,8 @@ var _pressing := false
 var _dragging := false
 var _s_down := -1.0
 var _s_hard := false
+var _groups := {}                           # control group key (1..9) -> unit ids
+var _group_tap := {}                        # key -> time of the last recall (double tap centres the camera)
 const ITEM_KEYS := [KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N]
 const ABILITY_KEYS := [KEY_Q, KEY_W, KEY_E, KEY_R]
 
@@ -139,6 +142,10 @@ func _unhandled_input(e: InputEvent) -> void:
 					_press_at = mb.position
 			elif _pressing:
 				_pressing = false
+				if not _dragging and mb.alt_pressed:
+					ping(game.camera.ground_at(mb.position))
+					drag_rect = Rect2()
+					return
 				if _dragging:
 					_box_select(drag_rect, mb.shift_pressed)
 				else:
@@ -219,6 +226,26 @@ func _box_select(r: Rect2, shift: bool) -> void:
 
 func _key(k: InputEventKey, h: SimUnit) -> void:
 	var w: SimWorld = game.world
+	# control groups: Ctrl+1..9 stores your selected units, 1..9 recalls them, a double tap centres on them
+	if k.keycode >= KEY_1 and k.keycode <= KEY_9:
+		var g := int(k.keycode - KEY_0)
+		if k.ctrl_pressed:
+			var ids: Array = game.selected.filter(func(x): return _owned(w.get_unit(x)))
+			if not ids.is_empty():
+				_groups[g] = ids
+				if game.hud and game.hud.has_method("notice"):
+					game.hud.notice("Control group %d set" % g)
+		elif _groups.has(g):
+			var ids2: Array = (_groups[g] as Array).filter(func(x): return w.get_unit(x) != null)
+			if not ids2.is_empty():
+				select(ids2)
+				var now2 := Time.get_ticks_msec() / 1000.0
+				if now2 - float(_group_tap.get(g, -9.0)) < 0.4:
+					var u0: SimUnit = w.get_unit(ids2[0])
+					if u0 and u0.alive:
+						game.camera.focus(View.to3(u0.pos, game.terrain.height_at(u0.pos)))
+				_group_tap[g] = now2
+		return
 	match k.keycode:
 		KEY_S:
 			targeting = ""
@@ -312,6 +339,19 @@ func target_point(p: Vector2, shift := false) -> void:
 	elif targeting != "":
 		game.world.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": p, "queue": shift})
 	targeting = ""
+
+## Alt+click (ground or minimap): a ping your team sees, with a sound and a ring on the ground and minimap.
+var pings: Array = []                       # [{pos: Vector2, t: game time}]
+
+func ping(p: Vector2) -> void:
+	var now: float = game.world.time
+	pings = pings.filter(func(x): return now - float(x.t) < 3.0)
+	if pings.size() >= 5:
+		return
+	pings.append({"pos": p, "t": now})
+	game.fx.ping(p)
+	if game.audio:
+		game.audio.ui("ui_click", -2.0)
 
 ## A right click on the minimap: move the selected units you control there.
 func move_selected(p: Vector2, shift := false) -> void:

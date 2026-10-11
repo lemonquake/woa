@@ -135,7 +135,8 @@ func _bit(kind: String, mat: Material, at: Vector3, vel: Vector3, life: float, s
 		streak := false) -> void:
 	if _bits.size() >= MAX_BITS:
 		var old: Dictionary = _bits.pop_front()
-		(old.node as Node3D).queue_free()
+		if is_instance_valid(old.node):
+			(old.node as Node3D).queue_free()
 	var mi := MeshInstance3D.new()
 	mi.mesh = _mesh(kind)
 	mi.material_override = mat
@@ -171,13 +172,13 @@ func debris(at: Vector3, n: int, col: Color, speed := 4.0, size := 1.0, kind := 
 func _update_bits(dt: float) -> void:
 	for i in range(_bits.size() - 1, -1, -1):
 		var b: Dictionary = _bits[i]
-		var n: MeshInstance3D = b.node
 		b.life += dt
-		if b.life >= b.max or not is_instance_valid(n):
-			if is_instance_valid(n):
-				n.queue_free()
+		if b.life >= b.max or not is_instance_valid(b.node):
+			if is_instance_valid(b.node):
+				(b.node as Node).queue_free()
 			_bits.remove_at(i)
 			continue
+		var n: MeshInstance3D = b.node
 		if not b.rest:
 			var v: Vector3 = b.vel
 			v.y -= (16.0 if b.streak else 11.0) * dt
@@ -408,6 +409,9 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		_:
 			node.add_child(_sphere(0.1, _glow(Color(0.9, 0.9, 0.8), 3.0)))
 	add_child(node)
+	if trail and game.args.has("notrails"):
+		trail.free()
+		trail = null
 	if trail:
 		add_child(trail)
 	var p0 := View.to3(src.pos, game.terrain.height_at(src.pos)) + Vector3(0, h0, 0)
@@ -494,10 +498,10 @@ func _embed(node: Node3D, target_id: int, dir: Vector3, trail: Trail3D) -> void:
 func _update_flyers(dt: float) -> void:
 	for i in range(_flyers.size() - 1, -1, -1):
 		var f: Dictionary = _flyers[i]
-		var n: Node3D = f.node
-		if not is_instance_valid(n):
+		if not is_instance_valid(f.node):
 			_flyers.remove_at(i)
 			continue
+		var n: Node3D = f.node
 		f.t += dt
 		var k := clampf(f.t / f.dur, 0.0, 1.0)
 		var old := n.global_position
@@ -519,10 +523,10 @@ func _update_stuck(dt: float) -> void:
 	var now := Time.get_ticks_msec() / 1000.0
 	for i in range(_stuck.size() - 1, -1, -1):
 		var s: Dictionary = _stuck[i]
-		var n: Node3D = s.node
-		if not is_instance_valid(n):
+		if not is_instance_valid(s.node):
 			_stuck.remove_at(i)
 			continue
+		var n: Node3D = s.node
 		var left: float = s.until - now
 		if left <= 0.0:
 			n.queue_free()
@@ -762,9 +766,11 @@ func leap_land(e: Dictionary) -> void:
 	var uid := int(e.u)
 	if _leap_trails.has(uid):
 		var arr: Array = _leap_trails[uid]
-		(arr[1] as Trail3D).stop()
-		(arr[2] as Trail3D).stop()
-		(arr[0] as Node3D).queue_free()
+		for k in [1, 2]:
+			if is_instance_valid(arr[k]):
+				(arr[k] as Trail3D).stop()
+		if is_instance_valid(arr[0]):
+			(arr[0] as Node3D).queue_free()
 		_leap_trails.erase(uid)
 	var p: Vector2 = e.pos
 	if not _seen(p):
@@ -848,6 +854,9 @@ func unholy_reflect(from_id: int, to_id: int) -> void:
 func _update_homers(dt: float) -> void:
 	for i in range(_homers.size() - 1, -1, -1):
 		var h: Dictionary = _homers[i]
+		if not is_instance_valid(h.node):
+			_homers.remove_at(i)
+			continue
 		h.t += dt
 		var k := clampf(h.t / h.dur, 0.0, 1.0)
 		var to := _chest(int(h.to_id))
@@ -956,6 +965,12 @@ func tower_ranges(w: SimWorld, h: SimUnit, team: int) -> void:
 		var d := h.pos.distance_to(u.pos) - (u.attack_range + u.hull)
 		var a := clampf(1.0 - d / 700.0, 0.25, 0.9)
 		(ring.material_override as StandardMaterial3D).albedo_color = Color(1.0, 0.2, 0.15, 0.95) if aggro else Color(1.0, 0.85, 0.3, a)
+
+## A ping: three yellow rings pulsing outwards on the ground.
+func ping(p: Vector2) -> void:
+	var at := ground3(p)
+	for i in 3:
+		get_tree().create_timer(i * 0.28).timeout.connect(func(): shockwave(at, 2.4, Color(1.0, 0.85, 0.3), 0.7, 0.1, 2.5))
 
 ## Dota's order feedback: a green ripple where you move, a red one on what you attack.
 func marker(at: Vector3, attack: bool) -> void:

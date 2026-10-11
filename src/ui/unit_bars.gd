@@ -61,7 +61,14 @@ func _process(dt: float) -> void:
 	popups = popups.filter(func(p): return p.t < p.life)
 	queue_redraw()
 
+static var cost_us := 0                     # benchmark: total time spent drawing bars and text
+
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_all()
+	cost_us += Time.get_ticks_usec() - t0
+
+func _draw_all() -> void:
 	if game == null or game.world == null:
 		return
 	var cam: Camera3D = game.camera.cam

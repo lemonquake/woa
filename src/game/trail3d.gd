@@ -36,7 +36,14 @@ func stop() -> void:
 	_stopping = true
 	target = null
 
+static var cost_us := 0                     # benchmark: total time spent rebuilding trails
+
 func _process(dt: float) -> void:
+	var t0 := Time.get_ticks_usec()
+	_step(dt)
+	cost_us += Time.get_ticks_usec() - t0
+
+func _step(dt: float) -> void:
 	for p in _pts:
 		p[1] += dt
 	while not _pts.is_empty() and _pts[0][1] > life:

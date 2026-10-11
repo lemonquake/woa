@@ -25,11 +25,25 @@ var build := ["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith
 	"broadsword", "lifesteal", "mask_of_madness"]
 var _build_i := 0
 
+const EZEE_SKILLS := ["dark_stomp", "tainted_touch", "leap_strike", "dark_stomp", "dark_stomp", "unholy_might",
+	"dark_stomp", "leap_strike", "leap_strike", "leap_strike", "unholy_might", "tainted_touch", "tainted_touch",
+	"tainted_touch", "unholy_might"]
+const EZEE_BUILD := ["tango", "salve", "gauntlets", "quelling_blade", "circlet", "branch", "branch", "magic_stick",
+	"boots", "magic_wand", "belt_str", "ring_regen", "chainmail", "broadsword", "lifesteal", "mask_of_madness"]
+
+var kit := "galewarden"
+
 func _init(world: SimWorld, hid: int, p_lane := "mid", p_name := "Bot") -> void:
 	w = world
 	hero_id = hid
 	lane = p_lane
 	name = p_name
+	var h := hero()
+	if h != null:
+		kit = String(h.def.id)
+	if kit == "ezee":
+		skill_order = EZEE_SKILLS
+		build = EZEE_BUILD
 
 func hero() -> SimUnit:
 	return w.get_unit(hero_id)
@@ -77,7 +91,7 @@ func _learn(h: SimUnit) -> void:
 					break
 		if not done:
 			break
-	if h.ability_level_of("frost_quiver") > 0:
+	if kit == "galewarden" and h.ability_level_of("frost_quiver") > 0:
 		h.autocast["frost_quiver"] = false
 
 func _wants(h: SimUnit, aid: String) -> bool:
@@ -144,6 +158,8 @@ func _busy(h: SimUnit) -> bool:
 	return h.cast_phase != SimUnit.CastPhase.NONE or not h.channel.is_empty() 		or h.order in [O.CAST_POINT, O.CAST_NO_TARGET] and w.time < _cast_deadline
 
 var _cast_deadline := 0.0
+var _lh_id := -1
+var _lh_until := 0.0
 
 func _lane(h: SimUnit) -> void:
 	if _busy(h):
@@ -184,12 +200,25 @@ func _lane(h: SimUnit) -> void:
 			if not _busy(h):
 				_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
 			return
-	# 2. last hit / deny
+	# 2. last hit / deny (melee heroes commit to the walk-up instead of second-guessing it every think)
+	var committed := w.get_unit(_lh_id)
+	if committed != null and committed.alive and w.time < _lh_until and h.order == O.ATTACK_UNIT and h.order_target == _lh_id:
+		return
 	var lh := _last_hit_target(h, foes, allies)
 	if lh != null:
 		_order(h, {"type": O.ATTACK_UNIT, "target": lh.id})
+		_lh_id = lh.id
+		_lh_until = w.time + (1.3 if not h.is_ranged() else 0.0)
 		return
-	# 3. harass with the hand-cast orb when the enemy hero is in reach and we're not under their tower
+	# 3. harass: Ezee trades blows when the enemy hero wanders into reach; Galewarden pokes with the hand-cast orb
+	if kit == "ezee":
+		for e in enemy_heroes:
+			var safe := not _under_enemy_tower(h, e.pos, enemy_towers)
+			if safe and h.edge_distance(e) <= 260.0 and h.hp > h.max_hp * 0.5 and h.hp / h.max_hp >= e.hp / e.max_hp - 0.1:
+				_spells_on(h, e)
+				if not _busy(h):
+					_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
+				return
 	for e in enemy_heroes:
 		if h.edge_distance(e) <= h.attack_range and not _under_enemy_tower(h, h.pos, enemy_towers) and h.mana > h.max_mana * 0.35:
 			if h.ability_level_of("frost_quiver") > 0 and h.atk_phase == SimUnit.AtkPhase.NONE:
@@ -217,7 +246,8 @@ func _lane(h: SimUnit) -> void:
 			nearest_foe = f
 	var back := (path[0] - front).normalized()
 	if nearest_foe != null:
-		spot = nearest_foe.pos + (h.pos - nearest_foe.pos).normalized() * (h.attack_range * 0.85)
+		var keep := maxf(h.attack_range * 0.85, 330.0) if not h.is_ranged() else h.attack_range * 0.85
+		spot = nearest_foe.pos + (h.pos - nearest_foe.pos).normalized() * keep
 		spot = spot.lerp(front + back * 300.0, 0.3)
 	else:
 		spot = front + back * 300.0
@@ -275,7 +305,8 @@ func _last_hit_target(h: SimUnit, foes: Array[SimUnit], allies: Array[SimUnit]) 
 		var mult := w.combat.attack_class_multiplier(snap, c) * C.armor_multiplier(c.armor)
 		var my_min := (h.dmg_min + h.bonus_damage + (w.combat._quelling(h) if c.team != h.team else 0.0)) * mult
 		var travel := h.attack_point_time() + maxf(0.0, h.edge_distance(c) - h.attack_range) / maxf(1.0, h.move_speed)
-		travel += c.pos.distance_to(h.pos) / maxf(1.0, float(h.def.projectile_speed))
+		if h.is_ranged():
+			travel += c.pos.distance_to(h.pos) / float(h.def.projectile_speed)
 		var incoming := _incoming_dps(c) * travel
 		var hp_then := c.hp - incoming
 		if hp_then <= 0.0:
@@ -298,7 +329,32 @@ func _incoming_dps(c: SimUnit) -> float:
 			dps += avg * w.combat.attack_class_multiplier(snap, c) * C.armor_multiplier(c.armor) / o.attack_interval()
 	return dps
 
+func _ezee_spells(h: SimUnit, e: SimUnit) -> void:
+	var d := h.edge_distance(e)
+	var ab := w.abilities
+	# the ultimate when a real fight is on
+	if ab.cast_error(h, "unholy_might", -1, null, h.pos) == "" and d < 450.0 and (e.hp < e.max_hp * 0.75 or h.hp < h.max_hp * 0.6):
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "unholy_might"}, true)
+		_cast_deadline = w.time + 1.0
+		return
+	# leap in when the leap would pick the hero
+	var keen := e.hp < e.max_hp * 0.6 or h.hp > h.max_hp * 0.75
+	if keen and ab.cast_error(h, "leap_strike", -1, null, h.pos) == "" and ab.leap_target(h, h.ability_level_of("leap_strike")) == e and d > 150.0:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "leap_strike"}, true)
+		_cast_deadline = w.time + 1.2
+		return
+	if ab.cast_error(h, "dark_stomp", -1, null, h.pos) == "" and d < 260.0:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"}, true)
+		_cast_deadline = w.time + 0.9
+		return
+	if ab.cast_error(h, "tainted_touch", -1, null, h.pos) == "" and d < 400.0:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "tainted_touch"}, true)
+		_cast_deadline = w.time + 0.8
+
 func _spells_on(h: SimUnit, e: SimUnit) -> void:
+	if kit == "ezee":
+		_ezee_spells(h, e)
+		return
 	if w.abilities.cast_error(h, "arrow_storm", -1, null, e.pos) == "" and e.hp < e.max_hp * 0.7 and h.pos.distance_to(e.pos) < 900.0:
 		_order(h, {"type": O.CAST_POINT, "ability": "arrow_storm", "point": e.pos}, true)
 		_cast_deadline = w.time + 1.5

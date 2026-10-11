@@ -12,6 +12,7 @@ uniform float wind = 1.0;
 uniform float sway_height = 1.0;
 uniform float translucency = 0.45;
 uniform float night = 0.0;
+uniform float near_fade = 8.5;            // foliage closer to the camera than this dithers away (foreground canopies)
 
 varying float hvar;
 varying float vheight;
@@ -28,9 +29,20 @@ void vertex() {
 	vheight = h;
 }
 
+float bayer4(vec2 p) {
+	ivec2 i = ivec2(mod(p, 4.0));
+	int idx = i.x + i.y * 4;
+	float m[16] = float[](0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0, 3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0);
+	return (m[idx] + 0.5) / 16.0;
+}
+
 void fragment() {
 	vec4 c = texture(albedo_tex, UV);
 	if (c.a < alpha_cut) {
+		discard;
+	}
+	float keep = smoothstep(near_fade - 3.0, near_fade, length(VERTEX));
+	if (keep < bayer4(FRAGCOORD.xy)) {
 		discard;
 	}
 	vec3 col = c.rgb * mix(tint, tint2, hvar) * vec3(0.92, 0.94, 0.96);

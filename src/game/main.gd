@@ -16,6 +16,7 @@ var atmosphere: Atmosphere
 var camera: CameraRig
 var fx: Fx
 var status_fx: StatusFx
+var targeting_fx: TargetingFx
 var bars: UnitBars
 var input: InputController
 var audio: GameAudio
@@ -61,6 +62,9 @@ func _ready() -> void:
 	status_fx.game = self
 	status_fx.fx = fx
 	add_child(status_fx)
+	targeting_fx = TargetingFx.new()
+	targeting_fx.game = self
+	add_child(targeting_fx)
 	camera = CameraRig.new()
 	add_child(camera)
 	camera.height_at = func(p: Vector2) -> float: return terrain.height_at(p)
@@ -73,6 +77,9 @@ func _ready() -> void:
 	var ui := CanvasLayer.new()
 	ui.name = "UI"
 	add_child(ui)
+	var screen := ScreenFx.new()
+	screen.game = self
+	ui.add_child(screen)
 	bars = UnitBars.new()
 	bars.game = self
 	ui.add_child(bars)
@@ -420,11 +427,15 @@ func _process(dt: float) -> void:
 					v.visible = world.vision.cell_visible(player_team, u.pos)
 	_t = _tm("views", _t)
 	fx.frame(world, alpha, dt)
-	status_fx.frame(dt)
 	_t = _tm("fx", _t)
+	status_fx.frame(dt)
+	_t = _tm("status", _t)
+	targeting_fx.frame()
+	_t = _tm("target", _t)
 	if _bench_until > 0.0:
 		_bench_frame(dt)
 	atmosphere.update(world.is_night(), dt if _capture_frames < 0 else 10.0)
+	foliage.set_near_fade(camera.distance * camera.zoom)
 	_update_fog(dt)
 	_t = _tm("fog", _t)
 	var hover: int = input.hover_id if input else -1
@@ -526,6 +537,8 @@ func _bench_frame(dt: float) -> void:
 		camera.focus(View.to3(h.pos, terrain.height_at(h.pos)))
 	if _bench_warm > 0.0:
 		_bench_warm -= dt
+		Trail3D.cost_us = 0
+		UnitBars.cost_us = 0
 		return
 	_bench_frames.append(dt * 1000.0)
 	var vrid := get_viewport().get_viewport_rid()
@@ -546,6 +559,8 @@ func _bench_frame(dt: float) -> void:
 		avg /= n
 		var line := "BENCH frames %d avg %.2f ms (%.0f fps) p50 %.2f p95 %.2f p99 %.2f max %.2f over16.7 %d units %d" % [
 			n, avg, 1000.0 / avg, a[n / 2], a[int(n * 0.95)], a[int(n * 0.99)], a[n - 1], a.filter(func(v): return v > 16.7).size(), world.units.size()]
+		_bench_acc["trails"] = Trail3D.cost_us / 1000.0
+		_bench_acc["bars"] = UnitBars.cost_us / 1000.0
 		var parts := []
 		for k in _bench_acc:
 			parts.append("%s %.2f" % [k, _bench_acc[k] / n])
@@ -575,6 +590,8 @@ func _start_capture() -> void:
 		var c := String(args.cam).split(",")
 		var p := Vector2(float(c[0]), float(c[1]))
 		camera.focus(View.to3(p, terrain.height_at(p)))
+	elif _demo_cam.x != INF:
+		camera.focus(View.to3(_demo_cam, terrain.height_at(_demo_cam)))
 	else:
 		var h := world.get_unit(player_hero_id)
 		camera.focus(View.to3(h.pos, terrain.height_at(h.pos)))
@@ -603,6 +620,8 @@ func _start_capture() -> void:
 
 ## Capture demos: --lvl=N levels the player's hero and learns its abilities, --at=x,y moves it, --cast=a,b@F issues
 ## each ability at capture frame F (no-target abilities at once, point abilities at the nearest enemy).
+var _demo_cam := Vector2(INF, INF)
+
 func _demo_setup() -> void:
 	var h := world.get_unit(player_hero_id)
 	if args.has("lvl"):
@@ -623,7 +642,34 @@ func _demo_setup() -> void:
 				break
 	if args.has("at"):
 		var av := String(args.at).split(",")
-		if av[0] == "wave":
+		if av[0] == "tree":
+			# a creep standing between the hero and a tree: for impact / stun captures
+			for i in map.trees.size():
+				var tr: Dictionary = map.trees[i]
+				if not tr.alive or tr.pos.length() > 4000.0:
+					continue
+				var found := false
+				for k in 8:
+					var d := Vector2.from_angle(k * TAU / 8.0)
+					var ok := true
+					for s in range(2, 9):
+						if not map.is_walkable(tr.pos + d * (s * 64.0)):
+							ok = false
+							break
+					if ok:
+						var cp: Vector2 = tr.pos + d * 190.0
+						var c := world.spawn("dusk_melee", C.DUSK, cp)
+						c.order = C.Order.HOLD
+						var c2 := world.spawn("dusk_ranged", C.DUSK, cp + d.orthogonal() * 120.0)
+						c2.order = C.Order.HOLD
+						h.pos = cp + d * 170.0
+						h.facing = (-d).angle()
+						_demo_cam = cp - d * 60.0
+						found = true
+						break
+				if found:
+					break
+		elif av[0] == "wave":
 			# beside the enemy mid wave: the Dusk lane creep nearest the map centre
 			var best: SimUnit = null
 			for u in world.units:
@@ -656,6 +702,9 @@ func _demo_casts() -> void:
 			nd = u.pos.distance_to(h.pos)
 			near = u
 	for aid in spec[0].split(","):
+		if aid == "attack" and near:
+			world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id})
+			continue
 		var a := SimData.ability(aid)
 		if a.is_empty():
 			continue
