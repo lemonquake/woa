@@ -311,6 +311,8 @@ func give_gold(h: SimUnit, amount: int, reliable: bool, at: Vector2) -> void:
 		h.gold_reliable += amount
 	else:
 		h.gold_unreliable += amount
+	if amount > 0:
+		h.gold_earned += amount
 	w.events.append({"t": "gold", "u": h.id, "amount": amount, "pos": at})
 
 func _hero_death(t: SimUnit, killer: SimUnit) -> void:

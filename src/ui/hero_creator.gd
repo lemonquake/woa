@@ -26,7 +26,10 @@ const SLOT_NAMES := {"inner_garment": "Shirt", "armor": "Armour / coat", "leggin
 	"gloves": "Gloves", "boots": "Boots", "accessory_1": "Accessory 1", "accessory_2": "Accessory 2",
 	"accessory_3": "Accessory 3", "accessory_4": "Accessory 4"}
 const DYES := [["cloth", "Cloth"], ["trim", "Trim"], ["leather", "Leather"], ["metal", "Metal"], ["gold", "Gold"]]
-const ANIMS := [["Idle", "idle_bow"], ["Walk", "walk"], ["Run", "run"], ["Shoot", "bow_1"], ["Cast", "cast_quick"],
+const SELECT := "res://src/ui/hero_select.tscn"
+const EZEE_ANIMS := [["Idle", "idle_2h"], ["Run", "hero_run"], ["Attack", "gs_3"], ["Stomp", "boss_slam"],
+	["Leap", "leap_slam"], ["Roar", "boss_roar"], ["Victory", "war_cry"]]
+const ANIMS := [["Idle", "idle_bow"], ["Walk", "walk"], ["Run", "hero_run"], ["Shoot", "bow_1"], ["Cast", "cast_quick"],
 	["Victory", "war_cry"], ["Taunt", "taunt"]]
 
 var hero := {}
@@ -49,6 +52,7 @@ func _ready() -> void:
 	theme = U.theme()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	hero = GameSettings.load_hero().duplicate(true)
+	_anim = "idle_2h" if GameSettings.selected == "ezee" else "idle_bow"
 	_rng.randomize()
 	_build_stage()
 	_build_ui()
@@ -194,11 +198,25 @@ func _rebuild_model() -> void:
 	anim = anims[0] if not anims.is_empty() else null
 	app = HeroAppearance.new(model)
 	var sk := app.skeleton
-	if sk and sk.find_bone("weapon.L") >= 0:
-		var at := BoneAttachment3D.new()
-		at.bone_name = "weapon.L"
-		sk.add_child(at)
-		at.add_child((load("res://assets/weapons/bow.glb") as PackedScene).instantiate())
+	var cfg := ModelCatalog.info(String(SimData.unit(GameSettings.selected).get("model", "hero")))
+	for side in ["R", "L"]:
+		var ps := ModelCatalog.weapon(String(cfg.get(side, "")))
+		if sk and ps and sk.find_bone("weapon." + side) >= 0:
+			var at := BoneAttachment3D.new()
+			at.bone_name = "weapon." + side
+			sk.add_child(at)
+			var wpn := ps.instantiate() as Node3D
+			at.add_child(wpn)
+			if cfg.has("weapon_tint"):
+				for mi: MeshInstance3D in wpn.find_children("*", "MeshInstance3D", true, false):
+					for i in mi.mesh.get_surface_count():
+						var src := mi.mesh.surface_get_material(i) as BaseMaterial3D
+						if src:
+							var m := src.duplicate() as BaseMaterial3D
+							m.albedo_color = src.albedo_color * (cfg.weapon_tint as Color)
+							m.metallic = 0.85
+							m.roughness = 0.32
+							mi.set_surface_override_material(i, m)
 	_apply()
 	_play(_anim)
 
@@ -258,7 +276,7 @@ func _build_ui() -> void:
 	title.position = Vector2(34, 18)
 	add_child(title)
 	var sub := Label.new()
-	sub.text = "Hero Creator"
+	sub.text = "Hero Creator: " + String(SimData.unit(GameSettings.selected).get("name", "Hero"))
 	sub.add_theme_font_override("font", U.font("title"))
 	sub.add_theme_font_size_override("font_size", 20)
 	sub.add_theme_color_override("font_color", U.TEXT_DIM)
@@ -308,7 +326,7 @@ func _build_ui() -> void:
 	bar.offset_right = -28
 	bar.add_theme_constant_override("separation", 8)
 	add_child(bar)
-	for a in ANIMS:
+	for a in (EZEE_ANIMS if GameSettings.selected == "ezee" else ANIMS):
 		var b := Button.new()
 		b.text = a[0]
 		b.custom_minimum_size = Vector2(84, 46)
@@ -327,10 +345,18 @@ func _build_ui() -> void:
 	reset.text = "Reset"
 	reset.custom_minimum_size = Vector2(110, 46)
 	reset.pressed.connect(func():
-		hero = GameSettings.default_hero()
+		hero = GameSettings.default_look(GameSettings.selected)
 		_name_edit.text = hero.display_name
 		_after_change(true))
 	bar.add_child(reset)
+	var back := Button.new()
+	back.text = "Hero Select"
+	back.custom_minimum_size = Vector2(150, 46)
+	back.pressed.connect(func():
+		GameSettings.hero = hero.duplicate(true)
+		GameSettings.save_hero()
+		get_tree().change_scene_to_file(SELECT))
+	bar.add_child(back)
 	var play := Button.new()
 	play.text = "Play"
 	play.custom_minimum_size = Vector2(220, 52)

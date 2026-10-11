@@ -80,6 +80,7 @@ var dmg_out := {}                          # damage source key -> [to heroes, to
 var dmg_in := {}                           # damage source key -> damage taken
 var recent_in: Array = []                  # heroes: [{t, src, key, type, amount}] for the death recap (last 20 s)
 var healed := 0.0                          # health restored by heals and lifesteal
+var gold_earned := 0                       # heroes: all gold gained (for gold per minute)
 var last_kill_at := -99.0                  # heroes: for multi-kills
 var multi_kill := 0
 

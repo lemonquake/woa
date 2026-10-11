@@ -233,6 +233,35 @@ func _build_decor() -> void:
 		y += step
 	_emit(groups, 60.0, false)
 
+## A tree knocked down: a copy of it topples away from `from_pos`, then sinks into the ground.
+func fell_tree(index: int, from_pos: Vector2) -> void:
+	if not _tree_slot.has(index):
+		return
+	var s: Array = _tree_slot[index]
+	var mm: MultiMesh = s[0]
+	var xf: Transform3D = s[2]
+	var mi := MeshInstance3D.new()
+	mi.mesh = mm.mesh
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	add_child(mi)
+	mi.transform = xf
+	var d := Vector3(xf.origin.x, 0.0, xf.origin.z) - Vector3(from_pos.x * View.S, 0.0, -from_pos.y * View.S)
+	if d.length() < 0.01:
+		d = Vector3.RIGHT
+	var axis := Vector3.UP.cross(d.normalized()).normalized()
+	var base := xf.basis
+	var origin := xf.origin
+	var tw := mi.create_tween()
+	tw.tween_method(_tilt.bind(mi, axis, base, origin), 0.0, deg_to_rad(84.0), 0.85).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_method(_tilt.bind(mi, axis, base, origin), deg_to_rad(84.0), deg_to_rad(79.0), 0.12)
+	tw.tween_interval(1.4)
+	tw.tween_property(mi, "position:y", origin.y - 2.5, 1.2)
+	tw.tween_callback(mi.queue_free)
+
+static func _tilt(a: float, mi: MeshInstance3D, axis: Vector3, base: Basis, origin: Vector3) -> void:
+	if is_instance_valid(mi):
+		mi.transform = Transform3D(Basis(axis, a) * base, origin)
+
 func set_tree_alive(index: int, alive: bool) -> void:
 	if not _tree_slot.has(index):
 		return

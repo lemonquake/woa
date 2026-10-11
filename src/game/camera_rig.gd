@@ -19,6 +19,17 @@ var _drag_target := Vector3.ZERO
 var follow: Callable                       # returns the hero position (Vector3) or null
 var height_at: Callable                    # Vector2 sim -> height (game units)
 var edge_pan_enabled := true
+var _shake := 0.0                          # current shake strength (metres of jitter at the start)
+var _shake_left := 0.0
+var _shake_dur := 0.0
+
+## Shake the view: strength in metres of jitter, decaying over `dur` seconds (the stronger shake wins).
+func shake(strength: float, dur: float) -> void:
+	var cur := _shake * (_shake_left / maxf(0.001, _shake_dur)) if _shake_left > 0.0 else 0.0
+	if strength >= cur:
+		_shake = strength
+		_shake_dur = dur
+		_shake_left = dur
 
 func _ready() -> void:
 	cam = Camera3D.new()
@@ -78,6 +89,15 @@ func _process(dt: float) -> void:
 		target.y = lerpf(target.y, h, 1.0 - exp(-dt * 6.0))
 	zoom = lerpf(zoom, _zoom_goal, 1.0 - exp(-dt * 10.0))
 	_apply()
+	if _shake_left > 0.0:
+		_shake_left = maxf(0.0, _shake_left - dt)
+		var k := _shake * pow(_shake_left / maxf(0.001, _shake_dur), 1.5)
+		var t := Time.get_ticks_msec() / 1000.0
+		cam.h_offset = (sin(t * 71.0) + sin(t * 43.0) * 0.6) * 0.5 * k
+		cam.v_offset = (cos(t * 63.0) + sin(t * 37.0) * 0.6) * 0.5 * k
+	elif cam.h_offset != 0.0 or cam.v_offset != 0.0:
+		cam.h_offset = 0.0
+		cam.v_offset = 0.0
 
 func _apply() -> void:
 	if cam == null:

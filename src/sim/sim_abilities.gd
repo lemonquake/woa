@@ -510,7 +510,7 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 		var ti := w.map.tree_at(at, 110.0)
 		if ti >= 0 and w.map.destroy_tree(ti, 300.0):
 			w.vision.static_dirty = true
-			w.events.append({"t": "tree", "i": ti, "alive": false, "smashed": true})
+			w.events.append({"t": "tree", "i": ti, "alive": false, "smashed": true, "from": u.pos})
 	if u.team == int(k.team) or String(k.ability) != "dark_stomp":
 		return
 	var seq := int(k.seq)
@@ -649,7 +649,7 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 			if ti2 >= 0:
 				w.map.destroy_tree(ti2, 300.0)
 				w.vision.static_dirty = true
-				w.events.append({"t": "tree", "i": ti2, "alive": false})
+				w.events.append({"t": "tree", "i": ti2, "alive": false, "from": u.pos})
 		"ward":
 			var ward := w.spawn("ward_observer", u.team, p)
 			ward.ward_expires = w.time + float(v.lifetime)

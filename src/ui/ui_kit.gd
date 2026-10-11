@@ -25,7 +25,8 @@ const ITEM_ICONS := {
 	"dragon_lance": "items/bow_2",
 }
 const ABILITY_ICONS := {"frost_quiver": "skills/frost_arrow", "gale_shot": "skills/gale_burst",
-	"hunters_focus": "skills/keen_eye", "arrow_storm": "skills/arrow_rain"}
+	"hunters_focus": "skills/keen_eye", "arrow_storm": "skills/arrow_rain", "dark_stomp": "skills/tempo_wd_quake",
+	"leap_strike": "skills/leap_slam", "tainted_touch": "skills/shadow_curse", "unholy_might": "skills/dg_black_dominion"}
 
 static var _fonts := {}
 static var _icons := {}
@@ -36,8 +37,8 @@ static func font(kind := "body") -> Font:
 	var f: Font
 	match kind:
 		"title":
-			var ff := FontFile.new()
-			ff.load_dynamic_font("res://assets/ui/fonts/Cinzel.ttf")
+			# the imported resource (the raw .ttf is not packed in exported builds)
+			var ff := load("res://assets/ui/fonts/Cinzel.ttf") as Font
 			var fv := FontVariation.new()
 			fv.base_font = ff
 			fv.variation_opentype = {"wght": 700}

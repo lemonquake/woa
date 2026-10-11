@@ -15,6 +15,7 @@ var foliage: Foliage
 var atmosphere: Atmosphere
 var camera: CameraRig
 var fx: Fx
+var status_fx: StatusFx
 var bars: UnitBars
 var input: InputController
 var audio: GameAudio
@@ -56,6 +57,10 @@ func _ready() -> void:
 	fx = Fx.new()
 	fx.game = self
 	add_child(fx)
+	status_fx = StatusFx.new()
+	status_fx.game = self
+	status_fx.fx = fx
+	add_child(status_fx)
 	camera = CameraRig.new()
 	add_child(camera)
 	camera.height_at = func(p: Vector2) -> float: return terrain.height_at(p)
@@ -121,28 +126,53 @@ func _parse_args() -> void:
 			var kv := a.substr(2).split("=", true, 1)
 			args[kv[0]] = kv[1] if kv.size() > 1 else "1"
 
-## The player's Galewarden (Dawn) and the bot's (Dusk). Looks and outfits use the customisable hero body.
+## The player's hero (Dawn, chosen in Hero Select) and the bot's (Dusk). Looks and outfits use the customisable
+## hero body. Capture and benchmark runs use default looks; --hero= and --bot_hero= pick the heroes.
 func _spawn_heroes() -> void:
-	# the hero built in the Hero Creator (or the default Galewarden)
-	var mine: Dictionary = GameSettings.load_hero() if not args.has("capture") and not args.has("bench") else GameSettings.default_hero()
-	var p := world.spawn_hero("galewarden", C.DAWN, mine.duplicate(true))
+	var automated := args.has("capture") or args.has("bench")
+	var my_id := String(args.get("hero", GameSettings.selected))
+	if not (my_id in GameSettings.HEROES):
+		my_id = "galewarden"
+	var mine: Dictionary = GameSettings.default_look(my_id) if automated else GameSettings.look_for(my_id)
+	var p := world.spawn_hero(my_id, C.DAWN, mine.duplicate(true))
 	p.player = true
 	player_hero_id = p.id
-	var blook := HeroLook.preset("shade")
-	var b := world.spawn_hero("galewarden", C.DUSK, {
-		"display_name": "Bot Gerald", "look": blook,
-		"outfit": {"inner_garment": "chain_shirt", "armor": "tc_nightstalker_leathers", "leggings": "nightweave_leggings",
-			"boots": "soft_boot", "gloves": "runed_glove", "helm": "linen_hood"},
-		"dyes": {"armor": {"cloth": "3a1020", "leather": "201014"}},
-	})
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var bot_id := String(args.get("bot_hero", "galewarden" if automated else GameSettings.opponent_hero(rng)))
+	if not (bot_id in GameSettings.HEROES):
+		bot_id = "galewarden"
+	var b := world.spawn_hero(bot_id, C.DUSK, bot_look(bot_id))
 	world.bots.append(SimBot.new(world, b.id, "mid", "Bot Gerald"))
 	if args.has("autoplay"):
 		world.bots.append(SimBot.new(world, p.id, "mid", "Autoplay"))
 
+## The bot's appearance: the hero's default look in Dusk colours.
+static func bot_look(id: String) -> Dictionary:
+	if id == "ezee":
+		var e := GameSettings.default_look("ezee")
+		e.display_name = "Bot Gerald"
+		e.look["eye_color"] = "ff3a2a"
+		e.look["hair_color"] = "2a0c0a"
+		for slot in e.dyes:
+			if (e.dyes[slot] as Dictionary).has("cloth"):
+				e.dyes[slot]["cloth"] = "5a0c14"
+			if (e.dyes[slot] as Dictionary).has("trim"):
+				e.dyes[slot]["trim"] = "c03020"
+			if (e.dyes[slot] as Dictionary).has("gold"):
+				e.dyes[slot]["gold"] = "a02818"
+		return e
+	return {
+		"display_name": "Bot Gerald", "look": HeroLook.preset("shade"),
+		"outfit": {"inner_garment": "chain_shirt", "armor": "tc_nightstalker_leathers", "leggings": "nightweave_leggings",
+			"boots": "soft_boot", "gloves": "runed_glove", "helm": "linen_hood"},
+		"dyes": {"armor": {"cloth": "3a1020", "leather": "201014"}},
+	}
+
 # ---- Simulation loop -----------------------------------------------------------------------------------------------
 
 func _physics_process(_dt: float) -> void:
-	if _capture_frames >= 0:
+	if _capture_frames >= 0 and not args.has("live"):
 		return
 	_step()
 
@@ -208,10 +238,42 @@ func _drain_events() -> void:
 			audio.event(e, world)
 		match e.t:
 			"damage":
-				_last_dmg[e.u] = float(e.amount)
-				var dv = views.get(e.u)
-				if dv is UnitView and float(e.amount) > 0.0 and e.get("attack", false):
-					dv.flash()
+				_on_damage(e)
+			"cast_start":
+				var cv = views.get(e.u)
+				var aid := String(e.ability)
+				if cv is UnitView and int(e.get("slot", -1)) < 0 and aid != "tp":
+					cv.on_cast_start(aid, world.abilities.cast_point(aid, -1))
+			"leap_start":
+				var lv = views.get(e.u)
+				if lv is UnitView:
+					lv.on_leap(float(e.dur))
+				fx.leap_start(e.u)
+			"leap_land":
+				var lv2 = views.get(e.u)
+				if lv2 is UnitView:
+					lv2.on_leap_land()
+				fx.leap_land(e)
+			"impact":
+				var iv = views.get(e.u)
+				if iv is UnitView:
+					iv.on_impact(String(e.what))
+				fx.push_impact(e)
+			"stomp":
+				fx.stomp(e.pos, float(e.radius))
+			"push_land":
+				if float(e.speed) > 300.0:
+					fx.push_land(e.u)
+			"taint_cast":
+				fx.taint_cast(e.u)
+			"curse":
+				fx.curse_hit(e.u)
+			"unholy_start":
+				fx.unholy_start(e.u)
+			"unholy_end":
+				fx.unholy_end(e.u)
+			"unholy_reflect":
+				fx.unholy_reflect(e.u, int(e.target))
 			"attack_start":
 				var v = views.get(e.u)
 				if v is UnitView:
@@ -261,10 +323,15 @@ func _drain_events() -> void:
 			"volley":
 				fx.volley(e.pos, float(e.radius))
 			"tree":
+				if not bool(e.alive) and e.has("from"):
+					fx.tree_fell(int(e.i), e.from)
 				foliage.set_tree_alive(int(e.i), bool(e.alive))
 			"hero_kill":
 				if hud and hud.has_method("on_kill"):
 					hud.on_kill(e)
+				var kv2 := world.get_unit(e.victim)
+				if kv2 and int(e.u) == player_hero_id:
+					bars.popup("+%d" % int(e.get("gold", 0)), _head(kv2.pos, 2.6), Color(1.0, 0.82, 0.2), 30, 1.6, 2.0, Vector2.ZERO, true)
 			"death":
 				var kv = views.get(e.u)
 				var killer := world.get_unit(e.killer)
@@ -276,9 +343,19 @@ func _drain_events() -> void:
 					var side := "Your" if du.team == player_team else "The enemy's"
 					var what := {"tower1": "tier 1 tower", "tower2": "tier 2 tower", "tower3": "tier 3 tower", "tower4": "tier 4 tower",
 						"melee_rax": "melee barracks", "ranged_rax": "ranged barracks", "filler": "effigy", "ancient": "Aether Core"}
+					var wname := String(what.get(String(du.def.id), "building"))
 					var verb := "was denied" if e.get("deny", false) else "has fallen"
-					hud.announce("%s %s %s" % [side, String(what.get(String(du.def.id), "building")), verb],
-						du.building_lane.capitalize() + (" lane" if du.building_lane != "" else ""))
+					hud.announce("%s %s %s" % [side, wname, verb],
+						du.building_lane.capitalize() + (" lane" if du.building_lane != "" else ""),
+						UiKit.GOLD if du.team != player_team else UiKit.DUSK)
+					hud.kill_feed.on_building(du, killer, bool(e.get("deny", false)), player_team,
+						(du.building_lane.capitalize() + " " if du.building_lane != "" else "") + wname)
+				if du and du.kind == C.Kind.COURIER and hud:
+					hud.kill_feed.on_courier(du, killer)
+				if du and du.id == player_hero_id and hud:
+					hud.scoreboard.capture_recap(du, world)
+				if du and du.is_hero() and killer and killer.team == du.team and du.id != killer.id and hud:
+					hud.kill_feed.on_deny_hero(du)
 			"victory":
 				if hud and hud.has_method("announce"):
 					hud.announce("Victory!" if int(e.team) == player_team else "Defeat", "The Aether Core has been destroyed")
@@ -286,6 +363,38 @@ func _drain_events() -> void:
 				if e.u == player_hero_id and hud and hud.has_method("error"):
 					hud.error(String(e.msg))
 	world.events.clear()
+
+## Damage: hit reactions, melee sparks and floating numbers (yours, on you, and enemy hero spells you can see).
+func _on_damage(e: Dictionary) -> void:
+	var amt := float(e.amount)
+	_last_dmg[e.u] = amt
+	var tu := world.get_unit(e.u)
+	if tu == null or amt <= 0.0:
+		return
+	var su := world.get_unit(e.src)
+	var dv = views.get(e.u)
+	var atk := bool(e.get("attack", false))
+	if dv is UnitView:
+		dv.on_hit(su.pos if su else tu.pos, amt, tu.max_hp, atk)
+		if atk and su and not su.is_ranged() and dv.visible:
+			fx.melee_hit(su, tu, amt)
+	if not (tu.team == player_team or world.vision.sees(player_team, tu)):
+		return
+	var style := ""
+	if bool(e.get("reflected", false)):
+		style = "reflect"
+	elif su and su.id == player_hero_id:
+		style = "out"
+	elif tu.id == player_hero_id:
+		style = "in"
+	elif su and su.is_hero() and not atk:
+		style = "spell"
+	if style != "":
+		var hgt: float = (dv.bar_height + 0.35) if dv is UnitView else 2.2
+		bars.damage_number(amt, int(e.get("type", 0)), _head(tu.pos, hgt), style)
+	if float(e.get("halved", 0.0)) > 0.0:
+		var hv = views.get(e.u)
+		bars.popup("½", _head(tu.pos, (hv.bar_height if hv is UnitView else 2.2) + 0.6), Color(0.8, 0.5, 1.0), 26, 0.8, 0.8, Vector2(30, 0), true)
 
 func _head(p: Vector2, extra: float) -> Vector3:
 	return View.to3(p, terrain.height_at(p)) + Vector3(0, extra, 0)
@@ -311,6 +420,7 @@ func _process(dt: float) -> void:
 					v.visible = world.vision.cell_visible(player_team, u.pos)
 	_t = _tm("views", _t)
 	fx.frame(world, alpha, dt)
+	status_fx.frame(dt)
 	_t = _tm("fx", _t)
 	if _bench_until > 0.0:
 		_bench_frame(dt)
@@ -332,11 +442,13 @@ func _process(dt: float) -> void:
 	fx.tower_ranges(world, world.get_unit(player_hero_id), player_team)
 	if _capture_frames >= 0:
 		_capture_frames += 1
-		if _capture_frames == int(args.get("frames", "45")) - 6 and args.has("marker"):
+		_demo_casts()
+		var fl := String(args.get("frames", "45")).split(",")
+		if _capture_frames == int(fl[0]) - 6 and args.has("marker"):
 			var mv := String(args.marker).split(",")
 			var mp := Vector2(float(mv[0]), float(mv[1]))
 			fx.marker(View.to3(mp, terrain.height_at(mp)), false)
-		if _capture_frames == int(args.get("frames", "45")):
+		if str(_capture_frames) in fl:
 			_save_capture()
 
 # ---- Fog of war -------------------------------------------------------------------------------------------------------
@@ -454,6 +566,7 @@ func _start_capture() -> void:
 		_drain_events()
 		if world.tick % 30 == 0:
 			_sync_views()
+	_demo_setup()
 	_sync_views()
 	for v in views.values():
 		if v is UnitView:
@@ -488,12 +601,83 @@ func _start_capture() -> void:
 		menus._show_end()
 	_capture_frames = 0
 
+## Capture demos: --lvl=N levels the player's hero and learns its abilities, --at=x,y moves it, --cast=a,b@F issues
+## each ability at capture frame F (no-target abilities at once, point abilities at the nearest enemy).
+func _demo_setup() -> void:
+	var h := world.get_unit(player_hero_id)
+	if args.has("lvl"):
+		var lv := int(args.lvl)
+		world.combat.give_xp(h, float(C.XP_TABLE[lv - 1]) - h.xp)
+		for aid in h.abilities:
+			var a := SimData.ability(aid)
+			var mx := int(a.max_level)
+			var want := mini(mx, (lv + 1) / 2) if not a.has("required_level") else (a.required_level as Array).filter(func(r): return lv >= int(r)).size()
+			h.ability_level[aid] = want
+		h.ability_points = 0
+		h.refresh_stats()
+		h.hp = h.max_hp
+		h.mana = h.max_mana
+		for b in world.bots:
+			if b.hero_id == player_hero_id:
+				world.bots.erase(b)
+				break
+	if args.has("at"):
+		var av := String(args.at).split(",")
+		if av[0] == "wave":
+			# beside the enemy mid wave: the Dusk lane creep nearest the map centre
+			var best: SimUnit = null
+			for u in world.units:
+				if u.alive and u.team == C.DUSK and u.is_lane_creep() and (best == null or u.pos.length() < best.pos.length()):
+					best = u
+			var off := float(av[1]) if av.size() > 1 else 200.0
+			h.pos = best.pos + Vector2(-off, -off * 0.6) if best else Vector2.ZERO
+		else:
+			h.pos = Vector2(float(av[0]), float(av[1]))
+		var v = views.get(h.id)
+		if v is UnitView:
+			v.prev_pos = h.pos
+			v.cur_pos = h.pos
+		if args.has("face"):
+			h.facing = deg_to_rad(float(args.face))
+		world.vision.update()
+
+func _demo_casts() -> void:
+	if not args.has("cast"):
+		return
+	var spec := String(args.cast).split("@")
+	var at_frame := int(spec[1]) if spec.size() > 1 else 3
+	if _capture_frames != at_frame:
+		return
+	var h := world.get_unit(player_hero_id)
+	var near: SimUnit = null
+	var nd := INF
+	for u in world.units:
+		if u.alive and u.team != h.team and not u.is_building() and u.pos.distance_to(h.pos) < nd:
+			nd = u.pos.distance_to(h.pos)
+			near = u
+	for aid in spec[0].split(","):
+		var a := SimData.ability(aid)
+		if a.is_empty():
+			continue
+		match String(a.behavior):
+			"no_target":
+				world.command(h.id, {"type": C.Order.CAST_NO_TARGET, "ability": aid})
+			"point":
+				world.command(h.id, {"type": C.Order.CAST_POINT, "ability": aid, "point": near.pos if near else h.pos})
+			_:
+				if near:
+					world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id, "queue": true})
+
 func _save_capture() -> void:
 	var img := get_viewport().get_texture().get_image()
 	var path := String(args.capture)
 	if not path.is_absolute_path():
 		path = ProjectSettings.globalize_path("res://" + path)
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	var fl := String(args.get("frames", "45")).split(",")
+	if fl.size() > 1:
+		path = path.get_basename() + "_%d.png" % _capture_frames
 	img.save_png(path)
 	print("captured ", path, " at game time ", world.clock_text())
-	get_tree().quit()
+	if str(_capture_frames) == fl[fl.size() - 1]:
+		get_tree().quit()

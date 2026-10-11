@@ -17,7 +17,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_pause = _panel("Paused")
 	var col: VBoxContainer = _pause.get_child(0)
-	for b in [["Resume", _resume], ["Settings", _open_settings], ["Hero Creator", _to_creator], ["Quit to desktop", func(): get_tree().quit()]]:
+	for b in [["Resume", _resume], ["Settings", _open_settings], ["Hero Select", _to_creator], ["Quit to desktop", func(): get_tree().quit()]]:
 		col.add_child(_button(b[0], b[1]))
 	_settings = _panel("Settings")
 	var sc: VBoxContainer = _settings.get_child(0)
@@ -115,7 +115,8 @@ func _open_settings() -> void:
 	_settings.visible = true
 
 func _to_creator() -> void:
-	get_tree().change_scene_to_file("res://src/ui/hero_creator.tscn")
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://src/ui/hero_select.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo:
@@ -164,7 +165,7 @@ func _show_end() -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 16)
 	row.add_child(_button("Play again", func(): get_tree().reload_current_scene()))
-	row.add_child(_button("Hero Creator", _to_creator))
+	row.add_child(_button("Hero Select", _to_creator))
 	row.add_child(_button("Quit", func(): get_tree().quit()))
 	v.add_child(row)
 	_end.visible = true

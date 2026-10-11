@@ -687,3 +687,198 @@ func test_neutrals_wake_on_damage_only() -> void:
 	w.command(h.id, {"type": O.ATTACK_UNIT, "target": n[0].id})
 	run(w, 2.0)
 	check(n[0].neutral_state == 1, "neutrals turn on the hero once damaged")
+
+# ---- Ezee, the Dark Paladin ----------------------------------------------------------------------------------------
+
+func _ezee(w: SimWorld, p: Vector2, levels := {}) -> SimUnit:
+	var e := w.spawn("ezee", C.DAWN, p)
+	e.level = 18
+	e.refresh_stats()
+	e.hp = e.max_hp
+	e.mana = e.max_mana
+	for aid in e.abilities:
+		e.ability_level[aid] = int(levels.get(aid, 4 if aid != "unholy_might" else 3))
+	return e
+
+## A tree with open walkable ground on one side, for impact tests: [tree index, free point, push direction].
+func _tree_spot() -> Array:
+	for i in _map.trees.size():
+		var t: Dictionary = _map.trees[i]
+		if not t.alive or t.pos.length() > 5000.0:
+			continue
+		for k in 8:
+			var d := Vector2.from_angle(k * TAU / 8.0)
+			var ok := true
+			for s in range(2, 9):
+				if not _map.is_walkable(t.pos + d * (s * 64.0)):
+					ok = false
+					break
+			if ok:
+				return [i, t.pos + d * 200.0, -d]
+	return []
+
+func test_ezee_dark_stomp_push() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1800, -4000))
+	c.order = O.HOLD
+	w.vision.update()
+	var hp0 := c.hp
+	var p0 := c.pos
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"})
+	run(w, 0.5)
+	check(c.hp < hp0, "the stomp damages an enemy in range")
+	check(not c.knock.is_empty() or c.pos.distance_to(p0) > 100.0, "the enemy is hurled away")
+	run(w, 1.5)
+	var moved := c.pos.distance_to(p0)
+	check(moved > 220.0 and moved < 520.0, "pushed a believable distance (%d units)" % int(moved))
+	check(c.pos.x > p0.x, "pushed away from Ezee")
+	check(not c.has_flag("stun"), "no impact, no extra stun")
+	check(w.abilities.cooldown_left(e, "dark_stomp") > 9.0, "12 s cooldown started")
+
+func test_ezee_dark_stomp_tree_impact() -> void:
+	var w := empty_world()
+	var spot := _tree_spot()
+	check(not spot.is_empty(), "found a tree with open ground beside it")
+	if spot.is_empty():
+		return
+	var ti: int = spot[0]
+	var cp: Vector2 = spot[1]
+	var dir: Vector2 = spot[2]
+	var c := w.spawn("dusk_melee", C.DUSK, cp)
+	c.order = O.HOLD
+	var e := _ezee(w, cp - dir * 180.0)
+	w.vision.update()
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"})
+	var impacted := false
+	var smashed := -1
+	var stunned_at := -1.0
+	for i in 90:
+		w.step()
+		for ev in w.events:
+			if ev.t == "impact" and ev.u == c.id:
+				impacted = ev.what == "tree"
+			if ev.t == "tree" and ev.get("smashed", false):
+				smashed = int(ev.i)
+		if c.has_flag("stun") and stunned_at < 0.0:
+			stunned_at = w.time
+		w.events.clear()
+	check(impacted, "the creep crashed into the tree")
+	check(smashed >= 0 and not _map.trees[smashed].alive, "the tree was smashed")
+	if smashed >= 0:
+		_map.regrow_tree(smashed)
+	var st := c.get_modifier("stun")
+	check(stunned_at > 0.0, "impact stun applied once the creep came to rest")
+	if not st.is_empty():
+		near(float(st.expires) - stunned_at, 2.8, 0.05, "level 4 impact stun lasts 2.8 s")
+	var row: Array = e.dmg_out.get("dark_stomp", [0, 0, 0])
+	near(float(row[1]), (150.0 + 125.0) * (1.0 - c.magic_resist), 1.0, "stomp plus impact damage (magic)")
+
+func test_ezee_dark_stomp_unit_collision() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1830, -4000))
+	var c2 := w.spawn("dusk_melee", C.DUSK, Vector2(-1560, -4000))
+	c.order = O.HOLD
+	c2.order = O.HOLD
+	w.vision.update()
+	var p2 := c2.pos
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"})
+	var hits := 0
+	for i in 75:
+		w.step()
+		for ev in w.events:
+			if ev.t == "impact" and ev.what == "unit":
+				hits += 1
+		w.events.clear()
+	check(hits >= 1, "the hurled creep slammed into the other one")
+	check(c2.pos.distance_to(p2) > 30.0, "momentum carried the struck creep along")
+	check(c2.hp < c2.max_hp, "the struck enemy takes impact damage too")
+
+func test_ezee_leap_strike_targeting() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var far_hurt := w.spawn("dusk_melee", C.DUSK, Vector2(-1400, -4000))
+	var near_full := w.spawn("dusk_melee", C.DUSK, Vector2(-1800, -4000))
+	var near_hurt := w.spawn("dusk_ranged", C.DUSK, Vector2(-1700, -3800))
+	for u in [far_hurt, near_full, near_hurt]:
+		u.order = O.HOLD
+	far_hurt.hp = far_hurt.max_hp * 0.3
+	near_hurt.hp = near_hurt.max_hp * 0.6
+	w.vision.update()
+	check(w.abilities.leap_target(e, 4) == far_hurt, "picks the lowest health fraction in range")
+	far_hurt.hp = far_hurt.max_hp
+	near_hurt.hp = near_hurt.max_hp
+	check(w.abilities.leap_target(e, 4) == near_full, "nobody hurt: picks the nearest")
+	var w2 := empty_world()
+	var e2 := _ezee(w2, Vector2(-2000, -4000))
+	w2.vision.update()
+	check(w2.abilities.cast_error(e2, "leap_strike", -1, null, e2.pos) == "No enemy in sight", "no enemy, no leap")
+
+func test_ezee_leap_strike_damage() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1450, -4000))
+	foe.order = O.HOLD
+	w.vision.update()
+	var hp0 := foe.hp
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "leap_strike"})
+	var landed := false
+	for i in 45:
+		w.step()
+		for ev in w.events:
+			if ev.t == "leap_land" and ev.u == e.id:
+				landed = true
+		w.events.clear()
+		if landed:
+			break
+	check(landed, "Ezee lands within 1.5 s")
+	near(hp0 - foe.hp, 175.0 + 0.6 * e.str_total, 1.0, "pure damage 175 + 60% strength")
+	check(not foe.get_modifier("leap_strike_slow").is_empty(), "the target is slowed")
+	check(e.edge_distance(foe) < 40.0, "Ezee lands beside the target")
+
+func test_ezee_tainted_touch_and_curse() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1820, -4000))
+	foe.order = O.HOLD
+	w.vision.update()
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "tainted_touch"})
+	run(w, 0.6)
+	check(not e.get_modifier("tainted_touch").is_empty(), "the sword is enchanted")
+	w.command(e.id, {"type": O.ATTACK_UNIT, "target": foe.id})
+	run(w, 1.2)
+	var row: Array = e.dmg_out.get("tainted_touch", [0, 0, 0])
+	near(float(row[0]), 150.0 * (1.0 - foe.magic_resist), 1.0, "a hit adds 150 magic damage at level 4")
+	check(w.vision.revealed_to(foe, C.DAWN), "the target is cursed and revealed")
+	foe.add_modifier({"id": "invis_test", "source": foe.id, "expires": -1.0, "invisible": true})
+	check(w.vision.sees(C.DAWN, foe), "the curse reveals it even when invisible")
+
+func test_ezee_unholy_might() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var foe := w.spawn("dusk_melee", C.DUSK, Vector2(-1800, -4000))
+	foe.order = O.HOLD
+	foe.def = foe.def.duplicate()
+	foe.def["can_attack"] = false
+	w.vision.update()
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "unholy_might"})
+	run(w, 0.7)
+	check(not e.get_modifier("unholy_might").is_empty(), "the dark aura is up")
+	var halved := 0
+	var total := 60
+	for i in total:
+		e.hp = e.max_hp
+		var before := foe.hp
+		var dealt := w.combat.deal_damage(foe.id, foe.team, false, e, 100.0, C.DamageType.PURE)
+		if dealt < 99.0:
+			halved += 1
+			near(dealt, 50.0, 0.01, "a halved blow")
+			check(foe.hp < before or not foe.alive, "the other half strikes a nearby enemy")
+		foe.hp = foe.max_hp
+	var rate := float(halved) / total
+	check(rate > 0.3 and rate < 0.72, "about half the blows halved at level 3 (%.2f)" % rate)
+	run(w, 10.0)
+	check(e.get_modifier("unholy_might").is_empty(), "the aura fades after 10 s")
+	check(not e.get_modifier("unholy_fatigue").is_empty(), "then Ezee is slowed")
+	near(e.move_speed, maxf(100.0, float(e.def.move_speed) * 0.5), 1.0, "slowed by 50%")

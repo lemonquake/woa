@@ -14,6 +14,8 @@ var minimap: Control
 var topbar: Control
 var shop: Control
 var tip: Control
+var kill_feed: KillFeed
+var scoreboard: Scoreboard
 var portrait_vp: SubViewport
 var portrait_cam: Camera3D
 var _msg := ""
@@ -44,6 +46,12 @@ func _ready() -> void:
 	shop.hud = self
 	shop.visible = false
 	add_child(shop)
+	kill_feed = KillFeed.new()
+	kill_feed.hud = self
+	add_child(kill_feed)
+	scoreboard = Scoreboard.new()
+	scoreboard.hud = self
+	add_child(scoreboard)
 	tip = Tip.new()
 	tip.hud = self
 	add_child(tip)
@@ -142,11 +150,6 @@ func _draw() -> void:
 	if _msg_t > 0.0:
 		var a := clampf(_msg_t / 0.5, 0.0, 1.0)
 		U.text_c(self, _msg, Vector2(vs.x * 0.5, vs.y - BottomPanel.H - 40), 22, Color(_msg_col, a), "bold")
-	if _announce_t > 0.0:
-		var a2 := clampf(_announce_t / 0.8, 0.0, 1.0)
-		U.text_c(self, _announce, Vector2(vs.x * 0.5, 150), 40, Color(1.0, 0.86, 0.5, a2), "title")
-		if _announce_sub != "":
-			U.text_c(self, _announce_sub, Vector2(vs.x * 0.5, 184), 20, Color(0.95, 0.95, 0.95, a2), "bold")
 	_unit_card()
 	var h := hero()
 	if h and not h.alive:
@@ -194,22 +197,11 @@ func notice(msg: String) -> void:
 
 var _msg_col := Color(1.0, 0.35, 0.3)
 
-func announce(title: String, sub := "") -> void:
-	_announce = title
-	_announce_sub = sub
-	_announce_t = 3.5
+func announce(title: String, sub := "", col := U.GOLD) -> void:
+	kill_feed.banner(title, sub, col)
 
 func on_kill(e: Dictionary) -> void:
-	var w: SimWorld = game.world
-	var victim := w.get_unit(e.victim)
-	var killer := w.get_unit(e.u)
-	var vn := _name(victim)
-	if e.get("first_blood", false):
-		announce("First Blood!", "%s drew first blood on %s" % [_name(killer), vn])
-	elif killer:
-		announce("%s killed %s" % [_name(killer), vn])
-	else:
-		announce("%s was killed" % vn)
+	kill_feed.on_hero_kill(e, game.world, game.player_team)
 
 func _name(u: SimUnit) -> String:
 	if u == null:

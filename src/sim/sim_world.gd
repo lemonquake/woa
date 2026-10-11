@@ -197,6 +197,7 @@ func _clock() -> void:
 				var g := int(_gold_acc[h.id])
 				_gold_acc[h.id] -= g
 				h.gold_reliable += g
+				h.gold_earned += g
 	# trees regrow
 	if tick % 30 == 0:
 		for i in map.trees.size():
