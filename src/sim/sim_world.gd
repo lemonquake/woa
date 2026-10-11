@@ -94,7 +94,38 @@ func spawn_hero(def_id: String, team: int, look := {}) -> SimUnit:
 	var u := spawn(def_id, team, map.fountains[team] + Vector2(300, 300) * (1.0 if team == C.DAWN else -1.0))
 	u.look = look
 	u.facing = PI * 0.25 if team == C.DAWN else -PI * 0.75
+	var c := spawn("courier", team, map.fountains[team] + Vector2(150, 420) * (1.0 if team == C.DAWN else -1.0))
+	c.owner_id = u.id
+	u.courier_id = c.id
 	return u
+
+## Buy back a dead hero: 200 + net worth / 13 gold (reliable first), 8 minute cooldown.
+func buyback_cost(h: SimUnit) -> int:
+	return C.BUYBACK_BASE + int(h.networth() / C.BUYBACK_NETWORTH_DIVISOR)
+
+func buyback(h: SimUnit) -> String:
+	if h.alive:
+		return "Not dead"
+	if time < h.buyback_ready:
+		return "Buyback on cooldown"
+	var cost := buyback_cost(h)
+	if h.gold() < cost:
+		return "Not enough gold"
+	var from_rel := mini(cost, h.gold_reliable)
+	h.gold_reliable -= from_rel
+	h.gold_unreliable -= cost - from_rel
+	h.buyback_ready = time + C.BUYBACK_COOLDOWN
+	respawn(h)
+	events.append({"t": "buyback", "u": h.id})
+	return ""
+
+## Send the hero's courier to fetch the stash and bring it to them.
+func courier_deliver(h: SimUnit) -> String:
+	var c := get_unit(h.courier_id)
+	if c == null or not c.alive:
+		return "Courier is dead"
+	c.courier_state = "fetch"
+	return ""
 
 func get_unit(uid: int) -> SimUnit:
 	return by_id.get(uid)
@@ -126,6 +157,7 @@ func step() -> void:
 	ai.think()
 	for b in bots:
 		b.think()
+	_couriers()
 	for u in units:
 		if u.alive:
 			orders.update(u)
@@ -274,6 +306,70 @@ func _cleanup() -> void:
 		if not u.alive and not u.is_hero() and not u.is_building() and time - u.spawn_time > 0.0 and u.removed:
 			units.remove_at(i)
 			by_id.erase(u.id)
+
+# ---- Couriers ------------------------------------------------------------------------------------------------------
+
+## Couriers fly straight (no pathing): fetch the owner's stash at the fountain, carry it to the owner, return home.
+func _couriers() -> void:
+	for c in units:
+		if c.kind != K.COURIER:
+			continue
+		if not c.alive:
+			if c.respawn_at >= 0.0 and time >= c.respawn_at:
+				c.alive = true
+				c.removed = false
+				c.respawn_at = -1.0
+				c.hp = c.max_hp
+				c.pos = map.fountains[c.team] + Vector2(150, 420) * (1.0 if c.team == C.DAWN else -1.0)
+				c.courier_state = "idle"
+				events.append({"t": "respawn", "u": c.id})
+			continue
+		var h := get_unit(c.owner_id)
+		if h == null:
+			continue
+		var home: Vector2 = map.fountains[c.team]
+		var goal := c.pos
+		match c.courier_state:
+			"fetch":
+				goal = home
+				if c.pos.distance_to(home) < 500.0:
+					for i in h.stash.size():
+						if h.stash[i] != null:
+							for k in c.inventory.size():
+								if c.inventory[k] == null:
+									c.inventory[k] = h.stash[i]
+									h.stash[i] = null
+									break
+					c.courier_state = "deliver" if c.inventory.any(func(x): return x != null) else "idle"
+			"deliver":
+				if not h.alive:
+					c.courier_state = "return"
+				else:
+					goal = h.pos
+					if c.pos.distance_to(h.pos) < 220.0:
+						for k in c.inventory.size():
+							var it = c.inventory[k]
+							if it == null:
+								continue
+							for s in 9:
+								if h.inventory[s] == null:
+									h.inventory[s] = it
+									c.inventory[k] = null
+									break
+						shop._combine_all(h)
+						h.refresh_stats()
+						events.append({"t": "delivered", "u": h.id})
+						c.courier_state = "return"
+			"return":
+				goal = home
+				if c.pos.distance_to(home) < 300.0:
+					c.courier_state = "idle"
+		var to := goal - c.pos
+		var step := c.move_speed * C.DT
+		c.moving = to.length() > 30.0
+		if c.moving:
+			c.facing = to.angle()
+			c.pos += to.normalized() * minf(step, to.length())
 
 # ---- Spatial queries ----------------------------------------------------------------------------------------------
 

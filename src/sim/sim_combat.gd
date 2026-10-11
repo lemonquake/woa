@@ -181,7 +181,7 @@ func kill(t: SimUnit, killer: SimUnit) -> void:
 func process_deaths() -> void:
 	# corpses are removed from the unit list a few seconds after death
 	for u in w.units:
-		if not u.alive and not u.removed and not u.is_hero() and w.time - u.death_at > 4.0:
+		if not u.alive and not u.removed and not u.is_hero() and u.kind != K.COURIER and w.time - u.death_at > 4.0:
 			u.removed = true
 	while not _deaths.is_empty():
 		var d: Dictionary = _deaths.pop_front()
@@ -191,6 +191,13 @@ func process_deaths() -> void:
 		w.events.append({"t": "death", "u": t.id, "killer": killer.id if killer else -1, "deny": deny})
 		if t.is_hero():
 			_hero_death(t, killer)
+		elif t.kind == K.COURIER:
+			t.respawn_at = w.time + C.COURIER_RESPAWN
+			t.removed = false
+			for i in t.inventory.size():
+				t.inventory[i] = null
+			if killer != null and killer.is_hero() and killer.team != t.team:
+				give_gold(killer, C.COURIER_BOUNTY, false, t.pos)
 		elif t.is_creep():
 			_creep_death(t, killer, deny)
 		elif t.is_building():

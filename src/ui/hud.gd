@@ -164,6 +164,9 @@ class BottomPanel extends Control:
 	var _learn_rects: Array = []
 	var _item_rects: Array = []
 	var _shop_rect := Rect2()
+	var _tp_rect := Rect2()
+	var _courier_rect := Rect2()
+	var _buyback_rect := Rect2()
 
 	func _ready() -> void:
 		size = Vector2(W, H)
@@ -182,6 +185,9 @@ class BottomPanel extends Control:
 		for i in 3:
 			_item_rects.append(Rect2(706 + i * 80, 158, 74, 36))
 		_shop_rect = Rect2(956, 132, 112, 62)
+		_tp_rect = Rect2(956, 96, 52, 32)
+		_courier_rect = Rect2(1012, 96, 56, 32)
+		_buyback_rect = Rect2(352, 132, 330, 50)
 
 	func _draw() -> void:
 		_layout()
@@ -203,6 +209,9 @@ class BottomPanel extends Control:
 		_bars(h)
 		_items(h, w)
 		_gold(h)
+		_tp_and_courier(h, w)
+		if not h.alive:
+			_buyback(h, w)
 
 	func _level_ring(h: SimUnit, c: Vector2) -> void:
 		draw_circle(c, 20, Color(0.04, 0.04, 0.05, 0.95))
@@ -366,6 +375,39 @@ class BottomPanel extends Control:
 			draw_texture_rect(si, Rect2(_shop_rect.position + Vector2(8, 14), Vector2(32, 32)), false, U.GOLD)
 		U.text(self, "Shop", _shop_rect.position + Vector2(48, 38), 18, U.GOLD, "title")
 
+	func _tp_and_courier(h: SimUnit, w: SimWorld) -> void:
+		var m := get_local_mouse_position()
+		U.slot(self, _tp_rect, hud.game.input.targeting == "tp")
+		var ti: Texture2D = U.icon("ui/teleport")
+		if ti:
+			draw_texture_rect(ti, Rect2(_tp_rect.position + Vector2(10, 2), Vector2(28, 28)), false, U.DAWN if h.tp_charges > 0 else Color(0.4, 0.4, 0.4))
+		var cd := w.abilities.cooldown_left(h, "tp")
+		if cd > 0.0:
+			U.cooldown(self, _tp_rect, cd / SimConst.TP_COOLDOWN, cd)
+		U.text(self, "T", _tp_rect.position + Vector2(3, 12), 10, Color(1, 1, 1), "bold")
+		U.text_r(self, str(h.tp_charges), _tp_rect.end + Vector2(-3, -3), 12, Color(1, 1, 1), "bold")
+		if _tp_rect.has_point(m):
+			hud.show_tip(get_global_mouse_position(), [["Town Portal Scroll", 18, U.GOLD, "title"],
+				["Channel 3 s, then teleport beside the allied building nearest the target point. Moving or a stun cancels it.", 14, U.TEXT, "body"],
+				["Charges %d. Cooldown 80 s. Mana 75. Buy more in the shop (100 gold). Hotkey T." % h.tp_charges, 13, U.TEXT_DIM, "body"]])
+		var c := w.get_unit(h.courier_id)
+		U.slot(self, _courier_rect, c != null and c.courier_state != "idle")
+		var state := "Dead" if c == null or not c.alive else c.courier_state.capitalize()
+		U.text_c(self, "Courier", _courier_rect.get_center() + Vector2(0, -2), 11, U.GOLD, "bold")
+		U.text_c(self, state, _courier_rect.get_center() + Vector2(0, 12), 10, U.TEXT_DIM, "body")
+		if _courier_rect.has_point(m):
+			hud.show_tip(get_global_mouse_position(), [["Courier", 18, U.GOLD, "title"],
+				["Click (or F3) to have your courier fetch the stash and fly it to you.", 14, U.TEXT, "body"]])
+
+	func _buyback(h: SimUnit, w: SimWorld) -> void:
+		var cost := w.buyback_cost(h)
+		var ready := w.time >= h.buyback_ready
+		var can := ready and h.gold() >= cost
+		draw_rect(_buyback_rect, Color(0.05, 0.04, 0.03, 0.92))
+		draw_rect(_buyback_rect, U.GOLD if can else Color(0.4, 0.35, 0.3), false, 2.0)
+		var label := "Buyback  %d gold" % cost if ready else "Buyback in %ds" % ceili(h.buyback_ready - w.time)
+		U.text_c(self, label, _buyback_rect.get_center() + Vector2(0, 8), 20, U.GOLD if can else U.TEXT_DIM, "title")
+
 	func _gui_input(e: InputEvent) -> void:
 		if not (e is InputEventMouseButton and e.pressed):
 			return
@@ -373,6 +415,22 @@ class BottomPanel extends Control:
 		var h: SimUnit = hud.hero()
 		var w: SimWorld = hud.game.world
 		var p := mb.position
+		if not h.alive and _buyback_rect.has_point(p):
+			var err := w.buyback(h)
+			if err != "":
+				hud.error(err)
+			accept_event()
+			return
+		if _tp_rect.has_point(p):
+			hud.game.input.begin_tp()
+			accept_event()
+			return
+		if _courier_rect.has_point(p):
+			var err2 := w.courier_deliver(h)
+			if err2 != "":
+				hud.error(err2)
+			accept_event()
+			return
 		for i in 4:
 			if i >= h.abilities.size():
 				break
@@ -592,6 +650,10 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				accept_event()
 				return
 			if mb.button_index == MOUSE_BUTTON_LEFT:
+				if mb.pressed and hud.game.input.targeting != "":
+					hud.game.input.target_point(_from_mm(mb.position), mb.shift_pressed)
+					accept_event()
+					return
 				_drag = mb.pressed
 				if mb.pressed:
 					_focus(mb.position)

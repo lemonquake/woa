@@ -29,11 +29,19 @@ func clear(u: SimUnit) -> void:
 # ---- Issuing ----------------------------------------------------------------------------------------------------------
 
 ## Validate and apply an order. from_player: issued by a player or bot (as opposed to the unit's own AI).
+func cancel_channel(u: SimUnit) -> void:
+	if not u.channel.is_empty():
+		u.channel = {}
+		w.events.append({"t": "tp_cancel", "u": u.id})
+
 func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
 	var type: int = o.get("type", O.NONE)
-	if o.get("queue", false) and not u.is_idle():
+	if o.get("queue", false) and (not u.is_idle() or not u.channel.is_empty()):
 		u.order_queue.append(o)
 		return
+	# any new order breaks a channel
+	if not u.channel.is_empty():
+		cancel_channel(u)
 	var tgt: SimUnit = w.get_unit(int(o.get("target", -1)))
 	match type:
 		O.ATTACK_UNIT:
@@ -157,6 +165,20 @@ func _cancel_windup(u: SimUnit) -> void:
 # ---- Update -----------------------------------------------------------------------------------------------------------
 
 func update(u: SimUnit) -> void:
+	if not u.channel.is_empty():
+		if u.is_stunned():
+			cancel_channel(u)
+		elif w.time >= float(u.channel.until):
+			var dest: Vector2 = u.channel.dest
+			u.channel = {}
+			u.pos = dest
+			u.path = PackedVector2Array()
+			u.order = O.NONE
+			u.atk_target = -1
+			w.events.append({"t": "tp_end", "u": u.id, "pos": dest})
+			return
+		else:
+			return
 	if u.is_stunned():
 		if u.atk_phase == AP.WINDUP:
 			_cancel_windup(u)
@@ -478,7 +500,7 @@ func _free(u: SimUnit, p: Vector2, chase: SimUnit, near: Array, loose := false) 
 	if not w.map.is_walkable(p):
 		return false
 	for o: SimUnit in near:
-		if o == u or o == chase or o.is_ward():
+		if o == u or o == chase or o.is_ward() or o.kind == K.COURIER:
 			continue
 		var min_d := u.hull + o.hull - (8.0 if loose else 2.0)
 		if o.is_building():

@@ -59,6 +59,16 @@ func item_cooldown_left(u: SimUnit, slot: int) -> float:
 func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vector2, at_cast := false) -> String:
 	if slot >= 0:
 		return _item_error(u, slot, target, point)
+	if aid == "tp":
+		if u.tp_charges <= 0:
+			return "No Town Portal Scroll"
+		if cooldown_left(u, "tp") > 0.0:
+			return "Town Portal on cooldown"
+		if u.mana < C.TP_MANA:
+			return "Not enough mana"
+		if u.is_stunned():
+			return "Stunned"
+		return ""
 	var a := SimData.ability(aid)
 	if a.is_empty() or not u.ability_level.has(aid):
 		return "Unknown ability"
@@ -126,13 +136,15 @@ func cast_range(u: SimUnit, aid: String, slot: int) -> float:
 			"ward":
 				return 500.0
 		return 0.0
+	if aid == "tp":
+		return INF
 	var a := SimData.ability(aid)
 	if a.behavior == "autocast_attack":
 		return u.attack_range
 	return float(a.range)
 
 func cast_point(aid: String, slot: int) -> float:
-	if slot >= 0:
+	if slot >= 0 or aid == "tp":
 		return 0.0
 	return float(SimData.ability(aid).get("cast_point", 0.0))
 
@@ -141,6 +153,9 @@ func cast_point(aid: String, slot: int) -> float:
 func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void:
 	if slot >= 0:
 		_use_item(u, slot, t, p)
+		return
+	if aid == "tp":
+		_start_tp(u, p)
 		return
 	var a := SimData.ability(aid)
 	var lv := u.ability_level_of(aid)
@@ -174,6 +189,35 @@ func _charge_sticks(caster: SimUnit) -> void:
 			if it != null and String(SimData.item(it.id).use) == "stick":
 				h.stick_charges = mini(h.stick_charges + 1, int(SimData.item(it.id).values.max_charges))
 				break
+
+# ---- Town Portal -----------------------------------------------------------------------------------------------------
+
+## Teleport to the allied building nearest the chosen point after a 3 s channel. The scroll, mana and cooldown are
+## spent when the channel starts; moving, stopping or being stunned cancels it.
+func _start_tp(u: SimUnit, p: Vector2) -> void:
+	var best: SimUnit = null
+	var bd := INF
+	for b in w.units:
+		if not b.alive or b.team != u.team or not b.is_building():
+			continue
+		var d := b.pos.distance_to(p)
+		if d < bd:
+			bd = d
+			best = b
+	if best == null:
+		return
+	var dir := (p - best.pos)
+	if dir.length() < 1.0:
+		dir = (w.map.fountains[1 - u.team] - best.pos)
+	var dest := best.pos + dir.normalized() * (best.hull + u.hull + 120.0)
+	if not w.map.is_walkable(dest):
+		var c := w.map.nearest_walkable(w.map.world_to_cell(dest))
+		dest = w.map.cell_center(c.x, c.y)
+	u.tp_charges -= 1
+	u.mana -= C.TP_MANA
+	u.ability_ready["tp"] = w.time + C.TP_COOLDOWN
+	u.channel = {"ability": "tp", "until": w.time + C.TP_CHANNEL, "dest": dest, "building": best.id}
+	w.events.append({"t": "tp_start", "u": u.id, "dest": dest, "until": u.channel.until})
 
 # ---- Attack modifier (orb) ------------------------------------------------------------------------------------------
 

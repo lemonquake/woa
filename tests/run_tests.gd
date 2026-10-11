@@ -571,3 +571,68 @@ func test_zprofile() -> void:
 	for k in tm:
 		parts.append("%s %.2f" % [k, tm[k] / 600.0 / 1000.0])
 	print("    ms per tick (%d units): %s" % [w.units.size(), ", ".join(parts)])
+
+# ---- Town Portal, buyback, courier ----------------------------------------------------------------------------------
+
+func test_town_portal() -> void:
+	var w := SimWorld.new(1, _map)
+	w.setup_match()
+	w.time = 100.0
+	w.next_wave_at = INF
+	w.next_neutral_at = INF
+	var h := w.spawn_hero("galewarden", C.DAWN)
+	check(h.tp_charges == 1, "heroes start with one Town Portal scroll")
+	var t1: SimUnit = null
+	for u in w.units:
+		if u.team == C.DAWN and u.kind == K.TOWER and u.lane_tier == 1 and u.building_lane == "bot":
+			t1 = u
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "tp", "point": t1.pos + Vector2(400, 0)})
+	run(w, 0.2)
+	check(not h.channel.is_empty(), "channelling the Town Portal")
+	run(w, 2.6)
+	check(h.pos.distance_to(t1.pos) > 2000.0, "still home before 3 s")
+	run(w, 0.4)
+	check(h.pos.distance_to(t1.pos) < 500.0, "arrives next to the chosen building after 3 s")
+	check(h.tp_charges == 0, "scroll spent")
+	var h2 := w.spawn_hero("galewarden", C.DAWN)
+	h2.tp_charges = 1
+	h2.mana = h2.max_mana
+	w.command(h2.id, {"type": O.CAST_POINT, "ability": "tp", "point": t1.pos})
+	run(w, 1.0)
+	w.command(h2.id, {"type": O.MOVE, "point": h2.pos + Vector2(100, 0)})
+	run(w, 3.0)
+	check(h2.pos.distance_to(t1.pos) > 2000.0, "moving cancels the channel")
+	check(h2.tp_charges == 0, "a cancelled teleport still uses the scroll")
+
+func test_buyback() -> void:
+	var w := SimWorld.new(1, _map)
+	w.time = 600.0
+	var h := w.spawn_hero("galewarden", C.DAWN)
+	h.gold_unreliable = 2000
+	w.combat.kill(h, null)
+	w.combat.process_deaths()
+	check(not h.alive and h.respawn_at > w.time, "dead and waiting to respawn")
+	var cost := w.buyback_cost(h)
+	var g0 := h.gold()
+	check(w.buyback(h) == "", "buyback succeeds")
+	check(h.alive, "back to life at once")
+	check(g0 - h.gold() == cost, "buyback cost %d paid" % cost)
+	w.combat.kill(h, null)
+	w.combat.process_deaths()
+	check(w.buyback(h) != "", "buyback on cooldown")
+
+func test_courier_delivery() -> void:
+	var w := SimWorld.new(1, _map)
+	w.time = 30.0
+	w.next_wave_at = INF
+	w.next_neutral_at = INF
+	var h := w.spawn_hero("galewarden", C.DAWN)
+	h.pos = Vector2(-1500, -1300)
+	h.gold_unreliable = 1000
+	check(w.shop.buy(h, "slippers") == "", "bought away from the shop")
+	check(h.stash.any(func(x): return x != null and x.id == "slippers"), "item waits in the stash")
+	check(w.courier_deliver(h) == "", "courier sent")
+	run(w, 40.0)
+	check(h.inventory.any(func(x): return x != null and x.id == "slippers"), "the courier delivered the slippers")
+	var c := w.get_unit(h.courier_id)
+	check(c.courier_state in ["return", "idle"], "courier heads home after delivering")

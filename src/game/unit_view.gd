@@ -48,7 +48,10 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	cur_facing = u.facing
 	if cfg.is_empty():
 		return
-	model = ModelCatalog.scene(key).instantiate() as Node3D
+	if cfg.has("scene_dusk") and u.team == 1:
+		model = (load(String(cfg.scene_dusk)) as PackedScene).instantiate() as Node3D
+	else:
+		model = ModelCatalog.scene(key).instantiate() as Node3D
 	add_child(model)
 	_model_scale = float(cfg.scale)
 	model.scale = Vector3.ONE * _model_scale
@@ -266,3 +269,5 @@ func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 			model.position.y = -(t - 2.5) * 0.7
 	if _ring and _ring.visible:
 		_ring.position.y = 0.04
+	if cfg.has("float") and model:
+		model.position.y = float(cfg.float) + sin(Time.get_ticks_msec() / 400.0 + uid) * 0.15

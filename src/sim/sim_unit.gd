@@ -138,6 +138,11 @@ var glyph_until := 0.0
 var modifiers: Array = []                  # see SimUnit.add_modifier
 var stats_dirty := true                    # recompute derived stats before the next tick
 var knock: Dictionary = {}                 # {from, to, t, dur}
+var channel: Dictionary = {}               # {ability, until, dest}: channelling (Town Portal)
+var tp_charges := 0                        # Town Portal scrolls in the dedicated slot
+var courier_id := -1                       # heroes: their courier
+var owner_id := -1                         # couriers: their hero
+var courier_state := "idle"
 var ward_expires := 0.0
 
 func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float) -> void:
@@ -163,6 +168,10 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 		stash.resize(6)
 		gold_reliable = 0
 		gold_unreliable = C.STARTING_GOLD
+		tp_charges = 1
+	if kind == K.COURIER:
+		inventory.resize(6)
+		add_modifier({"id": "flying", "source": p_id, "expires": -1.0, "flying": true})
 	refresh_stats()
 	hp = max_hp
 	mana = max_mana

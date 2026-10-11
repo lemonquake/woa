@@ -118,6 +118,8 @@ static func _build_units() -> void:
 		"move_speed": 0.0, "dmg_min": 290.0, "dmg_max": 310.0, "bat": 0.15, "attack_point": 0.0, "backswing": 0.0,
 		"acquire": 1200.0, "range": 1200.0, "projectile_speed": 1400.0, "vision_day": 1800.0, "vision_night": 1800.0,
 		"turn_rate": 1.0, "attack_class": AC.REINFORCED})
+	_add("courier", {"name": "Courier", "kind": K.COURIER, "hull": 8.0, "hp": 75.0, "can_attack": false,
+		"move_speed": 380.0, "turn_rate": 1.0, "vision_day": 500.0, "vision_night": 500.0, "model": "courier", "flying": true})
 	_add("ward_observer", {"name": "Watcher Ward", "kind": K.WARD, "hull": 8.0, "hp": 200.0, "can_attack": false,
 		"can_move": false, "move_speed": 0.0, "vision_day": 1600.0, "vision_night": 1600.0, "xp": 0.0})
 
@@ -225,6 +227,8 @@ static func _build_items() -> void:
 		"stats": {"hp_regen": 0.4}, "values": {"mana": 100.0}})
 	_it("faerie_fire", "Wisp Ember", 65, {"use": "faerie_fire", "charges": 1, "consumable": true, "category": "consumables",
 		"cooldown": 5.0, "stats": {"damage": 2.0}, "values": {"heal": 85.0}})
+	_it("tp_scroll", "Town Portal Scroll", 100, {"use": "tp", "charges": 1, "consumable": true, "category": "consumables",
+		"values": {"channel": SimConst.TP_CHANNEL}})
 	_it("observer_ward", "Watcher Ward", 0, {"use": "ward", "charges": 1, "consumable": true, "category": "consumables",
 		"cooldown": 1.0, "values": {"lifetime": 360.0}})
 	_it("branch", "Ironwood Twig", 55, {"stats": {"str": 1.0, "agi": 1.0, "int": 1.0}})

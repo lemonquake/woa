@@ -43,8 +43,7 @@ func think() -> void:
 		return
 	h.bot = true
 	_learn(h)
-	if w.shop.in_shop(h):
-		_shop(h)
+	_shop(h)
 	if h.hp < h.max_hp * 0.3 and state != "retreat":
 		state = "retreat"
 	if state == "retreat":
@@ -102,6 +101,13 @@ func _shop(h: SimUnit) -> void:
 			continue
 		if err == "":
 			_build_i += 1
+	# away from the shop, the courier brings what is waiting in the stash
+	if h.stash.any(func(x): return x != null) and not w.shop.in_shop(h):
+		var c := w.get_unit(h.courier_id)
+		if c and c.alive and c.courier_state == "idle":
+			w.courier_deliver(h)
+	if h.tp_charges == 0 and h.gold() >= 100 + w.shop.price(h, build[mini(_build_i, build.size() - 1)]) * 0:
+		w.shop.buy(h, "tp_scroll")
 	# drink a salve when hurt and not in the fountain
 	if h.hp < h.max_hp * 0.55:
 		_use_item(h, "salve")

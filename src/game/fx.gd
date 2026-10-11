@@ -252,6 +252,66 @@ func level_up(at: Vector3) -> void:
 		tw.parallel().tween_property(ring, "global_position:y", at.y + 2.4, 0.6)
 		tw.tween_callback(ring.queue_free)
 
+## Town Portal: a column of light at the hero and at the destination while channelling.
+var _tp := {}
+
+func tp_start(uid: int, from: Vector3, to: Vector3, team: int) -> void:
+	tp_end(uid)
+	var col := Color(0.45, 0.85, 1.0) if team == 0 else Color(1.0, 0.35, 0.4)
+	var nodes: Array = []
+	for at in [from, to]:
+		var n := Node3D.new()
+		add_child(n)
+		n.global_position = at
+		var beam := MeshInstance3D.new()
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 0.55
+		cyl.bottom_radius = 0.75
+		cyl.height = 7.0
+		cyl.cap_top = false
+		cyl.cap_bottom = false
+		beam.mesh = cyl
+		var m := _glow(Color(col.r, col.g, col.b, 0.35), 3.0).duplicate() as StandardMaterial3D
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		beam.material_override = m
+		beam.position.y = 3.5
+		beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		n.add_child(beam)
+		var ring := MeshInstance3D.new()
+		var tm := TorusMesh.new()
+		tm.inner_radius = 0.85
+		tm.outer_radius = 1.0
+		ring.mesh = tm
+		ring.scale = Vector3(1, 0.1, 1)
+		ring.material_override = _glow(col, 4.0)
+		ring.position.y = 0.08
+		n.add_child(ring)
+		var p := _trail(col, 40, 0.08)
+		p.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+		p.emission_ring_radius = 0.8
+		p.emission_ring_inner_radius = 0.6
+		p.emission_ring_height = 0.1
+		p.emission_ring_axis = Vector3.UP
+		p.direction = Vector3.UP
+		p.initial_velocity_min = 2.0
+		p.initial_velocity_max = 4.0
+		p.lifetime = 1.0
+		n.add_child(p)
+		var tw := beam.create_tween().set_loops()
+		tw.tween_property(beam, "scale", Vector3(1.15, 1.0, 1.15), 0.4)
+		tw.tween_property(beam, "scale", Vector3(0.9, 1.0, 0.9), 0.4)
+		nodes.append(n)
+	_tp[uid] = nodes
+
+func tp_end(uid: int, flash := false) -> void:
+	if not _tp.has(uid):
+		return
+	for n: Node3D in _tp[uid]:
+		if flash:
+			impact(n.global_position + Vector3(0, 1.0, 0), Color(0.8, 0.95, 1.0), 1.2)
+		n.queue_free()
+	_tp.erase(uid)
+
 ## Dota's order feedback: a green ripple where you move, a red one on what you attack.
 func marker(at: Vector3, attack: bool) -> void:
 	var col := Color(1.0, 0.25, 0.2, 0.9) if attack else Color(0.3, 1.0, 0.4, 0.9)

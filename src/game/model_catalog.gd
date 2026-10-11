@@ -27,6 +27,8 @@ const MODELS := {
 		"run": "run", "death": "death", "R": "axe", "L": "", "bar": 2.1, "banner": Color(0.6, 0.1, 0.2)},
 	"dusk_siege": {"scene": UNITS + "obsidian_golem.glb", "scale": 1.1, "attack": ["boss_slam"], "idle": "idle", "run": "walk",
 		"death": "death", "R": "", "L": "", "proj": "boulder_doom", "bar": 2.9},
+	"courier": {"scene": UNITS + "aether_wisp.glb", "scene_dusk": UNITS + "star_mote.glb", "scale": 1.6, "attack": [],
+		"idle": "idle", "run": "idle", "death": "death", "R": "", "L": "", "bar": 2.4, "float": 1.5},
 	"mudling": {"scene": UNITS + "goblin_skulker.glb", "scale": 0.8, "attack": ["dagger_1", "dagger_2"], "idle": "idle",
 		"run": "run", "death": "death", "R": "dagger", "L": "", "bar": 1.6},
 	"mudling_digger": {"scene": UNITS + "goblin_sapper.glb", "scale": 0.85, "attack": ["dagger_1", "dagger_2"], "idle": "idle",

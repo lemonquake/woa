@@ -124,6 +124,12 @@ func _key(k: InputEventKey, h: SimUnit) -> void:
 				game.hud.toggle_shop()
 		KEY_J:
 			w.glyph(game.player_team)
+		KEY_T:
+			begin_tp()
+		KEY_F3:
+			var err: String = w.courier_deliver(h)
+			if err != "" and game.hud and game.hud.has_method("error"):
+				game.hud.error(err)
 	var ai := ABILITY_KEYS.find(k.keycode)
 	if ai >= 0 and ai < h.abilities.size():
 		var aid: String = h.abilities[ai]
@@ -154,6 +160,28 @@ func begin_ability(aid: String) -> void:
 		"point", "unit", "autocast_attack":
 			targeting = aid
 
+func begin_tp() -> void:
+	var h := hero()
+	var err: String = game.world.abilities.cast_error(h, "tp", -1, null, h.pos)
+	if err != "":
+		if game.hud and game.hud.has_method("error"):
+			game.hud.error(err)
+		return
+	targeting = "tp"
+
+## Issue the pending targeted order at a sim point (used by the minimap too).
+func target_point(p: Vector2, shift := false) -> void:
+	var h := hero()
+	if targeting == "tp":
+		game.world.command(h.id, {"type": O.CAST_POINT, "ability": "tp", "point": p, "queue": shift})
+	elif targeting == "attack":
+		game.world.command(h.id, {"type": O.ATTACK_MOVE, "point": p, "queue": shift})
+	elif targeting.begins_with("item:"):
+		game.world.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": int(targeting.substr(5)), "point": p, "queue": shift})
+	elif targeting != "":
+		game.world.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": p, "queue": shift})
+	targeting = ""
+
 func use_item(slot: int) -> void:
 	var h := hero()
 	var it = h.inventory[slot]
@@ -176,6 +204,9 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 	var target_id := pick(pos)
 	var ground: Vector2 = game.camera.ground_at(pos)
 	var tgt := w.get_unit(target_id)
+	if targeting == "tp":
+		target_point(ground, shift)
+		return
 	if targeting == "attack":
 		if tgt and tgt.id != h.id:
 			w.command(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift})

@@ -16,7 +16,7 @@ const NEUTRAL := 2
 const TEAM_NAMES := ["Dawn", "Dusk", "Neutral"]
 
 # ---- Unit kinds -----------------------------------------------------------------------------------------------------
-enum Kind { HERO, CREEP_MELEE, CREEP_RANGED, CREEP_SIEGE, CREEP_FLAG, NEUTRAL_CREEP, TOWER, BARRACKS, ANCIENT, FILLER, FOUNTAIN, WARD }
+enum Kind { HERO, CREEP_MELEE, CREEP_RANGED, CREEP_SIEGE, CREEP_FLAG, NEUTRAL_CREEP, TOWER, BARRACKS, ANCIENT, FILLER, FOUNTAIN, WARD, COURIER }
 
 ## Attack classes (Liquipedia "Attack Damage": Default, Runty, Piercing, Reinforced).
 enum AttackClass { DEFAULT, RUNTY, PIERCING, REINFORCED }
@@ -141,6 +141,13 @@ const BUILDING_BOUNTY := {
 	"melee_rax": [90, 150, 150], "ranged_rax": [50, 100, 100], "filler": [0, 68, 68],
 }
 const TOWER_DENY_FACTOR := 0.5
+
+# ---- Town Portal, buyback, courier --------------------------------------------------------------------------------
+const TP_CHANNEL := 3.0                     # items.txt tooltip_channel_time
+const TP_COOLDOWN := 80.0                   # items.txt AbilityCooldown
+const TP_MANA := 75.0                       # items.txt AbilityManaCost
+const COURIER_BOUNTY := 75                  # APPROX
+const COURIER_RESPAWN := 60.0               # APPROX
 
 # ---- Fountain -------------------------------------------------------------------------------------------------------
 const FOUNTAIN_AURA_RADIUS := 1200.0

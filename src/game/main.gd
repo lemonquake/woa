@@ -218,6 +218,21 @@ func _drain_events() -> void:
 					fx.level_up(View.to3(h.pos, terrain.height_at(h.pos)))
 			"effect_move":
 				fx.gale_move(e.pos)
+			"tp_start":
+				var tu := world.get_unit(e.u)
+				if tu and (tu.team == player_team or world.vision.sees(player_team, tu)):
+					fx.tp_start(e.u, View.to3(tu.pos, terrain.height_at(tu.pos)), View.to3(e.dest, terrain.height_at(e.dest)), tu.team)
+				elif tu:
+					# enemies still see where a Town Portal is going to land
+					fx.tp_start(e.u, Vector3(0, -50, 0), View.to3(e.dest, terrain.height_at(e.dest)), tu.team)
+			"tp_end":
+				fx.tp_end(e.u, true)
+				var v3 = views.get(e.u)
+				if v3 is UnitView:
+					v3.prev_pos = e.pos
+					v3.cur_pos = e.pos
+			"tp_cancel":
+				fx.tp_end(e.u)
 			"volley":
 				fx.volley(e.pos, float(e.radius))
 			"tree":

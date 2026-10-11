@@ -48,6 +48,12 @@ func buy(u: SimUnit, item_id: String) -> String:
 		return "Not enough gold"
 	var here := in_shop(u)
 	var comps: Array = d.components
+	if item_id == "tp_scroll":
+		# Town Portal scrolls live in their own slot
+		u.tp_charges += 1
+		_spend(u, cost)
+		w.events.append({"t": "buy", "u": u.id, "item": item_id, "cost": cost})
+		return ""
 	if comps.is_empty():
 		if not _place(u, {"id": item_id, "charges": int(d.charges), "ready": 0.0, "bought": w.time}, here):
 			return "Inventory full"
