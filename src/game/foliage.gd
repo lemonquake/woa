@@ -1,0 +1,204 @@
+class_name Foliage
+extends Node3D
+## Trees (one per simulation tree, so cutting one removes exactly that tree), plus purely decorative grass, ferns,
+## flowers, bushes and rocks. Everything is MultiMesh-instanced per 16x16 m chunk so the renderer culls by chunk.
+
+const LEAF_SHADER := preload("res://src/game/foliage.gdshader")
+const NATURE := "res://assets/nature/"
+const CHUNK := 2048.0                      # game units per chunk side
+
+## Tree models per faction side: [file, scale min, scale max, weight]
+const DAWN_TREES := [["CommonTree_1", 0.42, 0.52, 3], ["CommonTree_2", 0.42, 0.52, 3], ["CommonTree_3", 0.42, 0.52, 3],
+	["CommonTree_4", 0.42, 0.52, 2], ["CommonTree_5", 0.42, 0.52, 2], ["Pine_1", 0.48, 0.6, 2], ["Pine_3", 0.48, 0.6, 2],
+	["Pine_4", 0.48, 0.6, 1]]
+const DUSK_TREES := [["TwistedTree_1", 0.24, 0.3, 2], ["TwistedTree_2", 0.24, 0.3, 2], ["TwistedTree_4", 0.24, 0.3, 2],
+	["DeadTree_1", 0.36, 0.44, 2], ["DeadTree_3", 0.36, 0.44, 2], ["Pine_2", 0.46, 0.58, 3], ["Pine_5", 0.46, 0.58, 3],
+	["CommonTree_3", 0.42, 0.5, 1]]
+const DECOR := [["Grass_Common_Short", 0.55, 0.9, 10], ["Grass_Wispy_Short", 0.55, 0.9, 8], ["Grass_Common_Tall", 0.45, 0.7, 4],
+	["Fern_1", 0.12, 0.18, 2], ["Flower_3_Group", 0.5, 0.8, 2], ["Flower_4_Group", 0.5, 0.8, 2], ["Bush_Common", 0.5, 0.75, 2],
+	["Bush_Common_Flowers", 0.5, 0.75, 1], ["Plant_1", 0.4, 0.6, 1], ["Mushroom_Common", 0.18, 0.28, 1]]
+
+var map: SimMap
+var terrain: TerrainBuilder
+var _meshes := {}                          # model -> Mesh (all surfaces, game materials)
+var _tree_slot := {}                       # tree index -> [MultiMesh, instance index, Transform3D]
+var _mats := {}
+
+func build(p_map: SimMap, p_terrain: TerrainBuilder) -> void:
+	map = p_map
+	terrain = p_terrain
+	name = "Foliage"
+	_build_trees()
+	_build_decor()
+
+func _mesh(model: String) -> Mesh:
+	if _meshes.has(model):
+		return _meshes[model]
+	var ps := load(NATURE + model + ".gltf") as PackedScene
+	var scene := ps.instantiate()
+	var mis := scene.find_children("*", "MeshInstance3D", true, false)
+	if scene is MeshInstance3D:
+		mis.append(scene)
+	var src: Mesh = (mis[0] as MeshInstance3D).mesh
+	var out := ArrayMesh.new()
+	for s in src.get_surface_count():
+		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, src.surface_get_arrays(s))
+		out.surface_set_material(s, _game_material(src.surface_get_material(s), model))
+	scene.free()
+	_meshes[model] = out
+	return out
+
+func _game_material(src: Material, model: String) -> Material:
+	var sm := src as BaseMaterial3D
+	var nm := sm.resource_name if sm else "?"
+	var key := nm + "|" + model.get_slice("_", 0)
+	if _mats.has(key):
+		return _mats[key]
+	var out: Material
+	var leafy := nm.begins_with("Leaves") or nm.begins_with("Leaf") or nm == "Grass" or nm == "Flowers"
+	if leafy and sm and sm.albedo_texture:
+		var m := ShaderMaterial.new()
+		m.shader = LEAF_SHADER
+		var tex := sm.albedo_texture
+		# bushes share the twisted tree's red leaf mask; give Dawn's undergrowth green leaves instead
+		if model.begins_with("Bush"):
+			tex = load(NATURE + "Leaves_NormalTree_C.png")
+		m.set_shader_parameter("albedo_tex", tex)
+		var grass := nm == "Grass"
+		m.set_shader_parameter("sway_height", 1.0 if grass else 6.0)
+		m.set_shader_parameter("wind", 0.9 if grass else 1.0)
+		if model.begins_with("Twisted"):
+			m.set_shader_parameter("tint", Color(0.62, 0.36, 0.6))
+			m.set_shader_parameter("tint2", Color(0.42, 0.22, 0.4))
+		elif model.begins_with("Pine"):
+			m.set_shader_parameter("tint", Color(0.82, 0.98, 0.86))
+			m.set_shader_parameter("tint2", Color(0.62, 0.82, 0.7))
+		elif grass:
+			m.set_shader_parameter("tint", Color(0.44, 0.66, 0.2))
+			m.set_shader_parameter("tint2", Color(0.56, 0.72, 0.26))
+			m.set_shader_parameter("alpha_cut", 0.3)
+		else:
+			m.set_shader_parameter("tint", Color(1.0, 1.08, 0.86))
+			m.set_shader_parameter("tint2", Color(0.86, 1.0, 0.72))
+		out = m
+	elif sm:
+		var b := sm.duplicate() as BaseMaterial3D
+		b.roughness = 0.9
+		if nm.begins_with("Bark"):
+			b.albedo_color = Color(0.92, 0.85, 0.78)
+		out = b
+	_mats[key] = out
+	return out
+
+func _pick(list: Array, rng: RandomNumberGenerator) -> Array:
+	var total := 0
+	for e in list:
+		total += int(e[3])
+	var r := rng.randi_range(0, total - 1)
+	for e in list:
+		r -= int(e[3])
+		if r < 0:
+			return e
+	return list[0]
+
+func _chunk_key(p: Vector2) -> Vector2i:
+	return Vector2i(floori((p.x + SimMap.HALF) / CHUNK), floori((p.y + SimMap.HALF) / CHUNK))
+
+## Group instances {model: {chunk: [[Transform3D, custom, tree index]]}} then build one MultiMesh per pair.
+func _emit(groups: Dictionary, vis_end: float, shadows: bool) -> void:
+	for model in groups:
+		var mesh := _mesh(model)
+		for ck in groups[model]:
+			var list: Array = groups[model][ck]
+			var mm := MultiMesh.new()
+			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.use_custom_data = true
+			mm.mesh = mesh
+			mm.instance_count = list.size()
+			for i in list.size():
+				var e: Array = list[i]
+				mm.set_instance_transform(i, e[0])
+				mm.set_instance_custom_data(i, e[1])
+				if e[2] >= 0:
+					_tree_slot[e[2]] = [mm, i, e[0]]
+			var mmi := MultiMeshInstance3D.new()
+			mmi.multimesh = mm
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if shadows else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if vis_end > 0.0:
+				mmi.visibility_range_end = vis_end
+				mmi.visibility_range_end_margin = 4.0
+				mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+			add_child(mmi)
+
+func _build_trees() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = map.seed_value * 31 + 5
+	var groups := {}
+	for i in map.trees.size():
+		var t: Dictionary = map.trees[i]
+		var p: Vector2 = t.pos
+		var dusk_side := (p.x + p.y) > 600.0 + sin(p.x * 0.002) * 500.0
+		var e := _pick(DUSK_TREES if dusk_side else DAWN_TREES, rng)
+		var s := rng.randf_range(e[1], e[2]) * float(t.scale) * 0.92
+		var basis := Basis(Vector3.UP, float(t.rot)).scaled(Vector3.ONE * s)
+		var xf := Transform3D(basis, View.to3(p, terrain.height_at(p) - 8.0))
+		var model: String = e[0]
+		var ck := _chunk_key(p)
+		if not groups.has(model):
+			groups[model] = {}
+		if not groups[model].has(ck):
+			groups[model][ck] = []
+		groups[model][ck].append([xf, Color(rng.randf(), 0, 0, 0), i])
+	_emit(groups, 0.0, true)
+
+## Grass and plants on open ground, thick at forest edges, never on roads, cliffs, paving or in the river.
+func _build_decor() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = map.seed_value * 97 + 3
+	var groups := {}
+	var count := 0
+	var step := 150.0
+	var y := -SimMap.HALF + 200.0
+	while y < SimMap.HALF - 200.0:
+		var x := -SimMap.HALF + 200.0
+		while x < SimMap.HALF - 200.0:
+			var p := Vector2(x + rng.randf_range(-70, 70), y + rng.randf_range(-70, 70))
+			x += step
+			if map.level_at(p) == SimMap.RIVER or map.level_at(p) == SimMap.HIGH:
+				continue
+			if not map.is_walkable(p) and map.tree_at(p, 60.0) < 0:
+				continue
+			var road := 1e9
+			for k in map.lanes:
+				road = minf(road, SimMap._polyline_distance(p, map.lanes[k]))
+				road = minf(road, SimMap._polyline_distance(-p, map.lanes[k]))
+			if road < 330.0:
+				continue
+			var near_tree := map.tree_at(p, 260.0) >= 0
+			if not near_tree and rng.randf() < 0.55:
+				continue
+			var e := _pick(DECOR, rng)
+			if (p.x + p.y) > 1500.0 and String(e[0]).begins_with("Flower") and rng.randf() < 0.8:
+				continue
+			var s := rng.randf_range(e[1], e[2])
+			var basis := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * s)
+			var xf := Transform3D(basis, View.to3(p, terrain.height_at(p) - 2.0))
+			var model: String = e[0]
+			var ck := _chunk_key(p)
+			if not groups.has(model):
+				groups[model] = {}
+			if not groups[model].has(ck):
+				groups[model][ck] = []
+			groups[model][ck].append([xf, Color(rng.randf(), 0, 0, 0), -1])
+			count += 1
+		y += step
+	_emit(groups, 60.0, false)
+
+func set_tree_alive(index: int, alive: bool) -> void:
+	if not _tree_slot.has(index):
+		return
+	var s: Array = _tree_slot[index]
+	var xf: Transform3D = s[2]
+	if not alive:
+		xf = Transform3D(Basis().scaled(Vector3.ONE * 0.0001), xf.origin - Vector3(0, 5, 0))
+	(s[0] as MultiMesh).set_instance_transform(s[1], xf)
