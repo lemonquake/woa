@@ -45,7 +45,7 @@ func think() -> void:
 	h.auto_attack = false
 	_learn(h)
 	_shop(h)
-	if h.hp < h.max_hp * 0.3 and state != "retreat":
+	if h.hp < h.max_hp * 0.22 and state != "retreat":
 		state = "retreat"
 	if state == "retreat":
 		if h.hp >= h.max_hp * 0.92 and h.mana >= h.max_mana * 0.6:
@@ -173,11 +173,16 @@ func _lane(h: SimUnit) -> void:
 			_next_tango = w.time + 18.0
 			_cast_deadline = w.time + 4.0
 			return
-	# 1. kill an enemy hero that is low
+	# 1. go for the kill when ahead: the enemy is low, or clearly weaker than us and away from their tower
 	for e in enemy_heroes:
-		if e.hp < e.max_hp * 0.3 and h.hp > h.max_hp * 0.5 and not _under_enemy_tower(h, e.pos, enemy_towers):
+		var mine := h.hp / h.max_hp
+		var theirs := e.hp / e.max_hp
+		var safe := not _under_enemy_tower(h, e.pos, enemy_towers)
+		var winning := theirs < 0.3 and mine > 0.4 or theirs < mine - 0.3 and mine > 0.55 and h.level >= e.level
+		if winning and (safe or theirs < 0.15) and h.pos.distance_to(e.pos) < 1100.0:
 			_spells_on(h, e)
-			_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
+			if not _busy(h):
+				_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
 			return
 	# 2. last hit / deny
 	var lh := _last_hit_target(h, foes, allies)
