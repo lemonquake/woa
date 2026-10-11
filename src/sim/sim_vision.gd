@@ -46,6 +46,14 @@ func update() -> void:
 				continue
 			done[key] = r
 			_cast(vis, u.pos, r, u.has_flag("flying"))
+		# cursed enemies (Tainted Touch) grant sight around themselves
+		for u in w.units:
+			if not u.alive or u.team == team:
+				continue
+			for m in u.modifiers:
+				if int(m.get("reveal", -1)) == team:
+					_cast(vis, u.pos, float(m.get("reveal_r", 300.0)), true)
+					break
 		visible[team] = vis
 
 func _rebuild_static(night: bool) -> void:
@@ -110,6 +118,13 @@ func _rays(rc: int) -> Array:
 	_templates[rc] = rays
 	return rays
 
+## A curse (Tainted Touch) reveals its bearer to the curser's team, invisible or not.
+func revealed_to(u: SimUnit, team: int) -> bool:
+	for m in u.modifiers:
+		if int(m.get("reveal", -1)) == team:
+			return true
+	return false
+
 func cell_visible(team: int, p: Vector2) -> bool:
 	if team < 0 or team > 1:
 		return true
@@ -119,6 +134,8 @@ func cell_visible(team: int, p: Vector2) -> bool:
 ## Whether `team` can see unit `u` (own units always; invisible units never without true sight).
 func sees(team: int, u: SimUnit) -> bool:
 	if u.team == team or team == C.NEUTRAL:
+		return true
+	if revealed_to(u, team):
 		return true
 	if u.has_flag("invisible"):
 		return false

@@ -52,6 +52,10 @@ func _draw() -> void:
 		draw_string_outline(t[0], t[1], t[2], HORIZONTAL_ALIGNMENT_LEFT, -1, t[3], t[4], Color(0, 0, 0, 0.9))
 	for t in _texts:
 		draw_string(t[0], t[1], t[2], HORIZONTAL_ALIGNMENT_LEFT, -1, t[3], t[5])
+	var dr: Rect2 = game.input.drag_rect if game.input else Rect2()
+	if dr.size.x > 1.0 and dr.size.y > 1.0:
+		draw_rect(dr, Color(0.25, 1.0, 0.35, 0.10))
+		draw_rect(dr, Color(0.35, 1.0, 0.45, 0.9), false, 1.5)
 	for p in popups:
 		var pos: Vector3 = p.pos + Vector3(0, p.t * p.rise, 0)
 		if cam.is_position_behind(pos):

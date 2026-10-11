@@ -352,13 +352,18 @@ func tower_ranges(w: SimWorld, h: SimUnit, team: int) -> void:
 ## Dota's order feedback: a green ripple where you move, a red one on what you attack.
 func marker(at: Vector3, attack: bool) -> void:
 	var col := Color(1.0, 0.25, 0.2, 0.9) if attack else Color(0.3, 1.0, 0.4, 0.9)
+	# never under the river surface, and drawn after the water so it always shows
+	at.y = maxf(at.y, TerrainBuilder.WATER_LEVEL * View.S)
+	var mat := _glow(col, 3.0).duplicate() as StandardMaterial3D
+	mat.render_priority = 20
 	for i in 2:
 		var ring := MeshInstance3D.new()
 		var tm := TorusMesh.new()
 		tm.inner_radius = 0.32
 		tm.outer_radius = 0.4
 		ring.mesh = tm
-		ring.material_override = _glow(col, 3.0)
+		ring.material_override = mat
+		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(ring)
 		ring.global_position = at + Vector3(0, 0.06, 0)
 		ring.scale = Vector3(1.0, 0.05, 1.0) * (1.0 + i * 0.5)

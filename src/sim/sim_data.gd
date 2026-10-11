@@ -171,6 +171,15 @@ static func _build_units() -> void:
 		"xp": 0.0, "primary": "agi", "str": 16.0, "str_gain": 1.9, "agi": 24.0, "agi_gain": 2.8, "int": 15.0,
 		"int_gain": 1.4, "abilities": ["frost_quiver", "gale_shot", "hunters_focus", "arrow_storm"],
 		"model": "hero"})
+	# Ezee, the Dark Paladin: a melee strength fighter (stats follow the classic melee-strength template).
+	_add("ezee", {"name": "Ezee", "title": "the Dark Paladin", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 0.5, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 1.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 30.0, "dmg_max": 34.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.4, "backswing": 0.6, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "str", "str": 24.0, "str_gain": 3.2, "agi": 16.0, "agi_gain": 2.0, "int": 18.0,
+		"int_gain": 1.7, "abilities": ["dark_stomp", "leap_strike", "tainted_touch", "unholy_might"],
+		"model": "hero_ezee"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -193,7 +202,7 @@ static func _build_abilities() -> void:
 		"desc": "Arrows of frost slow the target. Autocast, or cast on an enemy to fire one without drawing creep attention."}
 	_abilities["gale_shot"] = {"id": "gale_shot", "name": "Gale Shot", "behavior": "point", "key": "W",
 		"max_level": 4, "mana": [90, 90, 90, 90], "cooldown": [16, 14, 12, 10], "cast_point": 0.25,
-		"range": 1000, "values": {"damage": [70, 130, 190, 250], "width": [150, 150, 150, 150], "speed": [1800, 1800, 1800, 1800],
+		"range": 1000, "anim": "bow_1", "damage_type": "magical", "values": {"damage": [70, 130, 190, 250], "width": [150, 150, 150, 150], "speed": [1800, 1800, 1800, 1800],
 		"distance": [1000, 1000, 1000, 1000], "knockback": [300, 325, 350, 375], "knockback_time": [0.4, 0.4, 0.4, 0.4]},
 		"desc": "Looses a gust-laden arrow in a line, damaging and pushing back every enemy it passes through."}
 	_abilities["hunters_focus"] = {"id": "hunters_focus", "name": "Hunter's Focus", "behavior": "passive", "key": "E",
@@ -202,9 +211,35 @@ static func _build_abilities() -> void:
 		"desc": "Sharpened senses extend attack range and amplify agility."}
 	_abilities["arrow_storm"] = {"id": "arrow_storm", "name": "Arrow Storm", "behavior": "point", "key": "R",
 		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 175, 200], "cooldown": [70, 60, 50],
-		"cast_point": 0.35, "range": 900, "values": {"radius": [325, 325, 325], "volleys": [4, 4, 4], "interval": [0.5, 0.5, 0.5],
+		"cast_point": 0.35, "range": 900, "anim": "cast_heavy", "damage_type": "magical",
+		"values": {"radius": [325, 325, 325], "volleys": [4, 4, 4], "interval": [0.5, 0.5, 0.5],
 		"damage": [60, 95, 130], "slow": [0.3, 0.35, 0.4], "slow_duration": [1.0, 1.0, 1.0]},
 		"desc": "Darkens the sky with arrows: volleys strike an area, damaging and slowing enemies inside."}
+	# Ezee, the Dark Paladin
+	_abilities["dark_stomp"] = {"id": "dark_stomp", "name": "Dark Stomp", "behavior": "no_target", "key": "Q",
+		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.45, "range": 0,
+		"anim": "boss_slam", "damage_type": "magical",
+		"values": {"radius": [350, 350, 350, 350], "damage": [60, 90, 120, 150], "push_speed": [1000, 1000, 1000, 1000],
+		"impact_damage": [50, 75, 100, 125], "impact_stun": [0.7, 1.4, 2.1, 2.8]},
+		"desc": "Ezee slams the ground with unholy force, damaging nearby enemies and hurling them away. Enemies that crash into a unit, tree, cliff or wall take impact damage and are stunned."}
+	_abilities["leap_strike"] = {"id": "leap_strike", "name": "Leap Strike", "behavior": "no_target", "key": "W",
+		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [16, 15, 14, 13], "cast_point": 0.2, "range": 800,
+		"anim": "leap_slam", "damage_type": "pure",
+		"values": {"damage": [100, 125, 150, 175], "str_mult": [0.6, 0.6, 0.6, 0.6], "slow": [0.4, 0.4, 0.4, 0.4],
+		"slow_duration": [1.5, 1.5, 1.5, 1.5], "leap_time": [0.55, 0.55, 0.55, 0.55]},
+		"desc": "Ezee picks the visible enemy in range with the lowest health (the nearest one if none is hurt), leaps onto it and strikes for pure damage plus 60% of his strength, slowing it. Does nothing if no enemy is in sight."}
+	_abilities["tainted_touch"] = {"id": "tainted_touch", "name": "Tainted Touch", "behavior": "no_target", "key": "E",
+		"max_level": 4, "mana": [70, 80, 90, 100], "cooldown": [11, 11, 11, 11], "cast_point": 0.35, "range": 0,
+		"anim": "cast_weapon", "damage_type": "magical",
+		"values": {"bonus_damage": [60, 90, 120, 150], "duration": [7, 7, 7, 7], "curse_duration": [5, 5, 5, 5],
+		"curse_vision": [300, 300, 300, 300]},
+		"desc": "Purple lightning from the sky enchants Ezee's sword. His attacks deal bonus magic damage and curse the target, revealing it and granting sight around it, even through invisibility."}
+	_abilities["unholy_might"] = {"id": "unholy_might", "name": "Unholy Might", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [25, 25, 25],
+		"cast_point": 0.5, "range": 0, "anim": "boss_roar", "damage_type": "pure",
+		"values": {"duration": [10, 10, 10], "chance": [0.3, 0.4, 0.5], "reflect_radius": [700, 700, 700],
+		"fatigue_slow": [0.5, 0.5, 0.5], "fatigue_duration": [2, 2, 2]},
+		"desc": "Ezee roars and is wrapped in a dark aura. Each instance of damage he takes has a chance to be halved, the other half striking a random nearby enemy as pure damage. When the aura fades he is slowed for 2 seconds."}
 
 # ---- Items ----------------------------------------------------------------------------------------------------------
 ## Item data from items.txt. "stats": passive bonuses; "use": active effect; "recipe": components (recipe scroll cost

@@ -235,10 +235,9 @@ func attack_order_aggro(h: SimUnit) -> void:
 		_retarget(c, h.id)
 	w.events.append({"t": "aggro", "u": h.id})
 
-## An attack begins (the animation starts). Type 2 creep aggro, tower hero protection, neutrals waking up.
+## An attack begins (the animation starts): type 2 creep aggro and tower hero protection.
+## Neutral creeps are not woken by an attack starting, only by taking damage (SimCombat.deal_damage).
 func on_attack_start(a: SimUnit, t: SimUnit, manual_orb := false) -> void:
-	if t.kind == K.NEUTRAL_CREEP:
-		neutral_provoked(t, a)
 	if not (a.is_hero() and t.is_hero()) or manual_orb:
 		return
 	# towers protect heroes from heroes: switch to the attacker

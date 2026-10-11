@@ -23,7 +23,8 @@ var hud: Control
 var views := {}                            # unit id -> UnitView | BuildingView
 var player_team := C.DAWN
 var player_hero_id := -1
-var selected_id := -1
+var selected_id := -1                     # the primary selected unit (its card and portrait)
+var selected: Array = []                   # every selected unit id (box select)
 var fog_tex: ImageTexture
 var fog_img: Image
 var _fog_quad: MeshInstance3D
@@ -83,6 +84,7 @@ func _ready() -> void:
 	audio.game = self
 	add_child(audio)
 	selected_id = player_hero_id
+	selected = [player_hero_id]
 	_sync_views()
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
 	for f in String(args.get("off", "")).split(",", false):
@@ -153,6 +155,15 @@ func _step() -> void:
 	_tm("sync", t)
 
 func _sync_views() -> void:
+	if selected.size() > 0:
+		var keep: Array = []
+		for id in selected:
+			var su := world.get_unit(id)
+			if su != null and (su.alive or su.is_hero()):
+				keep.append(id)
+		if keep.size() != selected.size():
+			selected = keep if not keep.is_empty() else [player_hero_id]
+			selected_id = selected[0]
 	for u in world.units:
 		if not views.has(u.id):
 			_make_view(u)
@@ -312,7 +323,7 @@ func _process(dt: float) -> void:
 		if v is UnitView:
 			var su := world.get_unit(id)
 			var friendly := su != null and su.team == player_team
-			if id == selected_id:
+			if id in selected:
 				v.set_selected(true, Color(0.3, 1.0, 0.4, 0.9) if friendly else Color(1.0, 0.3, 0.25, 0.9))
 			elif id == hover:
 				v.set_selected(true, Color(1.0, 1.0, 1.0, 0.55) if friendly else Color(1.0, 0.55, 0.3, 0.7))
@@ -321,6 +332,10 @@ func _process(dt: float) -> void:
 	fx.tower_ranges(world, world.get_unit(player_hero_id), player_team)
 	if _capture_frames >= 0:
 		_capture_frames += 1
+		if _capture_frames == int(args.get("frames", "45")) - 6 and args.has("marker"):
+			var mv := String(args.marker).split(",")
+			var mp := Vector2(float(mv[0]), float(mv[1]))
+			fx.marker(View.to3(mp, terrain.height_at(mp)), false)
 		if _capture_frames == int(args.get("frames", "45")):
 			_save_capture()
 
@@ -460,6 +475,11 @@ func _start_capture() -> void:
 	camera._apply()
 	if args.has("select"):
 		selected_id = int(args.select)
+		selected = [selected_id]
+	if args.has("drag"):
+		var dv := String(args.drag).split(",")
+		input.drag_rect = Rect2(float(dv[0]), float(dv[1]), float(dv[2]), float(dv[3]))
+		input._box_select(input.drag_rect, false)
 	if args.has("pause"):
 		menus.toggle()
 	if args.has("endscreen"):

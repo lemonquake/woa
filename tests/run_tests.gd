@@ -193,9 +193,17 @@ func test_deny_rules() -> void:
 	var ally := w.spawn("dawn_melee", C.DAWN, Vector2(-1700, -4000))
 	ally.order = O.HOLD
 	w.vision.update()
-	check(w.orders.attack_error(h, ally) != "", "cannot attack an ally creep above half health")
+	check(not w.orders.can_deny(h, ally), "an ally creep above half health is not deniable")
+	# the order is accepted: the hero closes in and waits, swinging only once the creep can be denied
+	w.command(h.id, {"type": O.ATTACK_UNIT, "target": ally.id})
+	check(h.order == O.ATTACK_UNIT, "attack order on an ally is accepted")
+	run(w, 2.0)
+	check(h.atk_phase == SimUnit.AtkPhase.NONE and ally.hp == ally.max_hp, "no swing while the ally is above half health")
+	check(h.edge_distance(ally) <= h.attack_range, "the hero waits within attack range")
 	ally.hp = ally.max_hp * 0.49
-	check(w.orders.attack_error(h, ally) == "", "can deny an ally creep below half health")
+	check(w.orders.can_deny(h, ally), "can deny an ally creep below half health")
+	run(w, 1.5)
+	check(ally.hp < ally.max_hp * 0.49 or not ally.alive, "the hero attacks once the ally is deniable")
 
 func test_attack_class_matrix() -> void:
 	var w := empty_world()
@@ -636,3 +644,46 @@ func test_courier_delivery() -> void:
 	check(h.inventory.any(func(x): return x != null and x.id == "slippers"), "the courier delivered the slippers")
 	var c := w.get_unit(h.courier_id)
 	check(c.courier_state in ["return", "idle"], "courier heads home after delivering")
+
+func test_stop_and_hard_stop() -> void:
+	var w := empty_world()
+	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var foe := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	foe.order = O.HOLD
+	foe.def = foe.def.duplicate()
+	foe.def["can_attack"] = false
+	w.vision.update()
+	w.command(h.id, {"type": O.STOP})
+	run(w, 1.5)
+	check(h.atk_target == foe.id, "after a tap of S the hero still auto-attacks an enemy in range")
+	w.command(h.id, {"type": O.STOP, "hard": true})
+	run(w, 0.8)
+	var hp0 := foe.hp
+	run(w, 2.0)
+	check(h.atk_target == -1 and foe.hp >= hp0, "after a hard stop (S held) the hero does not auto-attack (target %d)" % h.atk_target)
+	w.command(h.id, {"type": O.MOVE, "point": h.pos + Vector2(10, 0)})
+	run(w, 1.5)
+	check(h.atk_target == foe.id, "the next order ends the hard stop")
+
+func test_neutrals_wake_on_damage_only() -> void:
+	var w := SimWorld.new(1, _map)
+	w.time = 59.0
+	w.next_wave_at = INF
+	run(w, 1.2)
+	var camp: Dictionary = _map.camps[1]
+	var h := w.spawn("galewarden", C.DAWN, camp.pos + Vector2(-500, 0))
+	w.vision.update()
+	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
+	w.command(h.id, {"type": O.ATTACK_UNIT, "target": n[0].id})
+	# stop before the arrow leaves: the attack started but nothing was hit
+	for i in 40:
+		w.step()
+		if h.atk_phase == SimUnit.AtkPhase.WINDUP:
+			break
+	check(h.atk_phase == SimUnit.AtkPhase.WINDUP, "the attack is winding up")
+	w.command(h.id, {"type": O.STOP, "hard": true})
+	run(w, 0.5)
+	check(n.all(func(u): return u.neutral_state == 0), "neutrals ignore an attack that never landed")
+	w.command(h.id, {"type": O.ATTACK_UNIT, "target": n[0].id})
+	run(w, 2.0)
+	check(n[0].neutral_state == 1, "neutrals turn on the hero once damaged")

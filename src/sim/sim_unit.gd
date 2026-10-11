@@ -73,8 +73,15 @@ var hero_damage_log := {}                  # enemy hero id -> last game time the
 var stick_charges := 0
 var player := false
 var auto_attack := true                    # idle heroes attack enemies in acquisition range (Dota "Standard")
+var no_acquire := false                    # set by a hard stop (S held): no auto-attack until the next order
 var bot := false
 var look := {}                             # appearance dictionary (HeroLook) for the renderer
+var dmg_out := {}                          # damage source key -> [to heroes, to other units, to buildings]
+var dmg_in := {}                           # damage source key -> damage taken
+var recent_in: Array = []                  # heroes: [{t, src, key, type, amount}] for the death recap (last 20 s)
+var healed := 0.0                          # health restored by heals and lifesteal
+var last_kill_at := -99.0                  # heroes: for multi-kills
+var multi_kill := 0
 
 # ---- Orders and actions -------------------------------------------------------------------------------------------
 var order := C.Order.NONE
@@ -138,12 +145,14 @@ var glyph_until := 0.0
 # ---- Effects ----------------------------------------------------------------------------------------------------------
 var modifiers: Array = []                  # see SimUnit.add_modifier
 var stats_dirty := true                    # recompute derived stats before the next tick
-var knock: Dictionary = {}                 # {from, to, t, dur}
+var knock: Dictionary = {}                 # {from, to, t, dur} (eased push) or {phys, vel, z, vz, ...} (physics push)
+var leap: Dictionary = {}                  # {target, from, to, t, dur, ability, lv}: a leap in progress (Leap Strike)
 var channel: Dictionary = {}               # {ability, until, dest}: channelling (Town Portal)
 var tp_charges := 0                        # Town Portal scrolls in the dedicated slot
 var courier_id := -1                       # heroes: their courier
 var owner_id := -1                         # couriers: their hero
 var courier_state := "idle"
+var courier_goal := Vector2.ZERO           # couriers: where a move order sends them
 var ward_expires := 0.0
 
 func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float) -> void:
@@ -249,6 +258,16 @@ func has_flag(flag: String) -> bool:
 
 func is_stunned() -> bool:
 	return has_flag("stun") or not knock.is_empty()
+
+## Leaping (Leap Strike): the unit flies to its target and takes no orders until it lands.
+func is_leaping() -> bool:
+	return not leap.is_empty()
+
+func get_modifier(mid: String) -> Dictionary:
+	for m in modifiers:
+		if m.id == mid:
+			return m
+	return {}
 
 func is_silenced() -> bool:
 	return has_flag("silence") or is_stunned()

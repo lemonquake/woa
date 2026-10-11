@@ -206,8 +206,10 @@ func tick(u: SimUnit) -> void:
 	if u.moving:
 		_lock_until = 0.0
 		var run := String(cfg.get("run", "run"))
+		if cfg.has("run_female") and float(u.look.get("look", {}).get("female", 0.0)) >= 0.5:
+			run = String(cfg.run_female)
 		var gs := float(ModelCatalog.clip(run).get("ground_speed", 5.0)) * _model_scale
-		var spd := clampf(u.move_speed * View.S / maxf(gs, 0.1), 0.4, 2.5)
+		var spd := clampf(u.move_speed * View.S / maxf(gs, 0.1), float(cfg.get("run_min", 0.4)), 2.5)
 		_play(run, true, spd, 0.12)
 	elif now >= _lock_until:
 		_play(String(cfg.idle), true, 1.0, 0.25)

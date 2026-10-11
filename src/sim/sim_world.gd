@@ -119,6 +119,15 @@ func buyback(h: SimUnit) -> String:
 	events.append({"t": "buyback", "u": h.id})
 	return ""
 
+## Order the hero's courier to fly to a point and wait there.
+func courier_move(h: SimUnit, p: Vector2) -> String:
+	var c := get_unit(h.courier_id)
+	if c == null or not c.alive:
+		return "Courier is dead"
+	c.courier_state = "move"
+	c.courier_goal = p
+	return ""
+
 ## Send the hero's courier to fetch the stash and bring it to them.
 func courier_deliver(h: SimUnit) -> String:
 	var c := get_unit(h.courier_id)
@@ -229,16 +238,9 @@ func _pre_unit(u: SimUnit) -> void:
 		shop.update(u)
 	if u.kind == K.WARD and time >= u.ward_expires:
 		combat.kill(u, null)
-	# knockback displacement
-	if not u.knock.is_empty():
-		var k := u.knock
-		k.t += C.DT
-		var f := clampf(k.t / k.dur, 0.0, 1.0)
-		var np: Vector2 = (k.from as Vector2).lerp(k.to, f)
-		if map.is_walkable(np):
-			u.pos = np
-		if f >= 1.0:
-			u.knock = {}
+	# pushes and leaps
+	if not u.knock.is_empty() or not u.leap.is_empty():
+		abilities.update_motion(u)
 
 ## Backdoor protection: a building takes half damage and heals what enemies did unless enemy lane creeps are near.
 ## Tier 2 towers watch their own surroundings; every in-base building shares the Ancient's large area.
@@ -293,6 +295,7 @@ func respawn(h: SimUnit) -> void:
 	h.pos = map.fountains[h.team] + Vector2(250, 250) * (1.0 if h.team == C.DAWN else -1.0)
 	h.modifiers.clear()
 	h.knock = {}
+	h.leap = {}
 	h.refresh_stats()
 	h.hp = h.max_hp
 	h.mana = h.max_mana
@@ -363,6 +366,10 @@ func _couriers() -> void:
 			"return":
 				goal = home
 				if c.pos.distance_to(home) < 300.0:
+					c.courier_state = "idle"
+			"move":
+				goal = c.courier_goal
+				if c.pos.distance_to(goal) < 40.0:
 					c.courier_state = "idle"
 		var to := goal - c.pos
 		var step := c.move_speed * C.DT

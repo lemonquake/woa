@@ -52,7 +52,12 @@ func _glyph_multishot(u: SimUnit, main: SimUnit, snap: Dictionary) -> void:
 func _snapshot(u: SimUnit, mod: String) -> Dictionary:
 	return {"src": u.id, "team": u.team, "hero": u.is_hero(), "kind": u.kind, "dmg_min": u.dmg_min, "dmg_max": u.dmg_max,
 		"bonus": u.bonus_damage, "class": int(u.def.attack_class), "level_h": w.map.level_at(u.pos), "mod": mod,
-		"lifesteal": u.lifesteal, "ranged": u.is_ranged(), "quell": _quelling(u)}
+		"lifesteal": u.lifesteal, "ranged": u.is_ranged(), "quell": _quelling(u), "taint": _taint(u)}
+
+## Tainted Touch: the level of the enchantment riding on this attack (0 = none), fixed when the blow is released.
+func _taint(u: SimUnit) -> int:
+	var m := u.get_modifier("tainted_touch")
+	return int(m.get("tainted", 0)) if not m.is_empty() else 0
 
 func _quelling(u: SimUnit) -> float:
 	if not u.is_hero():
@@ -69,22 +74,24 @@ func update_projectiles() -> void:
 		var p: Dictionary = w.projectiles[i]
 		var t := w.get_unit(p.target)
 		if t == null or not t.alive:
+			# the target died first: the projectile flies on to where it was and falls there (presentation only)
 			w.projectiles.remove_at(i)
-			w.events.append({"t": "projectile_end", "id": p.id, "hit": false})
+			w.events.append({"t": "projectile_end", "id": p.id, "hit": false, "pos": t.pos if t else p.pos})
 			continue
 		var to: Vector2 = t.pos - p.pos
 		var step: float = p.speed * C.DT
 		if to.length() <= step + t.hull * 0.5:
 			w.projectiles.remove_at(i)
-			w.events.append({"t": "projectile_end", "id": p.id, "hit": true})
-			land_attack(p.snap, t)
+			var landed := land_attack(p.snap, t)
+			w.events.append({"t": "projectile_end", "id": p.id, "hit": landed, "miss": not landed, "pos": t.pos,
+				"target": t.id})
 		else:
 			p.pos += to.normalized() * step
 
-## An attack connects: miss chance (evasion, uphill), damage, lifesteal and attack modifiers.
-func land_attack(s: Dictionary, t: SimUnit) -> void:
+## An attack connects: miss chance (evasion, uphill), damage, lifesteal and attack modifiers. False on a miss.
+func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if not t.alive:
-		return
+		return false
 	var src := w.get_unit(s.src)
 	var miss := false
 	if t.evasion > 0.0 and w.rng.randf() < t.evasion:
@@ -92,19 +99,22 @@ func land_attack(s: Dictionary, t: SimUnit) -> void:
 	elif int(s.level_h) < w.map.level_at(t.pos) and w.rng.randf() < C.UPHILL_MISS:
 		miss = true
 	if miss:
-		w.events.append({"t": "miss", "u": s.src, "target": t.id})
-		return
+		w.events.append({"t": "miss", "u": s.src, "target": t.id, "ranged": bool(s.ranged)})
+		return false
 	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus)
 	if s.mod != "":
 		dmg += w.abilities.attack_modifier_damage(s, t)
 	if t.is_creep() and t.team != s.team:
 		dmg += float(s.quell)
 	dmg *= attack_class_multiplier(s, t)
-	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, C.DamageType.PHYSICAL, true)
+	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, C.DamageType.PHYSICAL, true, "attack")
 	if dealt > 0.0 and float(s.lifesteal) > 0.0 and src != null and src.alive and not t.is_building():
-		src.hp = minf(src.max_hp, src.hp + dealt * float(s.lifesteal))
+		heal(src, dealt * float(s.lifesteal))
 	if s.mod != "" and t.alive:
 		w.abilities.attack_modifier_hit(s, t)
+	if int(s.get("taint", 0)) > 0 and not t.is_building() and t.team != s.team:
+		w.abilities.tainted_hit(s, t)
+	return true
 
 func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
 	var dc := t.defense_class()
@@ -121,7 +131,9 @@ func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
 # ---- Damage ---------------------------------------------------------------------------------------------------------------
 
 ## Apply damage after armor / magic resistance and building protections. Returns the health removed.
-func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount: float, dtype: int, is_attack := false) -> float:
+## key names the source for the damage tables ("attack", an ability or item id); reflected damage is not reflected again.
+func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount: float, dtype: int, is_attack := false,
+		key := "", reflected := false) -> float:
 	if not t.alive or amount <= 0.0:
 		return 0.0
 	if t.is_invulnerable():
@@ -129,6 +141,8 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	if w.time < t.glyph_until:
 		w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": 0.0, "blocked": true})
 		return 0.0
+	if key == "":
+		key = "attack" if is_attack else "spell"
 	match dtype:
 		C.DamageType.PHYSICAL:
 			amount *= C.armor_multiplier(t.armor)
@@ -139,9 +153,19 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	if t.is_building() and t.backdoor_active and src_team != t.team:
 		amount *= 1.0 - C.BACKDOOR_DAMAGE_REDUCTION
 		t.backdoor_pool += amount
+	# Unholy Might: a chance to halve the blow and send the other half into a random nearby enemy
+	var reflect_to: SimUnit = null
+	var reflect_amt := 0.0
+	if not reflected and src_team != t.team:
+		var um := t.get_modifier("unholy_might")
+		if not um.is_empty() and amount > 0.5 and w.rng.randf() < float(um.chance):
+			reflect_amt = amount * 0.5
+			amount -= reflect_amt
+			reflect_to = w.abilities.unholy_victim(t, float(um.radius))
 	amount = minf(amount, t.hp)
 	t.hp -= amount
 	var src := w.get_unit(src_id)
+	_ledger(src, t, key, dtype, amount, src_id)
 	if src_hero and t.is_hero() and src_team != t.team:
 		t.hero_damage_log[src_id] = w.time
 	if t.is_hero() and src_hero and src_team != t.team:
@@ -152,15 +176,37 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	# neutrals wake up and fight back when hurt
 	if t.kind == K.NEUTRAL_CREEP and src != null:
 		w.ai.neutral_provoked(t, src)
-	w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": amount, "type": dtype, "attack": is_attack})
+	w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": amount, "type": dtype, "attack": is_attack,
+		"key": key, "reflected": reflected, "halved": reflect_amt})
 	if t.hp <= 0.001:
 		t.hp = 0.0
 		kill(t, src)
+	if reflect_amt > 0.0:
+		w.events.append({"t": "unholy_reflect", "u": t.id, "target": reflect_to.id if reflect_to else -1, "amount": reflect_amt})
+		if reflect_to != null and reflect_to.alive:
+			deal_damage(t.id, t.team, t.is_hero(), reflect_to, reflect_amt, C.DamageType.PURE, false, "unholy_might", true)
 	return amount
+
+## Damage tables: what each unit dealt by source, what heroes took by source, and a short history for the death recap.
+func _ledger(src: SimUnit, t: SimUnit, key: String, dtype: int, amount: float, src_id: int) -> void:
+	if amount <= 0.0:
+		return
+	if src != null:
+		var row: Array = src.dmg_out.get(key, [0.0, 0.0, 0.0])
+		row[0 if t.is_hero() else (2 if t.is_building() else 1)] += amount
+		src.dmg_out[key] = row
+	if t.is_hero():
+		var k2 := (String(src.def.id) if src != null else "?") + ":" + key
+		t.dmg_in[k2] = float(t.dmg_in.get(k2, 0.0)) + amount
+		t.recent_in.append({"t": w.time, "src": src_id, "key": key, "type": dtype, "amount": amount})
+		while not t.recent_in.is_empty() and (w.time - float(t.recent_in[0].t) > 20.0 or t.recent_in.size() > 80):
+			t.recent_in.pop_front()
 
 func heal(t: SimUnit, amount: float) -> void:
 	if t.alive:
+		var before := t.hp
 		t.hp = minf(t.max_hp, t.hp + amount)
+		t.healed += t.hp - before
 
 # ---- Death --------------------------------------------------------------------------------------------------------------
 
@@ -176,6 +222,7 @@ func kill(t: SimUnit, killer: SimUnit) -> void:
 	t.cast_phase = SimUnit.CastPhase.NONE
 	t.order = C.Order.NONE
 	t.path = PackedVector2Array()
+	t.leap = {}
 	_deaths.append({"u": t, "killer": killer})
 
 func process_deaths() -> void:
@@ -305,13 +352,17 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 			w.first_blood = true
 			fb = C.FIRST_BLOOD_GOLD
 		give_gold(credit, int(base) + fb, false, t.pos)
-		w.events.append({"t": "hero_kill", "u": credit.id, "victim": t.id, "first_blood": fb > 0})
+		credit.multi_kill = credit.multi_kill + 1 if w.time - credit.last_kill_at <= 18.0 else 1
+		credit.last_kill_at = w.time
+		w.events.append({"t": "hero_kill", "u": credit.id, "victim": t.id, "first_blood": fb > 0, "streak": credit.streak,
+			"multi": credit.multi_kill, "ended_streak": victim_streak, "gold": int(base) + fb})
 	else:
 		# no hero involved: the kill gold is split among the whole enemy team
 		var team_heroes := w.heroes.filter(func(h): return h.team == enemy_team)
 		for h in team_heroes:
 			give_gold(h, int(base / maxf(1.0, team_heroes.size())), false, h.pos)
-		w.events.append({"t": "hero_kill", "u": -1, "victim": t.id, "first_blood": false})
+		w.events.append({"t": "hero_kill", "u": -1, "victim": t.id, "first_blood": false, "streak": 0, "multi": 0,
+			"ended_streak": victim_streak, "killer_unit": killer.id if killer else -1})
 	# assist (area) gold, shared equally including the killer
 	if not assisters.is_empty():
 		var nw_v := 0.0

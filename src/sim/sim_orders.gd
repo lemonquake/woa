@@ -42,6 +42,8 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
 	# any new order breaks a channel
 	if not u.channel.is_empty():
 		cancel_channel(u)
+	# a hard stop (S held) keeps the unit from acquiring targets until it gets another order
+	u.no_acquire = type == O.STOP and bool(o.get("hard", false))
 	var tgt: SimUnit = w.get_unit(int(o.get("target", -1)))
 	match type:
 		O.ATTACK_UNIT:
@@ -121,15 +123,13 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
 	u.order_from_player = from_player
 	u.order_queue.clear()
 
-## Why `u` may not attack `t` ("" = it may): allies only when deniable, nothing invulnerable or unseen.
+## Why `u` may not attack `t` ("" = it may). An attack order on an ally is accepted: the unit follows it and only
+## swings once the ally can be denied.
 func attack_error(u: SimUnit, t: SimUnit) -> String:
 	if not u.can_attack_at_all():
 		return "This unit cannot attack"
 	if t.is_invulnerable() and t.is_building():
 		return "Target is invulnerable"
-	if t.team == u.team:
-		if not can_deny(u, t):
-			return "Cannot attack allies"
 	if not w.vision.sees(u.team, t):
 		return "Target not visible"
 	return ""
@@ -165,6 +165,9 @@ func _cancel_windup(u: SimUnit) -> void:
 # ---- Update -----------------------------------------------------------------------------------------------------------
 
 func update(u: SimUnit) -> void:
+	if u.is_leaping():
+		u.moving = false
+		return
 	if not u.channel.is_empty():
 		if u.is_stunned():
 			cancel_channel(u)
@@ -238,7 +241,7 @@ func _idle(u: SimUnit, hold: bool) -> void:
 	if t == null or not _attackable(u, t):
 		u.atk_target = -1
 		t = null
-		if u.is_hero() and (u.auto_attack or hold):
+		if u.is_hero() and (u.auto_attack or hold) and not u.no_acquire:
 			t = _acquire(u, u.attack_range if hold else u.acquire_range)
 			if t:
 				u.atk_target = t.id
@@ -266,7 +269,9 @@ func _order_attack(u: SimUnit) -> void:
 		_move_to(u, t.pos, u.attack_range)
 		return
 	if t.team == u.team and not can_deny(u, t):
-		_finish_order(u)
+		# not deniable yet: stay at attack range and wait for it to drop low enough
+		if u.edge_distance(t) > u.attack_range * 0.9:
+			_move_to(u, t.pos, 0.0, t)
 		return
 	u.atk_target = t.id
 	_attack(u, t, true)

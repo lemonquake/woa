@@ -25,6 +25,8 @@ var _tip_lines: Array = []                 # [[text, size, color, kind]]
 var _tip_at := Vector2.ZERO
 var _redraw_t := 0.0
 var _last_tip: Array = []
+var _portrait_down := -1.0                 # when the portrait was pressed (click: centre camera, hold: follow)
+const PORTRAIT_HOLD := 0.3
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -70,7 +72,34 @@ func _portrait() -> void:
 func hero() -> SimUnit:
 	return game.world.get_unit(game.player_hero_id) if game and game.world else null
 
+## Portrait: a click selects your hero and centres the camera on it; holding it keeps the camera on the hero.
+func portrait_press() -> void:
+	_portrait_down = Time.get_ticks_msec() / 1000.0
+	game.input.select([game.player_hero_id])
+
+func portrait_release() -> void:
+	if _portrait_down < 0.0:
+		return
+	var held := Time.get_ticks_msec() / 1000.0 - _portrait_down
+	_portrait_down = -1.0
+	var h := hero()
+	if held < PORTRAIT_HOLD and h and h.alive:
+		game.camera.focus(View.to3(h.pos, game.terrain.height_at(h.pos)))
+
+func _follow_portrait(dt: float) -> void:
+	if _portrait_down < 0.0:
+		return
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		portrait_release()
+		return
+	if Time.get_ticks_msec() / 1000.0 - _portrait_down >= PORTRAIT_HOLD:
+		var h := hero()
+		if h and h.alive:
+			var p := View.to3(h.pos, game.terrain.height_at(h.pos))
+			game.camera.target = game.camera.target.lerp(p, 1.0 - exp(-dt * 14.0))
+
 func _process(dt: float) -> void:
+	_follow_portrait(dt)
 	_msg_t = maxf(0.0, _msg_t - dt)
 	_announce_t = maxf(0.0, _announce_t - dt)
 	var vs := get_viewport_rect().size
@@ -112,7 +141,7 @@ func _draw() -> void:
 	var vs := get_viewport_rect().size
 	if _msg_t > 0.0:
 		var a := clampf(_msg_t / 0.5, 0.0, 1.0)
-		U.text_c(self, _msg, Vector2(vs.x * 0.5, vs.y - BottomPanel.H - 40), 22, Color(1.0, 0.35, 0.3, a), "bold")
+		U.text_c(self, _msg, Vector2(vs.x * 0.5, vs.y - BottomPanel.H - 40), 22, Color(_msg_col, a), "bold")
 	if _announce_t > 0.0:
 		var a2 := clampf(_announce_t / 0.8, 0.0, 1.0)
 		U.text_c(self, _announce, Vector2(vs.x * 0.5, 150), 40, Color(1.0, 0.86, 0.5, a2), "title")
@@ -154,7 +183,16 @@ func _unit_card() -> void:
 
 func error(msg: String) -> void:
 	_msg = msg
+	_msg_col = Color(1.0, 0.35, 0.3)
 	_msg_t = 2.0
+
+## A neutral message in the same place as errors.
+func notice(msg: String) -> void:
+	_msg = msg
+	_msg_col = Color(0.75, 0.95, 0.75)
+	_msg_t = 2.0
+
+var _msg_col := Color(1.0, 0.35, 0.3)
 
 func announce(title: String, sub := "") -> void:
 	_announce = title
@@ -443,12 +481,19 @@ class BottomPanel extends Control:
 		U.text_c(self, label, _buyback_rect.get_center() + Vector2(0, 8), 20, U.GOLD if can else U.TEXT_DIM, "title")
 
 	func _gui_input(e: InputEvent) -> void:
+		if e is InputEventMouseButton and not e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+			hud.portrait_release()
+			return
 		if not (e is InputEventMouseButton and e.pressed):
 			return
 		var mb := e as InputEventMouseButton
 		var h: SimUnit = hud.hero()
 		var w: SimWorld = hud.game.world
 		var p := mb.position
+		if mb.button_index == MOUSE_BUTTON_LEFT and Rect2(12, 22, 170, 174).has_point(p):
+			hud.portrait_press()
+			accept_event()
+			return
 		if not h.alive and _buyback_rect.has_point(p):
 			var err := w.buyback(h)
 			if err != "":
@@ -693,7 +738,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 					_focus(mb.position)
 			elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 				var h: SimUnit = hud.hero()
-				hud.game.world.command(h.id, {"type": O.MOVE, "point": _from_mm(mb.position)})
+				hud.game.input.move_selected(_from_mm(mb.position), mb.shift_pressed)
 			accept_event()
 		elif e is InputEventMouseMotion and _drag:
 			_focus((e as InputEventMouseMotion).position)

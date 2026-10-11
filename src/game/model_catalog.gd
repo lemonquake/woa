@@ -10,7 +10,8 @@ const WEAPONS := "res://assets/weapons/"
 ## proj: projectile style for ranged units. bar: health bar height above the ground (m).
 const MODELS := {
 	"hero": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["bow_1"], "cast": "cast_quick",
-		"idle": "idle_bow", "run": "run", "death": "death", "R": "", "L": "bow", "proj": "arrow", "bar": 2.25, "hero": true},
+		"idle": "idle_bow", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72, "death": "death", "R": "", "L": "bow",
+		"proj": "arrow", "bar": 2.25, "hero": true},
 	"dawn_melee": {"scene": UNITS + "knight.glb", "scale": 0.86, "attack": ["sword_1", "sword_2", "sword_3"], "idle": "idle_shield",
 		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88)},
 	"dawn_ranged": {"scene": UNITS + "mage.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",
