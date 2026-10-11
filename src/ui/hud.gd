@@ -447,6 +447,7 @@ class Minimap extends Control:
 	var _fog_img: Image
 	var _fog_tex: ImageTexture
 	var _fog_t := 0.0
+	var _fog_rect: TextureRect
 	var _drag := false
 
 	func _ready() -> void:
@@ -495,8 +496,22 @@ class Minimap extends Control:
 								var y := clampi(n - 1 - c2.y + oy, 0, n - 1)
 								img.set_pixel(x, y, Color(0.6, 0.52, 0.38))
 		_base = ImageTexture.create_from_image(img)
-		_fog_img = Image.create(SimMap.VN, SimMap.VN, false, Image.FORMAT_LA8)
+		_fog_img = Image.create(SimMap.VN, SimMap.VN, false, Image.FORMAT_L8)
 		_fog_tex = ImageTexture.create_from_image(_fog_img)
+		# the vision grid (0 / 1 bytes, south row first) is drawn through a small shader: flip, scale, darken
+		_fog_rect = TextureRect.new()
+		_fog_rect.texture = _fog_tex
+		_fog_rect.size = Vector2(S, S)
+		_fog_rect.stretch_mode = TextureRect.STRETCH_SCALE
+		_fog_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var sm := ShaderMaterial.new()
+		var sh := Shader.new()
+		sh.code = "shader_type canvas_item;
+void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 255.0, 0.0, 1.0); COLOR = vec4(0.02, 0.03, 0.05, (1.0 - v) * 0.6); }"
+		sm.shader = sh
+		_fog_rect.material = sm
+		_fog_rect.show_behind_parent = false
+		add_child(_fog_rect)
 
 	func _neg(a: PackedVector2Array) -> PackedVector2Array:
 		var o := PackedVector2Array()
@@ -515,19 +530,9 @@ class Minimap extends Control:
 		draw_texture_rect(_base, Rect2(Vector2.ZERO, Vector2(S, S)), false)
 		_fog_t -= get_process_delta_time()
 		if _fog_t <= 0.0:
-			_fog_t = 0.25
-			var vis: PackedByteArray = w.vision.visible[team]
-			var n := SimMap.VN
-			var data := PackedByteArray()
-			data.resize(n * n * 2)
-			for y in n:
-				for x in n:
-					var src := (n - 1 - y) * n + x
-					data[(y * n + x) * 2] = 8
-					data[(y * n + x) * 2 + 1] = 0 if vis[src] == 1 else 150
-			_fog_img.set_data(n, n, false, Image.FORMAT_LA8, data)
+			_fog_t = 0.2
+			_fog_img.set_data(SimMap.VN, SimMap.VN, false, Image.FORMAT_L8, w.vision.visible[team])
 			_fog_tex.update(_fog_img)
-		draw_texture_rect(_fog_tex, Rect2(Vector2.ZERO, Vector2(S, S)), false)
 		for u in w.units:
 			if not u.alive:
 				continue

@@ -64,14 +64,20 @@ static func ability_icon(id: String) -> Texture2D:
 	return icon(String(ABILITY_ICONS.get(id, "skills/keen_eye")))
 
 ## A panel: vertical gradient, inner shadow, thin gold rim.
+static var _boxes := {}
+
 static func panel(ci: CanvasItem, r: Rect2, rim := GOLD_DIM, radius := 6.0) -> void:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = PANEL_BOT
-	sb.set_corner_radius_all(int(radius))
-	sb.border_color = rim
-	sb.set_border_width_all(2)
-	sb.shadow_color = Color(0, 0, 0, 0.55)
-	sb.shadow_size = 10
+	var key := rim.to_html() + str(radius)
+	var sb: StyleBoxFlat = _boxes.get(key)
+	if sb == null:
+		sb = StyleBoxFlat.new()
+		sb.bg_color = PANEL_BOT
+		sb.set_corner_radius_all(int(radius))
+		sb.border_color = rim
+		sb.set_border_width_all(2)
+		sb.shadow_color = Color(0, 0, 0, 0.55)
+		sb.shadow_size = 10
+		_boxes[key] = sb
 	sb.draw(ci.get_canvas_item(), r)
 	# top highlight band
 	var hi := r.grow(-3)

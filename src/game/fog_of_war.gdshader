@@ -7,6 +7,8 @@ render_mode unshaded, cull_disabled, depth_test_disabled, depth_draw_never, blen
 
 uniform sampler2D depth_tex : hint_depth_texture, filter_nearest;
 uniform sampler2D fog_tex : filter_linear, repeat_disable;
+uniform sampler2D fog_prev : filter_linear, repeat_disable;
+uniform float blend = 1.0;
 uniform float map_half = 81.92;
 uniform float strength = 0.72;
 uniform vec3 fog_color : source_color = vec3(0.06, 0.08, 0.14);
@@ -24,7 +26,10 @@ void fragment() {
 	vec2 uv = (world.xz + map_half) / (2.0 * map_half);
 	// texture rows run with sim y (north = -z)
 	uv.y = 1.0 - uv.y;
-	float vis = texture(fog_tex, uv).r;
+	// the grids hold 0 / 1 bytes: scale to 0..1 (filtering keeps the edges soft), then cross-fade from the last grid
+	float now_v = clamp(texture(fog_tex, uv).r * 255.0, 0.0, 1.0);
+	float prev_v = clamp(texture(fog_prev, uv).r * 255.0, 0.0, 1.0);
+	float vis = mix(prev_v, now_v, blend);
 	if (d <= 0.0) {
 		discard;
 	}

@@ -24,7 +24,6 @@ var player_hero_id := -1
 var selected_id := -1
 var fog_tex: ImageTexture
 var fog_img: Image
-var _fog_vals := PackedFloat32Array()
 var _fog_quad: MeshInstance3D
 var args := {}
 var _capture_frames := -1
@@ -73,8 +72,33 @@ func _ready() -> void:
 	selected_id = player_hero_id
 	_sync_views()
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
+	for f in String(args.get("off", "")).split(",", false):
+		match f:
+			"ssao": atmosphere.env.ssao_enabled = false
+			"glow": atmosphere.env.glow_enabled = false
+			"fog": atmosphere.env.fog_enabled = false
+			"msaa": get_viewport().msaa_3d = Viewport.MSAA_DISABLED
+			"fxaa": get_viewport().screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
+			"shadows": atmosphere.sun.shadow_enabled = false
+			"trees", "decor":
+				for c in foliage.get_children():
+					var mmi := c as MultiMeshInstance3D
+					if mmi and ((f == "decor") == (mmi.visibility_range_end > 0.0)):
+						mmi.visible = false
+			"water": get_node("River").visible = false
+			"fow": _fog_quad.visible = false
+			"terrain": get_node("Terrain").visible = false
+			"units":
+				for v in views.values():
+					if v is UnitView: v.visible = false
+	if args.has("noui"):
+		ui.visible = false
+		bars.visible = false
+		hud.visible = false
 	if args.has("capture"):
 		_start_capture()
+	elif args.has("bench"):
+		_start_bench()
 
 func _parse_args() -> void:
 	for a in OS.get_cmdline_user_args():
@@ -115,9 +139,12 @@ func _physics_process(_dt: float) -> void:
 	_step()
 
 func _step() -> void:
+	var t := Time.get_ticks_usec()
 	world.step()
+	t = _tm("sim", t)
 	_drain_events()
 	_sync_views()
+	_tm("sync", t)
 
 func _sync_views() -> void:
 	for u in world.units:
@@ -207,21 +234,33 @@ func _drain_events() -> void:
 func _head(p: Vector2, extra: float) -> Vector3:
 	return View.to3(p, terrain.height_at(p)) + Vector3(0, extra, 0)
 
+func _tm(key: String, t0: int) -> int:
+	var t1 := Time.get_ticks_usec()
+	if _bench_until > 0.0:
+		_bench_acc[key] = _bench_acc.get(key, 0.0) + (t1 - t0) / 1000.0
+	return t1
+
 func _process(dt: float) -> void:
+	var _t := Time.get_ticks_usec()
 	var alpha := Engine.get_physics_interpolation_fraction()
 	if _capture_frames >= 0:
 		alpha = 1.0
 	for v in views.values():
 		if v is UnitView:
-			v.frame(alpha, dt)
+			v.frame(alpha, dt, camera.cam)
 			var u := world.get_unit(v.uid)
 			if u:
 				v.visible = u.team == player_team or world.vision.sees(player_team, u) or not u.alive and false
 				if u.team != player_team and not u.alive:
 					v.visible = world.vision.cell_visible(player_team, u.pos)
+	_t = _tm("views", _t)
 	fx.frame(world, alpha, dt)
+	_t = _tm("fx", _t)
+	if _bench_until > 0.0:
+		_bench_frame(dt)
 	atmosphere.update(world.is_night(), dt if _capture_frames < 0 else 10.0)
 	_update_fog(dt)
+	_t = _tm("fog", _t)
 	for id in views:
 		var v = views[id]
 		if v is UnitView:
@@ -236,38 +275,105 @@ func _process(dt: float) -> void:
 func _build_fog() -> void:
 	var n := SimMap.VN
 	fog_img = Image.create(n, n, false, Image.FORMAT_L8)
-	_fog_vals.resize(n * n)
-	_fog_vals.fill(0.0)
 	fog_tex = ImageTexture.create_from_image(fog_img)
+	_fog_prev = ImageTexture.create_from_image(fog_img)
 	_fog_quad = MeshInstance3D.new()
 	var q := QuadMesh.new()
 	q.size = Vector2(1, 1)
 	_fog_quad.mesh = q
 	_fog_quad.extra_cull_margin = 16384.0
 	_fog_quad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var m := ShaderMaterial.new()
-	m.shader = preload("res://src/game/fog_of_war.gdshader")
-	m.set_shader_parameter("fog_tex", fog_tex)
-	m.set_shader_parameter("map_half", View.MAP_HALF_M)
-	m.render_priority = 100
-	_fog_quad.material_override = m
+	_fog_mat = ShaderMaterial.new()
+	_fog_mat.shader = preload("res://src/game/fog_of_war.gdshader")
+	_fog_mat.set_shader_parameter("fog_tex", fog_tex)
+	_fog_mat.set_shader_parameter("fog_prev", _fog_prev)
+	_fog_mat.set_shader_parameter("map_half", View.MAP_HALF_M)
+	_fog_mat.render_priority = 100
+	_fog_quad.material_override = _fog_mat
 	camera.cam.add_child(_fog_quad)
 	_fog_quad.position = Vector3(0, 0, -1)
 
+var _fog_prev: ImageTexture
+var _fog_mat: ShaderMaterial
+var _fog_tick := -1
+var _fog_blend := 1.0
+var _fog_prev_img: Image
+
+## The vision grid (0/1 bytes) goes to the GPU as-is whenever it changes; the shader scales it and cross-fades from
+## the previous grid, so cells fade in and out smoothly without a per-cell loop here.
 func _update_fog(dt: float) -> void:
-	var vis: PackedByteArray = world.vision.visible[player_team]
-	var n := SimMap.VN
-	var rate := clampf(dt * 4.0, 0.0, 1.0) if _capture_frames < 0 else 1.0
-	var data := PackedByteArray()
-	data.resize(n * n)
-	for i in n * n:
-		var goal := float(vis[i])
-		var v := _fog_vals[i]
-		v += (goal - v) * rate
-		_fog_vals[i] = v
-		data[i] = int(v * 255.0)
-	fog_img.set_data(n, n, false, Image.FORMAT_L8, data)
-	fog_tex.update(fog_img)
+	var vtick: int = world.tick / C.VISION_UPDATE_TICKS
+	if vtick != _fog_tick:
+		_fog_tick = vtick
+		if _fog_prev_img == null:
+			_fog_prev_img = Image.create(SimMap.VN, SimMap.VN, false, Image.FORMAT_L8)
+		_fog_prev_img.copy_from(fog_img)
+		_fog_prev.update(_fog_prev_img)
+		var n := SimMap.VN
+		fog_img.set_data(n, n, false, Image.FORMAT_L8, world.vision.visible[player_team])
+		fog_tex.update(fog_img)
+		_fog_blend = 0.0 if _capture_frames < 0 else 1.0
+	_fog_blend = minf(1.0, _fog_blend + dt / 0.25)
+	_fog_mat.set_shader_parameter("blend", _fog_blend)
+
+# ---- Benchmark ------------------------------------------------------------------------------------------------------
+
+var _bench_frames: PackedFloat32Array = PackedFloat32Array()
+var _bench_until := -1.0
+var _bench_warm := 0.0
+var _bench_acc := {}
+
+## Fast-forward to --t, then play normally for --bench seconds, following the player hero, and report frame times.
+func _start_bench() -> void:
+	var t := float(args.get("t", "120"))
+	camera.edge_pan_enabled = false
+	while world.time < t:
+		world.step()
+		_drain_events()
+		if world.tick % 30 == 0:
+			_sync_views()
+	_sync_views()
+	_bench_warm = 3.0
+	_bench_until = float(args.bench)
+	RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
+	Engine.max_fps = 0
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+
+func _bench_frame(dt: float) -> void:
+	var h := world.get_unit(player_hero_id)
+	if h:
+		camera.focus(View.to3(h.pos, terrain.height_at(h.pos)))
+	if _bench_warm > 0.0:
+		_bench_warm -= dt
+		return
+	_bench_frames.append(dt * 1000.0)
+	var vrid := get_viewport().get_viewport_rid()
+	_bench_acc["gpu"] = _bench_acc.get("gpu", 0.0) + RenderingServer.viewport_get_measured_render_time_gpu(vrid)
+	_bench_acc["rcpu"] = _bench_acc.get("rcpu", 0.0) + RenderingServer.viewport_get_measured_render_time_cpu(vrid)
+	_bench_acc["proc"] = _bench_acc.get("proc", 0.0) + Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
+	_bench_acc["phys"] = _bench_acc.get("phys", 0.0) + Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+	_bench_acc["draws"] = _bench_acc.get("draws", 0.0) + Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+	_bench_acc["prims"] = _bench_acc.get("prims", 0.0) + Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)
+	_bench_until -= dt
+	if _bench_until <= 0.0:
+		var a := Array(_bench_frames)
+		a.sort()
+		var n := a.size()
+		var avg := 0.0
+		for v in a:
+			avg += v
+		avg /= n
+		var line := "BENCH frames %d avg %.2f ms (%.0f fps) p50 %.2f p95 %.2f p99 %.2f max %.2f over16.7 %d units %d" % [
+			n, avg, 1000.0 / avg, a[n / 2], a[int(n * 0.95)], a[int(n * 0.99)], a[n - 1], a.filter(func(v): return v > 16.7).size(), world.units.size()]
+		var parts := []
+		for k in _bench_acc:
+			parts.append("%s %.2f" % [k, _bench_acc[k] / n])
+		line += "
+  per-frame means: " + ", ".join(parts)
+		print(line)
+		var f := FileAccess.open("res://work/bench.txt", FileAccess.WRITE)
+		f.store_line(line)
+		get_tree().quit()
 
 # ---- Capture ---------------------------------------------------------------------------------------------------------
 

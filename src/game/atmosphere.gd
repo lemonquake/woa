@@ -22,11 +22,9 @@ func build() -> void:
 	sun.shadow_bias = 0.03
 	sun.shadow_normal_bias = 1.2
 	sun.shadow_blur = 1.2
-	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
-	sun.directional_shadow_max_distance = 70.0
-	sun.directional_shadow_split_1 = 0.08
-	sun.directional_shadow_split_2 = 0.2
-	sun.directional_shadow_split_3 = 0.45
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
+	sun.directional_shadow_max_distance = 42.0
+	sun.directional_shadow_split_1 = 0.45
 	sun.light_angular_distance = 1.2
 	add_child(sun)
 	var we := WorldEnvironment.new()

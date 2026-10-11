@@ -56,6 +56,9 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	model.rotation.y = PI
 	var anims := model.find_children("*", "AnimationPlayer", true, false)
 	anim = anims[0] if not anims.is_empty() else null
+	if anim and OS.get_cmdline_user_args().has("--noanim"):
+		anim.active = false
+		anim = null
 	var sks := model.find_children("*", "Skeleton3D", true, false)
 	skeleton = sks[0] if not sks.is_empty() else null
 	if key == "hero":
@@ -243,8 +246,15 @@ func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := fal
 		anim.seek(0.0, true)
 
 ## Called every rendered frame with the interpolation fraction between the last two ticks.
-func frame(alpha: float, delta: float) -> void:
+func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 	var p := prev_pos.lerp(cur_pos, alpha)
+	# skeletons off screen do not need animating
+	if anim and cam:
+		var on := visible and cam.is_position_in_frustum(position + Vector3(0, 1.0, 0))
+		if not on and position.distance_to(cam.global_position) > 6.0:
+			on = cam.is_position_in_frustum(position) or cam.is_position_in_frustum(position + Vector3(0, 2.4, 0))
+		if anim.active != on:
+			anim.active = on
 	var h := terrain.height_at(p)
 	position = View.to3(p, h)
 	rotation.y = View.yaw(lerp_angle(prev_facing, cur_facing, alpha))

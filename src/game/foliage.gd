@@ -40,9 +40,9 @@ func _mesh(model: String) -> Mesh:
 	if scene is MeshInstance3D:
 		mis.append(scene)
 	var src: Mesh = (mis[0] as MeshInstance3D).mesh
-	var out := ArrayMesh.new()
-	for s in src.get_surface_count():
-		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, src.surface_get_arrays(s))
+	# duplicate keeps the importer's generated LODs (copying surface arrays would drop them)
+	var out := src.duplicate() as Mesh
+	for s in out.get_surface_count():
 		out.surface_set_material(s, _game_material(src.surface_get_material(s), model))
 	scene.free()
 	_meshes[model] = out
@@ -104,6 +104,34 @@ func _pick(list: Array, rng: RandomNumberGenerator) -> Array:
 func _chunk_key(p: Vector2) -> Vector2i:
 	return Vector2i(floori((p.x + SimMap.HALF) / CHUNK), floori((p.y + SimMap.HALF) / CHUNK))
 
+## A cheap opaque stand-in that casts a tree's shadow (canopy ellipsoid + trunk), so the alpha-tested leaf cards
+## never render into the shadow map. Top-down, the soft blob reads like a painted canopy shadow.
+var _proxies := {}
+
+func _proxy(model: String) -> Mesh:
+	if _proxies.has(model):
+		return _proxies[model]
+	var src := _mesh(model)
+	var bb := src.get_aabb()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var sphere := SphereMesh.new()
+	sphere.radial_segments = 10
+	sphere.rings = 5
+	var canopy := model.begins_with("Pine") or model.begins_with("Dead")
+	var r := Vector3(bb.size.x * (0.3 if canopy else 0.4), bb.size.y * (0.38 if canopy else 0.27), bb.size.z * (0.3 if canopy else 0.4))
+	var c := bb.get_center() + Vector3(0, bb.size.y * (0.02 if canopy else 0.12), 0)
+	st.append_from(sphere, 0, Transform3D(Basis.from_scale(r * 2.0), c))
+	var trunk := CylinderMesh.new()
+	trunk.top_radius = bb.size.x * 0.05
+	trunk.bottom_radius = bb.size.x * 0.07
+	trunk.height = bb.size.y * 0.5
+	trunk.radial_segments = 6
+	st.append_from(trunk, 0, Transform3D(Basis(), Vector3(bb.get_center().x, bb.position.y + trunk.height * 0.5, bb.get_center().z)))
+	var m := st.commit()
+	_proxies[model] = m
+	return m
+
 ## Group instances {model: {chunk: [[Transform3D, custom, tree index]]}} then build one MultiMesh per pair.
 func _emit(groups: Dictionary, vis_end: float, shadows: bool) -> void:
 	for model in groups:
@@ -123,7 +151,18 @@ func _emit(groups: Dictionary, vis_end: float, shadows: bool) -> void:
 					_tree_slot[e[2]] = [mm, i, e[0]]
 			var mmi := MultiMeshInstance3D.new()
 			mmi.multimesh = mm
-			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if shadows else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if shadows:
+				var smm := mm.duplicate() as MultiMesh
+				smm.mesh = _proxy(model)
+				var sh := MultiMeshInstance3D.new()
+				sh.multimesh = smm
+				sh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+				add_child(sh)
+				for i in list.size():
+					var e2: Array = list[i]
+					if e2[2] >= 0:
+						(_tree_slot[e2[2]] as Array).append(smm)
 			if vis_end > 0.0:
 				mmi.visibility_range_end = vis_end
 				mmi.visibility_range_end_margin = 4.0
@@ -202,3 +241,5 @@ func set_tree_alive(index: int, alive: bool) -> void:
 	if not alive:
 		xf = Transform3D(Basis().scaled(Vector3.ONE * 0.0001), xf.origin - Vector3(0, 5, 0))
 	(s[0] as MultiMesh).set_instance_transform(s[1], xf)
+	if s.size() > 3:
+		(s[3] as MultiMesh).set_instance_transform(s[1], xf)
