@@ -385,6 +385,7 @@ func _build(piece: Dictionary) -> Array[MeshInstance3D]:
 		mi.extra_cull_margin = 0.6
 		if not dye.is_empty():
 			_dye(mi, dye)
+		GearMaterials.apply(mi)
 		out.append(mi)
 	return out
 

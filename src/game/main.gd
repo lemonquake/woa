@@ -108,16 +108,9 @@ func _parse_args() -> void:
 
 ## The player's Galewarden (Dawn) and the bot's (Dusk). Looks and outfits use the customisable hero body.
 func _spawn_heroes() -> void:
-	var look := HeroLook.preset("huntress")
-	look["hair"] = "ponytail"
-	look["hair_color"] = "e8d28a"
-	look["eye_color"] = "3a7a6a"
-	var p := world.spawn_hero("galewarden", C.DAWN, {
-		"display_name": "Galewarden", "look": look,
-		"outfit": {"inner_garment": "silk_undershirt", "armor": "tc_trackers_leathers", "leggings": "hide_leggings",
-			"boots": "wayfarer_boot", "gloves": "silk_glove", "accessory_1": "windrider_feather"},
-		"dyes": {"armor": {"cloth": "2f6f4a", "leather": "6b4423"}, "leggings": {"cloth": "3a4a2a", "leather": "5a3a20"}},
-	})
+	# the hero built in the Hero Creator (or the default Galewarden)
+	var mine: Dictionary = GameSettings.load_hero() if not args.has("capture") and not args.has("bench") else GameSettings.default_hero()
+	var p := world.spawn_hero("galewarden", C.DAWN, mine.duplicate(true))
 	p.player = true
 	player_hero_id = p.id
 	var blook := HeroLook.preset("shade")

@@ -72,6 +72,8 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		_faction_colors(u.team)
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		if not is_hero:
+			GearMaterials.apply(mi)
 	_make_ring(u)
 	_play(String(cfg.idle), true)
 

@@ -144,3 +144,70 @@ static func wrap(s: String, width: float, size: int, kind := "body") -> PackedSt
 	if line != "":
 		out.append(line)
 	return out
+
+## The Control theme for menus: dark panels with a gold rim, Lato text, Cinzel headings, gold sliders and buttons.
+static var _theme: Theme
+
+static func theme() -> Theme:
+	if _theme:
+		return _theme
+	var t := Theme.new()
+	t.default_font = font("body")
+	t.default_font_size = 16
+	var sb := func(bg: Color, border: Color, bw := 1, r := 4, pad := 8) -> StyleBoxFlat:
+		var s := StyleBoxFlat.new()
+		s.bg_color = bg
+		s.border_color = border
+		s.set_border_width_all(bw)
+		s.set_corner_radius_all(r)
+		s.content_margin_left = pad
+		s.content_margin_right = pad
+		s.content_margin_top = pad * 0.6
+		s.content_margin_bottom = pad * 0.6
+		return s
+	t.set_stylebox("panel", "PanelContainer", sb.call(Color(0.06, 0.065, 0.085, 0.94), GOLD_DIM, 2, 8, 14))
+	t.set_stylebox("panel", "Panel", sb.call(Color(0.06, 0.065, 0.085, 0.94), GOLD_DIM, 2, 8, 14))
+	for cls in ["Button", "OptionButton"]:
+		t.set_stylebox("normal", cls, sb.call(Color(0.12, 0.12, 0.15), Color(0.35, 0.3, 0.22)))
+		t.set_stylebox("hover", cls, sb.call(Color(0.18, 0.16, 0.13), GOLD))
+		t.set_stylebox("pressed", cls, sb.call(Color(0.28, 0.22, 0.12), GOLD))
+		t.set_stylebox("focus", cls, sb.call(Color(0, 0, 0, 0), Color(0, 0, 0, 0), 0))
+		t.set_stylebox("disabled", cls, sb.call(Color(0.08, 0.08, 0.09), Color(0.2, 0.2, 0.2)))
+		t.set_color("font_color", cls, TEXT)
+		t.set_color("font_hover_color", cls, GOLD)
+		t.set_color("font_pressed_color", cls, GOLD)
+	t.set_stylebox("hover_pressed", "Button", sb.call(Color(0.3, 0.24, 0.13), GOLD))
+	t.set_color("font_color", "Label", TEXT)
+	t.set_font_size("font_size", "Label", 15)
+	var slider_bg: StyleBoxFlat = sb.call(Color(0.02, 0.02, 0.03), Color(0.25, 0.22, 0.18), 1, 3, 0)
+	slider_bg.content_margin_top = 4
+	slider_bg.content_margin_bottom = 4
+	t.set_stylebox("slider", "HSlider", slider_bg)
+	var fill: StyleBoxFlat = sb.call(Color(0.62, 0.48, 0.2), Color(0.8, 0.62, 0.28), 1, 3, 0)
+	fill.content_margin_top = 4
+	fill.content_margin_bottom = 4
+	t.set_stylebox("grabber_area", "HSlider", fill)
+	t.set_stylebox("grabber_area_highlight", "HSlider", fill)
+	var grab := Image.create(18, 18, false, Image.FORMAT_RGBA8)
+	for y in 18:
+		for x in 18:
+			var d := Vector2(x - 8.5, y - 8.5).length()
+			grab.set_pixel(x, y, Color(1.0, 0.86, 0.5, clampf(8.5 - d, 0.0, 1.0)) if d < 6.5 else Color(0.15, 0.1, 0.05, clampf(8.5 - d, 0.0, 1.0)))
+	var gt := ImageTexture.create_from_image(grab)
+	t.set_icon("grabber", "HSlider", gt)
+	t.set_icon("grabber_highlight", "HSlider", gt)
+	t.set_stylebox("tab_selected", "TabBar", sb.call(Color(0.2, 0.16, 0.1), GOLD, 1, 4, 12))
+	t.set_stylebox("tab_unselected", "TabBar", sb.call(Color(0.08, 0.08, 0.1), Color(0.3, 0.27, 0.22), 1, 4, 12))
+	t.set_stylebox("tab_hovered", "TabBar", sb.call(Color(0.14, 0.12, 0.1), GOLD_DIM, 1, 4, 12))
+	t.set_color("font_selected_color", "TabBar", GOLD)
+	t.set_color("font_unselected_color", "TabBar", TEXT_DIM)
+	t.set_color("font_hovered_color", "TabBar", TEXT)
+	t.set_stylebox("panel", "TabContainer", sb.call(Color(0.05, 0.055, 0.07, 0.92), GOLD_DIM, 1, 6, 12))
+	t.set_stylebox("normal", "LineEdit", sb.call(Color(0.03, 0.03, 0.04), Color(0.35, 0.3, 0.22)))
+	t.set_stylebox("focus", "LineEdit", sb.call(Color(0.03, 0.03, 0.04), GOLD))
+	t.set_stylebox("panel", "PopupMenu", sb.call(Color(0.07, 0.07, 0.09, 0.98), GOLD_DIM, 1, 4, 6))
+	t.set_color("font_color", "PopupMenu", TEXT)
+	t.set_color("font_hover_color", "PopupMenu", GOLD)
+	t.set_stylebox("hover", "PopupMenu", sb.call(Color(0.2, 0.16, 0.1), Color(0, 0, 0, 0), 0))
+	_theme = t
+	return t
