@@ -18,6 +18,7 @@ var fx: Fx
 var bars: UnitBars
 var input: InputController
 var audio: GameAudio
+var menus: Control
 var hud: Control
 var views := {}                            # unit id -> UnitView | BuildingView
 var player_team := C.DAWN
@@ -28,6 +29,7 @@ var fog_img: Image
 var _fog_quad: MeshInstance3D
 var args := {}
 var _capture_frames := -1
+var _last_dmg := {}
 
 func _ready() -> void:
 	_parse_args()
@@ -70,6 +72,9 @@ func _ready() -> void:
 	input = InputController.new()
 	input.game = self
 	add_child(input)
+	menus = preload("res://src/ui/match_menus.gd").new()
+	menus.set("game", self)
+	ui.add_child(menus)
 	audio = GameAudio.new()
 	audio.game = self
 	add_child(audio)
@@ -187,6 +192,11 @@ func _drain_events() -> void:
 		if audio and _capture_frames < 0:
 			audio.event(e, world)
 		match e.t:
+			"damage":
+				_last_dmg[e.u] = float(e.amount)
+				var dv = views.get(e.u)
+				if dv is UnitView and float(e.amount) > 0.0 and e.get("attack", false):
+					dv.flash()
 			"attack_start":
 				var v = views.get(e.u)
 				if v is UnitView:
@@ -241,6 +251,11 @@ func _drain_events() -> void:
 				if hud and hud.has_method("on_kill"):
 					hud.on_kill(e)
 			"death":
+				var kv = views.get(e.u)
+				var killer := world.get_unit(e.killer)
+				var dead := world.get_unit(e.u)
+				if kv is UnitView and killer and dead and dead.is_lane_creep() and killer.is_hero():
+					kv.death_knock(killer.pos, float(_last_dmg.get(e.u, 0.0)))
 				var du := world.get_unit(e.u)
 				if du and du.is_building() and hud and hud.has_method("announce"):
 					var side := "Your" if du.team == player_team else "The enemy's"
@@ -441,6 +456,12 @@ func _start_capture() -> void:
 	camera._apply()
 	if args.has("select"):
 		selected_id = int(args.select)
+	if args.has("pause"):
+		menus.toggle()
+	if args.has("endscreen"):
+		world.winner = player_team
+		menus._end_shown = true
+		menus._show_end()
 	_capture_frames = 0
 
 func _save_capture() -> void:

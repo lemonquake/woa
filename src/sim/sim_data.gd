@@ -80,8 +80,8 @@ static func _build_units() -> void:
 	var super_ranged := ranged.duplicate()
 	super_ranged.merge({"hp": 475.0, "armor": 1.0, "dmg_min": 46.0, "dmg_max": 51.0, "xp": 22.0, "gold_min": 19, "gold_max": 25}, true)
 	var names := {
-		0: {"melee": "Thornling", "ranged": "Sunseer", "siege": "Sunforge Ballista", "flag": "Banner Warden"},
-		1: {"melee": "Hollow Ghoul", "ranged": "Bone Caster", "siege": "Grave Engine", "flag": "Dread Standard"},
+		0: {"melee": "Sunguard Footman", "ranged": "Sunseer", "siege": "Sunforge Golem", "flag": "Banner Warden"},
+		1: {"melee": "Hollow Ghoul", "ranged": "Bone Caster", "siege": "Grave Colossus", "flag": "Dread Standard"},
 	}
 	for team in [0, 1]:
 		var p := "dawn_" if team == 0 else "dusk_"
@@ -125,39 +125,39 @@ static func _build_units() -> void:
 
 	# Neutral creeps (npc_dota_neutral_*), renamed.
 	var neu := {"kind": K.NEUTRAL_CREEP, "turn_rate": 0.9, "bat": 2.0, "vision_day": 800.0, "vision_night": 800.0}
-	_add("mudling", _merged(neu, {"name": "Mudling", "hull": 16.0, "hp": 240.0, "hp_regen": 0.5, "dmg_min": 15.0,
+	_add("mudling", _merged(neu, {"name": "Goblin Skulker", "hull": 16.0, "hp": 240.0, "hp_regen": 0.5, "dmg_min": 15.0,
 		"dmg_max": 16.0, "attack_point": 0.38, "backswing": 0.5, "acquire": 500.0, "range": 100.0, "move_speed": 290.0,
 		"xp": 14.0, "gold_min": 3, "gold_max": 5, "level": 1}))
-	_add("mudling_digger", _merged(neu, {"name": "Mudling Digger", "hull": 16.0, "hp": 325.0, "hp_regen": 0.5,
+	_add("mudling_digger", _merged(neu, {"name": "Goblin Sapper", "hull": 16.0, "hp": 325.0, "hp_regen": 0.5,
 		"armor": 1.0, "dmg_min": 22.0, "dmg_max": 23.0, "attack_point": 0.38, "backswing": 0.5, "acquire": 500.0,
 		"range": 100.0, "move_speed": 270.0, "xp": 17.0, "gold_min": 12, "gold_max": 14, "level": 1}))
-	_add("mudling_foreman", _merged(neu, {"name": "Mudling Foreman", "hull": 16.0, "hp": 400.0, "hp_regen": 0.5,
+	_add("mudling_foreman", _merged(neu, {"name": "Goblin Taskmaster", "hull": 16.0, "hp": 400.0, "hp_regen": 0.5,
 		"armor": 2.0, "dmg_min": 24.0, "dmg_max": 26.0, "attack_point": 0.38, "backswing": 0.5, "acquire": 500.0,
 		"range": 110.0, "move_speed": 330.0, "xp": 30.0, "gold_min": 19, "gold_max": 21, "level": 2}))
-	_add("ashfang", _merged(neu, {"name": "Ashfang Wolf", "hull": 16.0, "hp": 500.0, "hp_regen": 0.5, "mana": 200.0,
+	_add("ashfang", _merged(neu, {"name": "Dire Wolf", "hull": 16.0, "hp": 500.0, "hp_regen": 0.5, "mana": 200.0,
 		"armor": 1.0, "dmg_min": 15.0, "dmg_max": 17.0, "attack_point": 0.33, "backswing": 0.64, "acquire": 500.0,
 		"range": 90.0, "move_speed": 350.0, "xp": 40.0, "gold_min": 18, "gold_max": 22, "level": 3}))
-	_add("ashfang_alpha", _merged(neu, {"name": "Ashfang Alpha", "hull": 24.0, "hp": 600.0, "hp_regen": 0.5,
+	_add("ashfang_alpha", _merged(neu, {"name": "Dire Wolf Alpha", "hull": 24.0, "hp": 600.0, "hp_regen": 0.5,
 		"armor": 3.0, "dmg_min": 27.0, "dmg_max": 29.0, "attack_point": 0.33, "backswing": 0.64, "acquire": 500.0,
 		"range": 90.0, "move_speed": 350.0, "xp": 60.0, "gold_min": 32, "gold_max": 34, "level": 5}))
-	_add("strider", _merged(neu, {"name": "Plains Strider", "hull": 16.0, "hp": 350.0, "hp_regen": 0.5, "armor": 1.0,
+	_add("strider", _merged(neu, {"name": "Orc Raider", "hull": 16.0, "hp": 350.0, "hp_regen": 0.5, "armor": 1.0,
 		"dmg_min": 18.0, "dmg_max": 20.0, "attack_point": 0.3, "backswing": 0.3, "acquire": 500.0, "range": 100.0,
 		"move_speed": 320.0, "xp": 32.0, "gold_min": 16, "gold_max": 18, "level": 2}))
-	_add("strider_warlord", _merged(neu, {"name": "Plains Warlord", "hull": 24.0, "hp": 1100.0, "hp_regen": 1.0,
+	_add("strider_warlord", _merged(neu, {"name": "Orc Warchanter", "hull": 24.0, "hp": 1100.0, "hp_regen": 1.0,
 		"mana": 200.0, "armor": 4.0, "dmg_min": 49.0, "dmg_max": 55.0, "attack_point": 0.3, "backswing": 0.3,
 		"acquire": 500.0, "range": 100.0, "move_speed": 320.0, "xp": 90.0, "gold_min": 54, "gold_max": 60, "level": 5}))
-	_add("hill_troll", _merged(neu, {"name": "Hill Troll Slinger", "hull": 16.0, "hp": 500.0, "hp_regen": 0.5,
+	_add("hill_troll", _merged(neu, {"name": "Mire Troll", "hull": 16.0, "hp": 500.0, "hp_regen": 0.5,
 		"armor": 1.0, "dmg_min": 28.0, "dmg_max": 37.0, "attack_point": 0.3, "backswing": 0.3, "acquire": 300.0,
 		"range": 500.0, "projectile_speed": 1200.0, "move_speed": 270.0, "xp": 28.0, "gold_min": 18, "gold_max": 20,
 		"attack_class": AC.PIERCING, "level": 2}))
-	_add("ogre_brute", _merged(neu, {"name": "Ogre Brute", "hull": 24.0, "hp": 800.0, "hp_regen": 0.5, "armor": 1.0,
+	_add("ogre_brute", _merged(neu, {"name": "Ogre Crusher", "hull": 24.0, "hp": 800.0, "hp_regen": 0.5, "armor": 1.0,
 		"dmg_min": 22.0, "dmg_max": 24.0, "attack_point": 0.3, "backswing": 0.3, "acquire": 500.0, "range": 100.0,
 		"move_speed": 270.0, "xp": 32.0, "gold_min": 22, "gold_max": 26, "level": 2}))
-	_add("cinder_wyrmling", _merged(neu, {"name": "Cinder Wyrmling", "hull": 24.0, "hp": 950.0, "hp_regen": 0.5,
+	_add("cinder_wyrmling", _merged(neu, {"name": "Cinder Imp", "hull": 24.0, "hp": 950.0, "hp_regen": 0.5,
 		"armor": 2.0, "magic_resist": 0.25, "dmg_min": 20.0, "dmg_max": 22.0, "attack_point": 0.5, "backswing": 0.5,
 		"acquire": 300.0, "range": 300.0, "projectile_speed": 900.0, "move_speed": 350.0, "xp": 95.0, "gold_min": 37,
 		"gold_max": 43, "level": 3}))
-	_add("elder_cinder_wyrm", _merged(neu, {"name": "Elder Cinder Wyrm", "hull": 40.0, "hp": 2000.0, "hp_regen": 2.0,
+	_add("elder_cinder_wyrm", _merged(neu, {"name": "Magma Colossus", "hull": 40.0, "hp": 2000.0, "hp_regen": 2.0,
 		"mana": 500.0, "armor": 4.0, "magic_resist": 0.3, "dmg_min": 62.0, "dmg_max": 68.0, "attack_point": 0.5,
 		"backswing": 0.5, "acquire": 300.0, "range": 300.0, "projectile_speed": 1500.0, "move_speed": 300.0,
 		"xp": 124.0, "gold_min": 76, "gold_max": 80, "level": 6}))

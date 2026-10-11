@@ -177,6 +177,8 @@ func tick(u: SimUnit) -> void:
 	cur_pos = u.pos
 	cur_facing = u.facing
 	if not u.alive:
+		if _knock_t >= 0.0:
+			return
 		if _dead_at < 0.0:
 			_dead_at = Time.get_ticks_msec() / 1000.0
 			_play(String(cfg.get("death", "death")), false, 1.0, 0.1)
@@ -222,8 +224,42 @@ func on_attack_start(point_time: float) -> void:
 func on_attack_cancel() -> void:
 	_lock_until = 0.0
 
+static var _flash_mat: StandardMaterial3D
+
+## A brief white flash when hit.
 func flash() -> void:
-	_flash = 1.0
+	if model == null:
+		return
+	if _flash_mat == null:
+		_flash_mat = StandardMaterial3D.new()
+		_flash_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_flash_mat.albedo_color = Color(1.0, 0.95, 0.85, 0.28)
+		_flash_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_flash_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	if _flash <= 0.0:
+		for mi: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+			mi.material_overlay = _flash_mat
+	_flash = 0.09
+
+## Lane creeps killed by a big enough blow are thrown back up to 200 units in a short arc (Dota's death knockback).
+var _knock_from := Vector2.ZERO
+var _knock_to := Vector2.ZERO
+var _knock_t := -1.0
+var _knock_dur := 0.5
+var _knock_h := 0.0
+
+func death_knock(from: Vector2, damage: float) -> void:
+	if damage < 100.0:
+		return
+	var dir := (cur_pos - from).normalized()
+	if dir == Vector2.ZERO:
+		dir = Vector2.from_angle(randf() * TAU)
+	var dist := clampf(damage, 100.0, 500.0) / 500.0 * 200.0 * randf_range(0.6, 1.0)
+	_knock_from = cur_pos
+	_knock_to = cur_pos + dir * dist
+	_knock_dur = randf_range(0.4, 0.6)
+	_knock_h = dist / 200.0 * 0.5
+	_knock_t = 0.0
 
 func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := false) -> void:
 	if anim == null:
@@ -253,6 +289,21 @@ func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := fal
 ## Called every rendered frame with the interpolation fraction between the last two ticks.
 func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 	var p := prev_pos.lerp(cur_pos, alpha)
+	if _flash > 0.0:
+		_flash -= delta
+		if _flash <= 0.0 and model:
+			for mi: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+				mi.material_overlay = null
+	var lift := 0.0
+	if _knock_t >= 0.0:
+		_knock_t += delta
+		var f := clampf(_knock_t / _knock_dur, 0.0, 1.0)
+		p = _knock_from.lerp(_knock_to, f)
+		lift = sin(f * PI) * _knock_h
+		if f >= 1.0:
+			cur_pos = _knock_to
+			prev_pos = _knock_to
+			_knock_t = -1.0
 	# skeletons off screen do not need animating
 	if anim and cam:
 		var on := visible and cam.is_position_in_frustum(position + Vector3(0, 1.0, 0))
@@ -261,7 +312,7 @@ func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 		if anim.active != on:
 			anim.active = on
 	var h := terrain.height_at(p)
-	position = View.to3(p, h)
+	position = View.to3(p, h) + Vector3(0, lift, 0)
 	rotation.y = View.yaw(lerp_angle(prev_facing, cur_facing, alpha))
 	if _dead_at >= 0.0 and model:
 		var t := Time.get_ticks_msec() / 1000.0 - _dead_at

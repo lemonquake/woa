@@ -112,7 +112,9 @@ func _key(k: InputEventKey, h: SimUnit) -> void:
 		KEY_A:
 			targeting = "attack"
 		KEY_ESCAPE:
-			targeting = ""
+			if targeting != "":
+				targeting = ""
+				get_viewport().set_input_as_handled()
 		KEY_F1:
 			game.selected_id = h.id
 			var now := Time.get_ticks_msec() / 1000.0

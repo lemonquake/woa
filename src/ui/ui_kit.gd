@@ -95,16 +95,20 @@ static func cooldown(ci: CanvasItem, r: Rect2, frac: float, secs: float) -> void
 		return
 	var c := r.get_center()
 	var rad := r.size.length() * 0.5
-	var pts := PackedVector2Array([c])
 	var steps := 40
 	var start := -PI * 0.5
+	var col := PackedColorArray([Color(0, 0, 0, 0.66), Color(0, 0, 0, 0.66), Color(0, 0, 0, 0.66)])
+	var prev := Vector2.INF
 	for i in steps + 1:
 		var a := start + TAU * frac * float(i) / steps
 		var p := c + Vector2(cos(a), sin(a)) * rad
 		p.x = clampf(p.x, r.position.x, r.end.x)
 		p.y = clampf(p.y, r.position.y, r.end.y)
-		pts.append(p)
-	ci.draw_colored_polygon(pts, Color(0, 0, 0, 0.66))
+		if prev != Vector2.INF:
+			var area := absf((prev - c).cross(p - c))
+			if area > 0.01:
+				ci.draw_primitive(PackedVector2Array([c, prev, p]), col, PackedVector2Array())
+		prev = p
 	var s := str(ceili(secs)) if secs >= 1.0 else "%.1f" % secs
 	text_c(ci, s, c + Vector2(0, 7), 20, Color(1, 1, 1), "bold")
 
