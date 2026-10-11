@@ -21,7 +21,9 @@ Not yet done:
 ```
 or open `A:\Python\woa\project.godot` in the editor and press F5.
 
-* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset.
+* The game opens on the **Hero Creator** (`src/ui/hero_creator.tscn`). Press Play to start a match against Bot Gerald.
+* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 33 tests.
+* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured at 1080p on the RTX 4060: about 89 fps average, p95 13.3 ms.
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
 * Parse-check every script: `sh tools/check.sh`.
 * Rebuild the building models: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/buildings.py`.
@@ -42,6 +44,9 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 | Z X C V B N | Items. Right click an item slot to move it between the inventory and the backpack |
 | F4, the Shop button, or B with an empty slot 5 | Shop |
 | J, or the button above the minimap | Glyph |
+| T | Town Portal: target a point or the minimap; the hero teleports beside the nearest allied building after a 3 s channel |
+| F3, or the Courier button | Courier fetches your stash and flies it to you |
+| Buyback button (while dead) | Buy back: 200 + net worth / 13 gold, 8 minute cooldown |
 | F1 | Select your hero; press twice to centre on it |
 | Space (hold) | Follow your hero |
 | Screen edges, arrow keys, middle-drag | Pan the camera |
@@ -97,7 +102,7 @@ See `docs/ASSET_CREDITS.md`.
    * Better Ancient design: floating crystal and rune ring instead of the stick arms.
    * Larger stone blocks on towers.
    * Replace the paving texture, which reads as a checkerboard.
-2. Hero creator screen (sliders, style pickers, outfit and dye per slot) before the match, saved to `user://hero.json`.
-3. Courier, Town Portal scroll, buyback button, secret shop, runes and Roshan (deferred features).
+2. Done: Hero Creator, Town Portal, buyback, courier. Still deferred: secret shop, runes, Roshan, wards UI polish.
+3. Pause and settings menus, end-of-match screen with stats.
 4. More heroes; the bot currently plays only Galewarden mid.
 5. Blind visual review against Dota 2 reference captures (lemondev gauntlet) and a performance gate: a 60 s window with p95 frame time under 16.7 ms at 1080p on the RTX 4060.
