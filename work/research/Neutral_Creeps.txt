@@ -1,0 +1,799 @@
+:''"Neutral" redirects here.  For neutral items, see [[neutral items]].''
+{{Tabber
+| link1 = Neutral Creeps
+| link2 = Neutral Creeps/Changelogs
+| name2 = Changelogs
+}}
+
+[[File:Neutral creeps.png|right|300px]]
+<section begin=intro />'''Neutral creeps''' are a type of AI-controlled [[creep]] that  do not actively take part in the war between the Ancients. They are scattered across the map in various camps, which they do not leave. They attack only when attacked first, or when approached.
+
+These camps can be farmed by any player of either team for [[gold]] and [[experience]]. They come in different power levels and bounties, suitable for early-game and late-game farming. In general, they are a bigger threat than lane creeps, due to their varying stats and them possessing abilities.<br>{{U|Roshan}} the Immortal, who sits in one of his dens in the center river, and the {{U|Tormentor}} on the map corners are also neutral creeps.<section end=intro/>
+{{clr}}
+
+==Types==
+[[File:Dota 2 map neutral creep camps.jpg|thumb|Spawn areas of all creep camps other than Roshan and Tormentors.]]
+Neutral creeps always spawn in groups, known as camps. These camps have predetermined unit compositions, and are categorized in 4 tiers:
+
+* {{Symbol|Small Camp}} '''Small camps:''' very light creeps with low stats and basic abilities.
+* {{Symbol|Medium Camp}} '''Medium camps:''' light creeps with low stats and stronger abilities.
+* {{Symbol|Large Camp}} '''Large camps:''' big creeps with with higher stats and powerful abailities.
+* {{Symbol|Ancient Camp}} '''Ancient camps:''' very large creeps with high stats, the [[Ancient (unit type)|ancient unit]] classification, and powerful abilities.
+
+The camps are also divided into terrestrial camps and flooded camps:
+
+* {{Symbol|terrain land}} '''Terrestrial camps''' only spawn on land, in the '''dry camp spots'''. These camps are static, and do not change throughout the game.
+* {{Symbol|terrain river}} '''Amphibious camps''' only spawn within the river, in the '''flooded camp spots'''. These camps evolve over time, the creeps in these camp upgrade to higher tiers as the game goes on.
+{{clr}}
+
+===Small Camps===
+There are four small camp spots, from which two are dry and two are flooded. Both sides of the map contain one of each.
+
+{|class = "wikitable" style="text-align:center;" width = "100%"
+! class = "header" width = "13%" rowspan="2" | Camp locations
+! class = "header" width = "12%" rowspan="2" | Creeps
+! class = "header" width = "15%" rowspan="2" | Camp Name
+! class = "header" width = "27%" colspan="3" | Total Gold [{{tooltip|?|Values in brackets are the average values.}}]
+! class = "header" width = "10%" colspan="3" | Total Experience
+! class = "header" width = "8%" rowspan="2"  | Total Health
+! class = "header" width = "15%" rowspan="2" | Abilities
+|-
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less gold to their killer.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this gold to the player that stacked them if they get farmed by an ally.}}]
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less experience.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this experience to the player that stacked them if they get farmed by an ally.}}]
+|-
+| rowspan = "{{#vardefineecho:totalcamps|7}}" | [[File:Dota 2 map neutral creep camps small.jpg|300px]]
+| [[File:Kobold model.png|30px|link=Kobold]][[File:Kobold model.png|30px|link=Kobold]][[File:Kobold model.png|30px|link=Kobold]][[File:Kobold Soldier model.png|35px|link=Kobold Soldier]][[File:Kobold Foreman model.png|35px|link=Kobold Foreman]]
+| '''[[Kobold Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Kobold Camp|bounty min}}|to|{{Show|C|Kobold Camp|bounty max}}}} ({{Gold|{{Show|C|Kobold Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Kobold Camp|bounty min stacked}}|to|{{Show|C|Kobold Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Kobold Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Kobold Camp|bounty min stacker}}|to|{{Show|C|Kobold Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Kobold Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Kobold Camp|experience}}|i}}
+| {{XP|{{Show|C|Kobold Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Kobold Camp|experience stacker}}|i}}
+| {{Show|C|Kobold Camp|health}} {{M|Health}}
+| {{A|Kobold|Prospecting Aura}} - {{A|Kobold Soldier|Steal Weapon}} - {{A|Kobold Foreman|Speed Aura}}
+|-
+| [[File:Hill Troll Berserker model.png|35px|link=Hill Troll Berserker]][[File:Hill Troll Berserker model.png|35px|link=Hill Troll Berserker]][[File:Hill Troll Priest model.png|35px|link=Hill Troll Priest]]
+| '''[[Hill Troll Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Hill Troll Camp|bounty min}}|to|{{Show|C|Hill Troll Camp|bounty max}}}} ({{Gold|{{Show|C|Hill Troll Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Hill Troll Camp|bounty min stacked}}|to|{{Show|C|Hill Troll Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Hill Troll Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Hill Troll Camp|bounty min stacker}}|to|{{Show|C|Hill Troll Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Hill Troll Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Hill Troll Camp|experience}}|i}}
+| {{XP|{{Show|C|Hill Troll Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Hill Troll Camp|experience stacker}}|i}}
+| {{Show|C|Hill Troll Camp|health}} {{M|Health}}
+| {{A|Hill Troll Berserker|Break}} - {{A|Hill Troll Priest|Heal}} - {{A|Hill Troll Priest|Heal Amplification Aura}}
+|-
+| [[File:Hill Troll Berserker model.png|35px|link=Hill Troll Berserker]][[File:Hill Troll Berserker model.png|35px|link=Hill Troll Berserker]][[File:Kobold Foreman model.png|35px|link=Kobold Foreman]]
+| '''[[Hill Troll and Kobold Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Hill Troll and Kobold Camp|bounty min}}|to|{{Show|C|Hill Troll and Kobold Camp|bounty max}}}} ({{Gold|{{Show|C|Hill Troll and Kobold Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Hill Troll and Kobold Camp|bounty min stacked}}|to|{{Show|C|Hill Troll and Kobold Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Hill Troll and Kobold Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Hill Troll and Kobold Camp|bounty min stacker}}|to|{{Show|C|Hill Troll and Kobold Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Hill Troll and Kobold Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Hill Troll and Kobold Camp|experience}}|i}}
+| {{XP|{{Show|C|Hill Troll and Kobold Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Hill Troll and Kobold Camp|experience stacker}}|i}}
+| {{Show|C|Hill Troll and Kobold Camp|health}} {{M|Health}}
+| {{A|Hill Troll Berserker|Break}} - {{A|Kobold Foreman|Speed Aura}}
+|-
+| [[File:Vhoul Assassin model.png|35px|link=Vhoul Assassin]][[File:Vhoul Assassin model.png|35px|link=Vhoul Assassin]][[File:Vhoul Assassin model.png|35px|link=Vhoul Assassin]]
+| '''[[Vhoul Assassin Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Vhoul Assassin Camp|bounty min}}|to|{{Show|C|Vhoul Assassin Camp|bounty max}}}} ({{Gold|{{Show|C|Vhoul Assassin Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Vhoul Assassin Camp|bounty min stacked}}|to|{{Show|C|Vhoul Assassin Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Vhoul Assassin Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Vhoul Assassin Camp|bounty min stacker}}|to|{{Show|C|Vhoul Assassin Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Vhoul Assassin Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Vhoul Assassin Camp|experience}}|i}}
+| {{XP|{{Show|C|Vhoul Assassin Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Vhoul Assassin Camp|experience stacker}}|i}}
+| {{Show|C|Vhoul Assassin Camp|health}} {{M|Health}}
+| {{A|Vhoul Assassin|Envenomed Weapon}}
+|-
+| [[File:Fell Spirit model.png|35px|link=Fell Spirit]][[File:Fell Spirit model.png|35px|link=Fell Spirit]][[File:Ghost model.png|35px|link=Ghost]]
+| '''[[Ghost Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Ghost Camp|bounty min}}|to|{{Show|C|Ghost Camp|bounty max}}}} ({{Gold|{{Show|C|Ghost Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Ghost Camp|bounty min stacked}}|to|{{Show|C|Ghost Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Ghost Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Ghost Camp|bounty min stacker}}|to|{{Show|C|Ghost Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Ghost Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Ghost Camp|experience}}|i}}
+| {{XP|{{Show|C|Ghost Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Ghost Camp|experience stacker}}|i}}
+| {{Show|C|Ghost Camp|health}} {{M|Health}}
+| {{A|Fell Spirit|Vex}} - {{A|Ghost|Frost Attack}}
+|-
+| [[File:Harpy Scout model.png|35px|link=Harpy Scout]][[File:Harpy Scout model.png|35px|link=Harpy Scout]][[File:Harpy Stormcrafter model.png|35px|link=Harpy Stormcrafter]]
+| '''[[Harpy Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Harpy Camp|bounty min}}|to|{{Show|C|Harpy Camp|bounty max}}}} ({{Gold|{{Show|C|Harpy Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Harpy Camp|bounty min stacked}}|to|{{Show|C|Harpy Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Harpy Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Harpy Camp|bounty min stacker}}|to|{{Show|C|Harpy Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Harpy Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Harpy Camp|experience}}|i}}
+| {{XP|{{Show|C|Harpy Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Harpy Camp|experience stacker}}|i}}
+| {{Show|C|Harpy Camp|health}} {{M|Health}}
+| {{A|Harpy Scout|Take Off}} - {{A|Harpy Stormcrafter|Chain Lightning}}
+|-
+| [[File:Pollywog model dota2 wikiasset.png|30px|link=Pollywog]][[File:Pollywog model dota2 wikiasset.png|30px|link=Pollywog]][[File:Pollywog model dota2 wikiasset.png|30px|link=Pollywog]]
+| '''[[Pollywog Camp]]<small><sup>1</sup></small>'''<br><sup><big>(flooded camp)</big></sup>
+| {{Gold|{{Show|C|Pollywog Camp|bounty min}}|to|{{Show|C|Pollywog Camp|bounty max}}}} ({{Gold|{{Show|C|Pollywog Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Pollywog Camp|bounty min stacked}}|to|{{Show|C|Pollywog Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Pollywog Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Pollywog Camp|bounty min stacker}}|to|{{Show|C|Pollywog Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Pollywog Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Pollywog Camp|experience}}|i}}
+| {{XP|{{Show|C|Pollywog Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Pollywog Camp|experience stacker}}|i}}
+| {{Show|C|Pollywog Camp|health}} {{M|Health}}
+| {{A|Pollywog|Riverborn Aura}}
+|-
+! class = "header" | Total average
+| {{#expr:100/({{#var:totalcamps}}-1) round0}}% spawn chance, first spawn
+| {{#expr:100/({{#var:totalcamps}}-2) round0}}% spawn chance, following spawns
+| {{Gold|{{#vardefineecho:totalavgmin|{{#expr:({{Show|C|Kobold Camp|bounty min}}+{{Show|C|Hill Troll Camp|bounty min}}+{{Show|C|Hill Troll and Kobold Camp|bounty min}}+{{Show|C|Vhoul Assassin Camp|bounty min}}+{{Show|C|Ghost Camp|bounty min}}+{{Show|C|Harpy Camp|bounty min}}+{{Show|C|Pollywog Camp|bounty min}})/{{#var:totalcamps}} round0}}}}|to|{{#vardefineecho:totalavgmax|{{#expr:({{Show|C|Kobold Camp|bounty max}}+{{Show|C|Hill Troll Camp|bounty max}}+{{Show|C|Hill Troll and Kobold Camp|bounty max}}+{{Show|C|Vhoul Assassin Camp|bounty max}}+{{Show|C|Ghost Camp|bounty max}}+{{Show|C|Harpy Camp|bounty max}}+{{Show|C|Pollywog Camp|bounty max}})/{{#var:totalcamps}} round0}}}}}} ({{Gold|{{#vardefineecho:totalavg|{{#expr:({{#var:totalavgmin}}+{{#var:totalavgmax}})/2 round0}}}}|color}})
+| {{Gold|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}}) round0}}|to|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}}) round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}}) round0}}|color}})
+| {{Gold|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|to|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|color}})
+| {{XP|{{#vardefineecho:totalxp|{{#expr:({{Show|C|Kobold Camp|experience}}+{{Show|C|Hill Troll Camp|experience}}+{{Show|C|Hill Troll and Kobold Camp|experience}}+{{Show|C|Vhoul Assassin Camp|experience}}+{{Show|C|Ghost Camp|experience}}+{{Show|C|Harpy Camp|experience}}+{{Show|C|Pollywog Camp|experience}})/{{#var:totalcamps}} round0}}}}|i}}
+| {{XP|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}}) round0}}|i}}
+| {{XP|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|i}}
+| {{#expr:({{Show|C|Kobold Camp|health}}+{{Show|C|Hill Troll Camp|health}}+{{Show|C|Hill Troll and Kobold Camp|health}}+{{Show|C|Vhoul Assassin Camp|health}}+{{Show|C|Ghost Camp|health}}+{{Show|C|Harpy Camp|health}}+{{Show|C|Pollywog Camp|health}})/{{#var:totalcamps}}  round0}} {{M|Health}}
+|}
+{{Footnote|1|Displayed values do not consider evolved creeps.}}
+
+===Medium Camps===
+There are ten medium camps, from which six are dry and four flooded. Both sides of the map contain three dry and two flooded spots. Additionally, the two small amphibious camps slowly evolve into medium camps over time.
+
+{|class = "wikitable" style="text-align:center;" width = "100%"
+! class = "header" width = "13%" rowspan="2" | Camp locations
+! class = "header" width = "12%" rowspan="2" | Creeps
+! class = "header" width = "15%" rowspan="2" | Camp Name
+! class = "header" width = "27%" colspan="3" | Total Gold [{{tooltip|?|Values in brackets are the average values.}}]
+! class = "header" width = "10%" colspan="3" | Total Experience
+! class = "header" width = "8%" rowspan="2"  | Total Health
+! class = "header" width = "15%" rowspan="2" | Abilities
+|-
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less gold to their killer.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this gold to the player that stacked them if they get farmed by an ally.}}]
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less experience.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this experience to the player that stacked them if they get farmed by an ally.}}]
+|-
+| rowspan = "{{#vardefineecho:totalcamps|6}}" | [[File:Dota 2 map neutral creep camps medium.jpg|300px]]
+| [[File:Centaur Courser model.png|35px|link=Centaur Courser]][[File:Centaur Conqueror model.png|45px|link=Centaur Conqueror]]
+| '''[[Centaur Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Centaur Camp|bounty min}}|to|{{Show|C|Centaur Camp|bounty max}}}} ({{Gold|{{Show|C|Centaur Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Centaur Camp|bounty min stacked}}|to|{{Show|C|Centaur Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Centaur Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Centaur Camp|bounty min stacker}}|to|{{Show|C|Centaur Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Centaur Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Centaur Camp|experience}}|i}}
+| {{XP|{{Show|C|Centaur Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Centaur Camp|experience stacker}}|i}}
+| {{Show|C|Centaur Camp|health}} {{M|Health}}
+| {{A|Centaur Courser|Cloak Aura}} - {{A|Centaur Conqueror|War Stomp}}
+|-
+| [[File:Giant Wolf model.png|35px|link=Giant Wolf]][[File:Giant Wolf model.png|35px|link=Giant Wolf]][[File:Alpha Wolf model.png|45px|link=Alpha Wolf]]
+| '''[[Wolf Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Wolf Camp|bounty min}}|to|{{Show|C|Wolf Camp|bounty max}}}} ({{Gold|{{Show|C|Wolf Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Wolf Camp|bounty min stacked}}|to|{{Show|C|Wolf Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Wolf Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Wolf Camp|bounty min stacker}}|to|{{Show|C|Wolf Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Wolf Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Wolf Camp|experience}}|i}}
+| {{XP|{{Show|C|Wolf Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Wolf Camp|experience stacker}}|i}}
+| {{Show|C|Wolf Camp|health}} {{M|Health}}
+| {{A|Giant Wolf|Intimidate}} - {{A|Alpha Wolf|Critical Strike}} - {{A|Alpha Wolf|Packleader's Aura}}
+|-
+| [[File:Satyr Banisher model.png|35px|link=Satyr Banisher]][[File:Satyr Banisher model.png|35px|link=Satyr Banisher]][[File:Satyr Mindstealer model.png|40px|link=Satyr Mindstealer]][[File:Satyr Mindstealer model.png|40px|link=Satyr Mindstealer]]
+| '''[[Satyr Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Satyr Camp|bounty min}}|to|{{Show|C|Satyr Camp|bounty max}}}} ({{Gold|{{Show|C|Satyr Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Satyr Camp|bounty min stacked}}|to|{{Show|C|Satyr Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Satyr Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Satyr Camp|bounty min stacker}}|to|{{Show|C|Satyr Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Satyr Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Satyr Camp|experience}}|i}}
+| {{XP|{{Show|C|Satyr Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Satyr Camp|experience stacker}}|i}}
+| {{Show|C|Satyr Camp|health}} {{M|Health}}
+| {{A|Satyr Banisher|Purge}} - {{A|Satyr Mindstealer|Mana Burn}} - {{A|Satyr Mindstealer|Mana Aura}}
+|-
+| [[File:Ogre Bruiser model.png|35px|link=Ogre Bruiser]][[File:Ogre Bruiser model.png|35px|link=Ogre Bruiser]][[File:Ogre Frostmage model.png|40px|link=Ogre Frostmage]]
+| '''[[Ogre Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Ogre Camp|bounty min}}|to|{{Show|C|Ogre Camp|bounty max}}}} ({{Gold|{{Show|C|Ogre Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Ogre Camp|bounty min stacked}}|to|{{Show|C|Ogre Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Ogre Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Ogre Camp|bounty min stacker}}|to|{{Show|C|Ogre Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Ogre Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Ogre Camp|experience}}|i}}
+| {{XP|{{Show|C|Ogre Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Ogre Camp|experience stacker}}|i}}
+| {{Show|C|Ogre Camp|health}} {{M|Health}}
+| {{A|Ogre Bruiser|Ogre Smash!}} - {{A|Ogre Frostmage|Ice Armor}}
+|-
+| [[File:Mud Golem model.png|35px|link=Mud Golem]][[File:Mud Golem model.png|35px|link=Mud Golem]](<sup>[[File:Mud Golem model.png|25px|link=Shard Golem]][[File:Mud Golem model.png|25px|link=Shard Golem]][[File:Mud Golem model.png|25px|link=Shard Golem]][[File:Mud Golem model.png|25px|link=Shard Golem]]</sup>)
+| '''[[Golem Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{#expr:{{Show|C|Golem Camp|bounty min}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty min}})}}|to|{{#expr:{{Show|C|Golem Camp|bounty max}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty max}})}}}} ({{Gold|{{#expr:{{Show|C|Golem Camp|bounty avg}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*({{Show|U|Shard Golem|bounty min}}+{{Show|U|Shard Golem|bounty max}})/2)}}|color}})
+| {{Gold|{{#expr:{{Show|C|Golem Camp|bounty min stacked}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty min}})}}|to|{{#expr:{{Show|C|Golem Camp|bounty max stacked}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty max}})}}}} ({{Gold|{{#expr:{{Show|C|Golem Camp|bounty avg stacked}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*({{Show|U|Shard Golem|bounty min}}+{{Show|U|Shard Golem|bounty max}})/2)}}|color}})<small><sup>1</sup></small>
+| {{Gold|{{Show|C|Golem Camp|bounty min stacker}}|to|{{Show|C|Golem Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Golem Camp|bounty avg stacker}}|color}})<small><sup>2</sup></small>
+| {{XP|{{#expr:{{Show|C|Golem Camp|experience}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|experience}})}}|i}}
+| {{XP|{{#expr:{{Show|C|Golem Camp|experience stacked}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|experience}})}}|i}}<small><sup>1</sup></small>
+| {{XP|{{Show|C|Golem Camp|experience stacker}}|i}}<small><sup>2</sup></small>
+| {{#expr:{{Show|C|Golem Camp|health}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{#explode:{{Show|U|Shard Golem|health}}|/}})}} {{M|Health}}
+| {{A|Mud Golem|Hurl Boulder}} - {{A|Mud Golem|Shard Split}}
+|-
+| [[File:Boglet model dota2 wikiasset.png|35px|link=Boglet]][[File:Boglet model dota2 wikiasset.png|35px|link=Boglet]][[File:Marshmage Apprentice model dota2 wikiasset.png|35px|link=Marshmage Apprentice]]
+| '''[[Froglet Camp]]'''<small><sup>3</sup></small><br><sup><big>(flooded camp)</big></sup>
+| {{Gold|{{Show|C|Froglet Camp|bounty min}}|to|{{Show|C|Froglet Camp|bounty max}}}} ({{Gold|{{Show|C|Froglet Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Froglet Camp|bounty min stacked}}|to|{{Show|C|Froglet Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Froglet Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Froglet Camp|bounty min stacker}}|to|{{Show|C|Froglet Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Froglet Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Froglet Camp|experience}}|i}}
+| {{XP|{{Show|C|Froglet Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Froglet Camp|experience stacker}}|i}}
+| {{Show|C|Froglet Camp|health}} {{M|Health}}
+| {{A|Boglet|Riverborn Aura}} - {{A|Boglet|Arm of the Deep}} - {{A|Marshmage Apprentice|Water Bubble (Small)}}
+|-
+! class = "header" | Total average
+| {{#expr:100/({{#var:totalcamps}}-1) round0}}% spawn chance, first spawn
+| {{#expr:100/({{#var:totalcamps}}-2) round0}}% spawn chance, following spawns
+| {{Gold|{{#vardefine:totalavgmin|{{#expr:({{Show|C|Centaur Camp|bounty min}}+{{Show|C|Wolf Camp|bounty min}}+{{Show|C|Satyr Camp|bounty min}}+{{Show|C|Ogre Camp|bounty min}}+{{Show|C|Golem Camp|bounty min}}+{{Show|C|Froglet Camp|bounty min}})/{{#var:totalcamps}} round0}}}}{{#expr:{{#var:totalavgmin}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty min}}/{{#var:totalcamps}} round0)}}|to|{{#vardefine:totalavgmax|{{#expr:({{Show|C|Centaur Camp|bounty max}}+{{Show|C|Wolf Camp|bounty max}}+{{Show|C|Satyr Camp|bounty max}}+{{Show|C|Ogre Camp|bounty max}}+{{Show|C|Golem Camp|bounty max}}+{{Show|C|Froglet Camp|bounty max}})/{{#var:totalcamps}} round0}}}}{{#expr:{{#var:totalavgmax}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty max}}/{{#var:totalcamps}} round0)}}}} ({{Gold|{{#vardefine:totalavg|{{#expr:({{#var:totalavgmin}}+{{#var:totalavgmax}})/2 round0}}}}{{#expr:{{#var:totalavg}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*({{Show|U|Shard Golem|bounty min}}+{{Show|U|Shard Golem|bounty max}})/2/{{#var:totalcamps}} round0)}}|color}})
+| {{Gold|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}})+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty min}}/{{#var:totalcamps}}) round0}}|to|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}})+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|bounty max}}/{{#var:totalcamps}}) round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}})+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*({{Show|U|Shard Golem|bounty min}}+{{Show|U|Shard Golem|bounty max}})/2/{{#var:totalcamps}}) round0}}|color}})<small><sup>1</sup></small>
+| {{Gold|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|to|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|color}})<small><sup>2</sup></small>
+| {{XP|{{#vardefine:totalxp|{{#expr:({{Show|C|Centaur Camp|experience}}+{{Show|C|Wolf Camp|experience}}+{{Show|C|Satyr Camp|experience}}+{{Show|C|Ogre Camp|experience}}+{{Show|C|Golem Camp|experience}}+{{Show|C|Froglet Camp|experience}})/{{#var:totalcamps}} round0}}}}{{#expr:{{#var:totalxp}}+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|experience}}/{{#var:totalcamps}}) round0}}|i}}
+| {{XP|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}})+(2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{Show|U|Shard Golem|experience}}/{{#var:totalcamps}}) round0}}|i}}<small><sup>1</sup></small>
+| {{XP|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|i}}<small><sup>2</sup></small>
+| {{#expr:({{Show|C|Centaur Camp|health}}+{{Show|C|Wolf Camp|health}}+{{Show|C|Satyr Camp|health}}+{{Show|C|Ogre Camp|health}}+{{Show|C|Golem Camp|health}}+{{Show|C|Froglet Camp|health}}+2*{{#explode:{{Show|A|Mud Golem|Shard Split|value1}}|/}}*{{#explode:{{Show|U|Shard Golem|health}}|/}})/{{#var:totalcamps}} round0}} {{M|Health}}
+|}
+{{Footnote|1|Summons are not affected by the {{#expr:{{G|neutral stack penalty}}*100}}% stack penalty.}}
+{{Footnote|2|Summons do not grant their stacker any gold.}}
+{{Footnote|3|Displayed values do not consider evolved creeps.}}
+
+===Large Camps===
+There are ten large camps, all of which are dry. Both sides of the map contain five camps each. Additionally, the four medium amphibious camps slowly evolve into medium camps over time. The small amphibious camp end up as large camps during their evolution, and do not evolve further.
+
+{|class = "wikitable" style="text-align:center;" width = "100%"
+! class = "header" width = "13%" rowspan="2" | Camp locations
+! class = "header" width = "12%" rowspan="2" | Creeps
+! class = "header" width = "15%" rowspan="2" | Camp Name
+! class = "header" width = "27%" colspan="3" | Total Gold [{{tooltip|?|Values in brackets are the average values.}}]
+! class = "header" width = "10%" colspan="3" | Total Experience
+! class = "header" width = "8%" rowspan="2"  | Total Health
+! class = "header" width = "15%" rowspan="2" | Abilities
+|-
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less gold to their killer.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this gold to the player that stacked them if they get farmed by an ally.}}]
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less experience.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this experience to the player that stacked them if they get farmed by an ally.}}]
+|-
+| rowspan = "{{#expr:{{#vardefineecho:totalcamps|7}}+1}}" | [[File:Dota 2 map neutral creep camps large.jpg|300px]]
+| [[File:Centaur Courser model.png|35px|link=Centaur Courser]][[File:Centaur Courser model.png|35px|link=Centaur Courser]][[File:Centaur Conqueror model.png|45px|link=Centaur Conqueror]]
+| '''[[Large Centaur Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Large Centaur Camp|bounty min}}|to|{{Show|C|Large Centaur Camp|bounty max}}}} ({{Gold|{{Show|C|Large Centaur Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Large Centaur Camp|bounty min stacked}}|to|{{Show|C|Large Centaur Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Large Centaur Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Large Centaur Camp|bounty min stacker}}|to|{{Show|C|Large Centaur Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Large Centaur Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Large Centaur Camp|experience}}|i}}
+| {{XP|{{Show|C|Large Centaur Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Large Centaur Camp|experience stacker}}|i}}
+| {{Show|C|Large Centaur Camp|health}} {{M|Health}}
+| {{A|Centaur Courser|Cloak Aura}} - {{A|Centaur Conqueror|War Stomp}}
+|-
+| [[File:Satyr Banisher model.png|35px|link=Satyr Banisher]][[File:Satyr Mindstealer model.png|40px|link=Satyr Mindstealer]][[File:Satyr Tormenter model.png|45px|link=Satyr Tormenter]]
+| '''[[Large Satyr Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Large Satyr Camp|bounty min}}|to|{{Show|C|Large Satyr Camp|bounty max}}}} ({{Gold|{{Show|C|Large Satyr Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Large Satyr Camp|bounty min stacked}}|to|{{Show|C|Large Satyr Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Large Satyr Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Large Satyr Camp|bounty min stacker}}|to|{{Show|C|Large Satyr Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Large Satyr Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Large Satyr Camp|experience}}|i}}
+| {{XP|{{Show|C|Large Satyr Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Large Satyr Camp|experience stacker}}|i}}
+| {{Show|C|Large Satyr Camp|health}} {{M|Health}}
+| {{A|Satyr Banisher|Purge}} - {{A|Satyr Mindstealer|Mana Burn}} - {{A|Satyr Mindstealer|Mana Aura}} - {{A|Satyr Tormenter|Shockwave}} - {{A|Satyr Tormenter|Unholy Aura}}
+|-
+| [[File:Hellbear model.png|35px|link=Hellbear]][[File:Hellbear Smasher model.png|45px|link=Hellbear Smasher]]
+| '''[[Hellbear Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Hellbear Camp|bounty min}}|to|{{Show|C|Hellbear Camp|bounty max}}}} ({{Gold|{{Show|C|Hellbear Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Hellbear Camp|bounty min stacked}}|to|{{Show|C|Hellbear Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Hellbear Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Hellbear Camp|bounty min stacker}}|to|{{Show|C|Hellbear Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Hellbear Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Hellbear Camp|experience}}|i}}
+| {{XP|{{Show|C|Hellbear Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Hellbear Camp|experience stacker}}|i}}
+| {{Show|C|Hellbear Camp|health}} {{M|Health}}
+| {{A|Hellbear|Swiftness Aura}} - {{A|Hellbear|Death Throe: Rush}} - {{A|Hellbear Smasher|Thunder Clap}} - {{A|Hellbear Smasher|Death Throe: Power}}
+|-
+| [[File:Wildwing model.png|35px|link=Wildwing]][[File:Wildwing model.png|35px|link=Wildwing]][[File:Wildwing Ripper model.png|45px|link=Wildwing Ripper]]
+| '''[[Wildwing Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Wildwing Camp|bounty min}}|to|{{Show|C|Wildwing Camp|bounty max}}}} ({{Gold|{{Show|C|Wildwing Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Wildwing Camp|bounty min stacked}}|to|{{Show|C|Wildwing Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Wildwing Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Wildwing Camp|bounty min stacker}}|to|{{Show|C|Wildwing Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Wildwing Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Wildwing Camp|experience}}|i}}
+| {{XP|{{Show|C|Wildwing Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Wildwing Camp|experience stacker}}|i}}
+| {{Show|C|Wildwing Camp|health}} {{M|Health}}
+| {{A|Wildwing|Tornado}} ({{A|Tornado (Wildwing)|Tempest}}) - {{A|Wildwing Ripper|Hurricane}} - {{A|Wildwing Ripper|Toughness Aura}}
+|-
+| rowspan="2" | [[File:Hill Troll model.png|35px|link=Hill Troll]][[File: Hill Troll model.png|35px|link=Hill Troll]][[File:Dark Troll Summoner model.png|45px|link=Dark Troll Summoner]](<sup>[[File:Dark Troll Summoner Skeleton Warrior model.png|25px|link=Skeleton Warrior]][[File:Dark Troll Summoner Skeleton Warrior model.png|25px|link=Skeleton Warrior]][[File:Dark Troll Summoner Skeleton Warrior model.png|25px|link=Skeleton Warrior]]</sup>)
+| '''[[Troll Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Troll Camp|bounty min}}|to|{{Show|C|Troll Camp|bounty max}}}} ({{Gold|{{Show|C|Troll Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Troll Camp|bounty min stacked}}|to|{{Show|C|Troll Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Troll Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Troll Camp|bounty min stacker}}|to|{{Show|C|Troll Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Troll Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Troll Camp|experience}}|i}}
+| {{XP|{{Show|C|Troll Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Troll Camp|experience stacker}}|i}}
+| {{Show|C|Troll Camp|health}} {{M|Health}}
+| rowspan="2" | {{A|Hill Troll|Ensnare}} - {{A|Dark Troll Summoner|Raise Dead}} ({{A|Skeleton Warrior|Rally}})
+|-
+| '''+ {{Show|A|Dark Troll Summoner|Raise Dead|value1}} {{U|Skeleton Warrior|text=Skeletons}}'''{{#vardefine:skel avg|{{#expr:({{Show|U|Skeleton Warrior|bounty min}}+{{Show|U|Skeleton Warrior|bounty max}})/2 round0}}}}
+| {{Gold|{{#expr:{{Show|C|Troll Camp|bounty min}}+{{Show|U|Skeleton Warrior|bounty min}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}} round0}}|to|{{#expr:{{Show|C|Troll Camp|bounty max}}+{{Show|U|Skeleton Warrior|bounty max}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}} round0}}}} ({{Gold|{{#expr:{{Show|C|Troll Camp|bounty avg}}+{{#var:skel avg}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}} round0}}|color}})
+| {{Gold|{{#expr:{{Show|C|Troll Camp|bounty min stacked}}+{{Show|U|Skeleton Warrior|bounty min}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}}}|to|{{#expr:{{Show|C|Troll Camp|bounty max stacked}}+{{Show|U|Skeleton Warrior|bounty max}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}}}}} ({{Gold|{{#expr:{{Show|C|Troll Camp|bounty avg stacked}}+{{#var:skel avg}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}}}|color}})<small><sup>1</sup></small>
+| {{Gold|{{Show|C|Troll Camp|bounty min stacker}}|to|{{Show|C|Troll Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Troll Camp|bounty avg stacker}}|color}})<small><sup>2</sup></small>
+| {{XP|{{#expr:{{Show|C|Troll Camp|experience}}+{{Show|U|Skeleton Warrior|experience}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}}}|i}}
+| {{XP|{{#expr:{{Show|C|Troll Camp|experience stacked}}+{{Show|U|Skeleton Warrior|experience}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}}}|i}}<small><sup>1</sup></small>
+| {{XP|{{Show|C|Troll Camp|experience stacker}}|i}}<small><sup>2</sup></small>
+| {{#expr:({{Show|C|Troll Camp|health}}+2*{{show|U|Skeleton Warrior|health}} round0)}} {{M|Health}}
+|-
+| [[File:Warpine Raider model.png|35px|link=Warpine Raider]][[File:Warpine Raider model.png|35px|link=Warpine Raider]]
+| '''[[Warpine Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Warpine Camp|bounty min}}|to|{{Show|C|Warpine Camp|bounty max}}}} ({{Gold|{{Show|C|Warpine Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Warpine Camp|bounty min stacked}}|to|{{Show|C|Warpine Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Warpine Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Warpine Camp|bounty min stacker}}|to|{{Show|C|Warpine Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Warpine Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Warpine Camp|experience}}|i}}
+| {{XP|{{Show|C|Warpine Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Warpine Camp|experience stacker}}|i}}
+| {{Show|C|Warpine Camp|health}} {{M|Health}}
+| {{A|Warpine Raider|Seed Shot}}
+|-
+| [[File:Croaker model dota2 wikiasset.png|40px|link=Croaker]][[File:Croaker model dota2 wikiasset.png|40px|link=Croaker]][[File:Marshmage model dota2 wikiasset.png|40px|link=Marshmage]]
+| '''[[Frog Camp]]<small><sup>3</sup></small>'''<br><sup><big>(flooded camp)</big></sup>
+| {{Gold|{{Show|C|Frog Camp|bounty min}}|to|{{Show|C|Frog Camp|bounty max}}}} ({{Gold|{{Show|C|Frog Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Frog Camp|bounty min stacked}}|to|{{Show|C|Frog Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Frog Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Frog Camp|bounty min stacker}}|to|{{Show|C|Frog Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Frog Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Frog Camp|experience}}|i}}
+| {{XP|{{Show|C|Frog Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Frog Camp|experience stacker}}|i}}
+| {{Show|C|Frog Camp|health}} {{M|Health}}
+| {{A|Croaker|Riverborn Aura}} - {{A|Croaker|Tendrils of the Deep}} - {{A|Marshmage|Water Bubble (Medium)}}
+|-
+! class = "header" rowspan="2" | Total average<small><sup>3</sup></small>
+| rowspan="2" | {{#expr:100/({{#var:totalcamps}}-1) round0}}% spawn chance, first spawn
+| rowspan="2" | {{#expr:100/({{#var:totalcamps}}-2) round0}}% spawn chance, following spawns
+| {{Gold|{{#vardefineecho:totalavgmin|{{#expr:({{Show|C|Large Centaur Camp|bounty min}}+{{Show|C|Large Satyr Camp|bounty min}}+{{Show|C|Hellbear Camp|bounty min}}+{{Show|C|Wildwing Camp|bounty min}}+{{Show|C|Troll Camp|bounty min}}+{{Show|C|Warpine Camp|bounty min}}+{{Show|C|Frog Camp|bounty min}})/{{#var:totalcamps}} round0}}}}|to|{{#vardefineecho:totalavgmax|{{#expr:({{Show|C|Large Centaur Camp|bounty max}}+{{Show|C|Large Satyr Camp|bounty max}}+{{Show|C|Hellbear Camp|bounty max}}+{{Show|C|Wildwing Camp|bounty max}}+{{Show|C|Troll Camp|bounty max}}+{{Show|C|Warpine Camp|bounty max}}+{{Show|C|Frog Camp|bounty max}})/{{#var:totalcamps}} round0}}}}}} ({{Gold|{{#vardefineecho:totalavg|{{#expr:({{#var:totalavgmin}}+{{#var:totalavgmax}})/2 round0}}}}|color}})
+| {{Gold|{{#vardefineecho:totalavgmin stacked|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}}) round0}}}}|to|{{#vardefineecho:totalavgmax stacked|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}}) round0}}}}}} ({{Gold|{{#vardefineecho:totalavg stacked|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}}) round0}}}}|color}})
+| {{Gold|{{#vardefineecho:totalavgmin stacker|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}}|to|{{#vardefineecho:totalavgmax stacker|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}}}} ({{Gold|{{#vardefineecho:totalavg stacker|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}}|color}})
+| {{XP|{{#vardefineecho:totalxp|{{#expr:({{Show|C|Large Centaur Camp|experience}}+{{Show|C|Large Satyr Camp|experience}}+{{Show|C|Hellbear Camp|experience}}+{{Show|C|Wildwing Camp|experience}}+{{Show|C|Troll Camp|experience}}+{{Show|C|Warpine Camp|experience}}+{{Show|C|Frog Camp|experience}})/{{#var:totalcamps}} round0}}}}|i}}
+| {{XP|{{#vardefineecho:totalxp stacked|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}}) round0}}}}|i}}
+| {{XP|{{#vardefineecho:totalxp stacker|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}}|i}}
+| {{#vardefineecho:totalhpavg|{{#expr:({{Show|C|Large Centaur Camp|health}}+{{Show|C|Large Satyr Camp|health}}+{{Show|C|Hellbear Camp|health}}+{{Show|C|Wildwing Camp|health}}+{{Show|C|Troll Camp|health}}+{{Show|C|Warpine Camp|health}}+{{Show|C|Frog Camp|health}})/{{#var:totalcamps}} round0}}}} {{M|Health}}
+| rowspan="2"|
+|-
+| {{Gold|{{#expr:{{#var:totalavgmin}}+{{Show|U|Skeleton Warrior|bounty min}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}|to|{{#expr:{{#var:totalavgmax}}+{{Show|U|Skeleton Warrior|bounty max}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}+({{Show|U|Skeleton Warrior|bounty min}}+{{Show|U|Skeleton Warrior|bounty max}})/3*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}|color}})
+| {{Gold|{{#expr:{{#var:totalavgmin stacked}}+{{Show|U|Skeleton Warrior|bounty min}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/5 round0}}|to|{{#expr:{{#var:totalavgmax stacked}}+{{Show|U|Skeleton Warrior|bounty max}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}}} ({{Gold|{{#expr:{{#var:totalavg stacked}}+({{Show|U|Skeleton Warrior|bounty min}}+{{Show|U|Skeleton Warrior|bounty max}})/3*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}|color}})<small><sup>1</sup></small>
+| {{Gold|{{#var:totalavgmin stacker}}|to|{{#var:totalavgmax stacker}}}} ({{Gold|{{#var:totalavg stacker}}|color}})<small><sup>2</sup></small>
+| {{XP|{{#expr:{{#var:totalxp}}+{{Show|U|Skeleton Warrior|experience}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}|i}}
+| {{XP|{{#expr:{{#var:totalxp stacked}}+{{Show|U|Skeleton Warrior|experience}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}}|i}}<small><sup>1</sup></small>
+| {{XP|{{#var:totalxp stacker}}}}<small><sup>2</sup></small>
+| {{#expr:{{#var:totalhpavg}}+{{Show|U|Skeleton Warrior|health}}*{{Show|A|Dark Troll Summoner|Raise Dead|value1}}/{{#var:totalcamps}} round0}} {{M|Health}}
+|}
+{{Footnote|1|Summons are not affected by the {{#expr:{{G|neutral stack penalty}}*100}}% stack penalty.}}
+{{Footnote|2|Summons do not grant their stacker any gold.}}
+{{Footnote|3|Displayed values do not consider evolved creeps.}}
+
+===Ancient Camps===
+There are four ancient camps, all of which are dry. Both sides of the map contain two camps each. Additionally, the four medium amphibious camps end up as ancient camps at the end of their evolution.
+
+{|class = "wikitable" style="text-align:center;" width = "100%"
+! class = "header" width = "13%" rowspan="2" | Camp locations
+! class = "header" width = "12%" rowspan="2" | Creeps
+! class = "header" width = "15%" rowspan="2" | Camp Name
+! class = "header" width = "27%" colspan="3" | Total Gold [{{tooltip|?|Values in brackets are the average values.}}]
+! class = "header" width = "10%" colspan="3" | Total Experience
+! class = "header" width = "8%" rowspan="2"  | Total Health
+! class = "header" width = "15%" rowspan="2" | Abilities
+|-
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less gold to their killer.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this gold to the player that stacked them if they get farmed by an ally.}}]
+! Default
+! Stacked [{{tooltip|?|Creeps spawning as a result of stacking grant less experience.}}]
+! For Stacker [{{tooltip|?|Creeps spawning as a result of stacking grant this expreoence to the player that stacked them if they get farmed by an ally.}}]
+|-
+| rowspan = "{{#vardefineecho:totalcamps|6}}" | [[File:Dota 2 map neutral creep camps ancient.jpg|300px]]
+| [[File:Ancient Black Drake model.png|50px|link=Ancient Black Drake]][[File:Ancient Black Drake model.png|50px|link=Ancient Black Drake]][[File:Ancient Black Dragon model.png|60px|link=Ancient Black Dragon]]
+| '''[[Dragon Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Dragon Camp|bounty min}}|to|{{Show|C|Dragon Camp|bounty max}}}} ({{Gold|{{Show|C|Dragon Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Dragon Camp|bounty min stacked}}|to|{{Show|C|Dragon Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Dragon Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Dragon Camp|bounty min stacker}}|to|{{Show|C|Dragon Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Dragon Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Dragon Camp|experience}}|i}}
+| {{XP|{{Show|C|Dragon Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Dragon Camp|experience stacker}}|i}}
+| {{Show|C|Dragon Camp|health}} {{M|Health}}
+| {{A|Ancient Black Drake|Magic Amplification Aura}} - {{A|Ancient Black Dragon|Fireball}} - {{A|Ancient Black Dragon|Splash Attack}} - {{A|Ancient Black Dragon|Dragonhide Aura}}
+|-
+| [[File:Ancient Rock Golem model.png|50px|link=Ancient Rock Golem]][[File:Ancient Rock Golem model.png|50px|link=Ancient Rock Golem]][[File:Ancient Granite Golem model.png|60px|link=Ancient Granite Golem]]
+| '''[[Large Golem Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Large Golem Camp|bounty min}}|to|{{Show|C|Large Golem Camp|bounty max}}}} ({{Gold|{{Show|C|Large Golem Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Large Golem Camp|bounty min stacked}}|to|{{Show|C|Large Golem Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Large Golem Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Large Golem Camp|bounty min stacker}}|to|{{Show|C|Large Golem Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Large Golem Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Large Golem Camp|experience}}|i}}
+| {{XP|{{Show|C|Large Golem Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Large Golem Camp|experience stacker}}|i}}
+| {{#expr:{{Show|C|Large Golem Camp|health}}*(100+{{#explode:{{Show|A|Ancient Granite Golem|Granite Aura|value2}}|%/|0}})/100}} {{M|Health}}<small><sup>1</sup></small><br>{{#expr:{{Show|C|Large Golem Camp|health}}*(100+{{#explode:{{Show|A|Ancient Granite Golem|Granite Aura|value2}}|%/|1}})/100}} {{M|Health}}<small><sup>1</sup></small><br>{{#expr:{{Show|C|Large Golem Camp|health}}*(100+{{#explode:{{Show|A|Ancient Granite Golem|Granite Aura|value2}}|%/|2}})/100}} {{M|Health}}<small><sup>1</sup></small>
+| {{A|Ancient Rock Golem|Weakening Aura}} - {{A|Ancient Granite Golem|Granite Aura}}
+|-
+| [[File:Ancient Rumblehide model.png|50px|link=Ancient Rumblehide]][[File:Ancient Rumblehide model.png|50px|link=Ancient Rumblehide]][[File:Ancient Thunderhide model.png|60px|link=Ancient Thunderhide]]
+| '''[[Thunderhide Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Thunderhide Camp|bounty min}}|to|{{Show|C|Thunderhide Camp|bounty max}}}} ({{Gold|{{Show|C|Thunderhide Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Thunderhide Camp|bounty min stacked}}|to|{{Show|C|Thunderhide Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Thunderhide Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Thunderhide Camp|bounty min stacker}}|to|{{Show|C|Thunderhide Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Thunderhide Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Thunderhide Camp|experience}}|i}}
+| {{XP|{{Show|C|Thunderhide Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Thunderhide Camp|experience stacker}}|i}}
+| {{Show|C|Thunderhide Camp|health}} {{M|Health}}
+| {{A|Ancient Rumblehide|War Drums Aura}} - {{A|Ancient Thunderhide|Frenzy}} - {{A|Ancient Thunderhide|Slam}}
+|-
+| [[File:Ancient Frostbitten Golem model.png|50px|link=Ancient Frostbitten Golem]][[File:Ancient Frostbitten Golem model.png|50px|link=Ancient Frostbitten Golem]][[File:Ancient Ice Shaman model.png|60px|link=Ancient Ice Shaman]]
+| '''[[Frostbitten Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Frostbitten Camp|bounty min}}|to|{{Show|C|Frostbitten Camp|bounty max}}}} ({{Gold|{{Show|C|Frostbitten Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Frostbitten Camp|bounty min stacked}}|to|{{Show|C|Frostbitten Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Frostbitten Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Frostbitten Camp|bounty min stacker}}|to|{{Show|C|Frostbitten Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Frostbitten Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Frostbitten Camp|experience}}|i}}
+| {{XP|{{Show|C|Frostbitten Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Frostbitten Camp|experience stacker}}|i}}
+| {{Show|C|Frostbitten Camp|health}} {{M|Health}}
+| {{A|Ancient Frostbitten Golem|Time Warp Aura}} - {{A|Ancient Ice Shaman|Icefire Bomb}}
+|-
+| [[File:Ancient Prowler Acolyte model.png|50px|link=Ancient Prowler Acolyte]][[File:Ancient Prowler Acolyte model.png|50px|link=Ancient Prowler Acolyte]][[File:Ancient Prowler Shaman model.png|60px|link=Ancient Prowler Shaman]]
+| '''[[Prowler Camp]]'''<br><sup><big>(dry camp)</big></sup>
+| {{Gold|{{Show|C|Prowler Camp|bounty min}}|to|{{Show|C|Prowler Camp|bounty max}}}} ({{Gold|{{Show|C|Prowler Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Prowler Camp|bounty min stacked}}|to|{{Show|C|Prowler Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Prowler Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Prowler Camp|bounty min stacker}}|to|{{Show|C|Prowler Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Prowler Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Prowler Camp|experience}}|i}}
+| {{XP|{{Show|C|Prowler Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Prowler Camp|experience stacker}}|i}}
+| {{Show|C|Prowler Camp|health}} {{M|Health}}
+| {{A|Ancient Prowler Acolyte|Prowler Aura}} - {{A|Ancient Prowler Shaman|Desecrate}} - {{A|Ancient Prowler Shaman|Petrify}}
+|-
+| [[File:Ancient Croaker model dota2 wikiasset.png|50px|link=Ancient Croaker]][[File:Ancient Croaker model dota2 wikiasset.png|50px|link=Ancient Croaker]][[File:Ancient Marshmage model dota2 wikiasset.png|50px|link=Ancient Marshmage]]
+| '''[[Ancient Frog Camp]]'''<br><sup><big>(flooded camp)</big></sup>
+| {{Gold|{{Show|C|Ancient Frog Camp|bounty min}}|to|{{Show|C|Ancient Frog Camp|bounty max}}}} ({{Gold|{{Show|C|Ancient Frog Camp|bounty avg}}|color}})
+| {{Gold|{{Show|C|Ancient Frog Camp|bounty min stacked}}|to|{{Show|C|Ancient Frog Camp|bounty max stacked}}}} ({{Gold|{{Show|C|Ancient Frog Camp|bounty avg stacked}}|color}})
+| {{Gold|{{Show|C|Ancient Frog Camp|bounty min stacker}}|to|{{Show|C|Ancient Frog Camp|bounty max stacker}}}} ({{Gold|{{Show|C|Ancient Frog Camp|bounty avg stacker}}|color}})
+| {{XP|{{Show|C|Ancient Frog Camp|experience}}|i}}
+| {{XP|{{Show|C|Ancient Frog Camp|experience stacked}}|i}}
+| {{XP|{{Show|C|Ancient Frog Camp|experience stacker}}|i}}
+| {{Show|C|Ancient Frog Camp|health}} {{M|Health}}
+| {{A|Ancient Croaker|Riverborn Aura}} - {{A|Ancient Croaker|Congregations of the Deep}} - {{A|Ancient Marshmage|Water Bubble (Large)}}
+|-
+! class = "header" | Total average
+| {{#expr:100/({{#var:totalcamps}}-1) round0}}% spawn chance, first spawn
+| {{#expr:100/({{#var:totalcamps}}-2) round0}}% spawn chance, following spawns
+| {{Gold|{{#vardefineecho:totalavgmin|{{#expr:({{Show|C|Dragon Camp|bounty min}}+{{Show|C|Large Golem Camp|bounty min}}+{{Show|C|Thunderhide Camp|bounty min}}+{{Show|C|Frostbitten Camp|bounty min}}+{{Show|C|Prowler Camp|bounty min}}+{{Show|C|Ancient Frog Camp|bounty min}})/{{#var:totalcamps}} round0}}}}|to|{{#vardefineecho:totalavgmax|{{#expr:({{Show|C|Dragon Camp|bounty max}}+{{Show|C|Large Golem Camp|bounty max}}+{{Show|C|Thunderhide Camp|bounty max}}+{{Show|C|Frostbitten Camp|bounty max}}+{{Show|C|Prowler Camp|bounty max}}+{{Show|C|Ancient Frog Camp|bounty max}})/{{#var:totalcamps}} round0}}}}}} ({{Gold|{{#vardefineecho:totalavg|{{#expr:({{#var:totalavgmin}}+{{#var:totalavgmax}})/2 round0}}}}|color}})
+| {{Gold|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}}) round0}}|to|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}}) round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}}) round0}}|color}})
+| {{Gold|{{#expr:{{#var:totalavgmin}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|to|{{#expr:{{#var:totalavgmax}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}}} ({{Gold|{{#expr:{{#var:totalavg}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|color}})
+| {{XP|{{#vardefineecho:totalxp|{{#expr:({{Show|C|Dragon Camp|experience}}+{{Show|C|Large Golem Camp|experience}}+{{Show|C|Thunderhide Camp|experience}}+{{Show|C|Frostbitten Camp|experience}}+{{Show|C|Prowler Camp|experience}}+{{Show|C|Ancient Frog Camp|experience}})/{{#var:totalcamps}} round0}}}}|i}}
+| {{XP|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}}) round0}}|i}}
+| {{XP|{{#expr:{{#var:totalxp}}*(1-{{G|neutral stack penalty}})*{{G|neutral stacker gold}} round0}}|i}}
+| {{#expr:({{Show|C|Dragon Camp|health}}+({{#expr:{{Show|C|Large Golem Camp|health}}*(100+{{#explode:{{Show|A|Ancient Granite Golem|Granite Aura|value3}}|%}})/100}})+{{Show|C|Thunderhide Camp|health}}+{{Show|C|Frostbitten Camp|health}}+{{Show|C|Ancient Frog Camp|health}})/{{#var:totalcamps}} round0}} {{M|Health}}
+|}
+{{Footnote|1|Health includes level 1 {{A|Ancient Granite Golem|Granite Aura}}.}}
+{{Footnote|2|Health includes level 2 {{A|Ancient Granite Golem|Granite Aura}}. Ability levels up at minute {{#time: i:s | @{{G|neutral ability interval}}}}.}}
+{{Footnote|3|Health includes level 3 {{A|Ancient Granite Golem|Granite Aura}}. Ability levels up at minute {{#time: i:s | @{{#expr:{{G|neutral ability interval}}*2}}}}.}}
+
+Ancient creeps have their own unit class, resulting in unique interactions with several abilities. For a list of interactions, see [[Ancient (unit type)]].
+
+===Evolving camps===
+* The flooded camps evolve as the game progresses. These evolutions are permanent.
+** Every {{#expr:{{G|amphibious neutrals evolve timer}}/60}} minutes, one of the creeps within each flooded camp evolves to the next tier.
+** Once a creep has evolved, it cannot evolve again until the other creeps in the camp have evolved, too.
+** Each camp undergoes {{G|amphibious neutrals max evolve}} evolutions in total, with the last evolution happening at the {{#expr:{{G|amphibious neutrals max evolve}}*{{G|amphibious neutrals evolve timer}}/60}}th minute mark.
+** This means by that time, all flooded camps will have evolved by {{#expr:{{G|amphibious neutrals max evolve}}/3}} tiers in total.
+** The creeps evolve as follows:
+*** {{U|Pollywog}} -> {{U|Boglet}} -> {{U|Croaker}} -> {{U|Ancient Croaker}}
+*** {{U|Pollywog}} -> {{U|Marshmage Apprentice}} -> {{U|Marshmage}} -> {{U|Ancient Marshmage}}
+
+* When an evolution takes place, all creeps within the flooded camps get cleared and a new instance of the camp spawns.
+** If a camp is blocked by a player-controlled unit, or by a lane creep, or is currently aggroed, that camp will not get cleared.
+** However, the upgrade still takes place; once the creep camp gets killed, the next time they respawn they will be upgraded.
+** When a flooded camp is blocked for a longer period, the upgrades still take place and take effect on their next respawn.
+** A stacked camp is considered blocked as well, the camp will not spawn evolved creeps when stacked again.
+
+* The number of evolved creeps within a camp is limited until the entire camp has upgraded to the next tier.
+** This means If a camp with 1 evolved creep gets stacked, the new instance will not include an evolved creep.
+** Until the entire camp has evolved, stacking the camp will spawn the creeps based on the previous evolution.
+** Example 1: [[Pollywog Camp]] with 1 evolution contains 2 {{U|Pollywog|text=Pollywogs}} and 1 {{U|Boglet}}.
+*** If this camp gets stacked, it will spawn 3 Pollywogs.
+*** If the Boglet gets killed, stacking it again will spawn 2 Pollywogs and 1 Boglet.
+*** If stacked for a third time, it will spawn 3 Pollywogs again.
+*** The total of evolved creeps stays at 1, no matter how often it gets stacked.
+** This also applies to when the camp already evolved 2 times.
+** Once the camp has evolved 3 times, it starts spawning creeps of the next tier when stacked.
+
+===Roshan===
+{{main|Roshan}}
+{{#lst:Roshan|intro}}
+
+{|class = "wikitable" style="text-align:center;" width = "100%"
+! class = "header" width = "13%" | Camp locations
+! class = "header" width = "12%" | Creeps
+! class = "header" width = "15%" | Camp Name
+! class = "header" width = "15%" | Total Gold
+! class = "header" width = "15%" | Total Experience
+! class = "header" width = "15%" | Total Health
+! class = "header" width = "15%" | Abilities
+|-
+| [[File:Dota 2 map neutral creep camps roshan.jpg|150px]]
+| [[File:Roshan model.png|x120px|link=Roshan]]
+| '''[[Roshan]]'''
+| {{Gold|{{show|U|Roshan|bounty min}}|to|{{show|U|Roshan|bounty max}}|color}} ({{tooltip|{{Gold|{{#expr:({{show|U|Roshan|bounty min}}+{{show|U|Roshan|bounty max}})/2}}|color}}|Average value}})<br>+ {{Gold|{{show|U|Roshan|bounty team}}}} Team Bounty
+| {{XP|{{show|U|Roshan|experience}}|color}} + {{XP|{{Show|A|Roshan|Strength of the Immortal|type1 value1}}|i}}<sup>/min</sup>
+| {{show|U|Roshan|health}} {{M|Health}} + {{Show|A|Roshan|Strength of the Immortal|value2}}<sup>/min</sup>
+| {{A|Roshan|Roar of Retribution}} - {{A|Roshan|Slam}} - {{A|Roshan|Bash}} - {{A|Roshan|Spell Block}} - {{A|Roshan|Throw}} - {{A|Roshan|Strength of the Immortal}} - {{A|Roshan|On The Move}}
+|}
+
+===Tormentors===
+{{main|Tormentor}}
+{{#lst:Tormentor|intro}}
+
+{|class = "wikitable" style="text-align:center;" width = "100%"
+! class = "header" width = "13%" | Camp locations
+! class = "header" width = "12%" | Creeps
+! class = "header" width = "15%" | Camp Name
+! class = "header" width = "15%" | Total Gold
+! class = "header" width = "15%" | Total Experience
+! class = "header" width = "15%" | Total Health
+! class = "header" width = "15%" | Abilities
+|-
+| [[File:Dota 2 map neutral creep camps tormentor.jpg|150px]]
+| [[File:Tormentor Radiant model.png|x120px|link=Tormentor]][[File:Tormentor Dire model.png|x120px|link=Tormentor]]
+| '''[[Tormentor]]'''
+| {{Gold|{{show|U|Tormentor|bounty team}}}} Team Bounty<br>+1 {{I|Aghanim's Shard}}<br>OR<br>+{{Gold|{{G|Tormentor bounty}}}} Additional Team Bounty
+| {{XP|{{show|U|Tormentor|experience}}}}
+| {{show|U|Tormentor|health}} {{M|Health}}<br>{{Show|A|Tormentor|Unyielding Shield|value1}} + {{Show|A|Tormentor|Unyielding Shield|type1 value1}}<sup>/min</sup>  {{M|Damage Barrier}}.
+| {{A|Tormentor|Unyielding Shield}} - {{A|Tormentor|Reflect}} - {{A|Tormentor|The Shining}} - {{A|Tormentor|Alleviation}}
+|}
+
+==Spawning==
+===Spawn timings===
+;Initial spawn: 01:00 game time
+
+;Spawn interval: {{#expr:60/{{G|neutral spawn interval}}}} Minute
+
+* The spawn interval is locked to the in-game time, not to the time the specific camp was cleared at.
+** Therefore, after the initial spawn, the camps spawn neutral creeps in-game time 02:00, 03:00, 04:00, etc.
+
+===Spawn rules===
+* A camp does not respawn when there are units present within the camp area, except for the following units:
+* {{U|Astral Spirit}}
+* {{U|Courier}}
+* {{A|Clockwerk|Power Cogs}}
+* {{A|Earth Spirit|Stone Remnant}}
+* {{U|Fiend's Gate}}
+* {{H|Largo|Hero Model|text=Frogling}}
+* {{U|Raptor}}
+* {{U|Jex}}
+* {{U|Psionic Trap}}
+* {{U|Skeleton Archer}}
+* {{A|Tidehunter|Leviathan's Catch|text= Leviathan's Fish}}
+* {{U|Treant's Eyes}}
+* {{U|Roshan's Banner (unit)}}
+* {{U|Spin Web}}
+* {{U|Sticky Bomb}}, {{U|Minefield Sign}}, {{U|Proximity Mine}} and {{U|M.A.D.}}
+<br/>
+
+All other units (including {{M|ward-type units}}) block neutral creep spawns even if they:
+* {{M|Hidden}}, {{M|Invulnerable}}, {{M|True Sight|text=True Sight Immune}}, {{M|Invisible}}, {{M|Untargetable}}.
+
+* Holding {{Key press|ALT}} reveals the creep camp areas with a yellow outline.
+
+* A camp cannot spawn the same set of neutral creeps twice in a row.
+** For example, if a small camp spawned the [[Ghost Camp]], its next spawn cannot be a Ghost Camp again.
+** The amphibious creep camps can only spawn in the river spots, while the other camps can only spawn on land.
+** Besides these limitation, all types of camps have the same chance to spawn within their tiers.
+
+===Stacking camps===
+* A neutral creep camp does not need to be killed off in order for the next creeps to spawn
+* This allows a camp to be stacked:
+** To stack a camp, the existing creeps need to be pulled out of the camp's area, before the next spawn happens.
+** This is usually done by aggroing the creeps and running away, having the creeps follow and leave the camp area.
+** When stacked successfully, the player gets an <ab>ui_stacked.mp3</ab> audio cue.
+** There is no limit to how often a creep camp be stacked.
+** For more details, see <i>[[creep stacking]]</i>.
+
+===Visual indicators===
+* All creep camps are marked on the map with icons. The icons indicate the tier of the camp:
+*: {{Symbol|Small Camp}} A simple triangle indicates a small camp
+*: {{Symbol|Medium Camp}} The same triangle, but with a single bar below it, indicates a medium camp
+*: {{Symbol|Large Camp}} A triangle with two bars below it indicates a large camp.
+*: {{Symbol|Ancient Camp}} A big triangle with an inlined triangle indicates an ancient camp.
+* These icons do not reveal the current state of the camp, they cannot be used to tell whether a camp got cleared or is blocked.
+
+* Within the world, a yellow particle effect appears within every camp about 3 seconds before the respawn timer is reached.
+** This effect appears regardless of whether the camp can spawn or not, so a blocked camp will still show these particles.
+
+==Behavior==
+Neutral creeps do not belong to either faction. Most of the time they just stand in their camps, doing nothing. They only fight when aggroed, which can be done in multiple ways. Neutral creeps can also flee under certain conditions. Once dominated, a neutral creep drops these behaviors completely.
+
+===Drawing Aggro===
+[[File:Neutrals multi stacking.jpeg|thumb|{{H|Phoenix}} drawing aggro of two camps with {{A|Phoenix|Fire Spirits}} in order to stack them simultaneously.<br><ab>ui stacked.mp3</ab> Sucessful stack sound]]
+The aggro of neutral creeps can be drawn in two ways: By coming within {{G|neutral approach aggro range}} range of them ({{G|roshan approach aggro range}} range in Roshan's case), or by dealing damage to or casting a single-target spell on them while within {{G|neutral damage aggro range}} range of them. Aggroed neutral creeps follow regular auto-attack rules, meaning they prioritize the closest enemies. So if a unit draws aggro and another unit is closer to them, the closer unit gets attacked, and not the unit which actually aggroed them. If multiple heroes are about equally close, the one which attacks them get prioritized, while the one which does not attack, or attacks an enemy from the opposing faction has second priority, and the one who attacks its own allies has least priority. Multiple non-hero units within about equal range have all the same priority, regardless of what they do. The creeps ignore units which attack them from further away, despite them being a bigger threat. They always prioritize closer units. There is one exception to this rule. If a hero within the acquisition range of an aggroed neutral creeps issues an attack order on a hero from the opposing faction, the creeps immediately switch to attack the hero that received the attack order, as if they want to protect the opposing hero, similar to how lane creeps protect their allied heroes. Siege creeps always have a lower priority than heroes and other units, regardless of what they do. Buildings have a lower priority than siege creeps and wards have a lower priority than buildings, also regardless of what they do. Although neutral creeps can attack buildings, they are too far away. They lose aggro before they get within range. On the other side, towers do not attack neutral creeps, so even though creeps can be pulled close enough to towers, they do not attack the creeps.
+
+Only units which can be attacked can aggro neutral creeps. [[Hidden]], [[invulnerable]], [[ethereal]] or [[Invisibility#True Sight Immunity|True Sight immune]] units cannot aggro neutral creeps. In these cases, the neutral creeps just stand still and fully ignore the enemy. [[Invisible]] units cannot aggro neutral creeps either. However, if a neutral creep takes damage from invisible units, the creep and all other neutral creeps within {{G|neutral nearby aggro range}} range of it flee, instead of ignoring it. They move to a random spot {{G|neutral flee distance}} range away from their camp spot and walk for up to {{G|neutral flee duration}} seconds. If they reach the flee spot earlier, they wait there and return once {{G|neutral flee duration}} seconds have passed. Neutral creeps have shared vision with both teams, so attacking them from the fog of war still draws aggro normally.
+
+===Losing Aggro===
+If the neutral creep moves more than {{G|neutral guard distance}} range away from its original spot in the camp (called the "''guard distance''"), it loses aggro {{G|neutral aggro duration}} seconds later and then returns to its spot. However, if the creep somehow gets within {{G|neutral guard distance}} range of its spot again before the {{G|neutral aggro duration}} seconds elapse, it stays aggroed. The {{G|neutral aggro duration}} seconds timer gets reset whenever the neutral creep gets {{G|neutral guard distance}} range away from its spot. If the timer does not get reset, their chase distance is effectively capped by their movement speed and the {{G|neutral aggro duration}} seconds chase limit. This results in an average chase distance of {{#expr:{{G|neutral guard distance}}+{{G|neutral aggro duration}}*270}} ‒ {{#expr:{{G|neutral guard distance}}+{{G|neutral aggro duration}}*360}} ({{G|neutral guard distance}} base distance + {{G|neutral aggro duration}}*270 ‒ 360 movement speed), assuming the creeps do not attack but only chase their target. If a neutral creep loses aggro due to the {{G|neutral aggro duration}} seconds aggro limit, then it cannot be re-aggroed by standing too close to them until they return to their spot. It cannot be re-aggroed by damage for {{G|neutral re-aggro duration}} seconds either, but can be re-aggroed by damaging them or another neutral creep within a {{G|neutral nearby aggro range}} radius after {{G|neutral re-aggro duration}} seconds have passed.
+
+If they get re-aggroed within those {{G|neutral re-aggro duration}} seconds, they behave exactly like described before, except that now the aggro lasts {{G|neutral re-aggro duration}} seconds, instead of {{G|neutral aggro duration}}. Once all (remaining) creeps from the camp fully returned to their spots, they can be aggroed for {{G|neutral aggro duration}} seconds again.
+
+Neutral creeps also lose aggro when their target turns [[ethereal]], [[invulnerable]], [[hidden]] or [[Invisibility#True Sight Immunity|True Sight immune]]. In this case, aggro is lost immediately, so that they either return to their spot, or attack other nearby enemies. If they return to their spot after losing aggro this way, they still are aggressive while returning, meaning they attack any enemy within {{G|neutral nearby aggro range}} range on their way back. This has no effect on their aggro timer limit. If their initial target turns unattackable while more than {{G|neutral guard distance}} range away from the camp spot, their {{G|neutral aggro duration}} seconds aggro timer still runs down and does not reset if they find another target while outside the {{G|neutral guard distance}} range.
+
+===Interaction with Lane Creeps===
+Neutral creeps are mostly ignored by lane creeps. The only neutral creeps which lane creeps attack are the ones from the small camps, and the large within the main jungles at the off lanes. This means these four camps are the only ones that can be used to pull lane creeps to. Neutral creeps from all other camps are completely ignored by lane creeps. However, neutral creeps can always attack lane creeps, no matter where they are from. Even when attacked by the neutrals, the lane creeps still ignore them if they do not come from the mentioned four camps.
+
+===Nighttime===
+<section begin=Nighttime />
+During {{Symbol|Nighttime}} nighttime, all neutral creeps, except for {{U|Roshan}}, are sleeping. This means during the night, their aggro range is reduced to 0, so they do not attack enemies who get too close to them. To draw their aggro, they must be damaged, or be targeted by a single-targeted ability. Besides not automatically drawing aggro, the creeps behave the same as during the {{Symbol|Daytime}} daytime. When returning to their camp after de-aggroing, they go back to sleep as soon as they reach their original spot.
+
+Sleeping creeps are indicated by floating Zs above the creeps.<section end=Nighttime />
+
+===Disarming===
+If a neutral creep is [[disarm]]ed, it cannot be aggroed. It completely stands still, ignoring any damage dealt to or any spell targeted on it or other neutrals. If an already aggroed neutral creep gets disarmed, it either stands still and waits for the disarm to expire after which it then returns, or it returns immediately as soon as disarmed. A disarmed neutral creep does not cast any spells either, even if the conditions are met.
+
+===Ability Cast Behaviors===
+Most neutral creeps will cast their abilities, if specific conditions are met. The conditions can be found within the creeps' articles.
+
+{{SkillListHead|title=Autocastable Neutral Creep Abilities}}
+{{#lpdb:datapoint
+| conditions = [[type::ability]] and [[extradata_type0::npc]] and [[extradata_npcauto::true]]
+| template = SkillListLite
+| limit = 1000
+| order = pagename ASC
+}}
+{{SkillListTail}}
+
+==Stats==
+{{Spellcard
+| name = Neutral Upgrade
+
+| icon0 = Neutral Factor
+| type0 = npc
+| target0 = Passive
+| affect0 = Neutral Creep
+| desc0 = Neutral creeps grow stronger as time passes by.
+
+| trait1 = Max Stats Upgrades
+| value1 = 30
+| trait2 = Stats Upgrade Interval
+| value2 = {{G|lanecreep upgrade cycle}}
+| trait3 = Health Bonus
+| value3 = {{G|neutral upg hp}}
+| trait4 = Armor Bonus
+| value4 = {{G|neutral upg armor}}
+| trait5 = Base Attack Damage Bonus
+| value5 = {{G|neutral upg damage}}
+| trait6 = Attack Speed Bonus
+| value6 = {{G|neutral upg as}}
+
+
+| icon1 = Neutral Factor
+| type1 = alticon
+| target1 = Passive
+| desc1 = As the creeps grow stronger over time, so do some of their abilities.
+
+| type1 trait1 = Max Ability Upgrades
+| type1 value1 = 3
+| type1 trait2 = Ability Upgrade Interval
+| type1 value2 = {{G|neutral ability interval}}
+
+| icon2 = Neutral Factor
+| type2 = alticon
+| target3 = Passive
+| desc2 = An increase in power also results in higher bounty values for neutral creeps. These increase together with the other stats.
+
+| type2 trait1 = Gold Bounty Increase
+| type2 value1 = {{G|neutral upg gold}}
+| type2 trait2 = Experience Bounty Increase
+| type2 value2 = {{G|neutral upg xp}}
+
+| buff1 = modifier_neutral_upgrade
+| buff1text = Hidden modifier
+| buff1dispel = None
+| buff2 = modifier_neutral_sleep_ai
+| buff2text = Hidden modifier
+| buff2dispel = None
+
+| mechanics = * The timer starts at game time 00:00, as the horn sounds.
+
+* The stats are granted to all neutral creeps immediately.
+** This includes neutral creeps that have been {{M|Dominated}} by players.
+** The {{M|armor}} is granted as a flat armor bonus, it is not added to the base armor.
+** The {{M|attack damage}} is granted as a flat attack damage bonus, it is not added to the base attack damage.
+** The bounty increase is also applied immediately to all neutral creeps.
+** Refer to the table below for the bonuses on each interval.
+
+* Unlike the stats, the ability levels of neutral creeps is bound to the level they were spawned with.
+** Between game time 00:00 &ndash; {{#time: i:s|@{{#expr:{{G|neutral ability interval}}-1}}}}, neutral creeps spawn with their abilities at level 1.
+** Between game time {{#time: i:s|@{{G|neutral ability interval}}}} &ndash; {{#time: i:s|@{{#expr:{{G|neutral ability interval}}*2-1}}}}, neutral creeps spawn with their abilities at level 2.
+** At game time {{#time: i:s|@{{#expr:{{G|neutral ability interval}}*2}}}} and onwards, neutral creeps spawn with their abilities at level 3.
+** Although their abilities have 4 levels, they can only reach level 3 by default.
+** [[Turbo Mode]] uses the same timings as other modes.
+** Not all abilities have multiple levels. See the neutral creeps articles to view their individual abilities.
+}}
+
+{|class="wikitable" style="text-align:center;"width="15%"
+! Upg
+! Time
+! {{M|Health}}
+! {{M|Armor}}
+! {{M|Attack Damage|text=DMG}}
+! {{M|Attack Speed|text=AS}}
+! {{M|Gold}}
+! {{M|Experience|text=XP}}
+|- 
+{{#invoke:Lua|invoke|module=loop|fn=i|1|{{#var:Neutral Upgrade value1}}|<nowiki>
+! {{#var:i}}
+| {{#ifexpr:{{#var:i}}=1|0|}}{{#expr:trunc({{#var:Neutral Upgrade value2}}*{{#var:i}}/60)}}:{{#time: s|@{{#expr:{{#var:Neutral Upgrade value2}}*{{#var:i}}}}}}
+| {{#expr:{{#var:Neutral Upgrade value3}}*{{#var:i}}}}
+| {{#expr:{{#var:Neutral Upgrade value4}}*{{#var:i}}}}
+| {{#expr:{{#var:Neutral Upgrade value5}}*{{#var:i}}}}
+| {{#expr:{{#var:Neutral Upgrade value6}}*{{#var:i}}}}
+| {{#expr:{{#var:Neutral Upgrade type2 value1}}*{{#var:i}}}}
+| {{#expr:{{#var:Neutral Upgrade type2 value2}}*{{#var:i}}}}
+|-</nowiki>}}
+|}
+
+==Bounties==
+* Each neutral creep has a [[gold]] bounty, consisting of a minimum and maximum value.
+** The bounty is randomized between the two values as the unit dies, using [[true random distribution]].
+** The gold bounty is only granted to the player that kills the neutral creep.
+
+* Each neutral creep also has a [[experience]] bouhty. Unlike the gold bounty, this is a single fixed value.
+** The experience bounty is split evenly amongst all heroes within a {{G|xp radius}} radius around the dying neutral creep.
+** This includes heroes of both teams, not just the killing player's team.
+
+* Neutral creeps may also drop {{I|Madstone}} bundles. See the item's page for more details.
+
+===Camp Stacking Bounty===
+* When stacking a camp, the newly spawned creeps gain a status buff.
+** This buff has the stacking player's icon on it, so that allies can see who stacked it.
+** The buff has the following effects:
+*** The creep grants {{#expr:{{G|neutral stack penalty}}*100}}% less gold and experience than it would normally do, regardless of who kills it.
+*** If killed by an ally, the player that stacked the camp gains the following:
+**** Gold, equal to {{#expr:{{G|neutral stacker gold}}*100}}% of exactly what the ally got.
+**** Experience, equal to {{#expr:{{G|neutral stacker gold}}*100}}% of the creep's reduced experience bounty.
+*** The experience gained is independent from what was gained by nearby heroes around the creep.
+*** If the stacking player is within the experience share radius as well, they will gain both the shared and the stack experience.
+** The stacking player gets an <ab>ui coins big.mp3</ab> audio cue whenever a creep they stacked gets killed by an ally.
+** The buff is only applied to the newly spawned creeps, the creeps that get pulled out of the camp do not gain it.
+** The buff is permanent, and cannot be dispelled. If even {{M|dominated}} by a player, they still carry the buff.
+*** If dominated by an ally, denying the creep still grants the player the stack bounties.
+
+* A creep stack is creditted to whoever initially aggroed the camp.
+** This means when they switch aggro to another unit, the player that originally aggroed it still gets the credits for stacking the camp.
+** The stacking mechanic relies on the creep's aggro.
+** If a camp gets stacked without drawing their aggro at all, they do not gain the status buff.
+*** If moved out of the camp by non-damaging sources of {{M|Forced Movement}} (e.g. {{A|Drow Ranger|Gust}}), they do not gain the buff.
+*** If aggroed and pulled out by a lane creep, they do not gain the buff either.
+*** However, if a player drew their aggro after the lane creeps did, that player gains the credits.
+
+===Neutral Items===
+{{Main|Neutral items}}
+{{#lst:Neutral_items|neutral_items}}
+{{clr}}
+
+==Trivia==
+* Creeps stacking originated as a bug in DotA on Warcraft III.
+** Originally, neutral creep camps only required the existing creeps to be cleared in order to respawn.
+** In DotA Allstars, neutral creep spawn mechanics were changed to not respawn when there are other units with the camp.
+** Originally, the intent of this was to prevent creeps from spawning on top of players who happend to be within the camp at that time.
+** The act of actively blocking a camp with wards or other units as a strategic move was a side effect of this, and not the original intent.
+** As pulling creeps was not an established strategy back then, it was not considered while this change was implemented either.
+** Once this interaction was discovered, pro players started to abuse this a lot, to optimize farming routes.
+** In [[6.18]], this was fixed, and camps would no longer respawn until the existing instance was cleared.
+** However, this was quickly reverted based on player feedback, and officially turned into a feature.
+
+==Gallery==
+<gallery>
+Roshan Concept Art1.jpg|[[Roshan]] [[Concept Art]]
+Roshan Concept Art2.jpg|Roshan Concept Art
+Ghost and Fell Spirit Concept Art1.jpg|<center>[[Ghost]] & [[Fell Spirit]] Concept Art</center>
+</gallery>
+
+==Recent Changes==
+{{main|Neutral creeps/Changelogs|l1=Neutral Creeps/Changelogs}}
+{{Recent changes wrapper}}
+
+
+{{Neutral creep navbox}}
+{{MechanicsNav}}
+[[Category:Units]]
+
+[[ru:Нейтральные крипы]]

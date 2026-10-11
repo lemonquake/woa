@@ -1,0 +1,835 @@
+{{Tabber
+| name1 = Main
+| link1 = Experience
+| name2 = Changelogs
+| link2 = Experience/Changelogs
+}}
+
+[[File:Hand of God icon.png|frame]]
+{{Quotation|Storm Spirit|I grow stronger!|sound=ui_power_up_06.mp3}}
+<dfn>Experience</dfn>'''<sub>XP</sub>''' is an element heroes can gather by killing enemy units, or being present as enemy units get killed. On its own, experience does nothing, but when accumulated, it increases the hero's level, so that they grow more powerful. Only heroes can gather experience and therefore reach higher levels.
+
+With each level gained, a hero's base attributes increase by static values, which makes them stronger in several ways. Heroes may also learn new [[Ability|abilities]] upon leveling up, or improve already learned spells onto higher levels, making them more powerful. {{Symbol|Talent}} [[Talents]] may also be learned on certain levels, which further improve the hero's stats or abilities.
+
+==Leveling==
+Each hero begins at level 1, with one free ability point to spend. Heroes may level up by acquiring certain amounts of experience. Upon leveling up, the hero's {{Symbol|Strength}} / {{Symbol|Agility}} / {{Symbol|Intelligence}} [[attributes]] increase by fixed amounts ([[Table of hero attributes|unique for each hero]]), which makes them overall more powerful. Heroes may also gain more ability points by leveling up, allowing them to learn new abilities, to improve an already learned ability, making it more powerful or to gain additional attributes. On certain levels, ability points may also be spent for {{Symbol|Talent}} [[talents]], which further improve their stats or abilities. Ability points do not need to be spent immediately, a hero can level up multiple times while saving the ability points.
+
+<!--[[File:XP by Level.png|thumbnail|Experience required for each level.]]-->
+The amount of experience required to level up increases for each level. There is no specific formula for this requirement, but rather just set values for each individual level. Heroes can gain a total for 29 levels, resulting in level 30 as the highest possible level a hero can reach.
+<!--
+-->{{#vardefine:level 2|240}}<!--
+-->{{#vardefine:level 3|400}}<!--
+-->{{#vardefine:level 4|520}}<!--
+-->{{#vardefine:level 5|600}}<!--
+-->{{#vardefine:level 6|680}}<!--
+-->{{#vardefine:level 7|760}}<!--
+-->{{#vardefine:level 8|800}}<!--
+-->{{#vardefine:level 9|900}}<!--
+-->{{#vardefine:level 10|1000}}<!--
+-->{{#vardefine:level 11|1100}}<!--
+-->{{#vardefine:level 12|1200}}<!--
+-->{{#vardefine:level 13|1300}}<!--
+-->{{#vardefine:level 14|1400}}<!--
+-->{{#vardefine:level 15|1500}}<!--
+-->{{#vardefine:level 16|1600}}<!--
+-->{{#vardefine:level 17|1700}}<!--
+-->{{#vardefine:level 18|1800}}<!--
+-->{{#vardefine:level 19|1900}}<!--
+-->{{#vardefine:level 20|2000}}<!--
+-->{{#vardefine:level 21|2200}}<!--
+-->{{#vardefine:level 22|2400}}<!--
+-->{{#vardefine:level 23|2600}}<!--
+-->{{#vardefine:level 24|2800}}<!--
+-->{{#vardefine:level 25|3000}}<!--
+-->{{#vardefine:level 26|4000}}<!--
+-->{{#vardefine:level 27|5000}}<!--
+-->{{#vardefine:level 28|6000}}<!--
+-->{{#vardefine:level 29|7000}}<!--
+-->{{#vardefine:level 30|8000}}<!--
+-->{{#vardefine:level 2 total|{{#var:level 2}}}}<!--
+-->{{#vardefine:level 3 total|{{#expr:{{#var:level 2 total}}+{{#var:level 3}}}}}}<!--
+-->{{#vardefine:level 4 total|{{#expr:{{#var:level 3 total}}+{{#var:level 4}}}}}}<!--
+-->{{#vardefine:level 5 total|{{#expr:{{#var:level 4 total}}+{{#var:level 5}}}}}}<!--
+-->{{#vardefine:level 6 total|{{#expr:{{#var:level 5 total}}+{{#var:level 6}}}}}}<!--
+-->{{#vardefine:level 7 total|{{#expr:{{#var:level 6 total}}+{{#var:level 7}}}}}}<!--
+-->{{#vardefine:level 8 total|{{#expr:{{#var:level 7 total}}+{{#var:level 8}}}}}}<!--
+-->{{#vardefine:level 9 total|{{#expr:{{#var:level 8 total}}+{{#var:level 9}}}}}}<!--
+-->{{#vardefine:level 10 total|{{#expr:{{#var:level 9 total}}+{{#var:level 10}}}}}}<!--
+-->{{#vardefine:level 11 total|{{#expr:{{#var:level 10 total}}+{{#var:level 11}}}}}}<!--
+-->{{#vardefine:level 12 total|{{#expr:{{#var:level 11 total}}+{{#var:level 12}}}}}}<!--
+-->{{#vardefine:level 13 total|{{#expr:{{#var:level 12 total}}+{{#var:level 13}}}}}}<!--
+-->{{#vardefine:level 14 total|{{#expr:{{#var:level 13 total}}+{{#var:level 14}}}}}}<!--
+-->{{#vardefine:level 15 total|{{#expr:{{#var:level 14 total}}+{{#var:level 15}}}}}}<!--
+-->{{#vardefine:level 16 total|{{#expr:{{#var:level 15 total}}+{{#var:level 16}}}}}}<!--
+-->{{#vardefine:level 17 total|{{#expr:{{#var:level 16 total}}+{{#var:level 17}}}}}}<!--
+-->{{#vardefine:level 18 total|{{#expr:{{#var:level 17 total}}+{{#var:level 18}}}}}}<!--
+-->{{#vardefine:level 19 total|{{#expr:{{#var:level 18 total}}+{{#var:level 19}}}}}}<!--
+-->{{#vardefine:level 20 total|{{#expr:{{#var:level 19 total}}+{{#var:level 20}}}}}}<!--
+-->{{#vardefine:level 21 total|{{#expr:{{#var:level 20 total}}+{{#var:level 21}}}}}}<!--
+-->{{#vardefine:level 22 total|{{#expr:{{#var:level 21 total}}+{{#var:level 22}}}}}}<!--
+-->{{#vardefine:level 23 total|{{#expr:{{#var:level 22 total}}+{{#var:level 23}}}}}}<!--
+-->{{#vardefine:level 24 total|{{#expr:{{#var:level 23 total}}+{{#var:level 24}}}}}}<!--
+-->{{#vardefine:level 25 total|{{#expr:{{#var:level 24 total}}+{{#var:level 25}}}}}}<!--
+-->{{#vardefine:level 26 total|{{#expr:{{#var:level 25 total}}+{{#var:level 26}}}}}}<!--
+-->{{#vardefine:level 27 total|{{#expr:{{#var:level 26 total}}+{{#var:level 27}}}}}}<!--
+-->{{#vardefine:level 28 total|{{#expr:{{#var:level 27 total}}+{{#var:level 28}}}}}}<!--
+-->{{#vardefine:level 29 total|{{#expr:{{#var:level 28 total}}+{{#var:level 29}}}}}}<!--
+-->{{#vardefine:level 30 total|{{#expr:{{#var:level 29 total}}+{{#var:level 30}}}}}}<!--
+-->{| class="wikitable mw-datatable" cellpadding=2 style="text-align:center;"
+! class="header" width="100px" | Hero level
+! class="header" width="75px" | {{tooltip|Total XP|For each level}}
+! class="header" width="75px" | {{tooltip|XP Needed|For next level}}
+! class="header" width="150px" | Unlocks
+|-
+| align="center" | 1
+| align="center" | 0
+| align="center" | {{#var:level 2}}
+|
+|-
+| align="center" | 2
+| align="center" | {{#var:level 2 total}}
+| align="center" | {{#var:level 3}}
+|
+|-
+| align="center" | 3
+| align="center" | {{#var:level 3 total}}
+| align="center" | {{#var:level 4}}
+|
+|-
+| align="center" | 4
+| align="center" | {{#var:level 4 total}}
+| align="center" | {{#var:level 5}}
+| align="center" | <small>Lvl 1 {{A|Meepo|Divided We Stand}}</small>
+|-
+| align="center" | 5
+| align="center" | {{#var:level 5 total}}
+| align="center" | {{#var:level 6}}
+|
+|-
+| align="center" | 6
+| align="center" | {{#var:level 6 total}}
+| align="center" | {{#var:level 7}}
+| align="center" style = "background:{{color|ultimate}}" | '''<span style="color:white">Lvl 1 Ultimate</span>'''
+|-
+| align="center" | 7
+| align="center" | {{#var:level 7 total}}
+| align="center" | {{#var:level 8}}
+|
+|-
+| align="center" | 8
+| align="center" | {{#var:level 8 total}}
+| align="center" | {{#var:level 9}}
+|
+|-
+| align="center" | 9
+| align="center" | {{#var:level 9 total}}
+| align="center" | {{#var:level 10}}
+|
+|-
+| align="center" | 10
+| align="center" | {{#var:level 10 total}}
+| align="center" | {{#var:level 11}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''1'''
+|-
+| align="center" | 11
+| align="center" | {{#var:level 11 total}}
+| align="center" | {{#var:level 12}}
+| align="center" | <small>Lvl 2 {{A|Meepo|Divided We Stand}}</small>
+|-
+| align="center" | 12
+| align="center" | {{#var:level 12 total}}
+| align="center" | {{#var:level 13}}
+| align="center" style = "background:{{color|ultimate}}" | '''<span style="color:white">Lvl 2 Ultimate</span>'''
+|-
+| align="center" | 13
+| align="center" | {{#var:level 13 total}}
+| align="center" | {{#var:level 14}}
+|
+|-
+| align="center" | 14
+| align="center" | {{#var:level 14 total}}
+| align="center" | {{#var:level 15}}
+|
+|-
+| align="center" | 15
+| align="center" | {{#var:level 15 total}}
+| align="center" | {{#var:level 16}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''2'''
+|-
+| align="center" | 16
+| align="center" | {{#var:level 16 total}}
+| align="center" | {{#var:level 17}}
+|
+|-
+| align="center" | 17
+| align="center" | {{#var:level 17 total}}
+| align="center" | {{#var:level 18}}
+|
+|-
+| align="center" | 18
+| align="center" | {{#var:level 18 total}}
+| align="center" | {{#var:level 19}}
+| align="center" style = "background:{{color|ultimate}}" | '''<span style="color:white">Lvl 3 Ultimate</span>'''
+|-
+| align="center" | 19
+| align="center" |{{#var:level 19 total}}
+| align="center" |{{#var:level 20}}
+|
+|-
+| align="center" | 20
+| align="center" | {{#var:level 20 total}}
+| align="center" | {{#var:level 21}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''3'''
+|-
+| align="center" | 21
+| align="center" | {{#var:level 21 total}}
+| align="center" | {{#var:level 22}}
+|
+|-
+| align="center" | 22
+| align="center" | {{#var:level 22 total}}
+| align="center" | {{#var:level 23}}
+|
+|-
+| align="center" | 23
+| align="center" | {{#var:level 23 total}}
+| align="center" | {{#var:level 24}}
+|
+|-
+| align="center" | 24
+| align="center" | {{#var:level 24 total}}
+| align="center" | {{#var:level 25}}
+|
+|-
+| align="center" |25
+| align="center" |{{#var:level 25 total}}
+| align="center" |{{#var:level 26}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''4'''
+|-
+| align="center" | 26
+| align="center" | {{#var:level 26 total}}
+| align="center" | {{#var:level 27}}
+|
+|-
+| align="center" | 27
+| align="center" | {{#var:level 27 total}}
+| align="center" | {{#var:level 28}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''1'''
+|-
+| align="center" | 28
+| align="center" | {{#var:level 28 total}}
+| align="center" | {{#var:level 29}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''2'''
+|-
+| align="center" | 29
+| align="center" | {{#var:level 29 total}}
+| align="center" | {{#var:level 30}}
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''3'''
+|-
+| align="center" | 30
+| align="center" | {{#var:level 30 total}}
+| align="center" | -
+| align="center" style = "background:{{color|talent}}" | {{Symbol|Talent}} '''4'''
+|}
+
+==Acquiring Experience==
+Experience is awarded in a {{G|xp radius}} radius when an enemy hero dies to any ally, or when an enemy non-hero unit (creeps or summons) dies to any allied or neutral creep. This experience is shared between all allied heroes within the area, [[wikipedia:Floor and ceiling functions|truncated]] and splitting evenly amongst them. Therefore, the more heroes there are, the less every individual hero gets, and if no hero is nearby, the experience is effectively lost or wasted. Additionally, heroes that are already level 30 still take their share of experience within range, also effectively wasting experience.
+
+Dying units do not grant any experience if they have [[Reincarnation]]. Dying summons or [[illusion]]s do not grant any experience if their duration runs out naturally.
+
+Heroes must be alive to gain experience. Other status effects, such as [[spell immunity]], [[invulnerability]], and being [[hidden]], do not prevent a hero from gaining experience.
+
+===Exceptions===
+Except {{A|Meepo|Divided We Stand|text=Meepo Clones}} and the {{A|Vengeful Spirit|Vengeance Aura|text=Vengeance Illusion}}, hero [[clones]] and [[illusions]] do not gain any experience, and are not considered by the experience sharing. 
+
+; {{H|Meepo}}
+{{#lst:Meepo|xpshare}}
+
+; {{A|Vengeful Spirit|Vengeance Aura|text=Vengeance Illusion}}
+The Vengeance Illusion is considered an allied hero within the area. Experience is shared and split evenly amongst her and her allies.
+
+===Hero Kills===
+Hero kills give experience in an area as well, splitting it up amongst all present heroes. However, unlike non-hero kills, hero kills always grant experience to the hero of the player who killed them, regardless of distance. This means when a player kills an enemy hero while outside the experience range (with a global spell, or with units under their control), but has an ally within the experience range of the killed enemy hero (regardless of any actual contribution to the kill), the experience is split between the killing player's hero, and the hero of the allied player who was within range of the kill.
+
+Experience granted by heroes is determined by the following values and formula:<!--
+-->{{#vardefine:hero xp base|{{G|xp hero base}}}}<!--
+-->{{#vardefine:hero xp factor|{{G|xp hero factor}}}}<!--
+-->{{#vardefine:hero xp formula|{{G|xp hero base}}+{{G|xp hero factor}}}}
+
+{| class="wikitable" style="text-align:center;"
+! class="header" width="225px" | Hero Kills Base XP
+! class="header" width="225px" | Factor XP
+|-
+| {{XP|{{G|xp hero base}}|}}
+| {{G|xp hero factor}}
+|}
+
+<span style="font-size:110%; font-weight:bold;"><span style="{{ValueColor/El|XP}};">Bounty</span><sub>XP</sub> = (<span style="color:{{ValueColor/El|XP}};">{{G|xp hero base}}</span><sub>XP</sub> + {{G|xp hero factor}} × DeadHero<sub>XP</sub>) / n + <span style="color:{{ValueColor/El|XP}};">Streak</span><sub>XP</sub></span>
+
+This means for every {{XP|{{#expr:1/{{G|xp hero factor}} round2}}}} the dying hero has, their experience bounty increases by {{XP|1}}, starting with a base experience of {{XP|{{G|xp hero base}}}}.
+
+The following table shows the experience bounty ranges based on the level of the killed hero. The experience bounty does not increase past level 25.
+{| class="wikitable" cellpadding=2 style="text-align:center;"
+! class="header" width="150px" | Dead Hero Level
+! class="header" width="150px" | Possible Current XP of dead hero
+! class="header" width="150px" | Possible XP bounty of dead hero
+|-
+|1
+|0 - {{#expr:{{#var:level 2 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*0}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 2 total}}-1)}}
+|-
+|2
+|{{#var:level 2 total}} - {{#expr:{{#var:level 3 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 2 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 3 total}}-1)}}
+|-
+|3
+|{{#var:level 3 total}} - {{#expr:{{#var:level 4 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 3 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 4 total}}-1)}}
+|-
+|4
+|{{#var:level 4 total}} - {{#expr:{{#var:level 5 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 4 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 5 total}}-1)}}
+|-
+|5
+|{{#var:level 5 total}} - {{#expr:{{#var:level 6 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 5 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 6 total}}-1)}}
+|-
+|6
+|{{#var:level 6 total}} - {{#expr:{{#var:level 7 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 6 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 7 total}}-1)}}
+|-
+|7
+|{{#var:level 7 total}} - {{#expr:{{#var:level 8 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 7 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 8 total}}-1)}}
+|-
+|8
+|{{#var:level 8 total}} - {{#expr:{{#var:level 9 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 8 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 9 total}}-1)}}
+|-
+|9
+|{{#var:level 9 total}} - {{#expr:{{#var:level 10 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 9 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 10 total}}-1)}}
+|-
+|10
+|{{#var:level 10 total}} - {{#expr:{{#var:level 11 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 10 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 11 total}}-1)}}
+|-
+|11
+|{{#var:level 11 total}} - {{#expr:{{#var:level 12 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 11 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 12 total}}-1)}}
+|-
+|12
+|{{#var:level 12 total}} - {{#expr:{{#var:level 13 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 12 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 13 total}}-1)}}
+|-
+|13
+|{{#var:level 13 total}} - {{#expr:{{#var:level 14 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 13 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 14 total}}-1)}}
+|-
+|14
+|{{#var:level 14 total}} - {{#expr:{{#var:level 15 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 14 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 15 total}}-1)}}
+|-
+|15
+|{{#var:level 15 total}} - {{#expr:{{#var:level 16 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 15 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 16 total}}-1)}}
+|-
+|16
+|{{#var:level 16 total}} - {{#expr:{{#var:level 17 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 16 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 17 total}}-1)}}
+|-
+|17
+|{{#var:level 17 total}} - {{#expr:{{#var:level 18 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 17 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 18 total}}-1)}}
+|-
+|18
+|{{#var:level 18 total}} - {{#expr:{{#var:level 19 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 18 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 19 total}}-1)}}
+|-
+|19
+|{{#var:level 19 total}} - {{#expr:{{#var:level 20 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 19 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 20 total}}-1)}}
+|-
+|20
+|{{#var:level 20 total}} - {{#expr:{{#var:level 21 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 20 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 21 total}}-1)}}
+|-
+|21
+|{{#var:level 21 total}} - {{#expr:{{#var:level 22 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 21 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 22 total}}-1)}}
+|-
+|22
+|{{#var:level 22 total}} - {{#expr:{{#var:level 23 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 22 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 23 total}}-1)}}
+|-
+|23
+|{{#var:level 23 total}} - {{#expr:{{#var:level 24 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 23 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 24 total}}-1)}}
+|-
+|24
+|{{#var:level 24 total}} - {{#expr:{{#var:level 25 total}}-1}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 24 total}}}} - {{#expr:{{#var:hero xp formula}}*({{#var:level 25 total}}-1)}}
+|-
+|25 - 30
+|{{#var:level 25 total}}
+|{{#expr:{{#var:hero xp formula}}*{{#var:level 25 total}}}}
+|}
+
+===Streak Values===
+Additionally, if the killed hero had a killing streak going on, bonus experience is awarded for killing them, on top of the default experience values. This experience bonus depends on the killed hero's level.
+
+Streak Value Bonus Experience does not increase past '''beyond <font color='#FF8100'>GODLIKE'''</font>.
+
+The streak experience bounty is defined by the following formula:
+
+<span style="font-size:110%; font-weight:bold;">f(x) = ({{G|kill streak xp multiplier 1}}x<sup>{{G|kill streak xp exponent}}</sup> - {{G|kill streak xp multiplier 2}}x + {{G|kill streak xp base}}) × L</span>
+
+The following bonuses are granted for ending a streak:
+
+{| class="wikitable" cellpadding=2 style="text-align:center;"
+! class="header" width="100px" | Streak length
+! class="header" width="400px" colspan="2" | Streak name
+! class="header" width="150px" | Streak value (XP)
+|-
+| 0, 1, 2
+| N/A
+| N/A
+| <code>0</code>
+|-
+| 3
+| <ab>vo announcer killing spree announcer kill spree 01.mp3</ab>
+| Player is on a <font color='#00FF40'><dfn>killing spree</dfn></font>
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*{{G|kill streak min}}^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*{{G|kill streak min}}+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 4
+| <ab>vo announcer killing spree announcer kill dominate 01.mp3</ab>
+| Player is <font color='#5E00BD'>'''dominating'''</font>
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*4^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*4+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 5
+| <ab>vo announcer killing spree announcer kill mega 01.mp3</ab>
+| Player is on a <font color='#FF0080'>'''mega Kill'''</font> streak
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*5^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*5+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 6
+| <ab>vo announcer killing spree announcer kill unstop 01.mp3</ab>
+| Player is <font color='#FF8000'>'''unstoppable!'''</font>
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*6^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*6+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 7
+| <ab>vo announcer killing spree announcer kill wicked 01.mp3</ab>
+| Player is <font color='#808000'>'''wicked sick'''</font>
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*7^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*7+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 8
+| <ab>vo announcer killing spree announcer kill monster 01.mp3</ab>
+| Player is on a <font color='#FF80FF'>'''monster kill'''</font> streak
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*8^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*8+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 9
+| <ab>vo announcer killing spree announcer kill godlike 01.mp3</ab>
+| Player is <font color='#FF0000'>'''GODLIKE'''</font>
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*9^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*9+{{G|kill streak xp base}}}} × Level</code>
+|-
+| 10+
+| <ab>vo announcer killing spree announcer kill holy 01.mp3</ab>
+| Player is beyond <font color='#FF8100'>'''GODLIKE, someone kill them!!'''</font>
+| <code>{{#expr:{{G|kill streak xp multiplier 1}}*{{G|kill streak max}}^{{G|kill streak xp exponent}}-{{G|kill streak xp multiplier 2}}*{{G|kill streak max}}+{{G|kill streak xp base}}}} × Level</code>
+|-
+! colspan="4" | <sup>Announcer responses are [[Announcer|customizable]]</sup>
+|}
+
+===Denying===
+{{Main|Denying}}
+When a hero gets denied (be it by allies or by the hero itself), {{#expr:{{G|hero deny factor}}*100}}% no experience is awarded to enemies around it. This also applies to heroes killed by neutral creeps.
+
+When other player-controlled units get denied, {{#expr:{{G|summon deny factor}}*100}}% experience is awarded to the enemy either. Summons dying to neutral creeps do not count as denied and grant their default experience bounty.
+
+When a lane creep gets denied, the enemy gets {{#expr:{{G|creep deny factor}}*100}}% of its {{XP|Experience|i}} bounty, instead of 100%. Lane creeps dying to neutral creeps do not count as denied and grant their default experience bounty.
+
+===Experience Granting Abilities===
+Some abilities award a hero with experience when used.
+{{SkillListHead}}
+{{SkillListRich
+| source = Hand of Midas
+| name = Transmute
+| trait1 = Experience Bonus Multiplier
+| value1 = {{Show|A|Hand of Midas|Transmute|value2}}
+| notes = Multiplies the target's experience value.
+}}
+{{SkillListRich
+| source = Helm of the Dominator
+| name = Dominate
+| trait1 = Dominate Experience Bounty
+| value1 = {{Show|A|Helm of the Dominator|Dominate|type1 value3}}
+| notes = Grants the target's experience value.
+}}
+{{SkillListRich
+| source = Helm of the Overlord
+| name = Dominate
+| trait1 = Dominate Experience Bounty
+| value1 = {{Show|A|Helm of the Overlord|Dominate|type1 value3}}
+| notes = Grants the target's experience value.
+}}
+{{SkillListRich
+| source = Shrine of Wisdom
+| name = Experience Fountain
+| trait1 = Base Experience Gain
+| value1 = {{Show|A|Shrine of Wisdom|Experience Fountain|value3}}
+| trait2 = Experience Gain per Interval
+| value2 = {{Show|A|Shrine of Wisdom|Experience Fountain|type1 value3}}
+| notes = Stand nearby the Shrine of Wisdom to start gathering the experience.
+}}
+{{SkillListTail}}
+
+===Talents===
+{{Spellcard
+| ID = 5983, 5985, 5986, 6017, 5987, 6317, 6372, 6447, 344, 7125
+| intern = special_bonus_exp_boost_5/10/15/20/25/30/35/40/50/60
+| name = Experience Gain
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Experience Multiplier
+| value1 = Varies
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Increases all experience the hero gains by a percentage.
+
+* The following values exist:
+** 5%/10%/15%/20%/25%/30%/35%/40%/50%/60%
+}}
+
+{{Talent bonus table|xp gain|increased experience gain}}
+
+==Other Experience Sources==
+Most creeps have a fixed experience value they grant. This includes [[lane creeps]] and most [[summoned units]]. [[Buildings]] do not grant any experience.
+
+[[Neutral creeps]] have each a unique base value, which stays the same throught the match, although neutral creeps that spawned by getting stacked have a 15% penalty on their experience bounty. {{U|Roshan}}'s experience bounty increases by {{Show|A|Roshan|Strength of the Immortal|type1 value1}} every minute. Neutral creeps always grant experience to both teams, no matter who kills them, splitting it evenly amongst all present heroes.
+
+===Lane Creeps===
+{{main|Lane creeps}}
+{| class="wikitable sortable collapsible" cellpadding=2 style="text-align:center;"
+|- style="height: 20px;"
+! class="header" width="150px" | Creep
+! data-sort-type="number" class="header" width="100px" | Experience
+|-
+| [[File:Melee creeps.png|50px|link=Melee Creep]]<br>[[Melee Creep]]
+| {{show|U|Melee Creep|experience}}
+|-
+| [[File:Ranged creeps.png|50px|link=Ranged Creep]]<br>[[Ranged Creep]]
+| {{show|U|Ranged Creep|experience}}
+|-
+| [[File:Siege creeps.png|50px|link=Siege Creep]]<br>[[Siege Creep]]
+| {{show|U|Siege Creep|experience}}
+|-
+| [[File:Melee creeps.png|70px|link=Super Melee Creep]]<br>[[Super Melee Creep]]
+| {{show|U|Super Melee Creep|experience}}
+|-
+| [[File:Ranged creeps.png|70px|link=Super Ranged Creep]]<br>[[Super Ranged Creep]]
+| {{show|U|Super Ranged Creep|experience}}
+|-
+| [[File:Siege creeps.png|70px|link=Super Siege Creep]]<br>[[Super Siege Creep]]
+| {{show|U|Super Siege Creep|experience}}
+|-
+| [[File:Mega Melee creeps.png|90px|link=Mega Melee Creep]]<br>[[Mega Melee Creep]]
+| {{show|U|Mega Melee Creep|experience}}
+|-
+| [[File:Mega Ranged creeps.png|90px|link=Mega Ranged Creep]]<br>[[Mega Ranged Creep]]
+| {{show|U|Mega Ranged Creep|experience}}
+|}
+
+===Neutral Creeps===
+{{Main|Neutral creeps}}
+{| class="wikitable sortable collapsible collapsed" cellpadding=2 style="text-align:center;"
+|- style="height: 20px;"
+! class="header" width="140px" | Creep
+! data-sort-type="number" class="header" width="100px" | Experience
+|-
+| [[File:Kobold model.png|x50px|link=Kobold]]<br>[[Kobold]]
+| {{show|U|Kobold|experience}}
+|-
+| [[File:Kobold Soldier model.png|x50px|link=Kobold Soldier]]<br>[[Kobold Soldier]]
+| {{show|U|Kobold Soldier|experience}}
+|-
+| [[File:Kobold Foreman model.png|x50px|link=Kobold Foreman]]<br>[[Kobold Foreman]]
+| {{show|U|Kobold Foreman|experience}}
+|-
+| [[File:Hill Troll Berserker model.png|x50px|link=Hill Troll Berserker]]<br>[[Hill Troll Berserker]]
+| {{show|U|Hill Troll Berserker|experience}}
+|-
+| [[File:Hill Troll Priest model.png|x50px|link=Hill Troll Priest]]<br>[[Hill Troll Priest]]
+| {{show|U|Hill Troll Priest|experience}}
+|-
+| [[File:Vhoul Assassin model.png|x50px|link=Vhoul Assassin]]<br>[[Vhoul Assassin]]
+| {{show|U|Vhoul Assassin|experience}}
+|-
+| [[File:Fell Spirit model.png|x50px|link=Fell Spirit]]<br>[[Fell Spirit]]
+| {{show|U|Fell Spirit|experience}}
+|-
+| [[File:Ghost model.png|x50px|link=Ghost]]<br>[[Ghost]]
+| {{show|U|Ghost|experience}}
+|-
+| [[File:Harpy Scout model.png|x50px|link=Harpy Scout]]<br>[[Harpy Scout]]
+| {{show|U|Harpy Scout|experience}}
+|-
+| [[File:Harpy Stormcrafter model.png|x50px|link=Harpy Stormcrafter]]<br>[[Harpy Stormcrafter]]
+| {{show|U|Harpy Stormcrafter|experience}}
+|-
+| [[File:Centaur Courser model.png|x50px|link=Centaur Courser]]<br>[[Centaur Courser]]
+| {{show|U|Centaur Courser|experience}}
+|-
+| [[File:Centaur Conqueror model.png|x50px|link=Centaur Conqueror]]<br>[[Centaur Conqueror]]
+| {{show|U|Centaur Conqueror|experience}}
+|-
+| [[File:Giant Wolf model.png|x50px|link=Giant Wolf]]<br>[[Giant Wolf]]
+| {{show|U|Giant Wolf|experience}}
+|-
+| [[File:Alpha Wolf model.png|x50px|link=Alpha Wolf]]<br>[[Alpha Wolf]]
+| {{show|U|Alpha Wolf|experience}}
+|-
+| [[File:Satyr Banisher model.png|x50px|link=Satyr Banisher]]<br>[[Satyr Banisher]]
+| {{show|U|Satyr Banisher|experience}}
+|-
+| [[File:Satyr Mindstealer model.png|x50px|link=Satyr Mindstealer]]<br>[[Satyr Mindstealer]]
+| {{show|U|Satyr Mindstealer|experience}}
+|-
+| [[File:Satyr Tormenter model.png|x50px|link=Satyr Tormenter]]<br>[[Satyr Tormenter]]
+| {{show|U|Satyr Tormenter|experience}}
+|-
+| [[File:Ogre Bruiser model.png|x50px|link=Ogre Bruiser]]<br>[[Ogre Bruiser]]
+| {{show|U|Ogre Bruiser|experience}}
+|-
+| [[File:Ogre Frostmage model.png|x50px|link=Ogre Frostmage]]<br>[[Ogre Frostmage]]
+| {{show|U|Ogre Frostmage|experience}}
+|-
+| [[File:Mud Golem model.png|x50px|link=Mud Golem]]<br>[[Mud Golem]]
+| {{show|U|Mud Golem|experience}}
+|-
+| [[File:Mud Golem model.png|x50px|link=Shard Golem]]<br>[[Shard Golem]]
+| {{show|U|Shard Golem|experience}}
+|-
+| [[File:Hellbear model.png|x50px|link=Hellbear]]<br>[[Hellbear]]
+| {{show|U|Hellbear|experience}}
+|-
+| [[File:Hellbear Smasher model.png|x50px|link=Hellbear Smasher]]<br>[[Hellbear Smasher]]
+| {{show|U|Hellbear Smasher|experience}}
+|-
+| [[File:Wildwing model.png|x50px|link=Wildwing]]<br>[[Wildwing]]
+| {{show|U|Wildwing|experience}}
+|-
+| [[File:Wildwing Ripper model.png|x50px|link=Wildwing Ripper]]<br>[[Wildwing Ripper]]
+| {{show|U|Wildwing Ripper|experience}}
+|-
+| [[File:Hill Troll model.png|x50px|link=Hill Troll]]<br>[[Hill Troll]]
+| {{show|U|Hill Troll|experience}}
+|-
+| [[File:Dark Troll Summoner model.png|x50px|link=Dark Troll Summoner]]<br>[[Dark Troll Summoner]]
+| {{show|U|Dark Troll Summoner|experience}}
+|-
+| [[File:Dark Troll Summoner Skeleton Warrior model.png|x50px|link=Skeleton Warrior]]<br>[[Skeleton Warrior]]
+| {{show|U|Skeleton Warrior|experience}}
+|-
+| [[File:Warpine Raider model.png|x50px|link=Warpine Raider]]<br>[[Warpine Raider]]
+| {{show|U|Warpine Raider|experience}}
+|-
+| [[File:Ancient Black Drake model.png|x50px|link=Ancient Black Drake]]<br>[[Ancient Black Drake]]
+| {{show|U|Ancient Black Drake|experience}}
+|-
+| [[File:Ancient Black Dragon model.png|x50px|link=Ancient Black Dragon]]<br>[[Ancient Black Dragon]]
+| {{show|U|Ancient Black Dragon|experience}}
+|-
+| [[File:Ancient Rock Golem model.png|x50px|link=Ancient Rock Golem]]<br>[[Ancient Rock Golem]]
+| {{show|U|Ancient Rock Golem|experience}}
+|-
+| [[File:Ancient Granite Golem model.png|x50px|link=Ancient Granite Golem]]<br>[[Ancient Granite Golem]]
+| {{show|U|Ancient Granite Golem|experience}}
+|-
+| [[File:Ancient Rumblehide model.png|x50px|link=Ancient Rumblehide]]<br>[[Ancient Rumblehide]]
+| {{show|U|Ancient Rumblehide|experience}}
+|-
+| [[File:Ancient Thunderhide model.png|x50px|link=Ancient Thunderhide]]<br>[[Ancient Thunderhide]]
+| {{show|U|Ancient Thunderhide|experience}}
+
+|}
+
+===Roshan===
+{| class="wikitable collapsible" cellpadding=2 style="text-align:center;"
+|-
+| width="200px" | [[File:Roshan model.png|60px|link=Roshan]]<br>[[Roshan]]
+| width="100px" | 400 + {{Show|A|Roshan|Strength of the Immortal|type1 value1}} every minute
+|}
+
+===Summons===
+{{main|Summons}}
+{| class="wikitable sortable collapsible collapsed" cellpadding=2 style="text-align:center;"
+|- style="height: 20px;"
+! class="header" width="130px" align="left" | Source
+! class="header" width="150px" | Unit
+! data-sort-type="number" class="header" width="100px" | Experience
+|-
+| align="left"| {{H|Beastmaster}}
+| [[File:Beastmaster Raptor model.png|x50px|link=Raptor]]<br>[[Raptor]]
+| {{show|U|Raptor|experience}}
+|-
+| align="left"| {{H|Beastmaster}}
+| [[File:Beastmaster Razorback model.png|x50px|link=Razorback]]<br>[[Razorback]]
+| {{show|U|Razorback|experience}}
+|-
+| align="left"| {{H|Brewmaster}}
+| data-sort-value="Earth Brewling" | [[File:Brewmaster Earth Brewling model.png|x50px|link=Earth Brewling]]<br>[[Earth Brewling]]
+| {{show|U|Earth Brewling|experience}}
+|-
+| align="left"| {{H|Brewmaster}}
+| data-sort-value="Storm Brewling" | [[File:Brewmaster Storm Brewling model.png|x50px|link=Storm Brewling]]<br>[[Storm Brewling]]
+| {{show|U|Storm Brewling|experience}}
+|-
+| align="left"| {{H|Brewmaster}}
+| data-sort-value="Fire Brewling" | [[File:Brewmaster Fire Brewling model.png|x50px|link=Fire Brewling]]<br>[[Fire Brewling]]
+| {{show|U|Fire Brewling|experience}}
+|-
+| align="left"| {{H|Broodmother}}
+| [[File:Broodmother Spiderling model.png|x50px|link=Spiderling]]<br>[[Spiderling]]
+| {{show|U|Spiderling|experience}}
+|-
+| align="left"| {{H|Broodmother}}
+| [[File:Broodmother Spiderling model.png|x50px|link=Spiderite]]<br>[[Spiderite]]
+| {{show|U|Spiderite|experience}}
+|-
+| align="left"| {{H|Clockwerk}}
+| [[File:Clockwerk Power Cog model.png|x50px|link=Power Cog]]<br>[[Power Cog]]
+| {{show|U|Power Cog|experience}}
+|-
+| align="left"| {{H|Enigma}}
+| [[File:Enigma Eidolon model.png|x50px|link=Eidolon]]<br>[[Eidolon]]
+| {{show|U|Eidolon|experience}}
+|-
+| align="left"| {{H|Gyrocopter}}
+| [[File:Gyrocopter Homing Missile model.png|x50px|link=Homing Missile]]<br>[[Homing Missile]]
+| {{show|U|Homing Missile|experience}}
+|-
+| align="left"| {{H|Invoker}}
+| [[File:Invoker Forged Spirit model.png|x50px|link=Forged Spirit]]<br>[[Forged Spirit]]
+| {{show|U|Forged Spirit|experience}}
+|-
+| align="left"| {{H|Juggernaut}}
+| [[File:Juggernaut Healing Ward model.png|x50px|link=Healing Ward]]<br>[[Healing Ward]]
+| {{show|U|Healing Ward|experience}}
+|-
+| align="left"| {{H|Lone Druid}}
+| [[File:Lone Druid Spirit Bear model.png|x50px|link=Spirit Bear]]<br>[[Spirit Bear]]
+| {{show|A|Spirit Bear|Hero Model|type2 value1}}
+|-
+| align="left"| {{H|Lycan}}
+| [[File:Lycan Wolf model.png|x50px|link=Lycan Wolf]]<br>[[Lycan Wolf]]
+| {{show|U|Lycan Wolf|experience}}
+|-
+| align="left"| {{H|Nature's Prophet}}
+| [[File:Nature's Prophet Treant model.png|x50px|link=Treant]]<br>[[Treant]]
+| {{show|U|Treant|experience}}
+|-
+| align="left"| {{H|Nature's Prophet}}
+| [[File:Nature's Prophet Treant model.png|x50px|link=Greater Treant]]<br>[[Greater Treant]]
+| {{show|U|Greater Treant|experience}}
+|-
+| align="left"| {{H|Phoenix}}
+| [[File:Phoenix Sun model.png|x50px|link=Phoenix Sun]]<br>[[Phoenix Sun]]
+| {{show|U|Phoenix Sun|experience}}
+|-
+| align="left"| {{H|Pugna}}
+| [[File:Pugna Nether Ward model.png|x50px|link=Nether Ward]]<br>[[Nether Ward]]
+| {{show|U|Nether Ward|experience}}
+|-
+| align="left"| {{H|Shadow Shaman}}
+| [[File:Shadow Shaman Serpent Ward model.png|x50px|link=Serpent Ward]]<br>[[Serpent Ward]]
+| {{show|U|Serpent Ward|experience}}
+|-
+| align="left"| {{H|Techies}}
+| [[File:Techies Proximity Mine model.png|x50px|link=Proximity Mine]]<br>[[Proximity Mine]]
+| {{show|U|Proximity Mine|experience}}
+|-
+| align="left"| {{H|Techies}}
+| [[File:Techies Stasis Trap model.png|x50px|link=Stasis Trap]]<br>[[Stasis Trap]]
+| {{show|U| Stasis Trap (7.00-7.30e)|experience }}
+|-
+| align="left"| {{H|Techies}}
+| [[File:Techies Remote Mine model.png|x50px|link=Remote Mine]]<br>[[Remote Mine]]
+| {{show|U|Remote Mine|experience}}
+|-
+| align="left"| {{H|Templar Assassin}}
+| [[File:Templar Assassin Psionic Trap model.png|x50px|link=Psionic Trap]]<br>[[Psionic Trap]]
+| {{show|U|Psionic Trap|experience}}
+|-
+| align="left"| {{H|Undying}}
+| [[File:Undying Tombstone model.png|x50px|link=Tombstone]]<br>[[Tombstone]]
+| {{show|U|Tombstone|experience}}
+|-
+| align="left"| {{H|Undying}}
+| [[File:Undying Zombie model.png|x50px|link=Undying Zombie]]<br>[[Undying Zombie]]
+| {{show|U|Undying Zombie|experience}}
+|-
+| align="left"| {{H|Venomancer}}
+| [[File:Venomancer Plague Ward model.png|x50px|link=Plague Ward]]<br>[[Plague Ward]]
+| {{show|U|Plague Ward|experience}}
+|-
+| align="left"| {{H|Visage}}
+| [[File:Visage Familiar model.png|x50px|link=Familiar]]<br>[[Familiar]]
+| {{show|U|Familiar|experience}}
+|-
+| align="left"| {{H|Warlock}}
+| [[File:Warlock Golem model.png|x50px|link=Warlock Golem]]<br>[[Warlock Golem]]
+| {{show|U|Warlock Golem|experience}}
+|-
+| align="left"| {{H|Weaver}}
+| [[File:Weaver Beetle model.png|x50px|link=Beetle]]<br>[[Beetle]]
+| {{show|U|Beetle|experience}}
+|-
+| align="left"| {{H|Zeus}}
+| [[File:Zeus Nimbus model.png|x50px|link=Nimbus]]<br>[[Nimbus]]
+| {{show|U|Nimbus|experience}}
+|-
+| data-sort-value="zzz Necronomicon" align="left"| {{I|Book of the Dead}}
+| [[File:Demonic Warrior 3 model.png|x50px|link=Demonic Warrior (Book of the Dead)]]<br>[[Demonic Warrior (Book of the Dead)|Demonic Warrior]]
+| {{show|U|Demonic Warrior (Book of the Dead)|experience}}
+|-
+| data-sort-value="zzz Necronomicon" align="left"| {{I|Book of the Dead}}
+| [[File:Demonic Archer 3 model.png|x50px|link=Demonic Archer (Book of the Dead)]]<br>[[Demonic Archer (Book of the Dead)|Demonic Archer]]
+| {{show|U|Demonic Archer (Book of the Dead)|experience}}
+|-
+| data-sort-value="zzz Wards Observer" align="left"| {{I|Observer Ward}}
+| [[File:Observer Ward model.png|x50px|link=Observer Ward (unit)]]<br>[[Observer Ward (unit)|Observer Ward]]
+| {{show|U|Observer Ward (unit)|experience}}
+|-
+| data-sort-value="zzz Wards Sentry" align="left"| {{I|Sentry Ward}}
+| [[File:Sentry Ward model.png|x50px|link=Sentry Ward (unit)]]<br>[[Sentry Ward (unit)|Sentry Ward]]
+| {{show|U|Sentry Ward (unit)|experience}}
+|}
+
+===Special===
+{| class="wikitable sortable collapsible collapsed" cellpadding=2 style="text-align:center;"
+|- style="height: 20px;"
+! class="header" width="130px" align="left" | Source
+! class="header" width="150px" | Unit
+! data-sort-type="number" class="header" width="150px" | Experience
+|-
+| align="left"| {{H|Arc Warden}}
+| [[File:Tempest Double mapicon dota2 gameasset.png|x50px|link=Tempest Double]]<br>[[Tempest Double]]
+| {{Show|U|Tempest Double|experience}}
+|}
+
+==Recent Changes==
+{{Main|Experience/Changelogs}}
+{{Recent changes wrapper}}
+
+{{MechanicsNav}}
+
+[[Category:Gameplay]]
+[[Category:Mechanics]]
+
+[[ru:Опыт]]

@@ -1,0 +1,1575 @@
+{
+ "_breeches": {
+  "base": true,
+  "hair": "hide",
+  "name": " Breeches",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "_shoes": {
+  "base": true,
+  "hair": "hide",
+  "name": " Shoes",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.01,
+   0.146
+  ]
+ },
+ "_under_body": {
+  "base": true,
+  "hair": "hide",
+  "name": " Under Body",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.848,
+   1.534
+  ]
+ },
+ "_under_feet": {
+  "base": true,
+  "hair": "hide",
+  "name": " Under Feet",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.008,
+   0.171
+  ]
+ },
+ "_under_hands": {
+  "base": true,
+  "hair": "hide",
+  "name": " Under Hands",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.486
+  ]
+ },
+ "_under_legs": {
+  "base": true,
+  "hair": "hide",
+  "name": " Under Legs",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "aethersilk_trousers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Aethersilk Trousers",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "apprentice_robe": {
+  "base": false,
+  "hair": "hide",
+  "name": "Apprentice Robe",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.3,
+   1.55
+  ]
+ },
+ "arcanist_cowl": {
+  "base": false,
+  "hair": "hide",
+  "name": "Arcanist Cowl",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.366,
+   1.862
+  ]
+ },
+ "arcanist_legwraps": {
+  "base": false,
+  "hair": "hide",
+  "name": "Arcanist Legwraps",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "barbute_helm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Barbute",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.56,
+   1.882
+  ]
+ },
+ "bone_amulet": {
+  "base": false,
+  "hair": "hide",
+  "name": "Bone Amulet",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.306,
+   1.55
+  ]
+ },
+ "brigandine": {
+  "base": false,
+  "hair": "hide",
+  "name": "Brigandine",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.828,
+   1.546
+  ]
+ },
+ "bulwark_locket": {
+  "base": false,
+  "hair": "hide",
+  "name": "Bulwark Locket",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.336,
+   1.55
+  ]
+ },
+ "chain_shirt": {
+  "base": false,
+  "hair": "hide",
+  "name": "Chain Shirt",
+  "sides": false,
+  "slot": "inner_garment",
+  "y": [
+   0.857,
+   1.545
+  ]
+ },
+ "commander_cuisses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Commander Cuisses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "copper_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Copper Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.424,
+   1.428
+  ]
+ },
+ "crescent_nighttide": {
+  "base": false,
+  "hair": "hide",
+  "name": "Crescent Nighttide",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.33,
+   1.55
+  ]
+ },
+ "cutpurse_trousers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Cutpurse Trousers",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "depth_deepwarden_coat": {
+  "base": false,
+  "hair": "hide",
+  "name": "Deepwarden Coat",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.8,
+   1.555
+  ]
+ },
+ "depth_deepwarden_crown": {
+  "base": false,
+  "hair": "hide",
+  "name": "Deepwarden Crown",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.536,
+   1.842
+  ]
+ },
+ "depth_deepwarden_cuisses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Deepwarden Cuisses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "depth_deepwarden_grips": {
+  "base": false,
+  "hair": "hide",
+  "name": "Deepwarden Grips",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.532
+  ]
+ },
+ "depth_deepwarden_treads": {
+  "base": false,
+  "hair": "hide",
+  "name": "Deepwarden Treads",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.334
+  ]
+ },
+ "depth_gloomthread_coat": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gloomthread Coat",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.83,
+   1.544
+  ]
+ },
+ "depth_gloomthread_crown": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gloomthread Crown",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.366,
+   1.862
+  ]
+ },
+ "depth_gloomthread_grips": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gloomthread Grips",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.51
+  ]
+ },
+ "depth_gloomthread_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gloomthread Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "depth_gloomthread_treads": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gloomthread Treads",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.426
+  ]
+ },
+ "depth_prismkeeper_coat": {
+  "base": false,
+  "hair": "hide",
+  "name": "Prismkeeper Coat",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.3,
+   1.55
+  ]
+ },
+ "depth_prismkeeper_crown": {
+  "base": false,
+  "hair": "hide",
+  "name": "Prismkeeper Crown",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.366,
+   1.852
+  ]
+ },
+ "depth_prismkeeper_grips": {
+  "base": false,
+  "hair": "hide",
+  "name": "Prismkeeper Grips",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.51
+  ]
+ },
+ "depth_prismkeeper_legwraps": {
+  "base": false,
+  "hair": "hide",
+  "name": "Prismkeeper Legwraps",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "depth_prismkeeper_treads": {
+  "base": false,
+  "hair": "hide",
+  "name": "Prismkeeper Treads",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.363
+  ]
+ },
+ "depth_vaultpath_coat": {
+  "base": false,
+  "hair": "hide",
+  "name": "Vaultpath Coat",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.66,
+   1.546
+  ]
+ },
+ "depth_vaultpath_crown": {
+  "base": false,
+  "hair": "hide",
+  "name": "Vaultpath Crown",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.366,
+   1.862
+  ]
+ },
+ "depth_vaultpath_grips": {
+  "base": false,
+  "hair": "hide",
+  "name": "Vaultpath Grips",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.51
+  ]
+ },
+ "depth_vaultpath_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Vaultpath Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "depth_vaultpath_treads": {
+  "base": false,
+  "hair": "hide",
+  "name": "Vaultpath Treads",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.394
+  ]
+ },
+ "duskrunner_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Duskrunner Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "ember_dragonhide": {
+  "base": false,
+  "hair": "hide",
+  "name": "Ember Dragonhide",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.776,
+   1.575
+  ]
+ },
+ "gamblers_bones": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gamblers Bones",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.927,
+   1.05
+  ]
+ },
+ "gold_amulet": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gilded Amulet",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.343,
+   1.55
+  ]
+ },
+ "gravewhisper_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Gravewhisper Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.42,
+   1.431
+  ]
+ },
+ "guardian_cuisses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Guardian Cuisses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "guardian_gauntlets": {
+  "base": false,
+  "hair": "hide",
+  "name": "Aether Guardian Gauntlets",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.532
+  ]
+ },
+ "guardian_greaves": {
+  "base": false,
+  "hair": "hide",
+  "name": "Aether Guardian Greaves",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.409
+  ]
+ },
+ "guardian_helm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Aether Guardian Helm",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.585,
+   1.897
+  ]
+ },
+ "guardian_plate": {
+  "base": false,
+  "hair": "hide",
+  "name": "Aether Guardian Plate",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.8,
+   1.555
+  ]
+ },
+ "hide_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Hide Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "iron_cuisses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Iron Cuisses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "iron_gauntlet": {
+  "base": false,
+  "hair": "hide",
+  "name": "Iron Gauntlet",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.532
+  ]
+ },
+ "iron_hauberk": {
+  "base": false,
+  "hair": "hide",
+  "name": "Iron Hauberk",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.6,
+   1.548
+  ]
+ },
+ "iron_helm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Iron Helm",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.706,
+   1.841
+  ]
+ },
+ "iron_sabaton": {
+  "base": false,
+  "hair": "hide",
+  "name": "Iron Sabaton",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.375
+  ]
+ },
+ "kingsguard_crown_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Kingsguard Crown Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.418,
+   1.434
+  ]
+ },
+ "linen_hood": {
+  "base": false,
+  "hair": "hide",
+  "name": "Linen Hood",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.366,
+   1.852
+  ]
+ },
+ "linen_trousers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Linen Trousers",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "longstrider_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Longstrider Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "magister_robe": {
+  "base": false,
+  "hair": "hide",
+  "name": "Magister Robe",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.24,
+   1.55
+  ]
+ },
+ "magister_silks": {
+  "base": false,
+  "hair": "hide",
+  "name": "Magister Silks",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "mail_chausses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Mail Chausses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "nightweave_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Nightweave Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "padded_gambeson": {
+  "base": false,
+  "hair": "hide",
+  "name": "Padded Gambeson",
+  "sides": false,
+  "slot": "inner_garment",
+  "y": [
+   0.846,
+   1.56
+  ]
+ },
+ "phial_of_last_light": {
+  "base": false,
+  "hair": "hide",
+  "name": "Phial Of Last Light",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.346,
+   1.55
+  ]
+ },
+ "riveted_legplates": {
+  "base": false,
+  "hair": "hide",
+  "name": "Riveted Legplates",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "rune_charm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Rune Charm",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.9,
+   1.05
+  ]
+ },
+ "runed_glove": {
+  "base": false,
+  "hair": "hide",
+  "name": "Runed Glove",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.51
+  ]
+ },
+ "runeweave_vest": {
+  "base": false,
+  "hair": "hide",
+  "name": "Runeweave Vest",
+  "sides": false,
+  "slot": "inner_garment",
+  "y": [
+   0.854,
+   1.539
+  ]
+ },
+ "sage_boots": {
+  "base": false,
+  "hair": "hide",
+  "name": "Starbound Sage Boots",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.359
+  ]
+ },
+ "sage_gloves": {
+  "base": false,
+  "hair": "hide",
+  "name": "Starbound Sage Gloves",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.51
+  ]
+ },
+ "sage_hood": {
+  "base": false,
+  "hair": "hide",
+  "name": "Starbound Sage Hood",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.366,
+   1.862
+  ]
+ },
+ "sage_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sage Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "sage_robe": {
+  "base": false,
+  "hair": "hide",
+  "name": "Starbound Sage Robe",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.24,
+   1.55
+  ]
+ },
+ "sands_of_tempo": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sands Of Tempo",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.922,
+   1.051
+  ]
+ },
+ "scholars_breeches": {
+  "base": false,
+  "hair": "hide",
+  "name": "Scholars Breeches",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "seers_circlet": {
+  "base": false,
+  "hair": "keep",
+  "name": "Seer's Veil",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.59,
+   1.775
+  ]
+ },
+ "sigil_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sigil Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.419,
+   1.433
+  ]
+ },
+ "silentstep_breeches": {
+  "base": false,
+  "hair": "hide",
+  "name": "Silentstep Breeches",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "silk_glove": {
+  "base": false,
+  "hair": "hide",
+  "name": "Silk Glove",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.51
+  ]
+ },
+ "silk_undershirt": {
+  "base": false,
+  "hair": "hide",
+  "name": "Silk Undershirt",
+  "sides": false,
+  "slot": "inner_garment",
+  "y": [
+   0.858,
+   1.543
+  ]
+ },
+ "silver_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Silver Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.42,
+   1.432
+  ]
+ },
+ "soft_boot": {
+  "base": false,
+  "hair": "hide",
+  "name": "Soft Boot",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.325
+  ]
+ },
+ "spiked_gauntlet": {
+  "base": false,
+  "hair": "hide",
+  "name": "Spiked Gauntlet",
+  "sides": true,
+  "slot": "gloves",
+  "y": [
+   1.378,
+   1.532
+  ]
+ },
+ "spirit_bell": {
+  "base": false,
+  "hair": "hide",
+  "name": "Spirit Bell",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.925,
+   1.05
+  ]
+ },
+ "staghide_chaps": {
+  "base": false,
+  "hair": "hide",
+  "name": "Staghide Chaps",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "star_pendant": {
+  "base": false,
+  "hair": "hide",
+  "name": "Star Pendant",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.343,
+   1.55
+  ]
+ },
+ "starcluster_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Starcluster Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.419,
+   1.434
+  ]
+ },
+ "stoneheart_idol": {
+  "base": false,
+  "hair": "hide",
+  "name": "Stoneheart Idol",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.924,
+   1.052
+  ]
+ },
+ "sunforged_medallion": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sunforged Medallion",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.337,
+   1.55
+  ]
+ },
+ "tc_afterimage_mantle": {
+  "base": false,
+  "hair": "hide",
+  "name": "Afterimage Mantle",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.322,
+   1.579
+  ]
+ },
+ "tc_arcanist_vestments": {
+  "base": false,
+  "hair": "hide",
+  "name": "Arcanist Vestments",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.24,
+   1.55
+  ]
+ },
+ "tc_archmage_robes": {
+  "base": false,
+  "hair": "hide",
+  "name": "Archmage Robes",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.2,
+   1.584
+  ]
+ },
+ "tc_black_dominion_plate": {
+  "base": false,
+  "hair": "hide",
+  "name": "Black Dominion Plate",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.372,
+   1.785
+  ]
+ },
+ "tc_bloodmoon_signet": {
+  "base": false,
+  "hair": "hide",
+  "name": "Bloodmoon Signet",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.418,
+   1.434
+  ]
+ },
+ "tc_comet_lens": {
+  "base": false,
+  "hair": "hide",
+  "name": "Comet Lens",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.9,
+   1.05
+  ]
+ },
+ "tc_constellation_leathers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Constellation Leathers",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.42,
+   1.602
+  ]
+ },
+ "tc_convergence_prism": {
+  "base": false,
+  "hair": "hide",
+  "name": "Convergence Prism",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.351,
+   1.55
+  ]
+ },
+ "tc_dread_command_signet": {
+  "base": false,
+  "hair": "hide",
+  "name": "Dread Command Signet",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.422,
+   1.43
+  ]
+ },
+ "tc_horizon_core": {
+  "base": false,
+  "hair": "hide",
+  "name": "Horizon Core",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.924,
+   1.052
+  ]
+ },
+ "tc_livingwood_leathers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Livingwood Leathers",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.499,
+   1.607
+  ]
+ },
+ "tc_nightstalker_leathers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Nightstalker Leathers",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.797,
+   1.605
+  ]
+ },
+ "tc_oathkeeper_seal": {
+  "base": false,
+  "hair": "hide",
+  "name": "Oathkeeper Seal",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.418,
+   1.434
+  ]
+ },
+ "tc_quarry_compass": {
+  "base": false,
+  "hair": "hide",
+  "name": "Quarry Compass",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.889,
+   1.05
+  ]
+ },
+ "tc_reapers_glass": {
+  "base": false,
+  "hair": "hide",
+  "name": "Reapers Glass",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.922,
+   1.051
+  ]
+ },
+ "tc_riftwoven_robes": {
+  "base": false,
+  "hair": "hide",
+  "name": "Riftwoven Robes",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.22,
+   1.725
+  ]
+ },
+ "tc_royal_guard_cuirass": {
+  "base": false,
+  "hair": "hide",
+  "name": "Royal Guard Cuirass",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.458,
+   1.645
+  ]
+ },
+ "tc_runic_focus": {
+  "base": false,
+  "hair": "hide",
+  "name": "Runic Focus",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.9,
+   1.05
+  ]
+ },
+ "tc_sanctified_plate": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sanctified Plate",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.319,
+   1.645
+  ]
+ },
+ "tc_sanguine_leathers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sanguine Leathers",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.32,
+   1.62
+  ]
+ },
+ "tc_silent_trail_charm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Silent Trail Charm",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.926,
+   1.05
+  ]
+ },
+ "tc_sunward_reliquary": {
+  "base": false,
+  "hair": "hide",
+  "name": "Sunward Reliquary",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.337,
+   1.55
+  ]
+ },
+ "tc_trackers_leathers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Trackers Leathers",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.828,
+   1.633
+  ]
+ },
+ "tc_wildroot_pendant": {
+  "base": false,
+  "hair": "hide",
+  "name": "Wildroot Pendant",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.343,
+   1.55
+  ]
+ },
+ "thornbrand_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Thornbrand Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.422,
+   1.43
+  ]
+ },
+ "tidecaller_moonstone": {
+  "base": false,
+  "hair": "hide",
+  "name": "Tidecaller Moonstone",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.418,
+   1.434
+  ]
+ },
+ "trackers_breeches": {
+  "base": false,
+  "hair": "hide",
+  "name": "Trackers Breeches",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "traveler_coat": {
+  "base": false,
+  "hair": "hide",
+  "name": "Traveler's Coat",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.42,
+   1.55
+  ]
+ },
+ "twinmoon_band": {
+  "base": false,
+  "hair": "hide",
+  "name": "Twinmoon Band",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.422,
+   1.43
+  ]
+ },
+ "u_band_of_stillness": {
+  "base": false,
+  "hair": "hide",
+  "name": "Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.417,
+   1.435
+  ]
+ },
+ "u_bloodrunner": {
+  "base": false,
+  "hair": "hide",
+  "name": "Bloodrunner",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_echoing_legplates": {
+  "base": false,
+  "hair": "hide",
+  "name": "Echoing Legplates",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_heart_of_aether": {
+  "base": false,
+  "hair": "hide",
+  "name": "Amulet",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.351,
+   1.55
+  ]
+ },
+ "u_oathbound_cuisses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Oathbound Cuisses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_riftwalker_legwraps": {
+  "base": false,
+  "hair": "hide",
+  "name": "Riftwalker Legwraps",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_rimewalkers": {
+  "base": false,
+  "hair": "hide",
+  "name": "Rimewalkers",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_stillwater_silks": {
+  "base": false,
+  "hair": "hide",
+  "name": "Stillwater Silks",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_stormstriders": {
+  "base": false,
+  "hair": "hide",
+  "name": "Stormstriders",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "u_windswift_breeches": {
+  "base": false,
+  "hair": "hide",
+  "name": "Windswift Breeches",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "veilstalker_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Veilstalker Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "verdant_leaf_charm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Verdant Leaf Charm",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.911,
+   1.05
+  ]
+ },
+ "viper_coil_ring": {
+  "base": false,
+  "hair": "hide",
+  "name": "Viper Coil Ring",
+  "sides": true,
+  "slot": "accessory",
+  "y": [
+   1.422,
+   1.435
+  ]
+ },
+ "visored_greathelm": {
+  "base": false,
+  "hair": "hide",
+  "name": "Visored Greathelm",
+  "sides": false,
+  "slot": "helm",
+  "y": [
+   1.536,
+   1.842
+  ]
+ },
+ "war_talisman": {
+  "base": false,
+  "hair": "hide",
+  "name": "War Talisman",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.889,
+   1.05
+  ]
+ },
+ "warden_cuisses": {
+  "base": false,
+  "hair": "hide",
+  "name": "Warden Cuisses",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "warden_greave": {
+  "base": false,
+  "hair": "hide",
+  "name": "Warden Greave",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.409
+  ]
+ },
+ "warden_plate": {
+  "base": false,
+  "hair": "hide",
+  "name": "Warden Plate",
+  "sides": false,
+  "slot": "armor",
+  "y": [
+   0.8,
+   1.555
+  ]
+ },
+ "watchers_eye": {
+  "base": false,
+  "hair": "hide",
+  "name": "Watchers Eye",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.352,
+   1.55
+  ]
+ },
+ "wayfarer_boot": {
+  "base": false,
+  "hair": "hide",
+  "name": "Wayfarer Boot",
+  "sides": true,
+  "slot": "boots",
+  "y": [
+   -0.015,
+   0.393
+  ]
+ },
+ "wayfarers_knot": {
+  "base": false,
+  "hair": "hide",
+  "name": "Wayfarers Knot",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   0.926,
+   1.05
+  ]
+ },
+ "windrider_feather": {
+  "base": false,
+  "hair": "hide",
+  "name": "Windrider Feather",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.328,
+   1.55
+  ]
+ },
+ "windrunner_leggings": {
+  "base": false,
+  "hair": "hide",
+  "name": "Windrunner Leggings",
+  "sides": false,
+  "slot": "leggings",
+  "y": [
+   0.102,
+   1.097
+  ]
+ },
+ "wolfclaw_torc": {
+  "base": false,
+  "hair": "hide",
+  "name": "Wolfclaw Torc",
+  "sides": false,
+  "slot": "accessory",
+  "y": [
+   1.335,
+   1.55
+  ]
+ }
+}

@@ -1,0 +1,525 @@
+{{tabber
+| link1 = Turn Rate
+| link2 = Turn Rate/Changelogs
+| name2 = Changelogs
+}}
+
+[[File:Counter Helix icon.png|frame]]
+{{Quotation|Gyrocopter|Let's go for a spin!|sound=vo_gyrocopter_gyro_spawn_02.mp3}}
+<dfn>Turn rate</dfn> is the speed at which a unit can turn. When moving to a location, a unit first turns to face that location, then begins walking. Similarly, when targeting another unit with an attack or spell, a unit first turns until it is facing the target, and then continues with the action. A unit only starts moving, or only starts casting a spell on a targeted area or point when the target is within 11.5°<ref>[http://blog.dota2.com/2015/03/various-pathfinding-fixes/ Confirmation of required facing angle being 11.5° (2nd paragraph)]</ref> angle in front of the ordered unit. This can make [[Glossary#K - O|kiting]] more difficult, as the hero has to spend time turning towards and away from the target with each attack.
+
+Every unit has a base turn rate, which can be lowered by some abilities. The vast majority of heroes have a turn rate between 0.6 and 0.5, meaning it takes between 0.15 and 0.19 seconds for the hero to make a 180° turn.
+
+There are currently no {{Symbol|Talent}} [[talents]] that improve turn rate.
+
+==Mechanics==
+<pre>Turn rate speed was improved by 20% in [[7.29]]</pre>
+Turn rate is expressed in radians per 0.03 seconds. A 180° turn is the same as &pi; (3.1416) radians, therefore 0.03&pi; divided by the turn rate of the unit equals the time it takes to turn 180°. 
+
+Turn rate is defined as 
+
+: {{math|1=
+t = {{sfrac|0.03&pi;|T}}
+}}
+
+With <code>t</code> being the time it takes to turn around and <code>T</code> the turn rate sources.
+
+Turn rate slow directly affects the base turn rate, and all sources of turn rate slow stack multiplicatively. 
+
+: <math>\sum T = 
+ \begin{cases}
+ T_{Set} & \text{if} \;\; T_{Set} = \top \\
+ T_{b} \times \displaystyle\prod_{i=1}^n (1-r_i)(1+a_i) & \text{otherwise} 
+ \end{cases}</math>
+
+With <code>T<sub>Set</sub></code> being the [[Turn rate#Turn Rate Setting Abilities|Set Turn Rate Value]], <code>T<sub>b</sub></code> the Base Turn Rate, <code>r</code> the Turn Rate Slow Value and <code>a</code> the Turn Rate Improve Value.
+
+A unit does not immediately start turning at the highest rate it can turn. The turn rate ramps as the unit starts turning, reaching the unit's max turn rate after a certain amount of time. The rate at which the turn rate ramps up is unknown.
+
+If a unit starts turning due to an ability or item cast order (by targeting a point, area or unit which is not within the required 11.5° facing angle), the turning cannot be canceled by a move, attack or a new spell cast order. Because the 11.5° angle can be in either direction, this creates a 23° angle directly in front of the hero allowing instant actions on any target within 23°. For any target beyond this angle, the hero must wait until they turn before the action occurs. The above formula is used to find the maximum time, so the time until the action takes place is actually ≤ 168.5°. 
+
+Any command ordered while turning due to a spell cast order gets queued up and executed once the spell is cast. In order to cancel the spell or ability cast, the player must issue a stop or halt command, in the same way how to cancel spell during its cast animation. This is to prevent accidental canceling of casts due to fast clicking. Issuing a stop or halt command (with {{Key press|S}}) does not stop the unit from turning if it has already started to turn, but stops the order which initiated the turning. For example, this allows {{H|Templar Assassin}} to turn during {{A|Templar Assassin|Meld}} without canceling the ability, as long as the move command is stopped before the targeted point is within the required angle.
+
+===Stacking===
+;Example 1<!--
+-->{{#vardefine:70p slow|0.3}}<!--
+-->{{#vardefine:50p slow|0.5}}<!--
+-->{{#vardefine:pi|3.1416}}<!--
+-->{{#vardefine:earthshaker tr|{{Show|H|Earthshaker|turn rate}}}}<!--
+-->{{#vardefine:earthshaker atr|{{#expr:{{#var:earthshaker tr}} * {{#var:70p slow}}}}}}<!--
+-->{{#vardefine:earthshaker atr2|{{#expr:{{#var:earthshaker tr}} * {{#var:70p slow}} * {{#var:50p slow}}}}}}<!--
+-->{{#vardefine:earthshaker t|{{#expr:(0.03 * 3.1416) / ({{#var:earthshaker atr}}) round 3}}}}<!--
+-->{{#vardefine:earthshaker t2|{{#expr:(0.03 * 3.1416) / ({{#var:earthshaker atr2}}) round 3}}}}
+
+: {{H|Earthshaker}} is affected by a turn rate slow of 70%. What is his current actual turn rate? How long would it take for him to turn  180°?
+
+: {{#tag:math|
+T = {{#var:earthshaker tr}} \times (1 - 0.7) = {{#var:earthshaker atr}}
+}}
+
+: {{#tag:math|
+t = \frac{ 0.03\pi }{ {{#var:earthshaker atr}} } = {{#var:earthshaker t}}
+}}
+
+: {{H|Earthshaker}} affected by a turn rate slow of 70% has a lowered turn rate of {{#var:earthshaker atr}} and it takes him roughly {{#var:earthshaker t}}s to turn 180° in this example.
+
+;Example 2
+
+: {{H|Earthshaker}} is affected by two turn rate slows of 70% and 50%. What is his current actual turn rate? How long would it take for him to turn 180°?
+
+: {{#tag:math|
+T = {{#var:earthshaker tr}} \times (1 - 0.7) \times (1 - 0.5) = {{#var:earthshaker atr2}}
+}}
+
+: {{#tag:math|
+t = \frac{ 0.03\pi }{ {{#var:earthshaker atr2}} } = {{#var:earthshaker t2}}
+}}
+
+: {{H|Earthshaker}} affected by two turn rate slow of 70% and 50% has a lowered turn rate of {{#var:earthshaker atr2}} and it takes him roughly {{#var:earthshaker t2}}s to turn 180° in this example.
+
+==Turn Rate Comparison==
+{{Grouped attribute table|hero|turnrate|value heading=Turn Rate}}
+
+{| class="wikitable collapsible mw-datatable" width="100%;" style="text-align:center;"
+|-
+|+ Turn Rate to Time Required to turn 180° Conversion
+|-
+! {{#invoke:Lua|invoke|module=loop|fn=tr|0|8|<nowiki>class="header" style="width:3%;" {{!}} {{#switch:{{#var:tr}}|0=Turn Rate|#default={{#expr:0.3+{{#var:tr}}*0.1}}}} 
+{{#ifexpr:{{#var:tr}}=7||!}}</nowiki>}}
+|-
+! class="header" | Time
+| {{#invoke:Lua|invoke|module=loop|fn=t|0|7|<nowiki>{{#expr:{{G|tick rate}}*3.1416/(0.4+{{#var:t}}*0.1) round3}}s
+{{#ifexpr:{{#var:t}}=6||{{!}}}}</nowiki>}}
+|}
+
+===Units===
+{{Grouped attribute table|unit|turn_rate|value heading=Turn Rate}}
+
+==Modifying Turn Rate==
+Several abilities and items have abilities that slows or improve turn rate. For better readability, some of the turn rates in Hero pages are given as degrees per second, instead of radians per 0.03 seconds. 
+
+===Turn Rate Slowing Abilities===
+The following abilities slows turn rate:
+
+Highest value takes precedence.
+{{SkillListHead|collapse=no|title=Turn Rate Slowing Abilities}}
+{{SkillListLite
+| source = Batrider
+| name = Sticky Napalm
+}}
+{{SkillListLite
+| source = Medusa
+| name = Stone Gaze
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===Turn Rate Improving Abilities===
+The following abilities improve the turn rate:
+
+Multiple increasing sources stack multiplicatively, the highest turn rate value cannot exceed 1
+{{SkillListHead|title=Turn Rate Improving Sources}}
+{{SkillListLite
+| source = Broodmother
+| name = Spin Web
+}}
+{{SkillListLite
+| source = Phase Boots
+| name = Phase
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Time Zone
+}}
+{{SkillListTail}}
+
+===Turn Rate Setting Abilities===
+Set Turn Rate ( <math>T_{Set}</math> ) sets a unit's turn rate to a fixed value for the duration, so it cannot be altered by other effects.
+
+The following abilities sets turn rate to the given value for the duration.
+{{SkillListHead|title=Turn Rate Setting Abilities}}
+{{SkillListLite
+| source = Clockwerk
+| name = Jetpack
+}}
+{{SkillListLite
+| source = Hoodwink
+| name = Sharpshooter
+}}
+{{SkillListLite
+| source = Phoenix
+| name = Sun Ray
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Rolling Thunder
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Roll Up
+}}
+{{SkillListTail}}
+
+==Turn Rate Lock==
+The following abilities completely prevent the affected unit from turning:
+{{SkillListHead|title=Abilities Preventing Turning}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Will-O-Wisp
+}}
+{{SkillListLite
+| source = Mars
+| name = Bulwark
+}}
+{{SkillListLite
+| source = Medusa
+| name = Gorgon's Grasp
+}}
+{{SkillListTail}}
+
+===Stunned===
+{{SkillListHead|collapse=yes|title=Stunned: can't attack and use hero spells or items}}
+{{SkillListLite
+| source = Earthshaker
+| name = Enchant Totem
+| nametext = Enchant Totem <sup>2a<sup>
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Time Walk
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Reverse Time Walk
+}}
+{{SkillListLite
+| source = Kez
+| name = Grappling Claw
+}}
+{{SkillListLite
+| source = Marci
+| name = Rebound
+}}
+{{SkillListLite
+| source = Marci
+| name = Rebound (Alt-Cast)
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Boundless Strike (Alt-Cast)
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Tree Dance
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Swashbuckle
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Shield Crash
+}}
+{{SkillListLite
+| source = Pudge
+| name = Meat Hook
+}}
+{{SkillListLite
+| source = Sand King
+| name = Burrowstrike
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Firesnap Cookie
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Spit Out
+}}
+{{SkillListLite
+| source = Techies
+| name = Blast Off!
+}}
+{{SkillListLite
+| source = Tiny
+| name = Toss
+}}
+{{SkillListLite
+| source = Viper
+| name = Nosedive
+}}
+{{SkillListTail}}
+
+===Disarmed, can use spells without facing target===
+{{SkillListHead|title=Can't manually attack, can use spells without facing target}}
+{{SkillListLite
+| source = Bristleback
+| name = Bristleback
+}}
+{{SkillListLite
+| source = Clockwerk
+| name = Hookshot
+| nametext = Hookshot <sup>4<sup>
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Omnislash
+| nametext = Omnislash <sup>5<sup>
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Swiftslash
+| nametext = Swiftslash <sup>5<sup>
+}}
+{{SkillListLite
+| source = Kez
+| name = Shodo Sai
+}}
+{{SkillListLite
+| source = Phoenix
+| name = Sun Ray
+}}
+{{SkillListTail}}
+{{Footnote|1|Applies {{M|Silence|text=self-silence}} and {{M|Root|text=self-root}}.}}
+{{Footnote|2|{{A|Juggernaut|Blade Fury}} is inactive.}}
+
+===Disarmed, can use spells following hero facing===
+{{SkillListHead|title=Can't attack, can use hero spells and items in the hero facing direction}}
+{{SkillListLite
+| source = Dawnbreaker
+| name = Converge
+}}
+{{SkillListLite
+| source = Dawnbreaker
+| name = Starbreaker
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Multishot
+}}
+{{SkillListLite
+| source = Pudge
+| name = Meat Hook
+| nametext = Meat Hook (Self) <sup>4<sup>
+}}
+{{SkillListTail}}
+{{Footnote|4|Muted.}}
+
+===Allowes anything following hero facing===
+{{SkillListHead|title=Can attack, use hero spells and items in the hero facing direction}}
+{{SkillListLite
+| source = Ember Spirit
+| name = Activate Fire Remnant
+| nametext = Activate Fire Remnant <sup>4<sup>
+}}
+{{SkillListLite
+| source = Mirana
+| name = Leap
+}}
+{{SkillListLite
+| source = Ringmaster
+| name = Whoopee Cushion
+}}
+{{SkillListLite
+| source = Zeus
+| name = Heavenly Jump
+}}
+{{SkillListTail}}
+{{Footnote|4|Can use hero spells in any direction. Can use items following his facing (forward and right side).}}
+
+==Abilities that allow you to use other abilities without turning==
+{{SkillListHead|title=}}
+{{SkillListRich
+| source = Bristleback
+| name = Bristleback
+| notes aghs = While using this ability, {{H|Bristleback}} can use hero abilities or items without turning.<br/>Applies {{M|Disarm|text=self-disarm}}.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Clockwerk
+| name = Jetpack
+| notes = While using this ability, {{H|Clockwerk}} can use hero abilities and items without turning.<br/>Applies {{M|Disarm|text=self-disarm}}.
+}}
+{{SkillListRich
+| source = Clockwerk
+| name = Hookshot
+| notes = While using this ability, {{H|Clockwerk}} can use items without turning.<br/>Applies {{M|Silence|text = self-silence}}.
+}}
+{{SkillListRich
+| source = Drow Ranger
+| name = Multishot
+| notes = While using this ability, {{H|Drow Ranger}} can use hero abilities and items without turning.<br/>Applies {{M|Disarm|text=self-disarm}}.
+}}
+{{SkillListRich
+| source = Ember Spirit
+| name = Activate Fire Remnant
+| notes = While using this ability, {{H|Ember Spirit}} can use hero abilities without turning.<br/>Objects can be used only in the direction of his gaze, which is shifted to the right.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Juggernaut
+| name = Omnislash
+| nametext = Omnislash & Swiftslash
+| notes = While using this ability, {{H|Juggernaut}} can use hero abilities and items without turning.<br/>{{A|Juggernaut|Blade Fury}} is disabled.<br/>Applies {{M|Root|text = self-root}}.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Kez
+| name = Shodo Sai
+| notes = While using this ability, {{H|Kez}} can use hero abilites and items without turning.<br/>Using any ability will interrupt {{A|Kez|Shodo Sai}}.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Lich
+| name = Sinister Gaze
+| notes aghs = While channeling this ability, {{H|Lich}} can use hero abilites without turning.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Mars
+| name = Bulwark
+| notes = While using this ability, {{H|Mars}} can use {{A|Mars|Arena of Blood}} and items without turning.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Nyx Assassin
+| name = Burrow
+| notes = While underground, {{H|Nyx Assassin}} can use hero abilities and items without turning.<br/>Applies {{M|Disarm|text=self-disarm}}.
+}}
+{{SkillListRich
+| source = Ogre Seal Totem
+| name = Ogre Seal Flop
+| notes = While floping, heroes can attack, use hero abilites and items without turning.
+}}
+{{SkillListRich
+| source = Pugna
+| name = Oblivion Savant
+| notes = While channeling any ability, {{H|Pugna}} can use non-channeling hero abilities and items without turning.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Phoenix
+| name = Icarus Dive
+| notes = While using this ability, {{H|Phoenix}} can use hero abilities and items without turning. <br/>{{A|Phoenix|Sun Ray}} and {{A|Phoenix|Toggle Movement}} is disabled.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Phoenix
+| name = Sun Ray
+| notes = While active, {{H|Phoenix}} can use hero abilities and items without turning.<br/>Applies {{M|Disarm|text=self-disarm}}.
+}}
+{{SkillListRich
+| source = Pangolier
+| name = Hero Model
+| notes = {{H|Pangolier}} generally can use items without turning.
+}}
+{{SkillListRich
+| source = Primal Beast
+| name = Onslaught
+| notes = If Primal Beast receives a command to use a hero ability or item while winding up for Charge, he will immediately start charging forward and use that ability without turning.
+}}
+{{SkillListRich
+| source = Riki
+| name = Tricks of the Trade
+| notes = While channeling this ability, {{H|Riki}} can use {{A|Riki|Smoke Screen}} without turning.<br/>Locks turning.
+}}
+{{SkillListRich
+| source = Troll Warlord
+| name = Battle Trance
+| notes = While in trance, {{H|Troll Warlord}} can use hero abilites and items without turning.
+}}
+{{SkillListTail}}
+
+==Abilities Ignores Turning==
+You can also drop and pick up {{M|Items}} without turning.
+{{SkillListHead|title=Targeted to an area}}
+{{SkillListLite
+| source = Ancient Apparition
+| name = Release
+}}
+{{SkillListLite
+| source = Batrider
+| name = Sticky Napalm
+}}
+{{SkillListLite
+| source = Crystal Maiden
+| name = Crystal Clone
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Torrent
+}}
+{{SkillListLite
+| source = Rubick
+| name = Telekinesis Land
+}}
+{{SkillListTail}}
+
+{{SkillListHead|title=Targeted to an hero}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Friendly Shadow
+}}
+{{SkillListLite
+| source = Bottle
+| name = Regenerate
+}}
+{{SkillListLite
+| source = Bottle
+| name = Store Rune
+}}
+{{SkillListLite
+| source = Clarity
+| name = Replenish
+}}
+{{SkillListLite
+| source = Enchanted Mango
+| name = Eat Mango
+}}
+{{SkillListLite
+| source = Healing Salve
+| name = Salve
+}}
+{{SkillListLite
+| source = Holy Locket
+| name = Energy Charge
+}}
+{{SkillListLite
+| source = Glimmer Cape
+| name = Glimmer
+}}
+{{SkillListLite
+| source = Moon Shard
+| name = Consume
+}}
+{{SkillListLite
+| source = Runes
+| name = Activate
+}}
+{{SkillListLite
+| source = Shadow Amulet
+| name = Fade
+}}
+{{SkillListLite
+| source = Tusk
+| name = Snowball
+| nametext = Snowball (Grab Ally)
+}}
+{{SkillListLite
+| source = Tusk
+| name = Snowball
+| nametext = Snowball (Enterance)
+}}
+{{SkillListLite
+| source = Undying
+| name = Tombstone
+| nametext = Tombstone (Enterance)
+}}
+{{SkillListTail}}
+
+==Recent Changes==
+{{Main|Turn Rate/Changelogs}}
+{{Recent changes wrapper}}
+
+==References==
+<references />
+
+{{MechanicsNav}}
+
+[[Category:Mechanics]]
+
+[[ru:Скорость поворота]]

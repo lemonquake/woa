@@ -1,0 +1,344 @@
+{
+ "items": {
+  "aethersilk_trousers": {
+   "name": "Aethersilk Trousers",
+   "slot": "cloth"
+  },
+  "apprentice_robe": {
+   "name": "Apprentice Robe",
+   "slot": "armor"
+  },
+  "arcanist_cowl": {
+   "name": "Arcanist Cowl",
+   "slot": "helm"
+  },
+  "arcanist_legwraps": {
+   "name": "Arcanist Legwraps",
+   "slot": "cloth"
+  },
+  "barbute_helm": {
+   "name": "Barbute",
+   "slot": "helm"
+  },
+  "bone_amulet": {
+   "name": "Bone Amulet",
+   "slot": "accessory"
+  },
+  "brigandine": {
+   "name": "Brigandine",
+   "slot": "armor"
+  },
+  "chain_shirt": {
+   "name": "Chain Shirt",
+   "slot": "inner_garment"
+  },
+  "commander_cuisses": {
+   "name": "Knight-Commander's Cuisses",
+   "slot": "heavy"
+  },
+  "copper_ring": {
+   "name": "Copper Ring",
+   "slot": "accessory"
+  },
+  "cutpurse_trousers": {
+   "name": "Cutpurse Trousers",
+   "slot": "cloth"
+  },
+  "duskrunner_leggings": {
+   "name": "Duskrunner Leggings",
+   "slot": "cloth"
+  },
+  "ember_dragonhide": {
+   "name": "Ember Dragonhide",
+   "slot": "armor"
+  },
+  "gold_amulet": {
+   "name": "Gilded Amulet",
+   "slot": "accessory"
+  },
+  "guardian_cuisses": {
+   "name": "Aether Guardian Cuisses",
+   "slot": "aether_guardian"
+  },
+  "guardian_gauntlets": {
+   "name": "Aether Guardian Gauntlets",
+   "slot": "gloves"
+  },
+  "guardian_greaves": {
+   "name": "Aether Guardian Greaves",
+   "slot": "boots"
+  },
+  "guardian_helm": {
+   "name": "Aether Guardian Helm",
+   "slot": "helm"
+  },
+  "guardian_plate": {
+   "name": "Aether Guardian Plate",
+   "slot": "armor"
+  },
+  "hide_leggings": {
+   "name": "Hide Leggings",
+   "slot": "cloth"
+  },
+  "iron_cuisses": {
+   "name": "Iron Cuisses",
+   "slot": "heavy"
+  },
+  "iron_gauntlet": {
+   "name": "Iron Gauntlet",
+   "slot": "gloves"
+  },
+  "iron_hauberk": {
+   "name": "Iron Hauberk",
+   "slot": "armor"
+  },
+  "iron_helm": {
+   "name": "Iron Helm",
+   "slot": "helm"
+  },
+  "iron_sabaton": {
+   "name": "Iron Sabaton",
+   "slot": "boots"
+  },
+  "linen_hood": {
+   "name": "Linen Hood",
+   "slot": "helm"
+  },
+  "linen_trousers": {
+   "name": "Linen Trousers",
+   "slot": "cloth"
+  },
+  "longstrider_leggings": {
+   "name": "Longstrider Leggings",
+   "slot": "cloth"
+  },
+  "magister_robe": {
+   "name": "Magister Robe",
+   "slot": "armor"
+  },
+  "magister_silks": {
+   "name": "Magister Silks",
+   "slot": "cloth"
+  },
+  "mail_chausses": {
+   "name": "Mail Chausses",
+   "slot": "heavy"
+  },
+  "nightweave_leggings": {
+   "name": "Nightweave Leggings",
+   "slot": "cloth"
+  },
+  "padded_gambeson": {
+   "name": "Padded Gambeson",
+   "slot": "inner_garment"
+  },
+  "riveted_legplates": {
+   "name": "Riveted Legplates",
+   "slot": "heavy"
+  },
+  "rune_charm": {
+   "name": "Rune Charm",
+   "slot": "accessory"
+  },
+  "runed_glove": {
+   "name": "Runed Glove",
+   "slot": "gloves"
+  },
+  "runeweave_vest": {
+   "name": "Runeweave Vest",
+   "slot": "inner_garment"
+  },
+  "sage_boots": {
+   "name": "Starbound Sage Boots",
+   "slot": "boots"
+  },
+  "sage_gloves": {
+   "name": "Starbound Sage Gloves",
+   "slot": "gloves"
+  },
+  "sage_hood": {
+   "name": "Starbound Sage Hood",
+   "slot": "helm"
+  },
+  "sage_leggings": {
+   "name": "Starbound Sage Leggings",
+   "slot": "starbound_sage"
+  },
+  "sage_robe": {
+   "name": "Starbound Sage Robe",
+   "slot": "armor"
+  },
+  "scholars_breeches": {
+   "name": "Scholar's Breeches",
+   "slot": "cloth"
+  },
+  "seers_circlet": {
+   "name": "Seer's Veil",
+   "slot": "helm"
+  },
+  "sigil_ring": {
+   "name": "Sigil Ring",
+   "slot": "accessory"
+  },
+  "silentstep_breeches": {
+   "name": "Silent-Step Breeches",
+   "slot": "cloth"
+  },
+  "silk_glove": {
+   "name": "Silk Glove",
+   "slot": "gloves"
+  },
+  "silk_undershirt": {
+   "name": "Silk Undershirt",
+   "slot": "inner_garment"
+  },
+  "silver_ring": {
+   "name": "Silver Ring",
+   "slot": "accessory"
+  },
+  "soft_boot": {
+   "name": "Soft Boot",
+   "slot": "boots"
+  },
+  "spiked_gauntlet": {
+   "name": "Spiked Gauntlet",
+   "slot": "gloves"
+  },
+  "staghide_chaps": {
+   "name": "Stag-Hide Chaps",
+   "slot": "cloth"
+  },
+  "star_pendant": {
+   "name": "Star Pendant",
+   "slot": "accessory"
+  },
+  "trackers_breeches": {
+   "name": "Tracker's Breeches",
+   "slot": "cloth"
+  },
+  "traveler_coat": {
+   "name": "Traveler's Coat",
+   "slot": "armor"
+  },
+  "u_band_of_stillness": {
+   "name": "Ring",
+   "slot": "accessory"
+  },
+  "u_heart_of_aether": {
+   "name": "Amulet",
+   "slot": "accessory"
+  },
+  "veilstalker_leggings": {
+   "name": "Veilstalker Leggings",
+   "slot": "cloth"
+  },
+  "visored_greathelm": {
+   "name": "Visored Greathelm",
+   "slot": "helm"
+  },
+  "war_talisman": {
+   "name": "War Talisman",
+   "slot": "accessory"
+  },
+  "warden_cuisses": {
+   "name": "Warden Cuisses",
+   "slot": "heavy"
+  },
+  "warden_greave": {
+   "name": "Warden Greave",
+   "slot": "boots"
+  },
+  "warden_plate": {
+   "name": "Warden Plate",
+   "slot": "armor"
+  },
+  "wayfarer_boot": {
+   "name": "Wayfarer Boot",
+   "slot": "boots"
+  },
+  "windrunner_leggings": {
+   "name": "Windrunner Leggings",
+   "slot": "cloth"
+  }
+ },
+ "missing": [
+  "_breeches",
+  "_shoes",
+  "_under_body",
+  "_under_feet",
+  "_under_hands",
+  "_under_legs",
+  "bulwark_locket",
+  "crescent_nighttide",
+  "depth_deepwarden_coat",
+  "depth_deepwarden_crown",
+  "depth_deepwarden_cuisses",
+  "depth_deepwarden_grips",
+  "depth_deepwarden_treads",
+  "depth_gloomthread_coat",
+  "depth_gloomthread_crown",
+  "depth_gloomthread_grips",
+  "depth_gloomthread_leggings",
+  "depth_gloomthread_treads",
+  "depth_prismkeeper_coat",
+  "depth_prismkeeper_crown",
+  "depth_prismkeeper_grips",
+  "depth_prismkeeper_legwraps",
+  "depth_prismkeeper_treads",
+  "depth_vaultpath_coat",
+  "depth_vaultpath_crown",
+  "depth_vaultpath_grips",
+  "depth_vaultpath_leggings",
+  "depth_vaultpath_treads",
+  "gamblers_bones",
+  "gravewhisper_ring",
+  "kingsguard_crown_ring",
+  "phial_of_last_light",
+  "sands_of_tempo",
+  "spirit_bell",
+  "starcluster_ring",
+  "stoneheart_idol",
+  "sunforged_medallion",
+  "tc_afterimage_mantle",
+  "tc_arcanist_vestments",
+  "tc_archmage_robes",
+  "tc_black_dominion_plate",
+  "tc_bloodmoon_signet",
+  "tc_comet_lens",
+  "tc_constellation_leathers",
+  "tc_convergence_prism",
+  "tc_dread_command_signet",
+  "tc_horizon_core",
+  "tc_livingwood_leathers",
+  "tc_nightstalker_leathers",
+  "tc_oathkeeper_seal",
+  "tc_quarry_compass",
+  "tc_reapers_glass",
+  "tc_riftwoven_robes",
+  "tc_royal_guard_cuirass",
+  "tc_runic_focus",
+  "tc_sanctified_plate",
+  "tc_sanguine_leathers",
+  "tc_silent_trail_charm",
+  "tc_sunward_reliquary",
+  "tc_trackers_leathers",
+  "tc_wildroot_pendant",
+  "thornbrand_ring",
+  "tidecaller_moonstone",
+  "twinmoon_band",
+  "u_bloodrunner",
+  "u_echoing_legplates",
+  "u_oathbound_cuisses",
+  "u_riftwalker_legwraps",
+  "u_rimewalkers",
+  "u_stillwater_silks",
+  "u_stormstriders",
+  "u_windswift_breeches",
+  "verdant_leaf_charm",
+  "viper_coil_ring",
+  "watchers_eye",
+  "wayfarers_knot",
+  "windrider_feather",
+  "wolfclaw_torc"
+ ]
+}

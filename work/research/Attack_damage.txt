@@ -1,0 +1,1473 @@
+<section begin=tabber/>{{Tabber
+| link1 = Attack Damage
+| link2 = Attack Damage/Heroes
+| name2 = Heroes' Main Attack Damage
+| link3 = Spell Damage
+| link4 = Damage Types
+}}<section end=tabber/>
+{{hatnote|'<i>Attack</i>' redirects here. For other uses, see [[Attack (Disambiguation)]].}}
+[[File:Jinada icon.png|frame]]
+<section begin=intro /><dfn>Attack damage</dfn> ({{Code|Attack Damage}}) is the amount of damage a unit is shown to deal with a regular attack. A unit's total attack damage is the sum of its {{Symbol|attack damage|main}} [[Attack damage#Main Attack Damage|{{Code|Main Attack Damage}}]] and {{Symbol|attack damage|bonus}} [[Attack damage#Bonus Attack Damage|{{Code|Bonus Attack Damage}}]].<section end=intro /> Attack damage is and can be modified by many different effects in the game, and ends up going through a number of steps in order to determine how much damage an attack actually deals as its overall or total attack damage.
+
+__TOC__
+==Total Attack Damage==
+[[File:Basic_Stats_(for_Mechanics).png|frame|Properties of a level 1 {{H|Sniper}} with {{I|Blades of Attack}}: Sniper's base attack damage varies by 6; main attack damage is white, bonus attack damage green.]]
+Calculating the total damage of an attack involves using many different multipliers and values. Total attack damage is synonymous with how much health a target immediately loses as a direct result of the attack. Some on-hit effects that are not affected by critical strike are still considered part of attack damage, and some are not.
+
+===Total Attack Damage Sources===
+{{Treelist}}
+* Total Attack Damage can be defined as
+** [[Attack Damage#Base Attack Damage|Base]] and [[Attack Damage#Main Attack Damage|Main]] Value
+*** ± Base Attack Damage Values (× Multiplier)
+*** × % [[Attack Damage#Bonus Attack Damage|Bonus Attack Damage]] Multiplier
+*** ± Flat Bonus Attack Damage Values
+*** × [[Attack Damage#Critical Strike Multiplier|Critical Strike Multiplier]]
+** ± [[Attack Damage#Instant Attacks|Instant Attack]] Damage Bonus (× Multiplier)
+** ± × [[Attack Damage#Conditional Attack Damage Bonus|Conditional Bonuses]]
+** − [[Attack Damage#Damage Block|Damage Block]]
+** × [[Attack Damage#Attack Classes|Attack Class Multiplier]]
+** × [[Attack Damage#Damage Manipulation|Damage Manipulation]]
+{{Treelist/end}}
+
+The following abilities reduce the affected unit's damage '''before''' [[Attack Damage#Damage Block|damage block]] is applied.
+{{SkillListHead|title=Total Attack Damage Reducing Sources}}
+{{SkillListLite
+| source = Bane
+| name = Enfeeble
+}}
+{{SkillListLite
+| source = Dragon Knight
+| name = Breathe Fire
+}}
+{{SkillListLite
+| source = Giant Wolf
+| name = Intimidate
+}}
+{{SkillListLite
+| source = Hoodwink
+| name = Acorn Shot
+| nametext = Acorn Shot<sup>3</sup>
+}}
+{{SkillListLite
+| source = Phantom Assassin
+| name = Stifling Dagger
+| nametext = Stifling Dagger<sup>3</sup>
+}}
+{{SkillListLite
+| source = Riki
+| name = Tricks of the Trade
+}}
+{{SkillListLite
+| source = Vengeful Spirit
+| name = Wave of Terror
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Main attack damage is only reduced for the [[Attack Damage#Instant Attack|instant attack]] so that only the ability can use it.}}
+
+=={{Symbol|attack damage|main}} Main Attack Damage==
+{{Main|Attack Damage/Heroes|l1=Heroes' Main Attack Damage Table}}
+{{Symbol|attack damage|main}} {{Code|Main Attack Damage}} is the damage value shown in white numbers on a hero's statistics consisting of the {{Symbol|attack damage|base}}{{Code|Base Attack Damage}} with the damage granted by a hero's primary attribute on top. A hero's {{Symbol|attack damage|main}}{{Code|Main Attack Damage}} can only be increased by raising its [[Attributes#Primary Attribute|primary attribute]], or by very few specific abilities.
+
+Attribute points can be acquired by leveling up, or by using specific items, abilities, or {{Symbol|Talent}} [[talent]]s that grants bonus attributes.
+
+{| class="wikitable" style="text-align:center;"
+! class="header" width="225px" | Primary Attribute
+! class="header" width="225px" | Main Attack Damage/Point 
+! class="header" width="225px" | Scaling Attributes 
+|-
+| {{Attribute ID|Strength}}
+| +{{G|bonus damage}}
+| {{Symbol|Strength}}
+|-
+| {{Attribute ID|Agility}}
+| +{{G|bonus damage}}
+| {{Symbol|Agility}}
+|-
+| {{Attribute ID|Intelligence}}
+| +{{G|bonus damage}}
+| {{Symbol|Intelligence}}
+|-
+| {{Attribute ID|Universal}}
+| +{{G|bonus universal damage}}
+| {{Symbol|Agility}} {{Symbol|Strength}} {{Symbol|Intelligence}}
+|}
+
+{{Code|Main Attack Damage}} is defined as
+
+<span style="font-size:100%; font-weight:bold;">Main Attack Damage =</span>
+<span style="font-size:85%"> (([[Attack Damage#Base Attack Damage|Base Attack Damage]] + Σ [[Attributes#Primary Attribute|Primary Attribute]]) × (1 + Bonus Modifiers<sub>1</sub>) × (1 + Bonus Modifiers<sub>2</sub>) × … × (1 + Bonus Modifiers<sub>n</sub>))</span>
+
+For a detailed table of all {{#lpdb:datapoint|query=count::pagename|conditions=[[type::hero]] and [[extradata_game::]]|template=Identity{{!}}param=count_pagename|limit=1}} heroes' main attack damage, please refer to [[Attack Damage/Heroes|this page]].
+
+===Main Attack Damage Sources===
+The following items and abilities manipulates the primary attribute of the hero, and therefore increasing its main attack damage.
+{{SkillListHead|title=Main Attack Damage Increasing Sources}}
+{{SkillListRich
+| source = Attributes
+| name = Attribute Bonus
+| trait1 = All Attribute Bonus
+| value1 = {{Show|A|Attributes|Attribute Bonus|value2}}
+| notes = If all ability points are spend on their respective levels, Attribute Bonus levels up automatically on the levels 17/19/21/22/23/24/26.
+}}
+{{SkillListRich
+| source = Power Treads
+| name = Switch Attribute
+| trait1 = Selected Attribute Bonus
+| value1 = {{Show|A|Power Treads|Switch Attribute|value1}}
+| notes = Passively grants the owner of the item a bonus to the current selected attribute. Can be cast to switch the bonus from {{Attribute ID|Strength}} ➜ {{Attribute ID|Intelligence}}, {{Attribute ID|Intelligence}} ➜ {{Attribute ID|Agility}} and {{Attribute ID|Agility}} ➜ {{Attribute ID|Strength}}.
+}}
+{{SkillListTail}}
+
+===={{Attribute ID|Strength}}====
+{{#lst:Strength|Items}}
+
+{{SkillListHead|title=Strength Increasing Sources}}
+{{#lst:Strength|mainattackdamage}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===={{Attribute ID|Agility}}====
+{{#lst:Agility|Items}}
+
+{{SkillListHead|title=Agility Increasing Sources}}
+{{#lst:Agility|mainattackdamage}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===={{Attribute ID|Intelligence}}====
+{{#lst:Intelligence|Items}}
+
+{{SkillListHead|title=Intelligence Increasing Sources}}
+{{#lst:Intelligence|mainattackdamage}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===={{Attribute ID|Universal}}====
+{{#lst:Universal|items}}
+
+; Talents
+{{See also|Strength#Strength Granting Talents|Agility#Agility Granting Talents|Intelligence#Intelligence Granting Talents|Attributes#Talents Granting Attributes
+|l1 = Strength Talents
+|l2 = Agility Talents
+|l3 = Intelligence Talents
+|l4 = All Attributes Talents
+}}
+
+====Reducing Sources====
+Some abilities reduce main attack damage based on percentages, and some abilities manipulate the primary attribute of the hero, therefore reducing its main attack damage. 
+{{SkillListHead|title=Main Attack Damage Reducing Sources}}
+{{SkillListLite
+| source = Lycan
+| name = Howl
+}}
+{{SkillListLite
+| source = Medusa
+| name = Split Shot
+}}
+{{SkillListLite
+| source = Morphling
+| name = Attribute Shift (Strength Gain)
+}}
+{{SkillListLite
+| source = Rubick
+| name = Fade Bolt
+}}
+{{SkillListLite
+| source = Silencer
+| name = Glaives of Wisdom
+}}
+{{SkillListLite
+| source = Slark
+| name = Essence Shift
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Anchor Smash
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Whirling Death
+}}
+{{SkillListLite
+| source = Underlord
+| name = Atrophy Aura
+}}
+{{SkillListLite
+| source = Undying
+| name = Decay
+}}
+{{SkillListLite
+| source = Windranger
+| name = Focus Fire
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+=={{Symbol|attack damage|base}}Base Attack Damage==
+Base attack damage is the part of the main attack damage that stays the same throughout a game. It consists of two values, a minimum and maximum amount. Every time an attack is issued, a random value between the minimum and maximum is chosen to help decide the damage output. 
+
+The most extreme hero example of this is {{H|Chaos Knight}}, with his base attack damage ranging between {{Show|H|Chaos Knight|attack damage min}} – {{Show|H|Chaos Knight|attack damage max}}, causing his damage output to be somewhat unpredictable. This range of {{#expr:{{Show|H|Chaos Knight|attack damage max}}-{{Show|H|Chaos Knight|attack damage min}}}} is always part of his attack calculations, no matter how many attributes or how much bonus attack damage he acquires.
+
+{{SkillListHead|title=Base Attack Damage Increasing Sources}}
+{{SkillListLite
+| source = Arc Warden
+| name = Magnetic Field
+| nametext = Magnetic Field (Disorder)
+}}
+{{SkillListLite
+| source = Terrorblade
+| name = Metamorphosis
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Grab
+}}
+{{SkillListLite
+| source = Tiny
+| name = Grow
+}}
+{{SkillListLite
+| source = Vengeful Spirit
+| name = Wave of Terror
+| nametext = Wave of Terror<sup>1</sup>
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+
+===Talents===
+{{Spellcard
+| ID = 524, 496, 450, 7372, 706, 7370, 548, 623
+| intern = special_bonus_attack_base_damage_15/20/25/30/40/45/50/100
+| name = Base Attack Damage
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Base Attack Damage Bonus
+| value1 = Varies
+
+| is_illusionuses = yes
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Grants the hero base attack damage bonus.
+** As such, it is affected by percentage-based damage increasing or reducing effects.
+
+* The following values exist:
+** 15/20/25/30/40/45/50/100
+}}
+
+{{Talent bonus table|Base Damage|base attack damage}}
+
+==Bonus Attack Damage==
+'''Bonus attack damage''' is the attack damage value shown in green numbers with a plus on the left, right after the white attack damage number on a unit's statistics. Whenever a [[Attack Damage#Bonus Attack Damage Source|bonus attack damage granting item or ability]] shows a <code>+Attack Damage</code>, e.g. {{I|Blades of Attack}} <code>+{{Show|I|Blades of Attack|bonus attack damage}} Damage</code>, it increases the bonus attack damage of the affected unit.
+
+Probably the most important difference between main and bonus attack damage is that [[illusions]] only benefit from main attack damage, although their [[HUD]] still shows the bonus damage number just like on other heroes, to make them less obvious to the enemy. 
+
+There are two types of bonus attack damage:
+* '''[[Attack Damage#Flat Bonuses|Flat Bonuses]]''': Adds a flat number of damage to the unit's damage total (e.g. {{I|Phase Boots}} etc.).
+* '''[[Attack Damage#Percentage Bonuses|Main Attack Damage Percentage Bonuses]]''': Adds an amount of bonus attack damage equal to a percentage of the affected unit's [[Attack Damage#Main Attack Damage|main attack damage]]  (e.g. {{I|Vladmir's Offering}}, {{A|Alpha Wolf|Packleader's Aura}} etc.). While bonus attack damage is usually positive values, it can also use a negative value to reduce a unit's net attack damage (e.g. {{A|Razor|Static Link}} etc.).
+
+
+Bonus Attack Damage is defined as
+
+<span style="font-size:110%; font-weight:bold;">
+Bonus Attack Damage </span>=<span style="font-size:80%; font-weight:bold;"> (([[Attack Damage#Main Attack Damage|Main Attack Damage]] × (1 + Bonus Modifiers<sub>1</sub>) × (1 + Bonus Modifiers<sub>2</sub>) × … × (1 + Bonus Modifiers<sub>n</sub>)) + Flat Bonus Values </span>
+
+
+===Bonus Attack Damage Sources===
+====Percentage Bonuses====
+{{SkillListHead|title=Abilities Granting Percentage Bonus}}
+{{SkillListLite
+| source = Alpha Wolf
+| name = Packleader's Aura
+}}
+{{SkillListLite
+| source = Earthshaker
+| name = Enchant Totem
+}}
+{{SkillListLite
+| source = Hellbear Smasher
+| name = Death Throe: Power
+}}
+{{SkillListLite
+| source = Lycan
+| name = Feral Impulse
+}}
+{{SkillListLite
+| source = Magnus
+| name = Empower
+}}
+{{SkillListLite
+| source = Marci
+| name = Bodyguard
+| nametext = Bodyguard<sup>1</sup>
+}}
+{{SkillListLite
+| source = Marci
+| name = Sidekick
+| nametext = Sidekick<sup>1</sup>
+}}
+{{SkillListLite
+| source = Runes
+| name = Amplify Damage
+}}
+{{SkillListLite
+| source = Sven
+| name = God's Strength
+}}
+{{SkillListLite
+| source = Vengeful Spirit
+| name = Vengeance Aura
+}}
+{{SkillListLite
+| source = Visage
+| name = Silent as the Grave
+}}
+{{SkillListLite
+| source = Vladmir's Offering
+| name = Vladmir's Aura
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|facet|on}} {{Symbol|facet|off}} [[facet]].}}
+
+
+<!-- {{SkillListHead|title=Items Granting Percentage Bonus}}
+{{SkillListRich
+| source = Titan Sliver
+}}
+{{SkillListTail}}
+--!>
+
+====Flat Bonuses====
+{{SkillListHead|title=Abilities Granting Flat Bonuses}}
+{{SkillListLite
+| source = Armlet of Mordiggian
+| name = Unholy Strength
+}}
+{{SkillListLite
+| source = Alchemist
+| name = Aghanim's Scepter Synth
+}}
+{{SkillListLite
+| source = Bristleback
+| name = Warpath
+}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Jinada
+}}
+{{SkillListLite
+| source = Broodmother
+| name = Insatiable Hunger
+}}
+{{SkillListLite
+| source = Chen
+| name = Holy Persuasion
+| nametext = Holy Persuasion<sup>4a</sup>
+}}
+{{SkillListLite
+| source = Dawnbreaker
+| name = Starbreaker
+| nametext = Starbreaker<sup>3</sup>
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Astral Spirit
+}}
+{{SkillListLite
+| source = Enchantress
+| name = Enchant
+}}
+{{SkillListLite
+| source = Hoodwink
+| name = Acorn Shot
+| nametext = Acorn Shot<sup>3</sup>
+}}
+{{SkillListLite
+| source = Helm of the Dominator
+| name = Dominate
+}}
+{{SkillListLite
+| source = Helm of the Overlord
+| name = Dominate
+}}
+{{SkillListLite
+| source = Io
+| name = Tether
+| nametext = Tether<sup>1</sup>
+}}
+{{SkillListLite
+| source = Invoker
+| name = Exort
+| nametext = Exort<sup>5</sup>
+}}
+{{SkillListLite
+| source = Invoker
+| name = Alacrity
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Tidebringer
+}}
+{{SkillListLite
+| source = Legion Commander
+| name = Duel
+}}
+{{SkillListLite
+| source = Mirana
+| name = Solar Flare
+| nametext = Solar Flare<sup>5</sup>
+}}
+{{SkillListLite
+| source = Luna
+| name = Lunar Blessing
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Jingu Mastery
+}}
+{{SkillListLite
+| source = Nature's Prophet
+| name = Wrath of Nature
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Dark Ascension
+}}
+{{SkillListLite
+| source = Phantom Assassin
+| name = Stifling Dagger
+| nametext = Stifling Dagger<sup>3</sup>
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Uproar
+}}
+{{SkillListLite
+| source = Razor
+| name = Static Link
+}}
+{{SkillListLite
+| source = Shadow Fiend
+| name = Necromastery
+}}
+{{SkillListLite
+| source = Skeleton Warrior
+| name = Rally
+}}
+{{SkillListLite
+| source = Templar Assassin
+| name = Refraction
+}}
+{{SkillListLite
+| source = Underlord
+| name = Atrophy Aura
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Damage is granted for the ability and is immediately removed afterward, so that only the ability can use it.}}
+{{Footnote|4a|Grants flat attack damage bonus to {{A|Chen|Holy Persuasion|text=Persuaded}} units only.}}
+{{Footnote|5|Requires {{Symbol|facet|on}} {{Symbol|facet|off}} [[facet]].}}
+
+===Talents===
+{{Spellcard
+| ID = 6095, 6159, 5938, 487, 488, 5960, 6009, 5939, 6164, 5940, 6253, 5941, 6396, 6366, 6142, 5942, 427, 442, 5968, 5979, 6112, 6247, 8017, 460, 6556, 7039, 703, 6553
+| intern = special_bonus_attack_damage_10/12/15/16/18/20/25/30/35/40/45/50/55/60/65/70/75/80/90/100/120/150/160/200/250/251/252/400
+| name = Attack Damage
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Attack Damage Bonus
+| value1 = Varies
+
+| is_illusionuses = no
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Grants the hero a flat attack damage bonus.
+** As such, it is not affected by percentage-based damage increasing or reducing effects.
+
+* The following values exist:
+** 10/12/15/16/18/20/25/30/35/40/45/50/55/60/65/70/75/80/90/100/120/150/160/200/250/251/252/400
+}}
+
+{{Talent bonus table|Damage|flat bonus attack damage}}
+
+The majority of attack damage increasing {{Symbol|Talent}} [[talent]]s grants bonus attack damage. Therefore, it does not benefit [[illusions]] and is unaffected by most percentage-based damage-increasing or reducing effects.
+
+====Items====
+{{#lst:Strength|atk-dmg-items}}
+
+{{#lst:Agility|atk-dmg-items}}
+
+{{#lst:Intelligence|atk-dmg-items}}
+
+{{#lst:Universal|atk-dmg-items}}
+
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_attack_damage::>0]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Flat Bonus Attack Damage Increasing Items
+| template = Item bonus value table el{{!}}attack_damage
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}
+
+===Reducing Sources===
+{{SkillListHead|title=Abilities Applying Bonus Attack Damage Reductions}}
+{{SkillListLite
+| source = Razor
+| name = Static Link
+}}
+{{SkillListTail}}
+
+===Unique Sources===
+Grants attack damage bonus upon the unit's attack point.
+
+==Critical Strike Multiplier==
+[[File:Crit.png|thumb|250px|{{H|Wraith King}} performing a critical strike.<br>The red number displays the resulting physical damage before reductions.]]
+{{Main|Critical Strike}}
+{{#lst:Critical Strike|main}} If an attack procs more than one source of critical strike, only the highest multiplier is applied.
+
+==Damage Block==
+{{Main|Damage Block}}
+{{#lst:Damage block|main}} If an attack activates more than one damage block ability, only the highest block value is applied.
+
+All {{Symbol|Melee}} Melee heroes have an innate {{M|Damage Block}} ability, which has a {{Show|M|Damage Block|Damage Block (Melee)|value1}} chance to block {{Show|M|Damage Block|Damage Block (Melee)|value2}} damage.
+{{clr}}
+
+==Damage Manipulation==
+{{Main|Armor#Damage Multiplier|Damage manipulation|l1=Armor|l2=Damage Manipulation}}
+<!--{{#lst:Damage manipulation|intro}}
+
+{{#lst:Armor|dmu outro}}-->
+
+====Magical Attack Damage Bonus====
+
+====Pure Attack Damage Bonus====
+
+==Set Attack Damage==
+
+==Attack Classes==
+<section begin=attackclassintro />There are currently 3 different classes of attack damage types (also known as '''Attack Classes'') that manipulate the damage value of a unit's attack against certain other unit types. Each attack classes deal either reduced, increased, or unchanged damage against heroes, creeps (i.e. non-hero units), and [[buildings]], before all [[armor]] reduction values.<section end=attackclassintro />
+
+The attack classes are represented by 3 abilities visible in the unit's HUD. If a unit does not have any of these 3 abilities, their attacks deal 100% damage and are only altered by the target's armor and other damage manipulators.
+
+===Runty===
+{{Spellcard
+| ID = 914
+| intern = creep_irresolute
+| name = Runty
+
+| icon0 = Runty
+| type0 = inn
+| target0 = Passive
+| affect0 = Self
+| desc0 = Units of this attack classification deal reduced attack damage to heroes.
+
+| traitamp = ampout-n
+| trait1 = Hero Factor
+| value1 = {{G|basic v hero}}
+
+| icon1 = Buildings Factor
+| type1 = inn
+| target1 = Passive
+| desc1 = Units of this attack classification deal reduced attack damage to Reinforced units.
+
+| type1 traitamp = ampout-n
+| type1 trait1 = Unit Total Factor
+| type1 value1 = {{G|basic v structure}}
+
+| is_illusionuses = yes
+| is_passivebreak = no
+
+| buff1 = modifier_creep_irresolute
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Affects the total attack damage value.
+** All reduction values are converted to multipliers for wiki calculation convenience.
+
+* Runty units consider {{M|creep-heroes}} as heroes, {{M|Roshan}} as creeps.
+
+| miscnotes = * {{A|Doom|Devour}}-based abilities does not acquire this {{M|innate}} ability.
+}}
+
+===Piercing===
+{{Spellcard
+| ID = 913
+| intern = creep_piercing
+| name = Piercing
+
+| icon0 = Piercing
+| type0 = inn
+| target0 = Passive
+| affect0 = Self
+| desc0 = Units of this attack classification deal reduced attack damage to heroes.
+
+| traitamp = ampout-n
+| trait1 = Hero Factor
+| value1 = {{G|pierce v hero}}
+
+| icon1 = Creep Factor
+| type1 = alticon
+| target1 = Passive
+| desc1 = Units of this attack classification deal increased attack damage to creeps.
+
+| type1 traitamp = ampout-p
+| type1 trait1 = Unit Factor
+| type1 value1 = {{G|pierce v basic}}
+
+| icon2 = Buildings Factor
+| type2 = inn
+| target2 = Passive
+| desc2 = Units of this attack classification deal greatly reduced attack damage to Reinforced units.
+
+| type2 traitamp = ampout-n
+| type2 trait1 = Unit Factor
+| type2 value1 = {{G|pierce v structure}}
+
+| is_illusionuses = yes
+| is_passivebreak = no
+
+| buff1 = modifier_creep_piercing
+| buff1mp1 = MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Affects the total attack damage value.
+** All reduction values are converted to multipliers for wiki calculation convenience.
+
+* Piercing units consider {{M|creep-heroes}} as heroes, {{M|Roshan}} as creeps.
+
+| miscnotes = * {{A|Doom|Devour}}-based abilities does not acquire this {{M|innate}} ability.
+}}
+
+===Reinforced===
+{{Spellcard
+| ID = 912
+| intern = creep_siege
+| name = Reinforced
+
+| icon0 = Reinforced
+| type0 = inn
+| target0 = Passive
+| affect0 = Self
+| desc0 = Units of this attack classification take less damage from heroes, illusions and summoned units.
+
+| traitamp = ampin-p;ampin-p;ampin-p
+| trait1 = Hero Factor
+| value1 = {{G|hero v structure}}
+| trait2 = Illusion Factor
+| value2 = {{G|illusion v structure}}
+| trait3 = Summoned Unit Factor
+| value3 = {{G|summoned v structure}}
+
+| icon1 = Runty
+| type1 = inn
+| target1 = Passive
+| desc1 = Units of this attack classification take less damage from Runty attacks.
+
+| type1 traitamp = ampin-p
+| type1 trait1 = Runty Factor
+| type1 value1 = {{G|basic v structure}}
+
+| icon2 = Piercing
+| type2 = inn
+| target2 = Passive
+| desc2 = Units of this attack classification take less damage from Piercing attacks.
+
+| type2 traitamp = ampin-p
+| type2 trait1 = Piercing Final Factor
+| type2 value1 = {{G|pierce v structure}}
+
+| icon3 = Buildings Factor
+| type3 = inn
+| target3 = Passive
+| desc3 = Units of this attack classification also deal greatly increased damage to Reinforced units.
+
+| type3 traitamp = ampout-p
+| type3 trait1 = Reinforced Factor
+| type3 value1 = {{G|siege v structure}}
+
+| is_illusionuses = yes
+| is_passivebreak = no
+
+| buff1 = modifier_creep_irresolute
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Affects the total attack damage value.
+** All reduction values are converted to multipliers for wiki calculation convenience.
+
+* Reinforced units consider {{M|creep-heroes}} as heroes, {{M|Roshan}} as creeps.
+
+* The following units are considered as summoned units:
+** {{M|Summons}}
+** {{M|Dominated}} creeps
+
+* The following units are not considered as summoned units:
+** {{M|creep-heroes}}
+** {{M|illusions}}
+** {{M|Ward-type units}}
+
+| miscnotes = * {{A|Doom|Devour}}-based abilities does not acquire this {{M|innate}} ability.
+}}
+
+===Attack Class Definition===
+Attack damage dealt against unit-types can be defined as
+
+<span style="font-size:110%; font-weight:bold;">Attack Damage Dealt = [[Attack Damage#Total Attack Damage|Total Attack Damage]] × Attack Class × [[Damage Manipulation]]</span> 
+
+This table shows how much damage each attack class deals against each defense class, and which units use which attack class:
+{| class="wikitable" style="width:100%;text-align:center"
+! rowspan="2" class="header" width="10%" | Attack Class
+! rowspan="2" class="header" width="50%" | Used by
+! class="header" colspan ="5" |Damage Against Unit Type
+|-
+! class= "header" width="10%" | Hero
+! class= "header" width="10%" | Non-Hero
+! class= "header" width="10%" | Reinforced
+|-
+| {{tooltip|Default|Including Physical damage from Abilities.}}
+| [[Heroes]], [[Clones]], [[Illusions]], [[Creep-Heroes]] and every single non-hero unit that is not explicitly listed in another attack class
+| 100%
+| 100%
+| {{tooltip|50%|Attacker counts as hero unit}} / {{tooltip|70%|Attacker counts as non-hero unit}} / {{tooltip|100%|Spell damage from abilities, regardless of the caster's unit type}}
+|-
+| Runty
+| {{#lpdb:datapoint
+  | conditions = [[type::unit]] and ([[extradata_attack_class::Basic]] or [[extradata_attack_class::Runty]]) and [[extradata_game::]]
+  | limit = 1000
+  | template = PageLink
+}}
+| 75%
+| 100%
+| 70%
+|-
+| Piercing
+| {{#lpdb:datapoint
+  | conditions = [[type::unit]] and ([[extradata_attack_class::Pierce]] or [[extradata_attack_class::Piercing]]) and [[extradata_game::]]
+  | limit = 1000
+  | template = PageLink
+}}
+| 50%
+| 150%
+| 35%
+|-
+| Reinforced
+| {{#lpdb:datapoint
+  | conditions = [[type::unit]] and ([[extradata_attack_class::Siege]] or [[extradata_attack_class::Reinforced]]) and [[extradata_game::]]
+  | limit = 1000
+  | template = PageLink
+}}
+| 100%
+| 100%
+| 250%
+|}
+
+==Instant Attacks==
+<section begin=instantatk />Instant Attacks are abilities that uses the hero's regular attack damage values as ability damage to the target unit(s) or area. Instant Attacks do not use the hero's [[attack animation]], are independent from [[attack speed]], and ignores the regular downtime between attacks. Certain abilities that deal instant attack damage are not affected by [[evasion]].<section end=instantatk /> If an instant attack is performed by a {{Symbol|Ranged}} Ranged hero, it still uses their regular attack projectile for the attack, unless it is set not to. 
+
+If an instant attack occurs while already attacking an enemy normally, it does not interfere with the regular attacks. Instant Attacks do not interfere with any other actions of the hero either, meaning they neither interrupt movement, nor cancel ability casts nor stop [[channeling]] abilities.
+
+Since instant attacks do not use attack animations and jump straight to the attack point, they cannot proc effects which react on the start of an attack (e.g. {{A|Enchantress|Untouchable}} or {{A|Legion Commander|Moment of Courage}}). However, they can proc effects which react on attack hit (e.g. {{A|Axe|Counter Helix}} or {{A|Centaur Warrunner|Retaliate}}), although there are some exceptions to this. 
+
+Instant attacks may proc on-hit effects only when they are allowed to. An instant attack which is not allowed to proc [[attack modifier]]s is not allowed to proc on-hit effects either. [[Evasion]] and [[blind]] fully work against instant attacks. Just like regular attacks, most instant attacks also cause the attacking hero to get revealed under {{A|Smoke of Deceit|Disguise}} and/or when attacking from the [[Fog of War]] unless stated in their respective ability notes.
+
+{{M|Instant Attack}} damage do not interact with {{M|Spell Lifesteal}}, the magic damage from attack modifier interact with spell lifesteal (excl. cleave).<br/><br/>Invisibility interactions explained [[Invisibility#Instant_Attack]]<br/>Active Attack Modifiers interactions explained [[Attack_Modifier#Active_Attack_Modifiers]]
+
+{| class="wikitable mw-datatable sortable" width="80%" style="text-align:center;"<!--
+-->{{#vardefine:p|style="background:#CD5F51; color:#000; font-weight:bold;" {{!}} Prevented}}<!--
+-->{{#vardefine:s|style="background:#70B04A; color:#000; font-weight:bold;" {{!}} Situational}}<!--
+-->{{#vardefine:f|style="background:#F1E7AE; color:#000; font-weight:bold;" {{!}} Forced}}
+! class = "header" rowspan = "2" | Source
+! class = "header" colspan = "7" | Properties
+|-
+! class="header" width="10%" | Procs {{I|Battle Fury}}? <br/> [{{tooltip|?|Tidebringer can't be triggered by Instant Attack}}]
+! class="header" width="10%" | Procs other<br/>{{M|Attack Modifiers}}?<br/>[{{tooltip|?|Most Active Attack Modifiers can't be triggered by instant attack. Excluding Battle Fury.}}]
+! class="header" width="10%" | Has<br/>{{M|True Strike}}?
+! class="header" width="10%" | Ignores<br/>{{M|Disarm}}?
+! class="header" width="15%" | Also<br/>Prevented By [{{tooltip|?|Silence also prevents most abilities from being casted, but it won't be specified}}]
+! class="header" width="15%" | Breaks {{M|Invisibility}}?<br/>[{{tooltip|?|Including Smoke. Some invisibility sources always breaks after instant attack (NoYes). Includes only interactions with instant attack component}}]
+|-
+| style="text-align:left;" | {{A|Clinkz|Burning Barrage}} {{Symbol|Aghshard}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| Yes
+| Yes
+| 
+| NoYes
+|-
+| style="text-align:left;" | {{A|Dawnbreaker|Starbreaker}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| Yes
+|
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Dazzle|Shadow Wave}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+|
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Defiant Shell|Reciprocity}} [{{tooltip|?|Instant Attacks the attacker, do not react on instant attacks}}]
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes if Melee Hero}}]
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+|
+| NoYes [{{tooltip|?|Do not break invisibility from Shadow Blade, Silver Edge and most other sources}}]
+|-
+| style="text-align:left;" | {{A|Ember Spirit|Sleight of Fist}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+|
+| NoYes
+|-
+| style="text-align:left;" | {{A|Faceless Void|Time Lock}}<br/>{{A|Faceless Void|Time Walk}} {{Symbol|Aghanim}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Break<br/>
+| NoYes
+|-
+| style="text-align:left;" | {{A|Gyrocopter|Side Gunner}} {{Symbol|Aghanim}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes 
+| Break<br/>Invisibility [{{tooltip|?|Disabled while Gyro is invisible}}]
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Hoodwink|Acorn Shot}} 
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| NoYes [{{tooltip|?|Always Yes if unit-targeted}}]
+|-
+| style="text-align:left;" | {{A|Io|Tether}} {{Symbol|Bonus t4l}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Stun
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Jakiro|Double Trouble}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Juggernaut|Omnislash}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Juggernaut|Swiftslash}} {{Symbol|Aghanim}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Kez|Echo Slash}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| NoYes [{{tooltip|?|Do not break invisibility from Shadow Blade, Silver Edge and most other sources}}]
+|-
+| style="text-align:left;" | {{A|Kez|Falcon Rush}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Dispel
+| NoYes
+|-
+| style="text-align:left;" | {{A|Kez|Grappling Claw}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Forced Movement
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Kez|Kazurai Katana}}
+| Yes
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Kez|Talon Toss}}
+| Yes
+| Yes
+| Yes
+| Yes
+|
+| NoYes
+|-
+| style="text-align:left;" | {{A|Legion Commander|Moment of Courage|text=Moment<br/>of Courage}} [{{tooltip|?|Do not react on instant attacks}}]
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|To trigger, you need to make an instant attack from another source}}]
+| Break
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Lifestealer|Infest}} {{Symbol|Aghanim}}
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes for first attack}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| NoYes
+|-
+| style="text-align:left;" | {{A|Luna|Lunar Orbit}}
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes if Melee Hero}}]
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| 
+| NoYes [{{tooltip|?|Do not break invisibility from Shadow Blade, Silver Edge and most other sources}}]
+|-
+| style="text-align:left;" | {{A|Mars|God's Rebuke}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Monkey King|Boundless Strike}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Pangolier|Swashbuckle}}
+| Yes
+| Yes
+| Yes
+| Yes
+| Root<br/>Forced Movement
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Pangolier|Shield Crash}} {{Symbol|Aghanim}}
+| Yes
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Phantom Assassin|Stifling Dagger}}
+| Yes
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Puck|Phase Shift}} {{Symbol|Aghshard}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Puck|Dream Coil}} {{Symbol|Aghanim}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| NoYes
+|-
+| style="text-align:left;" | {{A|Riki|Blink Strike}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| CD [{{tooltip|?|Unlike other instant attack sources, can't instant attack between normal attacks (while normal attack in cooldown)}}]<br/>Root<br/>Spell Block
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Riki|Tricks of the Trade}}
+| Yes
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Root<br/>[{{tooltip|?|Can attack up to two targets)}}]
+| NoYes
+|-
+| style="text-align:left;" | {{A|Sand King|Stinger}}<br/>{{A|Sand King|Epicenter}} {{Symbol|Aghanim}}<br/>{{A|Sand King|Epicenter}} {{Symbol|Aghshard}} {{Symbol|Aghanim}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| Yes
+| 
+| NoYes
+|-
+| style="text-align:left;" | {{A|Silencer|Glaives of Wisdom|text=Glaives<br/>of Wisdom}} {{Symbol|Aghshard}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Shadow Fiend|Shadowraze}} {{Symbol|Bonus t4l}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| No
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Sniper|Assassinate}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Tidehunter|Anchor Smash}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Tidehunter|Anchor Smash}} {{Symbol|Bonus t3l}}
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''YesNo'''</span> [{{tooltip|?|Reflected damage. Lifesteal is Disabled}}]
+| Yes
+| Yes
+| Break
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Tiny|Tree Throw}}
+| Yes
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Tiny|Tree Volley}} {{Symbol|Aghanim}}
+| Yes
+| Yes
+| Yes
+| Yes
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Void Spirit|Astral Step}}
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Yes
+| Yes
+| Root
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Weaver|Geminate Attack}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|To trigger, you need to make an instant attack from another source}}]
+| Break
+| NoYes
+|-
+| style="text-align:left;" | {{A|Weaver|Shukuchi}} {{Symbol|Aghshard}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| Yes
+| Dispel
+| NoYes
+|-
+|}
+
+===Secondary Attacks===
+
+These attacks do not interact with other instant attack sources.<br/>
+
+{| class="wikitable mw-datatable sortable" width="80%" style="text-align:center;"<!--
+-->{{#vardefine:p|style="background:#CD5F51; color:#000; font-weight:bold;" {{!}} Prevented}}<!--
+-->{{#vardefine:s|style="background:#70B04A; color:#000; font-weight:bold;" {{!}} Situational}}<!--
+-->{{#vardefine:f|style="background:#F1E7AE; color:#000; font-weight:bold;" {{!}} Forced}}
+! class = "header" rowspan = "2" | Source
+! class = "header" colspan = "7" | Properties
+|-
+! class="header" width="10%" | Procs {{I|Battle Fury}}? <br/> [{{tooltip|?|Tidebringer can't be triggered by Instant Attack}}]
+! class="header" width="10%" | Procs other<br/> {{M|Attack Modifiers}}?<br/>[{{tooltip|?|Most Active Attack Modifiers can't be triggered by instant attack. Excluding Battle Fury.}}]
+! class="header" width="10%" | Has<br/>{{M|True Strike}}?
+! class="header" width="10%" | Ignores<br/>{{M|Disarm}}?
+! class="header" width="15%" | Also<br/>Prevented By [{{tooltip|?|Silence also prevents most abilities from being casted/toggled, but it won't be specified}}]
+! class="header" width="15%" | Breaks {{M|Invisibility}}?<br/>[{{tooltip|?|Including Smoke. Some invisibility sources always breaks after instant attack (NoYes). Includes only interactions with instant attack component}}]
+|-
+| style="text-align:left;" | {{A|Clinkz|Searing Arrows}} {{Symbol|Bonus t4l}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Mana [{{tooltip|?|Mana is required to use the ability on a second target}}]<br/>Unit-Type [{{tooltip|?|Doesn't proc when main target is Ward}}]
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Enchantress|Sproink}} {{Symbol|Aghshard}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Gyrocopter|Flak Cannon}}
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes if Melee Hero}}]
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes for main target}}]
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| 
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Hydra's Breath|Polycephaly}}
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes if Melee Hero}}]
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Triggers Miasma}}]
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Chance-based<br/>Unit-Type [{{tooltip|?|Doesn't proc when main target is Building}}]
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Muerta|Gunslinger}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Break<br/>Chance-based
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Medusa|Split Shot}}
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes for main target}}]
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes for main target}}]
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Break
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Medusa|Split Shot}} {{Symbol|Aghanim}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Break
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Snapfire|Lil' Shredder}} {{Symbol|bonus t3r}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| Yes 
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span> [{{tooltip|?|The ability charge will be spent from the instant attack, but secondary targets will not be selected.}}]
+| Dispel
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Specialist's Array|Splitshot}}
+| <span style="color:#FF0000">'''NoYes'''</span> [{{tooltip|?|Yes if Melee Hero}}]
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Chance-based<br/>Unit-Type [{{tooltip|?|Doesn't proc when main target is Building}}]
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Troll Warlord|Fervor}} {{Symbol|Aghshard}}
+| NoYes [{{tooltip|?|Yes if Melee Hero}}]
+| YesNo [{{tooltip|?|Can't trigger Berserker's Rage Root}}]
+| <span style="color:#FF0000">'''No'''</span>
+| <span style="color:#FF0000">'''No'''</span>
+| Break <br/>Chance-based<br/>Unit-Type[{{tooltip|?|Doesn't proc when main target is Ward or Building}}]
+| <span style="color:#FF0000">'''Yes'''</span>
+|-
+| style="text-align:left;" | {{A|Shadow Shaman|Mass Serpent Ward|text=Mass<br/>Serpent Ward}} {{Symbol|bonus t4l}}
+| -
+| -
+| -
+| -
+| -
+| -
+|-
+|}
+
+
+'''Ignore disarm?''' - Most instant attacks' rule for interaction with [[disarm]] is relatively intuitive: if the instant attack is generated outside of normal attack animation, it ignores disarm. If it is generated together with a normal attack animation (e.g. various multishot instant attacks), then the attack is trivially not generated due to the normal attack not being allowed. The few exceptions are highlighted in '''bold'''.
+
+===Attack-based Projectiles===
+Some abilities generate projectiles that are based on an attack, but are technically not an attack. These abilities' projectiles use the source's attack projectile, and deal damage based on the attacking unit's attack damage, and have their damage flagged as attack damage as well, but are not counted as attacks otherwise. Instead, they are treated like regular ability projectiles (like e.g. {{A|Vengeful Spirit|Magic Missile}}), and therefore cannot trigger attack modifier or {{M|on-hit effects}}, ignore evasion and blind. This also means that these abilities continue to use projectiles even when their source is a melee hero.
+
+These "attacks" do not breaks invisibility from any source and do not reveal the attacking units through the [[Fog of War]].<br/>
+
+{{SkillListHead|title=Spell damage-based attacks that proc some Attack Modifiers}}
+{{SkillListLite
+| source = Luna
+| name = Moon Glaives
+| nametext = Moon Glaives <sup>3<sup>
+}}
+{{SkillListLite
+| source = Storm Spirit
+| name = Overload
+| nametext = Overload <sup>1 4<sup>
+}}
+{{SkillListLite
+| source = Witch Doctor
+| name = Death Ward
+| nametext = Death Ward <sup>2a 5<sup>
+}}
+{{SkillListLite
+| source = Witch Doctor
+| name = Voodoo Switcheroo
+| nametext = Voodoo Switcheroo <sup>2a 5<sup>
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{M|Talent}}.}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|3|Interacts with {{M|Spell Lifesteal}}, but not with {{M|Lifesteal}}.}}
+{{Footnote|4|Bounce attack damage does not interact with Lifesteal or Spell Lifesteal. Overload damage interacts with Spell Lifesteal.}}
+
+===Attack Immunity===
+{{Main|Attack immunity|l1=Attack Immunity}}
+{{#lst:Attack immunity|Intro}}
+
+==Conditional Attack Damage Bonus==
+<section begin=Conditional Attack Damage Bonus Intro />These abilities give direct attack damage bonuses under certain circumstances, these bonuses are not displayed in the [[HUD]] and its [[damage type]] is not limited to physical damage; nonetheless, they are considered as attack damage since it is dealt in one instance together with a unit's attack damage.<section end=Conditional Attack Damage Bonus Intro />
+
+They are affected by [[Attack Damage#Attack Classes|attack classes]] (even when dealing [[magical]] or [[pure]] damage). It is also not affected by percentage-based attack damage bonuses or reductions, but can be reduced with flat reductions (i.e. [[Damage Block]]).
+
+{{SkillListHead|title=Conditional Attack Damage Bonus (as [[Physical]] Damage)}}
+{{#lst:Mana break|Sources}}
+{{SkillListLite
+| source = Abyssal Blade
+| name = Bash
+}}
+{{SkillListLite
+| source = Skull Basher
+| name = Bash
+}}
+{{SkillListLite
+| source = Roshan
+| name = Bash
+}}
+{{SkillListLite
+| source = Slardar
+| name = Bash of the Deep
+}}
+{{SkillListLite
+| source = Battle Fury
+| name = Quell
+}}
+{{SkillListLite
+| source = Quelling Blade
+| name = Quell
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Frost Arrows
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Marksmanship
+}}
+{{SkillListLite
+| source = Earth Brewling
+| name = Demolish
+}}
+{{SkillListLite
+| source = Ember Spirit
+| name = Sleight of Fist
+}}
+{{SkillListLite
+| source = Hoodwink
+| name = Acorn Shot
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Tidebringer
+}}
+{{SkillListLite
+| source = The Leveller
+| name = Demolish
+}}
+{{SkillListLite
+| source = Lifestealer
+| name = Feast
+}}
+{{SkillListLite
+| source = Lifestealer
+| name = Open Wounds
+}}
+{{SkillListLite
+| source = Mars
+| name = Bulwark
+| nametext = Bulwark<sup>2a 4</sup>
+}}
+{{SkillListLite
+| source = Medusa
+| name = Mystic Snake
+| nametext = Mystic Snake<sup>2a 4</sup>
+}}
+{{SkillListLite
+| source = Medusa
+| name = Cold Blooded
+| nametext = Cold Blooded<sup>2a 4</sup>
+}}
+{{SkillListLite
+| source = Medusa
+| name = Stone Gaze
+}}
+{{SkillListLite
+| source = Riki
+| name = Cloak and Dagger
+}}
+{{SkillListLite
+| source = Shadow Blade
+| name = Shadow Walk
+| nametext = Shadow Walk<sup>3</sup>
+}}
+{{SkillListLite
+| source = Silver Edge
+| name = Shadow Walk
+| nametext = Shadow Walk<sup>3</sup>
+}}
+{{SkillListLite
+| source = Sniper
+| name = Headshot
+}}
+{{SkillListLite
+| source = Spirit Bear
+| name = Demolish
+}}
+{{SkillListLite
+| source = Storm Brewling
+| name = Wind Walk
+| nametext = Wind Walk<sup>3</sup>
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Anchor Smash
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Grab
+}}
+{{SkillListLite
+| source = Tusk
+| name = Tag Team
+}}
+{{SkillListLite
+| source = Ursa
+| name = Fury Swipes
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|3b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Grants conditional attack damage bonus on the attack that breaks [[invisibility]].}}
+{{Footnote|4|Damage amplified is considered as conditional attack damage bonus for this ability.}}
+
+===Magical Attack Damage Bonus===
+{{SkillListHead|title=Conditional Attack Damage Bonus (as [[Magical]] Damage)}}
+{{SkillListLite
+| source = Bloodthorn
+| name = Pierce
+}}
+{{SkillListLite
+| source = Javelin
+| name = Pierce
+}}
+{{SkillListLite
+| source = Monkey King Bar
+| name = Pierce
+}}
+{{SkillListLite
+| source = Witchbane
+| name = Subjugate
+}}
+{{SkillListTail}}
+
+===Pure Attack Damage Bonus===
+{{SkillListHead|title=Conditional Attack Damage Bonus (as [[Pure]] Damage)}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Bloodrage
+| nametext = Bloodrage<sup>2b</sup>
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===Reducing Sources===
+{{SkillListHead|title=Conditional Attack Damage Bonus Reducing Sources}}
+{{SkillListRich
+| source = Axe
+| name = Counter Helix
+| notes aghs = Reduces attack damage of debuffed enemies when attacking Axe.
+}}
+{{SkillListRich
+| source = Juggernaut
+| name = Blade Fury
+| notes = During Blade Fury, {{H|Juggernaut}}'s attacks deal 0 damage, except against [[ward]]s and [[buildings]].
+}}
+{{SkillListTail}}
+
+{{MechanicsNav}}
+[[Category:Mechanics]]
+
+[[ru:Урон от атаки]]

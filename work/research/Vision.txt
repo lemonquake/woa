@@ -1,0 +1,1426 @@
+{{Tabber
+| link1 = Vision
+| name1 = Vision
+| link2 = Vision/Changelogs
+| name2 = Changelogs
+}}{{hatnote|"Sight" redirects here. For other uses, see [[Sight (Disambiguation)]].}}
+
+[[File:Vision zeus moving.gif|thumb|Vision changes around while the hero moves.]]
+{{Quotation|Monkey King|Oh, nice view!|sound=vo_monkey_king_monkey_ability1_16.mp3}}
+<dfn>Vision</dfn> describes what a unit can and cannot see within a circular area from its current location and state. Places a unit cannot see are filled with the Fog of War, a dark mist that hides enemy units inside of it. Allied units cannot be hidden by the fog of war. Invisible units cannot be seen even when outside of the Fog of War, unless they are revealed by a source of [[True Sight]]. Trees and higher elevation block a unit's vision if it has ground vision. Flying vision is unobstructed by trees and elevation. Abilities can grant vision over areas as well, usually for a short amount of time and limited to their area of effect.
+
+All vision is shared within a team, which means that everything allied units see can be seen by the player as well. This includes allied player-controlled units, as well as NPC units, like [[lane creeps]] and [[buildings]].
+
+__TOC__
+==Fog of War==
+All areas outside of friendly vision are constantly covered by the <dfn>Fog of War</dfn>. Any non-friendly units within the Fog of War cannot be seen or directly targeted, however they can still be hit by non-targeted spells. To unveil units in the Fog of War, an allied unit must gain vision over that area.
+
+If an enemy enters the fog of war during the [[cast time]] of an ability, the cast gets canceled. However, attacks do not cancel if their targets enter the fog of war during the [[attack animation]].
+
+===Elevation===
+{{Main|Map#Terrain|l1=Terrain}}
+[[File:Vision demo elevation.gif|thumb|Units cannot see areas that are on higher elevations than them.]]
+The Dota 2 map's cliffs and valleys shape the battle, determining both where units can move and what they can see. Units with ground vision cannot see areas that are on higher elevation than them. For example, a unit standing in the [[river]] (which is the on the lowest elevation) cannot see anything past the cliffs surrounding the river, or beyond the ramps leading out of the river.
+
+On the other side, units standing on higher elevation effectively have unobstructed vision on lower elevation. For example, a unit standing on an elevated ward spot can see the entire surrounding, unobstructed by nearby trees, regardless of their vision type.
+
+Units with flying vision do not have their vision obstructed by higher elevations.
+
+===Trees===
+{{Main|Trees}}
+[[File:Vision demo tree.gif|thumb|Amount of vision blocked by single tree changes based on proximity to it.]]
+Besides blocking pathing, [[trees]] also block vision for units on the same elevation as them, and for units one elevation above them. Trees block vision like how objects cast shadows: The closer the object is to the source of light, the bigger and wider the object's shadow gets. The closer a unit is to a tree, the more vision is blocked by the tree, blocking out an entire section of the circular vision area of the unit. The exact numbers for these are unknown.
+
+The small trees created by {{I|Iron Branch}}, {{I|Ironwood Tree}}, {{I|Woodland Striders}}, and {{A|Nature's Prophet|Sprout}} have a narrower vision blocker than the regular trees on the map.
+
+Units with flying vision do not have their vision obstructed by trees.
+
+===Vision Blockers===
+{{Main|Buildings#Fountains|Roshan#Roshan_Pit|l1=Fountain|l2=Roshan}}
+Artificial vision blockers exist at certain locations, which control visibility in addition to the normal rules. All sources of [[Vision#Flying Vision|flying vision]] are unaffected by vision blockers.
+
+{{SkillListHead|title=Vision Blocker Sources}}
+{{SkillListRich
+| source = Drow Ranger
+| name = Glacier
+| notes = Creates a hill of ice beneath {{H|Drow Ranger}}. The front of the hill obscures the enemy's vision while granting allied heroes on top [[flying vision]].
+}}
+{{SkillListTail}}
+
+====Fountain Entrances====
+Both [[fountain]]s have a vision blocker at their stairs, preventing the enemies of that fountain's team from seeing into the fountain area from outside. This is normally redundant, since the fountain's higher elevation already prevents vision, but it also prevents vision from nearby higher-elevation ground, such as the {{M|Radiant}} fountain [[ward]] cliff.
+
+====Roshan Pit====
+[[File:Roshan phantom spots.png|right|thumb|<span style="color:#00ff00;">Green tiles</span> can see in, but cannot be seen from inside. <span style="color:#ff0000;">Red tiles</span> can see out, but cannot be seen from outside.]]
+{{U|Roshan}}'s pit is sealed by vision blockers that prevent vision both into and out of the pit, including from units with flying visions. 
+
+However, the pit entrance also has phantom spots, areas in which vision is asymmetric. Units standing in these areas can either see into the pit while being unseen from inside, or see out of the pit while being unseen from outside. These may be useful for juking, scouting Roshan attempts, and for hiding [[wards]], most notably {{A|Templar Assassin|Psionic Trap|text=Psionic Traps}}. With [[Vision#Ground Vision|ground vision]], units on phantom spots can only be seen by standing within 3 tiles of them (in [https://en.wikipedia.org/wiki/Taxicab_geometry rectilinear distance]).
+
+In-game, the phantom spots are not marked. To tell when you've stepped into a phantom spot, look for a subtle brightning of a small area of ground around you. This indicates you have direct vision of some phantom spot tiles, implying you are in a phantom spot yourself. The right side of the pit entrance has the largest continuous phantom spot, so it is the most forgiving location for this.
+{{clr}}
+
+==Time of Day==
+{{Main|Time of day|l1=Time of Day}}
+The current [[time of day]] affects vision. Most units' vision range is shorter at night and higher by day. Exceptions exist, with some units having shorter day vision and longer night vision, and some having the same vision regardless of time.
+
+==Base Vision Ranges==
+Most units have day and night vision, only very few have absolutely no vision. These values can be altered with vision bonuses and reductions.
+
+===Heroes===
+<section begin=Heroes />All heroes have a {{Symbol|Daytime}} daytime and {{Symbol|Nighttime}} nighttime vision range of {{G|vision day}} and {{G|vision night}} respectively, except for the following:
+{| class="wikitable sortable mw-datatable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180" | Unit
+! class="header" scope="col" width="160" | Day
+! class="header" scope="col" width="160" | Night
+{{#lpdb:datapoint
+| conditions = [[type::hero]] AND ([[extradata_visionday::!1800]] OR [[extradata_visionnight::!800]]) AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=Hero icon/1800/800
+| query = pagename, extradata
+}}
+|}<section end=Heroes />
+
+===Lane Creeps===
+All lane creeps have a vision range of 750 during the day and the night, except for the following ones:
+{| class="wikitable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::Lane Creep]] AND ([[extradata_sight_range_day::!750]] OR [[extradata_sight_range_day::!750]]) AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/750/750
+| query = pagename, extradata
+}}
+|}
+
+===Neutral Creeps===
+All neutral creeps have a vision range of 800 during the day and the night, except for the following ones:
+{| class="wikitable sortable mw-datatable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::Creep]] AND [[extradata_neutral::yes]] AND ([[extradata_sight_range_day::!800]] OR [[extradata_sight_range_day::!800]]) AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/800/800
+| query = pagename, extradata
+}}
+|}
+
+===Summoned Creeps===
+All summoned creeps have a vision range of 800 during the day and the night, except for the following ones
+{| class="wikitable sortable mw-datatable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::!Creep-Hero]] AND [[extradata_type::!Ward]] AND [[extradata_type::!Attached]] AND [[extradata_summoned::yes]] AND ([[extradata_sight_range_day::!800]] OR [[extradata_sight_range_day::!800]]) AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/800/800
+| query = pagename, extradata
+}}
+|}
+
+===Creep-Heroes===
+{| class="wikitable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::Creep-Hero]] AND [[extradata_summoned::yes]] AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/1800/800
+| query = pagename, extradata
+}}
+|}
+
+===Couriers===
+{| class="wikitable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::Courier]] AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/200/200
+| query = pagename, extradata
+}}
+|}
+
+===Wards===
+{| class="wikitable sortable mw-datatable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND ([[extradata_type::Ward]] OR [[extradata_type::Other]]) AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/800/800
+| query = pagename, extradata
+}}
+|}
+
+===Attached===
+{| class="wikitable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Unit
+! class="header" scope="col" width="160"|Day
+! class="header" scope="col" width="160"|Night
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::Attached]] AND [[extradata_game::]]
+| template=Vision table el {{!}}userparam=U/1800/800
+| query = pagename, extradata
+}}
+|}
+
+===Buildings===
+{| class="wikitable sortable mw-datatable" width="50%" style="text-align:center;"
+! class="header" scope="col" width="180"|Building
+! class="header" scope="col" width="80"|Day
+! class="header" scope="col" width="80"|Night
+! class="header" scope="col" width="80"|True Sight
+! class="header" scope="col" width="80"|Attack Range
+{{#lpdb:datapoint
+| conditions = [[type::unit]] AND [[extradata_type::Building]] AND [[extradata_sight_range_day::!]] AND [[extradata_game::]]
+| template=Vision table el
+| query = pagename, name, extradata
+}}
+|}
+
+==Types of Vision==
+There are 2 types of vision, ground vision (also known as obstructed vision) and flying vision (also known as unobstructed vision). Ground vision is impaired by higher elevations, trees, and vision blockers, while flying vision is completely unhindered.
+
+Every hero has ground vision. Other units have the following vision types
+{{Grouped attribute table|unit|vision_type|value heading=Vision Type}}
+
+==Modifying Vision==
+Several abilities and items can grant or reduce vision. Most of these vision bonuses stack additively unless stated otherwise.
+
+===Vision Increasing Sources===
+A unit can have a maximum vision range of 4000 as shown in the example below.
+
+{| width="100%" style="text-align:center;"
+| [[File:Max Vision Example.png|frame|center]]
+|}
+
+{{SkillListHead|title=Vision Increasing Abilities}}
+{{SkillListLite
+| source = Lycan
+| name = Shapeshift
+}}
+{{SkillListLite
+| source = Lycan
+| name = Wolf Bite
+}}
+{{SkillListLite
+| source = Luna
+| name = Lunar Blessing
+}}
+{{SkillListLite
+| source = Moon Shard
+| name = Consume
+}}
+{{SkillListLite
+| source = Moon Shard
+| name = Shade Sight
+}}
+{{SkillListTail}}
+
+<!--=== Vision Reducing Sources ===
+{{SkillListHead|title=Vision Reducing Abilities}}
+{{SkillListTail}}-->
+
+===Setting Vision===
+These abilities set a unit's vision to a specific value.
+{{SkillListHead|title=Vision setting abilities|collapse=no}}
+{{SkillListRich
+| source = Bane
+| name = Nightmare
+| trait1 = Set Vision Range
+| value1 = {{Show|A|Bane|Nightmare|value1}}
+| notes = Set the affected unit's vision range to a specific value for its sleep duration. Takes priority over all other vision-changing effects, except for {{A|Moon Shard|Shade Sight}}.
+}}
+{{SkillListRich
+| source = Bristleback
+| name = Seeing Red
+| trait1 = Set Vision Radius
+| value1 = {{Show|A|Bristleback|Seeing Red|value1}}
+| notes = Set the affected unit's vision radius to a specific value for its rage duration.
+}}
+{{SkillListRich
+| source = Hoodwink
+| name = Bushwhack
+| trait1 = Set Vision Range
+| value1 = {{Show|A|Hoodwink|Bushwhack|type1 value2}}
+| notes = Set the affected unit's vision range to a specific value for its stun duration.
+}}
+{{SkillListRich
+| source = Hoodwink
+| name = Decoy
+| notes = Once triggered, the set vision values are based on {{A|Hoodwink|Bushwhack}}.
+}}
+{{SkillListRich
+| source = Monkey King
+| name = Tree Dance
+| trait1 = {{Symbol|daytime}} Day Vision
+| value1 = {{Show|A|Monkey King|Tree Dance|type1 value1}}
+| trait2 = {{Symbol|nighttime}} Night Vision
+| value2 = {{Show|A|Monkey King|Tree Dance|type1 value2}}
+| notes = Affects the caster. Lasts until unperched. Takes priority over all other vision-changing effects, except for {{A|Moon Shard|Shade Sight}}.
+}}
+{{SkillListTail}}
+
+===Talents===
+{{Spellcard
+| ID = 6228
+| intern = special_bonus_vision_200
+| name = Vision
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Vision Bonus
+| value1 = 200
+
+| is_illusionuses = yes
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Grants the hero bonus day and night vision.
+
+* Does not counter any vision reducing effect.
+}}
+
+{{Talent bonus table|Vision|bonus vision}}
+
+====Day Vision Talents====
+{{Spellcard
+| ID = 6092
+| intern = special_bonus_day_vision_400
+| name = Day Vision
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Day Vision Bonus
+| value1 = 400
+
+| is_illusionuses = yes
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Grants the hero bonus day vision.
+
+* Does not counter any vision reducing effect.
+}}
+
+{{Talent bonus table|Day Vision|bonus day vision}}
+
+====Night Vision Talents====
+{{Spellcard
+| ID = 6920, 7022, 7019, 457, 6888
+| intern = special_bonus_night_vision_400/500/600/800/1000
+| name = Night Vision
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Night Vision Bonus
+| value1 = Varies
+
+| is_illusionuses = yes
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Grants the hero bonus night vision.
+
+* Does not counter any vision reducing effect.
+
+* The following values exist:
+** 400/500/600/800/1000
+}}
+
+{{Talent bonus table|Night Vision|bonus night vision}}
+
+==Sources of Vision==
+Units are not the only entities with vision. A lot of abilities are able to create vision cells of varying sizes on the world, revealing an area of a fixed duration.
+
+===Caster Vision===
+[[File:Caster vision.png|thumb|Caster vision granted over {{H|Bane}} to his enemies for casting {{A|Bane|Brain Sap}} on them.]]
+Caster vision is a flying vision cell granted to the victims of targeted spells and attacks. Whenever a unit casts a unit-target spell (except {{A|Spirit Breaker|Charge of Darkness}} and {{A|Bounty Hunter|Track}} during {{A|Bounty Hunter|Shadow Walk}}) on an enemy within 1800 range, or performs an attack on them, the enemy gains 150 radius ground vision around the casting or attacking unit which lasts for 2 seconds. This vision prevents players from easily and constantly harassing enemies from the fog of war, especially with long-distant spells that can be spammed easily like {{A|Skywrath Mage|Arcane Bolt}}, or with ranged attacks.
+
+Only one of these vision cell can exist per unit. This means if a vision cell already exists from a previous targeted order, performing another targeted order within the previous vision cell's duration does not create a second vision cell. Instead, the location of the previous vision cell gets updated, its duration gets reset, and its vision type is changed to flying vision.
+
+Unit-targeted abilities blocked by {{M|Spell Block}} provide caster-vision.<br/>
+Ground-targeted abilities blocked by {{M|Spell Block}} do not provide caster-vision.
+List:
+* {{A|Earth Spirit|Boulder Smash}}
+* {{A|Nature's Prophet|Wrath of Nature}}
+* {{A|Zeus|Lightning Bolt}}
+* {{A|Gleipnir|Eternal Chains}} 
+{{clr}}
+
+===Ground Vision===
+Ground vision is obstructed by trees, higher elevations, and vision blockers.
+
+{{SkillListHead|title=Sources of ground vision|collapse=no}}
+{{SkillListRich
+| source = Aegis of the Immortal
+| name = Reincarnation
+| trait1 = Day vision radius
+| value1 = 1800
+| trait2 = Night vision radius
+| value2 = 800
+| notes = Provides ground vision around the hero upon triggering. Lingers for 5 seconds.
+}}
+{{SkillListRich
+| source = Ancient Black Dragon
+| name = Fireball
+| trait1 = Vision radius
+| value1 = {{Show|A|Ancient Black Dragon|Fireball|value2}}
+| notes = Provides ground vision within the target area. Lingers for {{Show|A|Ancient Black Dragon|Fireball|value4}} seconds.
+}}
+{{SkillListRich
+| source = Arc Warden
+| name = Spark Wraith
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides ground vision around the wraith while stationary, starting upon cast. Lingers for {{Show|A|Arc Warden|Spark Wraith|value3}}+{{Show|A|Arc Warden|Spark Wraith|value7}} seconds. Triggering the wraith removes the vision.
+}}
+{{SkillListRich
+| source = Bane
+| name = Fiend's Grip
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides ground vision within the area of target unit's initial position. Duration is based on the channel time after reductions and amplifications. Always lingers for the full duration, even when canceled.
+}}
+{{SkillListRich
+| source = Bloodseeker
+| name = Blood Rite
+| trait1 = Vision radius
+| value1 = {{Show|A|Bloodseeker|Blood Rite|value1}}
+| notes = Provides ground vision within the area. Lingers for 5 seconds.
+}}
+{{SkillListRich
+| source = Crystal Maiden
+| name = Crystal Nova
+| trait1 = Vision radius
+| value1 = 900
+| notes = Provides ground vision at the target area. Lingers for 6 seconds.
+}}
+{{SkillListRich
+| source = Disruptor
+| name = Kinetic Field
+| trait1 = Vision radius
+| value1 = {{Show|A|Disruptor|Kinetic Field|value2}}
+| notes = Provides ground radius within the target area. Lingers for 5 seconds.
+}}
+{{SkillListRich
+| source = Enigma
+| name = Black Hole
+| trait1 = Vision radius
+| value1 = 800
+| notes = Provides ground vision at the target area. Lingers for 4 seconds.
+}}
+{{SkillListRich
+| source = Kunkka
+| name = Torrent
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides ground vision at the target area. Lingers for {{#expr:{{Show|A|Kunkka|Torrent|value3}}+1.5}} seconds.
+}}
+{{SkillListRich
+| source = Kunkka
+| name = X Marks the Spot
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides ground vision around the x mark on the ground. Lingers for 5.94 seconds.
+}}
+{{SkillListRich
+| source = Luna
+| name = Eclipse
+| trait1 = Vision radius
+| value1 = {{Show|A|Luna|Eclipse|value2}}
+| notes = Provides ground vision within the target area when cast on the ground. Lingers for 2.4/4.2/6 seconds.
+}}
+{{SkillListRich
+| source = Manta Style
+| name = Mirror Image
+| trait1 = Vision radius
+| value1 = 1000
+| notes = Provides ground vision around the caster upon cast. Lingers for {{Show|A|Manta Style|Mirror Image|value1}} seconds.
+}}
+{{SkillListRich
+| source = Monkey King
+| name = Primal Spring
+| trait1 = Vision radius
+| value1 = {{Show|A|Monkey King|Primal Spring|value3}}
+| notes = Provides ground vision within the target area. The duration is based on the channel time, plus the travel time based on the distance. Always lingers for the full duration, even when canceled.
+}}
+{{SkillListRich
+| source = Phantom Lancer
+| name = Doppelganger
+| trait1 = Vision radius
+| value1 = {{Show|A|Phantom Lancer|Doppelganger|value3}}
+| notes = Provides ground vision within the illusion gather area. Lingers for {{Show|A|Phantom Lancer|Doppelganger|value4}} second.
+}}
+{{SkillListRich
+| source = Phoenix
+| name = Launch Fire Spirit
+| trait1 = Vision radius
+| value1 = {{Show|A|Phoenix|Launch Fire Spirit|value2}}
+| notes = Provides ground vision within the affected area on impact. Lingers for 1 second.
+}}
+{{SkillListRich
+| source = Riki
+| name = Tricks of the Trade
+| trait1 = Vision radius
+| value1 = {{Show|A|Riki|Tricks of the Trade|value3}}
+| notes = Provides ground vision within the attack radius. Duration is based on the channel time. Always lingers for the full duration, even when canceled.
+}}
+{{SkillListRich
+| source = Spectre
+| name = Spectral Dagger
+| trait1 = Vision radius
+| value1 = 200
+| notes = Provides ground vision around the shadow trail left by the dagger, and by hit enemy heroes. Lingers for {{Show|A|Spectre|Spectral Dagger|value5}} seconds.
+}}
+{{SkillListRich
+| source = Techies
+| name = Proximity Mines
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides ground vision around itself upon exploding. Lingers for 1 second.
+}}
+{{SkillListRich
+| source = Tidehunter
+| name = Gush
+| trait1 = Vision radius
+| value1 = 0 ({{Symbol|Aghanim}} 200)
+| notes = Requires {{I|Aghanim's Scepter}}. Provides ground vision at each hit enemy's location. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Undying
+| name = Reincarnation
+| trait1 = Vision radius
+| value1 = 1800
+| notes = Provides ground vision around the hero upon triggering. Lingers for 5 seconds.
+}}
+{{SkillListRich
+| source = Wraith King
+| name = Reincarnation
+| trait1 = Day vision radius
+| value1 = 1800
+| trait2 = Night vision radius
+| value2 = 800
+| notes = Provides ground vision around the hero upon triggering. Lingers for 3 seconds.
+}}
+{{SkillListTail}}
+<br/>
+{{SkillListHead|title=}}
+{{SkillListRich
+| source = Clockwerk
+| name = Hookshot
+| trait1 = Vision radius
+| value1 = 200
+| notes = Provides non-lingering ground vision around the hook's tip as it travels and upon retracting. Provides 400 radius vision at the max distance upon reaching it, if not latching.
+}}
+{{SkillListRich
+| source = Elder Titan
+| name = Astral Spirit
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides non-lingering ground vision around the spirit, until it returns or dies.
+}}
+{{SkillListRich
+| source = Timbersaw
+| name = Timber Chain
+| trait1 = Vision radius
+| value1 = 100
+| notes = Provides non-lingering ground vision around the hook's tip as it travels.
+}}
+{{SkillListTail}}
+
+===Flying Vision===
+Flying vision is not obstructed by trees, higher elevations, and vision blockers.
+
+<!--linger-->
+{{SkillListHead|title=Sources of flying vision|collapse=no}}
+{{SkillListRich
+| source = Ancient Apparition
+| name = Ice Vortex
+| trait1 = Vision radius
+| value1 = 200
+| notes = Provides flying vision at the target area. Lingers for {{Show|A|Ancient Apparition|Ice Vortex|value4}} seconds.
+}}
+{{SkillListRich
+| source = Ancient Apparition
+| name = Ice Blast
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides flying vision around both projectiles as they travel. The vision of the tracer does not linger. The vision of the ice ball lingers for 3.5 seconds.
+}}
+{{SkillListRich
+| source = Ancient Apparition
+| name = Release
+| trait1 = Vision radius
+| value1 = {{#expr:500*1.5}}
+| notes = Provides flying vision at the marked area upon cast. Lingers for 5.3 seconds.
+}}
+{{SkillListRich
+| source = Batrider
+| name = Sticky Napalm
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides flying vision at the targeted area. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Chaos Knight
+| name = Phantasm
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides flying vision around the caster upon cast. Lingers for {{Show|A|Chaos Knight|Phantasm|value1}} seconds.
+}}
+{{SkillListRich
+| source = Clockwerk
+| name = Rocket Flare
+| trait1 = Vision radius
+| value1 = 600
+| notes = Provides flying vision around the rocket as it travels. Lingers for 10 seconds.
+}}
+{{SkillListRich
+| source = Disruptor
+| name = Thunder Strike
+| trait1 = Vision radius
+| value1 = 450
+| notes = Provides flying vision around the target's location upon applying the final strike. Lingers for 3 seconds.
+}}
+{{SkillListRich
+| source = Disruptor
+| name = Static Storm
+| trait1 = Vision radius
+| value1 = 450
+| notes = Provides flying vision at the target area. Lingers for {{Show|A|Disruptor|Static Storm|value6}} ({{Symbol|Aghanim}} {{Show|A|Disruptor|Static Storm|value6 aghs}}) seconds.
+}}
+{{SkillListRich
+| source = Elder Titan
+| name = Earth Splitter
+| trait1 = Vision radius
+| value1 = 500
+| notes = Spawns 12 vision cells along the crack in 0.22-second intervals, with a distance of 200 in between each, which provide vision around where they are spawned. Lingers for 4 seconds.
+}}
+{{SkillListRich
+| source = Faceless Void
+| name = Chronosphere
+| trait1 = Vision radius
+| value1 = 475
+| notes = Provides flying vision at the target area. Lasts {{Show|A|Faceless Void|Chronosphere|value4}} seconds.
+}}
+{{SkillListRich
+| source = Gyrocopter
+| name = Call Down
+| trait1 = Vision radius
+| value1 = 350
+| notes = Provides flying vision at the target area upon cast. Lingers for 4 seconds.
+}}
+{{SkillListRich
+| source = Invoker
+| name = Sun Strike
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides flying vision at the target area upon cast. Lingers for {{#expr:{{Show|A|Invoker|Sun Strike|value3}}+4}} seconds.
+}}
+{{SkillListRich
+| source = Io
+| name = Spirits
+| trait1 = Vision radius
+| value1 = 350
+| notes = Provides flying vision around the hit enemy hero upon impact. Lingers for 3 seconds.
+}}
+{{SkillListRich
+| source = Io
+| name = Relocate
+| trait1 = Vision radius
+| value1 = 150
+| notes = Provides flying vision at the targeted point upon cast. Lingers for 2.7 seconds.
+}}
+{{SkillListRich
+| source = Jakiro
+| name = Ice Path
+| trait1 = Vision radius
+| value1 = 150
+| notes = Provides flying vision along the entire path. Lingers for 3 seconds.
+}}
+{{SkillListRich
+| source = Juggernaut
+| name = Omnislash
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides flying vision around the caster on each slash. Lingers for 1 second.
+}}
+{{SkillListRich
+| source = Keeper of the Light
+| name = Illuminate
+| trait1 = Vision radius
+| value1 = 375
+| notes = Spawns vision cells in front of the caster in a line in 0.5-second intervals, with a distance of 150 in between each, which provide vision around where they are spawned. Spawns them until the channeling ends. Lingers for 10.34 seconds.
+}}
+{{SkillListRich
+| source = Kez
+| name = Raven's Veil
+| trait1 = Vision radius
+| value1 = 775
+| notes = Grants flying vision around the activation point. Lingers for 3 seconds.
+}}
+{{SkillListRich
+| source = Mars
+| name = Arena of Blood
+| trait1 = Vision radius
+| value1 = {{Show|A|Mars|Arena of Blood|value2}}
+| notes = Provides flying vision within the target area upon cast. Lasts {{#expr:{{Show|A|Mars|Arena of Blood|value4}}+{{Show|A|Mars|Arena of Blood|value5}}}} seconds.
+}}
+{{SkillListRich
+| source = Naga Siren
+| name = Mirror Image
+| trait1 = Vision radius
+| value1 = 450
+| notes = Provides flying vision around the caster upon cast. Lingers for {{Show|A|Naga Siren|Mirror Image|value1}} seconds.
+}}
+{{SkillListRich
+| source = Nature's Prophet
+| name = Sprout
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides flying vision at the target area upon cast. Lingers for {{Show|A|Nature's Prophet|Sprout|value3}} seconds.
+}}
+{{SkillListRich
+| source = Night Stalker
+| name = Dark Ascension
+| trait1 = Vision radius
+| value1 = 1800
+| notes = Provides flying vision around the hero. Is active for for {{Show|A|Night Stalker|Dark Ascension|value2}} seconds.
+}}
+{{SkillListRich
+| source = Puck
+| name = Illusory Orb
+| trait1 = Vision radius
+| value1 = 450
+| notes = Provides flying vision around the orb as it travels. Lingers for 3.34 ({{Symbol|Talent}} {{#expr:3.34*(1+{{show|T|Puck|v3l}}/100)}}) seconds.
+}}
+{{SkillListRich
+| source = Pudge
+| name = Meat Hook
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides flying vision around the unit the hook latches on upon latching. Lingers for 4 seconds.
+}}
+{{SkillListRich
+| source = Razor
+| name = Plasma Field
+| trait1 = Vision radius
+| value1 = 800
+| notes = Provides flying vision around the caster for the entire duration. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Sniper
+| name = Shrapnel
+| trait1 = Vision radius
+| value1 = {{Show|A|Sniper|Shrapnel|value2}}
+| notes = Provides flying vision within the target area after the effect delay. Lingers for {{Show|A|Sniper|Shrapnel|value7}} seconds.
+}}
+{{SkillListRich
+| source = Timbersaw
+| name = Chakram
+| trait1 = Vision radius
+| value1 = {{Show|A|Timbersaw|Chakram|value2}}
+| notes = Provides flying vision around the sawblade after reaching the targeted location, until it starts to return.
+}}
+{{SkillListRich
+| source = Timbersaw
+| name = Second Chakram
+| trait1 = Vision radius
+| value1 = {{Show|A|Timbersaw|Second Chakram|value2}}
+| notes = Provides flying vision around the sawblade after reaching the targeted location, until it starts to return.
+}}
+{{SkillListRich
+| source = Vengeful Spirit
+| name = Wave of Terror
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides flying vision around the wave as it travels. Lingers for 4 seconds.
+}}
+{{SkillListRich
+| source = Zeus
+| name = Lightning Bolt
+| trait1 = Vision radius
+| value1 = 750
+| notes = Provides flying vision around the target point or targeted enemy. Lingers for 4.5 seconds.
+}}
+{{SkillListRich
+| source = Zeus
+| name = Thundergod's Wrath
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides flying vision around each hit enemy hero. Lingers for 3 seconds.
+}}
+{{SkillListRich
+| source = Sentry Ward
+| name = Plant
+| trait1 = Vision radius
+| value1 = 150
+| notes = Provides flying vision around the ward upon cast. Lingers for 12 seconds.
+}}
+{{SkillListRich
+| source = Town Portal Scroll
+| name = Teleport
+| trait1 = Vision radius
+| value1 = 200
+| notes = Provides flying vision at the teleport destination upon channel begin. Duration is based on the channel time. Always lingers for the full duration, even when canceled.
+}}
+{{SkillListRich
+| source = Meteor Hammer
+| name = Meteor Hammer
+| trait1 = Vision radius
+| value1 = {{Show|A|Meteor Hammer|Meteor Hammer|value2}}
+| notes = Provides flying vision within the target area upon cast. Lingers for 2.8 seconds.
+}}
+{{SkillListRich
+| source = Shiva's Guard
+| name = Arctic Blast
+| trait1 = Vision radius
+| value1 = 800
+| notes = Provides flying vision around the caster for the entire duration. Lingers for 2 seconds.
+}}
+{{SkillListTail}}
+<br/>
+<!--Partially linger-->
+{{SkillListHead}}
+{{SkillListRich
+| source = Arc Warden
+| name = Spark Wraith
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides non-lingering flying vision around the wraith as it travels towards the target. Provides the same vision around the target's location upon impact. Lingers for 3.34 seconds.
+}}
+{{SkillListRich
+| source = Disruptor
+| name = Glimpse
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides non-lingering flying vision around the projectile as it travels. Provides the same vision around the target's location after getting teleported back. Lingers for 3.34 seconds.
+}}
+{{SkillListRich
+| source = Grimstroke
+| name = Stroke of Fate
+| trait1 = Vision radius
+| value1 = 120/250
+| notes = Provides 120 non-lingering flying vision around the ink trail as it travels. Provides 250 flying vision at the end location upon reaching it. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Gyrocopter
+| name = Homing Missile
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides non-lingering flying vision around the missile as it travels. Provides the same vision at the target's location on impact. Lingers for 4 seconds.
+}}
+{{SkillListRich
+| source = Invoker
+| name = Tornado
+| trait1 = Vision radius
+| value1 = 200
+| notes = Provides non-lingering flying vision around the tornado as it travels. Provides the same vision at the max distance upon reaching it. Lingers for 1.75 seconds.
+}}
+{{SkillListRich
+| source = Invoker
+| name = Chaos Meteor
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides non-lingering flying vision around the meteor as it starts rolling. Provides the same vision at the max distance upon reaching it. Lingers for 3 seconds.
+}}
+{{SkillListRich
+| source = Mars
+| name = Spear of Mars
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides non-lingering flying vision around the spear as it travels. Provides the same vision upon reaching max distance, or upon impaling an enemy. Lingers for 1 second if not impaled. If impaled, lingers for {{Show|A|Mars|Spear of Mars|value7}} ({{Symbol|Talent}} {{Show|A|Mars|Spear of Mars|value7 aghs}}) seconds.
+}}
+{{SkillListRich
+| source = Mirana
+| name = Sacred Arrow
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides non-lingering flying vision around the arrow as it travels. Provides the same vision upon reaching max distance, or upon hitting an enemy. Lingers for 3.5 seconds.
+}}
+{{SkillListRich
+| source = Oracle
+| name = Fortune's End
+| trait1 = Vision radius
+| value1 = 200
+| notes = Provides non-lingering flying vision around the orb as it travels. Provides the same vision at the target's location on impact. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Phantom Assassin
+| name = Stifling Dagger
+| trait1 = Vision radius
+| value1 = 450
+| notes = Provides non-lingering flying vision around the dagger as it travels. Provides the same vision at the target's location on impact. Lingers for 3.34 seconds.
+}}
+{{SkillListRich
+| source = Shadow Demon
+| name = Shadow Poison
+| trait1 = Path vision radius
+| value1 = 350
+| trait2 = Hit/End vision radius
+| value2 = 300
+| notes = Provides non-lingering flying vision around the poison cloud as it travels. Provides flying vision around each hit enemy, and at max distance upon reaching it. Lingers for 3.5 seconds.
+}}
+{{SkillListRich
+| source = Skywrath Mage
+| name = Arcane Bolt
+| trait1 = Vision radius
+| value1 = 325
+| notes = Provides non-lingering flying vision around the bolt as it travels. Provides the same vision at the target's location on impact. Lingers for 3.34 seconds.
+}}
+{{SkillListRich
+| source = Skywrath Mage
+| name = Concussive Shot
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides non-lingering flying vision around the shot as it travels. Provides the same vision at the target's location on impact. Lingers for 3.34 seconds.
+}}
+{{SkillListRich
+| source = Snapfire
+| name = Mortimer Kisses
+| trait1 = Vision radius
+| value1 = 500
+| notes = Provides non-lingering flying vision around the lava blobs as they travel. Provides the same vision at marked location on impact. Lingers for 3.5 seconds.
+}}
+{{SkillListRich
+| source = Tiny
+| name = Tree Throw
+| trait1 = Vision radius
+| value1 = 100
+| notes = Provides non-lingering flying vision around the tree as it travels, if ground-targeted. No provided if unit-targeted. Provides the same vision at the target's location on impact, regardless of how it was targeted. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Tiny
+| name = Tree Volley
+| trait1 = Tree vision radius
+| value1 = {{Show|A|Tiny|Tree Volley|value3}}
+| trait2 = Impact vision radius
+| value2 = 100
+| notes = Provides non-lingering flying vision around the trees as they travel. Provides flying vision at each hit enemy's location on impact. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Tusk
+| name = Ice Shards
+| trait1 = Projectile vision radius
+| value1 = {{Show|A|Tusk|Ice Shards|value2}}
+| trait2 = Shards vision radius
+| value2 = 100
+| notes = Provides non-lingering flying vision around the projectile as it travels. Provides flying vision around each shard after their creation. Lingers for 2 seconds.
+}}
+{{SkillListRich
+| source = Venomancer
+| name = Venomous Gale
+| trait1 = Vision radius
+| value1 = 350
+| notes = Provides non-lingering flying vision around the gale as it travels.
+}}
+{{SkillListRich
+| source = Windranger
+| name = Powershot
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides non-lingering flying vision around the arrow as it travels. Provides the same vision at the max distance upon reaching it. Lingers for 3.34 seconds.
+}}
+{{SkillListTail}}
+<br/><!--No linger-->
+{{SkillListHead}}
+{{SkillListRich
+| source = Batrider
+| name = Flamebreak
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides non-lingering flying vision around the explosive cocktail as it travels.
+}}
+{{SkillListRich
+| source = Beastmaster
+| name = Wild Axes
+| trait1 = Vision radius
+| value1 = 350
+| notes = Provides non-lingering flying vision around the axes as they travel.
+}}
+{{SkillListRich
+| source = Drow Ranger
+| name = Multishot
+| trait1 = Vision radius
+| value1 = 100
+| notes = Provides non-lingering flying vision around the arrows as they travel.
+}}
+{{SkillListRich
+| source = Kunkka
+| name = Ghostship
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides non-lingering flying vision around the ships as they travel.
+}}
+{{SkillListRich
+| source = Lich
+| name = Chain Frost
+| trait1 = Vision radius
+| value1 = 800
+| notes = Provides non-lingering flying vision around the ball of ice as it travels.
+}}
+{{SkillListRich
+| source = Medusa
+| name = Mystic Snake
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides non-lingering flying vision around the snake as it travels.
+}}
+{{SkillListRich
+| source = Meepo
+| name = Earthbind
+| trait1 = Vision radius
+| value1 = 300
+| notes = Provides non-lingering flying vision around the net as it travels.
+}}
+{{SkillListRich
+| source = Sven
+| name = Storm Hammer
+| trait1 = Vision radius
+| value1 = 225
+| notes = Provides non-lingering flying vision around the fist as it travels.
+}}
+{{SkillListRich
+| source = Storm Spirit
+| name = Ball Lightning
+| trait1 = Vision radius
+| value1 = 400
+| notes = Provides non-lingering flying vision around the ball of lightning as it travels.
+}}
+{{SkillListRich
+| source = Void Spirit
+| name = Aether Remnant
+| trait1 = Travel vision radius
+| value1 = 150
+| trait2 = Stationary vision radius
+| value2 = 200
+| notes = Provides non-lingering flying vision around the remnant as it travels. Spawns 2 vision cells in front of the remnant after the delay, one at max distance, and the other halfway through max distance. Lingers for as long as the remnant exists, so if triggered, the vision stops once the pulling ends.
+}}
+{{SkillListRich
+| source = Weaver
+| name = The Swarm
+| trait1 = Vision radius
+| value1 = 321
+| notes = Provides non-lingering flying vision around each individual beetle within the swarm as they travel.
+}}
+{{SkillListTail}}
+
+===Shared Vision===
+Some abilities are capable of sharing an enemy unit's vision the player's team. This means anything that unit sees can also be seen by its opponents.
+
+{{SkillListHead|title=Sources of shared vision with {{M|True Sight}}}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Track
+| nametext = Track<sup>1<sup>
+}}
+{{SkillListLite
+| source = Essence Distiller
+| name = Soul Release
+}}
+{{SkillListLite
+| source = Meepo
+| name = Earthbind
+}}
+{{SkillListLite
+| source = Medusa
+| name = Gorgon's Grasp
+}}
+{{SkillListLite
+| source = Sniper
+| name = Assassinate
+| nametext = Assassinate<sup>4<sup>
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Sources of shared vision without {{M|True Sight}}}}
+{{SkillListLite
+| source = Grimstroke
+| name = Soulbind
+}}
+{{SkillListLite
+| source = Razor
+| name = Static Link
+}}
+{{SkillListLite
+| source = Silencer
+| name = Last Word
+}}
+{{SkillListLite
+| source = Spectre
+| name = Spectral Dagger
+| nametext = Spectral Dagger<sup>5<sup>
+}}
+{{SkillListLite
+| source = Spirit Breaker
+| name = Charge of Darkness
+| nametext = Charge of Darkness<sup>6<sup>
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Unique cases}}
+{{SkillListRich
+| source = Grimstroke
+| name = Phantom's Embrace
+| notes = Instantly dies if the unit it is attached to is invisible.
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{M|talent|t=t0}}.}}
+{{Footnote|4|Shares the target's vision upon cast begin. Vision is removed if the ability cast is cancelled or after a successful hit, but no longer than 4 seconds.Vision is not shared if targeted invulnerable unit.}}
+{{Footnote|5|Shares all hit enemy heroes' vision as long as they create a shadow path still.}}
+{{Footnote|6|Shares the target's vision until the charge stops, either upon reaching it, or when canceled earlier.}}
+
+==Exposing==
+Several abilities can expose an enemy's model through the fog of war, without truly providing vision over them. This means the Fog of War still shrouds their surroundings, but they are visible and targetable as if they were not within the Fog of War. Exposed enemies are treated as visible units by abilities. The difference between exposure and vision (e.g. {{I|Observer Ward}}) is that the expose is tied to the unit, not to the area he is standing on.
+
+<section begin=Exposing />Exposing an enemy does not cancel out the effects of [[invisibility]], although it usually does make their silhouette visible. Invisible enemy exposed only by silhouette cannot be targeted by attacks or single-targeted abilities, and still counts as invisible in terms of abilities affecting them, with very few exceptions. However, you can click on a unit's silhouette to view information about him.  Some sources of exposure also provide [[True Sight]] to fully reveal the enemy, but not all do.<section end=Exposing />
+
+{{M|Debuff Immunity}} does not protect against Expose and True Sight, with the sole exception being {{A|Nature's Prophet|Curse of the Oldgrowth}}. However, Debuff Immunity is sometimes paired with Dispel, which can remove certain negative effects—including Expose and True Sight—if they are tied to a dispellable debuff.
+
+Exposing is a default component of shared vision so that all abilities listed in the previous section also expose enemies. Besides them, the following abilities expose enemies. 
+
+{{SkillListHead|title=Exposure without {{M|True Sight}}}}
+{{SkillListLite
+| source = Dark Willow
+| name = Terrorize
+}}
+{{SkillListLite
+| source = Disruptor
+| name = Thunder Strike
+}}
+{{SkillListLite
+| source = Grimstroke
+| name = Ink Trail
+}}
+{{SkillListLite
+| source = Tusk
+| name = Snowball
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Special Cases}}
+{{SkillListRich
+| source = Hoodwink
+| name = Bushwhack
+| nametext = Bushwhack
+| notes = Can't bind invisible or debuff immune unit.<br/><br/>If unit becomes invisible or debuff immune while binded, his silhouette will be revealed.<br/>
+}}
+{{SkillListRich
+| source = Nature's Prophet
+| name = Curse of the Oldgrowth
+| notes = Debuff cannot be applied to an invisible hero.<br/>
+Exposing is disabled while hero debuff immune.<br/>
+If a hero becomes invisible, his silhouette will not be revealed.
+}}
+{{SkillListRich
+| source = Spirit Breaker
+| name = Nether Strike
+| notes = Can't target and expose invisible unit.<br/> Unlike other cases, unit is exposing during cast time. <br/>
+<br/>If unit becomes invisible, his silhouette will not be revealed.<br/>
+}}
+{{SkillListRich
+| source = Troll Warlord
+| name = Battle Trance
+| notes = Can't target and expose invisible unit.<br/>If unit becomes invisible, his silhouette will not be revealed.
+}}
+{{SkillListTail}}
+<br/>
+{{SkillListHead|title=Exposure with {{M|True Sight}}}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Thirst
+}}
+{{SkillListLite
+| source = Bane
+| name = Fiend's Grip
+}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Track
+}}
+{{SkillListLite
+| source = Broodmother
+| name = Spinner's Snare
+| nametext = Spinner's Snare<sup>4<sup>
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Chronosphere
+}}
+{{SkillListLite
+| source = Gem of True Sight
+| name = Reveal
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Pulverize
+}}
+{{SkillListLite
+| source = Pugna
+| name = Life Drain
+}}
+{{SkillListLite
+| source = Slardar
+| name = Corrosive Haze
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Dead in the Water
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{M|talent|t=t0}}.}}
+{{Footnote|2a|Requires {{M|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{M|Aghanim's Shard}}.}}
+{{Footnote|3|Requires the selected [[facet]].}}
+{{Footnote|4|Won't trigger on debuff immune hero. If enemy already binded, becoming debuff immune doesn't protect unit from exposing.}}
+
+==True Sight==
+{{Main|True Sight}}
+
+==Vision interaction with spells==
+Generally, unit-targeted spells require vision over the target, while ground targeted or non-target spells may be cast regardless of vision. Once cast, a spell usually works regardless of vision. Area effects usually do not require vision to affect enemies. Some non-targeted spells that do the targeting themselves may require vision over enemies. There are exceptions to all of these.
+
+The following spells require vision over enemies to affect them
+{{SkillListHead}}
+{{SkillListLite
+| source = Abaddon
+| name = Aphotic Shield
+| nametext = Aphotic Shield area damage
+}}
+{{SkillListLite
+| source = Bristleback
+| name = Viscous Nasal Goo
+| nametext = Area Viscous Nasal Goo<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Dark Willow
+| name = Bedlam
+| nametext = Bedlam attacks
+}}
+{{SkillListLite
+| source = Dazzle
+| name = Poison Touch
+| nametext = Poison Touch secondary projectiles
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Marksmanship
+| nametext = Marksmanship splinters<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Ember Spirit
+| name = Searing Chains
+}}
+{{SkillListLite
+| source = Gyrocopter
+| name = Rocket Barrage
+}}
+{{SkillListLite
+| source = Gyrocopter
+| name = Homing Missile
+| nametext = Homing Missile<sup>4</sup>
+}}
+{{SkillListLite
+| source = Gyrocopter
+| name = Flak Cannon
+}}
+{{SkillListLite
+| source = Gyrocopter
+| name = Flak Cannon
+| nametext = Side Gunner
+}}
+{{SkillListLite
+| source = Harpy Stormcrafter
+| name = Chain Lightning
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Omnislash
+}}
+{{SkillListLite
+| source = Leshrac
+| name = Lightning Storm
+}}
+{{SkillListLite
+| source = Leshrac
+| name = Pulse Nova
+| nametext = Pulse Nova's Lightning Storms<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Lich
+| name = Frost Shield
+| nametext = Frost Shield area damage
+}}
+{{SkillListLite
+| source = Lion
+| name = Mana Drain
+| nametext = Mana Drain<sup>2a 5</sup>
+}}
+{{SkillListLite
+| source = Luna
+| name = Moon Glaives
+}}
+{{SkillListLite
+| source = Luna
+| name = Eclipse
+}}
+{{SkillListLite
+| source = Maelstrom
+| name = Chain Lightning
+}}
+{{SkillListLite
+| source = Medusa
+| name = Split Shot
+}}
+{{SkillListLite
+| source = Mirana
+| name = Starstorm
+| nametext = Starstorm<sup>6</sup>
+}}
+{{SkillListLite
+| source = Mjollnir
+| name = Chain Lightning
+}}
+{{SkillListLite
+| source = Morphling
+| name = Adaptive Strike
+| nametext = Adaptive Strike<sup>1</sup>
+}}
+{{SkillListLite
+| source = Nature's Prophet
+| name = Wrath of Nature
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Void
+| nametext = Void<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Ogre Magi
+| name = Ignite
+}}
+{{SkillListLite
+| source = Ogre Magi
+| name = Multicast
+| nametext = Multicast<sup>7</sup>
+}}
+{{SkillListLite
+| source = Phantom Assassin
+| name = Stifling Dagger
+| nametext = Stifling Dagger<sup>1</sup>
+}}
+{{SkillListLite
+| source = Puck
+| name = Phase Shift
+| nametext = Phase Shift<sup>1</sup>
+}}
+{{SkillListLite
+| source = Razor
+| name = Eye of the Storm
+}}
+{{SkillListLite
+| source = Rubick
+| name = Fade Bolt
+}}
+{{SkillListLite
+| source = Shadow Shaman
+| name = Ether Shock
+}}
+{{SkillListLite
+| source = Shadow Shaman
+| name = Mass Serpent Ward
+| nametext = Mass Serpent Ward<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Skywrath Mage
+| name = Arcane Bolt
+| nametext = Arcane Bolt<sup>1 2a</sup>
+}}
+{{SkillListLite
+| source = Skywrath Mage
+| name = Concussive Shot
+}}
+{{SkillListLite
+| source = Skywrath Mage
+| name = Ancient Seal
+| nametext = Ancient Seal<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Skywrath Mage
+| name = Mystic Flare
+| nametext = Mystic Flare<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Spirit Breaker
+| name = Charge of Darkness
+| nametext = Charge of Darkness<sup>4</sup>
+}}
+{{SkillListLite
+| source = Storm Spirit
+| name = Electric Vortex
+| nametext = Electric Vortex<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Tinker
+| name = Laser
+| nametext = Laser<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Tinker
+| name = Heat-Seeking Missile
+}}
+{{SkillListLite
+| source = Undying
+| name = Soul Rip
+}}
+{{SkillListLite
+| source = Undying
+| name = Tombstone
+}}
+{{SkillListLite
+| source = Visage
+| name = Soul Assumption
+| nametext = Soul Assumption<sup>1</sup>
+}}
+{{SkillListLite
+| source = Witch Doctor
+| name = Death Ward
+| nametext = Death Ward<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Zeus
+| name = Arc Lightning
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Requires selecting the corresponding [[facet]].}}
+{{Footnote|4|When the current target of these spells die, they choose new targets. Only choose visible enemies.}}
+{{Footnote|5|{{A|Lion|Mana Drain}} ends immediately if the target enters the fog of war.}}
+{{Footnote|6|When Starstorm's initial wave requires vision over enemies, the secondary single projectile does not.}}
+{{Footnote|7|When {{A|Ogre Magi|Multicast}} items and {{A|Ogre Magi|Ignite}} only target visible secondary targets.}}
+
+==Recent Changes==
+{{Main|Vision/Changelogs}}
+{{Recent changes wrapper}}
+
+{{MechanicsNav}}
+[[Category:Mechanics]]
+
+[[ru:Обзор]]

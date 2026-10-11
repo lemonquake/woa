@@ -1,0 +1,634 @@
+{{Tabber
+| name1 = Gold
+| link1 = Gold
+| name2 = Changelogs
+| link2 = Gold/Changelogs
+}}
+[[File:Alchemist Greevil's Greed abilityicon dota2 gameasset.png|frame]]
+{{Quotation|Alchemist|Now that's how you make gold.|sound=vo_alchemist_alch_lasthit_02.mp3}}
+<dfn>Gold</dfn> is the currency used to buy items or instantly revive your hero. Gold can be earned from killing [[heroes]], [[creeps]], or [[buildings]].
+
+==Reliable & Unreliable Gold==
+A player's gold is split into '''reliable gold''' and '''unreliable gold'''. 
+* '''Reliable gold'''  : Passive gold receive every seconds; Gold gained from activating bounty runes.
+* '''Unreliable gold''' : Any other source (Hero kills, Creep kills, Building destroys, Hand of Midas, Track, etc).
+
+The difference between the two is how each one is spent:
+* Dying only takes away gold from the unreliable gold pool.
+* Buying items uses up the unreliable gold first before falling back to reliable gold.
+* Buyback uses reliable gold first.
+
+Hovering the mouse cursor over the gold display in the [[HUD]] shows brings up a tooltip showing reliable and unreliable gold totals.
+
+==Net Worth==
+A hero's net worth is the sum of their gold and the cost of all the items they own, no matter where they are on the map. An item that has been consumed or destroyed doesn't count towards net worth, since it doesn't exist anymore. While it's usually used as an indicator of the player's performance, gameplay-wise it affects unfavorably the cost of buyback, and the amount of gold gained by hero kills on both sides.
+
+Some items however aren't factored in certain conditions:
+* Items in the inventory of a unit of the enemy team. 
+* The following items on the ground:
+** {{I|Gem of True Sight}}
+** {{I|Divine Rapier}}. Note that as soon as an enemy of the owner picks it up for the first time, the item will be owned by the one who has it in their inventory.
+* The items obtained by randomizing the hero pick, found by the {{I|Trusty Shovel}}, or {{I|Town Portal Scroll|text=Town Portal Scrolls}} obtained by dying or from the {{I|Boots of Travel}}.
+** If any of these is part of a stack of items, they are always consumed first.
+
+Some [[consumables]] grant a buff that increases the target's net worth by the cost of the item when used, in order to not decrease the team's net worth:
+* {{I|Moon Shard}}
+* {{I|Aghanim's Blessing}}, {{I|Aghanim's Blessing - Roshan}} and {{A|Alchemist|Aghanim's Scepter Synth}}
+* {{I|Aghanim's Shard}} and {{I|Aghanim's Shard - Consumable}}
+
+==Acquiring gold==
+===Starting gold===
+Every hero starts with {{Gold|{{G|starting gold}}}} gold and 1 {{I|Town Portal Scroll}} at the beginning of the game. If the player randoms, they are given a {{I|Faerie Fire}} and an {{I|Enchanted Mango}} as well. None of these free items can be sold.
+
+===Periodic Gold===
+Each player passively receives {{Gold|1}} reliable gold every {{#expr:60/{{G|base gpm}} round2}} seconds (starting from 0:00 on the game clock), which results in {{Gold|{{G|base gpm}}}} gold every minute, at the start of the game. This periodic gold increases over time by 2 per minute based on the in-game clock.
+
+{| class="wikitable" style="text-align:center;"
+! class="header" width="225px" | Time in Game
+! class="header" width="225px" | GPM From This Time Onward
+|-
+| 0:00
+| {{Gold|{{G|base gpm}}}}
+|-
+| 12:00
+| {{Gold|94.8}}
+|-
+| 30:00
+| {{Gold|99.8}}
+|-
+| 45:00
+| {{Gold|105.5}}
+|-
+| 62:00
+| {{Gold|112.8}}
+|-
+| 87:00
+| {{Gold|120.5}}
+|-
+| 112:00
+| {{Gold|129}}
+|-
+| 140:00
+| {{Gold|139}}
+|-
+| 175:00
+| {{Gold|150.5}}
+|}
+
+{{SkillListHead|title=Other Passive Gold Gain Sources}}
+{{SkillListLite
+| source = Kobold
+| name = Prospecting Aura
+}}
+{{SkillListTail}}
+
+===Talents===
+{{Spellcard
+| ID = 5955, 5956, 6007, 6008, 5957, 6026, 8005, 6301, 6318, 6446
+| intern = special_bonus_gold_income_30/60/90/120/150/180/210/240/300/420
+| name = Gold Income
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Gold per Minute Bonus
+| value1 = Varies
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Increases the hero's periodic gold per minute income.
+
+* Gold granted from the talent is unreliable gold.
+
+* The following values exist:
+** 30/60/90/120/150/180/210/240/300/420
+}}
+
+{{Talent bonus table|gold/min|increased periodic gold income}}
+
+===Bounty Rune===
+{{Main|Bounty Rune}}
+{{Spellcard wrapper|Runes|Bounty}}
+
+===Abilities===
+Most gold-granting abilities grant unreliable gold, and there are only a few items and abilities that are able to directly grant gold to the player in different ways.
+{{SkillListHead|title=Unreliable Gold Sources}}
+{{SkillListLite
+| source = Alchemist
+| name = Greevil's Greed
+}}
+{{SkillListLite
+| source = Alchemist
+| name = Aghanim's Scepter Synth
+| nametext = Aghanim's Scepter Synth<sup>3</sup>
+}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Jinada
+}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Track
+}}
+{{SkillListLite
+| source = Doom
+| name = Devour
+}}
+{{SkillListLite
+| source = Hand of Midas
+| name = Transmute
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Only upon refunding the ally's {{I|Aghanim's Scepter}} or {{I|Aghanim's Blessing}}.}}
+
+{{SkillListHead|title=Reliable Gold Sources}}
+{{SkillListRich
+| source = Alchemist
+| name = Greevil's Greed
+| trait1 = Gold Type
+| value1 = Reliable
+| trait2 = Bounty Rune Multiplier
+| value2 = {{Show|A|Alchemist|Greevil's Greed|value5}}
+| notes = Directly multiplies the reliable gold granted from Bounty Runes. 
+}}
+{{SkillListRich
+| source = Runes
+| name = Bounty
+| trait1 = Gold Type
+| value1 = Reliable
+}}
+{{SkillListRich
+| source = Kobold
+| name = Prospecting Aura
+| trait1 = Gold per Minute
+| value1 = {{Gold|{{Show|A|Kobold|Prospecting Aura|value2}}}}
+| trait2 = Gold Type
+| value2 = Reliable
+}}
+{{SkillListTail}}
+
+===Hero kills===
+Hero kills grant unreliable gold to the killer. The first hero that is killed in a match gives a bonus {{Gold|{{G|first blood gold}}}} unreliable gold to the killer; this is called <ab>vo announcer killing spree announcer 1stblood 01.mp3</ab> <font color ='#8A0707'>'''First Blood!'''</font>. Bonus gold is also awarded for stopping kill streaks.
+
+When a hero dies to enemy creeps or an enemy tower and has not been damaged by any enemy heroes in the last {{G|kill time window}} seconds (regardless of distance between heroes), the kill gold is split among all enemy heroes. When a hero dies to enemy creeps or an enemy tower and has been damaged by only one enemy, that enemy is credited with the kill. When a hero dies to enemy creeps or an enemy tower and has been damaged by two or more enemies, the gold is split equally amongst all heroes that assisted. Damage negation to 0 credits as assist too.
+
+Every time a hero kills an enemy hero, the killer is awarded unreliable gold using the following formula:
+
+{| class="wikitable" style="text-align:center;"
+! class="header" width="225px" | Hero Kills Base Gold
+! class="header" width="225px" | First Blood Gold
+|-
+| {{Gold|{{G|kill base gold}}}}
+| {{Gold|{{G|first blood gold}}}}
+|}
+
+: <big><big><big>Σ</big></big></big> <i>Bounty<sub>Gold</sub> = b<sub>Gold</sub> + (DeadHero<sub>LVL</sub> × {{G|kill lvl multiplier}}) + Streak<sub>Gold</sub> + FB</i>
+
+===Kill Streaks===
+As a hero accrues multiple kills without dying that player is said to be on a '''Kill Streak'''. An additional gold bounty is granted to the player that ends another player's kill streak; this is sometimes called Shutdown Gold. Kill streaks start at {{G|kill streak min}} kills and increase for each kill up to {{G|kill streak max}} kills, but do not increase beyond {{G|kill streak max}} kills.
+
+The streak bounty is defined by the following formula:
+
+: {{#tag:math|f(x) = ({{G|kill streak gold value}}k^{{G|kill streak gold exponent}} + {{G|kill streak gold value}}x)}}
+
+{| class="wikitable" cellpadding=2 style="text-align:center;"
+! class="header" width="100px" | Streak length
+! class="header" width="150px" colspan="2" | Short time span (18 secs)
+! class="header" width="400px" colspan="2" | Streak name
+! class="header" width="100px" | Streak value
+|-
+| 0
+| N/A
+| N/A
+| N/A
+| N/A
+| {{Gold|0}}
+|-
+| 1
+| <ab>vo_announcer_killing_spree_announcer_1stblood_01.mp3</ab>
+| First Blood!
+| N/A
+| N/A
+| {{Gold|0}}
+|-
+| 2
+| <ab>vo_announcer_killing_spree_announcer_kill_double_01.mp3</ab>
+| Double Kill!
+| N/A
+| N/A
+| {{Gold|0}}
+|-
+| {{G|kill streak min}}
+| <ab>vo_announcer_killing_spree_announcer_kill_triple_01.mp3</ab>
+| Triple Kill!
+| <ab>vo announcer killing spree announcer kill spree 01.mp3</ab>
+| Player is on a <font color='#00FF40'><dfn>killing spree</dfn></font>
+| {{#expr:{{G|kill streak gold value}}*{{G|kill streak min}}^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*{{G|kill streak min}}}}
+|-
+| 4
+| <ab>vo_announcer_killing_spree_announcer_kill_ultra_01.mp3</ab>
+| Ultra Kill!
+| <ab>vo announcer killing spree announcer kill dominate 01.mp3</ab>
+| Player is <font color='#5E00BD'>'''dominating'''</font>
+| {{#expr:{{G|kill streak gold value}}*4^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*4}}
+|-
+| 5
+| <ab>vo_announcer_killing_spree_announcer_kill_rampage_01.mp3</ab>
+| Rampage!
+| <ab>vo announcer killing spree announcer kill mega 01.mp3</ab>
+| Player is on a <font color='#FF0080'>'''mega Kill'''</font> streak
+| {{#expr:{{G|kill streak gold value}}*5^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*5}}
+|-
+| 6
+|
+|
+| <ab>vo announcer killing spree announcer kill unstop 01.mp3</ab>
+| Player is <font color='#FF8000'>'''unstoppable!'''</font>
+| {{#expr:{{G|kill streak gold value}}*6^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*6}}
+|-
+| 7
+|
+|
+| <ab>vo announcer killing spree announcer kill wicked 01.mp3</ab>
+| Player is <font color='#808000'>'''wicked sick'''</font>
+| {{#expr:{{G|kill streak gold value}}*7^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*7}}
+|-
+| 8
+|
+|
+| <ab>vo announcer killing spree announcer kill monster 01.mp3</ab>
+| Player is on a <font color='#FF80FF'>'''monster kill'''</font> streak
+| {{#expr:{{G|kill streak gold value}}*8^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*8}}
+|-
+| 9
+|
+|
+| <ab>vo announcer killing spree announcer kill godlike 01.mp3</ab>
+| Player is <font color='#FF0000'>'''GODLIKE'''</font>
+| {{#expr:{{G|kill streak gold value}}*9^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*9}}
+|-
+| {{G|kill streak max}}+
+|
+|
+| <ab>vo announcer killing spree announcer kill holy 01.mp3</ab>
+| Player is beyond <font color='#FF0000'>'''GODLIKE'''</font>, someone kill them!!
+| {{#expr:{{G|kill streak gold value}}*{{G|kill streak max}}^{{G|kill streak gold exponent}}+{{G|kill streak gold value}}*{{G|kill streak max}}}}
+|-
+! colspan="6" | <sup>Announcer responses are [[Announcer|customizable]]</sup>
+|}
+
+The following deaths do not stop kill streaks or count as <ab>vo announcer killing spree announcer 1stblood 01.mp3</ab> <font color ='#8A0707'>'''First Blood!'''</font>:
+* Deaths where the killing blow is dealt by [[neutral creeps]], including {{U|Roshan}} and [[Tormentor]]s.
+* Deaths where the killing blow is dealt by [[Denies|the dying hero's team.]]
+* Deaths where the killing blow is dealt by an enemy [[tower]] or [[lane creep]], if no enemy heroes damaged them in the last {{G|kill time window}} seconds.
+* Deaths which trigger [[Reincarnation]].
+
+===Assists (AoE gold)===
+Allied heroes within {{G|assist radius}} radius of a killed enemy, including the killer, receive experience and unreliable gold if they assisted in the kill. To qualify for an assist, the allied hero either has to be within the given radius of the dying enemy hero, or have damaged or debuffed the enemy hero. Note that the assist counter on the scoreboard only counts assists if the player dealt damage or applied a debuff to the victim, or if they applied a buff to the killer, but gold and experience are awarded independently of the "assist" counter.
+
+The amount of assist gold received ({{Code|A}}) is the same for the killer and all assisting heroes, and is defined as:
+
+<code style="font-size:110%; font-weight:bold;">f = {{G|assist base gold}} + (({{G|assist scaling gold}} + (VictimNetWorth × {{G|assist networth factor}})) / Number of Heroes)</code>
+
+<code style="font-size:110%; font-weight:bold;">A = Σ VictimTeam NetWorth / Σ KillerTeam NetWorth × f</code>
+
+===Buildings===
+{{main|Buildings}}
+When an enemy [[tower]] is destroyed, unreliable gold is awarded to each player on your team. The player that got the last hit on the building is credited with destroying it and receives some bonus unreliable gold. If a tower gets [[denied]], both teams get {{#expr:{{G|tower deny factor}}*100}}% of its team gold bounty. If no player gets the last hit and the tower instead dies to lane creeps, no player gets the extra bonus gold.
+
+{| class = "wikitable" style="width:70%; text-align:center; white-space:nowrap;"
+! class = "header" width="10%" | Building
+! class = "header" width="10%" colspan="2" | Team Bounty
+! class = "header" width="10%" colspan="2" | Deny Bounty
+! class = "header" width="10%" colspan="2" | Last Hit Bounty
+! class = "header" width="10%" colspan="2" | Last Hit Total
+! class = "header" width="10%" colspan="2" | No Last Hit Total
+! class = "header" width="10%" colspan="2" | Denied Total
+|-
+! 
+! Regular
+! [[Turbo Mode|Turbo]]
+! Regular
+! [[Turbo Mode|Turbo]]
+! Regular
+! [[Turbo Mode|Turbo]]
+! Regular
+! [[Turbo Mode|Turbo]]
+! Regular
+! [[Turbo Mode|Turbo]]
+! Regular
+! [[Turbo Mode|Turbo]]
+|-
+{{#invoke:Lua|invoke|module=loop|fn=n|1|4|<nowiki>{{!}} [[Tower (Tier {{#var:n}})]]
+{{!}} {{Gold|{{Show|U|Tower (Tier {{#var:n}})|bounty team}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*{{G|turbo mode factor}}}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*{{G|tower deny factor}}}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*{{G|tower deny factor}}*{{G|turbo mode factor}}}}}}
+{{!}} {{Gold|{{Show|U|Tower (Tier {{#var:n}})|bounty min}}|to|{{Show|U|Tower (Tier 1)|bounty max}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty min}}*{{G|turbo mode factor}}}}|to|{{#expr:{{Show|U|Tower (Tier 1)|bounty max}}*{{G|turbo mode factor}}}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5+{{Show|U|Tower (Tier {{#var:n}})|bounty min}}}}|to|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5+{{Show|U|Tower (Tier {{#var:n}})|bounty max}}}}}}
+{{!}} {{Gold|{{#expr:({{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5+{{Show|U|Tower (Tier {{#var:n}})|bounty min}})*{{G|turbo mode factor}}}}|to|{{#expr:({{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5+{{Show|U|Tower (Tier {{#var:n}})|bounty max}})*{{G|turbo mode factor}}}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5*{{G|turbo mode factor}}}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5*{{G|tower deny factor}}}}}}
+{{!}} {{Gold|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*5*{{G|tower deny factor}}*{{G|turbo mode factor}}}}}}
+{{!}}- 
+{{#ifexpr:{{#var:n}}<4|{{!}}|}}</nowiki>}}
+| [[Ranged Barracks]]
+| {{Gold|{{Show|U|Ranged Barracks|bounty team}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*{{G|turbo mode factor}}}}}}
+| {{Gold|{{Show|U|Ranged Barracks|bounty team}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*{{G|turbo mode factor}}}}}}
+| {{Gold|{{Show|U|Ranged Barracks|bounty min}}|to|{{Show|U|Ranged Barracks|bounty max}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty min}}*{{G|turbo mode factor}}}}|to|{{#expr:{{Show|U|Ranged Barracks|bounty max}}*{{G|turbo mode factor}}}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5+{{Show|U|Ranged Barracks|bounty min}}}}|to|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5+{{Show|U|Ranged Barracks|bounty max}}}}}}
+| {{Gold|{{#expr:({{Show|U|Ranged Barracks|bounty team}}*5+{{Show|U|Ranged Barracks|bounty min}})*{{G|turbo mode factor}}}}|to|{{#expr:({{Show|U|Ranged Barracks|bounty team}}*5+{{Show|U|Ranged Barracks|bounty max}})*{{G|turbo mode factor}}}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5*{{G|turbo mode factor}}}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5}}}}
+| {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5*{{G|turbo mode factor}}}}}}
+|-
+| [[Melee Barracks]]
+| {{Gold|{{Show|U|Melee Barracks|bounty team}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*{{G|turbo mode factor}}}}}}
+| {{Gold|{{Show|U|Melee Barracks|bounty team}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*{{G|turbo mode factor}}}}}}
+| {{Gold|{{Show|U|Melee Barracks|bounty min}}|to|{{Show|U|Melee Barracks|bounty max}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty min}}*{{G|turbo mode factor}}}}|to|{{#expr:{{Show|U|Melee Barracks|bounty max}}*{{G|turbo mode factor}}}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5+{{Show|U|Melee Barracks|bounty min}}}}|to|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5+{{Show|U|Melee Barracks|bounty max}}}}}}
+| {{Gold|{{#expr:({{Show|U|Melee Barracks|bounty team}}*5+{{Show|U|Melee Barracks|bounty min}})*{{G|turbo mode factor}}}}|to|{{#expr:({{Show|U|Melee Barracks|bounty team}}*5+{{Show|U|Melee Barracks|bounty max}})*{{G|turbo mode factor}}}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5*{{G|turbo mode factor}}}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5}}}}
+| {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5*{{G|turbo mode factor}}}}}}
+|-
+| [[Effigy Building]]
+| -
+| -
+| -
+| -
+| {{#ifeq:{{Show|U|Effigy Building|bounty min}}|{{Show|U|Effigy Building|bounty max}}|{{Gold|{{Show|U|Effigy Building|bounty min}}}}|{{Gold|{{Show|U|Effigy Building|bounty min}}|to|{{Show|U|Effigy Building|bounty max}}}}}}
+| {{#ifeq:{{Show|U|Effigy Building|bounty min}}|{{Show|U|Effigy Building|bounty max}}|{{Gold|{{#expr:{{Show|U|Effigy Building|bounty min}}*{{G|turbo mode factor}}}}}}|{{Gold|{{#expr:{{Show|U|Effigy Building|bounty min}}*{{G|turbo mode factor}}}}|to|{{#expr:{{Show|U|Effigy Building|bounty max}}*{{G|turbo mode factor}}}}}}}}
+| -
+| -
+| -
+| -
+| -
+| -
+|}
+
+===Lane creeps===
+The bounty for [[lane creeps|regular lane creeps]] increases by {{Gold|{{G|lanecreep upg melee gold}}}} gold every {{#expr:trunc({{G|lanecreep upgrade cycle}}/60)}} minutes {{#if:{{#explode:{{#expr:{{G|lanecreep upgrade cycle}}/60}}|.|1}}|{{#expr:60*0.{{#explode:{{#expr:{{G|lanecreep upgrade cycle}}/60}}|.|1}}}} seconds|}}, while the bounty for [[lane creeps|super creeps]] increases by {{Gold|{{G|lanecreep upg sup melee gold}}}}.
+
+In [[Turbo Mode]], the bounty for regular lane creeps increases by {{Gold|{{#expr:{{G|lanecreep upg melee gold}}*{{G|lanecreep upgrade turbo multiplier}}}}}} gold every {{#expr:trunc({{G|lanecreep upgrade cycle turbo}}/60)}} minutes {{#if:{{#explode:{{#expr:{{G|lanecreep upgrade cycle turbo}}/60}}|.|1}}|{{#expr:60*0.{{#explode:{{#expr:{{G|lanecreep upgrade cycle turbo}}/60}}|.|1}}}} seconds|}}, while the bounty for [[lane creeps|super creeps]] increases by {{Gold|{{#expr:{{G|lanecreep upg sup melee gold}}*{{G|lanecreep upgrade turbo multiplier}}}}}}.
+{{Gold bounty table start|Lane Creeps}}
+{{#lpdb:datapoint|conditions=[[type::unit]] and [[extradata_type::Lane Creep]] and [[extradata_game::]]|template=Gold bounty table el|limit=100}}
+{{Gold bounty table end}}
+
+===Neutral creeps===
+{{main|Neutral creeps}}
+
+When stacking neutral creeps, the stacking player gains gold equal to {{#expr:{{G|neutral stacker gold}}*100}}% of whatever the allied player farming the stacked camp gets.
+
+{{Gold bounty table start|Neutral Creeps}}
+{{#lpdb:datapoint|conditions=[[type::unit]] and [[extradata_neutral::yes]] and [[extradata_game::]] and [[name::!Roshan]]|template=Gold bounty table el|limit=100}}
+|-
+| [[File:Roshan model.png|x50px|link=Roshan]]
+| '''[[Roshan]]'''
+| {{Gold|{{Show|U|Roshan|bounty min}}‒{{Show|U|Roshan|bounty max}}}}<br>+ {{Tooltip|{{Gold|{{Show|U|Roshan|bounty team}}}}|Team Gold}}
+| -
+| {{Gold|{{#expr:{{Show|U|Roshan|bounty min}}*{{G|turbo mode factor}}}}‒{{#expr:{{Show|U|Roshan|bounty max}}*{{G|turbo mode factor}}}}}}<br>+ {{Tooltip|{{Gold|{{#expr:{{Show|U|Roshan|bounty team}}*{{G|turbo mode factor}}}}}}|Team Gold}}
+| -
+{{Gold bounty table end}}
+<sup>1</sup> <small>Shard Golems do not provide the stacking player any gold, since they have other spawning conditions and are therefore not counted as part of the Mud Golem camp.</small>
+
+===Summons===
+{{main|Summons}}
+Summonned units have static bounties that never change.
+{{Gold bounty table start|Summoned units}}
+{{#lpdb:datapoint|conditions=[[type::unit]] and ([[extradata_type::Creep]] or [[extradata_type::CreepHero]]) and [[extradata_summoned::yes]] and [[extradata_bounty_min::!0]] and [[extradata_game::]]|template=Gold bounty table el|limit=100}}
+|-
+| <div style='display:none'>Spirit Bear</div>[[File:Lone Druid Spirit Bear model.png|x50px|link=Spirit Bear]]
+| '''[[Spirit Bear]]'''
+| {{Gold|{{Show|A|Spirit Bear|Hero Model|type2 value2}}}}
+|-
+| <div style='display:none'>Tempest Double</div>[[File:Tempest Double mapicon dota2 gameasset.png|x50px|link=Tempest Double]]
+| '''[[Tempest Double]]'''<small><sup>1</sup></small>
+| {{Gold|{{Show|U|Tempest Double|bounty min}}}}
+| -
+{{Gold bounty table end}}
+<sup>1<small> Since the Tempest Double is a hero clone, its bounty is not affected by Turbo Mode.</small></sup>
+
+===Wards===
+Wards have static bounties that never change.
+{{Gold bounty table start|Wards}}
+| <div style='display:none'>Observer Ward</div>[[File:Observer Ward model.png|x50px|link=Observer Ward]]
+| '''[[Observer Ward]]'''
+| {{Gold|{{Show|U|Observer Ward (unit)|bounty min}}}} + {{Gold|{{Show|A|Observer Ward|Plant|type2 value1}}/min}}
+| {{Gold|{{#expr:{{Show|U|Observer Ward (unit)|bounty min}}*{{G|turbo mode factor}}}}}} + {{Gold|{{#expr:{{Show|A|Observer Ward|Plant|type2 value1}}*{{G|turbo mode factor}}}}/min}}
+|-
+{{#lpdb:datapoint|conditions=[[type::unit]] and ([[extradata_type::Ward]] or [[extradata_type::Attached]]) and [[name::!Observer Ward]] and [[extradata_bounty_min::!0]] and [[extradata_game::]]|template=Gold bounty table el|limit=100}}
+{{Gold bounty table end}}
+
+===Couriers===
+{| class="wikitable" cellpadding=2 style="text-align:center;"
+|-
+| width="200px" | [[File:Animal Courier Radiant model.png|60px|link=Courier]]<br>[[Courier]]
+| width="300px" | {{Gold|{{Show|U|Courier|bounty min}} + {{Show|U|Courier|bounty team}}}} per hero level to each player on the killing team<br>Couriers cannot be killed in [[Turbo Mode]]
+|}
+
+===Selling===
+{{Main|Items/Selling|l1=Item selling}}
+{{#lst:Items/Selling|intro}}
+
+==Spending and losing gold==
+===Drafting phase===
+During the drafting phase in [[All Pick]] and [[Ranked All Pick]], the player loses {{Gold|{{G|draft gold loss}}}} gold per second if they have not picked a hero after the selection timer runs out.
+
+===Items===
+The main purpose of gold is to purchase [[items]]. The player with the most gold is able to buy the most powerful items, and therefore has a very strong hero. The items each player buys depend on their role in the team and many other factors.
+
+TODO: Send people to another page with all items.
+
+* {{I|Divine Rapier}} and {{I|Gem of True Sight}} cannot be sold.
+* {{I|Cheese}} cannot be purchased, but can be sold for {{Show|I|Cheese|sell value}} gold.
+* {{I|Refresher Shard}} cannot be purchased, but can be sold for {{Show|I|Refresher Shard|sell value}} gold.
+
+===Death===
+<section begin=lossexpr />A hero loses the following amount of [[unreliable gold]] every time it dies. Dying does not take away reliable gold.
+* {{cf|expr}} <code>GoldLoss = NetWorth/{{G|death gold loss divisor}}</code><section end=lossexpr />
+
+===Buyback===
+
+
+Buyback<span style="{{ValueColor/El|Gold}};">Cost</span> = [[wikipedia:Floor and ceiling functions|⌊]] ( 200 + <span style="{{ValueColor/El|Gold}};">NetWorth</span> / 13 ) [[wikipedia:Floor and ceiling functions|⌋]]
+
+<section begin=Buyback />
+{{Spellcard
+| name = Buyback
+| sound0 = Music valve dota 001 stingers buy back
+| key = N/A
+
+| icon0 = Buyback
+| type0 = npc
+| target0 = No
+| affect0 = Self
+| desc0 = While dead, the player has the option to buy their hero back into the match, spending money in order to instantly respawn at the fountain.
+
+| trait1 = Base Gold Cost
+| value1 = 200
+| trait2 = Networth Gold Divisor
+| value2 = 13
+| trait3 = Next Respawn Time Increase
+| value3 = 25
+| trait4 = Neutral Set Respawn Time
+| value4 = {{G|res neutral min time}}
+
+| cd = 480
+
+| mechanics = * The buyback button appears on the hero portrait while the hero is dead.
+
+* Cannot be used while the hero is [[stun]]ned while dead (e.g. {{A|Tiny|Toss}}, {{A|Tusk|Walrus PUNCH!}}, {{A|Tusk|Walrus Kick}}, {{A|Winter Wyvern|Winter's Curse}}, which persist through death).
+
+* Cannot be used while [[Reincarnation|reincarnating]].
+
+* Buyback only takes from [[reliable gold]] first, and then from unreliable gold.
+
+* Buyback has a base cost of {{Gold|{{#var:Buyback value1}}}}, plus a fraction of the hero's networth, rounded down, using the following formula: {{cf|expr}} {{Code|200 + NetWorth / 13}}
+
+* The respawn time increase affects the next respawn time. Does not count deaths with Reincarnation.
+}}
+<section end=Buyback />
+
+Due to the high cooldown, high gold cost, and heavy penalties, using buyback should be a thoroughly thought-through action, as it can backfire and cause more harm than good. Scenarios, where a buyback may be a good idea, are when a crucial team fight starts while one is dead, in order to join the fight. Another crucial moment is when the base needs defending, or when having died during a team fight which your team still won and is going for a final push. Buyback should generally not be used to skip death timing to farm, as the gold cost is usually too big to make it ever worth it. Also, the death time penalty gets added on the next death. Especially on high levels, an early or ill-fated buyback can easily lead to a very long respawn time on the next death.
+
+; Buyback cost with certain networth values
+{| class="wikitable mw-collapsible mw-datatable" cellpadding=2 style="text-align:center;"
+|- style="height: 20px;"
+! class="header" width="175px" | NetWorth<b><sub>NW</sub></b>
+! class="header" width="175px" | Buyback Cost
+|-
+| '''1k'''
+| {{Gold|276}}
+|-
+| '''2k'''
+| {{Gold|353}}
+|-
+| '''3k'''
+| {{Gold|430}}
+|-
+| '''4k'''
+| {{Gold|507}}
+|-
+| '''5k'''
+| {{Gold|584}}
+|-
+| '''6k'''
+| {{Gold|661}}
+|-
+| '''7k'''
+| {{Gold|738}}
+|-
+| '''8k'''
+| {{Gold|815}}
+|-
+| '''9k'''
+| {{Gold|892}}
+|-
+| '''10k'''
+| {{Gold|969}}
+|-
+| '''11k'''
+| {{Gold|1046}}
+|-
+| '''12k'''
+| {{Gold|1123}}
+|-
+| '''13k'''
+| {{Gold|1200}}
+|-
+| '''14k'''
+| {{Gold|1276}}
+|-
+| '''15k'''
+| {{Gold|1353}}
+|-
+| '''16k'''
+| {{Gold|1430}}
+|-
+| '''17k'''
+| {{Gold|1507}}
+|-
+| '''18k'''
+| {{Gold|1584}}
+|-
+| '''19k'''
+| {{Gold|1661}}
+|-
+| '''20k'''
+| {{Gold|1738}}
+|-
+| '''21k'''
+| {{Gold|1815}}
+|-
+| '''22k'''
+| {{Gold|1892}}
+|-
+| '''23k'''
+| {{Gold|1969}}
+|-
+| '''24k'''
+| {{Gold|2046}}
+|-
+| '''25k'''
+| {{Gold|2123}}
+|-
+| '''26k'''
+| {{Gold|2200}}
+|-
+| '''27k'''
+| {{Gold|2276}}
+|-
+| '''28k'''
+| {{Gold|2353}}
+|-
+| '''29k'''
+| {{Gold|2430}}
+|-
+| '''30k'''
+| {{Gold|2507}}
+|}
+
+===Abandoning the game===
+After being disconnected from the game for more than 5 minutes, all of the player's gold is equally distributed between the remaining players on their team. This distribution continues every second, so that any gold they gain afterwards gets distributed as well. This distributing stops when the player reconnects, but the gold that got distributed is not reimbursed.
+{{clr}}
+
+==Trivia==
+* It is implied that copper is used in the world of Dota as a lower-value currency.<ref>[[Dota 2 X Monster Hunter/Hero Atlas#Viper|Dota 2 X Monster Hunter: Hero Atlas - Viper]]</ref>
+
+==Gallery==
+<gallery>
+Buyback Gold Penalty abilityicon dota2 gameasset.png|Unused Buyback gold penalty icon
+Buyback old abilityicon dota2 gameasset.png|Buyback placeholder icon
+</gallery>
+
+==Recent Changes==
+{{Main|Gold/Changelogs}}
+{{Recent changes wrapper}}
+
+==References==
+<references />
+
+{{MechanicsNav}}
+
+[[Category:Gameplay]]
+[[Category:Mechanics]]
+
+[[ru:Золото]]

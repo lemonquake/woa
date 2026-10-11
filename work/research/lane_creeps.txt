@@ -1,0 +1,371 @@
+<section begin=tabber />{{Tabber
+| link1 = Lane Creeps 
+| link2 = Lane Creeps/Wave Stats
+| name2 = Wave Stats
+| link3 = Lane Creeps/Lore
+| name3 = Lore
+| link4 = Lane Creeps/Changelogs
+| name4 = Changelogs
+}}<section end=tabber />
+
+[[File:Lane creeps.png|right|300px]]
+<section begin=intro />'''Lane creeps''' are a type of [[creep]] that automatically moves down the three [[lanes]] towards the enemy faction's [[Ancient (Building)|Ancient]]. Each and every 30 seconds a new group (the ''creep wave'') spawns for each faction at each of their [[barracks]], but the number in the group and their stats eventually change, as the game progresses. Lane creeps engage any hostile unit nearby, but when left unattended, the opposing creeps end up clashing each other in the lanes on their way towards the enemy base.<section end=intro />
+
+Like other creeps, lane creeps are vitally important to a [[hero]]'s progress because they grant resources, allowing for an advantage over the enemy team. They give experience to nearby enemies when killed – as well as gold to heroes who deal the [[last hit]] they take. Allied creeps can also be [[denying|denied]] by their team, preventing the enemy from getting their gold bounty, and halving the experience gain from them. To get as many last hits as possible, players often manipulate creep position in the lane by abusing their simple [[#Behavior|AI]], gaining an advantage and disrupting the pace of the battle into their favor. [[Creep control techniques]] include disruptively [[pushing]] forward into towers, [[pulling]] neutral creeps for allied lane creeps to fight, or aggroing enemy melee creeps to change their target.
+
+Lane creeps (while controlled by the AI) are the only units capable of disabling {{A|Buildings|Backdoor Protection}}. However, once taken over by a player, a lane creep no longer disables the protection.
+
+==Types==
+There are four types of lane creeps: Melee, Ranged, Flagbearer, and Siege. Melee creeps spawn in larger numbers and have more health and less attack damage than ranged creeps. Ranged creeps have lower health, but deal more damage per attack to creeps, and are able to attack from a distance. However, their attack type causes them to deal less damage against heroes and buildings. Flagbearer creeps are identical to melee creeps, but have higher magic resistance, carry an aura that grants nearby allies health regeneration, and grant their gold bounty to every enemy within an area around them when killed. They start spawning at the fifth creep wave and spawn on every second wave from that point on, replacing one melee creep in those waves. Siege creeps spawn in every tenth wave. They have high health and high [[magic resistance]]. They have a long ranged attack which deals significantly more damage to [[buildings]], but less to other units. They also prioritize buildings over other units when in range.
+
+<section begin=upgrades/>Destroying either of the enemy team's melee or ranged [[barracks]] causes the destroying team's respective lane to begin spawning super creeps instead of regular creeps. Super creeps are stronger versions of regular lane creeps that give less gold and experience to the enemy when killed. When all enemy barracks are destroyed, mega creeps begin to spawn from all lanes and siege creeps gain additional damage. Flagbearer creeps do not get upgraded.<section end=upgrades/>
+
+{{#lpdb:datapoint
+| conditions = [[type::unit]] and [[extradata_type::Lane Creep]] and [[extradata_game::]] and [[extradata_summoned::no]]
+| limit = 1000
+|template=Lane creep attribute table el
+|starttemplate=Lane creep attribute table start
+|endtemplate=Lane creep attribute table end
+}}
+
+==Spawning==
+[[File:Lane creeps spawn locations.jpeg|thumb|400px|Spawn location of Radiant and Dire lane creeps, bot mid and top]]
+; Spawn timing
+Lane creeps spawn the first time as the game timer reaches 00:00, right after the game horn sounds. After that, they spawn every 30 seconds. While melee and ranged creeps spawn on every wave, flagbearer creeps and siege creeps are delayed and do not spawn on every wave. Flagbearer creeps first start spawning on the fifth wave, and then every second wave, meaning they spawn every minute, with the first ones spawning at 2:00. When Flagbearer creeps spawn, they replace a random melee creep in that wave, so that they do not increase the number of creeps in those waves. Siege creeps start spawning on the eleventh wave, and then every tenth wave, meaning they spawn every 5 minutes, with the first ones spawning at 5:00.
+
+Initially, a creep wave consists of 3 melee creeps and 1 ranged creep (and 1 siege creep every 10th wave). As the game progresses, their quantity gets upgraded:
+* 31st wave and onwards (15:00): All lanes get +1 melee creep. Total count of melee creeps is now 4 for all lanes.
+* 61st wave and onwards (30:00):
+** All lanes get +1 melee creep. Total count of melee creeps is now 5 for all lanes.
+** All lanes get +1 siege creep. Total count of siege creeps is now 2 for all lanes.
+* 81st wave and onwards (40:00): All lanes get +1 ranged creep. Total count of ranged creeps is now 2 for all lanes.
+* 91st wave and onwards (45:00): All lanes get +1 melee creep. Total count of melee creeps is now 6 for all lanes.
+* 121st wave and onwards (60:00): All lanes get +1 siege creep. Total count of siege creeps is now 3 for all lanes.
+As mentioned before, flagbearer creeps replace a random melee creep when they spawn, keeping the total count of creeps the same.
+
+After the 45th minute, a creep wave consists of 6 melee creeps (or 5 melee creeps and a flagbearer creep every second wave) and 2 ranged creeps (and 2 siege creeps every tenth wave), resulting in a total of 8 (10 with siege creeps) creeps per wave.
+
+; Spawn locations
+Lane creeps spawn close to the lanes' barracks. There is however some minor adjustment for each lane, so that they meet at certain points of each lane if they are not interrupted or distracted.
+
+{| class="wikitable"
+! style="width:5em;" | Lane
+! {{M|Radiant}} side
+! {{M|Dire}} side
+|- style="height:40px;"
+| Top
+| Creeps spawn slightly behind the [[barracks]], right at the center of the triangle formed by the barracks and the [[effigy building]] below.
+| Creeps spawn in front of the [[tier 3 tower]], right at the edge of the ramp.
+|- style="height:40px;"
+| Middle
+| Creeps spawn between the melee and ranged barracks, on the circle between them.
+| Creeps spawn right in front of the tier 3 tower, slightly behind the edge of the ramp.
+|- style="height:40px;"
+| Bottom
+| Creeps spawn right in front of the tier 3 tower, right at the edge of the ramp.
+| Creeps spawn slightly behind the barracks, right at the center of the triangle formed by the barracks and the effigy building above.
+|}
+
+The spawn locations do not change throughout the entire match. The creeps spawn so that the ranged creeps are always behind the melee creeps. However, the siege creeps spawn between the melee creeps.
+
+==Stats==
+Every {{#expr:trunc({{G|lanecreep upgrade cycle}}/60)}} minutes and {{#expr:60*({{G|lanecreep upgrade cycle}}/60-trunc({{G|lanecreep upgrade cycle}}/60))}} seconds, melee and ranged creeps gain a permanent upgrade to their health and attack damage, as well as an increase to their bounties. The following bonuses are applied:
+* '''Melee creeps''': +{{G|lanecreep upg melee Hp}} health, +{{G|lanecreep upg melee Dmg}} attack damage, +{{G|lanecreep upg melee Gold}} gold bounty
+* '''Ranged creeps''': +{{G|lanecreep upg range Hp}} health, +{{G|lanecreep upg range Dmg}} attack damage, +{{G|lanecreep upg range Gold}} gold bounty, +{{G|lanecreep upg range xp}} experience bounty
+* '''Super melee creeps''': +{{G|lanecreep upg sup melee Hp}} health, +{{G|lanecreep upg sup melee Dmg}} attack damage, +{{G|lanecreep upg sup melee Gold}} gold bounty
+* '''Super ranged creeps''': +{{G|lanecreep upg sup range Hp}} health, +{{G|lanecreep upg sup range Dmg}} attack damage, +{{G|lanecreep upg sup range Gold}} gold bounty
+* '''Mega melee creeps''': +{{G|lanecreep upg sup melee Gold}} gold bounty
+* '''Mega ranged creeps''': +{{G|lanecreep upg sup range Gold}} gold bounty
+* '''Siege creeps''': only gain one upgrade, and that is +{{G|lanecreep upg siege dmg}} damage upon destroying their respective lane's ranged barracks
+* '''Flagbearer creeps''': follows the logic of melee creeps upgrade. Additionally, {{A|Flagbearer Creep|Inspiration Aura}}'s magic resistance bonus upgrades by {{show|A|Flagbearer Creep|Inspiration Aura|value4}}, up to {{show|A|Flagbearer Creep|Inspiration Aura|value5}} times.
+
+These health and damage upgrades are applied a maximum of {{G|lanecreep max upgrades}} times, while the gold and experience bounty upgrades have no limit. This means their health and damage are fully upgraded at {{#vardefineecho:maxupgtime|{{#expr:trunc({{G|lanecreep max upgrades}}*({{G|lanecreep upgrade cycle}}/60))}}}}:{{#expr:({{G|lanecreep max upgrades}} mod 2)*3}}0 in-game time, which is {{#expr:trunc({{#var:maxupgtime}}/60)}} hours and {{#expr:60*({{#var:maxupgtime}}/60-trunc({{#var:maxupgtime}}/60))}} minutes. The total values on each upgrade cycle can be seen in the following table.
+
+Flagbearer creeps do not get upgraded and stay the same throughout the entire match. Although Super and Mega versions of them exist, only the default Flagbearer Creeps spawn, even when other creeps use their super and mega forms.
+
+Mega creeps do not grow stronger, but have their bounties increased over time.
+
+{| class="wikitable mw-datatable" style="width:100%;"
+! Time
+! Wave
+! Upgrade number
+! HP melee
+! DMG melee
+! Gold melee
+! HP super melee
+! DMG super melee
+! Gold super/mega melee
+! HP ranged
+! DMG ranged
+! Gold ranged
+! EXP ranged
+! HP super ranged
+! DMG super ranged
+! Gold super/mega ranged
+{{#invoke:Lua|invoke|module=loop|fn=i|0|{{#expr:{{G|lanecreep max upgrades}}+1}}|<nowiki>
+{{!}}-
+! {{#expr:trunc({{#var:i}}*({{G|lanecreep upgrade cycle}}/60))}}:{{#expr:({{#var:i}} mod 2)*3}}0
+{{!}} {{#expr:1+{{#var:i}}*15}}
+{{!}} {{#var:i}}
+{{!}} {{#expr:{{Show|U|Melee Creep|Health}}+{{#var:i}}*{{G|lanecreep upg melee Hp}}}}
+{{!}} {{#expr:{{Show|U|Melee Creep|Attack damage min}}+{{#var:i}}*{{G|lanecreep upg melee Dmg}}}}‒{{#expr:{{Show|U|Melee Creep|Attack damage max}}+{{#var:i}}*{{G|lanecreep upg melee Dmg}}}}
+{{!}} {{#expr:{{Show|U|Melee Creep|Bounty min}}+{{#var:i}}*{{G|lanecreep upg melee Gold}}}}‒{{#expr:{{Show|U|Melee Creep|Bounty max}}+{{#var:i}}*{{G|lanecreep upg melee Gold}}}}
+{{!}} {{#expr:{{Show|U|Super Melee Creep|Health}}+{{#var:i}}*{{G|lanecreep upg sup melee Hp}}}}
+{{!}} {{#expr:{{Show|U|Super Melee Creep|Attack damage min}}+{{#var:i}}*{{G|lanecreep upg sup melee Dmg}}}}‒{{#expr:{{Show|U|Super Melee Creep|Attack damage max}}+{{#var:i}}*{{G|lanecreep upg sup melee Dmg}}}}
+{{!}} {{#expr:{{Show|U|Super Melee Creep|Bounty min}}+{{#var:i}}*{{G|lanecreep upg sup melee Gold}}}}‒{{#expr:{{Show|U|Super Melee Creep|Bounty max}}+{{#var:i}}*{{G|lanecreep upg sup melee Gold}}}}
+{{!}} {{#expr:{{Show|U|Ranged Creep|Health}}+{{#var:i}}*{{G|lanecreep upg range Hp}}}}
+{{!}} {{#expr:{{Show|U|Ranged Creep|Attack damage min}}+{{#var:i}}*{{G|lanecreep upg range Dmg}}}}‒{{#expr:{{Show|U|Ranged Creep|Attack damage max}}+{{#var:i}}*{{G|lanecreep upg range Dmg}}}}
+{{!}} {{#expr:{{Show|U|Ranged Creep|Bounty min}}+{{#var:i}}*{{G|lanecreep upg range Gold}}}}‒{{#expr:{{Show|U|Ranged Creep|Bounty max}}+{{#var:i}}*{{G|lanecreep upg range Gold}}}}
+{{!}} {{#expr:{{Show|U|Ranged Creep|Experience}}+{{#var:i}}*{{G|lanecreep upg range xp}}}}
+{{!}} {{#expr:{{Show|U|Super Ranged Creep|Health}}+{{#var:i}}*{{G|lanecreep upg sup range Hp}}}}
+{{!}} {{#expr:{{Show|U|Super Ranged Creep|Attack damage min}}+{{#var:i}}*{{G|lanecreep upg sup range Dmg}}}}‒{{#expr:{{Show|U|Super Ranged Creep|Attack damage max}}+{{#var:i}}*{{G|lanecreep upg sup range Dmg}}}}
+{{!}} {{#expr:{{Show|U|Super Ranged Creep|Bounty min}}+{{#var:i}}*{{G|lanecreep upg sup range Gold}}}}‒{{#expr:{{Show|U|Super Ranged Creep|Bounty max}}+{{#var:i}}*{{G|lanecreep upg sup range Gold}}}}
+{{!}}-
+</nowiki>}}
+|}
+
+;Melee creeps:
+* When fully upgraded, regular melee creeps have almost as much health as super melee creeps with 11 upgrades.
+* When fully upgraded, regular melee creeps have almost as much attack damage as super melee creeps with 6 upgrades.
+* After {{G|lanecreep max upgrades}} upgrades, super melee creeps' gold bounty exceeds that of regular melee creeps with the same amount of upgrades.
+
+;Ranged creeps:
+* When fully upgraded, regular ranged creeps have a bit more health than super ranged creeps with 10 upgrades.
+* When fully upgraded, regular ranged creeps have as much attack damage as super ranged creeps with 13 upgrades.
+* After {{G|lanecreep max upgrades}} upgrades, super ranged creeps have about the same gold bounty as regular ranged creeps with 26 upgrades.
+
+When fully upgraded, super creeps are as exactly as strong as mega creeps, but this does not automatically make them mega creeps. All barracks must be destroyed to get mega creeps. But at this point, the only difference between super and mega creeps is their visual appearance.
+
+===Bounties===
+When a lane creep gets denied by one of its allies, it grants 50% of its experience value to enemies. Enemies may only get full experience when the creep dies to them, or when a [[neutral creep]] kills it. [[Gold]] bounties are only granted to the enemy player who gets the last hit on the creep.
+
+Flagbearer creeps still grant their kill bounty to the killing player normally, on top of granting the area gold bounty. This means the killing player may get twice the gold from them if they have a hero within range {{Show|A|Flagbearer Creep|Inspiration Aura|value2}} range of the creep upon killing it. The area gold is not granted if the creep gets denied.
+
+===Abilities===
+Flagbearer creeps possess an aura that grants nearby allied creeps health regeneration and magic resistance.
+{{Spellcard wrapper|Flagbearer Creep|Inspiration Aura}}
+
+==Behavior==
+* Lane creeps have a set path in their lane which they follow. They walk down the lanes aggressively, attacking any enemy that comes within their acquisition range.
+* Creeps will never choose alternative paths unless they are forced to (i.e. their gets obstructed).
+* If a creep starts chasing an enemy and leaves its lane, it will remember the exact spot of within the lane they left of.
+** Once the creep stops chasing the target, it will try to return to that exact spot it remembered.
+** This means the creep does not just seek out the closest way to re-enter its dedicated lane, but will try to use the exact spot it left from.
+** However, if &mdash; while moving towards the remembered spot &mdash; the creep happens to enter its lane, it starts walking down its lane again.
+** Creeps will never join other lanes. Even if they happen to enter another lane, they will ignore it and move to their own lane.
+
+* If completely undisturbed by other factors, a creep will chase its current attack target indefinitely.
+** If the target enters the [[Fog of War]], the creep moves to the last spot at which its target was still visible.
+** If it cannot see its target again after reaching that spot, it returns to its lane.
+** It also stops chasing immediately if its target becomes [[attack immune]], turns [[invisible]] or [[death|dies]].
+** It also stops chasing immediately if its target [[teleport]]s a distance greater than {{G|lanecreep tp cutoff distance}}.
+
+* Newly spawned lane creeps cannot be aggroed until the game time reaches {{#time:i:s|@{{G|lanecreep initial aggro block}}}}.
+** This aggro restriction is lifted once the creeps come within {{G|lanecreep block lift distance}} range of their {{U|Tier 1 Tower}}.
+
+* If a lane creep gets [[disarm]]ed, it stops moving and stands still until the disarm expires.
+** It completely ignores everything in this state. This prevents the creep from walking past towers if disarmed while at a tower.
+
+===Attack Priority===
+Lane creeps follow the basic auto-attack behavior, using the following conditions to determine the next attack target:
+
+{{anchor|condition_1}}
+;Condition 1 - Distance:
+* In any case, a creep will attack the first enemy that comes within its acquisition range (see table above).
+* If no other factors are in play, the creep will stick with its current target.
+* Even if another valid target moves closer to them, they will not switch targets.
+** However, if the current target moves outside of the creep's attack range, and forces the creep to move as well, instead of moving, it rather switches to the next closest valid target within its attack range.
+** This means the distance check only happens while the creep is actively moving, and not while it is standing and attacking.
+** An already started attack on the current target is not interrupted, the creep switches once the current attack finishes.
+
+{{anchor|condition_2}}
+;Condition 1 - Unit type:
+
+* Lane creeps continuously check the unity types of all valid targets within their attack range.
+* The creeps have the following unit type priorities:
+*# Heroes and non-hero units alike
+*# {{U|Siege Creep|text=Siege Creeps}}
+*# {{M|buildings}}
+*# {{M|ward-type unit}}
+* For siege creeps, the priorities are significantly different:
+*# {{M|Buildings}}
+*# Non-hero units, including {{M|Creep-Heroes}}
+*# {{U|Siege Creep|text=Siege Creeps}}
+*# Heroes, including {{M|Illusions}} and {{M|Clones}}
+*# {{M|ward-type unit}}
+* Unlike the distance check, this check happens while standing and attacking as well.
+** This means if a unit of higher priority enters its attack range, the lane creep will switch to that unit.
+** Like with the distance check, an already started attack is not interrupted and is finished first.
+
+{{anchor|condition_3}}
+;Condition 3 - Threat level:
+
+* Lane creeps also check for the target's current threat level:
+*# Units that directly attack the creep
+*# Units that attack an ally of the creep
+*# Units that are idle or are casting abilities
+* The threat level is checked at the same time as the distance check.
+** This means, like the distance check, if the creep is already standing and attacking, it will not switch targets based on threat level.
+** However, once it is forced to actively move, it will choose the target based on its threat level.
+** If multiple valid targets have the same threat level and are of the same unit type, the closest of them will get targeted.
+
+{{anchor|special_behavior}}
+;Special behavior - Protective creeps: Actively drawing creep aggro
+
+* lane creeps are coded to protect heroes from other heroes. There are 2 types of protection.
+
+; Type 1<nowiki>:</nowiki> Attack order
+* Issuing an attack order on an enemy hero will draw the aggro of lane creeps within {{G|lanecreep aggro distance}} range of the aggressor hero.
+** An attack order alone is enough to trigger this, the attack itself does not need to be initiated.
+** This aggroing only happens once upon issuing the order, it does not happen continuously.
+*** This means if the order was given outside of range, moving past creeps does not draw their aggro.
+** The target of the attack order must be an enemy hero, illusion, clone, or a {{H|Spirit Bear}}.
+** The distance of the targeted enemy does not matter, as long as the target is an enemy hero.
+** Only a hero, illusion, clone, or the a Spirit Bear can draw aggro this way.
+** The order must be an active attack order (right-click or A-Target). This does not trigger if auto-attack chose the target on its own.
+** This aggro system has a cooldown of {{G|lanecreep aggro cooldown}}, preventing them from aggroing again for a short while.
+*** This cooldown always triggers, even if no creeps were nearby to get aggroed.
+** Creeps stay aggroed for up to {{G|lanecreep aggro duration}} seconds, during which they will chase the hero no matter what.
+** After this duration, the creeps return to their default behavior.
+
+; Type 2<nowiki>:</nowiki> Ongoing attack
+* If an attack is initiated and enters its animation phase, creeps within {{G|lanecreep aggro distance}} range of the attacking hero are aggroed.
+** This triggers whenever a new attack is initiated on the enemy hero, effectively making this continuous.
+** Just like before, the target must be a hero, illusion, clone, or a Spirit Bear.
+** However, the alliance of the target does not matter, attacking an allied hero triggers this as well.
+** Unlike before, [[creep-heroes]] may draw aggro this way too.
+** Also unlike before, it does not matter how the attacks were initiated, be it via direct orders or via auto-attack.
+** However, it does rely on the attack animation, so [[instant attacks]] do not trigger it, since they do not use attack animations.
+** Unlike type 1, type2 does not trigger the cooldown, nor does it force creeps to chase the aggroing hero.
+*** However, if the aggro cooldown was triggered by a type 1 aggro, type 2 does respect the cooldown.
+*** Similarly, if creeps are forced to chase due to a type 1 aggro, type 2 respects that as well.
+** Type 2 has a lower priority than type 1, a creep that is already aggro via type 2 will switch if type 1 is triggered by another player.
+
+;Ways to circumvent creep protection
+
+* The lane creeps' protective behavior only reacts on attacks, they completely ignore ability cast.
+** This means even single-target abilities cast on enemy heroes does not draw aggro of nearby lane creeps.
+** Manually casting [[active attack modifier]] does not aggro them either, as they register this as an ability-cast, rather than an attack.
+** The act of manually casting active attack modifiers is referred to as <i>[[orb walking]]</i>.
+** However, if auto-cast is used instead, the creeps will register it as an attack and get aggroed.
+
+; Important information
+
+* If the creeps are aggroed, they will only start chasing after they have completed their attack animation.
+** If creeps have been aggroed by an "Attack" command, they can only be aggroed onto a different unit via an "Attack" command once they have calmed down (after 2.3 seconds).
+* The 3-second aggro cooldown triggers even if there are no creeps near you at all. It also works if creeps are nearby but you are invulnerable or invisible.
+** Furthermore, each unit capable of aggroing creeps via an attack command on an enemy hero has its own separate cooldown.
+** If you approach creeps after triggering the cooldown (while you were far away, invisible, or invulnerable), they won't aggro onto you.
+
+===Invincibility===
+{{A|Buildings|Glyph of Fortification}} and {{I|Roshan's Banner}} grants invincibility to Lane Creeps. Their HP can't drop, but they can still be killed by some abilities.
+
+{{SkillListHead|collapse=no|title=Instant Killing Creeps Abilities}}
+{{SkillListLite
+| source = Axe
+| name = Culling Blade
+| nametext = Culling Blade<sup>4</sup>
+}}
+{{SkillListLite
+| source = Clinkz
+| name = Death Pact
+}}
+{{SkillListLite
+| source = Doom
+| name = Devour
+}}
+{{SkillListLite
+| source = Hand of Midas
+| name = Transmute
+}}
+{{SkillListLite
+| source = Lifestealer
+| name = Consume
+}}
+{{SkillListLite
+| source = Mirana
+| name = Sacred Arrow
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Midnight Feast
+}}
+{{SkillListLite
+| source = Pudge
+| name = Meat Hook
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Spit Out
+| nametext = Spit Out<sup>5</sup>
+}}
+{{SkillListTail}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|4|Instantly kills the target if their current health is below the threshold.}}
+{{Footnote|5|Instantly kills the launched unit upon landing if it is not a hero or a [[clone]].}}
+
+A controlled creep can't gain a new invincibility effect, but the effect received before taming will stay.
+{{SkillListHead|collapse=yes|title=Instant Killing Creeps Abilities<sup>4<sup>}}
+{{SkillListLite
+| source = Chen
+| name = Holy Persuasion
+}}
+{{SkillListLite
+| source = Enchantress
+| name = Enchant
+}}
+{{SkillListLite
+| source = Helm of the Dominator
+| name = Dominate
+}}
+{{SkillListLite
+| source = Helm of the Overlord
+| name = Dominate
+}}
+{{SkillListTail}}
+{{Footnote|4|Instantly kills the oldest captured unit if the max amount of units gets exceeded.}}
+
+===Death===
+<section begin=death_knockback />Upon dying to a player-controlled unit, lane creeps are knocked up to 200 range away from the damage source, in an arc with up to 50 range upwards. The distance and height get higher, based on the damage instance that killed them (capped at 500), but are still randomised, so that equal damage instances do not result in always the same distances. The knockback duration ranges between 0.4 and 0.6 seconds. Damage below 100 does not cause a knockback. The knockback itself is mainly for aesthetic purposes, but might also affect some abilities. For example, {{A|Disruptor|Thunder Strike}} and {{A|Treant Protector|Leech Seed}} follows the corpse of the unit with their effects.<section end=death_knockback />
+
+Despite what the death animation of siege creep suggests, siege creeps are knocked back as well. This is because their death animation stays where the unit initially died, and does not follow the unit's actual location.
+
+The knockback does not happen when the creeps are killed by units not controlled by any player.
+
+==Wave stats==
+{{hatnote|See [[Lane Creeps/Wave Stats|Wave Stats]]}}
+
+==Trivia==
+* In DotA, the {{M|Radiant}} are called [https://warcraft.wiki.gg/wiki/Sentinels The Sentinel], the primary army of the {{wc3|Night Elf|text=Night Elves}}.
+** As such, all of the Radiant (Sentinel) lane creeps are Night Elf units:
+*** The {{U|Melee Creep|text=Melee Creeps}} use the model and name of the {{wc3|Treant|text=Treants}}.
+*** The {{U|Ranged Creep|text=Ranged Creeps}} use the model and name of the {{wc3|Druid of the Talon|text=Druids of the Talon}}.
+*** The {{U|Siege Creep|text=Siege Creeps}} use the model and name of the {{wc3|Glaive Thrower|text=Glaive Throwers}}.
+
+* In DotA, the {{M|Dire}} are called [https://warcraft.wiki.gg/wiki/Scourge The Scourge], one of the three major {{wc3|Undead}} factions in the Warcraft universe.
+** As such, all of the Dire (Scourge) buildings are Undead units:
+*** The {{U|Melee Creep|text=Melee Creeps}} use the model and name of the {{wc3|Ghoul|text=Ghouls}}.
+*** The {{U|Ranged Creep|text=Ranged Creeps}} use the model and name of the {{wc3|Necromancer|text=Necromancers}}.
+*** The {{U|Siege Creep|text=Siege Creeps}} use the model and name of the {{wc3|Meat Wagon|text=Meat Wagons}}.
+
+==Recent Changes==
+{{main|Lane creeps/Changelogs|l1=Lane Creeps/Changelogs}}
+{{Recent changes wrapper}}
+
+==Gallery==
+<gallery>
+Radiant Siege Creep beta model.png|Beta model of Radiant's siege creep
+Lane Creeps Concept Art1.jpg|[[Concept Art]]
+Dire Creeps Concept Art1.jpg|[[Concept Art]]
+Dark Carnival Tarot Cards 09 dota2 gameasset.png|Tarot card from the [[Dark Carnival#The Oracle|Dark Carnival]] event, <i>Death</i>
+</gallery>
+
+==See also==
+* [[Custom Creeps]]
+
+{{Lane creep navbox}}
+{{MechanicsNav}}
+[[Category:Units]]
+[[Category:Lane creeps]]
+
+[[ru:Линейные крипы]]

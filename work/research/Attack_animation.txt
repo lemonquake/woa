@@ -1,0 +1,368 @@
+[[File:chasedpsthreshold.png|400px|thumb|Movement speed advantage required for a given attack efficiency when chasing, which is dependent on attack animation]]
+Every unit in Dota 2 has an <dfn>attack animation</dfn>. This is a period of time required to perform an attack. During this time the unit generally cannot perform any other actions simultaneously, including moving. 
+
+__TOC__
+==Definition==
+There are two components in attack animations — a foreswing (or attack point), which takes place before an attack lands, and a backswing, which takes place after. 
+
+The animations can be manually canceled by players, but AI units (i.e. [[lane creeps]]) generally do not. The backswing can be canceled with no consequences. However, canceling the foreswing will cancel the attack. Different heroes have different animation times, which affect their abilities to last-hit, deny, and attack enemy units while chasing their target.
+
+Unlike [[cast animation]], losing vision doesn't cancel attack animation.
+
+Both the effective attack point and attack backswing are affected by the [[Attack speed#Mechanics|total attack speed]].
+
+The effective attack point <code>A<sub>p</sub></code> and effective attack backswing <code>A<sub>b</sub></code> can be defined as
+
+: {{#tag:math|
+A_p = B_p \times \frac{100}{\sum_{AS} } \times (1+AP_{Manip})
+}}
+
+: {{#tag:math|
+A_b = B_b \times \frac{100}{\sum_{AS} }
+}}
+
+With <code>B<sub>p</sub></code> and <code>B<sub>b</sub></code> being the base attack point and base backswing respectively, <code>AP<sub>Manip</sub></code> is the value of an attack point manipulation effect. Only the highest value is counted for attack point manipulation effects.
+
+However, a unit's [[attack speed]] is completely independent of its attack animation.
+
+The attack animation strictly refers to the delay between when an attack order is issued and when the attack is launched. For example, if a unit has an attack time of 1 second, an attack point of 0.3 seconds, and an attack backswing of 0.5 seconds, they will be idle for 0.2 seconds during every attack cycle. 
+
+Even if the attack backswing is canceled after 0.2 seconds, the idle period is extended to 0.5 seconds. However, during that idle period, other commands can be issued such as moving or casting spells.
+
+: {{#tag:math|
+ 0.5 = \overbrace{
+   \underbrace{0.2}_\text{Original Idle Time} +
+   \underbrace{0.5}_\text{Backswing} -
+   \underbrace{0.2}_\text{Cancelled Completed Backswing Time}
+  }^\text{Extended Idle Period}
+}}
+
+In other words, canceling your animation does not allow you to attack faster.
+
+===Attack Animation Manipulation===
+The following abilities can change the attack animation speed.
+{{SkillListHead|title=Attack Animation Manipulation Sources}}
+{{SkillListLite
+| source = Nyx Assassin
+| name = Vendetta
+}}
+{{SkillListLite
+| source = Tusk
+| name = Walrus PUNCH!
+}}
+{{SkillListTail}}
+
+===Orb Walking===
+{{Main|Attack modifier#Stutter Stepping|l1=Stutter Stepping (Trivia)}}
+<section begin=orb intro />Because of how manually casting active attack modifiers behaves, as compared to regular attacks. During the cast time of a manually cast active attack modifier, the player can spam the move command, which does not cancel the ongoing cast, but the first move command after the cast point is reached cancels the backswing, so the hero moves almost immediately after the attack launched. 
+
+However, doing that during a regular attack does cancel the regular attack, causing the unit to move immediately, so the player must time the move command after the attack launched. This means stutter stepping was much easier to do with casting active attack modifiers, as timing for the move command was not required, allowing for much more effective stutter stepping.<section end=orb intro />
+
+A later usage of the term '''Orb Walking''' refers to using attacks or active attack modifiers to achieve <dfn>Stutter Stepping</dfn>, which is the act of cancelling the backswing animation of an attack, allowing the unit to move between attacks, following the target, instead of standing and waiting for the backswing to finish.
+
+==Attack Animations of Heroes==
+{{#lpdb:datapoint
+ |conditions = [[type::hero]] and [[extradata_game::]]
+ |starttemplate = Hero attack animation table start
+ |template = Hero attack animation table el
+ |endtemplate = Hero attack animation table end
+ |limit = 1000
+}}
+
+==Attack Animation of Other Units==
+{| class = "wikitable sortable" width = "100%"
+! class = "header unsortable" width = "100px" |
+! class = "header" width = "20%" | Unit
+! class = "header" width = "20%" data-sort-type="number" | Attack Range
+! class = "header" width = "20%" data-sort-type="number" | Attack Point
+! class = "header" width = "20%" data-sort-type="number" | Attack Backswing 
+! class = "header" width = "20%" data-sort-type="number" | Projectile Speed
+|-
+| [[File:Ranged creeps.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Ranged Creep]]
+| align = "center" | <span style="display:none">b4</span>500
+| align = "center" | 0.5
+| align = "center" | 0.3
+| align = "center" | 900
+|-
+| [[File:Melee creeps.png|60px]] [[File:Nature's Prophet Treant model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Melee Creep]], [[Treant]]
+| align = "center" | <span style="display:none">a1</span>{{tooltip|Melee|100}}
+| align = "center" | 0.467
+| align = "center" | 0.533
+| align = "center" | -
+|-
+| [[File:Siege creeps.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Siege Creep]]
+| align = "center" | <span style="display:none">b7</span>690
+| align = "center" | 0.7
+| align = "center" | 1.3
+| align = "center" | 1100
+|-
+| [[File:Towers.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Tower]]
+| align = "center" | <span style="display:none">b8</span>700
+| align = "center" | 0.6
+| align = "center" | 0.4
+| align = "center" | 750
+|-
+| [[File:Fountains.jpg|60px]]
+| align = "center" style = "font-weight:bold;" | [[Fountain]]
+| align = "center" | <span style="display:none">b9</span>1200
+| align = "center" | 0
+| align = "center" | 0
+| align = "center" | 1400
+|-
+| [[File:Kobold model.png|60px]] [[File:Kobold Soldier model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Kobold]], [[Kobold Soldier]]
+| align = "center" | <span style="display:none">a1</span>{{tooltip|Melee|100}}
+| align = "center" | 0.38
+| align = "center" | 0.6
+| align = "center" | -
+|-
+| [[File:Kobold Foreman model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Kobold Foreman]]
+| align = "center" | <span style="display:none">a2</span>{{tooltip|Melee|110}}
+| align = "center" | 0.38
+| align = "center" | 0.6
+| align = "center" | -
+|-
+| [[File:Centaur Courser model.png|60px]] [[File:Mud Golem model.png|60px]] [[File:Broodmother Spiderling model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Centaur Courser]], [[Mud Golem]], [[Spiderling]], [[Spiderite]]
+| align = "center" | <span style="display:none">a1</span>{{tooltip|Melee|100}}
+| align = "center" | 0.5
+| align = "center" | 0.3
+| align = "center" | -
+|-
+| [[File:Centaur Conqueror model.png|60px]] [[File:Hellbear model.png|60px]] [[File:Hellbear Smasher model.png|60px]] [[File:Ogre Bruiser model.png|60px]] [[File:Ogre Frostmage model.png|60px]] [[File:Satyr Mindstealer model.png|60px]] [[File:Satyr Tormenter model.png|60px]] [[File:Ancient Rock Golem model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Centaur Conqueror]], [[Hellbear]], [[Hellbear Smasher]] [[Ogre Bruiser]], [[Ogre Frostmage]], [[Satyr Mindstealer]], [[Satyr Tormenter]], [[Ancient Rock Golem]]
+| align = "center" | <span style="display:none">a1</span>{{tooltip|Melee|100}}
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | -
+|-
+| [[File:Fell Spirit model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Fell Spirit]]
+| align = "center" | <span style="display:none">a1</span>{{tooltip|Melee|100}}
+| align = "center" | 0.4
+| align = "center" | 0.3
+| align = "center" | -
+|-
+| [[File:Ghost model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Ghost]]
+| align = "center" | <span style="display:none">b1</span>300
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | 900
+|-
+| [[File:Giant Wolf model.png|60px]] [[File:Alpha Wolf model.png|60px]] [[File:Lycan Wolf model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Giant Wolf]], [[Alpha Wolf]], [[Lycan Wolf]]
+| align = "center" | <span style="display:none">a0</span>{{tooltip|Melee|90}}
+| align = "center" | 0.33
+| align = "center" | 0.64
+| align = "center" | -
+|-
+| [[File:Wildwing model.png|60px]] [[File:Wildwing Ripper model.png|60px]] [[File:Roshan model.png|60px]] [[File:Brewmaster Earth Brewling model.png|60px]] [[File:Brewmaster Fire Brewling model.png|60px]] [[File:Undying Zombie model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Wildwing]], [[Wildwing Ripper]], [[Roshan]], [[Earth Brewling]], [[Fire Brewling]], [[Undying Zombie]]
+| align = "center" | <span style="display:none">a3</span>{{tooltip|Melee|128}}
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | -
+|-
+| [[File:Satyr Banisher model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Satyr Banisher]]
+| align = "center" | <span style="display:none">b1</span>300
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | 1500
+|-
+| [[File:Ancient Granite Golem model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Ancient Granite Golem]]
+| align = "center" | <span style="display:none">a3</span>{{tooltip|Melee|128}}
+| align = "center" | 0.3
+| align = "center" | 0.5
+| align = "center" | -
+|-
+| [[File:Ancient Thunderhide model.png|60px]] [[File:Ancient Rumblehide model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Ancient Thunderhide]], [[Ancient Rumblehide]]
+| align = "center" | <span style="display:none">b1</span>300
+| align = "center" | 0.5
+| align = "center" | 0.56
+| align = "center" | 1500
+|-
+| [[File:Vhoul Assassin model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Vhoul Assassin]]
+| align = "center" | <span style="display:none">b4</span>500
+| align = "center" | 0.4
+| align = "center" | 0.3
+| align = "center" | 1500
+|-
+| [[File:Hill Troll model.png|60px]] [[File:Dark Troll Summoner model.png|60px]] [[File:Hill Troll Berserker model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Hill Troll]], [[Dark Troll Summoner]], [[Hill Troll Berserker]]
+| align = "center" | <span style="display:none">b4</span>500
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | 1200
+|-
+| [[File:Hill Troll Priest model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Hill Troll Priest]]
+| align = "center" | <span style="display:none">b6</span>600
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | 900
+|-
+| [[File:Harpy Scout model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Harpy Scout]]
+| align = "center" | <span style="display:none">b1</span>300
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | 1200
+|-
+| [[File:Harpy Stormcrafter model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Harpy Stormcrafter]]
+| align = "center" | <span style="display:none">b3</span>450
+| align = "center" | 0.3
+| align = "center" | 0.3
+| align = "center" | 1200
+|-
+| [[File:Ancient Black Drake model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Ancient Black Drake]]
+| align = "center" | <span style="display:none">b1</span>300
+| align = "center" | 0.94
+| align = "center" | 0.56
+| align = "center" | 900
+|-
+| [[File:Ancient Black Dragon model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Ancient Black Dragon]]
+| align = "center" | <span style="display:none">b1</span>300
+| align = "center" | 0.94
+| align = "center" | 0.56
+| align = "center" | 1500
+|-
+| [[File:Dark Troll Summoner Skeleton Warrior model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Skeleton Warrior]]
+| align = "center" | <span style="display:none">a0</span>{{tooltip|Melee|90}}
+| align = "center" | 0.56
+| align = "center" | 0.44
+| align = "center" | -
+|-
+| [[File:Wraith King Skeleton model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Wraith King Skeleton]]
+| align = "center" | <span style="display:none">a0</span>{{tooltip|Melee|115}}
+| align = "center" | 0.56
+| align = "center" | 0.64
+| align = "center" | -
+|-
+| [[File:Necronomicon Warrior 3 model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Necronomicon Warrior]]
+| align = "center" | <span style="display:none">a1</span>{{tooltip|Melee|100}}
+| align = "center" | 0.56
+| align = "center" | 0.44
+| align = "center" | -
+|-
+| [[File:Necronomicon Archer 3 model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Necronomicon Archer]]
+| align = "center" | <span style="display:none">b2</span>350/450/550
+| align = "center" | 0.7
+| align = "center" | 0.3
+| align = "center" | 900
+|-
+| [[File:Witch Doctor Death Ward model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Death Ward]]
+| align = "center" | <span style="display:none">b8</span>700
+| align = "center" | 0
+| align = "center" | 0
+| align = "center" | 1000
+|-
+| [[File:Shadow Shaman Serpent Ward model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Serpent Ward]]
+| align = "center" | <span style="display:none">b6</span>600
+| align = "center" | 0.3
+| align = "center" | 0.4
+| align = "center" | 900
+|-
+| [[File:Venomancer Plague Ward model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Plague Ward]]
+| align = "center" | <span style="display:none">b6</span>600
+| align = "center" | 0.3
+| align = "center" | 0.7
+| align = "center" | 1900
+|-
+| [[File:Enigma Eidolon model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Eidolon]]
+| align = "center" | <span style="display:none">b3</span>450
+| align = "center" | 0.4
+| align = "center" | 0.77
+| align = "center" | 900
+|-
+| [[File:Invoker Forged Spirit model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Forged Spirit]]
+| align = "center" | <span style="display:none">b1</span>300/365/430/495/560/625/690
+| align = "center" | 0.2
+| align = "center" | 0.4
+| align = "center" | 1000
+|-
+| [[File:Warlock Golem model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Warlock Golem]]
+| align = "center" | <span style="display:none">a4</span>{{tooltip|Melee|225}}
+| align = "center" | 0.26
+| align = "center" | 0.74
+| align = "center" | -
+|-
+| [[File:Beastmaster Razorback model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Razorback]]
+| align = "center" | <span style="display:none">b5</span>550
+| align = "center" | 0.633
+| align = "center" | 0.337
+| align = "center" | 1500
+|-
+| [[File:Brewmaster Storm Brewling model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Storm Brewling]]
+| align = "center" | <span style="display:none">b6</span>600
+| align = "center" | 0.4
+| align = "center" | 0.77
+| align = "center" | 1200
+|-
+| [[File:Lone Druid Spirit Bear model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Spirit Bear]]
+| align = "center" | <span style="display:none">a3</span>{{tooltip|Melee|128}}
+| align = "center" | 0.43
+| align = "center" | 0.67
+| align = "center" | -
+|-
+| [[File:Visage Familiar model.png|60px]]
+| align = "center" style = "font-weight:bold;" | [[Familiar]]
+| align = "center" | <span style="display:none">b0</span>160
+| align = "center" | 0.33
+| align = "center" | 0.2
+| align = "center" | 900
+|-
+|}
+
+==Version History==
+{{VersionTableStart}}
+{{VersionTableElement|7.28|
+* The following abilities now increases the hero's attack animation speed:
+** {{A|Nyx Assassin|Vendetta}}
+** {{A|Riki|Blink Strike}} 
+** {{A|Tusk|Walrus PUNCH!}}
+}}
+{{VersionTableElement|7.28|
+* {{cf|Created}} {{I|Quicksilver Amulet}}.
+}}
+{{VersionTableElement|6.00|
+* Updated all of the attack animations so they more fully match the hero models.
+}}
+{{VersionTableEnd}}
+
+==Patch History==
+{{PatchTableStart}}
+{{PatchTableElement|2016-03-24|
+* Fixed various attack animation prediction exploits (i.e. {{A|Phantom Assassin|Coup de Grace}}).
+}}
+{{PatchTableEnd}}
+
+{{MechanicsNav}}
+[[Category:Mechanics]]
+
+[[ru:Анимация атаки]]

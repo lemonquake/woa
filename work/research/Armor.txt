@@ -1,0 +1,711 @@
+{{Tabber
+| link1 = Armor
+| name1 = Armor
+| link2 = Armor/Old Mechanics
+| name2 = Old Mechanics
+| link3 = Armor/Changelogs
+| name3 = Changelogs
+}}
+
+[[File:Ice Armor (Ogre Frostmage) icon.png|frame]]
+{{Quotation|Clockwerk|Armored to the teeth!|sound=vo_rattletrap_ratt_attack_10.mp3}}
+{{Hatnote|For items within the Armor category, see [[Items#Armor|Items]].}}
+<dfn>Armor</dfn> is a stat that reduces (or increases, if negative) [[physical]] damage a unit takes from abilities and attacks. Every unit is capable of gaining or losing armor, and most units start with a small amount of base armor, some even starting with negative armor. A hero's armor can be passively increased with {{M|agility}} via leveling up, certain [[items]], {{M|talents}} and [[#Modifying Armor|some abilities]]. Armor of any unit can also be temporarily increased or reduced with some abilities.
+
+Each point of {{M|agility}} increases a hero's armor by {{#expr:{{G|bonus armor}} round3}} or <sup>1</sup>/<sub>{{#expr:ceil (1/{{G|bonus armor}})}}</sub>.
+
+__TOC__
+==Definition==
+The actual total armor according to the unit's {{Code|ent_text}} is up to two decimal places. The [[HUD]]'s displays the rounded down armor value next to the hero portrait, while the details tab displays the armor value rounded up.
+
+{| <section begin=Definition />class="wikitable" style="text-align:center;" width="70%"
+! style="width:20%;" | Armor Type
+! style="width:60%;" | Definition
+! style="width:20%;" | Examples
+|-
+! {{Symbol|Armor|Main|size=42px}}<br>[[Armor#Main Armor|Main Armor]]
+| style="text-align:left;" | 
+* The armor value shown in white numbers near the shield icon on the [[HUD]].
+* Grants {{Code|+{{#expr:{{G|bonus armor}} round3}}}} per {{M|agility}}.
+| {{M|Agility}}-based Armor
+|-
+! [[Armor#Base Armor|Base Armor]]
+| style="text-align:left;" | 
+* The unit's predefined armor value in the game files, can be either a positive or a negative value.
+* For heroes, this is defined in {{Code|npc_heroes}}.
+** {{Symbol|HeroLvl|1}} Since only heroes utilize {{M|agility}}, their {{M|main armor}} is the sum of both the Base and Main Armor.
+| 
+|-
+! {{Symbol|Armor|Bonus|size=42px}}<br>[[Armor#Bonus Armor|Bonus Armor]]
+| style="text-align:left;" | 
+* The {{Code|+ x}} armor value shown in green numbers near the shield icon on the [[HUD]].
+* Most armor manipulating sources in the game modifies the bonus armor value.
+* Does not benefit created {{M|illusions}}.
+| {{I|Platemail}}
+|-
+! {{Symbol|Damage|Physical|size=42px}}<br>[[Armor#Armor Damage Factor|Armor Damage Factor]]
+| style="text-align:left;" | 
+* Incoming {{M|physical}} damage instances are reduced by a factor of the current total armor values on the attacked unit.
+* The attacked unit's {{M|current health}} to incoming physical damage factor is the [[Armor#Effective HP|Effective HP]] of the unit.
+|-
+<section end=Definition />
+|}
+
+===Equations===
+{{Spellcard
+| name = Equations
+| structure = hidden
+
+| icon0 = Allied Hero Factor
+| type0 = inn
+| target0 = Passive
+| affect0 = Self
+| desc0 = Incoming {{M|physical}} damage instances are reduced by a factor of the current total armor values on the attacked unit.
+
+| trait1 = Armor Formula Base {{Code|b}}
+| value1 = {{G|armor base}}
+| trait2 = Armor Formula Factor {{Code|f}}
+| value2 = {{G|armor factor}}
+
+| icon1 = Universal Factor
+| type1 = alticon
+| target1 = Passive
+| desc1 = Grants the following bonuses per {{M|agility}} for all heroes.
+
+| type1 trait1 = Base Armor Bonus per Agi
+| type1 value1 = {{#expr:{{G|bonus armor}} round3}}
+
+| is_illusionuses = yes
+| is_passivebreak = no
+
+| interacts = 
+{{Illusionnotes
+| name = Agility Factor
+| desc = All {{M|attributes}} and the secondary stat bonuses, including {{M|main armor}} bonuses, granted are functional for the created [[illusions]].
+| structure = hidden
+}}
+
+| mechanics = * {{cf|expr}}
+** {{M|Physical}} Damage Factor: <code style="font-size:110%; font-weight:bold;">1 - ( {{G|armor factor}} × ΣArmor ) / ( {{G|armor base}} + {{G|armor factor}} × [[Wikipedia:Absolute value|{{!}}]]ΣArmor[[Wikipedia:Absolute value|{{!}}]])</code>
+*** ΣArmor: <code style="font-size:110%; font-weight:bold;">[[Armor#Main Armor|Main]] × f([[Armor#Armor Negating Sources|ArmorNegation]]) ± FlatBonus</code>
+*** [[Main Armor]]: <code style="font-size:110%; font-weight:bold;">[[Armor#Base Armor|Base]] + ( ΣCurrent[[Agility|AGI]] × {{#var:Equations type1 value1}} )</code>
+}}
+
+===Armor Damage Factor===
+{{Main|Damage Manipulation}}
+All units, including {{M|buildings}}, have an inherent {{M|Base Armor}} value and [[Attack Damage#Attack Classes|attack class]].
+
+All {{M|physical}} damage instances applied to a unit is multiplied by the armor damage factor, resulting in either damage reduction or increase depending on the attacked target's total armor value. Hence, the armor damage factor affects the unit's [[Armor#Effective HP|Effective HP]] (EHP).
+
+The lower the armor damage factor, the higher the Effective HP of a unit, and vice versa.
+
+The armor damage factor has a lower and upper limit of {{#vardefineecho:dm lower lim|{{#expr:1 - {{G|armor factor}} / {{G|armor factor}}}}}} and {{#vardefineecho:dm upper lim|{{#expr:1 - {{G|armor factor}} / (-{{G|armor factor}})}}}} respectively as shown in the collapsed table below. The EHP is increased by 6% of the unit's MaxHP per armor.
+
+{| class="wikitable mw-collapsible mw-collapsed mw-datatable" width="55%"
+! class="header" width="10%" align="center" | Armor (+)
+! class="header" width="10%" align="center" | Factor
+! class="header" width="10%" align="center" | Armor (-)
+! class="header" width="10%" align="center" | Factor
+|-
+| {{#sub:{{#invoke:Lua|invoke|module=loop|fn=i|1|9|<nowiki>align="center" {{!}} {{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}} align="center" {{!}} -{{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*-{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}}-
+{{!}} </nowiki>}}||-5}}
+|-
+| {{#sub:{{#invoke:Lua|invoke|module=loop|fn=i|10|9|<nowiki>align="center" {{!}} {{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}} align="center" {{!}} -{{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*-{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}}-
+{{!}} </nowiki>}}||-5}}
+|-
+| {{#sub:{{#invoke:Lua|invoke|module=loop|fn=i|19|9|<nowiki>align="center" {{!}} {{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}} align="center" {{!}} -{{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*-{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}}-
+{{!}} </nowiki>}}||-5}}
+|-
+| {{#sub:{{#invoke:Lua|invoke|module=loop|fn=i|28|9|<nowiki>align="center" {{!}} {{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}} align="center" {{!}} -{{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*-{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}}-
+{{!}} </nowiki>}}||-5}}
+|-
+| {{#sub:{{#invoke:Lua|invoke|module=loop|fn=i|37|9|<nowiki>align="center" {{!}} {{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}} align="center" {{!}} -{{#var:i}}
+{{!}} align="center" {{!}} {{#expr:(1-{{G|armor factor}}*-{{#var:i}}/({{G|armor base}}+{{G|armor factor}}*{{#var:i}}))*100 round 0}}%
+{{!}}-
+{{!}} </nowiki>}}||-5}}
+|}
+
+===Pure Damage===
+{{Main|Pure Damage}}
+{{Main|Damage types#Damage Classification|Damage types#Flags|l1=Damage Types|l2=HP Removal}}
+{{#lst:Damage types|puredmg}}
+
+==Main Armor==
+{{See also|Table of hero attributes}}
+'''Main Armor''' is the armor value shown in white numbers near the shield icon in the HUD, this is the sum of both the [[Armor#Base Armor|base armor]] and {{M|agility}}-based armor. The ways to improve a hero's main armor are leveling up, acquiring certain items, or with the help of certain abilities.<!--{{Hero armor table start}}
+{{#lpdb:datapoint
+| conditions = [[type::hero]] AND [[extradata_game::]]
+| query = name, image, extradata
+| template = Hero armor table el
+| limit = 5000
+}}
+{{Hero armor table end}}-->
+
+===Base Armor===
+'''Base Armor''' is a fixed, predefined value for each unit individually of the main armor that never changes throughout a game. Since only heroes utilize {{M|agility}}, the [[HUD]] of all non-hero units shows only their base armor.
+
+====Heroes====
+{{Grouped attribute table|hero|armor|value heading=Armor}}
+
+====Creeps====
+{{Grouped attribute table|unit|armor|extraConditions=[[extradata_type::Creep]]}}
+
+====Summons====
+{{Grouped attribute table|unit|armor|extraConditions=[[extradata_type::Creep-Hero]]}}
+
+===Main Armor Sources===
+These abilities directly manipulate the {{M|agility}} value and affects the hero's main armor.
+
+{{SkillListHead|title=Main Armor Affecting Sources}}
+{{#lst:Agility|mainattackdamage}}
+{{SkillListLite
+| source = Morphling
+| name = Attribute Shift
+| nametext = Attribute Shift (Strength Gain)
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Whirling Death
+| nametext = Whirling Death<sup>3</sup>
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{M|Talent}}.}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Only affects {{M|universal}} heroes and heroes with {{M|agility}} as their [[primary attribute]].}}
+
+===Armor Negation Sources===
+'''Armor Negation''' sources interact and manipulate a unit's {{M|main armor|x}}, unless explicitly stated within the ability notes. These sources do not interact with [[Attack Classes]].
+
+{{SkillListHead|title=Armor Negate Sources}}
+{{SkillListLite
+| source = Clinkz
+| name = Infernal Shred
+| nametext = Infernal Shred <sup>4<sup>
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Marksmanship
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Natural Order
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{M|Talent}}.}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|4|Interacts wtih total armor.}}
+
+===Armor Piercing Sources===
+more details
+
+==Bonus Armor==
+'''Bonus Armor''' is the {{Code|+Armor}} value shown in green numbers with a plus on the left, right after the white armor number.
+
+Most manipulation sources affect the {{M|bonus armor|x}} of the affected unit, reduction sources can nevertheless bring total armor into negative values if the {{M|main armor}} value is sufficiently small.
+
+{{M|Illusions}} do not benefit from {{M|bonus armor|x}} sources. Their [[HUD]] still displays the bonus armor granted for camouflaging purposes.
+
+===Armor Increasing Sources===
+{{SkillListHead|title=Armor Increasing Sources}}
+{{SkillListLite
+| source = Ancient Black Dragon
+| name = Dragonhide Aura
+}}
+{{SkillListLite
+| source = Axe
+| name = Berserker's Call
+}}
+{{SkillListLite
+| source = Axe
+| name = Culling Blade
+}}
+{{SkillListLite
+| source = Chen
+| name = Divine Favor
+}}
+{{SkillListLite
+| source = Dazzle
+| name = Bad Juju
+}}
+{{SkillListLite
+| source = Dazzle
+| name = Shadow Wave
+}}
+{{SkillListLite
+| source = Dragon Knight
+| name = Dragon Blood
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Astral Spirit
+}}
+{{SkillListLite
+| source = Legion Commander
+| name = Overwhelming Odds
+| nametext = Overwhelming Odds<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Lone Druid
+| name = Spirit Link
+}}
+{{SkillListLite
+| source = Lone Druid
+| name = True Form
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Wukong's Command
+}}
+{{SkillListLite
+| source = Ogre Frostmage
+| name = Ice Armor
+}}
+{{SkillListLite
+| source = Oracle
+| name = False Promise
+| nametext = False Promise<sup>1</sup>
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Uproar
+}}
+{{SkillListLite
+| source = Roshan
+| name = Strength of the Immortal
+}}
+{{SkillListLite
+| source = Skywrath Mage
+| name = Shield of the Scion
+}}
+{{SkillListLite
+| source = Slardar
+| name = Guardian Sprint
+| nametext = Guardian Sprint<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Sven
+| name = Warcry
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Reactive Armor
+}}
+{{SkillListLite
+| source = Tiny
+| name = Grow
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Living Armor
+}}
+{{SkillListLite
+| source = Buildings
+| sourcetext = Towers
+| name = Tower Protection
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Berserker's Rage
+}}
+{{SkillListLite
+| source = Wildwing Ripper
+| name = Toughness Aura
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires a {{M|Talent}}.}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Affects the player-controlled creep.}}
+
+{{SkillListHead|title=Armor Increasing Item Sources}}
+{{SkillListLite
+| source = Armlet of Mordiggian
+| name = Unholy Strength
+}}
+{{SkillListLite
+| source = Assault Cuirass
+| name = Assault Aura
+}}
+{{SkillListLite
+| source = Buckler
+| name = Buckler Aura
+}}
+{{SkillListLite
+| source = Medallion of Courage
+| name = Valor
+}}
+{{SkillListLite
+| source = Ring of Aquila
+| name = Aquila Aura
+}}
+{{SkillListLite
+| source = Solar Crest
+| name = Shine
+}}
+{{SkillListLite
+| source = Helm of the Dominator
+| name = Dominate
+| nametext = Dominate<sup>1</sup>
+}}
+{{SkillListLite
+| source = Helm of the Overlord
+| name = Dominate
+| nametext = Dominate<sup>1</sup>
+}}
+{{SkillListLite
+| source = Vladmir's Offering
+| name = Vladmir's Aura
+}}
+{{SkillListTail}}
+{{Footnote|1|Affects the player-controlled creep.}}
+
+===Talents===
+{{Spellcard
+| intern = special_bonus_armor_x
+| name = Bonus Armor
+
+| icon0 = t0
+| type0 = tal
+| target0 = Passive
+| affect0 = Self
+| desc0 = Grants units flat bonus armor upon selecting their respective talents.
+
+| trait1 = Armor Bonus
+| value1 = Varies
+
+| is_illusionuses = no
+| is_passivebreak = no
+
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * {{Symbol|Armor|bonus}}
+** Grants flat armor bonus.
+** The following heroes have {{M|talents}} that grants bonus armor to their {{M|summons|text=player-controlled units}}:
+*** {{H|Enchantress}}' {{A|Enchantress|Enchant|text=Enchanted Creep}}.
+*** {{H|Lone Druid}}'s {{A|Lone Druid|Summon Spirit Bear}}.
+*** {{H|Warlock}}'s {{A|Warlock|Chaotic Offering}}.
+
+| miscnotes = * There are different ability IDs for the following armor values:
+** 6110 (+2)
+** 5930 (+3)
+** 5931 (+4)
+** 5932 (+5)
+** 5933 (+6)
+** 5970 (+7)
+** 5937 (+8)
+** 6136 (+9)
+** 6004 (+10)
+** 6286 (+12)
+** 6175 (+15)
+** 6503 (+20)
+** 6645 (+30)
+}}
+
+{{Talent bonus table|Armor|bonus armor}}
+
+===Items===
+The following items increase a unit's armor. The effects are limited to the item's owner, which must have the item equipped.
+
+<!--Items that provide armor bonus by flat amount and Agility:
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_armor::!]] AND [[extradata_bonus_agility::!]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Agility-based and Flat Armor
+| template = Item bonus value table el{{!}}armor{{!}}agility{{!}}modifier2=Bonus Armor
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}-->
+
+These items have a flat armor bonus to the hero who has them equipped.
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_armor::!]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Flat Armor
+| template = Item bonus value table el{{!}}armor
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}
+
+<!--These items increase the hero's armor through the agility they provide.
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_armor::]] AND [[extradata_bonus_agility::!]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Agility-based Armor
+| template = Item bonus value table el{{!}}agility{{!}}modifier1=Bonus Armor
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}-->
+
+===Armor Reducing Sources===
+{{SkillListHead|title=Armor Reducing Sources}}
+{{SkillListLite
+| source = Alchemist
+| name = Acid Spray
+}}
+{{SkillListLite
+| source = Ancient Rock Golem
+| name = Weakening Aura
+}}
+{{SkillListLite
+| source = Bristleback
+| name = Viscous Nasal Goo
+}}
+{{SkillListLite
+| source = Bristleback
+| name = Hairball
+}}
+{{SkillListLite
+| source = Chaos Knight
+| name = Reality Rift
+}}
+{{SkillListLite
+| source = Dazzle
+| name = Poison Touch
+}}
+{{SkillListLite
+| source = Dazzle
+| name = Shadow Wave
+| nametext = Shadow Wave<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Forged Spirit
+| name = Melting Strike
+}}
+{{SkillListLite
+| source = Lycan
+| name = Howl
+}}
+{{SkillListLite
+| source = Naga Siren
+| name = Rip Tide
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Lucky Shot
+}}
+{{SkillListLite
+| source = Razor
+| name = Eye of the Storm
+}}
+{{SkillListLite
+| source = Shadow Fiend
+| name = Presence of the Dark Lord
+}}
+{{SkillListLite
+| source = Slardar
+| name = Slithereen Crush
+| nametext = Slithereen Crush<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Slardar
+| name = Corrosive Haze
+}}
+{{SkillListLite
+| source = Slark
+| name = Essence Shift
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Lil' Shredder
+}}
+{{SkillListLite
+| source = Templar Assassin
+| name = Meld
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Gush
+}}
+{{SkillListLite
+| source = Vengeful Spirit
+| name = Wave of Terror
+}}
+{{SkillListLite
+| source = Viper
+| name = Poison Attack
+| nametext = Poison Attack<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Weaver
+| name = The Swarm
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+{{SkillListHead|title=Armor Reducing Item Sources}}
+{{SkillListLite
+| source = Assault Cuirass
+| name = Assault Aura
+}}
+{{SkillListLite
+| source = Mask of Madness
+| name = Berserk
+}}
+{{Anchor|Armor Corruption Items}}
+{{SkillListLite
+| source = Orb of Blight
+| name = Lesser Corruption
+}}
+{{SkillListLite
+| source = Desolator
+| name = Corruption
+}}
+{{SkillListLite
+| source = Orb of Corrosion
+| name = Corrosion
+}}
+{{SkillListLite
+| source = Stygian Desolator
+| name = Greater Corruption
+}}
+{{SkillListTail}}
+
+====Armor Corruption====
+{{Spellcard
+| ID = 
+| intern = special_bonus_armor_corruption_x <!-- 25/3/4/5 -->
+| name = Armor Corruption
+
+| icon0 = Armor Corruption
+| type0 = tal
+| target0 = Passive
+| affect0 = Enemies
+| desc0 = Granted by learning a {{Symbol|talent}} talent. Attacks now reduce the affected target's armor by a certain amount.
+
+| trait1 = Armor Reduction
+| value1 = Varies
+| trait2 = Duration
+| value2 = 10
+
+| is_piercesdbfim = no
+| is_illusionuses = no
+| is_passivebreak = no
+
+| posbuff1 = modifier_armor_corruption_x
+| posbuff1notes = Hidden modifier
+| posbuff1displ = None
+| negbuff1 = modifier_armor_corruption
+| negbuff1notes = Armor Corruption: Armor is reduced by x.
+| negbuff1displ = Any
+
+| mechanics = * {{Symbol|Modifier|Debuff}}
+** Applies the debuff per successful attack on the affected unit.
+** Stacks independently with other {{A|Armor|Armor Corruption}} or armor reduction sources.
+** Reapplying the Armor Corruption debuff refreshes the duration.
+
+* Affects the following units:
+** {{M|Ally units|x}}.
+** {{M|Buildings}}
+** {{M|Ward-type units}}.
+
+| miscnotes = * There are different modifiers for the following armor reduction values.
+** 439 (2.5)
+** 7383 (3)
+** 7011 (4)
+** 6846 (5)
+
+* The ability effects are applied as follows:
+** The Armor Corruption {{M|debuff}}.
+** The hero's attack damage instance.
+}}
+
+<!--{{Talent bonus table|Armor Corruption|Armor Corruption}}-->
+
+==Armor-based Sources==
+The following sources utilizes the hero's current armor value as an ability effect.
+{{SkillListHead|title=Armor-based Sources}}
+{{SkillListLite
+| source = Axe
+| name = Battle Hunger
+}}
+{{SkillListLite
+| source = Axe
+| name = One Man Army
+}}
+{{SkillListLite
+| source = Clockwerk
+| name = Armor Power
+}}
+{{SkillListTail}}
+
+==Calculation Examples==
+===Armor Calculations===
+;Example 1 - Armor with {{M|Agility}} Sources.<!--
+-->{{#vardefine:tb b|{{Show|H|Terrorblade|armor}}}}<!--
+-->{{#vardefine:tb 1|{{Show|H|Terrorblade|agility}}}}<!--
+-->{{#vardefine:tb 2|{{Show|H|Terrorblade|agility growth}}}}<!--
+-->{{#vardefine:tb m|{{#expr:{{#var:tb base armor}} + ({{#var:blade agi}} + {{#var:tb agi}} + {{#var:tb agi growth}} * 7) / 6}}}}
+
+: How much armor does a hero level {{Symbol|HeroLvl|10}} {{H|Terrorblade}} with a {{I|Blade of Alacrity}} and {{I|Blade Mail}} equipped has?
+:: [[Armor#Base Armor|Base Armor]]: {{#var:tb b}}
+:: [[Armor#Bonus Armor|Bonus Armor]]: {{I|Blade Mail}} {{Code|+{{#vardefineecho:blade armor|{{Show|I|Blade Mail|bonus armor}}}}}}
+:: Total {{M|agility}}: {{#var:tb 1}} + {{#var:tb 2}} * 9 + {{I|Blade of Alacrity}} ({{#vardefineecho:blade agi|{{Show|I|Blade of Alacrity|bonus agility}}}})
+
+:: Main Armor
+:: = Base + (ΣAgi / 6)
+:: = {{#vardefineecho:eg1|{{#var:tb b}} + ({{#var:tb 1}} + {{#var:tb 2}} * 9 + {{#var:blade agi}}) / 6}}
+:: = {{Symbol|Armor|Main}} {{#expr:{{#var:eg1}} round2}}
+
+:: Total Armor
+:: = {{M|Main Armor}} + {{M|Bonus Armor}}
+:: = {{Symbol|Armor|Main}} {{#expr:{{#var:eg1}} round2}} + {{Symbol|Armor|Bonus}} {{#var:blade armor}}
+:: = {{#expr:{{#var:eg1}}+{{#var:blade armor}} round2}}
+
+: {{H|Terrorblade}} has {{#expr:{{#var:eg1}} round2}} {{M|main armor}}, with a total {{#expr:{{#var:eg1}}+{{#var:blade armor}} round2}} armor displayed on his [[HUD]].
+
+;Example 2 - Various Armor Sources with Armor Negation Interactions.
+: {{H|Terrorblade}} from the previous example is now affected by {{cf|Level|3}} {{A|Elder Titan|Natural Order}}. How much total armor does he have now?
+:: [[Armor#Armor Negation Sources|Armor Negation]]: {{A|Elder Titan|Natural Order}} ({{#explode:{{Show|A|Elder Titan|Natural Order|value2}}|/|2}})
+
+:: Total Armor
+:: = {{M|Main Armor}} * (1 - ArmorNegation) + {{M|Bonus Armor}}
+:: = {{Symbol|Armor|Main}} {{#expr:{{#var:eg1}}}} * (1 - {{#explode:{{Show|A|Elder Titan|Natural Order|value2}}|/|2}}) + {{Symbol|Armor|Bonus}} {{#var:blade armor}}
+:: = {{#expr:{{#vardefineecho:eg2|(({{#var:eg1}})*(1-{{#explode:{{#explode:{{Show|A|Elder Titan|Natural Order|value2}}|/|2}}|%}}/100))}}+{{#var:blade armor}} round2}}
+
+: {{H|Terrorblade}} has {{#expr:{{#var:eg2}}+{{#var:blade armor}} round2}} total armor in this example.
+: {{A|Elder Titan|Natural Order}} affects the {{M|main armor}} component, but not the {{M|bonus armor}} component within the calculations.
+
+;Example 3 - Incoming {{M|Physical}} Damage with Total Armor Interactions.
+
+===Effective HP Calculations===
+;Example 4 - Effective HP Against Incoming {{M|Physical}} Damage.
+
+===EHP Calculations===
+
+==Recent Changes==
+{{Main|Armor/Changelogs}}
+{{Recent changes wrapper}}
+
+{{MechanicsNav}}
+[[Category:Mechanics]]
+
+[[ru:Броня]]

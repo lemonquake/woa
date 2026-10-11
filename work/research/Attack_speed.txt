@@ -1,0 +1,1102 @@
+{{Tabber
+| link1 = Attack Speed
+| name1 = Attack Speed
+| name2 = Changelogs
+| link2 = Attack Speed/Changelogs
+}}
+
+[[File:Focus Fire icon.png|frame]]
+<dfn>Attack Speed</dfn> is the frequency with which units attack is measured. A unit's attack speed can be modified by [[items]], per point of {{Attribute ID|agility}}, abilities providing flat bonuses and [[aura]]s.
+
+==Mechanics==
+[[File:IAS vs BAT Attack per second graph.png|thumb|{{tooltip|IAS|Increased attack speed}} vs {{tooltip|BAT|Base attack time}}: attacks per second]]
+Most heroes have a base attack speed and base attack time of {{G|attack speed}} and {{G|base attack time}} respectively.
+
+Total attack speed is defined as 
+
+<span style="font-size:110%; font-weight:bold;">Σ Attack Speed = (Base Attack Speed + Σ [[File:Agility attribute symbol.png|24px|Agility|link=Agility]] Current + [[Attack speed#Modifying Attack Speed|Σ Flat Attack Speed Bonuses]]) × (1 + Attack Speed Multiplier)</span>
+
+with
+
+<span style="font-size:110%; font-weight:bold;">{{G|attack speed min}} ≤ Σ Attack Speed ≤ {{G|attack speed max}}</span>
+
+<section begin=as intro />Attack speed bonuses and reductions stack additively by a flat value and/or percentages. By default, the total attack speed value has a minimum of {{G|attack speed min}} and an maximum value of {{G|attack speed max}} and most unit's attack speeds cannot be reduced or increased beyond the values above.<section end=as intro />
+
+{{Anchor|Attack Rate}}
+The attack rate is the amount of attacks a unit can launch within a second, and is defined as 
+
+<span style="font-size:110%; font-weight:bold;">r = (Σ Attack Speed) / (100 × [[Attack speed#Base Attack Time|BAT]])
+
+Therefore, the time needed per attack a hero launches is defined as
+
+<span style="font-size:110%; font-weight:bold;">T = 1 / r</span>
+
+==Base Attack Time==
+Every unit has a base attack time (<dfn>BAT</dfn>), which refers to the default interval between attacks for a unit without considering {{Attribute ID|agility}} and attack speed bonus. 
+
+For example, a {{U|Melee Creep}} has a BAT of {{Show|U|Melee Creep|base attack time}}, and thus attacks once per second by default. Similarly, if a hero with {{G|base attack time}} BAT with no {{Attribute ID|agility}} and no bonus attack speed, they would attack once every 1.7 seconds. While nearly every unit can have their attack speed modified, only a few heroes can actively change their BAT.
+
+===Examples===
+: With a base attack time of {{Show|H|Marci|base attack time}}, {{Show|H|Marci|attack speed}} base attack speed and {{Show|H|Marci|agility}} {{Attribute ID|agility}} at level 1. What is {{H|Marci}}'s current attack rate?
+
+: AttackRate = ({{Show|H|Marci|attack speed}} + {{Show|H|Marci|agility}}) / ({{Show|H|Marci|attack speed}} x {{Show|H|Marci|base attack time}}) = {{#vardefineecho:eg1 f|{{#expr:({{Show|H|Marci|attack speed}}+{{Show|H|Marci|agility}})/({{Show|H|Marci|attack speed}}*{{Show|H|Marci|base attack time}}) round3}}}}
+
+: Attack s^-1 = 1/r = {{#vardefineecho:eg1 t|{{#expr:1/{{#var:eg1 f}} round3}}}}
+
+: {{H|Marci}} attacks about {{#var:eg1 f}} times per second in this example, and takes {{#var:eg1 t}} seconds between attacks.
+
+===Benchmark===
+Most heroes' attack rate is {{#expr:1/{{G|base attack time}} round3}} attacks per second. Attack speed is expressed in percent of base attack speed. The base is therefore expressed as {{G|attack speed}}. Each point of increased attack speed (IAS) sources add {{#expr:{{G|attack speed}}/100}} point to it, and attack speed works together with base attack time to determine how often a unit can attack.
+
+When hovering over the hero's attributes in the [[HUD]], the first field shows the attack speed and the time required per attack in parenthesis. The attack speed field is defaulted to {{G|attack speed}} and adds the attack speed bonuses or reductions afterwards, with to a minimum of {{G|attack speed min}} and a maximum value of {{g|attack speed max}}.
+
+The following table shows the attack speed benchmarks and their effect on attacks per second:
+{| class="mw-datatable wikitable" style="text-align:center; width:60%;"
+|-
+! class="header" colspan="3" style="width:60%;" | {{tooltip|AS|Attack Speed}} Vs {{tooltip|BAT|Base Attack Time}} Benchmarks
+|-
+! style="width:20%" | Default AS<br>({{G|attack speed}})
+! style="width:20%" | BAT
+! style="width:20%" | Normal Speed
+|-
+| {{#invoke:Lua|invoke|module=loop|fn=a|0|11|<nowiki>{{#ifexpr:{{#expr:5-{{#var:a}}}}>0|{{#expr:trunc({{G|attack speed}}/(5-{{#var:a}}))}} 
+{{!}} {{#expr:5-{{#var:a}}}}x
+{{!}} {{#ifexpr:{{#var:a}}=4|1|1/{{#expr:5-{{#var:a}}}}}}x
+{{!}}-
+{{!}}|{{#expr:{{G|attack speed}}*({{#var:a}}-3)}}
+{{!}} 1/{{#expr:{{#var:a}}-3}}x
+{{!}} {{#expr:{{#var:a}}-3}}x
+{{!}}-
+{{!}}}}</nowiki>}}-
+|}
+
+===Exceptions===
+Most heroes have a BAT of {{G|base attack time}} except for the following:
+{{BatTableStart|type=Hero}}
+{{BatTableRow
+| source = Juggernaut
+}}
+{{BatTableRow
+| source = Anti-Mage
+}}
+{{BatTableRow
+| source = Abaddon
+}}
+{{BatTableRow
+| source = Dark Willow
+}}
+{{BatTableRow
+| source = Morphling
+}}
+{{BatTableRow
+| source = Bounty Hunter
+}}
+{{BatTableRow
+| source = Nature's Prophet
+}}
+{{BatTableRow
+| source = Queen of Pain
+}}
+{{BatTableRow
+| source = Terrorblade
+}}
+{{BatTableRow
+| source = Windranger
+}}
+{{BatTableRow
+| source = Spirit Bear
+}}
+{{BatTableRow
+| source = Dragon Knight
+}}
+{{BatTableRow
+| source = Huskar
+}}
+{{BatTableRow
+| source = Lina
+}}
+{{BatTableRow
+| source = Lone Druid
+}}
+{{BatTableRow
+| source = Shadow Fiend
+}}
+{{BatTableRow
+| source = Silencer
+}}
+{{BatTableRow
+| source = Storm Spirit
+}}
+{{BatTableRow
+| source = Bristleback
+}}
+{{BatTableRow
+| source = Magnus
+}}
+{{BatTableRow
+| source = Mars
+}}
+{{BatTableRow
+| source = Primal Beast
+}}
+{{BatTableRow
+| source = Snapfire
+}}
+{{BatTableRow
+| source = Weaver
+}}
+{{BatTableRow
+| source = Sven
+}}
+{{BatTableRow
+| source = Outworld Destroyer
+}}
+{{BatTableRow
+| source = Treant Protector
+}}
+{{BatTableRow
+| source = Spirit Breaker
+}}
+{{BatTableRow
+| source = Doom
+}}
+{{BatTableRow
+| source = Kez
+}}
+{{BatTableRow
+| source = Hoodwink
+}}
+{{Table end}}
+
+===Other Units===
+;Summons
+{{BatTableStart|type=Unit}}
+{{BatTableRow|type=Unit
+| unit = Fountain
+| alticon = Fountain Radiant 
+}}
+{{BatTableRow|type=Unit
+| unit = Death Ward
+| alticon = Witch Doctor Death Ward
+}}
+{{BatTableRow|type=Unit
+| unit = Familiar
+| alticon = Visage Familiar
+}}
+{{BatTableRow|type=Unit
+| unit = Necronomicon Warrior
+}}
+{{BatTableRow|type=Unit
+| unit = Void
+| alticon = Brewmaster_Void
+| level = 3
+}}
+{{BatTableRow|type=Unit
+| unit = Lycan Wolf
+| level = 4
+}}
+{{BatTableRow|type=Unit
+| unit = Melee Creep
+| alticon = Melee Creep Radiant
+}}
+{{BatTableRow|type=Unit
+| unit = Necronomicon Archer
+}}
+{{BatTableRow|type=Unit
+| unit = Lycan Wolf
+| level = 3
+}}
+{{BatTableRow|type=Unit
+| unit = Void
+| alticon = Brewmaster_Void
+| level = 2
+}}
+{{BatTableRow|type=Unit
+| unit = Lycan Wolf
+| level = 2
+}}
+{{BatTableRow|type=Unit
+| unit = Warlock Golem
+| alticon = Warlock Warlock Golem
+}}
+{{BatTableRow|type=Unit
+| unit = Lycan Wolf
+| level = 1
+}}
+{{BatTableRow|type=Unit
+| unit = Void
+| alticon = Brewmaster_Void
+| level = 1
+}}
+{{BatTableRow|type=Unit
+| unit = Wraith King Skeleton
+| alticon = Wraith King Skeleton
+}}
+{{BatTableRow|type=Unit
+| unit = Razorback
+| alticon = Beastmaster Razorback
+}}
+{{BatTableRow|type=Unit
+| unit = Earth Brewling
+| alticon = Brewmaster Earth
+}}
+{{BatTableRow|type=Unit
+| unit = Fire Brewling
+| alticon = Brewmaster Fire
+}}
+{{BatTableRow|type=Unit
+| unit = Spiderite
+| alticon = Broodmother Spiderling
+}}
+{{BatTableRow|type=Unit
+| unit = Spiderling
+| alticon = Broodmother Spiderling
+}}
+{{BatTableRow|type=Unit
+| unit = Forged Spirit
+| alticon = Invoker Forged Spirit
+}}
+{{BatTableRow|type=Unit
+| unit = Greater Treant
+| alticon = Nature's Prophet Treant
+}}
+{{BatTableRow|type=Unit
+| unit = Plague Ward
+| alticon = Venomancer Plague Ward
+}}
+{{BatTableRow|type=Unit
+| unit = Serpent Ward
+| alticon = Shadow Shaman Serpent Ward
+}}
+{{BatTableRow|type=Unit
+| unit = Eidolon
+| alticon = Enigma Eidolon
+}}
+{{BatTableRow|type=Unit
+| unit = Storm Brewling
+| alticon = Brewmaster Storm
+}}
+{{BatTableRow|type=Unit
+| unit = Treant
+| alticon = Nature's Prophet Treant
+}}
+{{BatTableRow|type=Unit
+| unit = Undying Zombie
+}}
+{{BatTableRow|type=Unit
+| unit = Roshan
+}}
+{{BatTableRow|type=Unit
+| unit = Siege Creep
+| alticon = Siege_Creep_Radiant
+}}
+{{Table end}}
+
+;[[Neutral Creep]]s
+{{BatTableStart|type=Unit}}
+{{BatTableRow|type=Unit
+| unit = Ghost
+}}
+{{BatTableRow|type=Unit
+| unit = Centaur Courser
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Granite Golem
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Rock Golem
+}}
+{{BatTableRow|type=Unit
+| unit = Alpha Wolf
+}}
+{{BatTableRow|type=Unit
+| unit = Dark Troll Summoner
+}}
+{{BatTableRow|type=Unit
+| unit = Hill Troll
+}}
+{{BatTableRow|type=Unit
+| unit = Kobold
+}}
+{{BatTableRow|type=Unit
+| unit = Kobold Foreman
+}}
+{{BatTableRow|type=Unit
+| unit = Kobold Soldier
+}}
+{{BatTableRow|type=Unit
+| unit = Mud Golem
+}}
+{{BatTableRow|type=Unit
+| unit = Ogre Bruiser
+}}
+{{BatTableRow|type=Unit
+| unit = Ogre Frostmage
+}}
+{{BatTableRow|type=Unit
+| unit = Satyr Mindstealer
+}}
+{{BatTableRow|type=Unit
+| unit = Satyr Tormenter
+}}
+{{BatTableRow|type=Unit
+| unit = Shard Golem
+}}
+{{BatTableRow|type=Unit
+| unit = Wildwing
+}}
+{{BatTableRow|type=Unit
+| unit = Wildwing Ripper
+}}
+{{BatTableRow|type=Unit
+| unit = Warpine Raider
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Frostbitten Golem
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Ice Shaman
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Black Dragon
+}}
+{{BatTableRow|type=Unit
+| unit = Centaur Conqueror
+}}
+{{BatTableRow|type=Unit
+| unit = Fell Spirit
+}}
+{{BatTableRow|type=Unit
+| unit = Hellbear
+}}
+{{BatTableRow|type=Unit
+| unit = Giant Wolf
+}}
+{{BatTableRow|type=Unit
+| unit = Hellbear Smasher
+}}
+{{BatTableRow|type=Unit
+| unit = Harpy Scout
+}}
+{{BatTableRow|type=Unit
+| unit = Harpy Stormcrafter
+}}
+{{BatTableRow|type=Unit
+| unit = Hill Troll Berserker
+}}
+{{BatTableRow|type=Unit
+| unit = Vhoul Assassin
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Black Drake
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Rumblehide
+}}
+{{BatTableRow|type=Unit
+| unit = Ancient Thunderhide
+}}
+{{BatTableRow|type=Unit
+| unit = Hill Troll Priest
+}}
+{{Table end}}
+
+===Base Attack Time Manipulation===
+
+There are a few abilities that can alter the base attack time of a unit, either by directly setting the unit's BAT to a fixed value or by reducing it by a certain amount.
+Base attack time setting abilities do not stack with another and the first cast (or passively leveled) BAT setting ability has a higher precedence, even if another BAT setting ability with a lower BAT value gets used afterwards.
+
+The only exceptions to this are {{A|Terrorblade|Metamorphosis}} and {{A|Kez|Switch Discipline}}, which always override other BAT setting abilities once cast or passively acquired, the latter having the highest priority of all BAT setting abilities.
+
+Meanwhile base attack time reducing abilities fully stack with each other (except for {{A|Oracle|False Promise}} and {{A|Broodmother|Insatiable Hunger}}) and they also stack with the base attack time setting ability of the highest precedence. The order of stacking a BAT reducing and BAT setting ability does not matter, as BAT reducing abilities will always reduce a unit's current BAT after it was set to a fixed value by BAT setting abilities.
+
+{{SkillListHead|title=Base Attack Time Setting Sources}}
+{{SkillListLite
+| source = Alchemist
+| name = Chemical Rage
+}}
+{{SkillListLite
+| source = Lone Druid
+| name = Summon Spirit Bear
+}}
+{{SkillListLite
+| source = Kez
+| name = Switch Discipline
+}}
+{{SkillListLite
+| source = Lycan
+| name = Summon Wolves
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Lil' Shredder
+}}
+{{SkillListLite
+| source = Terrorblade
+| name = Metamorphosis
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Battle Stance
+}}
+{{SkillListTail}}
+
+{{SkillListHead|title=Base Attack Time Reducing Sources}}
+{{SkillListRich
+| source = Crude Enchantment
+| trait1 = Bonus Base Attack Time
+| value1 = {{Show|I|Crude Enchantment|bonus base attack time}} -12%/-18%
+}}
+{{SkillListRich
+| source = Broodmother
+| name = Insatiable Hunger
+| trait1 = Base Attack Time Reduction
+| value1 = {{Symbol|talent}} {{Show|A|Broodmother|Insatiable Hunger|value5 tal}}
+}}
+{{SkillListRich
+| source = Oracle
+| name = False Promise
+| nametext = False Promise
+| trait1 = Base Attack Time Reduction
+| value1 = {{Symbol|Aghanim}} {{Show|A|Oracle|False Promise|type1 value2 agh}}
+}}
+{{SkillListTail}}
+
+==Base Attack Speed==
+{{Grouped attribute table|hero|atkspeed|value heading=Attack Speed}}
+
+==Attack Speed Limits==
+Heroes with a unique base attack speed will also have a unique minimum attack speed equal to the difference between the hero's base attack speed and the default {{G|attack speed}} base attack speed. 
+
+For example, {{H|Tiny}} has a base attack speed of {{Show|H|Tiny|attack speed}}, which is {{#vardefineecho:Tiny attack speed difference|{{#expr:{{G|attack speed}}-{{Show|H|Tiny|attack speed}}}}}} less attack speed than the default {{G|attack speed}}. Therefore, his minimum attack speed will be {{#vardefineecho:Tiny attack speed min|{{#expr:{{G|attack speed min}}-{{#var:Tiny attack speed difference}}}}}}, which is {{#var:Tiny attack speed difference}} less attack speed than the default {{G|attack speed min}} minimum attack speed.
+
+This means despite {{H|Tiny}} and {{H|Drow Ranger}} both having the same {{G|base attack time}} [[Attack speed#Base Attack Time|BAT]], their slowest attack rates are {{#invoke:Lua|invoke|module=loop|fn=a|0|2|<nowiki>{{#expr:1/({{#ifexpr:{{#var:a}}=0|{{#var:Tiny attack speed min}}|{{G|attack speed min}}}}/{{G|base attack time}}/100) round2}} {{#ifexpr:{{#var:a}}=0|and&nbsp;}}</nowiki>}} seconds respectively.  This works in reverse for higher base attack speeds — {{H|Sven}}, whose base attack speed is {{Show|H|Sven|attack speed}}, will have a minimum attack speed of {{#vardefine:Sven attack speed difference|{{#expr:{{G|attack speed}}-{{Show|H|Sven|attack speed}}}}}}{{#vardefineecho:Sven attack speed min|{{#expr:{{G|attack speed min}}-{{#var:Sven attack speed difference}}}}}}.  
+
+However, this minimum attack speed mechanic does not appear to apply to non-hero units. For example, {{U|Roshan}} and {{H|Hoodwink}}, who both have {{Show|H|Hoodwink|base attack time}} BAT, both have a minimum attack rate of {{#expr:1/({{G|attack speed min}}/{{Show|U|Roshan|base attack time}}/100) round2}} seconds, despite Roshan having a base attack speed of {{Show|U|Roshan|attack speed}}.
+
+The maximum attack speed of all heroes is {{G|attack speed max}}. This value does not change based on the heroes' base attack speed. This means that heroes like {{H|Tiny}} have a greater attack speed range ({{#var:Tiny attack speed min}} – {{G|attack speed max}}) , and heroes like {{H|Sven}} have a lesser attack speed range ({{#var:Sven attack speed min}} – {{G|attack speed max}}) than the average hero ({{G|attack speed min}} – {{G|attack speed max}}).
+
+<!--=== Minimum Attack Speed ===-->
+===Maximum Attack Speed===
+The following abilities are able to change a unit's maximum attack speed (of {{G|attack speed max}}), allowing it to reach even higher values. If a unit is affected by multiple abilities that change the maximum value, the higher value takes priority.
+{{SkillListHead|title=Maximum Attack Speed Changing Abilities}}
+{{SkillListLite
+| source = Marci
+| name = Unleash
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Battle Trance
+| nametext = Battle Trance<sup>3<sup>
+}}
+{{SkillListTail}}
+
+==Fixed Attack Interval==
+The following abilities <section begin=Attack Interval />perform [[instant attack]]s or attacks based on fixed intervals and they completely ignore the base attack time, attack speed and attack rate of the unit.<section end=Attack Interval />
+{{SkillListHead|collapse=no|title=Abilities with Fixed Attack Intervals}}
+{{SkillListRich
+| source = Gyrocopter
+| name = Flak Cannon
+| trait1 = Side Gunner Range
+| value1 = {{Symbol|Aghanim}} {{Show|A|Gyrocopter|Flak Cannon|type1 value1 agh}}
+| trait2 = Side Gunner Interval
+| value2 = {{Symbol|Aghanim}} {{Show|A|Gyrocopter|Flak Cannon|type1 value2 agh}}
+| notes aghs = Prioritizes furthest unit away within its range.
+}}
+{{SkillListRich
+| source = Io
+| name = Tether
+| notes tal = The attacks are performed as soon as the ally launches their attack (including instant attacks from the ally). It does not matter whether the attack actually hits or not.
+}}
+{{SkillListRich
+| source = Lifestealer
+| name = Consume
+| nametext = Infest
+| trait1 = Enemy Hero Attack Interval
+| value1 = {{Symbol|Aghanim}} {{Show|A|Lifestealer|Consume|type2 value2 agh}}
+| trait2 = Enemy Hero Duration
+| value2 = {{Symbol|Aghanim}} {{Show|A|Lifestealer|Consume|type2 value3 agh}}
+| notes aghs = Ability can be now cast on enemy heroes or [[creep-hero]]es.
+}}
+{{SkillListRich
+| source = Monkey King
+| name = Wukong's Command
+| trait1 = Soldiers Attack Interval
+| value1 = {{Show|A|Monkey King|Wukong's Command|value4}}
+}}
+{{SkillListRich
+| source = Puck
+| name = Dream Coil
+| trait1 = Instant Attack Radius
+| value1 = {{Symbol|Aghanim}} {{Show|A|Puck|Dream Coil|value1}}
+| notes aghs = Performs instant attacks on all leashed enemies, attack interval is set as casters attack rate at the time of cast or reset on coil break.
+}}
+{{SkillListRich
+| source = Riki
+| name = Tricks of the Trade
+| trait1 = Radius
+| value1 = {{Show|A|Riki|Tricks of the Trade|value1}}
+| trait2 = Attack Count
+| value2 = {{Show|A|Riki|Tricks of the Trade|value4}} ({{Symbol|Aghanim}} {{Show|A|Riki|Tricks of the Trade|value4 agh}})
+| trait3 = Instant Attack Interval
+| value3 = {{#expr:{{Show|A|Riki|Tricks of the Trade|value3}}/({{Show|A|Riki|Tricks of the Trade|value4}}-1) round3}} ({{Symbol|bonus agh}} {{#expr:{{Show|A|Riki|Tricks of the Trade|value3}}/({{Show|A|Riki|Tricks of the Trade|value4 agh}}-1) round3}})
+| trait4 = Max Channel Time
+| value4 = {{Show|A|Riki|Tricks of the Trade|value3}}
+}}
+{{SkillListRich
+| source = Tiny
+| name = Tree Volley
+| trait1 = Tree Throw Interval
+| value1 = {{Show|A|Tiny|Tree Volley|value5}}
+| trait2 = Max Channel Time
+| value2 = {{Show|A|Tiny|Tree Volley|value4}}
+}}
+{{SkillListRich
+| source = Weaver
+| name = Geminate Attack
+| trait1 = Instant Attack Interval
+| value1 = {{Show|A|Weaver|Geminate Attack|value1}}
+| trait2 = Number of Extra Attacks
+| value2 = {{Show|A|Weaver|Geminate Attack|value2}} ({{Symbol|Talent}} {{Show|A|Weaver|Geminate Attack|value2 tal}})
+}}
+{{SkillListTail}}
+
+==Modifying Attack Speed==
+These abilities increase or decrease a unit's attack speed by a constant value. These bonuses and reductions can not exceed the minimum and maximum attack speed limits.
+
+===Bonuses===
+{{SkillListHead|title=Flat Attack Speed Bonus Sources}}
+{{SkillListLite
+| source = Abaddon
+| name = Curse of Avernus
+}}
+{{SkillListLite
+| source = Alchemist
+| name = Berserk Potion
+}}
+{{SkillListLite
+| source = Ancient Rumblehide
+| name = War Drums Aura
+}}
+{{SkillListLite
+| source = Ancient Thunderhide
+| name = Frenzy
+}}
+{{SkillListLite
+| source = Arc Warden
+| name = Magnetic Field
+}}
+{{SkillListLite
+| source = Axe
+| name = Culling Blade
+}}
+{{SkillListLite
+| source = Beastmaster
+| name = Inner Beast
+}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Bloodrage
+}}
+{{SkillListLite
+| source = Chen
+| name = Penitence
+}}
+{{SkillListLite
+| source = Clinkz
+| name = Strafe
+}}
+{{SkillListLite
+| source = Clockwerk
+| name = Overclocking
+}}
+{{SkillListLite
+| source = Drum of Endurance
+| name = Endurance
+}}
+{{SkillListLite
+| source = Boots of Bearing
+| name = Endurance
+}}
+{{SkillListLite
+| source = Disruptor
+| name = Thunder Strike
+| nametext = Thunder Strike<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Echo Sabre
+| name = Echo Strike
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Chronosphere
+| nametext = Chronosphere<sup>1</sup>
+}}
+{{SkillListLite
+| source = Hellbear
+| name = Swiftness Aura
+}}
+{{SkillListLite
+| source = Hellbear
+| name = Death Throe: Rush
+}}
+{{SkillListLite
+| source = Hurricane Pike
+| name = Hurricane Thrust
+}}
+{{SkillListLite
+| source = Huskar
+| name = Berserker's Blood
+}}
+{{SkillListLite
+| source = Invoker
+| name = Alacrity
+}}
+{{SkillListLite
+| source = Invoker
+| name = Wex
+}}
+{{SkillListLite
+| source = Io
+| name = Overcharge
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Omnislash
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Swiftslash
+}}
+{{SkillListLite
+| source = Legion Commander
+| name = Overwhelming Odds
+}}
+{{SkillListLite
+| source = Lifestealer
+| name = Ghoul Frenzy
+}}
+{{SkillListLite
+| source = Lina
+| name = Fiery Soul
+}}
+{{SkillListLite
+| source = Lone Druid
+| name = Spirit Link
+}}
+{{SkillListLite
+| source = Lone Druid
+| name = Savage Roar
+| nametext = Savage Roar<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Mask of Madness
+| name = Berserk
+| nametext = Berserk
+}}
+{{SkillListLite
+| source = Morphling
+| name = Morph
+| nametext = Morph<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Spirit Bear
+| name = Savage Roar
+| nametext = Savage Roar<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Storm Spirit
+| name = Overload
+| nametext = Overload<sup>2b</sup>
+}}
+{{SkillListLite
+| source = Marci
+| name = Unleash
+}}
+{{SkillListLite
+| source = Mirana
+| name = Leap
+}}
+{{SkillListLite
+| source = Moon Shard
+| name = Consume
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Hunter in the Night
+}}
+{{SkillListLite
+| source = Ogre Magi
+| name = Bloodlust
+}}
+{{SkillListLite
+| source = Phantom Assassin
+| name = Phantom Strike
+}}
+{{SkillListLite
+| source = Slark
+| name = Shadow Dance
+| nametext = Shadow Dance<sup>1</sup>
+}}
+{{SkillListLite
+| source = Slark
+| name = Depth Shroud
+| nametext = Depth Shroud<sup>1</sup>
+}}
+{{SkillListLite
+| source = Solar Crest
+| name = Shine
+}}
+{{SkillListLite
+| source = Terrorblade
+| name = Demon Zeal
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Fervor
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Battle Trance
+}}
+{{SkillListLite
+| source = Ursa
+| name = Overpower
+}}
+{{SkillListLite
+| source = Undying Zombie
+| name = Deathlust
+}}
+{{SkillListLite
+| source = Visage
+| name = Grave Chill
+}}
+{{SkillListLite
+| source = Warlock
+| name = Upheaval
+| nametext = Upheaval<sup>1</sup>
+}}
+{{SkillListLite
+| source = Windranger
+| name = Focus Fire
+}}
+{{SkillListLite
+| source = Winter Wyvern
+| name = Winter's Curse
+}}
+{{SkillListLite
+| source = Wraith King
+| name = Reincarnation
+| nametext = Wraith Delay<sup>2a<sup>
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===Items===
+Many items grant their owners an attack speed bonus, increasing their attack speed when equipped, either by increasing their agility, or by just giving them a flat bonus.
+
+The following items increase a unit's attack speed. The effects are limited to the item's owner, which must have the item equipped.
+
+Items that provide attack speed bonus by flat amount and agility:
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_attack_speed::!]] AND [[extradata_bonus_agility::!]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Flat-Rate & Agility Attack Speed
+| template = Item bonus value table el{{!}}attack_speed{{!}}agility{{!}}modifier2={{G|bonus attack speed}}
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}
+
+These items have a flat attack speed bonus to the hero who has them equipped.
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_attack_speed::!]] AND [[extradata_bonus_agility::]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Flat-Rate Attack Speed
+| template = Item bonus value table el{{!}}attack_speed
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}
+
+These items increase the hero's attack speed through the agility they provide.
+{{#lpdb:datapoint
+| conditions = [[type::item_bonustraits]] AND [[extradata_bonus_attack_speed::]] AND [[extradata_bonus_agility::!]] AND [[extradata_game::]]
+| query = pagename, extradata
+| limit = 5000
+| starttemplate = Item bonus value table start{{!}}userparam=Agility Attack Speed
+| template = Item bonus value table el{{!}}agility{{!}}modifier1={{G|bonus attack speed}}
+| endtemplate = Item bonus value table end
+| default = No items found!
+| order = name ASC
+}}
+
+===Talents===
+{{Spellcard
+| ID = 6118, 6119, 5906, 6016, 5907, 6196, 6210, 6224, 6020, 409, 5908, 6444, 6030, 1153, 6037, 478, 6650, 6555, 6605, 7893, 6622, 6623, 7020
+| intern = special_bonus_attack_speed_10/15/20/25/30/35/40/45/50/55/60/70/80/90/100/110/120/140/160/175/200/225/250
+| name = Attack Speed
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Attack Speed Bonus
+| value1 = Varies
+
+| buff1 = ?
+| buff1text = Hidden modifier
+| buff1dispel = None
+
+| mechanics = * Grants a flat attack speed bonus.
+
+* The following values exist:
+** 10/15/20/25/30/35/40/45/50/55/60/70/80/90/100/110/120/140/160/175/200/225/250
+}}
+
+{{Talent bonus table|Attack Speed|attack speed}}
+
+===Flat Reductions===
+{{SkillListHead|title=Flat Attack Speed Reduction Sources}}
+{{SkillListLite
+| source = Ancient Thunderhide
+| name = Slam
+}}
+{{SkillListLite
+| source = Boar
+| name = Poison
+}}
+{{SkillListLite
+| source = Beastmaster
+| name = Primal Roar
+}}
+{{SkillListLite
+| source = Brewmaster
+| name = Thunder Clap
+}}
+{{SkillListLite
+| source = Crystal Maiden
+| name = Crystal Nova
+}}
+{{SkillListLite
+| source = Crystal Maiden
+| name = Freezing Field
+}}
+{{SkillListLite
+| source = Disruptor
+| name = Thunder Strike
+}}
+{{SkillListLite
+| source = Dragon Knight
+| name = Wyrm's Wrath
+| nametext = Wyrm's Wrath (Frost Dragon)
+}}
+{{SkillListLite
+| source = Enchantress
+| name = Untouchable
+}}
+{{SkillListLite
+| source = Eye of Skadi
+| name = Cold Attack
+}}
+{{SkillListLite
+| source = Ghost
+| name = Frost Attack
+}}
+{{SkillListLite
+| source = Hellbear Smasher
+| name = Thunder Clap
+}}
+{{SkillListLite
+| source = Huskar
+| name = Life Break
+}}
+{{SkillListLite
+| source = Io
+| name = Tether
+}}
+{{SkillListLite
+| source = Jakiro
+| name = Dual Breath
+}}
+{{SkillListLite
+| source = Jakiro
+| name = Liquid Fire
+}}
+{{SkillListLite
+| source = Lich
+| name = Frost Blast
+}}
+{{SkillListLite
+| source = Lich
+| name = Chain Frost
+}}
+{{SkillListLite
+| source = Lycan Wolf
+| name = Cripple
+}}
+{{SkillListLite
+| source = Lycan Lane Wolf
+| name = Cripple
+}}
+{{SkillListLite
+| source = Magnus
+| name = Skewer
+}}
+{{SkillListLite
+| source = Magnus
+| name = Horn Toss
+}}
+{{SkillListLite
+| source = Marci
+| name = Unleash
+}}
+{{SkillListLite
+| source = Medusa
+| name = Stone Gaze
+}}
+{{SkillListLite
+| source = Morphling
+| name = Morph
+| nametext = Morph<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Void
+}}
+{{SkillListLite
+| source = Phoenix
+| name = Fire Spirits
+}}
+{{SkillListLite
+| source = Roshan
+| name = Slam
+}}
+{{SkillListLite
+| source = Sand King
+| name = Epicenter
+}}
+{{SkillListLite
+| source = Shiva's Guard
+| name = Freezing Aura
+}}
+{{SkillListLite
+| source = Slardar
+| name = Slithereen Crush
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Scatterblast
+}}
+{{SkillListLite
+| source = Sniper
+| name = Headshot
+}}
+{{SkillListLite
+| source = Storm Spirit
+| name = Overload
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Throw
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Volley
+}}
+{{SkillListLite
+| source = Tiny
+| name = Grow
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Berserker's Rage
+}}
+{{SkillListLite
+| source = Wildwing
+| name = Tornado
+}}
+{{SkillListLite
+| source = Venomancer
+| name = Poison Nova
+| nametext = Poison Nova<sup>1</sup>
+}}
+{{SkillListLite
+| source = Viper
+| name = Corrosive Skin
+}}
+{{SkillListLite
+| source = Viper
+| name = Viper Strike
+}}
+{{SkillListLite
+| source = Visage
+| name = Grave Chill
+}}
+{{SkillListLite
+| source = Wraith King
+| name = Reincarnation
+}}
+{{SkillListLite
+| source = Zeus
+| name = Heavenly Jump
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===Percentage Bonus===
+Percentage attack speed changes can not exceed the minimum and maximum attack speed limits and are applied after flat attack speed bonuses and reductions.
+Percentage attack speed changes stack additively with another.
+{{SkillListHead|title=Percentage Attack Speed Bonus Sources}}
+{{SkillListRich
+| source = Meepo
+| name = Divided We Stand
+| nametext = Divided We Stand (Codependent)
+| trait1 = Attack Speed Bonus
+| value1 = {{Show|A|Meepo|Codependent|value3}}
+| notes = The attack speed bonus is a percentage, applied to the total attack speed. Fully stacks with itself.
+}}
+{{SkillListTail}}
+
+
+===Percentage Reductions===
+
+{{SkillListHead|title=Percentage Attack Speed Reduction Sources}}
+{{SkillListRich
+| source = Tiny
+| name = Grow
+| trait1 = Total Attack Speed Factor
+| value1 = {{Show|A|Tiny|Grow|value4}}
+| notes = Reduces all sources of attack speed on {{H|Tiny}}.
+}}
+{{SkillListRich
+| source = Giant's Maul
+| name = Crushing Blow
+| trait1 = Attack Speed Slow
+| value1 = {{Show|A|Giant's Maul|Crushing Blow|value3}}
+| notes = The attack speed slow is a percentage, applied to the total attack speed.
+}}
+{{SkillListTail}}
+
+==Slow Resistance==
+
+
+==Animations==
+{{Main|Hero Animations}}
+{{#lst:Hero Animations|Attack Speed}}
+
+==Recent Changes==
+{{Main|Attack Speed/Changelogs}}
+{{Recent changes wrapper}}
+
+{{MechanicsNav}}
+[[Category:Mechanics]]
+
+[[ru:Скорость атаки]]

@@ -1,0 +1,32 @@
+{{#lst:Lane Creeps|tabber}}
+The table only considers regular lane creeps, ignoring super creeps and mega creeps.
+<!-- The table currently does not consider the gold/xp bonus of the upgrade cycle of lane creeps.-->
+Expand the list by clicking on the expand button at the very right.
+{| class="wikitable" style="width:100%;"
+! Time
+! Wave
+! Melee
+! Ranged
+! Siege
+! Total creeps
+! Average gold
+! Average gold accumulated
+! Passive gold accumulated
+! Experience
+! Total experience accumulated
+{{#vardefine:n1}}{{#vardefine:n2}}{{#vardefine:n3}}{{#vardefine:total}}{{#vardefine:gold}}{{#vardefine:totalgold}}{{#vardefine:exp}}{{#vardefine:totalexp}}{{#invoke:Lua|invoke|module=loop|fn=i|0|121|<nowiki>
+{{!}}-
+! {{#expr:trunc({{#var:i}}*0.5)}}:{{#expr:({{#var:i}} mod 2)*3}}0
+{{!}} {{#expr:1+{{#var:i}}}}
+{{!}} {{#vardefineecho:n1|{{#ifeq:{{#var:i}}|120|6|{{#expr:3+trunc({{#var:i}}/30)}}}}}}
+{{!}} {{#vardefineecho:n2|{{#ifexpr:{{#var:i}} < 80|1|2}}}}
+{{!}} {{#vardefineecho:n3|{{#ifexpr:{{#var:i}} > 0 and {{#var:i}} mod 10 = 0|{{#ifexpr:{{#var:i}} < 60|1|2}}|0}}}}
+{{!}} {{#vardefineecho:total|{{#expr:{{#var:total}}+{{#var:n1}}+{{#var:n2}}+{{#var:n3}}}}}}
+{{!}} ~{{#vardefineecho:gold|{{#expr:{{#var:n1}}*({{show|U|Melee Creep|Bounty min}}+{{show|U|Melee Creep|Bounty max}})/2+{{#var:n2}}*({{show|U|Ranged Creep|Bounty min}}+{{show|U|Ranged Creep|Bounty max}})/2+{{#var:n3}}*({{show|U|Siege Creep|Bounty min}}+{{show|U|Siege Creep|Bounty max}})/2}}}}
+{{!}} ~{{#vardefineecho:totalgold|{{#expr:{{#var:totalgold}}+{{#var:gold}}}}}}
+{{!}} {{#expr:trunc({{#var:i}}*47.5)}}
+{{!}} {{#vardefineecho:exp|{{#expr:{{#var:n1}}*{{show|U|Melee Creep|Experience}}+{{#var:n2}}*{{show|U|Ranged Creep|Experience}}+{{#var:n3}}*{{show|U|Siege Creep|Experience}}}}}}
+{{!}} {{#vardefineecho:totalexp|{{#expr:{{#var:totalexp}}+{{#var:exp}}}}}}
+{{!}}-
+</nowiki>}}
+|}

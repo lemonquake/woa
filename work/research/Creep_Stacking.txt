@@ -1,0 +1,43 @@
+<dfn>Creep Stacking</dfn> is the process of drawing neutral creeps away from their camps in order to increase the number of units in an area. Generally, neutral creeps will spawn in the first minute of the game and at every  minute thereafter. So 1:00, 2:00, 3:00 etc. However, new creeps cannot spawn if a unit such as a player or a ward is present within the camp's boundary. By pulling neutral creeps beyond their camp boundaries, the game will generate a new set of creeps for the player to interact with in addition to any remaining creeps. This is incredibly time efficient, since it effectively increases the amount of gold available for a team. In many cases, a support who has stacked a substantial amount of creeps can build a sizable chunk of gold for not only their fellow teammates but also themselves for getting stacking bonus of 30% of the [[gold]] and [[experience]] bounty. However, this can work against you if the enemy team reaches your camps first and neither will the stacker get the bonus bounty. In addition, the player who stacked the creeps receives 20% reduced gold and experience from those creeps, so it is more rewarding for one player, most often a support, to stack the creeps and for another player to clear them.
+
+==Basics==
+
+[[File:creep_stack_sniper_ext.png|thumb|An extremely stacked Dire Ancient Camp. Harvesting it gives about 1500 gold.]]
+
+To stack a camp, you can either attack a unit in the camp or simply walk close to it. The neutral creeps will then attempt to chase you for a few seconds before returning to their initial position. Most camps can be stacked at around the 54-55 second mark. However, this timing varies depending on the spawn box size and the type of units involved. If done correctly, a new set of creeps will spawn at the minute mark.
+
+The above method can be done multiple times, but the timing might start to differ. This is because some creeps have auras which affect movement speed, and they can get in each other's way. Furthermore, all neutral camps can be stacked indefinitely; as long as all the creeps have escaped the camp boundaries.
+
+==Camp Boundary Boxes==
+{{UnderConstruction}}
+It's always best to practice stacking as the hero you want to play before joining an actual match. For practice you can use the custom game [https://steamcommunity.com/sharedfiles/filedetails/?id=3011606331 Creep Stacking Training].  The time at which you need to stack the camp will vary because of which camp type it is (different camps have differing lengths that the creeps will chase you), what neutrals are currently in the camp (some move faster than others, and some won't leave until your hero gets out of their attack range), the attributes of your hero including their attack range if you're attacking to get the creeps attention.
+
+Each camp has a "Base Stack Time".  You will need to modify this based on your situation in the following ways:
+* subtract ≈:01 if you're a melee hero & there's a long-ranged neutral creep currently in the camp such as [[Vhoul Assassin Camp]] or [[Troll Camp]]
+* subtract ≈:00.25 If your ranged hero has a short range (such as [[Luna]] or [[Huskar]]) and there's a long ranged creep currently in the camp.
+
+==Advanced Techniques==
+
+[[File:Real Boundaries.png|thumb|alt=Map location|The invisible camp boundaries go upward, as well as across the map]]
+
+Certain heroes can stack creeps very quickly, such as [[Clockwerk]]. {{A|Clockwerk|Rocket Flare}} can block a camp or stack it from anywhere if Clockwerk damages the creeps.
+
+===Safespotting===
+
+By using ranged abilities, some heroes can attack and stack creeps at little to no risk. For example, [[Alchemist]], [[Medusa]], [[Bristleback]], and [[Beastmaster]] can attack ancient camps at a distance using {{A|Alchemist|Acid Spray}}, {{A|Medusa|Split Shot}}, {{A|Bristleback|Quill Spray}} or {{A|Beastmaster|Wild Axes}}. 
+
+===Creep Pulling===
+
+See also: [[Creep Pulling#Creep Pulling|Creep Pulling]] 
+
+Although quite difficult to pull off, lane creeps can be used to absorb most of the damage dealt by a neutral camp. To do this, attack a neutral camp at the -:17 mark and walk towards the incoming lane creeps. The incoming wave will be drawn into the jungle. Additionally, creeps can be pulled again toward a hard camp. If done incorrectly, any remaining creeps will venture back into the lane and eventually push out the creep equilibrium.
+
+==Tips==
+
+* The [[Ghost Camp|Ghost]] reduces your movement speed by 20%, making the easy camp more difficult to stack if it's present.
+
+*The medium camp closest to the top T2 dire tower can be pulled; to do so it has to be done around the -:56 mark so the creeps are on the way down the steps and don't have vision of their camp
+
+[[Category:Mechanics]]
+
+[[ru:Нагромождение крипов]]

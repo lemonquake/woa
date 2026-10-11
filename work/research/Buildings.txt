@@ -1,0 +1,1188 @@
+<section begin=tabber/>{{Tabber
+| name1 = Buildings
+| link1 = Buildings
+| name2 = Neutral Buildings
+| link2 = Buildings/Neutral Buildings
+| name3 = Old Abilities
+| link3 = Buildings/Old Abilities
+| name4 = Removed Buildings
+| link4 = Buildings/Removed Buildings
+| name5 = Changelogs
+| link5 = Buildings/Changelogs
+}}<section end=tabber/>
+
+
+<section begin=intro/>Buildings are a type of unit that are not controlled by any player. At the beginning of a match, a set of buildings spawn at set locations in both teams' bases. Both [[factions]] have the same set of buildings, with only their appearance differing from each other. Buildings take mostly defensive roles and are the main objective of the game.
+
+Besides the bases, there are several neutral buildings scattered throughout the map that can be conquered, or be otherwised used by both teams.<section end=intro/>
+
+==Neutral Buildings==
+{{Main|Neutral Buildings}}
+{{#lst:Neutral Buildings|intro}}
+
+==Faction Buildings==
+<section begin=faction/>All faction buildings have the same base properties. They are immune to most abilities and can be only affected by a few abilities.
+
+When destroyed, some buildings grant a team {{Gold|Gold}} bounty, and some grant bounty to the player who made the last hit. A building with less than {{#expr:{{G|building deny health}}*100}}% of its max [[health]] can be denied, to reduce or prevent the enemy team from obtaining gold bounties. However, the [[Building#Ancient|Ancients]] cannot be denied.
+
+Buildings do not grant [[experience]]. Once destroyed, a building is permanently lost and does not respawn.
+
+There are a total of 26 buildings for each faction.<section end=faction/>
+
+==General Information==
+{{Main|Attack Damage|l1=Attack Classes}}
+[[File:Dota 2 map buildings.jpg|thumb|Locations of all faction buildings.]]
+All buildings are {{A|Attack Damage|Reinforced}}.
+
+{{Spellcard wrapper|Attack Damage|Reinforced
+}}
+{{clr}}
+
+===Backdoor Protection===
+[[File:Dota 2 map backdoor protection.jpg|thumb|350px|Backdoor Protection areas.]]
+
+'''Backdoor Protection''' is a passive ability most destroyable buildings have. This protection makes it difficult for players to destroy or even damage buildings without the presence of lane creeps. While active, Backdoor Protection reduces the [[Damage manipulation|incoming damage]] received while [[healing]] the building based on the damage dealt by enemy units, making them difficult to destroy. The ability deactivates itself when an enemy [[lane creep]] moves within the deactivation radius, [[Dominate]]d creeps do not deactivate this ability. Once deactivated, Backdoor Protection takes some time for the ability to activate again.
+
+There are currently four areas that deactivate Backdoor Protection, and each of them functions independently of the other.
+
+Although the backdoor protection ability is visible on each building within the base, they are all controlled by the [[Building#Ancients|Ancient]]'s Backdoor protection. If enemy creeps are within its huge detection radius, all buildings within the base lose their protection.
+
+Each {{U|Tower (Tier 2)}} has its deactivation radius. When one of them is disabled, the others are not. The Tier 2 Towers' Backdoor Protection is also independent of the Ancients' Backdoor Protection.
+
+Backdoor protection is not responsible for the [[invulnerability]] buildings have, so the buildings still stay invulnerable if their corresponding towers are not destroyed first.
+{{clr}}
+[[File:Dota 2 Backdoor Protection preview.jpg|thumb|250px|Backdoor Protection visual effect on [[Towers]].]]
+{{Spellcard
+| ID = 5350, 5351
+| intern = backdoor_protection, backdoor_protection_in_base
+| name = Backdoor Protection
+| sound0 = physics_damage_building_bd_protect
+
+| icon0 = Backdoor Protection
+| type0 = npc
+| target0 = Passive;Aura
+| affect0 = Allied Buildings
+| desc0 = Affected structures take less damage when there are no enemy lane creeps nearby. Any damage they take gets quickly healed back.
+
+| basic1 = 0.1;heal interval
+
+| traitamp = ampin-p
+| trait1 = Incoming Damage Reduction
+| value1 = 50%
+| trait2 = Heal per Second
+| value2 = 180
+| trait3 = Backdoor Disable Duration
+| value3 = 15
+| trait4 = Aura Linger Duration
+| value4 = 0.5
+
+| icon1 = Backdoor Protection
+| type1 = alticon
+| target1 = Passive
+| desc1 = All buildings within the allevated base area are affected. The detection radius originates from the Ancient and exceeds beyond the base.<br>All buildings within the base gain and lose their protection in unison.
+
+| type1 trait1 = Detection Radius
+| type1 value1 = 4000
+
+| icon2 = Tower Factor
+| type2 = alticon
+| target2 = Passive
+| desc2 = All tier 2 towers have their own, independent Backdoor Protection. Their detection area is centerd around them and is limited to their close surroundings.<br><br>Tier 1 towers are unprotected at all times.
+
+| type2 trait1 = Detection Radius
+| type2 value1 = 900
+
+| icon3 = Illusion Factor
+| type3 = alticon
+| target3 = Passive
+| desc3 = Illusions and all other summoned units deal even less damage to protected buildings.
+
+| type3 traitamp = ampin-p
+| type3 trait1 = Incoming Damage Reduction
+| type3 value1 = 75%
+
+| buff1 = modifier_backdoor_protection
+| buff1text = Hidden modifier
+| buff1dispel = None
+| buff2 = modifier_backdoor_protection_in_base
+| buff2text = Hidden modifier
+| buff2dispel = None
+| buff3 = modifier_backdoor_protection_active
+| buff3text = Backdoor Protection: Structure takes reduced damage, and quickly regenerates any damage taken while no enemy creeps are nearby.
+| buff3dispel = None
+
+| mechanics = * The unit detection is {{M|aura}}-based. If an enemy [[lane creep]] enters the search radius, the Backdoor Protection for that building is disabled.
+** The aura's effect lingers for {{#var:Backdoor Protection value4}} seconds, so the total reactivation delay is effectively {{#expr:{{#var:Backdoor Protection value3}}+{{#var:Backdoor Protection value4}}}} seconds.
+
+* Grants the following effects to the protected building while active:
+** Self-heals {{#expr:{{#var:Backdoor Protection value2}}*{{#var:Backdoor Protection basic1}}}} health in {{#var:Backdoor Protection basic1}} second intervals, starting immediately upon taking damage.
+** Only heals from enemy damage sources, damage from allies is not healed.
+** Applies generic [[incoming damage reduction]] on the building.
+*** Affects all [[damage types]] the building takes that is not flagged as [[HP removal]].
+*** Stacks additively with other sources of generic incoming damage manipulation.
+*** Stacks multiplicatively with the reduction of the {{A|Attack Damage|Reinforced}} class.
+*** {{cf|expr}}
+**** Against illusions attack damage: <code>[[Illusion]]DamageDealt × {{#expr:(1-{{#explode:{{#var:Backdoor Protection type3 value1}}|%}}/100)*(1-{{#explode:{{Show|A|Attack Damage|Reinforced|value2}}|%}})}}</code>
+**** Against illusions spell damage: <code>SpellDamageDealt × {{#expr:1-{{#explode:{{#var:Backdoor Protection type3 value1}}|%}}/100}}</code>
+**** Against [[summons]] and [[Dominate]]d creeps: <code>[[Attack Damage|AttackDamage]]Dealt × {{#expr:(1-{{#explode:{{#var:Backdoor Protection type3 value1}}|%}}/100)*(1-{{#explode:{{Show|A|Attack Damage|Reinforced|value3}}|%}})}}</code>
+}}
+
+===Glyph of Fortification===
+[[File:Dota 2 Glyph of Fortification preview.jpg|thumb|250px|A Glyphed tower.]]
+[[File:dota 2 minimap buttons player.jpg|right|thumb|250px|Glyph button, located on the right of the minimap.]]
+[[File:dota 2 minimap buttons spectator.jpg|right|thumb|250px|The button is split for spectators, showing both team's cooldowns at the same time.]]
+
+Glyph of Fortification (or '''Glyph''' in short) is an ability usable by any player that causes all friendly buildings and [[lane creeps]] to become impervious to damage for a short duration, while also granting [[Buildings#Towers|Towers]] above {{U|Tower (Tier 2)}} a multishot attack, allowing them to attack multiple enemies at the same time. 
+
+The effect has a rather low duration and very high cooldown, making the timing of usage very important. The Glyph is used strategically to stop enemy pushes or slow them down long enough to organize a defense. It may also be used offensively to secure a push by granting the creep waves damage immunity at the right time, or even for finishing enemies off by using the multishot attacks.
+
+The Glyph of Fortification can be activated by any player with a button at the right of the [[minimap]] or a {{Key press|Hotkey}} defined in the settings. The Glyph's cooldown is shared by the entire team, meaning if one player uses it, it goes on cooldown for all players of the team.
+
+{{Spellcard
+| name = Glyph of Fortification
+
+| icon0 = Glyph of Fortification
+| type0 = npc
+| target0 = no
+| affect0 = Allied Buildings
+| damage0 = Instant Attack,Physical
+| desc0 = Turns all allied buildings imprevious to all damage for some time.
+| key = J;J
+
+| traitamp = ampin-p
+| trait1 = Incoming Damage Reduction
+| value1 = 100%
+| trait2 = Duration
+| value2 = 7
+
+| icon1 = Creep Factor
+| type1 = alticon
+| target1 = Passive
+| desc1 = Turns all allied lane creeps imprevious to damage as well, but for a shorter duration.
+
+| type1 trait1 = Duration
+| type1 value1 = 3
+
+| icon2 = Tower Factor
+| type2 = alticon
+| target2 = Passive
+| desc2 = Towers of tier 2 and higher also attack multiple targets at once while affected.<br>Tier 1 towers do not gain this effect.
+
+| type2 trait1 = Bonus Attack Targets
+| type2 value1 = 5
+
+| icon3 = Glyph of Fortification
+| type3 = alticon
+| target3 = Passive
+| desc3 = Upon losing the first tier 1 tower, the first tier 2 tower, and the first melee barracks, the Glyph's cooldown gets reset after a short delay.
+
+| type3 trait1 = Cooldown Reset Delay
+| type3 value1 = 1
+
+| buff1 = modifier_fountain_glyph
+| buff1text = Glyph of Fortification: This structure is briefly impervious to damage.
+| buff1dispel = Death
+| buff2 = modifier_glyph_reset
+| buff2text = Hidden modifier
+| buff2dispel = None
+
+| dt icon0 = Glyph of Fortification
+| dt desc0 = Has an initial cooldown upon match begin, only being available after a few minutes into the match.
+| dt value1 = 180
+
+| cd = 300
+
+| mechanics = * Applies a generic 100% [[incoming damage reduction]] on buildings and [[lane creeps]].
+** Does not grant invulnerability, therefore, it does not prevent [[instant kill]] sources (e.g. {{A|Axe|Culling Blade}} etc.) from killing affected units.
+
+* Causes Towers to perform [[instant attacks]] on the closest {{#explode:{{#var:Glyph of Fortification value1}}|/|1}} enemies whenever it launches an attack projectile.
+** This means all projectiles are released at the same time together with the main attack. It does not matter whether the primary attack [[miss]]es.
+** The extra projectiles travel at the same speed as the leading attack's projectile.
+** Does not target the following units:
+*** [[Wards]] and other buildings.
+*** [[Invisible]], [[attack immune]] or [[untargetable]] units, and units inside the [[Fog of War]].
+** However, attacking wards or buildings still causes the secondary projectile to hit valid targets within the radius.
+
+* Affects:
+** {{M|Towers}}
+** {{U|Ranged Barracks}} and {{U|Melee Barracks}}
+** {{U|Effigy Building|text=Effigy Buildings}}
+** {{U|Ancient (Building)|text=Ancients}}
+** {{U|Fountain|text=Fountains}}
+** {{U|Fiend's Gate}}
+}}
+{{clr}}
+
+==Towers==
+[[File:Towers.png|thumb|350px|Radiant and Dire towers]]
+<section begin=towers/>'''Towers''' are the main line of defense for both [[faction]]s, attacking any non-neutral enemy unit that gets within their range. Both factions have all three lanes guarded by three towers each.
+
+Additionally, each faction's Ancient has two towers as well, resulting in a total of 11 towers per faction. Towers come in 4 different tiers:
+* {{U|Tower (Tier 1)|text=Towers (Tier 1)}}: located at the end of each lane.
+* {{U|Tower (Tier 2)|text=Towers (Tier 2)}}: located halfway through each lane.
+* {{U|Tower (Tier 3)|text=Towers (Tier 3)}}: located on top of the 3 ramps at each base.
+* {{U|Tower (Tier 4)|text=Towers (Tier 4)}}: located in pairs in front of each [[Buildings#Ancient|Ancient]].<section end=towers/>
+
+All Towers have an innate [[invulnerability]] before the lower tier tower preceding it in its lane is destroyed. {{U|Tower (Tier 1)|text=Towers (Tier 1)}} are invulnerable before the game begins. [[Barracks]] do not have to be destroyed to make {{U|Tower (Tier 4)|text=Towers (Tier 4)}} vulnerable. Both Tier 4 Towers must be destroyed to remove the [[Buildings#Ancient|Ancient]]'s invulnerability.
+
+===Tier Difference (Towers)===
+The different attributes per Tier are listed as below:
+{| class="wikitable mw-datatable" style="width:100%; text-align:center;"
+! class="header" width="15%" | Building
+! class="header" width="17%" | [[Health]]<br>([[Deny]] Health) [{{tooltip|?|Towers have no health regeneration.}}]
+! class="header" width="17%" | [[Armor]]
+! class="header" width="17%" | [[Attack Damage]]
+! class="header" width="17%" | {{A|Buildings|Backdoor Protection}}
+! class="header" width="17%" | [[Vision]] Range
+|-
+{{#invoke:Lua|invoke|module=loop|fn=t|1|4|<nowiki>{{!}} {{U|Tower (Tier {{#var:t}})}}
+{{!}} {{Show|U|Tower (Tier {{#var:t}})|health}}<br>({{#expr:{{Show|U|Tower (Tier {{#var:t}})|health}}*{{G|building deny health}}}})
+{{!}} {{Show|U|Tower (Tier {{#var:t}})|armor}}
+{{!}} {{Symbol|attack damage}} {{Show|U|Tower (Tier {{#var:t}})|attack damage min}}‒{{Show|U|Tower (Tier {{#var:t}})|attack damage max}}<br>({{#expr:(({{Show|U|Tower (Tier {{#var:t}})|attack damage min}}+{{Show|U|Tower (Tier {{#var:t}})|attack damage max}})/2)*(1/{{Show|U|Tower (Tier {{#var:t}})|base attack time}}) round2}} DPS)
+{{!}} {{c|{{#ifexpr:{{#var:t}}>1|y|n}}}}
+{{!}} {{Symbol|Daytime}} {{Show|U|Tower (Tier {{#var:t}})|sight range day}} {{Symbol|Nighttime}} {{Show|U|Tower (Tier {{#var:t}})|sight range night}}
+{{!}}-
+</nowiki>}}
+|}
+
+===Attack Priority===
+[[File:Dota 2 tower range preview.jpg|thumb|200px|Range indicator, appears when a player approachse a tower.]]
+[[File:Dota 2 tower range safe preview.jpg|thumb|200px|If the tower is already attacking, the indicator is yellow.]]
+[[File:Dota 2 tower targeting preview.jpg|thumb|200px|Targeting indicator, appears when the tower just <ab>weapons_tower_tower_aggro.mp3</ab> targeted the player.]]
+[[File:Dota 2 tower targeting safe preview.jpg|thumb|200px|If the tower switches away, the effect plays on the new target in yellow.]]
+Towers have multiple criteria for the selecting their next attack target. If multiple heroes are within its attack range and the tower wants to choose a new target, these are the conditions it is looking for.
+
+{{anchor|condition_1}}
+;Condition 1 - Unit type:
+
+* Towers have the following unit type priorities:
+*# Heroes and non-hero units alike
+*# {{U|Siege Creep|text=Siege Creeps}}
+*# {{M|buildings}}
+*# {{M|ward-type unit}}
+
+The unit type of all enemies within attack range is being checked continuously. If the tower is currently attacking a unit of a lower priority, and a unit of higher priority comes within attack range, the tower immediately switches to that unit.
+
+{{anchor|condition_2}}
+;Condition 2 - Threat level:
+
+* Towers check for the target's current threat:
+*# Units that directly attack the tower
+*# Units that attack an ally of the tower
+*# Units that are idle or are casting abilities
+
+Unlike the unit-type check, the threat check only applies to units within {{G|tower guard radius}} range of the tower, and only happens once upon choosing the next attack target. If the target's action changes after it has already been chosen, the tower sticks to the target. See ''[[#special_behavior_1|special behaviors]]'' below for exceptions.
+
+{{anchor|condition_3}}
+;Condition 3 - Distance:
+
+* If multiple units meet the same previous criteria, they are chosen based on proximity; the closest unit is chosen.
+
+{{anchor|special_behavior_1}}
+;Special behavior 1 - Manual de-aggro:
+
+* If a unit is being attacked by a tower, issuing an attack order on another allied unit causes the tower to immediately choose a new target.
+** This only works if there is another allied hero that is closer to the tower than the unit.
+** The order alone is enough to trigger this, the attack does not have to be initiated.
+** Even if the order gets canceled immediately, the de-aggro is still triggered.
+** Note that the unit-type priority condition still applies. A unit with a higher priority cannot switch aggro to a unit with lower priority.
+** A tower can only be de-aggroed once every {{G|tower aggro cooldown}} seconds this way.
+** This behavior also applies to the {{U|Fountain|text=Fountains}} and to [[lane creeps]].
+
+{{anchor|special_behavior_2}}
+;Special behavior 2 - Protective towers:
+
+* Towers are coded to protect heroes from other heroes.
+** If a hero is within {{g|tower protect radius}} range of a tower, and is attacking another hero, the tower immedaitely switches to the attacking hero.
+** Only triggers on regular attacks, manual attacks and auto-attacks alike. {{M|Instant attacks}} do not trigger this.
+*** Does not trigger when manually casting an {{M|active attack modifier}} on an hero, but does trigger if auto-cast is used.
+** Only protects heroes, including {{M|illusions}}, {{M|clones}}, and the {{H|Spirit Bear}}.
+** Only protects against heroes, including illusions, clones, and {{M|creep-heroes}}.
+** <b>Note that the factions of the attacking and attacked heroes do not matter!</b>
+*** An enemy tower can be aggroed by actively {{M|denying}} an allied hero, or when being forced to attack allies through a {{M|taunt}}.
+*** This counteracts the previous manual de-aggro special behavior.
+*** While the manual de-aggro triggers upon attack order, the protective behavior triggers upon order and attack begin.
+*** Therefore, when denying an ally, the tower initially de-aggros upn giving the attack order, and re-aggros upon beginning an attack.
+** This behavior also applies to [[lane creeps]], but not to {{U|Fountain|text=Fountains}}.
+
+===Visual Indicators===
+When approaching a tower, a section of the tower's attack range slowly becomes visible, starting to fade in when about 600 range away from it. The closer the player gets, the more it becomes visible. When standing in front of it, the effect appears like a bending wall. If the tower is already attacking, the effect appears yellow instead.
+
+Upon crossing the wall, the entire attack range circle becomes visible. If the target starts attacking the player, a red line appears, pointing from the tower to the player, along with an <ab>weapons_tower_tower_aggro.mp3</ab> audio cue, warning the player that the tower is targeting them. If the tower switches away from the player, the effects turn yellow, and the targeting effect plays again, on the new target.
+
+These effects are all client-sided, each player sees them differently.
+
+===Tower Bounty===
+All 3 types of Tower Bounty grant unreliable gold. [[Turbo Mode]] has a building {{Gold|Gold}} bounty multiplier of {{G|turbo mode factor}}.
+
+{| class="wikitable" width="70%"
+! style="width:20%;" | Gold {{Symbol|Gold}} Bounty Type
+! style="width:80%;" | Definition
+|-
+! style="text-align:center;" | Last Hit Bounty
+| 
+* Granted to the player who made the last hit on the Tower.
+|-
+! style="text-align:center;" | Team Bounty
+|
+* Granted to the team when a Tower is destroyed.
+* Grants the Team Bounty if there is no one to credit the last hit to (e.g. Tower being destroyed by [[lane creeps]]).
+|-
+! style="text-align:center;" | [[Deny|Denied]] Bounty
+|
+* Grants {{cf|expr}} <code>{{G|tower deny factor}} × TeamBounty</code> to both [[factions]] get when a Tower is denied.
+|}
+
+Grants the following amount of {{Gold|Gold}} bounty in certain conditions:
+{{Tabs dynamic
+|name1=Default
+|name2=Turbo Mode
+|hide-showall=true
+}}
+{{Tabs dynamic/tab|1}}
+{| class="wikitable" style="width:100%; text-align:center;"
+! class="header" width="16%" | Building
+! class="header" width="14%" | Team Bounty<sub> / Hero</sub>
+! class="header" width="14%" | Last Hit Bounty (Avg)
+! class="header" width="14%" | Last Hit (Σ)
+! class="header" width="14%" | Without Last Hit (Σ)
+! class="header" width="14%" | Deny Bounty<sub> / Hero</sub>
+! class="header" width="14%" | Deny Bounty (Σ)
+|-
+| {{#invoke:Lua|invoke|module=loop|fn=n|1|4|<nowiki>{{U|Tower (Tier {{#var:n}})}}
+{{!}} {{Gold|{{#vardefineecho:team{{#var:n}}|{{Show|U|Tower (Tier {{#var:n}})|bounty team}}}}}}
+{{!}} style="border-right:solid 5px;" {{!}} {{Gold|{{tooltip|{{#expr:{{#vardefineecho:solo{{#var:n}}|trunc(({{Show|U|Tower (Tier {{#var:n}})|bounty min}}+{{Show|U|Tower (Tier {{#var:n}})|bounty max}})/2)}}}}|{{Show|U|Tower (Tier {{#var:n}})|bounty min}} - {{Show|U|Tower (Tier {{#var:n}})|bounty max}}}}}}
+{{!}} {{Gold|{{#expr:{{#var:team{{#var:n}}}}*5+{{#var:solo{{#var:n}}}}}}}}
+{{!}} style="border-right:solid 5px;" {{!}} {{Gold|{{#expr:{{#var:team{{#var:n}}}}*5}}}}
+{{!}} {{Gold|{{#expr:trunc({{#var:team{{#var:n}}}}*{{G|tower deny factor}})}}}}
+{{!}} {{Gold|{{#expr:trunc({{#var:team{{#var:n}}}}*{{G|tower deny factor}})*5}}}}
+{{!}}-
+{{#ifexpr:{{#var:n}}<4|{{!}}}}</nowiki>}}
+|}
+{{Tabs dynamic/tab|2}}
+{| class="wikitable" style="width:100%; text-align:center;"
+! class="header" width="16%" | Building
+! class="header" width="14%" | Team Bounty<sub> / Hero</sub>
+! class="header" width="14%" | Last Hit Bounty (Avg)
+! class="header" width="14%" | Last Hit (Σ)
+! class="header" width="14%" | Without Last Hit (Σ)
+! class="header" width="14%" | Deny Bounty<sub> / Hero</sub>
+! class="header" width="14%" | Deny Bounty (Σ)
+|-
+| {{#invoke:Lua|invoke|module=loop|fn=n|1|4|<nowiki>{{U|Tower (Tier {{#var:n}})}}
+{{!}} {{Gold|{{#expr:{{#vardefineecho:team{{#var:n}}|{{Show|U|Tower (Tier {{#var:n}})|bounty team}}*{{G|turbo mode factor}}}}}}}}
+{{!}} style="border-right:solid 5px;" {{!}} {{Gold|{{tooltip|{{#expr:{{#vardefineecho:solo{{#var:n}}|(trunc(({{Show|U|Tower (Tier {{#var:n}})|bounty min}}+{{Show|U|Tower (Tier {{#var:n}})|bounty max}})/2))*{{G|turbo mode factor}}}}}}|{{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty min}}*{{G|turbo mode factor}}}} - {{#expr:{{Show|U|Tower (Tier {{#var:n}})|bounty max}}*{{G|turbo mode factor}}}}}}}}
+{{!}} {{Gold|{{#expr:{{#var:team{{#var:n}}}}*5+{{#var:solo{{#var:n}}}}}}}}
+{{!}} style="border-right:solid 5px;" {{!}} {{Gold|{{#expr:{{#var:team{{#var:n}}}}*5}}}}
+{{!}} {{Gold|{{#expr:trunc{{#var:team{{#var:n}}}}*{{G|tower deny factor}}}}}}
+{{!}} {{Gold|{{#expr:trunc({{#var:team{{#var:n}}}}*{{G|tower deny factor}})*5}}}}
+{{!}}-
+{{#ifexpr:{{#var:n}}<4|{{!}}}}</nowiki>}}
+|}
+{{Tabs dynamic/end}}
+
+===Tower Abilities===
+===Tower Protection===
+{{Spellcard
+| name = Tower Protection
+
+| icon0 = Tower Tower Protection
+| type0 = npc
+| target0 = Passive;Aura
+| affect0 = Allied Heroes
+| desc0 = Grants additional armor and health regeneration to nearby allies.
+
+| traitamp = aoe
+| trait1 = Radius
+| value1 = 900
+| trait2 = Armor Bonus
+| value2 = 3/5/5/5
+| trait3 = Health Regen Bonus
+| value3 = 1/3/3/3
+| trait4 = Aura Linger Duration
+| value4 = 0.5
+
+| is_illusionuses = yes
+
+| buff1 = modifier_tower_aura
+| buff1text = Tower Protection: Armor of nearby friendly heroes increased.
+| buff1dispel = None
+| buff2 = modifier_tower_aura_bonus
+| buff2text = Tower Protection: Armor increased by x and health regeneration by x.
+| buff2dispel = None
+
+| mechanics = * Only affects heroes, including {{M|illusions}}, {{M|clones}}, and {{M|creep-heroes}}.
+** Affects {{M|invulnerable}} heroes.
+** Does not affect {{M|hidden}} heroes.
+
+* Multiple instances of Tower Protection aura do not stack.
+** When teleporting between towers, the aura bonuses update immediately to the tower.
+
+* Can [[Health regeneration|regenerate]] up to {{calc|v1*60|v1={{#var:Tower Protection value3}}}} health on affected allies in one minute.
+}}
+
+===True Sight===
+{{Spellcard
+| name = True Sight
+
+| icon0 = True Sight
+| type0 = npc
+| target0 = Passive;Aura
+| affect0 = Enemies
+| desc0 = Reveals nearby invisible enemy units and wards, rendering them visible to allies.
+
+| trait1 = Reveal Radius
+| value1 = 700
+| trait2 = Aura Linger Duration 
+| value2 = 0.5
+
+| debuff1 = modifier_truesight
+| debuff1text = Hidden modifier
+| debuff1dispel = None
+
+| is_piercesdbi = Yes
+
+| mechanics = * Grants [[True Sight]] within the radius through an [[aura]] which affects enemies, it is not obstructed by anything.
+** The debuff lingers for {{#var:True Sight value2}} seconds.
+** As True Sight implies, it doesn't affect enemies with [[Invisibility#True_Sight_Immunity|True Sight Immunity]].
+
+* Holding {{Key press|Alt}} shows all allied Sentry Wards' and Towers' True Sight radius with a green ring.
+}}
+
+===Barracks Reinforcement===
+{{Spellcard
+| name = Barracks Reinforcement
+
+| icon0 = Tower Tower Protection
+| type0 = npc
+| target0 = Passive
+| affect0 = Self
+| desc0 = This tower is reinforced by each standing Barracks within the base.
+
+| trait1 = Armor Bonus per Barracks
+| value1 = 4
+
+| buff1 = modifier_armor_per_barracks
+| buff1text = Barracks Reinforcement: Reinforced by each standing barracks. Armor increased by x.
+| buff1dispel = None
+
+| mechanics = * This ability is only available for {{U|Tower (Tier 4)|text=Tier 4 Towers}}.
+
+* There are 6 barracks total, resulting in the following total armor values:
+** {{#invoke:Lua|invoke|module=loop|fn=i|0|{{#vardefineecho:barracks|7}}|<nowiki>{{#expr:{{#var:i}}*{{#var:Barracks Reinforcement value1}}}}{{#ifexpr:{{#var:i}}<{{#expr:{{#var:barracks}}-1}}|/|}}</nowiki>}} armor with 0/1/2/3/4/5/6 barracks standing
+}}
+
+==Barracks==
+[[File:Barracks.jpg|thumb|350px|{{M|Radiant}} and {{M|Dire}} Ranged and Melee Barracks.]]
+<section begin=barracks/>'''Barracks''' (commonly shortened to '''Rax''' or '''Racks''') are buildings, defended by and located behind {{U|Tower (Tier 3)|text=Towers (Tier 3)}} in each respective lanes. Barracks do not have to be destroyed to make {{U|Tower (Tier 4)|text=Towers (Tier 4)}} vulnerable.
+
+There are two types of Barracks on each lane per [[faction]], with a total of 6 Barracks per faction, 3 each of type — the {{Symbol|Melee}} [[Melee Barracks]] for {{U|Melee Creep|text=Melee Creeps}} and {{U|Flagbearer Creep|text=Flagbearer Creeps}} and the [[Ranged Barracks]] for {{Symbol|Ranged}} {{U|Ranged Creep|text=Ranged Creeps}} and {{U|Siege Creep|text=Siege Creeps}}. The Ranged Barracks are always located to the left of the Melee Barracks on each lane for both factions.<section end=barracks/>
+
+Barracks have the following attributes:
+* {{U|Melee Barracks}} have {{Show|U|Melee Barracks|health}} health (denyable at {{#expr:{{Show|U|Melee Barracks|health}}*{{G|building deny health}}}}), {{Show|U|Melee Barracks|health regen}} health regen, and {{Show|U|Melee Barracks|armor}} armor.
+* {{U|Ranged Barracks}} have {{Show|U|Ranged Barracks|health}} health (denyable at {{#expr:{{Show|U|Ranged Barracks|health}}*{{G|building deny health}}}}), {{Show|U|Ranged Barracks|health regen}} health regen, and {{Show|U|Ranged Barracks|armor}} armor.
+* All barracks have a [[daytime]] and [[nighttime]] vision range of {{Symbol|Daytime}} {{Show|U|Melee Barracks|sight range day}} and {{Symbol|Nighttime}} {{Show|U|Melee Barracks|sight range night}}.
+* No attack capabilities and no [[True Sight]].
+* {{A|Buildings|Backdoor Protection}}.
+
+===Lane Creep Upgrades===
+{{See also|Lane Creeps}}
+Barracks are [[invulnerable]] until their respective {{U|Tower (Tier 3)}} defending them is destroyed. The loss of Barracks does not prevent [[lane creeps]] from spawning but upgrades them instead.
+{{#lst:Lane Creeps|upgrades}}
+
+===Barracks Bounty===
+All 3 types of Barracks Bounty grant unreliable gold. [[Turbo Mode]] has a building {{Gold|Gold}} bounty multiplier of {{G|turbo mode factor}}.
+
+{| class="wikitable" width="70%"
+! style="width:20%;" | Gold {{Symbol|Gold}} Bounty Type
+! style="width:80%;" | Definition
+|-
+! style="text-align:center;" | Last Hit Bounty
+| 
+* Granted to the player who made the last hit on the Barracks.
+* The player who made the last hit is not granted the Team Bounty and vice versa.
+|-
+! style="text-align:center;" | Team Bounty
+|
+* Granted to the team when a Barracks is destroyed.
+* Grants the Team Bounty if there is no one to credit the last hit to (e.g. Barracks being destroyed by [[lane creeps]]).
+|-
+! style="text-align:center;" | [[Deny|Denied]] Bounty
+|
+* Does not reduce the Team Bounty. Grants the same amount as Team Bounty.
+|}
+
+Grants the following amount of {{Gold|Gold}} bounty in certain conditions:
+{{Tabs dynamic
+|name1=Default
+|name2=Turbo Mode
+|hide-showall=true
+}}
+{{Tabs dynamic/tab|1}}
+{| class="wikitable" style="width:100%; text-align:center;"
+! class="header" width="15%" | Building
+! class="header" width="17%" | Team Bounty<sub> / Hero</sub>
+! class="header" width="17%" | Last Hit Bounty (Avg)
+! class="header" width="17%" | Last Hit (Σ)
+! class="header" width="17%" | Without Last Hit (Σ)
+! class="header" width="17%" | Deny Bounty<sub> / Hero</sub>
+|-
+| {{Symbol|Melee}} [[Melee Barracks]]
+| {{Gold|{{Show|U|Melee Barracks|bounty team}}}}
+| {{Gold|{{tooltip|{{#expr:{{#vardefineecho:solom|trunc(({{Show|U|Melee Barracks|bounty min}}+{{Show|U|Melee Barracks|bounty max}})/2)}}}}|{{Show|U|Melee Barracks|bounty min}} - {{Show|U|Melee Barracks|bounty max}}}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{#var:solom}}+{{Show|U|Melee Barracks|bounty team}}*5}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{Show|U|Melee Barracks|bounty team}}*5}}}}
+| rowspan="2" | Same as Team Bounty
+|-
+| {{Symbol|Ranged}} [[Ranged Barracks]]
+| {{Gold|{{Show|U|Ranged Barracks|bounty team}}}}
+| {{Gold|{{tooltip|{{#expr:{{#vardefineecho:solom|trunc(({{Show|U|Ranged Barracks|bounty min}}+{{Show|U|Ranged Barracks|bounty max}})/2)}}}}|{{Show|U|Ranged Barracks|bounty min}} - {{Show|U|Ranged Barracks|bounty max}}}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{#var:solom}}+{{Show|U|Ranged Barracks|bounty team}}*5}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{Show|U|Ranged Barracks|bounty team}}*5}}}}
+|}
+{{Tabs dynamic/tab|2}}
+{| class="wikitable" style="width:100%; text-align:center;"
+! class="header" width="15%" | Building
+! class="header" width="17%" | Team Bounty<sub> / Hero</sub>
+! class="header" width="17%" | Last Hit Bounty (Avg)
+! class="header" width="17%" | Last Hit (Σ)
+! class="header" width="17%" | Without Last Hit (Σ)
+! class="header" width="17%" | Deny Bounty<sub> / Hero</sub>
+|-
+| {{Symbol|Melee}} [[Melee Barracks]]
+| {{Gold|{{#expr:{{#vardefineecho:teamm|{{Show|U|Melee Barracks|bounty team}}*{{G|turbo mode factor}}}}}}}}
+| {{Gold|{{tooltip|{{#expr:{{#vardefineecho:solom|(trunc(({{Show|U|Melee Barracks|bounty min}}+{{Show|U|Melee Barracks|bounty max}})/2))*{{G|turbo mode factor}}}}}}|{{#expr:{{Show|U|Melee Barracks|bounty min}}*{{G|turbo mode factor}}}} - {{#expr:{{Show|U|Melee Barracks|bounty max}}*{{G|turbo mode factor}}}}}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{#var:solom}}+{{#var:teamm}}*5}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{#var:teamm}}*5}}}}
+| rowspan="2" | Same as Team Bounty
+|-
+| {{Symbol|Ranged}} [[Ranged Barracks]]
+| {{Gold|{{#expr:{{#vardefineecho:teamm|{{Show|U|Ranged Barracks|bounty team}}*{{G|turbo mode factor}}}}}}}}
+| {{Gold|{{tooltip|{{#expr:{{#vardefineecho:solom|(trunc(({{Show|U|Ranged Barracks|bounty min}}+{{Show|U|Ranged Barracks|bounty max}})/2))*{{G|turbo mode factor}}}}}}|{{#expr:{{Show|U|Ranged Barracks|bounty min}}*{{G|turbo mode factor}}}} - {{#expr:{{Show|U|Ranged Barracks|bounty max}}*{{G|turbo mode factor}}}}}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{#var:solom}}+{{#var:teamm}}*5}}}}
+| style="border-right:solid 5px;" | {{Gold|{{#expr:{{#var:teamm}}*5}}}}
+|}
+{{Tabs dynamic/end}}
+
+==Ancients==
+{{For|the Ancients in lore|Nemesis Stones}}
+[[File:Dota2 Ancients.png|thumb|350px|Radiant's and Dire's Ancient.]]
+<section begin=ancients/>'''[[Ancient (Building)|Ancients]]''' (also commonly referred to as Thrones, or Tree for {{M|Radiant}}'s ancient and Throne for {{M|Dire}}'s ancient, as legacy names from DotA) are massive structures found inside each [[faction]]'s base and are the game's main objective. In order to win, the enemy team's Ancient must be destroyed, while the team's own Ancient must be kept alive. 
+
+Ancients are guarded by two {{U|Tower (Tier 4)|text=Towers (Tier 4)}} and both of them must be destroyed to remove the Ancient's [[invulnerability]].<section end=ancients/>
+
+The Ancients have the following attributes:
+* {{Show|U|Ancient (Building)|health}} health, {{Show|U|Ancient (Building)|health regen}} health regen (0 in [[Turbo Mode]]), and {{Show|U|Ancient (Building)|armor}} armor.
+* A [[daytime]] and [[nighttime]] vision range of {{Symbol|Daytime}} {{Show|U|Ancient (Building)|sight range day}} and {{Symbol|Nighttime}} {{Show|U|Ancient (Building)|sight range night}}.
+* No attack capabilities.
+* {{A|Buildings|Backdoor Protection}}.
+
+===Ancients Ability===
+{{Spellcard wrapper|Ancient (Building)|True Sight}}
+
+==Fountains==
+[[File:Fountains.jpg|thumb|350px|{{M|Radiant}} and {{M|Dire}} Fountain.]]
+<section begin=fountains/>'''[[Fountain]]s''' are located in the [[respawn]] areas of both [[faction]]s' base. They provide max [[Health Regeneration|health]] and [[mana regeneration]] to all allied units affected by {{A|Fountain|Rejuvenation Aura}}.<section end=fountains/>
+
+The Fountains have the following attributes
+* Permanently [[invulnerable]].
+* A [[daytime]] and [[nighttime]] vision range of {{Symbol|Daytime}} {{Show|U|Fountain|sight range day}} and {{Symbol|Nighttime}} {{Show|U|Fountain|sight range night}}.
+* Ranged attacks with a range of {{Symbol|Ranged}} {{Show|U|Fountain|attack range}} and projectile speed of {{Show|U|Fountain|projectile speed}}.
+** They deal {{Symbol|attack damage}} {{Show|U|Fountain|attack damage min}}‒{{Show|U|Fountain|attack damage max}} damage per attack, with {{#expr:1/{{Show|U|Fountain|base attack time}} round2}} attacks per second ({{#expr:(({{Show|U|Fountain|attack damage min}}+{{Show|U|Fountain|attack damage max}})/2)*(1/{{Show|U|Fountain|base attack time}}) round2}} DPS).
+** 25% of the damage dealt to a target is splashed to other units in a 250 radius.
+** {{A|Fountain|Fountain Damage}} are considered player-based damage and [[dispel]]s consumables, and other abilities that are normally disabled by player-based damage.
+** Uses the same [[Buildings#Attack Priority|attack priority]] as Towers, except that they cannot be aggroed immediately by attacking an enemy hero.
+
+===Fountain Ability===
+[[File:Dota 2 Fountain Invulnerability preview.jpg|thumb|250px|{{H|Primal Beast}} is invulnerable upon respawning.]]
+{{Spellcard wrapper|Fountain|Rejuvenation Aura}}
+
+{{Spellcard wrapper|Fountain|Fountain Damage}}
+
+{{Spellcard wrapper|Fountain|True Sight}}
+
+==Effigy Buildings==
+[[File:Effigy Buildings.jpeg|thumb|350px|{{M|Radiant}} and {{M|Dire}} Effigy Buildings.]]
+<section begin=effigies/>'''[[Effigy Building]]s''', or '''Filler Buildings''' are the other buildings within a [[faction]]'s base that act as buffers to delay the [[lane creeps]] from damaging the {{U|Tower (Tier 4)|text=Towers (Tier 4)}}. As of [[{{#lpdb:datapoint|conditions=[[type::version]]|order=date DESC|limit=1|template=Identity{{!}}param=information}}]], there are 7 Effigy Buildings in the base spread around the [[Buildings#Ancients|Ancient]].
+
+Five of the seven Effigy Buildings form a half-circle around the Ancient and are customizable with [[Effigy|Effigy Blocks]], giving them a different look and making them display a text notification when destroyed. This has only cosmetical purposes, each player can customize one of the five Effigy Buildings in their base.
+
+The {{M|Radiant}} has two different types of effigy building models, while the {{M|Dire}} has one model for all.<section end=effigies/>
+
+The Effigy Buildings have the following attributes:
+* {{Show|U|Effigy Building|health}} health (denyable at {{#expr:{{Show|U|Effigy Building|health}}*{{G|building deny health}}}}), {{Show|U|Effigy Building|health regen}} health regen, and {{Show|U|Effigy Building|armor}} armor.
+* A [[daytime]] and [[nighttime]] vision range of {{Symbol|Daytime}} {{Show|U|Effigy Building|sight range day}} and {{Symbol|Nighttime}} {{Show|U|Effigy Building|sight range night}}.
+* A [[Gold]] bounty of {{Gold|{{ValueColor|1|{{Show|U|Effigy Building|bounty min}}|gold|x}}}} ({{Gold|{{ValueColor|1|{{#expr:{{Show|U|Effigy Building|bounty min}}*{{G|turbo mode factor}}}}|gold|x}}}} in [[Turbo Mode]]). Grants unreliable gold.
+* No attack capabilities and no [[True Sight]].
+* {{A|Buildings|Backdoor Protection}}.
+
+==Defender's Gate==
+[[File:Defender's Gates.jpeg|thumb|350px|{{M|Radiant}} and {{M|Dire}} Defender's Gates.]]
+<section begin=Defender's Gates />'''Defender's Gates''' are forced fields placed at the walls of the main bases of each [[faction]]. These force fields only allow allies to path through them, blocking enemies off completely. Both factions have 2 Defender's Gates, located at the furthest edge of the base walls behind the top and bottom {{U|Tower (Tier 3)|text=Towers (Tier 3)}}.<section end=Defender's Gates/>
+
+===Defender's Gate===
+{{Spellcard
+| name = Defender's Gate
+
+| icon0 = Defender's Gate wikiasset
+| type0 = npc
+| target0 = Passive
+| affect0 = Enemies
+| desc0 = A permanent force field that grants vision and allows allies to path through freely, but fully blocks enemies.
+
+| trait1 = Segments
+| value1 = 15
+| trait2 = Pathing Block Radius
+| value2 = 24
+| trait3 = Vision Radius
+| value3 = 700
+
+| mechanics = * Defender's Gate can neither interact with any abilities nor be selected.
+
+* The Defender's Gate consist of {{#var:Defender's Gate value1}} segments that are lined up very tightly.
+** The segments have a collision size of {{#var:Defender's Gate value2}} and are placed every {{#vardefineecho:dg distance|12}} distance from the previous segment, overlapping the segments to create a tight line.
+** The gate has a width of {{#var:Defender's Gate value2}} and a length of {{#expr:{{#var:Defender's Gate value2}}+({{#var:Defender's Gate value2}}-{{#var:dg distance}})*({{#var:Defender's Gate value1}}-1)}}.
+
+* A non-selectable unit (<code>npc_dota_base_blocker</code>) is placed in the center of the Defender's Gate.
+** The aura grants allies [[Collision size#Ignoring Collision Size|unobstructed movement]], but not phased movement.
+** Units with [[flying movement]] can also pass through the Defender's Gate freely.
+
+* Holding {{key press|ALT}} reveals the gates' vision radius in the world and on the minimap.
+}}
+
+==Abilities Affecting Buildings==
+The following abilities can target or damage buildings. Hero abilities that deal [[physical]] attack damage are reduced by {{A|Attack Damage|Reinforced}} as well as standard [[armor]] value reductions. More information can be found in the abilities' respective notes.
+
+<section begin=Affects Buildings Sources />
+{{SkillListHead|title=Bonus damage vs buildings}}
+{{SkillListLite
+| source = Attack Damage
+| name = Reinforced
+}}
+{{SkillListLite
+| source = Earth
+| name = Demolish
+}}
+{{SkillListLite
+| source = Spirit Bear
+| name = Demolish
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Physical damage}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Jinada
+}}
+{{SkillListLite
+| source = Centaur Warrunner
+| name = Retaliate
+| nametext = Retaliate<sup>4<sup>
+}}
+{{SkillListLite
+| source = Clinkz
+| name = Searing Arrows
+}}
+{{SkillListLite
+| source = Gyrocopter
+| name = Flak Cannon
+| nametext = Flak Cannon<sup>2a<sup>
+}}
+{{SkillListLite
+| source = Roshan
+| name = Bash
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Lil' Shredder
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Grab
+| nametext = Tree Attack
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Fervor
+| nametext = Fervor<sup>2b<sup>
+}}
+{{SkillListLite
+| source = Weaver
+| name = Geminate Attack
+}}
+{{SkillListLite
+| source = Windranger
+| name = Focus Fire
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Physical damage to multiple buildings}}
+{{SkillListLite
+| source = Clinkz
+| name = Searing Arrows
+| nametext = Searing Arrows <sup>1<sup>
+}}
+{{SkillListLite
+| source = Death Prophet
+| name = Exorcism
+| nametext = Exorcism<sup>4<sup>
+}}
+{{SkillListLite
+| source = Gyrocopter
+| name = Flak Cannon
+| nametext = Flak Cannon<sup>(activated) 2a<sup>
+}}
+{{SkillListLite
+| source = Luna
+| name = Moon Glaives
+}}
+{{SkillListLite
+| source = Muerta
+| name = Gunslinger
+}}
+{{SkillListLite
+| source = Mars
+| name = Bulwark
+| nametext = Bulwark<sup>2a<sup>
+}}
+{{SkillListLite
+| source = Razor
+| name = Eye of the Storm
+| nametext = Eye of the Storm<sup>2a<sup>
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Anchor Smash
+| nametext = Anchor Smash<sup>1<sup>
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Magical damage}}
+{{SkillListLite
+| source = Ancient Ice Shaman
+| name = Icefire Bomb
+| nametext = Icefire Bomb<sup>4<sup>
+}}
+{{SkillListLite
+| source = Leshrac
+| name = Diabolic Edict
+}}
+{{SkillListLite
+| source = Lycan Lane Wolf
+| name = Cripple
+| nametext = Cripple<sup>2b<sup>
+}}
+{{SkillListLite
+| source = Viper
+| name = Poison Attack
+| nametext = Poison Attack<sup>2b 4<sup>
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Magical damage to multiple buildings}}
+{{SkillListLite
+| source = Batrider
+| name = Smoldering Resin
+}}
+{{SkillListLite
+| source = Batrider
+| name = Sticky Napalm
+| nametext = Sticky Napalm<sup>3 4<sup>
+}}
+{{SkillListLite
+| source = Jakiro
+| name = Liquid Fire
+| nametext = Liquid Fire<sup>4<sup>
+}}
+{{SkillListLite
+| source = Pugna
+| name = Nether Blast
+| nametext = Nether Blast<sup>4<sup>
+}}
+{{SkillListLite
+| source = Techies
+| name = Proximity Mines
+| nametext = Proximity Mines<sup>4<sup>
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Flamethrower
+| nametext = Flamethrower<sup>4<sup>
+}}
+{{SkillListLite
+| source = Tiny
+| name = Toss
+| nametext = Toss<sup>4<sup>
+}}
+{{SkillListLite
+| source = Fallen Sky
+| name = Fallen Sky
+| nametext = Fallen Sky<sup>4<sup>
+}}
+{{SkillListLite
+| source = Meteor Hammer
+| name = Meteor Hammer
+| nametext = Meteor Hammer<sup>4<sup>
+}}
+{{SkillListTail}}
+<br/>
+{{SkillListHead|title=Armor Reduction}}
+{{SkillListLite
+| source = Assault Cuirass
+| name = Assault Aura
+}}
+{{SkillListLite
+| source = Desolator
+| name = Corruption
+}}
+{{SkillListLite
+| source = Dragon Knight
+| name = Wyrm's Wrath
+| nametext = Wyrm's Wrath<sup>3<sup>
+}}
+{{SkillListLite
+| source = Orb of Blight
+| name = Lesser Corruption
+}}
+{{SkillListLite
+| source = Orb of Corrosion
+| name = Corrosion
+}}
+{{SkillListLite
+| source = Orb of Destruction
+| name = Impeding Corruption
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Lil' Shredder
+}}
+{{SkillListLite
+| source = Stygian Desolator
+| name = Greater Corruption
+}}
+{{SkillListLite
+| source = Viper
+| name = Poison Attack
+| nametext = Poison Attack<sup>2b<sup>
+}}
+{{SkillListLite
+| source = Hoodwink
+| name = Hero Model
+| type = Hero
+| nametext = Armor Corruption <sup>1<sup>
+}}
+{{SkillListLite
+| source = Visage
+| name = Hero Model
+| type = Hero
+| nametext = Armor Corruption <sup>1<sup>
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Health Restoration Reduction}}
+{{SkillListLite
+| source = Orb of Corrosion
+| name = Corrosion
+}}
+{{SkillListLite
+| source = Orb of Frost
+| name = Frost
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Other Debuffs}}
+{{SkillListLite
+| source = Abaddon
+| name = Curse of Avernus
+| nametext = Curse of Avernus<sup>4<sup>
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Chronosphere
+| nametext = Chronosphere<sup>3<sup>
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Time Zone
+| nametext = Time Zone<sup>3<sup>
+}}
+{{SkillListLite
+| source = Jakiro
+| name = Liquid Fire
+}}
+{{SkillListLite
+| source = Hill Troll Berserker
+| name = Break
+}}
+{{SkillListLite
+| source = Kobold Soldier
+| name = Steal Weapon
+}}
+{{SkillListLite
+| source = Lycan Lane Wolf
+| name = Cripple
+| nametext = Cripple<sup>2b<sup>
+}}
+{{SkillListLite
+| source = Naga Siren
+| name = Song of the Siren
+}}
+{{SkillListLite
+| source = Roshan
+| name = Bash
+}}
+{{SkillListLite
+| source = Viper
+| name = Poison Attack
+}}
+{{SkillListTail}}
+<br/>
+{{SkillListHead|title=Armor Increase}}
+{{SkillListLite
+| source = Assault Cuirass
+| name = Assault Aura
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Protect}}
+{{SkillListLite
+| source = Buildings
+| name = Glyph of Fortification
+}}
+{{SkillListLite
+| source = Buildings
+| name = Backdoor Protection
+}}
+{{SkillListLite
+| source = Crimson Guard
+| name = Guard
+}}
+{{SkillListLite
+| source = Lich
+| name = Frost Shield
+}}
+{{SkillListLite
+| source = Ogre Magi
+| name = Fire Shield
+}}
+{{SkillListLite
+| source = Omniknight
+| name = Guardian Angel
+| nametext = Guardian Angel<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Pipe of Insight
+| name = Barrier
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Living Armor
+}}
+{{SkillListTail}}
+{{SkillListHead|title=DMG Reduction vs}}
+{{SkillListLite
+| source = Attack Damage
+| name = Runty
+}}
+{{SkillListLite
+| source = Attack Damage
+| name = Piercing
+}}
+{{SkillListLite
+| source = Clinkz
+| name = Skeleton Walk
+}}
+{{SkillListLite
+| source = Wraith King
+| name = Bone Guard
+}}
+{{SkillListLite
+| source = Underlord
+| name = Abyssal Horde
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Restore (HEAL/REGEN)}}
+{{SkillListLite
+| source = Buildings
+| name = Backdoor Protection
+}}
+{{SkillListLite
+| source = Lich
+| name = Frost Shield
+| nametext = Frost Shield<sup>1<sup>
+}}
+{{SkillListLite
+| source = Omniknight
+| name = Guardian Angel
+| nametext = Guardian Angel<sup>2a 5</sup>
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Living Armor
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Attack Speed}}
+{{SkillListLite
+| source = Assault Cuirass
+| name = Assault Aura
+}}
+{{SkillListLite
+| source = Ogre Magi
+| name = Bloodlust
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|4|Less effective on Buildings.}}
+{{Footnote|5|Provides Heal Amp and Health Regen Amp.}}
+<section end=Affects Buildings Sources />
+
+{{SkillListHead|collapse=yes|title=Affects Buildings Conditionally}}
+{{SkillListRich
+| source = Centaur Warrunner
+| name = Retaliate
+| notes = Affects enemy buildings. Allied buildings are not affected. Damage is reduced by armor value only.
+}}
+{{SkillListRich
+| source = Death Prophet
+| name = Exorcism
+| notes = Damage is reduced by armor value and type.
+}}
+{{SkillListRich
+| source = Dragon Knight
+| name = Elder Dragon Form
+| notes = Corrosive Breath deals full damage to buildings.
+}}
+{{SkillListRich
+| source = Fallen Sky
+| name = Fallen Sky
+| notes = Fully affects buildings. Uses different damage values as against other units.
+}}
+{{SkillListRich
+| source = Gyrocopter
+| name = Flak Cannon
+| nametext = Side Gunner
+| notes aghs = The passive Side Gunner attacks can target buildings.
+}}
+{{SkillListRich
+| source = Meteor Hammer
+| name = Meteor Hammer
+| notes = Fully affects buildings. Uses different damage values as against other units.
+}}
+{{SkillListRich
+| source = Naga Siren
+| name = Song of the Siren
+| notes = Fully affects enemy buildings. Does not affect allied buildings.
+}}
+{{SkillListRich
+| source = Razor
+| name = Eye of the Storm
+| notes aghs = Can attack buildings but does not reduce the armor of struck buildings. Damage is reduced by armor value only.
+}}
+{{SkillListRich
+| source = Tiny
+| name = Toss
+| notes = Deals reduced damage against buildings within the damage radius. Cannot toss or directly target buildings.
+}}
+{{SkillListRich
+| source = Tiny
+| name = Tree Grab
+| notes = Causes Tiny's attacks to deal more damage to buildings while wielding a tree.
+}}
+{{SkillListRich
+| source = Town Portal Scroll
+| name = Teleport
+| notes = Can teleport to buildings only.
+}}
+{{SkillListRich
+| source = Viper
+| name = Poison Attack
+| notes shard = Deals reduced damage to buildings and reduces affected target's armor based on current stacks.
+}}
+{{SkillListRich
+| source = Windranger
+| name = Focus Fire
+| notes = Able to target buildings.
+}}
+{{SkillListTail}}
+
+=Interactions with Wards=
+
+{{SkillListHead|title=Tower attacks considered as hero attacks}}
+{{SkillListLite
+| source = Clinkz
+| name = Bone and Arrow
+| nametext = Skeleton Archer
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Healing Ward
+}}
+{{SkillListLite
+| source = Shadow Shaman
+| name = Mass Serpent Ward
+}}
+{{SkillListLite
+| source = Shadow Shaman
+| name = Urnaconda
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Buildings deals 0 damage}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Will-O-Wisp
+}}
+{{SkillListLite
+| source = Phoenix
+| name = Supernova
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Ignored by Buildings}}
+{{SkillListLite
+| source = Techies
+| name = Proximity Mines
+}}
+{{SkillListTail}}
+
+=Trivia=
+* In DotA, {{A|Buildings|Glyph of Fortification}} grants allied buildings [[spell immunity|magic immunity]] and 9999 [[armor]], instead of 100% incoming damage reduction.
+** Due to how the game rounds up damage values, this resulted in all attacks still dealing 1 damage to the building.
+** The magic immunity also prevented spells that usually affect buildings from affecting them.
+** In earlier versions of DotA, Glyph did not grant spell immunity, and spells such as {{A|Pugna|Nether Blast}} could deal damage through it.
+
+* In DotA, the {{M|Radiant}} are called [https://warcraft.wiki.gg/wiki/Sentinels The Sentinel], the primary army of the {{wc3|Night Elf|text=Night Elves}}.
+** As such, all of the Radiant (Sentinel) buildings are Night Elf structures:
+*** The {{U|Tier 1 Tower|text=Towers}} use the model and name of the {{wc3|Ancient Protector|text=Ancient Protectors}}.
+*** The {{U|Melee Barracks}} use the model and name of the {{wc3|Ancient of War|text=Ancients of War}}.
+*** The {{U|Ranged Barracks}} use the model and name of the {{wc3|Ancient of Lore|text=Ancients of Lore}}.
+*** The {{U|Effigy Building|text=Effigy Buildings}} use the model and name of the {{wc3|Moon Well|text=Moon Wells}}, and there are 11 of them.
+*** Besides these, there are more filler buildings in DotA:
+**** Two {{wc3|Ancient of Wind|text=Ancients of Wind}}, located behind the top and bottom barracks. They have 900 health and 5 armor.
+**** Two {{wc3|Hunter's Hall|text=Hunter's Halls}}, located further behind the Ancients of Wind. They have 1100 health and 5 armor.
+*** The {{U|Fountain}} uses the model {{wc3|Fountain of Health}}, and is named <i>Well of Life</i>.
+**** It is <i>not</i> [[invulnerable]]; It has 50000 health and 0 armor, and can be attacked and destroyed.
+*** The {{U|Ancient (Building)}} is called <i>The World Tree</i>, and uses a custom model of the [https://warcraft.wiki.gg/wiki/World_Tree World Tree], whose creator is unknown.
+***: The model can be found [https://www.hiveworkshop.com/threads/tree-of-life-wtv2_86.245215/ here].
+
+* In DotA, the {{M|Dire}} are called [https://warcraft.wiki.gg/wiki/Scourge The Scourge], one of the three major {{wc3|Undead}} factions in the Warcraft universe.
+** As such, all of the Dire (Scourge) buildings are Undead structures:
+*** The {{U|Tower (Tier 1)|F=Dire|text=Towers}} use the model and name of the {{wc3|Spirit Tower|text=Spirit Towers}}.
+*** The {{U|Melee Barracks|F=Dire}} use the model and name of the {{wc3|Crypt|text=Crypts}}.
+*** The {{U|Ranged Barracks|F=Dire}} use the model and name of the {{wc3|Temple of the Damned|text=Temples of the Damned}}.
+*** The {{U|Effigy Building|F=Dire|text=Effigy Buildings}} use the model and name of the {{wc3|Ziggurat|text=Ziggurats}}, and there are 11 of them.
+*** Besides these, there are more filler buildings in DotA:
+**** Two {{wc3|Sacrificial Pit|text=Sacrificial Pits}}, located behind the top and bottom barracks. They have 900 health and 5 armor.
+**** Two {{wc3|Boneyard|text=Boneyards}}, located further behind the Ancients of Wind. They have 1100 health and 5 armor.
+*** The {{U|Fountain|F=Dire}} uses the [https://warcraft.wiki.gg/wiki/Fountain_of_Health#Origins defiled] version of the {{wc3|Fountain of Health}}, and is named <i>Defiled Fountain of Life</i>.
+**** It is <i>not</i> [[invulnerable]]; It has 50000 health and 0 armor, and can be attacked and destroyed.
+*** The {{U|Ancient (Building)|F=Dire}} is called <i>The Frozen Throne</i>, and uses the [https://warcraft.wiki.gg/wiki/Frozen_Throne Frozen Throne] model from the campaign.
+
+==Gallery==
+<gallery>
+Glyph of Fortification old abilityicon dota2 gameasset.png|Placeholder Glyph icon
+Dire Barracks Concept Art1.jpg|Dire Barracks [[Concept Art]]
+</gallery>
+
+=Recent Changes=
+{{Main|Buildings/Changelogs}}
+{{Recent changes wrapper}}
+
+{{MechanicsNav}}
+[[Category:Gameplay]]
+[[Category:Mechanics]]
+
+[[ru:Постройки]]

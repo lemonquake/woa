@@ -1,0 +1,180 @@
+[[File:Night Stalker Darkness abilityicon dota2 gameasset.png|frame]]
+{{Quotation|Dawnbreaker|Is it just me or is the sun shining particularly bright today?|sound=vo_dawnbreaker_valora_levelup_14.mp3}}
+<dfn>Time of day</dfn> is a gameplay element in Dota 2 that operates alongside the game's clock. Certain mechanics behave differently depending on the time of day.
+
+As soon as a match starts (after the heroes from both [[factions]] have been shown), the clock starts at one of the following values, depending on the [[game mode]]:
+* {{G|clock start regular}} in a regular match.
+* {{G|clock start bots}} in a [[Game_modes#Play_vs_Bots|Play vs Bots]] match.
+* {{G|clock start turbo}} in a [[Game_modes#Turbo_Mode|Turbo]] match.
+** However, [[Game_modes#New_Player_Mode|New_Player_Mode]] starts at {{G|clock start regular}}, despite using the Turbo ruleset. Item availability isn't adjusted here, meaning that because of the extra time spent in the preparation phase, items such as {{I|Aghanim's Shard}} will become available in the shop {{#expr:{{G|clock start turbo}}-{{G|clock start regular}}}} seconds "earlier".<!--https://github.com/ValveSoftware/Dota2-Gameplay/issues/9851-->
+* {{G|clock start demo}} in the Demo Hero mode.
+
+==Day-Night Cycle==
+[[File:DayNight.png|thumb|The Day/Night indicator in the default [[HUD Skins|HUD]].]]
+Each day in Dota 2 is {{#expr:{{G|day duration}}/60}} minutes long, divided evenly between daytime and nighttime. Each match starts out at nighttime during the preparation phase pre-horn. Once the <ab>ambient_horn_radiant.mp3</ab><ab>ambient_horn_dire.mp3</ab> horn sounds (Radiant/Dire) and the game time reaches 0:00, the first dawn starts. The first night begins at {{#expr:{{G|day duration}}/60/2}}:00, the second day starts at {{#expr:{{G|day duration}}/60}}:00, and so on. Shifting from day to night and vice versa is signaled by an audio cue, with nighttime being announced with a wolf's howl <ab>ambient_night.mp3</ab>, while daytime is announced with a bird's tweet and a rooster's crow <ab>ambient_morning.mp3</ab>. Some custom maps may have their own version of these audio cues.
+
+At night, the map is darker and most units experience reduced vision, as detailed below. Additionally, some heroes have their abilities modified according to the time of day, with the most notable example being {{H|Night Stalker}}.
+
+{{Key press|Alt|mouseleft}} the clock prints the time in allied chat, and also prints whether {{Rune|Bounty}} and/or [[Runes|Powerup runes]] are spawning soon.
+{{clr}}
+
+==Day-Night Modifying Abilities==
+<section begin=timechange abilities />The following abilities temporarily change the current state of the day to either daytime or nighttime. They do not pause the day-night cycle.<br>The duration of these abilities are independent from each other, and do not stack.
+{{SkillListHead|column=1|title=Game Clock Modifying Abilities According to Priority}}
+{{SkillListRich
+| source = Dawnbreaker
+| name = Solar Guardian
+| notes = Turns night into day for {{show|A|Dawnbreaker|Solar Guardian|value6}} seconds. Has a higher priority than the nighttime caused by {{A|Luna|Eclipse}} and {{A|Night Stalker|Dark Ascension}}.
+}}
+{{SkillListRich
+| source = Phoenix
+| name = Supernova
+| notes = Turns night into day for {{show|A|Phoenix|Supernova|value5}} seconds. Has a higher priority than the nighttime caused by {{A|Luna|Eclipse}} and {{A|Night Stalker|Dark Ascension}}.
+}}
+{{SkillListRich
+| source = Luna
+| name = Eclipse
+| notes = Turns day into night for {{show|A|Luna|Eclipse|value6}} seconds.
+}}
+{{SkillListRich
+| source = Night Stalker
+| name = Dark Ascension
+| notes = Turns day into night for {{show|A|Night Stalker|Dark Ascension|value3}} seconds.
+}}
+{{SkillListTail}}<section end=timechange abilities />
+
+===Affected Abilities===
+{{SkillListHead}}
+{{SkillListLite
+| source = Luna
+| name = Lunar Blessing
+}}
+{{SkillListLite
+| source = Lycan
+| name = Shapeshift
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Tree Dance
+}}
+{{SkillListLite
+| source = Moon Shard
+| name = Consume
+}}
+{{SkillListLite
+| source = Moon Shard
+| name = Shade Sight
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Void
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Crippling Fear
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Hunter in the Night
+}}
+{{SkillListTail}}
+
+==Neutral Creeps==
+{{Main|Neutral Creeps}}
+{{#lst:Neutral creeps|Nighttime}}
+
+==Vision==
+{{Main|Vision#Base Vision Range|l1=Vision}}
+{{#lst:Vision|Heroes}}
+
+===Talents===
+{{Talent bonus table|Night Vision|bonus vision}}
+
+There are currently no {{Symbol|Talent}} talents that increase vision during the day.
+
+==Server Ticks==
+Article about server ticks. The game server ticks at {{#expr:{{G|tick rate}} round3}}-seconds. This is how often Dota2 sends data between server and client.
+
+The minimum duration for an ability's duration is 1-server tick.
+
+==Version History==
+{{VersionTableStart}}
+{{VersionTableElement|7.38|
+* Units no longer gain 15 movement speed during the night.|
+}}
+{{VersionTableElement|7.33|
+* All units now gain 15 movement speed during the night. Effect is doubled for heroes, but it can be broken for 5 seconds upon attacking or taking damage from player-controlled sources (similar to Tranquil Boots).
+}}
+{{VersionTableElement|7.28|
+* Matches now start at {{Symbol|Nighttime}} nighttime during the preparation phase, and turn to day once the timer reaches 0:00.
+}}
+{{VersionTableElement|7.20|
+* Increased daytime/nighttime length from {{tooltip|240|4 minutes}} to {{tooltip|300|5 minutes}}.
+}}
+{{VersionTableElement|7.12|
+* {{A|Phoenix|Supernova}} now turns night into day for its duration.
+** Has a higher priority than {{A|Night Stalker|Darkness (5.61-7.20)|text=Darkness}} and {{A|Luna|Eclipse}}.
+}}
+{{VersionTableElement|6.83|
+* {{A|Night Stalker|Darkness (5.61-7.20)|text=Darkness}} no longer stops the day/night cycle anymore.
+}}
+{{VersionTableElement|6.79|
+* Reduced daytime/nighttime length from {{tooltip|360|6 minutes}} to {{tooltip|240|4 minutes}}.
+}}
+{{VersionTableElement|6.68|
+* Reduced daytime/nighttime length from {{tooltip|480|8 minutes}} to {{tooltip|360|6 minutes}}. [{{tooltip|?|Daytime/nighttime length now cycles at 25% faster rate.}}]
+* {{A|Luna|Eclipse}} now turns day into night for 10 seconds.
+}}
+{{VersionTableElement|6.63|
+* Time of Day is now synchronized across all game modes.
+}}
+{{VersionTableElement|6.19b|
+* Fixed a rare bug with {{A|Night Stalker|Darkness (5.61-7.20)|text=Darkness}} that caused permanent [[Time of Day|nighttime]].
+}}
+{{VersionTableEnd}}
+
+==Patch History==
+{{PatchTableStart}}
+{{PatchTableElement|2019-08-08|
+* {{Key press|Alt|mouseleft}} the clock to print the time now also prints whether {{Rune|Bounty}} and/or [[Runes|Powerup runes]] are spawning soon.
+}}
+{{PatchTableElement|2018-02-01|
+* Added {{Key press|Alt|mouseleft}} the clock to print the time, indicating how much time left on day or night.
+}}
+{{PatchTableElement|2016-12-13|
+* {{Key press|Alt}} now displays the time pre-horn instead of just showing either daytime or nighttime.
+}}
+{{PatchTableElement|2016-09-13|
+* {{Undocumented}} Fixed [[rune]] spawn times and day-night-cycle offset in longer matches.
+}}
+{{PatchTableElement|2014-12-17|
+* [[December 17, 2014 Patch#Update 4|'''Update 4''']]
+** Fixed {{A|Luna|Eclipse}} not turning day into night properly.
+}}
+{{PatchTableElement|2014-09-25|
+* {{Key press|Alt|mouseleft}} the clock now prints the current game time.
+}}
+{{PatchTableElement|2013-02-07|
+* Fixed day-night-cycle duration as well as initial state being a bit off.
+}}
+{{PatchTableElement|2011-09-29|
+* Updated and added new day-night-cycle display.
+* Added new sounds to indicate daytime and nighttime.
+}}
+{{PatchTableElement|2011-05-20|
+* Updated and cleaned up the visual transition between the day-night-cycle.
+}}
+{{PatchTableElement|2012-02-16|
+* Updated day-night-cycle indicator.
+}}
+{{PatchTableElement|2011-04-14|
+* Added day-night-cycle indicator.
+}}
+
+{{PatchTableEnd}}
+
+{{MechanicsNav}}
+
+[[Category:Mechanics]]
+
+[[ru:Время суток]]
