@@ -8,7 +8,7 @@
 | Sound effects and ambience (synthesised) | `assets/audio/` | beyond-heroes project | same | Owned by the author |
 | UI icons (items, skills, attributes, status, ui), SVG | `assets/ui/` | beyond-heroes project | same | Owned by the author |
 | Trees, plants, grass, rocks | `assets/nature/` | Quaternius, Stylized Nature MegaKit (Standard) | quaternius.itch.io/stylized-nature-megakit | CC0 1.0 |
-| Terrain textures (leafy grass, aerial grass rock, rocky trail, forest ground 04, cliff side, patterned paving, burned ground 01, coast sand rocks 02, mossy cobblestone) | `assets/textures/terrain/` | Poly Haven authors | polyhaven.com (URLs and MD5s in `work/downloads/polyhaven/terrain_sources.json`) | CC0 1.0 |
+| Terrain textures (leafy grass, aerial grass rock, rocky trail, forest ground 04, cliff side, cobblestone floor 08, burned ground 01, coast sand rocks 02, stone pathway 02) | `assets/textures/terrain/` | Poly Haven authors | polyhaven.com (URLs and MD5s in `work/downloads/polyhaven/terrain_sources.json`) | CC0 1.0 |
 | Building textures (castle brick, medieval blocks, dark rock, volcanic tiles, clay roof tiles, rough block wall, weathered planks) | `assets/textures/building/` | Poly Haven authors via beyond-heroes | polyhaven.com | CC0 1.0 |
 | Buildings (towers, barracks, Ancients, fountains, effigies, shop) | `assets/buildings/` | Warriors of Aether (procedural, Blender 5.2) | `tools/blender/buildings.py` | Project-owned |
 | Fonts: Cinzel, Lato | `assets/ui/fonts/` | Natanael Gama (Cinzel); Łukasz Dziedzic (Lato) | Google Fonts | SIL Open Font License 1.1 (licence files included) |

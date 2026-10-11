@@ -187,5 +187,47 @@
   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_rough_2k.jpg",
   "md5": "81daa9a1d8b35dd9ffdff3aa7a74fbd9",
   "file": "forest_ground_04_rough.jpg"
+ },
+ {
+  "id": "cobblestone_floor_08",
+  "map": "Diffuse",
+  "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/cobblestone_floor_08/cobblestone_floor_08_diff_2k.jpg",
+  "md5": "56404e8a3cdf04c8697dbbc7f9ddd65c",
+  "file": "cobblestone_floor_08_albedo.jpg"
+ },
+ {
+  "id": "cobblestone_floor_08",
+  "map": "nor_gl",
+  "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/cobblestone_floor_08/cobblestone_floor_08_nor_gl_2k.jpg",
+  "md5": "3d1c34ed083de54949e8375d69033b0b",
+  "file": "cobblestone_floor_08_normal.jpg"
+ },
+ {
+  "id": "cobblestone_floor_08",
+  "map": "Rough",
+  "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/cobblestone_floor_08/cobblestone_floor_08_rough_2k.jpg",
+  "md5": "caae39f3ea47e2c09ca897d8dffa00ea",
+  "file": "cobblestone_floor_08_rough.jpg"
+ },
+ {
+  "id": "stone_pathway_02",
+  "map": "Diffuse",
+  "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/stone_pathway_02/stone_pathway_02_diff_2k.jpg",
+  "md5": "4a1eaa4f3aa788677762712b71049e8d",
+  "file": "stone_pathway_02_albedo.jpg"
+ },
+ {
+  "id": "stone_pathway_02",
+  "map": "nor_gl",
+  "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/stone_pathway_02/stone_pathway_02_nor_gl_2k.jpg",
+  "md5": "96fcdb222615b515d37ac8a333a1807a",
+  "file": "stone_pathway_02_normal.jpg"
+ },
+ {
+  "id": "stone_pathway_02",
+  "map": "Rough",
+  "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/stone_pathway_02/stone_pathway_02_rough_2k.jpg",
+  "md5": "3dc8dab4ee6d7dbe04594ae0c28a50a6",
+  "file": "stone_pathway_02_rough.jpg"
  }
 ]

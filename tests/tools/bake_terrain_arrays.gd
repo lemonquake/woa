@@ -7,7 +7,7 @@ const DIR := "res://assets/textures/terrain/"
 const OUT := "res://assets/generated/"
 ## Layer order is the terrain shader's numbering (terrain.gdshader).
 const LAYERS := ["leafy_grass", "aerial_grass_rock", "rocky_trail", "forest_ground_04", "cliff_side",
-	"patterned_paving", "burned_ground_01", "coast_sand_rocks_02", "mossy_cobblestone"]
+	"cobblestone_floor_08", "burned_ground_01", "coast_sand_rocks_02", "stone_pathway_02"]
 const SIZE := 1024
 
 func _init() -> void:

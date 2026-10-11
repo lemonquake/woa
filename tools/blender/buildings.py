@@ -155,50 +155,68 @@ def export(name):
 
 # ---- Towers ---------------------------------------------------------------------------------------------------------
 
+def banner(name, material, x, y, z, w, h, rot):
+    """A hanging cloth banner with a swallow-tail end, facing outward (rot = facing angle)."""
+    bm = bmesh.new()
+    pts = [(-w / 2, 0, 0), (w / 2, 0, 0), (w / 2, 0, -h), (0, 0, -h * 0.82), (-w / 2, 0, -h)]
+    vs = [bm.verts.new(p) for p in pts]
+    bm.faces.new(vs)
+    bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=Matrix.Rotation(rot - math.pi / 2, 3, "Z"), verts=bm.verts)
+    bmesh.ops.translate(bm, vec=(x, y, z), verts=bm.verts)
+    ob = new_obj(name, bm, material)
+    m = ob.modifiers.new("solid", "SOLIDIFY")
+    m.thickness = 0.03
+    return ob
+
+
 def tower(faction):
     reset()
     P = palette(faction)
     dusk = faction == "dusk"
     sides = 8
-    cyl("plinth", 1.75, 1.65, 0.35, sides, P["stone2"], rot=math.pi / 8, bev=0.05)
-    cyl("plinth2", 1.42, 1.35, 0.32, sides, P["stone"], z=0.35, rot=math.pi / 8, bev=0.04)
-    cyl("shaft", 1.05, 0.78, 4.1, sides, P["stone"], z=0.67, rot=math.pi / 8, bev=0.04)
-    # banded courses of stone along the shaft
-    for i, z in enumerate([1.3, 2.4, 3.5]):
-        r = 1.05 - (z - 0.67) / 4.1 * 0.27 + 0.05
-        cyl("band%d" % i, r, r - 0.01, 0.16, sides, P["trim"] if i == 1 else P["stone2"], z=z, rot=math.pi / 8, bev=0.02)
-    # buttresses
+    # stepped plinth with a ring of steps
+    cyl("plinth", 1.9, 1.8, 0.28, sides, P["stone2"], rot=math.pi / 8, bev=0.05)
+    cyl("plinth2", 1.55, 1.48, 0.3, sides, P["stone"], z=0.28, rot=math.pi / 8, bev=0.05)
+    cyl("shaft", 1.08, 0.8, 3.9, sides, P["stone"], z=0.58, rot=math.pi / 8, bev=0.04)
+    for i, z in enumerate([1.25, 2.35, 3.45]):
+        r = 1.08 - (z - 0.58) / 3.9 * 0.28 + 0.05
+        cyl("band%d" % i, r, r - 0.01, 0.14, sides, P["trim"] if i == 1 else P["stone2"], z=z, rot=math.pi / 8, bev=0.0, cap=False)
+    # four tall buttress fins flaring at the base
     for i in range(4):
         a = math.pi / 4 + i * math.pi / 2
-        x, y = math.cos(a), math.sin(a)
         bm = bmesh.new()
-        verts = [(0.0, -0.18, 0.0), (0.0, 0.18, 0.0), (0.95, 0.18, 0.0), (0.95, -0.18, 0.0),
-                 (0.0, -0.16, 2.3), (0.0, 0.16, 2.3), (0.22, 0.16, 2.3), (0.22, -0.16, 2.3)]
-        vs = [bm.verts.new(v) for v in verts]
-        for f in [(0, 1, 2, 3), (4, 7, 6, 5), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (3, 7, 4, 0)]:
-            bm.faces.new([vs[k] for k in f])
+        prof = [(0.0, 0.0), (1.05, 0.0), (0.95, 0.5), (0.45, 1.6), (0.18, 3.6), (0.0, 3.9)]
+        t = 0.16
+        front = [bm.verts.new((px, -t, pz)) for px, pz in prof]
+        back = [bm.verts.new((px, t, pz)) for px, pz in prof]
+        bm.faces.new(front)
+        bm.faces.new(list(reversed(back)))
+        n = len(prof)
+        for k in range(n):
+            bm.faces.new((front[k], front[(k + 1) % n], back[(k + 1) % n], back[k]))
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
         bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=Matrix.Rotation(a, 3, "Z"), verts=bm.verts)
-        bmesh.ops.translate(bm, vec=(x * 0.82, y * 0.82, 0.67), verts=bm.verts)
-        bevel(new_obj("buttress%d" % i, bm, P["stone2"]), 0.03)
-    # crown platform with crenellations
-    cyl("crown", 1.15, 1.2, 0.3, sides, P["stone2"], z=4.77, rot=math.pi / 8, bev=0.04)
-    ring_of(8, 1.02, 5.07, lambda i, x, y, z, a: box("merlon%d" % i, 0.32, 0.2, 0.3, P["stone"], x, y, z, a + math.pi / 2))
-    # lantern pillars and roof
-    ring_of(4, 0.62, 5.07, lambda i, x, y, z, a: cyl("pillar%d" % i, 0.09, 0.08, 1.35, 6, P["trim"], z, x, y), math.pi / 4)
-    cyl("roofbase", 0.86, 0.86, 0.12, sides, P["trim"], z=6.42, rot=math.pi / 8, bev=0.02)
+        bmesh.ops.translate(bm, vec=(math.cos(a) * 0.72, math.sin(a) * 0.72, 0.58), verts=bm.verts)
+        bevel(new_obj("fin%d" % i, bm, P["stone2"]), 0.03)
+        if dusk:
+            spike("finspike%d" % i, 0.12, 0.9, P["trim"], math.cos(a) * 1.2, math.sin(a) * 1.2, 1.3, (math.cos(a), math.sin(a), 0.9))
+    # crown: a wide open ring so the crystal is seen from above
+    cyl("crown", 1.25, 1.32, 0.34, sides, P["stone2"], z=4.48, rot=math.pi / 8, bev=0.04)
+    cyl("floor", 1.02, 1.02, 0.06, 16, P["stone"], z=4.82, bev=0.0)
+    cyl("rim", 0.62, 0.62, 0.08, 16, P["trim"], z=4.84, bev=0.0, cap=False)
     if dusk:
-        cyl("roof", 0.95, 0.0, 1.5, 6, P["roof"], z=6.54, bev=0.0)
-        ring_of(6, 0.8, 6.6, lambda i, x, y, z, a: spike("rspike%d" % i, 0.09, 0.8, P["trim"], x, y, z, (x, y, 0.7)))
+        ring_of(8, 1.18, 4.82, lambda i, x, y, z, a: spike("crownspike%d" % i, 0.16, 1.35 + (i % 2) * 0.5, P["trim"], x, y, z, (x * 0.35, y * 0.35, 1)))
         for i in range(10):
             a = i * math.tau / 10 + 0.2
-            zz = 1.0 + (i % 5) * 0.75
-            r = 1.05 - (zz - 0.67) / 4.1 * 0.27
-            spike("sspike%d" % i, 0.1, 0.65, P["trim"], math.cos(a) * r, math.sin(a) * r, zz, (math.cos(a), math.sin(a), 0.35))
+            zz = 0.9 + (i % 5) * 0.7
+            r = 1.08 - (zz - 0.58) / 3.9 * 0.28
+            spike("sspike%d" % i, 0.09, 0.55, P["trim"], math.cos(a) * r, math.sin(a) * r, zz, (math.cos(a), math.sin(a), 0.35))
     else:
-        cyl("roof", 0.92, 0.0, 1.25, 8, P["roof"], z=6.54, rot=math.pi / 8, bev=0.0)
-        gem("finial", 0.12, 0.6, P["trim"], 7.95)
-    gem("crystal", 0.32, 1.05, P["crystal"], 5.75)
+        ring_of(8, 1.18, 4.82, lambda i, x, y, z, a: box("merlon%d" % i, 0.34, 0.22, 0.42, P["stone"], x, y, z, a + math.pi / 2))
+        ring_of(4, 1.2, 5.24, lambda i, x, y, z, a: gem("cgem%d" % i, 0.1, 0.38, P["trim"], z + 0.15, x, y), math.pi / 4)
+    gem("crystal", 0.46, 1.5, P["crystal"], 6.1)
+    for k, a in enumerate([0.0, math.pi]):
+        banner("banner%d" % k, P["cloth"], math.cos(a + 0.4) * 1.22, math.sin(a + 0.4) * 1.22, 4.5, 0.55, 1.4, a + 0.4)
     export("tower_" + faction)
 
 
@@ -234,8 +252,8 @@ def barracks(faction, kind):
         box("lintel", 1.2, 0.2, 0.18, P["trim"], y=-d / 2 - 0.04, z=1.6)
         box("banner", 0.55, 0.04, 1.0, P["cloth"], y=-d / 2 - 0.05, z=1.85, bev=0.0)
     else:
-        cyl("hall", 1.45, 1.3, 2.3, 8, P["stone"], z=0.3, rot=math.pi / 8)
-        cyl("band", 1.4, 1.38, 0.18, 8, P["trim"], z=1.6, rot=math.pi / 8, bev=0.02)
+        cyl("hall", 1.45, 1.3, 2.0, 8, P["stone"], z=0.3, rot=math.pi / 8)
+        cyl("band", 1.4, 1.38, 0.18, 8, P["trim"], z=1.6, rot=math.pi / 8, bev=0.0, cap=False)
         if dusk:
             cyl("dome", 1.55, 0.2, 1.7, 8, P["roof"], z=2.6, rot=math.pi / 8, bev=0.0)
             ring_of(8, 1.42, 2.55, lambda i, x, y, z, a: spike("ds%d" % i, 0.1, 0.9, P["trim"], x, y, z, (x, y, 0.8)))
@@ -260,32 +278,37 @@ def ancient(faction):
     cyl("tier1", 4.6, 4.4, 0.45, 12, P["stone2"], rot=math.pi / 12, bev=0.06)
     cyl("tier2", 3.7, 3.55, 0.45, 12, P["stone"], z=0.45, rot=math.pi / 12, bev=0.05)
     cyl("tier3", 2.75, 2.6, 0.5, 12, P["stone2"], z=0.9, rot=math.pi / 12, bev=0.05)
-    cyl("trimring", 2.8, 2.8, 0.12, 12, P["trim"], z=1.4, rot=math.pi / 12, bev=0.02)
-    # monoliths around the dais
+    cyl("trimring", 2.8, 2.8, 0.12, 12, P["trim"], z=1.36, rot=math.pi / 12, bev=0.0, cap=False)
+    # stairs on four sides
+    for i in range(4):
+        a = i * math.pi / 2
+        for k in range(3):
+            d = 4.45 - k * 0.45
+            box("step%d_%d" % (i, k), 1.6, 0.5, 0.15 + k * 0.15, P["stone"], math.cos(a) * d, math.sin(a) * d, 0.0, a + math.pi / 2, 0.02)
+    # pylons around the dais, each topped with a small crystal (Dawn) or a hooked spike (Dusk)
     def mono(i, x, y, z, a):
-        h = 3.6 if i % 2 == 0 else 2.8
+        h = 3.2 if i % 2 == 0 else 2.5
         box("mono%d" % i, 0.55, 0.42, h, P["stone"], x, y, z, a + math.pi / 2, 0.05)
+        box("monocap%d" % i, 0.7, 0.55, 0.16, P["trim"], x, y, z + h, a + math.pi / 2, 0.02)
         if dusk:
-            spike("mspike%d" % i, 0.18, 1.2, P["trim"], x, y, z + h, (x * 0.15, y * 0.15, 1))
+            spike("mspike%d" % i, 0.2, 1.3, P["trim"], x, y, z + h + 0.1, (-x * 0.12, -y * 0.12, 1))
         else:
-            gem("mgem%d" % i, 0.18, 0.7, P["crystal"], z + h + 0.35, x, y)
+            gem("mgem%d" % i, 0.2, 0.75, P["crystal"], z + h + 0.55, x, y)
     ring_of(8, 3.95, 0.45, mono, math.pi / 8)
-    # arches holding the heart
-    for i in range(3):
-        a = i * math.tau / 3
-        x, y = math.cos(a) * 1.7, math.sin(a) * 1.7
-        bm = bmesh.new()
-        bmesh.ops.create_cone(bm, cap_ends=True, segments=6, radius1=0.32, radius2=0.12, depth=4.6,
-                              matrix=Matrix.Translation((0, 0, 2.3)))
-        tilt = Matrix.Rotation(math.radians(-18), 3, "X")
-        bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=tilt, verts=bm.verts)
-        bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=Matrix.Rotation(a + math.pi / 2, 3, "Z"), verts=bm.verts)
-        bmesh.ops.translate(bm, vec=(x, y, 1.4), verts=bm.verts)
-        new_obj("arm%d" % i, bm, P["trim"] if not dusk else P["stone"])
-    gem("heart", 1.05, 3.2, P["crystal"], 4.6, sides=8)
-    gem("heart_small1", 0.35, 1.0, P["crystal"], 2.8, 1.2, 0.5, 6, 0.4)
-    gem("heart_small2", 0.3, 0.9, P["crystal"], 3.1, -1.0, -0.8, 6, -0.5)
-    cyl("halo", 1.9, 1.9, 0.1, 24, P["trim"], z=4.5, bev=0.0, cap=False)
+    # central pedestal and bowl that cradle the floating heart
+    cyl("pedestal", 1.25, 0.95, 1.5, 12, P["stone"], z=1.4, bev=0.04)
+    cyl("bowl", 1.45, 1.3, 0.3, 16, P["stone2"], z=2.9, bev=0.03)
+    cyl("bowlrim", 1.5, 1.5, 0.1, 16, P["trim"], z=3.12, bev=0.0, cap=False)
+    if dusk:
+        # claws curling up around the heart
+        for i in range(5):
+            a = i * math.tau / 5
+            for k in range(3):
+                r = 1.55 - k * 0.32
+                z = 3.3 + k * 1.1
+                spike("claw%d_%d" % (i, k), 0.2 - k * 0.04, 1.3, P["stone"] if k < 2 else P["trim"],
+                      math.cos(a) * r, math.sin(a) * r, z, (-math.cos(a) * (0.2 + k * 0.35), -math.sin(a) * (0.2 + k * 0.35), 1))
+    gem("heart", 1.15, 3.4, P["crystal"], 5.4, sides=8)
     export("ancient_" + faction)
 
 

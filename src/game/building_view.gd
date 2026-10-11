@@ -9,10 +9,10 @@ const TEX := "res://assets/textures/building/"
 
 ## material name -> [texture set, tint, triplanar scale]
 const STONE := {
-	"WOA_StoneLight": ["ph_castle_brick_02_white", Color(1.0, 0.97, 0.9), 0.75],
-	"WOA_StoneWarm": ["ph_medieval_blocks_02", Color(0.98, 0.9, 0.78), 0.6],
-	"WOA_StoneDark": ["ph_dark_rock", Color(0.62, 0.55, 0.6), 0.55],
-	"WOA_StoneAsh": ["ph_volcanic_rock_tiles", Color(0.7, 0.6, 0.6), 0.65],
+	"WOA_StoneLight": ["ph_castle_brick_02_white", Color(1.0, 1.0, 0.97), 0.42],
+	"WOA_StoneWarm": ["ph_medieval_blocks_02", Color(0.96, 0.9, 0.8), 0.4],
+	"WOA_StoneDark": ["ph_dark_rock", Color(0.7, 0.62, 0.68), 0.4],
+	"WOA_StoneAsh": ["ph_volcanic_rock_tiles", Color(0.78, 0.66, 0.66), 0.45],
 	"WOA_RoofBlue": ["ph_clay_roof_tiles_02", Color(0.42, 0.62, 1.0), 1.2],
 	"WOA_RoofDark": ["ph_clay_roof_tiles_02", Color(0.45, 0.2, 0.28), 1.2],
 	"WOA_Wood": ["ph_weathered_planks", Color(0.85, 0.7, 0.55), 1.0],
@@ -83,14 +83,62 @@ func setup(u: SimUnit, terrain: TerrainBuilder) -> void:
 			bar_height = 5.5
 	model.scale = Vector3.ONE * s
 	_materials(position.y)
+	_find_floaters()
 	var col := Color(1.0, 0.8, 0.45) if team == 0 else Color(1.0, 0.25, 0.25)
 	light = OmniLight3D.new()
 	light.light_color = col
-	light.light_energy = 1.6 if u.kind != SimConst.Kind.ANCIENT else 2.4
+	light.light_energy = (1.1 if team == 0 else 0.8) if u.kind != SimConst.Kind.ANCIENT else (1.6 if team == 0 else 1.1)
 	light.omni_range = 6.0 if u.kind != SimConst.Kind.ANCIENT else 9.0
-	light.position.y = 5.8 * s if u.kind == SimConst.Kind.TOWER else (4.6 * s if u.kind == SimConst.Kind.ANCIENT else 4.0)
+	light.position.y = 6.8 * s if u.kind == SimConst.Kind.TOWER else (6.6 * s if u.kind == SimConst.Kind.ANCIENT else 4.4)
 	light.shadow_enabled = false
 	add_child(light)
+
+## Crystals float: they bob, turn slowly and carry orbiting rings of light.
+var _floaters: Array = []                  # [{node, base_y, phase, rings: [Node3D]}]
+var _t := 0.0
+
+func _find_floaters() -> void:
+	for n in model.find_children("*", "MeshInstance3D", true, false):
+		var nm := String(n.name)
+		if nm.begins_with("crystal") or nm.begins_with("heart") or nm == "orb":
+			var mi := n as MeshInstance3D
+			var aabb := mi.get_aabb()
+			var center := aabb.get_center()
+			var rings: Array = []
+			var big := nm.begins_with("heart")
+			for k in (2 if big else 1):
+				var r := MeshInstance3D.new()
+				var tm := TorusMesh.new()
+				var rad := maxf(aabb.size.x, aabb.size.z) * (0.72 + k * 0.28)
+				tm.inner_radius = rad * 0.93
+				tm.outer_radius = rad
+				tm.rings = 48
+				tm.ring_segments = 6
+				r.mesh = tm
+				r.material_override = _crystals[0] if not _crystals.is_empty() else null
+				r.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				r.position = center
+				r.rotation = Vector3(0.5 + k * 0.6, 0, 0.3 - k * 0.5)
+				mi.get_parent().add_child(r)
+				rings.append(r)
+			_floaters.append({"node": mi, "base": mi.position, "phase": randf() * TAU, "rings": rings, "center": center})
+
+func _process(dt: float) -> void:
+	_t += dt
+	for f in _floaters:
+		var n: Node3D = f.node
+		if not is_instance_valid(n):
+			continue
+		var bob := sin(_t * 1.3 + f.phase) * 0.12
+		n.position = (f.base as Vector3) + Vector3(0, bob, 0)
+		# spin about the crystal's own centre
+		n.rotation.y = _t * 0.6
+		n.position += (f.center as Vector3) - (f.center as Vector3).rotated(Vector3.UP, n.rotation.y)
+		var k := 0
+		for r: Node3D in f.rings:
+			r.position = (f.center as Vector3) + Vector3(0, bob, 0)
+			r.rotate_object_local(Vector3.UP, dt * (1.2 - k * 0.5))
+			k += 1
 
 func _materials(base_y: float) -> void:
 	for n in model.find_children("*", "MeshInstance3D", true, false):
@@ -121,24 +169,25 @@ func _material_for(nm: String, src: Material) -> Material:
 	if nm.begins_with("WOA_Crystal") or nm == "WOA_Water":
 		var c := ShaderMaterial.new()
 		c.shader = CRYSTAL_SHADER
-		var col := Color(1.0, 0.8, 0.4)
+		var col := Color(1.0, 0.7, 0.22)
 		if nm == "WOA_CrystalDusk":
-			col = Color(1.0, 0.15, 0.2)
+			col = Color(0.95, 0.1, 0.16)
 		elif nm == "WOA_Water":
 			col = Color(0.25, 0.65, 0.85)
 		c.set_shader_parameter("color", col)
-		c.set_shader_parameter("energy", 2.4 if nm != "WOA_Water" else 0.6)
+		c.set_shader_parameter("energy", 1.6 if nm != "WOA_Water" else 0.6)
 		_crystals.append(c)
 		return c
 	if src is BaseMaterial3D:
 		var m2 := (src as BaseMaterial3D).duplicate() as BaseMaterial3D
 		if nm == "WOA_Gold":
-			m2.metallic = 1.0
-			m2.roughness = 0.28
-			m2.albedo_color = Color(1.0, 0.78, 0.36)
+			m2.metallic = 0.9
+			m2.roughness = 0.42
+			m2.albedo_color = Color(0.78, 0.6, 0.3)
 		elif nm == "WOA_IronRed":
-			m2.metallic = 0.85
-			m2.roughness = 0.4
+			m2.metallic = 0.8
+			m2.roughness = 0.5
+			m2.albedo_color = Color(0.3, 0.08, 0.07)
 		return m2
 	return null
 
@@ -165,3 +214,7 @@ func _destroy() -> void:
 		tw.parallel().tween_property(light, "light_energy", 0.0, 0.8)
 	for c in _crystals:
 		c.set_shader_parameter("dim", 0.92)
+	for f in _floaters:
+		for r: Node3D in f.rings:
+			r.visible = false
+	_floaters.clear()
