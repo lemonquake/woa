@@ -42,6 +42,7 @@ func think() -> void:
 	if h == null or not h.alive:
 		return
 	h.bot = true
+	h.auto_attack = false
 	_learn(h)
 	_shop(h)
 	if h.hp < h.max_hp * 0.3 and state != "retreat":
@@ -136,7 +137,17 @@ func _own_tower(h: SimUnit, tier: int) -> SimUnit:
 			return u
 	return null
 
+var _next_tango := 0.0
+
+## Casting, channelling or walking to a cast target: let it finish rather than interrupt it.
+func _busy(h: SimUnit) -> bool:
+	return h.cast_phase != SimUnit.CastPhase.NONE or not h.channel.is_empty() 		or h.order in [O.CAST_POINT, O.CAST_NO_TARGET] and w.time < _cast_deadline
+
+var _cast_deadline := 0.0
+
 func _lane(h: SimUnit) -> void:
+	if _busy(h):
+		return
 	var path := w.map.lane_path(lane, h.team)
 	var allies: Array[SimUnit] = []
 	var foes: Array[SimUnit] = []
@@ -154,10 +165,14 @@ func _lane(h: SimUnit) -> void:
 			enemy_heroes.append(u)
 		elif u.kind == K.TOWER and u.team != h.team:
 			enemy_towers.append(u)
-	# use a salve / tango when chipped
-	if h.hp < h.max_hp * 0.5 and not _has_mod(h, "salve") and not _has_mod(h, "tango"):
-		if not _use_item(h, "salve") and h.hp < h.max_hp * 0.7:
-			_tango(h)
+	# use a salve / tango when chipped (and nothing is about to die in front of us)
+	if h.hp < h.max_hp * 0.6 and not _has_mod(h, "salve") and not _has_mod(h, "tango") and w.time >= _next_tango:
+		if h.hp < h.max_hp * 0.45 and _use_item(h, "salve"):
+			_next_tango = w.time + 2.0
+		elif _tango(h):
+			_next_tango = w.time + 18.0
+			_cast_deadline = w.time + 4.0
+			return
 	# 1. kill an enemy hero that is low
 	for e in enemy_heroes:
 		if e.hp < e.max_hp * 0.3 and h.hp > h.max_hp * 0.5 and not _under_enemy_tower(h, e.pos, enemy_towers):
@@ -281,18 +296,22 @@ func _incoming_dps(c: SimUnit) -> float:
 func _spells_on(h: SimUnit, e: SimUnit) -> void:
 	if w.abilities.cast_error(h, "arrow_storm", -1, null, e.pos) == "" and e.hp < e.max_hp * 0.7 and h.pos.distance_to(e.pos) < 900.0:
 		_order(h, {"type": O.CAST_POINT, "ability": "arrow_storm", "point": e.pos}, true)
+		_cast_deadline = w.time + 1.5
 		return
 	if w.abilities.cast_error(h, "gale_shot", -1, null, e.pos) == "" and h.pos.distance_to(e.pos) < 900.0:
 		_order(h, {"type": O.CAST_POINT, "ability": "gale_shot", "point": e.pos}, true)
+		_cast_deadline = w.time + 1.5
 
-func _tango(h: SimUnit) -> void:
+func _tango(h: SimUnit) -> bool:
 	for i in 6:
 		var it = h.inventory[i]
 		if it != null and it.id == "tango" and not _has_mod(h, "tango"):
-			var ti := w.map.tree_at(h.pos, 900.0)
+			var ti := w.map.tree_at(h.pos, 700.0)
 			if ti >= 0:
 				w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": i, "point": w.map.trees[ti].pos})
-			return
+				return true
+			return false
+	return false
 
 func _has_mod(h: SimUnit, mid: String) -> bool:
 	for m in h.modifiers:

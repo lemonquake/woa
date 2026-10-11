@@ -72,6 +72,7 @@ var streak := 0
 var hero_damage_log := {}                  # enemy hero id -> last game time they damaged us
 var stick_charges := 0
 var player := false
+var auto_attack := true                    # idle heroes attack enemies in acquisition range (Dota "Standard")
 var bot := false
 var look := {}                             # appearance dictionary (HeroLook) for the renderer
 

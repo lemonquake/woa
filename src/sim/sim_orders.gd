@@ -238,7 +238,7 @@ func _idle(u: SimUnit, hold: bool) -> void:
 	if t == null or not _attackable(u, t):
 		u.atk_target = -1
 		t = null
-		if u.is_hero():
+		if u.is_hero() and (u.auto_attack or hold):
 			t = _acquire(u, u.attack_range if hold else u.acquire_range)
 			if t:
 				u.atk_target = t.id
