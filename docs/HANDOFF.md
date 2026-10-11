@@ -4,15 +4,22 @@
 
 ## Status (keep this section current)
 
-**IMPLEMENTED, UNVERIFIED.**
+**IMPLEMENTED, PARTLY VERIFIED.**
 
 Verified:
-* The simulation's mechanics pass 30 headless tests.
-* The game renders and plays, with bots on both sides, as seen in the screenshots under `work/shots/`.
+* The simulation's mechanics pass 33 headless tests. A 10k-tick run takes about 2.6 ms per tick.
+* The game renders and plays, with bots on both sides. Screenshots are under `work/shots/`.
+* Performance gate PASSED (2026-10-12, 1080p, RTX 4060, full HUD, 240 s autoplay):
+  * 86 fps average;
+  * p50 11.1 ms, p95 14.8 ms;
+  * 2% of frames over 16.7 ms.
+  * HUD panels redraw at 20 Hz, and bar text is batched after the rectangles.
 
-Not yet done:
-* No independent blind visual review against Dota 2 reference images.
-* No sustained frame-time measurement. The sim profiles at about 2.5 ms per tick with ~150 units.
+Not met:
+* Blind visual review against Dota 2 reference shots: 7 passes, all REJECTED. The loop STOPPED on PLATEAU (see `work/lemondev/ledger.md`). The critics' remaining gap:
+  * hand-painted material authoring (towers and terrain still read semi-photographic);
+  * deeper AO and lighting.
+  * That is the top item in the backlog.
 
 ## Run it
 
@@ -23,7 +30,7 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 
 * The game opens on the **Hero Creator** (`src/ui/hero_creator.tscn`). Press Play to start a match against Bot Gerald.
 * Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 33 tests.
-* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured at 1080p on the RTX 4060: about 89 fps average, p95 13.3 ms.
+* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured at 1080p on the RTX 4060 with the HUD: 86 fps average, p95 14.8 ms (`--noui`: 104 fps).
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
 * Parse-check every script: `sh tools/check.sh`.
 * Rebuild the building models: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/buildings.py`.

@@ -23,6 +23,8 @@ var _announce_sub := ""
 var _announce_t := 0.0
 var _tip_lines: Array = []                 # [[text, size, color, kind]]
 var _tip_at := Vector2.ZERO
+var _redraw_t := 0.0
+var _last_tip: Array = []
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -79,8 +81,13 @@ func _process(dt: float) -> void:
 	_update_portrait()
 	_tip_lines = []
 	queue_redraw()
-	for c in [bottom, minimap, topbar, shop, tip]:
-		c.queue_redraw()
+	# panels redraw at 20 Hz (their contents change slowly); the tooltip follows the mouse every frame
+	_redraw_t -= dt
+	if _redraw_t <= 0.0:
+		_redraw_t = 0.05
+		for c in [bottom, minimap, topbar, shop]:
+			c.queue_redraw()
+	tip.queue_redraw()
 
 func _update_portrait() -> void:
 	var h := hero()
@@ -177,6 +184,7 @@ func toggle_shop() -> void:
 ## Tooltip content for this frame (drawn by Tip).
 func show_tip(at: Vector2, lines: Array) -> void:
 	_tip_lines = lines
+	_last_tip = lines
 	_tip_at = at
 
 # ======================================================================================================================
@@ -823,6 +831,15 @@ class Tip extends Control:
 
 	func _draw() -> void:
 		var lines: Array = hud._tip_lines
+		# panels only redraw at 20 Hz: keep showing the last tooltip while the mouse stays over them
+		if lines.is_empty() and hud._last_tip.size() > 0:
+			var m := get_viewport().get_mouse_position()
+			for c in [hud.bottom, hud.minimap, hud.shop]:
+				if c.visible and Rect2(c.global_position, c.size).has_point(m):
+					lines = hud._last_tip
+					break
+		if lines.is_empty():
+			hud._last_tip = []
 		if lines.is_empty():
 			return
 		var wmax := 0.0

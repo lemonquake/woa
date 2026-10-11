@@ -10,6 +10,7 @@ const K = C.Kind
 var game: Node                             # Main
 var font: Font
 var popups: Array = []                     # [{text, pos3, t, color, size, rise}]
+var _texts: Array = []                     # deferred labels: [font, pos, text, size, outline, colour]
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -32,6 +33,7 @@ func _draw() -> void:
 	var w: SimWorld = game.world
 	var my_team: int = game.player_team
 	var vp := get_viewport_rect().size
+	_texts.clear()
 	for v in game.views.values():
 		var u: SimUnit = w.get_unit(v.uid)
 		if u == null or not u.alive or not v.visible:
@@ -45,6 +47,11 @@ func _draw() -> void:
 		if s.x < -100 or s.y < -50 or s.x > vp.x + 100 or s.y > vp.y + 50:
 			continue
 		_bar(u, s, my_team)
+	# text after every rectangle, so the renderer can batch each kind together
+	for t in _texts:
+		draw_string_outline(t[0], t[1], t[2], HORIZONTAL_ALIGNMENT_LEFT, -1, t[3], t[4], Color(0, 0, 0, 0.9))
+	for t in _texts:
+		draw_string(t[0], t[1], t[2], HORIZONTAL_ALIGNMENT_LEFT, -1, t[3], t[5])
 	for p in popups:
 		var pos: Vector3 = p.pos + Vector3(0, p.t * p.rise, 0)
 		if cam.is_position_behind(pos):
@@ -98,9 +105,8 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		draw_rect(badge, Color(0.05, 0.05, 0.07, 0.95))
 		draw_rect(badge, Color(0.85, 0.7, 0.35), false, 1.0)
 		var tw := font.get_string_size(lv, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
-		draw_string(font, Vector2(badge.position.x + 9 - tw * 0.5, badge.position.y + 13), lv, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.92, 0.7))
+		_texts.append([font, Vector2(badge.position.x + 9 - tw * 0.5, badge.position.y + 13), lv, 12, 0, Color(1, 0.92, 0.7)])
 		var nm := u.name if u.look.get("display_name", "") == "" else String(u.look.display_name)
 		var nf := UiKit.font("bold")
 		var nw := nf.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
-		draw_string_outline(nf, Vector2(s.x - nw * 0.5, r.position.y - 7), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, 5, Color(0, 0, 0, 0.9))
-		draw_string(nf, Vector2(s.x - nw * 0.5, r.position.y - 7), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, col.lightened(0.45))
+		_texts.append([nf, Vector2(s.x - nw * 0.5, r.position.y - 7), nm, 16, 5, col.lightened(0.45)])
