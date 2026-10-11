@@ -17,6 +17,7 @@ var camera: CameraRig
 var fx: Fx
 var bars: UnitBars
 var input: InputController
+var audio: GameAudio
 var hud: Control
 var views := {}                            # unit id -> UnitView | BuildingView
 var player_team := C.DAWN
@@ -69,6 +70,9 @@ func _ready() -> void:
 	input = InputController.new()
 	input.game = self
 	add_child(input)
+	audio = GameAudio.new()
+	audio.game = self
+	add_child(audio)
 	selected_id = player_hero_id
 	_sync_views()
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
@@ -180,6 +184,8 @@ func _make_view(u: SimUnit) -> void:
 
 func _drain_events() -> void:
 	for e in world.events:
+		if audio and _capture_frames < 0:
+			audio.event(e, world)
 		match e.t:
 			"attack_start":
 				var v = views.get(e.u)
