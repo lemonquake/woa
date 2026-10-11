@@ -46,8 +46,8 @@ func build() -> void:
 	env.tonemap_exposure = 1.0
 	env.tonemap_white = 6.0
 	env.ssao_enabled = true
-	env.ssao_radius = 1.6
-	env.ssao_intensity = 2.2
+	env.ssao_radius = 2.4
+	env.ssao_intensity = 3.6
 	env.ssao_power = 1.6
 	env.ssao_detail = 0.6
 	env.ssil_enabled = false

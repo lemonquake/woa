@@ -23,7 +23,14 @@ const KINDS := {
 	"BH_Horn": ["leather_worn", 2.0, 0.35, 0.5, 0.0, 0.6],
 	"BH_Wood": ["leather_worn", 2.0, 0.5, 0.75, 0.0, 0.8],
 	"BH_Stone": ["forsaken_iron", 1.5, 0.6, 0.85, 0.0, 1.2],
+	"BH_Rock": ["forsaken_iron", 1.2, 0.65, 0.9, 0.0, 1.3],
+	"BH_StoneDark": ["forsaken_iron", 1.5, 0.6, 0.85, 0.0, 1.2],
+	"BH_Moss": ["storm_wool", 3.0, 0.6, 0.95, 0.0, 1.0],
 }
+
+## Colours for kinds whose imported colour was left white by the source pipeline.
+const BASE_COLORS := {"BH_Rock": Color(0.46, 0.44, 0.41), "BH_Stone": Color(0.52, 0.5, 0.47),
+	"BH_StoneDark": Color(0.3, 0.29, 0.3), "BH_Moss": Color(0.3, 0.42, 0.18)}
 
 static var _cache := {}
 static var _tex := {}
@@ -42,6 +49,8 @@ static func for_material(src: BaseMaterial3D, color_override = null) -> Material
 	if not KINDS.has(base):
 		return null
 	var col: Color = color_override if color_override != null else src.albedo_color
+	if color_override == null and BASE_COLORS.has(base) and src.albedo_color.get_luminance() > 0.85:
+		col = BASE_COLORS[base]
 	var key := "%s|%s" % [base, col.to_html(false)]
 	if _cache.has(key):
 		return _cache[key]

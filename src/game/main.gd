@@ -48,6 +48,10 @@ func _ready() -> void:
 	foliage = Foliage.new()
 	add_child(foliage)
 	foliage.build(map, terrain)
+	var dressing := Dressing.new()
+	dressing.foliage = foliage
+	add_child(dressing)
+	dressing.build(map, terrain)
 	fx = Fx.new()
 	fx.game = self
 	add_child(fx)

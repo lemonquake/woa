@@ -100,6 +100,7 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		var tw := font.get_string_size(lv, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
 		draw_string(font, Vector2(badge.position.x + 9 - tw * 0.5, badge.position.y + 13), lv, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.92, 0.7))
 		var nm := u.name if u.look.get("display_name", "") == "" else String(u.look.display_name)
-		var nw := font.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
-		draw_string_outline(font, Vector2(s.x - nw * 0.5, r.position.y - 6), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, 3, Color(0, 0, 0, 0.8))
-		draw_string(font, Vector2(s.x - nw * 0.5, r.position.y - 6), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, col.lightened(0.35))
+		var nf := UiKit.font("bold")
+		var nw := nf.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
+		draw_string_outline(nf, Vector2(s.x - nw * 0.5, r.position.y - 7), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, 5, Color(0, 0, 0, 0.9))
+		draw_string(nf, Vector2(s.x - nw * 0.5, r.position.y - 7), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, col.lightened(0.45))

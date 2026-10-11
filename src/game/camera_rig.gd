@@ -4,7 +4,7 @@ extends Node3D
 ## a middle-mouse drag, zoomed a little with the wheel, snapped to the hero with Space (held: follow).
 
 @export var pitch_deg := 55.0
-@export var distance := 15.5
+@export var distance := 13.6
 @export var fov := 46.0
 @export var edge_speed := 32.0             # m/s
 @export var edge_px := 6

@@ -1,0 +1,2 @@
+A=benchmark dota_3
+B=candidate

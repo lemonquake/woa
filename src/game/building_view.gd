@@ -13,10 +13,10 @@ const STONE := {
 	"WOA_StoneWarm": ["ph_medieval_blocks_02", Color(0.96, 0.9, 0.8), 0.4],
 	"WOA_StoneDark": ["ph_dark_rock", Color(0.7, 0.62, 0.68), 0.4],
 	"WOA_StoneAsh": ["ph_volcanic_rock_tiles", Color(0.78, 0.66, 0.66), 0.45],
-	"WOA_RoofBlue": ["ph_clay_roof_tiles_02", Color(0.42, 0.62, 1.0), 1.2],
-	"WOA_RoofDark": ["ph_clay_roof_tiles_02", Color(0.45, 0.2, 0.28), 1.2],
-	"WOA_Wood": ["ph_weathered_planks", Color(0.85, 0.7, 0.55), 1.0],
-	"WOA_Bone": ["ph_rough_block_wall", Color(1.0, 0.95, 0.85), 1.2],
+	"WOA_RoofBlue": ["ph_clay_roof_tiles_02", Color(0.42, 0.62, 1.0), 1.2, 0.0],
+	"WOA_RoofDark": ["ph_clay_roof_tiles_02", Color(0.45, 0.2, 0.28), 1.2, 0.0],
+	"WOA_Wood": ["ph_weathered_planks", Color(0.85, 0.7, 0.55), 1.0, 0.0],
+	"WOA_Bone": ["ph_rough_block_wall", Color(1.0, 0.95, 0.85), 1.2, 0.0],
 }
 
 static var _mats := {}
@@ -164,6 +164,8 @@ func _material_for(nm: String, src: Material) -> Material:
 		m.set_shader_parameter("rough_tex", _tex(d[0] + "_rough.png"))
 		m.set_shader_parameter("tint", d[1])
 		m.set_shader_parameter("scale", d[2])
+		m.set_shader_parameter("blocks", float(d[3]) if d.size() > 3 else 1.0)
+		m.set_shader_parameter("tint", (d[1] as Color) * (Color(0.92, 0.88, 0.8) if nm.begins_with("WOA_Stone") else Color.WHITE))
 		_shaders.append(m)
 		return m
 	if nm.begins_with("WOA_Crystal") or nm == "WOA_Water":
@@ -178,6 +180,17 @@ func _material_for(nm: String, src: Material) -> Material:
 		c.set_shader_parameter("energy", 1.6 if nm != "WOA_Water" else 0.6)
 		_crystals.append(c)
 		return c
+	if nm.begins_with("WOA_Cloth"):
+		var cm := ShaderMaterial.new()
+		cm.shader = preload("res://src/game/gear.gdshader")
+		var cc := Color(0.16, 0.34, 0.78) if nm == "WOA_ClothDawn" else (Color(0.5, 0.06, 0.09) if nm == "WOA_ClothDusk" else Color(0.75, 0.2, 0.15))
+		cm.set_shader_parameter("base_color", cc)
+		cm.set_shader_parameter("detail_albedo", load("res://assets/textures/gear/storm_wool_albedo.png"))
+		cm.set_shader_parameter("detail_normal", load("res://assets/textures/gear/storm_wool_normal.png"))
+		cm.set_shader_parameter("detail_rough", load("res://assets/textures/gear/storm_wool_rough.png"))
+		cm.set_shader_parameter("uv_scale", 2.0)
+		cm.set_shader_parameter("roughness", 0.9)
+		return cm
 	if src is BaseMaterial3D:
 		var m2 := (src as BaseMaterial3D).duplicate() as BaseMaterial3D
 		if nm == "WOA_Gold":

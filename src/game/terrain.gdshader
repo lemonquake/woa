@@ -12,10 +12,13 @@ uniform sampler2D macro_tex : filter_linear_mipmap, repeat_enable;
 uniform float map_half = 81.92;
 uniform float river_height = 0.55;
 uniform float level_height = 1.28;
-uniform vec3 grass_tint : source_color = vec3(0.86, 1.0, 0.74);
+uniform vec3 grass_tint : source_color = vec3(0.74, 0.93, 0.62);
 uniform vec3 dusk_tint : source_color = vec3(0.92, 0.78, 0.74);
-uniform float saturation = 1.18;
+uniform float saturation = 1.1;
 uniform float night = 0.0;
+// painterly look: sample albedo a couple of mips down so photographic grain becomes broad painted tone
+uniform float paint_bias = 1.8;
+uniform float normal_bias = 1.0;
 
 varying vec3 wpos;
 varying vec3 wnorm;
@@ -36,11 +39,11 @@ void vertex() {
 }
 
 vec4 tex(int layer, vec2 uv) {
-	return texture(albedo_tex, vec3(uv, float(layer)));
+	return texture(albedo_tex, vec3(uv, float(layer)), paint_bias);
 }
 
 vec3 nrm(int layer, vec2 uv) {
-	return texture(normal_tex, vec3(uv, float(layer))).rgb;
+	return texture(normal_tex, vec3(uv, float(layer)), normal_bias).rgb;
 }
 
 // Tiling with a rotated second sample at another scale, blended by a macro noise, so repeats do not show.
@@ -80,10 +83,23 @@ void fragment() {
 	float dusk_w = smoothstep(0.2, 0.8, sp.a + (macro2.g - 0.5) * 0.35);
 	col = mix(col, dusk, dusk_w);
 
-	// roads: height-blended so stones poke through grass at the edges
+	// roads: height-blended so stones poke through grass at the edges; large worn patches of packed dirt
 	vec4 road = tex2(L_ROAD, uv_r, m);
+	vec4 dirt = tex2(L_FOREST, uv_r * 0.8, macro.b);
+	road = mix(road, dirt * vec4(1.05, 0.95, 0.85, 1.0), smoothstep(0.45, 0.75, macro2.r) * 0.55);
+	road.rgb *= mix(0.82, 1.08, macro.g);
 	float rh = road.r * 0.5 + sp.r;
-	float road_w = smoothstep(0.55, 0.85, rh + (macro.g - 0.5) * 0.3);
+	float road_w = smoothstep(0.55, 0.85, rh + (macro.g - 0.5) * 0.45 + (texture(macro_tex, wpos.xz * 0.09).r - 0.5) * 0.35);
+	// a ragged fringe of packed dirt and leaf litter between grass and gravel
+	float fringe = smoothstep(0.28, 0.5, rh + (macro.b - 0.5) * 0.5) * (1.0 - road_w);
+	col = mix(col, forest * vec4(0.95, 0.9, 0.82, 1.0), fringe * 0.75);
+	// worn paving: patches of old cobbles surface through the dirt across the lane
+	vec4 cobble = tex(L_PLAZA, uv_p * 1.15);
+	float paved = smoothstep(0.52, 0.68, texture(macro_tex, wpos.xz * 0.045).g + cobble.r * 0.2) * smoothstep(0.75, 0.95, road_w);
+	road = mix(road, cobble * vec4(0.92, 0.9, 0.86, 1.0), paved * 0.85);
+	// grass creeps into the road in ragged tongues near the edges
+	float creep = smoothstep(0.6, 0.78, texture(macro_tex, wpos.xz * 0.12).b) * (1.0 - smoothstep(0.7, 1.0, rh));
+	road_w *= 1.0 - creep * 0.85;
 	col = mix(col, road, road_w);
 
 	// base paving (Dawn bright stone, Dusk mossy cobbles)
@@ -98,6 +114,11 @@ void fragment() {
 	vec4 riv = tex2(L_RIVER, uv_g * 0.9, m);
 	float riv_w = 1.0 - smoothstep(river_height - 0.15, river_height + 0.35, h + (riv.r - 0.5) * 0.3);
 	col = mix(col, riv, riv_w);
+	// wet, darkened bank just above the waterline
+	float wet = 1.0 - smoothstep(river_height - 0.02, river_height + 0.3, h + (macro.r - 0.5) * 0.12);
+	wet *= smoothstep(river_height - 0.25, river_height - 0.02, h);
+	col.rgb *= 1.0 - wet * 0.45;
+	col.a = mix(col.a, 0.25, wet);
 
 	// cliffs: triplanar on steep slopes
 	vec3 an = abs(wnorm);
@@ -119,16 +140,21 @@ void fragment() {
 	n_ground = mix(n_ground, nrm(L_RIVER, uv_g * 0.9), riv_w);
 	n_ground = mix(n_ground, vec3(0.5, 0.5, 1.0), cliff_w * 0.6);
 
-	// macro shading: large soft colour patches like painted terrain
-	col.rgb *= mix(0.86, 1.1, macro2.b);
+	// macro shading: large soft colour patches like painted terrain (warm sunlit / cool shaded areas)
+	col.rgb *= mix(0.82, 1.12, macro2.b);
+	col.rgb = mix(col.rgb, col.rgb * vec3(1.08, 1.02, 0.9), smoothstep(0.55, 0.8, macro2.g) * 0.5);
+	col.rgb = mix(col.rgb, col.rgb * vec3(0.88, 0.95, 1.06), smoothstep(0.45, 0.2, macro2.g) * 0.5);
 	col.rgb = sat(col.rgb, saturation);
 	col.rgb *= mix(vec3(1.0), vec3(0.78, 0.84, 1.0), night * 0.3);
 
 	ALBEDO = col.rgb;
 	ROUGHNESS = clamp(col.a * 0.9 + 0.12, 0.35, 1.0);
 	NORMAL_MAP = n_ground;
-	NORMAL_MAP_DEPTH = 1.1;
+	NORMAL_MAP_DEPTH = 0.7;
 	SPECULAR = 0.35;
-	AO = mix(1.0, 0.75, sp.g * (1.0 - road_w));
+	// contact darkening where grass meets road and around the forest floor
+	float edge = road_w * (1.0 - road_w) * 4.0;
+	col.rgb *= 1.0 - edge * 0.22;
+	AO = mix(1.0, 0.7, sp.g * (1.0 - road_w));
 	AO_LIGHT_AFFECT = 0.4;
 }

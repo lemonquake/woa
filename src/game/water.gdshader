@@ -38,10 +38,12 @@ void fragment() {
 	vec3 water = mix(shallow, deep, t);
 	vec3 col = mix(below * mix(vec3(1.0), shallow * 1.5, 0.5), water, clamp(t * clarity + 0.08, 0.0, 1.0));
 
-	float foam_line = 1.0 - smoothstep(0.0, 0.07, depth_diff);
+	float foam_line = (1.0 - smoothstep(0.0, 0.05, depth_diff)) * 0.6;
 	float foam_noise = texture(normal_tex, wpos.xz * 0.6 + vec2(TIME * 0.05)).r;
 	float foam = foam_line * smoothstep(0.35, 0.65, foam_noise + foam_line * 0.4);
-	col = mix(col, foam_color, foam * 0.55);
+	col = mix(col, foam_color, foam * 0.3);
+	// the water darkens and thins at the shore instead of drawing a bright outline
+	col = mix(col * 0.75, col, smoothstep(0.0, 0.12, depth_diff));
 	col *= mix(vec3(1.0), vec3(0.55, 0.65, 0.95), night * 0.4);
 
 	ALBEDO = col;

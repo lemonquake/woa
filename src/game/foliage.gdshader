@@ -33,8 +33,10 @@ void fragment() {
 	if (c.a < alpha_cut) {
 		discard;
 	}
-	vec3 col = c.rgb * mix(tint, tint2, hvar);
-	col *= mix(0.72, 1.12, clamp(vheight, 0.0, 1.0));
+	vec3 col = c.rgb * mix(tint, tint2, hvar) * vec3(0.92, 0.94, 0.96);
+	col *= mix(0.55, 1.12, clamp(vheight, 0.0, 1.0));
+	// darker towards the inside of a canopy: cards facing away from the sky are shaded
+	col *= mix(0.68, 1.0, clamp(NORMAL.y * 0.5 + 0.6, 0.0, 1.0));
 	col *= mix(vec3(1.0), vec3(0.78, 0.84, 1.0), night * 0.3);
 	ALBEDO = col;
 	ROUGHNESS = 0.85;

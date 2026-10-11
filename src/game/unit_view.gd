@@ -78,6 +78,13 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		if not is_hero:
 			GearMaterials.apply(mi)
 	_make_ring(u)
+	var shade := MeshInstance3D.new()
+	shade.mesh = Dressing.blob_mesh()
+	var r := maxf(u.hull, 16.0) * View.S * 3.2
+	shade.scale = Vector3(r, 1.0, r)
+	shade.position.y = 0.04
+	shade.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(shade)
 	_play(String(cfg.idle), true)
 
 func _weapons() -> void:
