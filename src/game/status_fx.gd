@@ -160,13 +160,14 @@ func _sync_taint(want: Dictionary) -> void:
 			var d: Dictionary = _taint[id]
 			if is_instance_valid(d.light):
 				(d.light as Node).queue_free()
-			if is_instance_valid(d.get("trail")):
-				(d.trail as Trail3D).stop()
-			if is_instance_valid(d.get("anchor")):
-				(d.anchor as Node).queue_free()
+
 			var v0: UnitView = game.views.get(id)
 			if v0:
 				v0.set_weapon_glow(false)
+				if v0.swing_trail:
+					v0.swing_trail.color = Color(0.92, 0.92, 1.0, 0.45)
+					v0.swing_trail.width = 0.06
+					v0.swing_lit = false
 			_taint.erase(id)
 	var now := Time.get_ticks_msec() / 1000.0
 	for id in want:
@@ -180,17 +181,12 @@ func _sync_taint(want: Dictionary) -> void:
 			l.light_energy = 2.0
 			l.omni_range = 3.5
 			add_child(l)
-			# a violet swing trail off the blade tip while the sword is enchanted
-			var anchor := Node3D.new()
-			if not v.weapons.is_empty():
-				v.weapons[0].add_child(anchor)
-				anchor.position = Vector3(0, 0.95, 0)
-			else:
-				v.add_child(anchor)
-				anchor.position = Vector3(0, 1.4, 0)
-			var tr := Trail3D.make(anchor, Color(0.7, 0.35, 1.0, 0.9), 0.07, 0.16)
-			add_child(tr)
-			_taint[id] = {"light": l, "next_arc": now + 0.2, "anchor": anchor, "trail": tr}
+			# the blade's swing trail turns violet and stays lit while the sword is enchanted
+			if v.swing_trail:
+				v.swing_trail.color = Color(0.7, 0.35, 1.0, 0.9)
+				v.swing_trail.width = 0.08
+				v.swing_lit = true
+			_taint[id] = {"light": l, "next_arc": now + 0.2}
 		var d: Dictionary = _taint[id]
 		var tip := v.weapon_tip()
 		(d.light as OmniLight3D).global_position = tip

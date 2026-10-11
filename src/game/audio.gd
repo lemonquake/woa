@@ -112,14 +112,15 @@ func event(e: Dictionary, w: SimWorld) -> void:
 					at("holy_strike", p, -10.0, 0, 0.2)
 				_:
 					at("mage_attack", p, -12.0, 2, 0.08)
-		"projectile_end":
-			pass
 		"damage":
 			if not e.get("attack", false):
 				return
 			var src2 := w.get_unit(e.src)
 			var p2 := _pos(w, e.u)
 			if src2 == null:
+				return
+			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "ezee":
+				at("greatsword_hit", p2, -5.0, 3, 0.05)
 				return
 			if src2.is_ranged():
 				if src2.is_hero():
@@ -170,6 +171,45 @@ func event(e: Dictionary, w: SimWorld) -> void:
 					at("wind_gust", p4, -2.0, 0, 0.2, 0.02)
 				"arrow_storm":
 					at("bow_attack", p4, -2.0, 3)
+				"leap_strike":
+					at("attack_woosh", p4, -2.0, 3, 0.1)
+				"tainted_touch":
+					at("dark_cast", p4, -4.0, 0, 0.2)
+		"stomp":
+			var ps := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.5, 0)
+			at("boss_slam", ps, 0.0, 0, 0.2, 0.04)
+			at("earth_quake", ps, -4.0, 0, 0.3, 0.04)
+		"impact":
+			var pi := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.8, 0)
+			match String(e.what):
+				"tree":
+					at("break_wood", pi, -2.0, 2, 0.08)
+				"cliff", "building":
+					at("wall_impact", pi, -2.0, 2, 0.08)
+				_:
+					at("hit_heavy", pi, -3.0, 2, 0.06)
+		"stunned":
+			at("stagger", _pos(w, e.u), -8.0, 0, 0.15)
+		"leap_land":
+			var pl := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.5, 0)
+			at("boss_slam", pl, -2.0, 0, 0.2, 0.05)
+			if bool(e.hit):
+				at("greatsword_hit", pl, -1.0, 3, 0.05)
+		"taint_cast":
+			at("thunder_strike", _pos(w, e.u), -2.0, 0, 0.2, 0.05)
+		"curse":
+			at("dark_curse", _pos(w, e.u), -9.0, 0, 0.25)
+		"unholy_start":
+			at("boss_roar", _pos(w, e.u), 1.0, 0, 0.3, 0.03)
+			at("dark_cast", _pos(w, e.u), -5.0, 0, 0.3)
+		"unholy_reflect":
+			at("drain", _pos(w, e.u), -6.0, 0, 0.1)
+		"unholy_end":
+			at("shade_hiss", _pos(w, e.u), -8.0, 0, 0.3)
+		"projectile_end":
+			if not bool(e.get("hit", false)) and e.has("pos"):
+				var pg: Vector2 = e.pos
+				at("arrow_impact", View.to3(pg, game.terrain.height_at(pg)), -16.0, 2, 0.12, 0.2)
 		"volley":
 			at("arrow_impact", View.to3(e.pos, game.terrain.height_at(e.pos)), -4.0, 2, 0.05)
 		"knockback":
@@ -185,6 +225,12 @@ func event(e: Dictionary, w: SimWorld) -> void:
 		"hero_kill":
 			if e.get("first_blood", false):
 				ui("war_cry", -2.0)
+			elif int(e.get("ended_streak", 0)) >= 3:
+				ui("sting_boss", -4.0)
+			elif int(e.get("streak", 0)) >= 3:
+				ui("elite_spawn", -4.0)
+			elif int(e.get("u", -1)) == game.player_hero_id:
+				ui("sting_victory", -8.0)
 		"respawn":
 			if e.u == game.player_hero_id:
 				ui("holy_cast", -6.0)

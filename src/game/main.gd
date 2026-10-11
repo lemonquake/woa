@@ -352,11 +352,11 @@ func _drain_events() -> void:
 						"melee_rax": "melee barracks", "ranged_rax": "ranged barracks", "filler": "effigy", "ancient": "Aether Core"}
 					var wname := String(what.get(String(du.def.id), "building"))
 					var verb := "was denied" if e.get("deny", false) else "has fallen"
-					hud.announce("%s %s %s" % [side, wname, verb],
-						du.building_lane.capitalize() + (" lane" if du.building_lane != "" else ""),
+					var lane_name: String = {"top": "Top", "mid": "Middle", "bot": "Bottom"}.get(du.building_lane, "")
+					hud.announce("%s %s %s" % [side, wname, verb], (lane_name + " lane") if lane_name != "" else "",
 						UiKit.GOLD if du.team != player_team else UiKit.DUSK)
 					hud.kill_feed.on_building(du, killer, bool(e.get("deny", false)), player_team,
-						(du.building_lane.capitalize() + " " if du.building_lane != "" else "") + wname)
+						(lane_name + " " if lane_name != "" else "") + wname)
 				if du and du.kind == C.Kind.COURIER and hud:
 					hud.kill_feed.on_courier(du, killer)
 				if du and du.id == player_hero_id and hud:
@@ -668,6 +668,16 @@ func _demo_setup() -> void:
 						found = true
 						break
 				if found:
+					break
+		elif av[0] == "hero":
+			# beside the enemy hero, which can be weakened (--weaken=0.15) for kill captures
+			for eh in world.heroes:
+				if eh.team != h.team:
+					var off2 := float(av[1]) if av.size() > 1 else 500.0
+					h.pos = eh.pos + Vector2(-off2, -off2 * 0.3)
+					if args.has("weaken"):
+						eh.hp = eh.max_hp * float(args.weaken)
+					_demo_cam = (h.pos + eh.pos) * 0.5
 					break
 		elif av[0] == "wave":
 			# beside the enemy mid wave: the Dusk lane creep nearest the map centre

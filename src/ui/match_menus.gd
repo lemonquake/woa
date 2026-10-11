@@ -146,17 +146,22 @@ func _show_end() -> void:
 	sub.text = "%s wins at %s" % [["Dawn", "Dusk"][w.winner], w.clock_text()]
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(sub)
+	_end.custom_minimum_size = Vector2(1180, 0)
 	var grid := GridContainer.new()
-	grid.columns = 7
+	grid.columns = 12
 	grid.add_theme_constant_override("h_separation", 22)
-	for hdr in ["Hero", "Team", "Level", "K / D / A", "LH / DN", "Net worth", "Gold"]:
+	for hdr in ["Hero", "Team", "Level", "K / D / A", "LH / DN", "Net worth", "GPM", "XPM", "Hero dmg", "Building dmg", "Taken", "Healing"]:
 		var l := Label.new()
 		l.text = hdr
 		l.add_theme_color_override("font_color", U.GOLD)
 		grid.add_child(l)
+	var minutes := maxf(w.time / 60.0, 0.25)
 	for h in w.heroes:
+		var tot := Scoreboard.totals(h)
 		for val in [String(h.look.get("display_name", h.name)), ["Dawn", "Dusk"][h.team], str(h.level),
-				"%d / %d / %d" % [h.kills, h.deaths, h.assists], "%d / %d" % [h.last_hits, h.denies], str(h.networth()), str(h.gold())]:
+				"%d / %d / %d" % [h.kills, h.deaths, h.assists], "%d / %d" % [h.last_hits, h.denies], str(h.networth()),
+				str(int(h.gold_earned / minutes)), str(int(h.xp / minutes)), str(int(tot.hero)), str(int(tot.building)),
+				str(int(tot.taken)), str(int(h.healed))]:
 			var l2 := Label.new()
 			l2.text = val
 			grid.add_child(l2)

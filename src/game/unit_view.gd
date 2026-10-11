@@ -41,6 +41,9 @@ var _flinch := Vector2.ZERO               # lean direction * strength (view spac
 var _flinch_t := 1.0
 var _glow_mat: StandardMaterial3D
 var _glow_on := false
+var swing_trail: Trail3D                  # melee heroes: a streak off the blade tip while swinging
+var _swing_until := 0.0
+var swing_lit := false                    # kept lit (Tainted Touch)
 
 func _now() -> float:
 	return Time.get_ticks_msec() / 1000.0
@@ -120,6 +123,13 @@ func _weapons() -> void:
 		weapons.append(w)
 		if cfg.has("weapon_tint"):
 			_tint_node(w, cfg.weapon_tint, 0.85)
+		if cfg.get("swing_trail", false) and side == "R":
+			var tip := Node3D.new()
+			w.add_child(tip)
+			tip.position = Vector3(0, 0.95, 0)
+			swing_trail = Trail3D.make(tip, Color(0.92, 0.92, 1.0, 0.45), 0.06, 0.14)
+			swing_trail.emitting = false
+			add_child(swing_trail)
 
 ## Darken a weapon to blackened steel (Ezee's greatsword).
 func _tint_node(n: Node3D, c: Color, metal := -1.0) -> void:
@@ -342,6 +352,7 @@ func on_attack_start(point_time: float) -> void:
 	_play(clip, false, spd, 0.06, true)
 	var length := float(ModelCatalog.clip(clip).get("length", 0.6))
 	_lock_until = _now() + length / spd
+	_swing_until = _now() + (strike / spd) * 1.35
 
 func on_attack_cancel() -> void:
 	_lock_until = 0.0
@@ -361,6 +372,7 @@ func on_cast_start(aid: String, cast_point: float) -> void:
 	var length := float(meta.get("length", 0.6))
 	# after the release the clip finishes at a natural pace
 	_lock_until = _now() + cast_point + maxf(0.0, length - release) / maxf(1.0, spd * 0.8)
+	_swing_until = _now() + cast_point + 0.25
 
 ## Leap Strike took off: stretch the airborne part of the clip so its strike frame lands with the simulation.
 func on_leap(dur: float) -> void:
@@ -510,6 +522,8 @@ func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 			pivot.rotation = Vector3(_flinch.x * k, 0.0, _flinch.y * k)
 		elif pivot.rotation != Vector3.ZERO:
 			pivot.rotation = Vector3.ZERO
+	if swing_trail:
+		swing_trail.emitting = swing_lit or _now() < _swing_until or _state == "leap"
 	if _glow_on and _glow_mat:
 		var t := _now()
 		_glow_mat.albedo_color.a = 0.55 + 0.25 * sin(t * 13.0) + 0.15 * sin(t * 31.0)

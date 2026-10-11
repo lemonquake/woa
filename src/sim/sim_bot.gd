@@ -160,6 +160,9 @@ func _busy(h: SimUnit) -> bool:
 var _cast_deadline := 0.0
 var _lh_id := -1
 var _lh_until := 0.0
+var _trade_id := -1
+var _trade_until := 0.0
+var _next_trade := 0.0
 
 func _lane(h: SimUnit) -> void:
 	if _busy(h):
@@ -213,8 +216,15 @@ func _lane(h: SimUnit) -> void:
 	# 3. harass: Ezee trades blows when the enemy hero wanders into reach; Galewarden pokes with the hand-cast orb
 	if kit == "ezee":
 		for e in enemy_heroes:
-			var safe := not _under_enemy_tower(h, e.pos, enemy_towers)
-			if safe and h.edge_distance(e) <= 260.0 and h.hp > h.max_hp * 0.5 and h.hp / h.max_hp >= e.hp / e.max_hp - 0.1:
+			var safe := not _under_enemy_tower(h, e.pos, enemy_towers) and not _under_enemy_tower(h, h.pos, enemy_towers)
+			var healthy := h.hp > h.max_hp * 0.55 and h.hp / h.max_hp >= e.hp / e.max_hp - 0.15
+			var trading := w.time < _trade_until and w.get_unit(_trade_id) == e
+			# commit to a trade for a few seconds, then back off and let the cooldown run
+			if safe and healthy and (trading or (h.edge_distance(e) <= 650.0 and w.time >= _next_trade)):
+				if not trading:
+					_trade_id = e.id
+					_trade_until = w.time + 3.5
+					_next_trade = w.time + 9.0
 				_spells_on(h, e)
 				if not _busy(h):
 					_order(h, {"type": O.ATTACK_UNIT, "target": e.id})

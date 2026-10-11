@@ -8,6 +8,7 @@ var target: Node3D
 var width := 0.06
 var life := 0.18                           # seconds a point lasts
 var color := Color(1, 1, 1, 0.6)
+var emitting := true                       # false: no new points (the tail still fades)
 var _pts: Array = []                       # [[position, age]]
 var _im := ImmediateMesh.new()
 var _stopping := false
@@ -48,11 +49,11 @@ func _step(dt: float) -> void:
 		p[1] += dt
 	while not _pts.is_empty() and _pts[0][1] > life:
 		_pts.pop_front()
-	if target != null and is_instance_valid(target) and not _stopping:
+	if target != null and is_instance_valid(target) and not _stopping and emitting:
 		var gp := target.global_position
 		if _pts.is_empty() or (_pts[-1][0] as Vector3).distance_to(gp) > 0.04:
 			_pts.append([gp, 0.0])
-	elif _pts.is_empty():
+	elif _pts.is_empty() and (_stopping or target == null or not is_instance_valid(target)):
 		queue_free()
 		return
 	_build()

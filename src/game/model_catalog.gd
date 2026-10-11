@@ -15,7 +15,7 @@ const MODELS := {
 	"hero_ezee": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["gs_1", "gs_2", "gs_3", "gs_4"],
 		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
 		"death": "death", "R": "greatsword", "L": "", "bar": 2.4, "hero": true, "weapon_tint": Color(0.5, 0.44, 0.62),
-		"weapon_glow": Color(0.55, 0.2, 1.0)},
+		"weapon_glow": Color(0.55, 0.2, 1.0), "swing_trail": true},
 	"dawn_melee": {"scene": UNITS + "knight.glb", "scale": 0.86, "attack": ["sword_1", "sword_2", "sword_3"], "idle": "idle_shield",
 		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88)},
 	"dawn_ranged": {"scene": UNITS + "mage.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",

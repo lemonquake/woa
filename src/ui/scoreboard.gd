@@ -19,7 +19,7 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
 func _process(_dt: float) -> void:
-	show_board = Input.is_key_pressed(KEY_TAB)
+	show_board = Input.is_key_pressed(KEY_TAB) or OS.get_cmdline_user_args().has("--board")
 	queue_redraw()
 
 static func source_name(key: String) -> String:
@@ -98,7 +98,10 @@ func _board() -> void:
 	var heroes: Array = w.heroes.duplicate()
 	heroes.sort_custom(func(a, b): return a.team < b.team)
 	var rows := heroes.size()
-	var r := Rect2(vs.x * 0.5 - width * 0.5, 120, width, 120 + rows * 44 + 230)
+	var bar_rows := 1
+	for hh: SimUnit in heroes:
+		bar_rows = maxi(bar_rows, mini(5, hh.dmg_out.size()))
+	var r := Rect2(vs.x * 0.5 - width * 0.5, 120, width, 150 + rows * 34 + 70 + bar_rows * 24)
 	U.panel(self, r, U.GOLD_DIM, 8)
 	U.text(self, "Scoreboard", r.position + Vector2(20, 36), 26, U.GOLD, "title")
 	U.text_r(self, "Game time " + w.clock_text(), Vector2(r.end.x - 20, r.position.y + 34), 16, U.TEXT_DIM, "bold")

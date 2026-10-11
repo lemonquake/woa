@@ -136,11 +136,11 @@ func on_hero_kill(e: Dictionary, w: SimWorld, player_team: int) -> void:
 func on_building(du: SimUnit, killer: SimUnit, deny: bool, player_team: int, what: String) -> void:
 	var side_col := _team_col(du.team)
 	if deny:
-		add_line([[what.capitalize(), side_col], ["was denied", U.TEXT_DIM]], "ui/level")
+		add_line([[what, side_col], ["was denied", U.TEXT_DIM]], "ui/level")
 	else:
 		var kn := _name(killer) if killer else ("Dusk" if du.team == 0 else "Dawn")
 		var kc := _team_col(killer.team if killer else 1 - du.team)
-		add_line([[kn, kc], ["ui/shop", Color.WHITE, "icon"], [what.capitalize(), side_col]], "ui/shop")
+		add_line([[kn, kc], ["status/sundered", Color.WHITE, "icon"], [what, side_col]], "ui/shop")
 
 func on_courier(dead: SimUnit, killer: SimUnit) -> void:
 	add_line([[_name(killer) if killer else "?", _team_col(killer.team if killer else 2)], ["items/dagger_2", Color.WHITE, "icon"],
