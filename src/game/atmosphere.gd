@@ -9,7 +9,7 @@ var night := 0.0                           # 0 day .. 1 night (smoothed)
 var materials: Array[ShaderMaterial] = []  # shaders with a "night" uniform
 
 const DAY_SUN := Color(1.0, 0.93, 0.8)
-const NIGHT_SUN := Color(0.52, 0.62, 1.0)
+const NIGHT_SUN := Color(0.62, 0.72, 1.0)
 
 func build() -> void:
 	name = "Atmosphere"
@@ -77,12 +77,12 @@ func update(is_night: bool, dt: float) -> void:
 	night = move_toward(night, goal, dt / 6.0)
 	var n := smoothstep(0.0, 1.0, night)
 	sun.light_color = DAY_SUN.lerp(NIGHT_SUN, n)
-	sun.light_energy = lerpf(1.55, 0.55, n)
+	sun.light_energy = lerpf(1.55, 1.0, n)
 	sun.rotation_degrees.x = lerpf(-52.0, -62.0, n)
-	env.ambient_light_energy = lerpf(0.75, 0.42, n)
-	sky_mat.sky_top_color = Color(0.32, 0.52, 0.86).lerp(Color(0.04, 0.06, 0.16), n)
-	sky_mat.sky_horizon_color = Color(0.78, 0.82, 0.86).lerp(Color(0.12, 0.16, 0.3), n)
-	env.fog_light_color = Color(0.72, 0.8, 0.9).lerp(Color(0.12, 0.16, 0.3), n)
-	env.adjustment_saturation = lerpf(1.12, 0.88, n)
+	env.ambient_light_energy = lerpf(0.75, 0.62, n)
+	sky_mat.sky_top_color = Color(0.32, 0.52, 0.86).lerp(Color(0.16, 0.22, 0.42), n)
+	sky_mat.sky_horizon_color = Color(0.78, 0.82, 0.86).lerp(Color(0.34, 0.4, 0.58), n)
+	env.fog_light_color = Color(0.72, 0.8, 0.9).lerp(Color(0.3, 0.36, 0.55), n)
+	env.adjustment_saturation = lerpf(1.12, 0.96, n)
 	for m in materials:
 		m.set_shader_parameter("night", n)

@@ -122,7 +122,7 @@ void fragment() {
 	// macro shading: large soft colour patches like painted terrain
 	col.rgb *= mix(0.86, 1.1, macro2.b);
 	col.rgb = sat(col.rgb, saturation);
-	col.rgb *= mix(vec3(1.0), vec3(0.62, 0.7, 0.95), night * 0.35);
+	col.rgb *= mix(vec3(1.0), vec3(0.78, 0.84, 1.0), night * 0.3);
 
 	ALBEDO = col.rgb;
 	ROUGHNESS = clamp(col.a * 0.9 + 0.12, 0.35, 1.0);

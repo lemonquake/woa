@@ -312,6 +312,43 @@ func tp_end(uid: int, flash := false) -> void:
 		n.queue_free()
 	_tp.erase(uid)
 
+## Attack-range rings for enemy towers near your hero: yellow, or red while the tower is targeting you.
+var _ranges := {}
+
+func tower_ranges(w: SimWorld, h: SimUnit, team: int) -> void:
+	for u in w.units:
+		if u.kind != SimConst.Kind.TOWER or u.team == team:
+			continue
+		var near := h != null and h.alive and u.alive and h.pos.distance_to(u.pos) < u.attack_range + u.hull + 700.0
+		var ring: MeshInstance3D = _ranges.get(u.id)
+		if not near:
+			if ring:
+				ring.visible = false
+			continue
+		if ring == null:
+			ring = MeshInstance3D.new()
+			var tm := TorusMesh.new()
+			var r := (u.attack_range + u.hull) * View.S
+			tm.inner_radius = r - 0.07
+			tm.outer_radius = r
+			tm.rings = 96
+			tm.ring_segments = 4
+			ring.mesh = tm
+			ring.scale = Vector3(1, 0.05, 1)
+			ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			var m := StandardMaterial3D.new()
+			m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			ring.material_override = m
+			add_child(ring)
+			ring.global_position = View.to3(u.pos, game.terrain.height_at(u.pos)) + Vector3(0, 0.1, 0)
+			_ranges[u.id] = ring
+		ring.visible = true
+		var aggro := u.atk_target == h.id
+		var d := h.pos.distance_to(u.pos) - (u.attack_range + u.hull)
+		var a := clampf(1.0 - d / 700.0, 0.25, 0.9)
+		(ring.material_override as StandardMaterial3D).albedo_color = Color(1.0, 0.2, 0.15, 0.95) if aggro else Color(1.0, 0.85, 0.3, a)
+
 ## Dota's order feedback: a green ripple where you move, a red one on what you attack.
 func marker(at: Vector3, attack: bool) -> void:
 	var col := Color(1.0, 0.25, 0.2, 0.9) if attack else Color(0.3, 1.0, 0.4, 0.9)

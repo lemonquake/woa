@@ -35,7 +35,7 @@ void fragment() {
 	}
 	vec3 col = c.rgb * mix(tint, tint2, hvar);
 	col *= mix(0.72, 1.12, clamp(vheight, 0.0, 1.0));
-	col *= mix(vec3(1.0), vec3(0.6, 0.68, 0.95), night * 0.4);
+	col *= mix(vec3(1.0), vec3(0.78, 0.84, 1.0), night * 0.3);
 	ALBEDO = col;
 	ROUGHNESS = 0.85;
 	BACKLIGHT = col * translucency;

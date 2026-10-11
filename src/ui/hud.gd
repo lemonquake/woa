@@ -111,6 +111,7 @@ func _draw() -> void:
 		U.text_c(self, _announce, Vector2(vs.x * 0.5, 150), 40, Color(1.0, 0.86, 0.5, a2), "title")
 		if _announce_sub != "":
 			U.text_c(self, _announce_sub, Vector2(vs.x * 0.5, 184), 20, Color(0.95, 0.95, 0.95, a2), "bold")
+	_unit_card()
 	var h := hero()
 	if h and not h.alive:
 		var t := maxf(0.0, h.respawn_at - game.world.time)
@@ -118,6 +119,31 @@ func _draw() -> void:
 	if game.input and game.input.targeting != "":
 		var lab: String = "Attack" if game.input.targeting == "attack" else "Choose a target"
 		U.text(self, lab, get_viewport().get_mouse_position() + Vector2(22, 30), 16, Color(1, 0.9, 0.6), "bold")
+
+## Info card for a selected unit that is not your hero (creeps, towers, neutrals, enemy heroes).
+func _unit_card() -> void:
+	var w: SimWorld = game.world
+	var sel: SimUnit = w.get_unit(game.selected_id)
+	if sel == null or sel.id == game.player_hero_id or not sel.alive:
+		return
+	var vs := get_viewport_rect().size
+	var r := Rect2(vs.x * 0.5 - 230, vs.y - BottomPanel.H - 92, 460, 80)
+	U.panel(self, r, U.GOLD_DIM, 6)
+	var col := U.DAWN if sel.team == 0 else (U.DUSK if sel.team == 1 else Color(0.95, 0.8, 0.4))
+	U.text(self, String(sel.look.get("display_name", sel.name)), r.position + Vector2(14, 26), 18, col, "title")
+	var lvl := " level %d" % sel.level if sel.is_hero() else ""
+	U.text_r(self, ["Dawn", "Dusk", "Neutral"][sel.team] + lvl, Vector2(r.end.x - 14, r.position.y + 24), 13, U.TEXT_DIM, "body")
+	U.bar(self, Rect2(r.position + Vector2(14, 36), Vector2(200, 14)), sel.hp / maxf(1.0, sel.max_hp), U.HP)
+	U.text_c(self, "%d / %d" % [int(sel.hp), int(sel.max_hp)], r.position + Vector2(114, 48), 11, U.TEXT, "bold")
+	if sel.max_mana > 0.0:
+		U.bar(self, Rect2(r.position + Vector2(14, 54), Vector2(200, 10)), sel.mana / maxf(1.0, sel.max_mana), U.MANA)
+	var dmg := "%d-%d" % [int(sel.dmg_min + sel.bonus_damage), int(sel.dmg_max + sel.bonus_damage)] if sel.can_attack_at_all() else "-"
+	U.text(self, "Damage %s   Armor %.0f   Range %d   Speed %d" % [dmg, sel.armor, int(sel.attack_range), int(sel.move_speed)],
+		r.position + Vector2(228, 50), 13, U.TEXT, "body")
+	if sel.is_building() and sel.is_invulnerable():
+		U.text(self, "Invulnerable", r.position + Vector2(228, 70), 12, Color(1.0, 0.75, 0.4), "bold")
+	elif sel.is_building() and sel.backdoor_active:
+		U.text(self, "Backdoor protection", r.position + Vector2(228, 70), 12, Color(0.6, 0.85, 1.0), "bold")
 
 func error(msg: String) -> void:
 	_msg = msg

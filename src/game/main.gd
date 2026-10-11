@@ -240,6 +240,18 @@ func _drain_events() -> void:
 			"hero_kill":
 				if hud and hud.has_method("on_kill"):
 					hud.on_kill(e)
+			"death":
+				var du := world.get_unit(e.u)
+				if du and du.is_building() and hud and hud.has_method("announce"):
+					var side := "Your" if du.team == player_team else "The enemy's"
+					var what := {"tower1": "tier 1 tower", "tower2": "tier 2 tower", "tower3": "tier 3 tower", "tower4": "tier 4 tower",
+						"melee_rax": "melee barracks", "ranged_rax": "ranged barracks", "filler": "effigy", "ancient": "Aether Core"}
+					var verb := "was denied" if e.get("deny", false) else "has fallen"
+					hud.announce("%s %s %s" % [side, String(what.get(String(du.def.id), "building")), verb],
+						du.building_lane.capitalize() + (" lane" if du.building_lane != "" else ""))
+			"victory":
+				if hud and hud.has_method("announce"):
+					hud.announce("Victory!" if int(e.team) == player_team else "Defeat", "The Aether Core has been destroyed")
 			"error":
 				if e.u == player_hero_id and hud and hud.has_method("error"):
 					hud.error(String(e.msg))
@@ -275,10 +287,19 @@ func _process(dt: float) -> void:
 	atmosphere.update(world.is_night(), dt if _capture_frames < 0 else 10.0)
 	_update_fog(dt)
 	_t = _tm("fog", _t)
+	var hover: int = input.hover_id if input else -1
 	for id in views:
 		var v = views[id]
 		if v is UnitView:
-			v.set_selected(id == selected_id, Color(0.3, 1.0, 0.4, 0.9) if world.get_unit(id) and world.get_unit(id).team == player_team else Color(1.0, 0.3, 0.25, 0.9))
+			var su := world.get_unit(id)
+			var friendly := su != null and su.team == player_team
+			if id == selected_id:
+				v.set_selected(true, Color(0.3, 1.0, 0.4, 0.9) if friendly else Color(1.0, 0.3, 0.25, 0.9))
+			elif id == hover:
+				v.set_selected(true, Color(1.0, 1.0, 1.0, 0.55) if friendly else Color(1.0, 0.55, 0.3, 0.7))
+			else:
+				v.set_selected(false, Color.WHITE)
+	fx.tower_ranges(world, world.get_unit(player_hero_id), player_team)
 	if _capture_frames >= 0:
 		_capture_frames += 1
 		if _capture_frames == int(args.get("frames", "45")):
