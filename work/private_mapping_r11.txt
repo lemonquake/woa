@@ -1,0 +1,1 @@
+{'vfx': {'A': 'benchmark', 'B': 'candidate'}}
