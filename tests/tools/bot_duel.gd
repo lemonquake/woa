@@ -24,6 +24,14 @@ func _init() -> void:
 				if e.t == "cast":
 					var k := "%s:%s" % ["A" if e.u == a.id else "B", e.ability]
 					casts[k] = int(casts.get(k, 0)) + 1
+				elif e.t == "toggle" and bool(e.on):
+					var k3 := "%s:%s_on" % ["A" if e.u == a.id else "B", e.ability]
+					casts[k3] = int(casts.get(k3, 0)) + 1
+				elif e.t == "hook_latch":
+					# what the hook caught: a hero or a creep
+					var hu := w.get_unit(int(e.u))
+					var k2 := "%s:hooked_%s" % ["A" if e.src == a.id else "B", "hero" if hu and hu.is_hero() else "creep"]
+					casts[k2] = int(casts.get(k2, 0)) + 1
 			w.events.clear()
 		print("seed %d at %s: A(%s) %d/%d/%d lvl %d LH %d DN %d nw %d | B(%s) %d/%d/%d lvl %d LH %d DN %d nw %d | towers lost A %d B %d" % [seed, w.clock_text(),
 			opts.a, a.kills, a.deaths, a.assists, a.level, a.last_hits, a.denies, a.networth(), opts.b, b.kills, b.deaths, b.assists, b.level, b.last_hits, b.denies, b.networth(),

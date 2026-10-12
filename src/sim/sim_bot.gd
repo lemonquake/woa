@@ -32,6 +32,14 @@ const EZEE_SKILLS := ["dark_stomp", "tainted_touch", "leap_strike", "dark_stomp"
 const EZEE_BUILD := ["tango", "salve", "gauntlets", "quelling_blade", "circlet", "branch", "branch", "magic_stick",
 	"boots", "magic_wand", "belt_str", "ring_regen", "chainmail", "broadsword", "lifesteal", "mask_of_madness"]
 
+# Sludge: Stench early for lane control, Shuriken Hook to level 4 next, Blubber last (a common Dota Pudge order)
+const SLUDGE_SKILLS := ["shuriken_hook", "stench", "stench", "blubber", "stench", "chomp", "stench", "shuriken_hook",
+	"shuriken_hook", "shuriken_hook", "chomp", "blubber", "blubber", "blubber", "chomp"]
+const SLUDGE_BUILD := ["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "boots", "magic_wand",
+	"belt_str", "ring_regen", "chainmail", "broadsword", "lifesteal", "mask_of_madness"]
+# talent side per tier (0 left, 1 right): Stench slow, hook damage, hook cooldown, Chomp damage and heal
+const SLUDGE_TALENTS := [0, 0, 0, 1]
+
 var kit := "blood_ranger"
 
 func _init(world: SimWorld, hid: int, p_lane := "mid", p_name := "Bot") -> void:
@@ -45,6 +53,9 @@ func _init(world: SimWorld, hid: int, p_lane := "mid", p_name := "Bot") -> void:
 	if kit == "ezee":
 		skill_order = EZEE_SKILLS
 		build = EZEE_BUILD
+	elif kit == "sludge":
+		skill_order = SLUDGE_SKILLS
+		build = SLUDGE_BUILD
 
 func hero() -> SimUnit:
 	return w.get_unit(hero_id)
@@ -66,6 +77,8 @@ func think() -> void:
 		if h.hp >= h.max_hp * 0.92 and h.mana >= h.max_mana * 0.6:
 			state = "lane"
 		else:
+			if bool(h.toggles.get("stench", false)):
+				_order(h, {"type": O.CAST_NO_TARGET, "ability": "stench"}, true)
 			_go(h, w.map.fountains[h.team])
 			return
 	if w.time < 0.0 and not _enemy_hero_near(h, 1300.0):
@@ -77,6 +90,12 @@ func think() -> void:
 # ---- Skills and items -------------------------------------------------------------------------------------------
 
 func _learn(h: SimUnit) -> void:
+	# a talent first whenever a tier opens (heroes without a talent tree skip this)
+	var tree: Array = h.def.get("talents", [])
+	for tier in tree.size():
+		if w.abilities.can_learn_talent(h, tier):
+			var side: int = SLUDGE_TALENTS[tier] if kit == "sludge" and tier < SLUDGE_TALENTS.size() else 0
+			w.abilities.learn_talent(h, tier, side)
 	var guard := 0
 	while h.ability_points > 0 and guard < 4:
 		guard += 1
@@ -190,6 +209,8 @@ func _lane(h: SimUnit) -> void:
 			enemy_heroes.append(u)
 		elif u.kind == K.TOWER and u.team != h.team:
 			enemy_towers.append(u)
+	if kit == "sludge":
+		_sludge_stench(h, enemy_heroes, foes)
 	# use a salve / tango when chipped (and nothing is about to die in front of us)
 	if h.hp < h.max_hp * 0.6 and not _has_mod(h, "salve") and not _has_mod(h, "tango") and w.time >= _next_tango:
 		if h.hp < h.max_hp * 0.45 and _use_item(h, "salve"):
@@ -219,8 +240,21 @@ func _lane(h: SimUnit) -> void:
 		_lh_id = lh.id
 		_lh_until = w.time + (1.3 if not h.is_ranged() else 0.0)
 		return
-	# 3. harass: Ezee trades blows when the enemy hero wanders into reach; Blood Ranger pokes from range
-	if kit == "ezee":
+	# 3. harass: melee heroes trade blows when the enemy hero wanders into reach; Blood Ranger pokes from range.
+	# Sludge also throws the hook from range whenever the chain would reach the hero first.
+	if kit == "sludge":
+		for e in enemy_heroes:
+			if _sludge_hook(h, e, enemy_towers):
+				return
+			# a hero just dragged in (or standing at his side): fight it out while he is healthy enough
+			if h.edge_distance(e) < 200.0 and h.hp > h.max_hp * 0.45 and not _under_enemy_tower(h, h.pos, enemy_towers):
+				_trade_id = e.id
+				_trade_until = w.time + 3.0
+				_spells_on(h, e)
+				if not _busy(h):
+					_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
+				return
+	if not h.is_ranged():
 		for e in enemy_heroes:
 			var safe := not _under_enemy_tower(h, e.pos, enemy_towers) and not _under_enemy_tower(h, h.pos, enemy_towers)
 			var healthy := h.hp > h.max_hp * 0.55 and h.hp / h.max_hp >= e.hp / e.max_hp - 0.15
@@ -375,7 +409,81 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 	if kit == "ezee":
 		_ezee_spells(h, e)
 		return
+	if kit == "sludge":
+		_sludge_spells(h, e)
+		return
 	_ranger_spells(h, e)
+
+## Sludge in a fight: Chomp when in reach, Blubber when he is being hit, Stench on, the hook when it would land.
+func _sludge_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var d := h.edge_distance(e)
+	if not bool(h.toggles.get("stench", false)) and h.ability_level_of("stench") > 0 and d < 300.0:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "stench"}, true)
+	if ab.cast_error(h, "blubber", -1, null, h.pos) == "" and d < 500.0 and h.hp < h.max_hp * 0.8:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "blubber"}, true)
+	if ab.cast_error(h, "chomp", -1, e, e.pos) == "" and d <= ab.cast_range(h, "chomp", -1) + 40.0:
+		_order(h, {"type": O.CAST_UNIT, "ability": "chomp", "target": e.id}, true)
+		_cast_deadline = w.time + 3.4
+		return
+	_sludge_hook(h, e, [])
+
+## Throw the hook at an enemy hero, leading a moving one, but only when nothing else the chain could catch stands
+## nearer along its line (the first unit touched is the one dragged). Not into a fight under the enemy's tower.
+func _sludge_hook(h: SimUnit, e: SimUnit, towers: Array[SimUnit]) -> bool:
+	var ab := w.abilities
+	if ab.cast_error(h, "shuriken_hook", -1, null, e.pos) != "":
+		return false
+	var reach := ab.val(h, "shuriken_hook", "distance")
+	var speed := ab.val(h, "shuriken_hook", "speed")
+	var width := ab.val(h, "shuriken_hook", "width")
+	var d := h.pos.distance_to(e.pos)
+	if d > reach - 60.0 or d < 200.0:
+		return false
+	if _under_enemy_tower(h, e.pos, towers) and e.hp > e.max_hp * 0.3:
+		return false
+	var lead := e.pos
+	if e.moving:
+		var t: float = float(SimData.ability("shuriken_hook").cast_point) + d / speed
+		lead += Vector2.from_angle(e.facing) * e.move_speed * t
+	if h.pos.distance_to(lead) > reach - 40.0:
+		return false
+	var dir := (lead - h.pos).normalized()
+	var to_t := (lead - h.pos).dot(dir)
+	for o: SimUnit in w.query((h.pos + lead) * 0.5, to_t * 0.5 + width + 120.0, true):
+		if o == e or o == h or not o.alive or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if bool(o.def.get("ancient", false)) or o.is_invulnerable():
+			continue
+		var along := (o.pos - h.pos).dot(dir)
+		if along < -o.hull or along > to_t:
+			continue
+		var cp := h.pos + dir * along
+		if cp.distance_to(o.pos) <= width + o.hull + 25.0:
+			return false                             # a creep or another hero would take the hook
+	_order(h, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": h.pos + dir * minf(reach, to_t + 100.0)}, true)
+	_cast_deadline = w.time + 0.8
+	return true
+
+## Stench on while an enemy hero is close or enemy creeps crowd him (it farms the wave), off otherwise and when low.
+func _sludge_stench(h: SimUnit, enemy_heroes: Array[SimUnit], foes: Array[SimUnit]) -> void:
+	if h.ability_level_of("stench") <= 0:
+		return
+	var r := w.abilities.val(h, "stench", "radius")
+	var want := false
+	for e in enemy_heroes:
+		if h.edge_distance(e) < r + 60.0:
+			want = true
+	var crowd := 0
+	for f in foes:
+		if h.edge_distance(f) < r:
+			crowd += 1
+	if crowd >= 3 and h.hp > h.max_hp * 0.5:
+		want = true
+	if h.hp < h.max_hp * 0.25 and enemy_heroes.is_empty():
+		want = false
+	if want != bool(h.toggles.get("stench", false)):
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "stench"}, true)
 
 ## Blood Ranger: the ultimate when a fight is on, Gale Impact through the enemy (leading a running target), and
 ## Burst Shot into the enemy hero when few creeps stand around it to soak the arrows.

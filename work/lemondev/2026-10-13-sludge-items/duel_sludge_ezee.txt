@@ -1,0 +1,6 @@
+seed 3 at 12:00: A(sludge) 4/1/0 lvl 9 LH 35 DN 18 nw 4661 | B(ezee) 0/4/0 lvl 4 LH 13 DN 8 nw 2169 | towers lost A 1 B 2
+    casts: { "A:shuriken_hook": 9, "A:hooked_creep": 3, "B:dark_stomp": 9, "A:hooked_hero": 5, "A:stench_on": 32, "B:tainted_touch": 6, "A:blubber": 5, "B:leap_strike": 3, "A:chomp": 1 }
+seed 7 at 12:00: A(sludge) 0/0/0 lvl 6 LH 24 DN 12 nw 2781 | B(ezee) 0/0/0 lvl 8 LH 29 DN 18 nw 2999 | towers lost A 1 B 1
+    casts: { "A:shuriken_hook": 7, "A:hooked_creep": 5, "B:dark_stomp": 7, "B:tainted_touch": 8, "A:stench_on": 25, "B:leap_strike": 3, "A:blubber": 3, "B:unholy_might": 2, "A:hooked_hero": 1 }
+seed 11 at 12:00: A(sludge) 0/2/0 lvl 6 LH 20 DN 6 nw 2597 | B(ezee) 2/1/0 lvl 8 LH 32 DN 24 nw 3898 | towers lost A 1 B 1
+    casts: { "A:shuriken_hook": 10, "A:hooked_creep": 3, "B:dark_stomp": 7, "A:stench_on": 25, "B:tainted_touch": 6, "B:leap_strike": 3, "A:hooked_hero": 6, "A:blubber": 7, "B:unholy_might": 2 }

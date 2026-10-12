@@ -1,0 +1,6 @@
+seed 3 at 12:00: A(sludge) 0/5/0 lvl 4 LH 10 DN 8 nw 2159 | B(blood_ranger) 5/0/0 lvl 10 LH 41 DN 34 nw 4036 | towers lost A 1 B 1
+    casts: { "B:gale_impact": 5, "A:shuriken_hook": 3, "B:burst_shot": 3, "A:stench_on": 15, "A:hooked_creep": 1, "B:blood_ranger_ult": 3, "A:hooked_hero": 1, "A:blubber": 1 }
+seed 7 at 12:00: A(sludge) 1/5/0 lvl 7 LH 25 DN 11 nw 3400 | B(blood_ranger) 5/1/0 lvl 9 LH 40 DN 24 nw 3988 | towers lost A 1 B 1
+    casts: { "B:gale_impact": 9, "A:shuriken_hook": 5, "A:hooked_hero": 3, "B:burst_shot": 4, "A:stench_on": 20, "A:blubber": 5, "A:hooked_creep": 2, "B:blood_ranger_ult": 1 }
+seed 11 at 12:00: A(sludge) 0/2/0 lvl 6 LH 31 DN 14 nw 2999 | B(blood_ranger) 2/0/0 lvl 9 LH 31 DN 24 nw 3905 | towers lost A 1 B 1
+    casts: { "B:gale_impact": 8, "B:burst_shot": 1, "A:shuriken_hook": 5, "A:hooked_hero": 2, "A:stench_on": 21, "A:hooked_creep": 3, "A:blubber": 5, "B:blood_ranger_ult": 2 }
