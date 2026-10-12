@@ -6,6 +6,7 @@ render_mode cull_disabled, diffuse_burley, specular_disabled, depth_draw_opaque;
 
 uniform sampler2D albedo_tex : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec3 tint : source_color = vec3(1.0);
+uniform float bleach = 0.0;               // 0..1: grey the leaf texture before tinting (blossom trees)
 uniform vec3 tint2 : source_color = vec3(1.0);
 uniform float alpha_cut = 0.42;
 uniform float wind = 1.0;
@@ -45,7 +46,8 @@ void fragment() {
 	if (keep < bayer4(FRAGCOORD.xy)) {
 		discard;
 	}
-	vec3 col = c.rgb * mix(tint, tint2, hvar) * vec3(0.92, 0.94, 0.96);
+	vec3 leaf = mix(c.rgb, vec3(dot(c.rgb, vec3(0.3, 0.55, 0.15))), bleach);
+	vec3 col = leaf * mix(tint, tint2, hvar) * vec3(0.92, 0.94, 0.96);
 	col *= mix(0.55, 1.12, clamp(vheight, 0.0, 1.0));
 	// darker towards the inside of a canopy: cards facing away from the sky are shaded
 	col *= mix(0.68, 1.0, clamp(NORMAL.y * 0.5 + 0.6, 0.0, 1.0));

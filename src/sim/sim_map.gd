@@ -16,6 +16,17 @@ const VN := 128                            # vision cells per side (128 units ea
 const RIVER := 0
 const GROUND := 1
 const HIGH := 2
+const MOUNTAIN := 3                        # impassable rock massifs at the corners and edges (block sight)
+
+## Jungle plateaus (Dawn's side; Dusk's are the same rotated 180 degrees): high ground with cliffs, reached by ramps
+## where jungle walkways cross their edges. [centre, half-axes, angle in degrees].
+const PLATEAUS := [
+	[Vector2(2200, -4500), Vector2(1250, 820), -20.0],   # the hard camp bluff (large and small camps)
+	[Vector2(-2400, -5100), Vector2(1100, 600), 8.0],     # the west ridge above the bottom lane
+	[Vector2(950, -3050), Vector2(720, 480), -40.0],      # the ancient camp terrace
+	[Vector2(-3900, 250), Vector2(1280, 800), 55.0],      # the off-lane bluff with two camps
+	[Vector2(-5000, 2750), Vector2(760, 460), 75.0],      # a lookout above the top lane
+]
 
 var seed_value := 1
 var level := PackedByteArray()             # N*N terrain level per path cell
@@ -35,12 +46,14 @@ var camps: Array = []                      # [{id, team_side, kind, pos, box_hal
 var fountains := [Vector2(-7050, -6650), Vector2(7050, 6650)]
 var shops := [Vector2(-6700, -6200), Vector2(6700, 6200)]
 var paths: Array = []                      # jungle walkways (PackedVector2Array), kept clear of trees
+var plateau_ramps: Array = []              # the ramps made where walkways cross plateau edges (also in ramps)
 
 # ---- Construction ---------------------------------------------------------------------------------------------------
 
 func build(p_seed := 1) -> void:
 	seed_value = p_seed
 	_layout()
+	_plateau_ramps()
 	_terrain()
 	_place_trees()
 	_pathing()
@@ -138,12 +151,119 @@ func _layout() -> void:
 func level_at_raw(p: Vector2) -> int:
 	# river: low ground along x + y = 0
 	var river_d := absf(p.x + p.y) / sqrt(2.0)
-	var river_w := 520.0 + 120.0 * sin(p.x * 0.0011) + 60.0 * sin(p.y * 0.0023)
+	var river_w := 500.0 + 120.0 * cos(p.x * 0.0011) + 60.0 * cos(p.y * 0.0023)    # even in p: both banks match
 	if river_d < river_w:
 		return RIVER
+	if is_mountain(p):
+		return MOUNTAIN
 	if _in_base(p) or _in_base(-p):
 		return HIGH
+	if _on_plateau(p) or _on_plateau(-p):
+		return HIGH
 	return GROUND
+
+## Mountains: massifs in the four corners (the river cuts a gorge through the north-west and south-east ones, the
+## bases sit under the other two) and a ragged band along the map edge. Kept clear of lanes, the river and the
+## fountains. Symmetric under p -> -p.
+func is_mountain(p: Vector2) -> bool:
+	var q := p if (p.x + p.y) < 0.0 or ((p.x + p.y) == 0.0 and p.x < 0.0) else -p
+	var river_d := absf(q.x + q.y) / sqrt(2.0)
+	if river_d < 900.0:
+		return false
+	var wob := 160.0 * sin(q.x * 0.0021 + 1.3) + 120.0 * sin(q.y * 0.0017 + 0.4) + 70.0 * sin((q.x - q.y) * 0.0043)
+	# corner behind Dawn's fountain (south-west) and the river corners (north-west / south-east, mirrored)
+	var corner := HALF * Vector2(-1, -1)
+	if q.distance_to(corner) < 1450.0 + wob:
+		return true
+	for c in [Vector2(-HALF, HALF), Vector2(HALF, -HALF)]:
+		if q.distance_to(c) < 3100.0 + wob * 1.5 and river_d > 1050.0 + wob * 0.5:
+			return _lane_clear(q, 800.0)
+	# a ragged band along the edge (wider where the forest is deep)
+	var edge := HALF - maxf(absf(q.x), absf(q.y))
+	if edge < 260.0 + maxf(0.0, wob) * 0.8:
+		return _lane_clear(q, 900.0) and q.distance_to(fountains[0]) > 1300.0
+	return false
+
+func _lane_clear(p: Vector2, r: float) -> bool:
+	for k in lanes:
+		if _polyline_distance(p, lanes[k]) < r or _polyline_distance(-p, lanes[k]) < r:
+			return false
+	return true
+
+## Whether a point (Dawn's side) is on a jungle plateau. Plateaus keep away from lanes, the river and buildings.
+func _on_plateau(p: Vector2) -> bool:
+	if (p.x + p.y) >= 0.0:
+		return false
+	for pl in PLATEAUS:
+		var d: Vector2 = (p - (pl[0] as Vector2)).rotated(-deg_to_rad(float(pl[2])))
+		var ax: Vector2 = pl[1]
+		var wob := 1.0 + 0.08 * sin(atan2(d.y, d.x) * 5.0 + float(pl[2]))
+		if (d.x * d.x) / (ax.x * ax.x) + (d.y * d.y) / (ax.y * ax.y) > wob * wob:
+			continue
+		if absf(p.x + p.y) / sqrt(2.0) < 1050.0:
+			return false
+		if not _lane_clear(p, 560.0):
+			return false
+		for b in buildings:
+			if p.distance_to(b.pos) < 700.0:
+				return false
+		return true
+	return false
+
+## Ramps where the jungle walkways cross plateau edges (merged when close), added to `ramps` with their mirrors.
+func _plateau_ramps() -> void:
+	plateau_ramps.clear()
+	var found: Array = []
+	for pth: PackedVector2Array in paths:
+		if (pth[0].x + pth[0].y) > 0.0:
+			continue                       # Dusk's walkways: mirrored below
+		for i in pth.size() - 1:
+			var a := pth[i]
+			var b := pth[i + 1]
+			var steps := int(a.distance_to(b) / 24.0) + 1
+			var prev := _on_plateau(a)
+			for s2 in range(1, steps + 1):
+				var q := a.lerp(b, float(s2) / steps)
+				var cur := _on_plateau(q)
+				if cur != prev:
+					var near := false
+					for f: Vector2 in found:
+						if f.distance_to(q) < 520.0:
+							near = true
+					if not near:
+						found.append(q)
+				prev = cur
+	# a plateau no walkway crosses gets one ramp on the side facing the nearest lane
+	for pl in PLATEAUS:
+		var c: Vector2 = pl[0]
+		var has := false
+		for f: Vector2 in found:
+			if f.distance_to(c) < (pl[1] as Vector2).x + 400.0:
+				has = true
+		if has or not _on_plateau(c):
+			continue
+		var best := Vector2.ZERO
+		var best_d := INF
+		for k in lanes:
+			for side in [1.0, -1.0]:
+				var ln: PackedVector2Array = lanes[k]
+				for i in ln.size() - 1:
+					var q := Geometry2D.get_closest_point_to_segment(c, ln[i] * side, ln[i + 1] * side)
+					if q.distance_to(c) < best_d:
+						best_d = q.distance_to(c)
+						best = q
+		var dir := (best - c).normalized()
+		var q2 := c
+		while _on_plateau(q2) and q2.distance_to(c) < 3000.0:
+			q2 += dir * 24.0
+		found.append(q2)
+	for f: Vector2 in found:
+		var r := {"pos": f, "radius": 320.0, "plateau": true}
+		plateau_ramps.append(r)
+		ramps.append(r)
+		var m := {"pos": -f, "radius": 320.0, "plateau": true}
+		plateau_ramps.append(m)
+		ramps.append(m)
 
 func _in_base(p: Vector2) -> bool:
 	# Dawn's high ground: the south-west block, its north-east corner cut diagonally (the mid ramp sits on the cut)
@@ -182,6 +302,8 @@ func _terrain() -> void:
 
 ## How much smoothing a terrain corner gets: river banks and ramps are gentle slopes, base edges stay as cliffs.
 func _slope_weight(p: Vector2) -> float:
+	if is_mountain(p):
+		return 0.3
 	for r in ramps:
 		if p.distance_to(r.pos) < r.radius:
 			return 0.95
@@ -283,8 +405,16 @@ func _tree_allowed(p: Vector2) -> bool:
 	var river_d := absf(p.x + p.y) / sqrt(2.0)
 	if river_d < 780.0:
 		return false
-	if _in_base(p) or _in_base(-p):
+	if level_at(p) == MOUNTAIN:
 		return false
+	if _in_base(p) or _in_base(-p):
+		# groves inside the bases: only well away from lanes, buildings and the fountain
+		var q := p if _in_base(p) else -p
+		if q.distance_to(fountains[0]) < 1700.0 or not _lane_clear(q, 650.0):
+			return false
+		for b in buildings:
+			if q.distance_to(b.pos if b.team == C.DAWN else -(b.pos as Vector2)) < 700.0:
+				return false
 	for k in lanes:
 		if _polyline_distance(p, lanes[k]) < 430.0:
 			return false
@@ -324,7 +454,7 @@ func _pathing() -> void:
 				ok = 0
 			elif tree_cell[cy * N + cx] >= 0:
 				ok = 0
-			elif is_cliff_cell(cx, cy):
+			elif is_cliff_cell(cx, cy) or level[cy * N + cx] == MOUNTAIN:
 				ok = 0
 			walkable[cy * N + cx] = ok
 	# buildings block their footprint (fountains are walkable around their centre for heroes to stand in)

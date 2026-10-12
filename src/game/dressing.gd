@@ -18,6 +18,7 @@ var _groups := {}                          # model -> {chunk -> [[xf, shadow]]}
 var _shadow := {}                          # model -> casts shadows
 var _rng := RandomNumberGenerator.new()
 var _lane_lines: Array = []
+var landscape: Landscape
 
 func build(p_map: SimMap, p_terrain: TerrainBuilder) -> void:
 	map = p_map
@@ -39,6 +40,9 @@ func build(p_map: SimMap, p_terrain: TerrainBuilder) -> void:
 	_camps()
 	_landmarks()
 	_tree_blobs()
+	landscape = Landscape.new()
+	add_child(landscape)
+	landscape.build(map, terrain, self)
 	_emit()
 
 ## Every tree trunk gets a contact pool too (canopy shadows come from the sun).
@@ -56,6 +60,9 @@ func _tree_blobs() -> void:
 ## All meshes of a model scene merged into one mesh (surfaces keep their materials and node transforms).
 func _mesh(path: String) -> Mesh:
 	if _meshes.has(path):
+		return _meshes[path]
+	if path.get_file() == "blossom.gltf" and foliage:
+		_meshes[path] = _blossom()
 		return _meshes[path]
 	if path.begins_with(NATURE) and foliage and not path.get_file().begins_with("Rock") and not path.get_file().begins_with("Pebble"):
 		_meshes[path] = foliage._mesh(path.get_file().get_basename())
@@ -79,6 +86,20 @@ func _mesh(path: String) -> Mesh:
 				out.surface_set_material(out.get_surface_count() - 1, _tune(mat, path))
 		scene.free()
 	_meshes[path] = out
+	return out
+
+## A blossom tree for the Dawn base's gardens: the common tree with its leaves bleached and tinted pink-white.
+func _blossom() -> Mesh:
+	var src := foliage._mesh("CommonTree_3")
+	var out := src.duplicate() as Mesh
+	for s in out.get_surface_count():
+		var m := out.surface_get_material(s)
+		if m is ShaderMaterial:
+			var pm := (m as ShaderMaterial).duplicate() as ShaderMaterial
+			pm.set_shader_parameter("bleach", 0.9)
+			pm.set_shader_parameter("tint", Color(1.45, 0.92, 1.12))
+			pm.set_shader_parameter("tint2", Color(1.25, 0.72, 0.95))
+			out.surface_set_material(s, pm)
 	return out
 
 static func _rel_xf(n: Node3D, root: Node) -> Transform3D:
@@ -419,7 +440,9 @@ func _camps() -> void:
 		var away: Vector2 = (p - map.fountains[c.side]).normalized()
 		var side: Vector2 = away.orthogonal()
 		_add("kf_fire_pit", p + away * 300.0, 0.7, 0.05, true)
-		_add("kd_tent", p + away * 420.0 + side * 180.0, 0.9, 0.0, true, (side).angle())
+		# a log seat by the fire and a caged lantern on a post (the old tent read as a flat box)
+		_add("kd_log", p + away * 420.0 + side * 120.0, 0.9, 0.05, true, side.angle())
+		_add("kf_lantern_cage", p + away * 470.0 - side * 200.0, 0.9, 0.0, true, (-away).angle())
 		if c.side == SimConst.DUSK:
 			_add("bones_scatter", p + side * -260.0, 0.6, 0.02)
 			_add("kd_grave_broken", p + side * -320.0 + away * 120.0, 0.8, 0.05, true)

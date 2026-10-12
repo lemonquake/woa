@@ -22,6 +22,7 @@ uniform float normal_bias = 1.0;
 
 varying vec3 wpos;
 varying vec3 wnorm;
+varying float mtn;                         // 0..1 mountain (vertex colour red, from the terrain builder)
 
 const int L_GRASS = 0;
 const int L_GRASS2 = 1;
@@ -36,6 +37,7 @@ const int L_DUSK_PLAZA = 8;
 void vertex() {
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	wnorm = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+	mtn = COLOR.r;
 }
 
 vec4 tex(int layer, vec2 uv) {
@@ -132,6 +134,24 @@ void fragment() {
 	cliff.rgb *= mix(vec3(0.95, 0.9, 0.82), vec3(0.75, 0.68, 0.72), dusk_w);
 	float cliff_w = smoothstep(0.3, 0.55, slope + (cliff.r - 0.5) * 0.25);
 	col = mix(col, cliff, cliff_w);
+
+	// mountains: bare rock on the slopes, mossy turf and scree on ledges, cooler and darker towards the peaks,
+	// with broad strata bands so the faces do not read as one smear
+	vec4 cxl = tex(L_CLIFF, wpos.zy / 9.0);
+	vec4 czl = tex(L_CLIFF, wpos.xy / 9.0);
+	vec4 rock = mix(cliff, cxl * bw.x + cy * bw.y + czl * bw.z, 0.45);
+	float strata = 0.5 + 0.5 * sin(wpos.y * 1.7 + macro.g * 5.0);
+	rock.rgb *= mix(0.84, 1.06, strata);
+	// greyer, cooler stone than the sandy cliff texture (the range reads as granite, not sandstone)
+	rock.rgb = mix(rock.rgb, vec3(dot(rock.rgb, vec3(0.33))), 0.55) * vec3(0.92, 0.95, 1.0);
+	rock.rgb *= mix(vec3(0.9, 0.86, 0.8), vec3(0.6, 0.63, 0.7), smoothstep(4.0, 24.0, h));
+	rock.rgb *= mix(vec3(1.0), vec3(0.82, 0.74, 0.76), dusk_w);
+	vec4 turf = mix(g2, forest, 0.35) * vec4(0.74, 0.84, 0.62, 1.0);
+	float ledge = smoothstep(0.78, 0.93, an.y + (macro.r - 0.5) * 0.25) * (1.0 - smoothstep(12.0, 26.0, h + macro.b * 4.0));
+	vec4 mcol = mix(rock, turf, ledge);
+	float mw = smoothstep(0.02, 0.5, mtn);
+	col = mix(col, mcol, mw);
+	cliff_w = max(cliff_w, mw * (1.0 - ledge));
 
 	// normal: planar layers only (cliffs keep the geometric normal plus a little detail)
 	vec3 n_ground = nrm(L_GRASS, uv_g);

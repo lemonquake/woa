@@ -101,6 +101,41 @@ func test_map_symmetry() -> void:
 	check(_map.level_at(Vector2(-3000, 3000)) == SimMap.RIVER, "river runs north-west to south-east")
 	check(_map.level_at(Vector2(-2000, -4000)) == SimMap.GROUND, "jungle is ground level")
 
+func test_map_elevation_and_mountains() -> void:
+	var N := SimMap.N
+	var asym := 0
+	var high_jungle := 0
+	var mountain := 0
+	for cy in N:
+		for cx in N:
+			var l := _map.level[cy * N + cx]
+			if l != _map.level[(N - 1 - cy) * N + (N - 1 - cx)]:
+				asym += 1
+			if l == SimMap.MOUNTAIN:
+				mountain += 1
+				check(_map.walkable[cy * N + cx] == 0, "mountain cells are impassable")
+			var p := _map.cell_center(cx, cy)
+			if l == SimMap.HIGH and not (absf(p.x) > 3700.0 and absf(p.y) > 3000.0 and signf(p.x) == signf(p.y)):
+				high_jungle += 1
+	check(asym == 0, "terrain levels are symmetric under p -> -p (%d cells differ)" % asym)
+	check(high_jungle > 1500, "the jungle has raised plateaus (%d high cells outside the bases)" % high_jungle)
+	check(mountain > 1500, "mountains frame the map (%d cells)" % mountain)
+	check(_map.plateau_ramps.size() >= 10, "plateaus have ramps (%d)" % _map.plateau_ramps.size())
+	# every camp and every plateau ramp can be walked to from both fountains
+	for f in _map.fountains:
+		var start: Vector2 = f + ((Vector2.ZERO - f).normalized() * 700.0)
+		for c in _map.camps:
+			var path := _map.find_path(start, c.pos)
+			check(path.size() > 1 and path[path.size() - 1].distance_to(c.pos) < 300.0, "camp %d reachable from the fountain at %s" % [c.id, f])
+		for r in _map.plateau_ramps:
+			var path2 := _map.find_path(start, r.pos)
+			check(path2.size() > 1 and path2[path2.size() - 1].distance_to(r.pos) < 300.0, "ramp at %s reachable" % r.pos)
+	# vision: a hero on a plateau sees down, one below the cliff does not see up
+	var w := empty_world()
+	var pl: Array = SimMap.PLATEAUS[0]
+	var top := w.spawn("blood_ranger", C.DUSK, pl[0])
+	check(_map.level_at(top.pos) == SimMap.HIGH, "the hard camp bluff is high ground")
+
 # ---- Turning and attacks ------------------------------------------------------------------------------------------
 
 func test_turn_rate() -> void:
@@ -458,8 +493,19 @@ func test_vision_high_ground() -> void:
 	var up := w.spawn("blood_ranger", C.DUSK, Vector2(-200, -200))
 	w.vision.update()
 	check(w.vision.sees(C.DAWN, up), "sees units on the same level nearby")
-	var cliff_top := w.spawn("blood_ranger", C.DUSK, Vector2(-5200, -4000))
-	var below := w.spawn("blood_ranger", C.DAWN, Vector2(-5200, -3350))
+	# a column across the base's north cliff with no tree between the two spots
+	var x := -6000.0
+	while x < -4600.0:
+		var clear := true
+		for yy in range(-4000, -3300, 32):
+			var c := _map.world_to_vcell(Vector2(x, yy))
+			if _map.vision_block[c.y * SimMap.VN + c.x] == 1:
+				clear = false
+		if clear and not _map.in_ramp(Vector2(x, -3700)):
+			break
+		x += 64.0
+	var cliff_top := w.spawn("blood_ranger", C.DUSK, Vector2(x, -4000))
+	var below := w.spawn("blood_ranger", C.DAWN, Vector2(x, -3350))
 	w.vision.update()
 	check(_map.level_at(cliff_top.pos) == SimMap.HIGH and _map.level_at(below.pos) == SimMap.GROUND, "test spots on high and low ground")
 	check(not w.vision.sees(C.DAWN, cliff_top), "low ground cannot see onto high ground")
@@ -1229,7 +1275,7 @@ func test_gale_impact_trees_and_crash() -> void:
 		for ev in w.events:
 			if ev.t == "impact" and ev.u == foe.id and ev.what == "tree":
 				crashed = true
-			if ev.t == "tree" and int(ev.i) == ti and not ev.alive:
+			if ev.t == "tree" and not ev.alive and _map.trees[int(ev.i)].pos.distance_to(foe.pos) < 260.0:
 				felled = true
 		w.events.clear()
 	var row: Array = r.dmg_out.get("gale_impact", [0, 0, 0])
