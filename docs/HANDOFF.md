@@ -146,14 +146,13 @@ takes the base value ("55% + 10% per level" = 55/65/75/85%). Numbers you did not
   pierces. 120/200/280/360 magic damage, then hurls each enemy sideways off the arrow's line (with a little forward
   push). A thrown enemy that hits a cliff, tree, building or unit takes another 20% of the arrow's damage once.
   Trees on the path and trees that thrown units hit are felled. 12 s cooldown, mana 100-130 *chosen*.
-* **Masterful Archery (E)**: passive, 30% chance *chosen* per attack to add 8/18/28/38% of her agility as physical
+* **Masterful Archery (E)**: passive, 30% chance *chosen* per attack to add 15/25/35/45% of her agility as physical
   damage (charged arrow, crimson burst, a red "+N!" number), 0.8 s cooldown (the E icon shows it).
 * **Blood Ranger (R)**: 15 s of 40/50/60% lifesteal and +200/300/400 attack range. Each attack that hits her has a 30%
   chance to make her leap 300 back, away from the attacker (stopped short by cliffs, trees and buildings). *Chosen*:
   at most one leap per second, so creep fire cannot chain them; the leap keeps her orders. 30 s cooldown, mana
   100-150 *chosen*.
-* Your Masterful Archery wording ("8% + 10 per level agility") had no chance value and could also be read
-  differently; at level 4 with 100 agility the burst adds 38 damage. Tell me if you meant something stronger.
+* Masterful Archery was buffed on request from (8% + 10% per level) to (15% + 10% per level) of agility.
 
 ## Trees, Mini-Axe and Vegan Picker
 

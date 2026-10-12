@@ -46,7 +46,7 @@ Ranged agility hero (Galewarden's base stats), female. Numbers the user did not 
   level magic damage and are hurled sideways off the arrow's line; a hurled enemy that hits a wall, unit, building or
   tree takes another 20% of that damage. Trees on the arrow's path and trees units crash into are destroyed.
 * E Masterful Archery: passive; an attack has a chance (30%, chosen) to deal bonus physical damage equal to
-  (8% + 10% per level) of her agility; 0.8 s cooldown; burst effect on hit.
+  (15% + 10% per level) of her agility (buffed from 8% on request); 0.8 s cooldown; burst effect on hit.
 * R Blood Ranger: 15 s; lifesteal 40% + 10% per level and +200 + 100 per level attack range; while active each attack
   that hits her has a 30% chance to make her leap 300 backwards (away from the attacker). 30 s cooldown.
   Chosen: 1.0 s minimum between leaps so creep fire cannot chain them; the leap keeps her orders (non-disabling).

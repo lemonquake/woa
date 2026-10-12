@@ -198,7 +198,7 @@ static func _merged(a: Dictionary, b: Dictionary) -> Dictionary:
 static func _build_abilities() -> void:
 	# Blood Ranger. Values the owner specified: Burst Shot 30 arrows in 5 waves of 4-7, 55% + 10% per level of attack
 	# damage, channelled, 17 s; Gale Impact 2000 range, 120 + 80 per level, +20% on impact, 12 s; Masterful Archery
-	# (8% + 10% per level) of agility, 0.8 s cooldown; Blood Ranger 15 s, 40% + 10% lifesteal, +200 + 100 range, 30%
+	# (15% + 10% per level) of agility, 0.8 s cooldown; Blood Ranger 15 s, 40% + 10% lifesteal, +200 + 100 range, 30%
 	# back leap of 300, 30 s. Everything else (mana, ranges, radii, timings, proc chance) is chosen; see docs/HANDOFF.md.
 	_abilities["burst_shot"] = {"id": "burst_shot", "name": "Burst Shot", "behavior": "point", "key": "Q",
 		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [17, 17, 17, 17], "cast_point": 0.2, "range": 900,
@@ -216,7 +216,7 @@ static func _build_abilities() -> void:
 	_abilities["masterful_archery"] = {"id": "masterful_archery", "name": "Masterful Archery", "behavior": "passive",
 		"key": "E", "max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0.8, 0.8, 0.8, 0.8], "cast_point": 0.0,
 		"range": 0, "damage_type": "physical",
-		"values": {"chance": [0.3, 0.3, 0.3, 0.3], "agility_pct": [0.08, 0.18, 0.28, 0.38], "proc_cooldown": [0.8, 0.8, 0.8, 0.8]},
+		"values": {"chance": [0.3, 0.3, 0.3, 0.3], "agility_pct": [0.15, 0.25, 0.35, 0.45], "proc_cooldown": [0.8, 0.8, 0.8, 0.8]},
 		"desc": "Her attacks have a chance to burst for bonus physical damage based on her agility. Cooldown after each burst."}
 	_abilities["blood_ranger_ult"] = {"id": "blood_ranger_ult", "name": "Blood Ranger", "behavior": "no_target", "key": "R",
 		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [30, 30, 30],

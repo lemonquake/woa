@@ -1190,7 +1190,7 @@ func test_masterful_archery() -> void:
 					gap_ok = false
 				last_proc = w.time
 		w.events.clear()
-	near(bonus, r.agi_total * 0.38, 0.01, "bonus = 38% of agility at level 4")
+	near(bonus, r.agi_total * 0.45, 0.01, "bonus = 45% of agility at level 4")
 	check(gap_ok, "never twice within 0.8 s")
 	var rate := float(procs) / maxf(1.0, attacks)
 	check(rate > 0.2 and rate < 0.36, "about 30% of attacks burst (%.2f of %d)" % [rate, attacks])
