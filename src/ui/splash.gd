@@ -38,7 +38,7 @@ func _process(dt: float) -> void:
 	var prog := []
 	var st := ResourceLoader.load_threaded_get_status(_path, prog)
 	var p: float = prog[0] if prog.size() > 0 else 0.0
-	var label := "Loading the heroes" if _path == HERO_SELECT else "Loading the battlefield"
+	var label := "Loading heroes" if _path == HERO_SELECT else "Loading the map"
 	LoadingScreen.progress(get_tree(), 0.05 + 0.6 * minf(p, _t / MIN_SHOW), label)
 	if st == ResourceLoader.THREAD_LOAD_FAILED or st == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 		set_process(false)
@@ -47,5 +47,5 @@ func _process(dt: float) -> void:
 	if st == ResourceLoader.THREAD_LOAD_LOADED and (_t >= MIN_SHOW or _quick):
 		set_process(false)
 		var ps := ResourceLoader.load_threaded_get(_path) as PackedScene
-		LoadingScreen.progress(get_tree(), 0.7, "Setting the stage")
+		LoadingScreen.progress(get_tree(), 0.7, "Starting")
 		get_tree().change_scene_to_packed(ps)

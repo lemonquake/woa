@@ -981,7 +981,7 @@ func test_planted_tree() -> void:
 	var p := Vector2(-1750, -4000)
 	var bystander := w.spawn("dawn_melee", C.DAWN, _map.cell_center(_map.world_to_cell(p).x, _map.world_to_cell(p).y))
 	bystander.order = O.HOLD
-	check(w.abilities.item_target("branch") == "point", "Ironwood Twig targets the ground")
+	check(w.abilities.item_target("branch") == "point", "Tree Twig targets the ground")
 	near(w.abilities.cast_range(h, "", 0), 400.0, 0.1, "planted within 400")
 	var n0 := _map.trees.size()
 	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": p})
@@ -1138,7 +1138,7 @@ func test_burst_shot_interrupts() -> void:
 		w2.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
 		w2.command(r.id, {"type": O.MOVE, "point": Vector2(-2600, -4000), "queue": true}))
 	var rw: SimUnit = wand[0]
-	check(rw.stick_charges == 0, "the Spark Rod was used mid-channel")
+	check(rw.stick_charges == 0, "the Zap Stick was used mid-channel")
 	near(float(wand[1]), float(full[1]), 1.0, "and the channel ran its course")
 	check(rw.pos.x < -2030.0, "the queued move ran after the channel ended")
 

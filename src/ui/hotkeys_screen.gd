@@ -305,7 +305,7 @@ func _start() -> void:
 	_starting = true
 	Keybinds.save()
 	LoadingScreen.open(get_tree())
-	LoadingScreen.progress(get_tree(), 0.02, "Loading the battlefield")
+	LoadingScreen.progress(get_tree(), 0.02, "Loading the map")
 	# let the loading screen draw before the match scene starts loading
 	await get_tree().process_frame
 	await get_tree().process_frame

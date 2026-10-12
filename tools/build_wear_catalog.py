@@ -8,6 +8,8 @@ import json, os, re, struct, sys
 WEAR = "assets/characters/hero/wear"
 BH = sys.argv[1] if len(sys.argv) > 1 else ""
 man = json.load(open(os.path.join(WEAR, "manifest.json")))["items"]
+# Plain display names (lemondev/references/naming.md); they win over generated and beyond-heroes names.
+NAMES = json.load(open("tools/wear_names.json", encoding="utf-8"))
 
 def bounds(path):
     f = open(path, "rb").read()
@@ -59,6 +61,7 @@ for f in sorted(os.listdir(WEAR)):
         elif "z" in hide or "sleeve" in hide: slot = "armor"
         elif y0 > 1.45 or (i.endswith("_crown")): slot = "helm"
         else: slot = "accessory"
+    name = NAMES.get(i, name)
     out[i] = {"name": name, "slot": slot, "sides": bool(info.get("sides", False)),
               "hair": info.get("hair", "hide"), "y": [round(y0, 3), round(y1, 3)], "base": i.startswith("_")}
 json.dump(out, open(os.path.join(WEAR, "catalog.json"), "w"), indent=1, sort_keys=True)

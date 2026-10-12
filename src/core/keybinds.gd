@@ -24,7 +24,7 @@ const ACTIONS := [
 	["item_4", "Item slot 4", "Items", KEY_V],
 	["item_5", "Item slot 5", "Items", KEY_B],
 	["item_6", "Item slot 6", "Items", KEY_N],
-	["tp", "Town Portal", "Items", KEY_T],
+	["tp", "Teleport", "Items", KEY_T],
 	["attack", "Attack", "Orders", KEY_A],
 	["stop", "Stop (hold: hard stop)", "Orders", KEY_S],
 	["hold", "Hold position", "Orders", KEY_H],
@@ -37,7 +37,7 @@ const ACTIONS := [
 	["camera_left", "Pan camera left", "Camera", KEY_LEFT],
 	["camera_right", "Pan camera right", "Camera", KEY_RIGHT],
 	["shop", "Open shop", "Interface", KEY_F4],
-	["glyph", "Glyph of Fortification", "Interface", KEY_J],
+	["glyph", "Fortify", "Interface", KEY_J],
 	["scoreboard", "Scoreboard (hold)", "Interface", KEY_TAB],
 	["debug", "Debug panel", "Interface", KEY_F9],
 ]

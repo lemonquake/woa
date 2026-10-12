@@ -5,7 +5,7 @@ extends CanvasLayer
 ## root, so it stays up across a scene change and covers the new scene until that scene calls LoadingScreen.close().
 ##
 ##   LoadingScreen.open(get_tree())          # show (or keep) the screen
-##   LoadingScreen.progress(tree, 0.4, "Raising the mountains")
+##   LoadingScreen.progress(tree, 0.4, "Loading mountains")
 ##   LoadingScreen.close(tree)               # fade out and free
 
 const U = preload("res://src/ui/ui_kit.gd")

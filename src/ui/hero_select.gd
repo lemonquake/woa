@@ -9,12 +9,12 @@ const CREATOR := "res://src/ui/hero_creator.tscn"
 const HOTKEYS := "res://src/ui/hotkeys_screen.tscn"
 
 const INFO := {
-	"blood_ranger": {"title": "the Crimson Huntress", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
+	"blood_ranger": {"title": "the Archer", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
 		"accent": Color(0.95, 0.22, 0.25), "flourish": "bow_1", "idle": "idle_bow",
-		"story": "She hunted the Dusk's beasts until the hunt hunted her back. Now the blood she spills keeps her standing, and every arrow she looses is a promise kept."},
+		"story": "She hunted the Black Sun's beasts until the hunt hunted her back. Now the blood she spills keeps her standing, and every arrow she looses is a promise kept."},
 	"ezee": {"title": "the Dark Paladin", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
 		"accent": Color(0.66, 0.3, 1.0), "flourish": "boss_roar", "idle": "idle_2h",
-		"story": "Once a knight of the Dawn, Ezee broke his oath to win a war the light was losing. The shadow he bargained with still answers when he calls, and it is always hungry."},
+		"story": "Once a knight of the Ancient Light, Ezee broke his word to win a war the light was losing. The shadow he bargained with still answers when he calls, and it is always hungry."},
 }
 
 var vp: SubViewport

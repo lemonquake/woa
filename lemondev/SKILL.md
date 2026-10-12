@@ -19,7 +19,7 @@ Turn a game-development request into bounded, independently verified components.
 
 Inspect the project and existing run/test commands. Establish the requested behavior, engine/version, target device and resolution, available tools, benchmark, performance budget, and allowed time/cost. Infer low-risk choices from the project; ask only for information that blocks consequential work. Continue independent work while awaiting it.
 
-Read [roles-and-review.md](references/roles-and-review.md) before decomposition or delegation. Read [systems.md](references/systems.md) for mechanics and simulations; read [visuals-and-ui.md](references/visuals-and-ui.md) for rendered assets, shaders, or UI. Use [records.md](references/records.md) for contracts, review packets, and handoff records. Consult [source-map.md](references/source-map.md) for provenance and adaptations.
+Read [roles-and-review.md](references/roles-and-review.md) before decomposition or delegation. Read [systems.md](references/systems.md) for mechanics and simulations; read [visuals-and-ui.md](references/visuals-and-ui.md) for rendered assets, shaders, or UI. Use [records.md](references/records.md) for contracts, review packets, and handoff records. Read [naming.md](references/naming.md) before naming anything. Consult [source-map.md](references/source-map.md) for provenance and adaptations.
 
 Decompose into discrete artifacts with dependencies, one owner per file set, public interfaces, acceptance criteria, benchmark evidence, test commands, and rollback boundaries. Start with a playable vertical slice for a whole game. Keep each component small enough to test and revise independently. Define the acceptance contract before viewing candidate results.
 
@@ -74,4 +74,8 @@ Report one of these states, scoped to the named artifact/revision:
 
 Do not say “complete,” “AAA,” “production-ready,” “60 FPS,” “stress-tested,” or “blind-reviewed” without the corresponding inspected evidence and stated conditions. A screenshot does not prove mechanics; a test command that never ran does not prove success; a visual win does not cancel a correctness failure. Mark a gate N/A only with a contract-based reason, never to conceal missing tools.
 
-Use plain product labels such as Play, Game Setup, Shop, Pause, Resume, Restart, Team, and Match Results. Keep UI readable at normal desktop size. Avoid military framing, slogans, and tiny uppercase text carrying essential information. Funny bot names are welcome when relevant; ordinary descriptions remain direct.
+## Names (mandatory)
+
+Before naming anything (heroes, abilities, items, units, buildings, teams, places, menus, buttons, settings, tooltips, loading text, errors, outfit pieces, files the player sees, new identifiers), read [naming.md](references/naming.md) and follow it. Names are ordinary words that say what the thing is or does, one to three words, like old DotA names (Bracer, Mini-Axe, Black King Bar). Invented "epic" compounds (Galewarden, Crownfall, Ashenfall), lore titles ("X of the Y"), fake-epic suffixes (-warden, -fall, -forged, -keeper) and the banned word list (aether, ashen, ember, gale, crown, rune, sigil, arcane, void...) are never used. Names the owner chose are never changed. Run the project's name checker before handing off and list every new name in the handoff.
+
+Use plain product labels such as Play, Options, Shop, Pause, Resume, Restart, Team, and Match Results. Keep UI readable at normal desktop size. Avoid military framing, slogans, and tiny uppercase text carrying essential information. Funny bot names are welcome when relevant; ordinary descriptions remain direct.

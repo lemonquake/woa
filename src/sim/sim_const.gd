@@ -13,7 +13,7 @@ const DT := 1.0 / 30.0
 const DAWN := 0
 const DUSK := 1
 const NEUTRAL := 2
-const TEAM_NAMES := ["Dawn", "Dusk", "Neutral"]
+const TEAM_NAMES := ["Ancient Light", "Black Sun", "Neutral"]
 
 # ---- Unit kinds -----------------------------------------------------------------------------------------------------
 enum Kind { HERO, CREEP_MELEE, CREEP_RANGED, CREEP_SIEGE, CREEP_FLAG, NEUTRAL_CREEP, TOWER, BARRACKS, ANCIENT, FILLER, FOUNTAIN, WARD, COURIER }

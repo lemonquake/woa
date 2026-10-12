@@ -61,9 +61,9 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		return _item_error(u, slot, target, point)
 	if aid == "tp":
 		if u.tp_charges <= 0:
-			return "No Town Portal Scroll"
+			return "No Teleport Scroll"
 		if cooldown_left(u, "tp") > 0.0:
-			return "Town Portal on cooldown"
+			return "Teleport on cooldown"
 		if u.mana < C.TP_MANA:
 			return "Not enough mana"
 		if u.is_stunned():

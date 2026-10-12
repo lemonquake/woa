@@ -143,7 +143,7 @@ func _show_end() -> void:
 	t.add_theme_color_override("font_color", U.GOLD if won else U.DUSK)
 	v.add_child(t)
 	var sub := Label.new()
-	sub.text = "%s wins at %s" % [["Dawn", "Dusk"][w.winner], w.clock_text()]
+	sub.text = "%s wins at %s" % [SimConst.TEAM_NAMES[w.winner], w.clock_text()]
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(sub)
 	_end.custom_minimum_size = Vector2(1180, 0)
@@ -158,7 +158,7 @@ func _show_end() -> void:
 	var minutes := maxf(w.time / 60.0, 0.25)
 	for h in w.heroes:
 		var tot := Scoreboard.totals(h)
-		for val in [String(h.look.get("display_name", h.name)), ["Dawn", "Dusk"][h.team], str(h.level),
+		for val in [String(h.look.get("display_name", h.name)), SimConst.TEAM_NAMES[h.team], str(h.level),
 				"%d / %d / %d" % [h.kills, h.deaths, h.assists], "%d / %d" % [h.last_hits, h.denies], str(h.networth()),
 				str(int(h.gold_earned / minutes)), str(int(h.xp / minutes)), str(int(tot.hero)), str(int(tot.building)),
 				str(int(tot.taken)), str(int(h.healed))]:

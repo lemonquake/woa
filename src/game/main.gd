@@ -44,30 +44,30 @@ func _stage(p: float, text: String) -> void:
 func _ready() -> void:
 	_parse_args()
 	var t0 := Time.get_ticks_msec()
-	await _stage(0.08, "Shaping the land")
+	await _stage(0.08, "Loading terrain")
 	map = SimMap.new()
 	map.build(1)
 	world = SimWorld.new(1, map)
 	world.setup_match()
 	_spawn_heroes()
-	await _stage(0.22, "Lighting the sky")
+	await _stage(0.22, "Loading sky")
 	atmosphere = Atmosphere.new()
 	add_child(atmosphere)
 	atmosphere.build()
-	await _stage(0.3, "Raising the mountains")
+	await _stage(0.3, "Loading mountains")
 	terrain = TerrainBuilder.new(map)
 	terrain.build(self)
 	atmosphere.materials.append(terrain.material)
-	await _stage(0.5, "Growing the forests")
+	await _stage(0.5, "Loading trees")
 	foliage = Foliage.new()
 	add_child(foliage)
 	foliage.build(map, terrain)
-	await _stage(0.68, "Building the bases")
+	await _stage(0.68, "Loading bases")
 	var dressing := Dressing.new()
 	dressing.foliage = foliage
 	add_child(dressing)
 	dressing.build(map, terrain)
-	await _stage(0.84, "Summoning the heroes")
+	await _stage(0.84, "Loading heroes")
 	fx = Fx.new()
 	fx.game = self
 	foliage.game_fx = fx
@@ -416,7 +416,7 @@ func _drain_events() -> void:
 				if du and du.is_building() and hud and hud.has_method("announce"):
 					var side := "Your" if du.team == player_team else "The enemy's"
 					var what := {"tower1": "tier 1 tower", "tower2": "tier 2 tower", "tower3": "tier 3 tower", "tower4": "tier 4 tower",
-						"melee_rax": "melee barracks", "ranged_rax": "ranged barracks", "filler": "effigy", "ancient": "Aether Core"}
+						"melee_rax": "melee barracks", "ranged_rax": "ranged barracks", "filler": "statue", "ancient": "Throne"}
 					var wname := String(what.get(String(du.def.id), "building"))
 					var verb := "was denied" if e.get("deny", false) else "has fallen"
 					var lane_name: String = {"top": "Top", "mid": "Middle", "bot": "Bottom"}.get(du.building_lane, "")
@@ -432,7 +432,7 @@ func _drain_events() -> void:
 					hud.kill_feed.on_deny_hero(du)
 			"victory":
 				if hud and hud.has_method("announce"):
-					hud.announce("Victory!" if int(e.team) == player_team else "Defeat", "The Aether Core has been destroyed")
+					hud.announce("Victory!" if int(e.team) == player_team else "Defeat", "The Throne has been destroyed")
 			"error":
 				if e.u == player_hero_id and hud and hud.has_method("error"):
 					hud.error(String(e.msg))

@@ -227,7 +227,7 @@ func _channel_bar(h: SimUnit, vs: Vector2) -> void:
 	var aid := String(h.channel.ability)
 	var total := C.TP_CHANNEL if aid == "tp" else float(h.channel.interval) * float((h.channel.waves as Array).size())
 	var left := maxf(0.0, float(h.channel.until) - game.world.time)
-	var name := "Town Portal" if aid == "tp" else String(SimData.ability(aid).get("name", aid))
+	var name := "Teleport" if aid == "tp" else String(SimData.ability(aid).get("name", aid))
 	var r := Rect2(vs.x * 0.5 - 160, vs.y - BottomPanel.H - 58, 320, 18)
 	U.panel(self, r.grow(4), U.GOLD_DIM, 4)
 	U.bar(self, r, 1.0 - left / maxf(0.01, total), Color(0.95, 0.78, 0.3))
@@ -245,7 +245,7 @@ func _unit_card() -> void:
 	var col := U.DAWN if sel.team == 0 else (U.DUSK if sel.team == 1 else Color(0.95, 0.8, 0.4))
 	U.text(self, String(sel.look.get("display_name", sel.name)), r.position + Vector2(14, 26), 18, col, "title")
 	var lvl := " level %d" % sel.level if sel.is_hero() else ""
-	U.text_r(self, ["Dawn", "Dusk", "Neutral"][sel.team] + lvl, Vector2(r.end.x - 14, r.position.y + 24), 13, U.TEXT_DIM, "body")
+	U.text_r(self, SimConst.TEAM_NAMES[sel.team] + lvl, Vector2(r.end.x - 14, r.position.y + 24), 13, U.TEXT_DIM, "body")
 	U.bar(self, Rect2(r.position + Vector2(14, 36), Vector2(200, 14)), sel.hp / maxf(1.0, sel.max_hp), U.HP)
 	U.text_c(self, "%d / %d" % [int(sel.hp), int(sel.max_hp)], r.position + Vector2(114, 48), 11, U.TEXT, "bold")
 	if sel.max_mana > 0.0:
@@ -571,7 +571,7 @@ class BottomPanel extends Control:
 		U.text(self, Keybinds.key_name("tp"), _tp_rect.position + Vector2(3, 12), 10, Color(1, 1, 1), "bold")
 		U.text_r(self, str(h.tp_charges), _tp_rect.end + Vector2(-3, -3), 12, Color(1, 1, 1), "bold")
 		if _tp_rect.has_point(m):
-			hud.show_tip(get_global_mouse_position(), [["Town Portal Scroll", 18, U.GOLD, "title"],
+			hud.show_tip(get_global_mouse_position(), [["Teleport Scroll", 18, U.GOLD, "title"],
 				["Channel 3 s, then teleport beside the allied building nearest the target point. Moving or a stun cancels it.", 14, U.TEXT, "body"],
 				["Charges %d. Cooldown 80 s. Mana 75. Buy more in the shop (100 gold). Hotkey %s." % [h.tp_charges, Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"]])
 		var c := w.get_unit(h.courier_id)
@@ -842,7 +842,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		if cd > 0.0:
 			U.text_c(self, str(ceili(cd)), gr.get_center() + Vector2(0, 6), 14, Color(1, 1, 1), "bold")
 		if gr.has_point(get_local_mouse_position()):
-			hud.show_tip(get_global_mouse_position(), [["Glyph of Fortification", 18, U.GOLD, "title"],
+			hud.show_tip(get_global_mouse_position(), [["Fortify", 18, U.GOLD, "title"],
 				["Your buildings take no damage for 7 seconds and your lane creeps for 3.", 14, U.TEXT, "body"],
 				["Tier 2+ towers attack 5 extra targets. Cooldown 5 minutes. (%s)" % Keybinds.key_name("glyph"), 13, U.TEXT_DIM, "body"]])
 
@@ -905,9 +905,9 @@ class TopBar extends Control:
 			kills[h.team] += h.kills
 		U.panel(self, Rect2(W * 0.5 - 220, 0, 120, 46), Color(0.25, 0.4, 0.6), 6)
 		U.panel(self, Rect2(W * 0.5 + 100, 0, 120, 46), Color(0.6, 0.25, 0.22), 6)
-		U.text_c(self, "Dawn", Vector2(W * 0.5 - 180, 18), 13, U.DAWN, "title")
+		U.text_c(self, SimConst.TEAM_NAMES[0], Vector2(W * 0.5 - 160, 18), 12, U.DAWN, "title")
 		U.text_c(self, str(kills[0]), Vector2(W * 0.5 - 130, 34), 26, U.TEXT, "bold")
-		U.text_c(self, "Dusk", Vector2(W * 0.5 + 140, 18), 13, U.DUSK, "title")
+		U.text_c(self, SimConst.TEAM_NAMES[1], Vector2(W * 0.5 + 160, 18), 12, U.DUSK, "title")
 		U.text_c(self, str(kills[1]), Vector2(W * 0.5 + 190, 34), 26, U.TEXT, "bold")
 		tiles.clear()
 		var slot := [0, 0]
@@ -959,7 +959,7 @@ class ShopPanel extends Control:
 	const W := 560.0
 	const H := 600.0
 	const CATS := [["consumables", "Consumables"], ["attributes", "Attributes"], ["armaments", "Armaments"],
-		["misc", "Arcane"], ["upgrades", "Upgrades"], ["basics", "Basics"]]
+		["misc", "Magic"], ["upgrades", "Upgrades"], ["basics", "Basics"]]
 	var hud
 	var _rects := {}
 

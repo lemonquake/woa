@@ -138,7 +138,7 @@ func on_building(du: SimUnit, killer: SimUnit, deny: bool, player_team: int, wha
 	if deny:
 		add_line([[what, side_col], ["was denied", U.TEXT_DIM]], "ui/level")
 	else:
-		var kn := _name(killer) if killer else ("Dusk" if du.team == 0 else "Dawn")
+		var kn: String = _name(killer) if killer else String(SimConst.TEAM_NAMES[1 - du.team])
 		var kc := _team_col(killer.team if killer else 1 - du.team)
 		add_line([[kn, kc], ["status/sundered", Color.WHITE, "icon"], [what, side_col]], "ui/shop")
 
