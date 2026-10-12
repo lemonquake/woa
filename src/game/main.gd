@@ -398,7 +398,7 @@ func _on_damage(e: Dictionary) -> void:
 		style = "spell"
 	if style != "":
 		var hgt: float = (dv.bar_height + 0.35) if dv is UnitView else 2.2
-		bars.damage_number(amt, int(e.get("type", 0)), _head(tu.pos, hgt), style)
+		bars.damage_number(amt, int(e.get("type", 0)), _head(tu.pos, hgt), style, tu.id)
 	if float(e.get("halved", 0.0)) > 0.0:
 		var hv = views.get(e.u)
 		bars.popup("½", _head(tu.pos, (hv.bar_height if hv is UnitView else 2.2) + 0.6), Color(0.8, 0.5, 1.0), 26, 0.8, 0.8, Vector2(30, 0), true)
@@ -664,7 +664,7 @@ func _demo_setup() -> void:
 						c2.order = C.Order.HOLD
 						h.pos = cp + d * 170.0
 						h.facing = (-d).angle()
-						_demo_cam = cp - d * 60.0
+						_demo_cam = cp + d * 120.0 if args.has("center_caster") else cp - d * 60.0
 						found = true
 						break
 				if found:

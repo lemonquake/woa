@@ -48,6 +48,6 @@ void fragment() {
 	float scorch = (1.0 - smoothstep(0.1, 0.55, r)) * 0.35;
 	float alpha = max(max(crack, centre * 0.85), scorch) * (1.0 - smoothstep(0.55, 1.0, age));
 	float hot = (1.0 - smoothstep(0.0, 0.4, age)) * max(crack, centre) * (1.0 - r * 0.8);
-	ALBEDO = mix(vec3(0.025, 0.02, 0.03), glow.rgb * 3.0, hot);
+	ALBEDO = mix(vec3(0.025, 0.02, 0.03), glow.rgb * 1.8, hot);
 	ALPHA = clamp(alpha, 0.0, 0.95);
 }

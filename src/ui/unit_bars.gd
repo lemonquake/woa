@@ -35,9 +35,17 @@ const DMG_COLORS := [Color(1.0, 0.86, 0.62), Color(0.5, 0.68, 1.0), Color(1.0, 0
 
 ## Floating damage numbers. style: "out" (dealt by your hero), "in" (taken by your hero), "spell" (other heroes'
 ## spells you can see), "reflect" (Unholy Might's deflected half).
-func damage_number(amount: float, dtype: int, at: Vector3, style: String) -> void:
+var _stack := {}                           # target key -> [time of last number, how many stacked]
+
+func damage_number(amount: float, dtype: int, at: Vector3, style: String, target := -1) -> void:
 	if amount < 0.5:
 		return
+	# numbers on the same unit in quick succession stack upwards instead of overprinting each other
+	var now := Time.get_ticks_msec() / 1000.0
+	var key := "%d:%s" % [target, style]
+	var st: Array = _stack.get(key, [-9.0, 0])
+	var level: int = st[1] + 1 if now - float(st[0]) < 0.35 else 0
+	_stack[key] = [now, level]
 	var n := int(round(amount))
 	var size := int(clampf(15.0 + log(amount + 1.0) * 2.6, 16.0, 32.0))
 	var col: Color = DMG_COLORS[clampi(dtype, 0, 2)]
@@ -53,7 +61,10 @@ func damage_number(amount: float, dtype: int, at: Vector3, style: String) -> voi
 			size = int(size * 0.85)
 		"reflect":
 			col = Color(0.78, 0.45, 1.0)
-	popup(text, at, col, size, 1.1, 1.05, drift, true)
+	popups.append({"text": text, "pos": at, "t": 0.0, "color": col, "size": size, "rise": 1.1, "life": 1.05,
+		"drift": drift, "pop": true, "offset": Vector2(0, -level * (size + 2))})
+	if popups.size() > 90:
+		popups.pop_front()
 
 func _process(dt: float) -> void:
 	for p in popups:
@@ -112,7 +123,7 @@ func _draw_all() -> void:
 		var pos: Vector3 = p.pos + Vector3(0, (1.0 - pow(1.0 - k, 2.2)) * p.rise, 0)
 		if cam.is_position_behind(pos):
 			continue
-		var sp := cam.unproject_position(pos) + (p.drift as Vector2) * k
+		var sp := cam.unproject_position(pos) + (p.drift as Vector2) * k + (p.get("offset", Vector2.ZERO) as Vector2)
 		var a := 1.0 - smoothstep(0.62, 1.0, k)
 		var col: Color = p.color
 		col.a = a

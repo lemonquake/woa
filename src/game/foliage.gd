@@ -278,7 +278,7 @@ var _fade_at := -1.0
 
 ## Foreground canopies dither away: anything nearer the camera than ~70% of its distance to the ground it looks at.
 func set_near_fade(cam_distance: float) -> void:
-	var d := cam_distance * 0.8
+	var d := cam_distance * 0.68
 	if absf(d - _fade_at) < 0.05:
 		return
 	_fade_at = d

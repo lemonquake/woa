@@ -107,6 +107,14 @@ func _tune(m: Material, path := "") -> Material:
 		r.albedo_color = bm.albedo_color * Color(0.74, 0.84, 0.82)
 		r.roughness = 0.85
 		return r
+	if f.begins_with("kd_tent") and bm.albedo_texture == null:
+		# plain white canvas glares under the sun: weathered, sun-faded cloth instead
+		var tc := bm.duplicate() as BaseMaterial3D
+		var c := bm.albedo_color
+		var lum := (c.r + c.g + c.b) / 3.0
+		tc.albedo_color = Color(0.58, 0.5, 0.4) if lum > 0.6 else c * Color(0.8, 0.72, 0.62)
+		tc.roughness = 0.95
+		return tc
 	if bm.albedo_texture == null and bm.resource_name.begins_with("BH_"):
 		var g := GearMaterials.for_material(bm)
 		if g:

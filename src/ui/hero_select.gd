@@ -23,6 +23,7 @@ var anim: AnimationPlayer
 var cam: Camera3D
 var rim: SpotLight3D
 var ring_mat: StandardMaterial3D
+var backdrop_mat: ShaderMaterial
 var _yaw := 0.35
 var _drag := false
 var _cards := {}
@@ -89,8 +90,8 @@ func _build_stage() -> void:
 	we.environment = env
 	stage.add_child(we)
 	var key := DirectionalLight3D.new()
-	key.rotation_degrees = Vector3(-38, -30, 0)
-	key.light_energy = 1.1
+	key.rotation_degrees = Vector3(-34, -24, 0)
+	key.light_energy = 2.1
 	key.light_color = Color(1.0, 0.92, 0.82)
 	key.shadow_enabled = true
 	stage.add_child(key)
@@ -101,9 +102,18 @@ func _build_stage() -> void:
 	rim.spot_angle = 32.0
 	stage.add_child(rim)
 	rim.look_at(Vector3(0, 1.0, 0))
+	# a white rim from behind and above outlines the silhouette against the backdrop
+	var rim2 := SpotLight3D.new()
+	rim2.position = Vector3(1.6, 3.4, -2.4)
+	rim2.light_energy = 7.0
+	rim2.spot_range = 9.0
+	rim2.spot_angle = 30.0
+	rim2.light_color = Color(0.95, 0.95, 1.0)
+	stage.add_child(rim2)
+	rim2.look_at(Vector3(0, 1.2, 0))
 	var fill := OmniLight3D.new()
 	fill.position = Vector3(2.2, 1.6, 2.4)
-	fill.light_energy = 0.6
+	fill.light_energy = 1.1
 	fill.omni_range = 7.0
 	fill.light_color = Color(0.7, 0.75, 1.0)
 	stage.add_child(fill)
@@ -145,6 +155,26 @@ func _build_stage() -> void:
 	floor_mi.material_override = fm
 	floor_mi.position.y = -0.32
 	stage.add_child(floor_mi)
+	# backdrop: a softly lit, accent-tinted glow behind the hero, dark at the edges
+	var bd := MeshInstance3D.new()
+	var bq := QuadMesh.new()
+	bq.size = Vector2(16, 9)
+	bd.mesh = bq
+	var bsh := Shader.new()
+	bsh.code = "shader_type spatial;
+render_mode unshaded, cull_disabled;
+uniform vec4 accent : source_color = vec4(0.6, 0.3, 1.0, 1.0);
+void fragment() {
+	vec2 p = (UV - vec2(0.5, 0.55)) * vec2(1.6, 1.0);
+	float g = exp(-dot(p, p) * 9.0);
+	ALBEDO = mix(vec3(0.015, 0.015, 0.022), accent.rgb * 0.2 + vec3(0.035), g);
+}
+"
+	backdrop_mat = ShaderMaterial.new()
+	backdrop_mat.shader = bsh
+	bd.material_override = backdrop_mat
+	bd.position = Vector3(0, 2.2, -4.5)
+	stage.add_child(bd)
 	cam = Camera3D.new()
 	cam.fov = 30.0
 	stage.add_child(cam)
@@ -354,6 +384,7 @@ func _select(id: String, flourish: bool) -> void:
 		(_cards[k] as Button).button_pressed = k == id
 	var info: Dictionary = INFO[id]
 	rim.light_color = info.accent
+	backdrop_mat.set_shader_parameter("accent", info.accent)
 	ring_mat.albedo_color = info.accent
 	ring_mat.emission = info.accent
 	_spawn_model(id)

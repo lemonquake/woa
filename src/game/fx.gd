@@ -10,6 +10,7 @@ extends Node3D
 const ARROW := "res://assets/weapons/arrow.glb"
 const SHOCK_SHADER := preload("res://src/game/shockwave.gdshader")
 const CRACK_SHADER := preload("res://src/game/ground_crack.gdshader")
+const WALL_SHADER := preload("res://src/game/force_wall.gdshader")
 const MAX_BITS := 260
 const VIOLET := Color(0.62, 0.24, 1.0)
 
@@ -27,6 +28,37 @@ var _waves: Array = []                      # {node, mat, t, dur, param}
 var _lights: Array = []                     # {light, energy, t, dur}
 var _bolts: Array = []                      # lightning: {mi, im, from, to, t, dur, width, color, seg}
 var _homers: Array = []                     # dark bolts: {node, trail, from, to_id, t, dur, ctrl, done}
+var _spikes: Array = []                     # erupting stone spikes: {node, t, h, y}
+var _walls: Array = []                      # rising force walls: {node, mat, t, dur, r0, r1}
+var _spike_meshes: Array = []
+var _spike_mat: ShaderMaterial
+
+## A faceted stone shard (unit height): an uneven hexagonal base narrowing through a twisted waist to a bent tip.
+func _shard_mesh(variant: int) -> ArrayMesh:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7919 * (variant + 1)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_smooth_group(-1)
+	var sides := 6
+	var base: Array = []
+	var waist: Array = []
+	var twist := rng.randf_range(0.3, 0.7)
+	for i in sides:
+		var a := TAU * i / sides + rng.randf_range(-0.2, 0.2)
+		var r := rng.randf_range(0.13, 0.2)
+		base.append(Vector3(cos(a) * r, 0.0, sin(a) * r))
+		waist.append(Vector3(cos(a + twist) * r * 0.55, rng.randf_range(0.42, 0.55), sin(a + twist) * r * 0.55))
+	var tip := Vector3(rng.randf_range(-0.06, 0.06), 1.0, rng.randf_range(-0.06, 0.06))
+	for i in sides:
+		var j := (i + 1) % sides
+		# lower band
+		st.add_vertex(base[i]); st.add_vertex(base[j]); st.add_vertex(waist[j])
+		st.add_vertex(base[i]); st.add_vertex(waist[j]); st.add_vertex(waist[i])
+		# upper facets to the tip
+		st.add_vertex(waist[i]); st.add_vertex(waist[j]); st.add_vertex(tip)
+	st.generate_normals()
+	return st.commit()
 var _spark_budget := 0
 
 func _ready() -> void:
@@ -227,6 +259,143 @@ func shockwave(at: Vector3, radius: float, col: Color, dur := 0.5, thickness := 
 	add_child(mi)
 	mi.global_position = at + Vector3(0, 0.08, 0)
 	_waves.append({"node": mi, "mat": m, "t": 0.0, "dur": dur, "param": "progress"})
+
+## A wall of force rising from the ground and racing outwards (an open cylinder that grows and fades).
+func force_wall(at: Vector3, r0: float, r1: float, height: float, col: Color, dur := 0.45) -> void:
+	var mi := MeshInstance3D.new()
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 1.0
+	cyl.bottom_radius = 1.0
+	cyl.height = 1.0
+	cyl.cap_top = false
+	cyl.cap_bottom = false
+	cyl.radial_segments = 48
+	cyl.rings = 1
+	mi.mesh = cyl
+	var m := ShaderMaterial.new()
+	m.shader = WALL_SHADER
+	m.set_shader_parameter("color", col)
+	m.render_priority = 6
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	mi.global_position = at + Vector3(0, height * 0.5 - 0.05, 0)
+	mi.scale = Vector3(r0, height, r0)
+	_walls.append({"node": mi, "mat": m, "t": 0.0, "dur": dur, "r0": r0, "r1": r1, "h": height})
+
+## Obsidian spikes erupting in a ring around a point: they burst up, hold, and sink back into the ground.
+func spike_ring(center: Vector2, radius: float, count: int, height := 1.3) -> void:
+	if _spike_mat == null:
+		for v in 4:
+			_spike_meshes.append(_shard_mesh(v))
+		_spike_mat = ShaderMaterial.new()
+		_spike_mat.shader = preload("res://src/game/spike.gdshader")
+	for i in count:
+		var a := TAU * float(i) / count + randf_range(-0.06, 0.06)
+		var d := radius * randf_range(0.9, 1.0)
+		var p := center + Vector2.from_angle(a) * d
+		# never through a unit: the enemies it hits must stay readable
+		var blocked := false
+		for u in game.world.query(p, 70.0, true):
+			if not u.is_building():
+				blocked = true
+				break
+		if blocked:
+			continue
+		var h := height * randf_range(0.85, 1.1)
+		var mi := MeshInstance3D.new()
+		mi.mesh = _spike_meshes[randi() % _spike_meshes.size()]
+		mi.material_override = _spike_mat
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		add_child(mi)
+		var base := ground3(p)
+		# where it broke through: a dark contact patch and a few chunks of earth around its foot
+		var patch := MeshInstance3D.new()
+		patch.mesh = Dressing.blob_mesh()
+		patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(patch)
+		patch.global_position = base + Vector3(0, 0.03, 0)
+		patch.scale = Vector3(0.9, 1.0, 0.9) * h * 0.55
+		_spikes.append({"node": patch, "t": -0.02, "h": 0.0, "base": base + Vector3(0, 0.03, 0), "dir": Vector3.UP, "patch": true})
+		for c in 3:
+			var cv := Vector3(randf_range(-1, 1), randf_range(1.5, 2.5), randf_range(-1, 1)).normalized() * randf_range(1.5, 3.0)
+			_bit("rock", _solid(Color(0.24, 0.2, 0.18)), base + Vector3(0, 0.1, 0), cv, randf_range(0.6, 1.0), randf_range(0.5, 0.9))
+		# lean outwards, away from the blast
+		var out := Vector3(cos(a), 0.0, -sin(a))
+		var tilt := 0.32
+		var axis := Vector3.UP.cross(out).normalized()
+		var wdt := randf_range(2.6, 3.0)
+		mi.global_transform = Transform3D(Basis(axis, -tilt) * Basis(Vector3.UP, a).scaled(Vector3(wdt, h, wdt)), base)
+		mi.set_meta("basis", mi.global_transform.basis)
+		_spikes.append({"node": mi, "t": -randf() * 0.06, "h": h, "base": base, "dir": mi.global_transform.basis.y.normalized()})
+
+func _update_spikes(dt: float) -> void:
+	for i in range(_spikes.size() - 1, -1, -1):
+		var s: Dictionary = _spikes[i]
+		if not is_instance_valid(s.node):
+			_spikes.remove_at(i)
+			continue
+		s.t += dt
+		var t: float = s.t
+		var n: MeshInstance3D = s.node
+		# burst up with an overshoot, hold, then sink
+		var k := 0.0
+		if t < 0.0:
+			k = 0.0
+		elif t < 0.08:
+			k = t / 0.08 * 1.12
+		elif t < 0.14:
+			k = lerpf(1.12, 1.0, (t - 0.08) / 0.06)
+		elif t < 0.75:
+			k = 1.0
+		elif t < 1.25:
+			k = 1.0 - (t - 0.75) / 0.5
+		else:
+			n.queue_free()
+			_spikes.remove_at(i)
+			continue
+		if s.get("patch", false):
+			n.visible = t >= 0.0
+			continue
+		var dir: Vector3 = s.dir
+		n.global_position = (s.base as Vector3) + dir * float(s.h) * (k - 1.0) * 0.5 + dir * float(s.h) * 0.5 * clampf(k, 0.0, 1.2)
+		n.visible = k > 0.01
+
+func _update_walls(dt: float) -> void:
+	for i in range(_walls.size() - 1, -1, -1):
+		var wl: Dictionary = _walls[i]
+		wl.t += dt
+		var k: float = wl.t / wl.dur
+		if k >= 1.0 or not is_instance_valid(wl.node):
+			if is_instance_valid(wl.node):
+				(wl.node as Node).queue_free()
+			_walls.remove_at(i)
+			continue
+		var r := lerpf(float(wl.r0), float(wl.r1), 1.0 - pow(1.0 - k, 2.0))
+		var hh: float = float(wl.h) * (1.0 - k * 0.5)
+		(wl.node as Node3D).scale = Vector3(r, hh, r)
+		(wl.mat as ShaderMaterial).set_shader_parameter("progress", k)
+
+## A bright band marking an area's edge on the ground that holds, then fades (the boundary of a blast).
+func edge_ring(at: Vector3, radius: float, col: Color, life := 1.2) -> void:
+	var mi := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = radius - 0.06
+	tm.outer_radius = radius + 0.03
+	tm.rings = 96
+	tm.ring_segments = 4
+	mi.mesh = tm
+	mi.scale = Vector3(1, 0.06, 1)
+	var m := _glow(col, 3.5).duplicate() as StandardMaterial3D
+	m.render_priority = 7
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	mi.global_position = at + Vector3(0, 0.1, 0)
+	var tw := mi.create_tween()
+	tw.tween_interval(life * 0.6)
+	tw.tween_property(m, "albedo_color:a", 0.0, life * 0.4)
+	tw.tween_callback(mi.queue_free)
 
 ## Cracks in the ground that glow, cool and fade.
 func crack(at: Vector3, radius: float, col: Color, life := 3.5) -> void:
@@ -571,6 +740,8 @@ func frame(w: SimWorld, alpha: float, dt: float) -> void:
 	_update_stuck(dt)
 	_update_bolts(dt)
 	_update_homers(dt)
+	_update_spikes(dt)
+	_update_walls(dt)
 	for i in range(_waves.size() - 1, -1, -1):
 		var wv: Dictionary = _waves[i]
 		wv.t += dt
@@ -711,9 +882,13 @@ func stomp(pos: Vector2, radius: float) -> void:
 	if not _seen(pos):
 		return
 	var at := ground3(pos)
-	shockwave(at, radius * View.S * 1.1, VIOLET, 0.55, 0.22, 3.0)
-	shockwave(at, radius * View.S * 0.7, Color(0.9, 0.8, 1.0), 0.3, 0.12, 2.0)
-	crack(at, radius * View.S * 0.55, VIOLET, 4.0)
+	var r := radius * View.S
+	force_wall(at, 0.4, r * 1.05, 1.5, Color(0.5, 0.24, 0.95), 0.45)
+	spike_ring(pos, radius * 1.0, 14, 1.9)
+	shockwave(at, r * 1.1, Color(0.45, 0.28, 0.75), 0.5, 0.12, 1.4)
+	edge_ring(at, r, Color(0.62, 0.38, 0.9, 0.4), 0.7)
+	# scorched fissures run from the stomp out to the spikes
+	crack(at, r * 1.05, Color(0.42, 0.24, 0.66), 4.5)
 	debris(at, 14, Color(0.2, 0.17, 0.2), 5.0, 1.2)
 	flash_light(at + Vector3(0, 1.0, 0), VIOLET, 6.0, radius * View.S * 2.0, 0.45)
 	_shake(pos, 0.35, 0.3)
