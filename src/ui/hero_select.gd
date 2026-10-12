@@ -6,6 +6,7 @@ extends Control
 const U = preload("res://src/ui/ui_kit.gd")
 const MATCH := "res://src/game/main.tscn"
 const CREATOR := "res://src/ui/hero_creator.tscn"
+const HOTKEYS := "res://src/ui/hotkeys_screen.tscn"
 
 const INFO := {
 	"blood_ranger": {"title": "the Crimson Huntress", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
@@ -49,7 +50,12 @@ func _ready() -> void:
 		elif a == "--match":
 			# exported builds cannot take a scene path: this jumps straight into a match (automation, smoke tests)
 			get_tree().change_scene_to_file.call_deferred(MATCH)
+			return
 	_select(GameSettings.selected, false)
+	# the title card from the splash stays up until the stage has drawn once
+	await get_tree().process_frame
+	await get_tree().process_frame
+	LoadingScreen.close(get_tree())
 
 # ---- Stage ----------------------------------------------------------------------------------------------------------
 
@@ -518,6 +524,7 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif e is InputEventMouseMotion and _drag:
 		_yaw += (e as InputEventMouseMotion).relative.x * 0.01
 
+## Play: the Hotkeys screen comes next ("Are you good to go?"), then the match loads.
 func _on_play() -> void:
 	GameSettings.save()
-	get_tree().change_scene_to_file(MATCH)
+	get_tree().change_scene_to_file(HOTKEYS)

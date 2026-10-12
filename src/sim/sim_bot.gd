@@ -15,6 +15,7 @@ var hero_id := -1
 var lane := "mid"
 var name := "Bot"
 var state := "lane"
+var passive := false                       # Debug panel: the bot stands still (a training dummy)
 var _next_think := C.LONG_AGO
 var _last_order := {}
 var skill_order := ["masterful_archery", "gale_impact", "burst_shot", "masterful_archery", "burst_shot",
@@ -49,7 +50,7 @@ func hero() -> SimUnit:
 	return w.get_unit(hero_id)
 
 func think() -> void:
-	if w == null or w.time < _next_think:
+	if w == null or w.time < _next_think or passive:
 		return
 	_next_think = w.time + 0.2
 	var h := hero()

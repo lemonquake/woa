@@ -1,0 +1,98 @@
+class_name SimDebug
+extends RefCounted
+## Test helpers behind the Debug panel (F9 in a match): skip the pre-game, spawn waves and camps, level up, gold,
+## refresh, god mode, free spells, reveal the map, skip time. They change the world directly, so they are for
+## testing only; flags that need upkeep every tick (god mode, free spells) are applied by tick().
+
+const C = preload("res://src/sim/sim_const.gd")
+
+## Skip the rest of the pre-game: the horn sounds now and the first wave spawns on the next tick.
+static func force_start(w: SimWorld) -> void:
+	if w.time < 0.0:
+		w.time = 0.0
+		w.next_wave_at = 0.0
+		w.wave = 0
+
+## A lane wave for both teams right now (the regular schedule carries on).
+static func force_wave(w: SimWorld) -> void:
+	w.wave += 1
+	w.ai.spawn_wave(w.wave)
+
+static func force_neutrals(w: SimWorld) -> void:
+	w.ai.spawn_neutrals()
+
+## Experience up to the next level (with its ability point).
+static func level_up(w: SimWorld, h: SimUnit, levels := 1) -> void:
+	var target := mini(h.level + levels, C.MAX_LEVEL)
+	var need := float(C.XP_TABLE[mini(target - 1, C.XP_TABLE.size() - 1)]) - h.xp
+	if need > 0.0:
+		w.combat.give_xp(h, need + 0.01)
+
+static func gold(w: SimWorld, h: SimUnit, amount: int) -> void:
+	w.combat.give_gold(h, amount, true, h.pos)
+
+## Full health and mana, every ability and item ready.
+static func refresh(w: SimWorld, h: SimUnit) -> void:
+	h.hp = h.max_hp
+	h.mana = h.max_mana
+	for aid in h.ability_ready.keys():
+		h.ability_ready[aid] = C.LONG_AGO
+	for it in h.inventory:
+		if it != null:
+			it["ready"] = C.LONG_AGO
+
+static func respawn(w: SimWorld, h: SimUnit) -> void:
+	if not h.alive:
+		w.respawn(h)
+
+## Kill a unit outright, credited to `by` (gold, experience and kill feed as for a normal kill).
+static func kill(w: SimWorld, u: SimUnit, by: SimUnit) -> void:
+	if u != null and u.alive and not u.is_invulnerable():
+		w.combat.deal_damage(by.id if by else -1, by.team if by else C.NEUTRAL, by != null and by.is_hero(), u,
+			u.hp + 1.0e6, C.DamageType.PURE, false, "debug")
+
+static func teleport(w: SimWorld, h: SimUnit, p: Vector2) -> void:
+	if not h.alive:
+		return
+	h.pos = p
+	h.path = PackedVector2Array()
+	h.order = C.Order.NONE
+	h.order_queue.clear()
+	w.nudge_out(p, h.hull)
+
+## Jump the clock forward. Waves and camps that would have spawned in the skipped time are skipped too, so the jump
+## does not flood the lanes.
+static func skip_time(w: SimWorld, seconds: float) -> void:
+	w.time += seconds
+	if w.time >= 0.0:
+		w.wave = int(floor(w.time / C.WAVE_INTERVAL)) + 1
+		w.next_wave_at = w.wave * C.WAVE_INTERVAL
+	while w.next_neutral_at <= w.time:
+		w.next_neutral_at += C.NEUTRAL_SPAWN_INTERVAL
+
+static func set_flag(w: SimWorld, flag: String, on: bool) -> void:
+	if on:
+		w.debug_flags[flag] = true
+	else:
+		w.debug_flags.erase(flag)
+	if flag == "reveal":
+		w.vision.reveal_all = on
+	if flag == "passive_bot":
+		for b in w.bots:
+			b.passive = on and not w.get_unit(b.hero_id).player
+
+## Upkeep for the per-tick flags, called by SimWorld.step while any flag is set.
+static func tick(w: SimWorld) -> void:
+	for h in w.heroes:
+		if not h.player or not h.alive:
+			continue
+		if w.debug_flags.has("god"):
+			h.hp = h.max_hp
+		if w.debug_flags.has("free_spells"):
+			h.mana = h.max_mana
+			for aid in h.ability_ready.keys():
+				if aid != "masterful_archery":
+					h.ability_ready[aid] = C.LONG_AGO
+			for it in h.inventory:
+				if it != null:
+					it["ready"] = C.LONG_AGO

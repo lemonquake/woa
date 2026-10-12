@@ -71,13 +71,14 @@ func _process(dt: float) -> void:
 		if m.x >= size.x - edge_px: move.x += 1
 		if m.y <= edge_px: move.y -= 1
 		if m.y >= size.y - edge_px: move.y += 1
-	if Input.is_key_pressed(KEY_LEFT): move.x -= 1
-	if Input.is_key_pressed(KEY_RIGHT): move.x += 1
-	if Input.is_key_pressed(KEY_UP): move.y -= 1
-	if Input.is_key_pressed(KEY_DOWN): move.y += 1
+	if focused:
+		if Keybinds.held("camera_left"): move.x -= 1
+		if Keybinds.held("camera_right"): move.x += 1
+		if Keybinds.held("camera_up"): move.y -= 1
+		if Keybinds.held("camera_down"): move.y += 1
 	if move != Vector2.ZERO:
 		target += Vector3(move.x, 0, move.y).normalized() * edge_speed * dt * zoom
-	if Input.is_key_pressed(KEY_SPACE) and follow.is_valid():
+	if focused and Keybinds.held("follow_hero") and follow.is_valid():
 		var p = follow.call()
 		if p != null:
 			target = target.lerp(p, 1.0 - exp(-dt * 12.0))

@@ -7,7 +7,9 @@ extends Node
 ##   H hold position.                                 Q W E R: abilities (point / unit targeting cursor).
 ##   Ctrl + Q W E R: learn ability.                    Right-click an ability button: toggle autocast.
 ##   Z X C V B N: items.                               Shift: queue orders.
-##   F1 / double-tap: centre on hero; Space: follow.   F4 or B: shop.  J: glyph.
+##   F1 / double-tap: centre on hero; Space: follow.   F4 or B: shop.  J: glyph.  F9: debug panel.
+##   Hold right click: the move / attack order repeats towards the cursor (auto right-click).
+## Every key above is the default: the player rebinds them on the Hotkeys screen (Keybinds).
 ## Orders go to the selected units you control (your hero and courier), as in Dota: with only an enemy or a creep
 ## selected, right clicks do nothing until you select your hero again (F1, the portrait, or a click on it).
 
@@ -22,6 +24,7 @@ var hover_id := -1
 var hover_ability := ""                     # the ability button under the mouse (its radius is previewed)
 var drag_rect := Rect2()                    # the green selection box while dragging (screen space)
 var _last_f1 := 0.0
+var _last_f2 := 0.0
 var _press_at := Vector2.ZERO
 var _pressing := false
 var _dragging := false
@@ -29,8 +32,14 @@ var _s_down := -1.0
 var _s_hard := false
 var _groups := {}                           # control group key (1..9) -> unit ids
 var _group_tap := {}                        # key -> time of the last recall (double tap centres the camera)
-const ITEM_KEYS := [KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N]
-const ABILITY_KEYS := [KEY_Q, KEY_W, KEY_E, KEY_R]
+const ITEM_ACTIONS := ["item_1", "item_2", "item_3", "item_4", "item_5", "item_6"]
+const ABILITY_ACTIONS := ["ability_1", "ability_2", "ability_3", "ability_4"]
+## Holding right click repeats the order: first repeat after RMB_DELAY, then every RMB_REPEAT seconds.
+const RMB_DELAY := 0.22
+const RMB_REPEAT := 0.1
+var _rmb_held := false
+var _rmb_next := 0.0
+var _rmb_shift := false
 
 func hero() -> SimUnit:
 	return game.world.get_unit(game.player_hero_id)
@@ -51,9 +60,10 @@ func _process(_dt: float) -> void:
 	var m := game.get_viewport().get_mouse_position()
 	hover_id = pick(m)
 	_cursor()
+	_rmb_repeat()
 	# S held long enough: a hard stop
 	if _s_down >= 0.0 and not _s_hard:
-		if not Input.is_key_pressed(KEY_S):
+		if not Keybinds.held("stop"):
 			_s_down = -1.0
 		elif Time.get_ticks_msec() / 1000.0 - _s_down >= HARD_STOP_HOLD:
 			_s_hard = true
@@ -61,6 +71,23 @@ func _process(_dt: float) -> void:
 				game.world.command(game.player_hero_id, {"type": O.STOP, "hard": true})
 				if game.hud and game.hud.has_method("error"):
 					game.hud.notice("Hard stop: no auto-attack until your next order")
+
+## Auto right-click: while the right button stays down (and the press began in the world, not on the HUD), keep
+## re-issuing the right-click order at the cursor so the hero tracks it, as holding right click does in Dota.
+func _rmb_repeat() -> void:
+	if not _rmb_held:
+		return
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) or targeting != "":
+		_rmb_held = false
+		return
+	var now := Time.get_ticks_msec() / 1000.0
+	if now < _rmb_next:
+		return
+	_rmb_next = now + RMB_REPEAT
+	var m := game.get_viewport().get_mouse_position()
+	if game.hud and game.hud.has_method("over_hud") and game.hud.over_hud(m):
+		return
+	_right_click(m, _rmb_shift, true)
 
 func _cursor() -> void:
 	var shape := Input.CURSOR_ARROW
@@ -127,11 +154,21 @@ func _unhandled_input(e: InputEvent) -> void:
 		_key(e as InputEventKey, h)
 	elif e is InputEventMouseButton:
 		var mb := e as InputEventMouseButton
+		if mb.pressed and mb.button_index in [MOUSE_BUTTON_XBUTTON1, MOUSE_BUTTON_XBUTTON2]:
+			var act := Keybinds.action_for(mb)
+			if act != "":
+				_action(act, h, mb.ctrl_pressed)
+			return
+		if mb.button_index == MOUSE_BUTTON_RIGHT and not mb.pressed:
+			_rmb_held = false
 		if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			if targeting != "":
 				targeting = ""
 				return
 			_right_click(mb.position, mb.shift_pressed)
+			_rmb_held = true
+			_rmb_shift = mb.shift_pressed
+			_rmb_next = Time.get_ticks_msec() / 1000.0 + RMB_DELAY
 		elif mb.button_index == MOUSE_BUTTON_LEFT:
 			if mb.pressed:
 				if targeting != "":
@@ -226,8 +263,10 @@ func _box_select(r: Rect2, shift: bool) -> void:
 
 func _key(k: InputEventKey, h: SimUnit) -> void:
 	var w: SimWorld = game.world
-	# control groups: Ctrl+1..9 stores your selected units, 1..9 recalls them, a double tap centres on them
-	if k.keycode >= KEY_1 and k.keycode <= KEY_9:
+	var act := Keybinds.action_for(k)
+	# control groups: Ctrl+1..9 stores your selected units, 1..9 recalls them (unless the digit is a hotkey),
+	# a double tap centres on them
+	if k.keycode >= KEY_1 and k.keycode <= KEY_9 and (k.ctrl_pressed or act == ""):
 		var g := int(k.keycode - KEY_0)
 		if k.ctrl_pressed:
 			var ids: Array = game.selected.filter(func(x): return _owned(w.get_unit(x)))
@@ -246,8 +285,21 @@ func _key(k: InputEventKey, h: SimUnit) -> void:
 						game.camera.focus(View.to3(u0.pos, game.terrain.height_at(u0.pos)))
 				_group_tap[g] = now2
 		return
-	match k.keycode:
-		KEY_S:
+	if k.keycode == KEY_ESCAPE:
+		if targeting != "":
+			targeting = ""
+			get_viewport().set_input_as_handled()
+		return
+	if act != "":
+		_action(act, h, k.ctrl_pressed)
+
+## Run a hotkey action (from a key or an extra mouse button). learn: Ctrl was held (Ctrl + ability key learns it).
+func _action(act: String, h: SimUnit, learn := false) -> void:
+	var w: SimWorld = game.world
+	if h == null:
+		return
+	match act:
+		"stop":
 			targeting = ""
 			_s_down = Time.get_ticks_msec() / 1000.0
 			_s_hard = false
@@ -256,48 +308,56 @@ func _key(k: InputEventKey, h: SimUnit) -> void:
 			var cs := _courier_selected()
 			if cs:
 				cs.courier_state = "idle"
-		KEY_H:
+		"hold":
 			targeting = ""
 			if hero_selected():
 				w.command(h.id, {"type": O.HOLD})
-		KEY_A:
+		"attack":
 			if hero_selected():
 				targeting = "attack"
-		KEY_ESCAPE:
-			if targeting != "":
-				targeting = ""
-				get_viewport().set_input_as_handled()
-		KEY_F1:
+		"select_hero":
 			select([h.id])
 			var now := Time.get_ticks_msec() / 1000.0
 			if now - _last_f1 < 0.4 and h.alive:
 				game.camera.focus(View.to3(h.pos, game.terrain.height_at(h.pos)))
 			_last_f1 = now
-		KEY_F4:
+		"select_courier":
+			var c := w.get_unit(h.courier_id)
+			if c != null and c.alive:
+				var now2 := Time.get_ticks_msec() / 1000.0
+				if game.selected == [c.id] and now2 - _last_f2 < 0.4:
+					game.camera.focus(View.to3(c.pos, game.terrain.height_at(c.pos)))
+				select([c.id])
+				_last_f2 = now2
+		"shop":
 			if game.hud and game.hud.has_method("toggle_shop"):
 				game.hud.toggle_shop()
-		KEY_J:
+		"glyph":
 			w.glyph(game.player_team)
-		KEY_T:
+		"tp":
 			if hero_selected():
 				begin_tp()
-		KEY_F3:
+		"courier_deliver":
 			var err: String = w.courier_deliver(h)
 			if err != "" and game.hud and game.hud.has_method("error"):
 				game.hud.error(err)
-	var ai := ABILITY_KEYS.find(k.keycode)
+		"debug":
+			if game.hud and game.hud.has_method("toggle_debug"):
+				game.hud.toggle_debug()
+	var ai := ABILITY_ACTIONS.find(act)
 	if ai >= 0 and ai < h.abilities.size():
 		if not hero_selected():
 			return
 		var aid: String = h.abilities[ai]
-		if k.ctrl_pressed:
+		if learn:
 			w.abilities.learn(h, aid)
 		else:
 			begin_ability(aid)
 		return
-	var ii := ITEM_KEYS.find(k.keycode)
+	var ii := ITEM_ACTIONS.find(act)
 	if ii >= 0:
-		if k.keycode == KEY_B and h.inventory[4] == null:
+		# the item 5 key opens the shop while that slot is empty (B in Dota)
+		if ii == 4 and h.inventory[4] == null:
 			if game.hud and game.hud.has_method("toggle_shop"):
 				game.hud.toggle_shop()
 			return
@@ -400,14 +460,16 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 	if not shift:
 		targeting = ""
 
-func _right_click(pos: Vector2, shift: bool) -> void:
+## repeat: re-issued by holding the button. Repeats skip the ground marker and keep an order already aimed at the
+## same unit (re-issuing an attack would restart its wind-up).
+func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 	var w: SimWorld = game.world
 	var h := hero()
 	var ground: Vector2 = game.camera.ground_at(pos)
 	var cs := _courier_selected()
 	if cs:
 		w.courier_move(h, ground)
-		if not hero_selected():
+		if not hero_selected() and not repeat:
 			game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
 	if h == null or not h.alive or not hero_selected():
 		return
@@ -415,10 +477,18 @@ func _right_click(pos: Vector2, shift: bool) -> void:
 	var tgt := w.get_unit(id)
 	if tgt and tgt != h:
 		if tgt.team != h.team or w.orders.can_deny(h, tgt):
-			w.command(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift})
-			game.fx.marker(View.to3(tgt.pos, game.terrain.height_at(tgt.pos)), true)
+			if repeat and h.order == O.ATTACK_UNIT and h.order_target == tgt.id:
+				return
+			w.command(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift and not repeat})
+			if not repeat:
+				game.fx.marker(View.to3(tgt.pos, game.terrain.height_at(tgt.pos)), true)
 			return
-		w.command(h.id, {"type": O.MOVE_TO_UNIT, "target": tgt.id, "queue": shift})
+		if repeat and h.order == O.MOVE_TO_UNIT and h.order_target == tgt.id:
+			return
+		w.command(h.id, {"type": O.MOVE_TO_UNIT, "target": tgt.id, "queue": shift and not repeat})
 		return
-	w.command(h.id, {"type": O.MOVE, "point": ground, "queue": shift})
-	game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
+	if repeat and h.order == O.MOVE and h.order_point.distance_to(ground) < 24.0:
+		return
+	w.command(h.id, {"type": O.MOVE, "point": ground, "queue": shift and not repeat})
+	if not repeat:
+		game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)

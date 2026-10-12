@@ -19,7 +19,7 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
 func _process(_dt: float) -> void:
-	show_board = Input.is_key_pressed(KEY_TAB) or OS.get_cmdline_user_args().has("--board")
+	show_board = Keybinds.held("scoreboard") or OS.get_cmdline_user_args().has("--board")
 	queue_redraw()
 
 static func source_name(key: String) -> String:

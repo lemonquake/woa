@@ -25,6 +25,7 @@ var rax_dead := {}                         # "team:lane:melee" -> true
 var first_blood := false
 var winner := -1
 var paused := false
+var debug_flags := {}                      # Debug panel switches (SimDebug): god, free_spells, reveal, passive_bot
 var _gold_acc := {}
 var _grid := {}
 const GRID := 512.0
@@ -167,6 +168,8 @@ func step() -> void:
 	for b in bots:
 		b.think()
 	_couriers()
+	if not debug_flags.is_empty():
+		SimDebug.tick(self)
 	for u in units:
 		if u.alive:
 			orders.update(u)

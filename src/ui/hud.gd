@@ -16,6 +16,7 @@ var shop: Control
 var tip: Control
 var kill_feed: KillFeed
 var scoreboard: Scoreboard
+var debug: DebugPanel
 var portrait_vp: SubViewport
 var portrait_cam: Camera3D
 var _msg := ""
@@ -52,6 +53,9 @@ func _ready() -> void:
 	scoreboard = Scoreboard.new()
 	scoreboard.hud = self
 	add_child(scoreboard)
+	debug = DebugPanel.new()
+	debug.game = game
+	add_child(debug)
 	tip = Tip.new()
 	tip.hud = self
 	add_child(tip)
@@ -249,6 +253,18 @@ func _name(u: SimUnit) -> String:
 func toggle_shop() -> void:
 	shop.visible = not shop.visible
 
+func toggle_debug() -> void:
+	debug.toggle()
+
+## Whether a screen point is over a HUD element (the held right click does not order through it).
+func over_hud(p: Vector2) -> bool:
+	for c: Control in [bottom, minimap, topbar]:
+		if c.get_global_rect().has_point(p):
+			return true
+	if shop.visible and shop.get_global_rect().has_point(p):
+		return true
+	return debug.covers(p)
+
 ## Tooltip content for this frame (drawn by Tip).
 func show_tip(at: Vector2, lines: Array) -> void:
 	_tip_lines = lines
@@ -320,7 +336,7 @@ class BottomPanel extends Control:
 				_buyback(h, w)
 		else:
 			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(960, 70), 15, U.TEXT_DIM, "bold")
-			U.text(self, "F1 or the portrait: back to your hero", Vector2(960, 94), 12, U.TEXT_DIM, "body")
+			U.text(self, Keybinds.key_name("select_hero") + " or the portrait: back to your hero", Vector2(960, 94), 12, U.TEXT_DIM, "body")
 
 	func _level_ring(h: SimUnit, c: Vector2) -> void:
 		draw_circle(c, 20, Color(0.04, 0.04, 0.05, 0.95))
@@ -403,7 +419,7 @@ class BottomPanel extends Control:
 			if auto:
 				var t := Time.get_ticks_msec() / 1000.0
 				draw_rect(r.grow(1), Color(1.0, 0.85, 0.3, 0.6 + 0.4 * sin(t * 6.0)), false, 3.0)
-			U.text(self, String(a.key), r.position + Vector2(4, 15), 14, Color(1, 1, 1), "bold")
+			U.text(self, Keybinds.key_name("ability_%d" % (i + 1)), r.position + Vector2(4, 15), 14, Color(1, 1, 1), "bold")
 			if mana_cost > 0:
 				U.text_r(self, str(int(mana_cost)), r.end + Vector2(-3, -4), 12, Color(0.55, 0.75, 1.0), "bold")
 			# level pips
@@ -440,7 +456,7 @@ class BottomPanel extends Control:
 			lines.append(["Mana: %s    Cooldown: %s" % [" / ".join(a.mana.map(func(x): return str(x))), " / ".join(a.cooldown.map(func(x): return str(x)))], 13, Color(0.6, 0.75, 1.0), "body"])
 		if a.behavior == "autocast_attack":
 			lines.append(["Right-click to toggle autocast. Cast by hand on a hero to attack without drawing creep aggro.", 12, U.TEXT_DIM, "body"])
-		lines.append(["Ctrl + %s to learn" % a.key, 12, U.TEXT_DIM, "body"])
+		lines.append(["Ctrl + %s to learn" % Keybinds.ability_key_name(String(a.key)), 12, U.TEXT_DIM, "body"])
 		return lines
 
 	func _bars(h: SimUnit) -> void:
@@ -454,7 +470,7 @@ class BottomPanel extends Control:
 		U.text_r(self, "+%.1f" % h.mana_regen, Vector2(mr.end.x - 4, mr.position.y + 15), 12, Color(0.8, 0.88, 1.0), "body")
 
 	func _items(h: SimUnit, w: SimWorld) -> void:
-		var keys := ["Z", "X", "C", "V", "B", "N"]
+		var keys: Array = range(6).map(func(i): return Keybinds.key_name("item_%d" % (i + 1)))
 		var m := get_local_mouse_position()
 		for i in 9:
 			var r: Rect2 = _item_rects[i]
@@ -504,12 +520,12 @@ class BottomPanel extends Control:
 		var cd := w.abilities.cooldown_left(h, "tp")
 		if cd > 0.0:
 			U.cooldown(self, _tp_rect, cd / SimConst.TP_COOLDOWN, cd)
-		U.text(self, "T", _tp_rect.position + Vector2(3, 12), 10, Color(1, 1, 1), "bold")
+		U.text(self, Keybinds.key_name("tp"), _tp_rect.position + Vector2(3, 12), 10, Color(1, 1, 1), "bold")
 		U.text_r(self, str(h.tp_charges), _tp_rect.end + Vector2(-3, -3), 12, Color(1, 1, 1), "bold")
 		if _tp_rect.has_point(m):
 			hud.show_tip(get_global_mouse_position(), [["Town Portal Scroll", 18, U.GOLD, "title"],
 				["Channel 3 s, then teleport beside the allied building nearest the target point. Moving or a stun cancels it.", 14, U.TEXT, "body"],
-				["Charges %d. Cooldown 80 s. Mana 75. Buy more in the shop (100 gold). Hotkey T." % h.tp_charges, 13, U.TEXT_DIM, "body"]])
+				["Charges %d. Cooldown 80 s. Mana 75. Buy more in the shop (100 gold). Hotkey %s." % [h.tp_charges, Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"]])
 		var c := w.get_unit(h.courier_id)
 		U.slot(self, _courier_rect, c != null and c.courier_state != "idle")
 		var state := "Dead" if c == null or not c.alive else c.courier_state.capitalize()
@@ -517,7 +533,7 @@ class BottomPanel extends Control:
 		U.text_c(self, state, _courier_rect.get_center() + Vector2(0, 12), 10, U.TEXT_DIM, "body")
 		if _courier_rect.has_point(m):
 			hud.show_tip(get_global_mouse_position(), [["Courier", 18, U.GOLD, "title"],
-				["Click (or F3) to have your courier fetch the stash and fly it to you.", 14, U.TEXT, "body"]])
+				["Click (or %s) to have your courier fetch the stash and fly it to you." % Keybinds.key_name("courier_deliver"), 14, U.TEXT, "body"]])
 
 	func _buyback(h: SimUnit, w: SimWorld) -> void:
 		var cost := w.buyback_cost(h)
@@ -780,7 +796,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		if gr.has_point(get_local_mouse_position()):
 			hud.show_tip(get_global_mouse_position(), [["Glyph of Fortification", 18, U.GOLD, "title"],
 				["Your buildings take no damage for 7 seconds and your lane creeps for 3.", 14, U.TEXT, "body"],
-				["Tier 2+ towers attack 5 extra targets. Cooldown 5 minutes. (J)", 13, U.TEXT_DIM, "body"]])
+				["Tier 2+ towers attack 5 extra targets. Cooldown 5 minutes. (%s)" % Keybinds.key_name("glyph"), 13, U.TEXT_DIM, "body"]])
 
 	func _gui_input(e: InputEvent) -> void:
 		var gr := Rect2(S - 38, -46, 38, 38)

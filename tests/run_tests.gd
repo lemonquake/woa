@@ -1118,6 +1118,61 @@ func test_no_cooldown_lock_before_horn() -> void:
 	run(w, 2.5)
 	check(foe.hp < hp1, "attacks land before the horn too")
 
+func test_keybinds_swap_and_templates() -> void:
+	Keybinds.load_all()
+	var saved: Dictionary = Keybinds.binds.duplicate()
+	Keybinds.binds = Keybinds.defaults()
+	check(Keybinds.key("ability_1") == KEY_Q and Keybinds.key("item_1") == KEY_Z, "Dota defaults")
+	var swapped := Keybinds.assign("ability_1", KEY_Z)
+	check(swapped == "item_1" and Keybinds.key("ability_1") == KEY_Z and Keybinds.key("item_1") == KEY_Q,
+		"a taken key swaps with the old one (no action is left without a key)")
+	var ev := InputEventKey.new()
+	ev.keycode = KEY_Z
+	ev.pressed = true
+	check(Keybinds.action_for(ev) == "ability_1", "the event maps to the rebound action")
+	var mb := InputEventMouseButton.new()
+	mb.button_index = MOUSE_BUTTON_XBUTTON1
+	mb.pressed = true
+	Keybinds.assign("tp", Keybinds.binding_of(mb))
+	check(Keybinds.action_for(mb) == "tp" and Keybinds.key_name("tp") == "Mouse 4", "extra mouse buttons bind too")
+	Keybinds.apply_template("Items on 1-6")
+	check(Keybinds.key("item_1") == KEY_1 and Keybinds.key("ability_1") == KEY_Q, "built-in template applies")
+	var all := {}
+	for a in Keybinds.binds:
+		check(not all.has(Keybinds.binds[a]), "template has no duplicate key (%s)" % a)
+		all[Keybinds.binds[a]] = true
+	Keybinds.binds = saved
+
+func test_debug_helpers() -> void:
+	var w := world(C.PREGAME_TIME)
+	var h := w.spawn_hero("blood_ranger", C.DAWN, {})
+	h.player = true
+	SimDebug.force_start(w)
+	run(w, 0.1)
+	check(w.time >= 0.0 and w.wave == 1, "force start: the horn sounds and wave 1 spawns (wave %d)" % w.wave)
+	var creeps := w.units.filter(func(u): return u.is_lane_creep()).size()
+	SimDebug.force_wave(w)
+	check(w.units.filter(func(u): return u.is_lane_creep()).size() > creeps, "force wave adds creeps")
+	SimDebug.level_up(w, h)
+	check(h.level == 2, "level up: level 2 (got %d)" % h.level)
+	SimDebug.level_up(w, h, 30)
+	check(h.level == C.MAX_LEVEL, "max level")
+	var g := h.gold()
+	SimDebug.gold(w, h, 1000)
+	check(h.gold() == g + 1000, "+1000 gold")
+	SimDebug.skip_time(w, 600.0)
+	var before := w.units.size()
+	run(w, 0.1)
+	check(w.units.size() - before < 40, "skipping time does not flood the lanes with missed waves")
+	SimDebug.set_flag(w, "god", true)
+	h.hp = 1.0
+	run(w, 0.1)
+	check(h.hp == h.max_hp, "god mode keeps health full")
+	SimDebug.set_flag(w, "god", false)
+	SimDebug.set_flag(w, "reveal", true)
+	check(w.vision.cell_visible(C.DAWN, Vector2(6000, 6000)), "reveal shows the enemy base")
+	SimDebug.set_flag(w, "reveal", false)
+
 func test_gale_impact() -> void:
 	var w := empty_world()
 	var r := _ranger(w, Vector2(-2000, -4000), {"gale_impact": 1})

@@ -32,29 +32,42 @@ var fog_img: Image
 var _fog_quad: MeshInstance3D
 var args := {}
 var _capture_frames := -1
+var booted := false                        # _ready finished building (it yields to the loading screen between steps)
 var _last_dmg := {}
+var _fog_all := PackedByteArray()          # the Debug panel's revealed map
+
+## One loading step: report it to the loading screen and let a frame draw.
+func _stage(p: float, text: String) -> void:
+	LoadingScreen.progress(get_tree(), p, text)
+	await get_tree().process_frame
 
 func _ready() -> void:
 	_parse_args()
 	var t0 := Time.get_ticks_msec()
+	await _stage(0.08, "Shaping the land")
 	map = SimMap.new()
 	map.build(1)
 	world = SimWorld.new(1, map)
 	world.setup_match()
 	_spawn_heroes()
+	await _stage(0.22, "Lighting the sky")
 	atmosphere = Atmosphere.new()
 	add_child(atmosphere)
 	atmosphere.build()
+	await _stage(0.3, "Raising the mountains")
 	terrain = TerrainBuilder.new(map)
 	terrain.build(self)
 	atmosphere.materials.append(terrain.material)
+	await _stage(0.5, "Growing the forests")
 	foliage = Foliage.new()
 	add_child(foliage)
 	foliage.build(map, terrain)
+	await _stage(0.68, "Building the bases")
 	var dressing := Dressing.new()
 	dressing.foliage = foliage
 	add_child(dressing)
 	dressing.build(map, terrain)
+	await _stage(0.84, "Summoning the heroes")
 	fx = Fx.new()
 	fx.game = self
 	foliage.game_fx = fx
@@ -99,7 +112,13 @@ func _ready() -> void:
 	selected_id = player_hero_id
 	selected = [player_hero_id]
 	_sync_views()
+	booted = true
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
+	await _stage(0.96, "Ready")
+	# a couple of rendered frames so shaders compile behind the loading screen, then reveal the match
+	for i in 3:
+		await get_tree().process_frame
+	LoadingScreen.close(get_tree())
 	for f in String(args.get("off", "")).split(",", false):
 		match f:
 			"ssao": atmosphere.env.ssao_enabled = false
@@ -180,6 +199,8 @@ static func bot_look(id: String) -> Dictionary:
 # ---- Simulation loop -----------------------------------------------------------------------------------------------
 
 func _physics_process(_dt: float) -> void:
+	if not booted:
+		return
 	if _capture_frames >= 0 and not args.has("live"):
 		return
 	_step()
@@ -460,6 +481,8 @@ func _tm(key: String, t0: int) -> int:
 	return t1
 
 func _process(dt: float) -> void:
+	if not booted:
+		return
 	var _t := Time.get_ticks_usec()
 	var alpha := Engine.get_physics_interpolation_fraction()
 	if _capture_frames >= 0:
@@ -549,7 +572,13 @@ func _update_fog(dt: float) -> void:
 		_fog_prev_img.copy_from(fog_img)
 		_fog_prev.update(_fog_prev_img)
 		var n := SimMap.VN
-		fog_img.set_data(n, n, false, Image.FORMAT_L8, world.vision.visible[player_team])
+		var vis: PackedByteArray = world.vision.visible[player_team]
+		if world.vision.reveal_all:
+			if _fog_all.size() != n * n:
+				_fog_all.resize(n * n)
+				_fog_all.fill(1)
+			vis = _fog_all
+		fog_img.set_data(n, n, false, Image.FORMAT_L8, vis)
 		fog_tex.update(fog_img)
 		_fog_blend = 0.0 if _capture_frames < 0 else 1.0
 	_fog_blend = minf(1.0, _fog_blend + dt / 0.25)

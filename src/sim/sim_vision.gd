@@ -24,6 +24,7 @@ func _init(world: SimWorld) -> void:
 ## Buildings never move: their combined sight is cached per team and rebuilt only when one falls, a tree changes or
 ## day turns to night.
 var static_dirty := true
+var reveal_all := false                     # Debug panel: every cell is in sight for both teams
 var _static: Array[PackedByteArray] = []
 var _static_night := false
 
@@ -126,7 +127,7 @@ func revealed_to(u: SimUnit, team: int) -> bool:
 	return false
 
 func cell_visible(team: int, p: Vector2) -> bool:
-	if team < 0 or team > 1:
+	if team < 0 or team > 1 or reveal_all:
 		return true
 	var c := w.map.world_to_vcell(p)
 	return visible[team][c.y * VN + c.x] == 1
