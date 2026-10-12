@@ -1,0 +1,4 @@
+r18_base A = candidate (work/shots/map0/rv_base.png)
+r18_base B = benchmark (work/benchmark/dota_3.jpg)
+r18_ramp A = candidate (work/shots/map0/rv_ramp.png)
+r18_ramp B = benchmark (work/benchmark/dota_2.jpg)

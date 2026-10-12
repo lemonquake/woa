@@ -1,0 +1,2 @@
+r20_base A = benchmark (work/benchmark/dota_3.jpg)
+r20_base B = candidate (work/shots/map0/p3_base.png)

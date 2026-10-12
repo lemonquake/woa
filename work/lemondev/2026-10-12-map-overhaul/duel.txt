@@ -1,0 +1,6 @@
+seed 3 at 12:00: A(blood_ranger) 2/0/0 lvl 9 LH 32 DN 27 nw 2636 | B(ezee) 0/3/0 lvl 5 LH 12 DN 6 nw 2091 | towers lost A 1 B 1
+    casts: { "A:gale_impact": 6, "A:burst_shot": 2, "B:dark_stomp": 8, "B:tainted_touch": 8, "B:leap_strike": 1, "A:blood_ranger_ult": 3 }
+seed 7 at 12:00: A(blood_ranger) 0/0/0 lvl 9 LH 44 DN 29 nw 3778 | B(ezee) 0/0/0 lvl 5 LH 12 DN 5 nw 2230 | towers lost A 1 B 1
+    casts: { "A:gale_impact": 5, "B:tainted_touch": 7, "A:burst_shot": 2, "B:dark_stomp": 5, "B:leap_strike": 2, "A:blood_ranger_ult": 3 }
+seed 11 at 12:00: A(blood_ranger) 0/0/0 lvl 9 LH 50 DN 43 nw 4224 | B(ezee) 0/0/0 lvl 3 LH 4 DN 3 nw 1843 | towers lost A 1 B 2
+    casts: { "A:gale_impact": 5, "A:burst_shot": 1, "B:dark_stomp": 2, "B:tainted_touch": 5, "A:blood_ranger_ult": 1 }
