@@ -87,8 +87,11 @@ func frame() -> void:
 		_place_ring(_range, h.pos, h.attack_range + h.hull)
 		return
 	if aid.begins_with("item:"):
-		# Mini-Axe, Vegan Picker, Ironwood Twig, wards: their cast range
+		# Mini-Axe, Vegan Picker, Tree Twig, wards, Push Staff, Gold Glove: their cast range; Jump Knife: its reach
 		var r: float = game.world.abilities.cast_range(h, "", int(aid.substr(5)))
+		var it = h.inventory[int(aid.substr(5))]
+		if it != null and not is_finite(r):
+			r = float(SimData.item(it.id).values.get("range", 0.0))
 		if r > 0.0 and r < 5000.0:
 			_place_ring(_range, h.pos, r + h.hull)
 		return

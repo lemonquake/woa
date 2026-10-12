@@ -664,26 +664,84 @@ class BottomPanel extends Control:
 			hud.toggle_shop()
 			accept_event()
 
-func item_tip(id: String, h: SimUnit) -> Array:
+const STAT_NAMES := {"str": "Strength", "agi": "Agility", "int": "Intelligence", "damage": "Damage",
+	"attack_speed": "Attack Speed", "armor": "Armor", "hp": "Health", "mana": "Mana", "hp_regen": "Health Regen",
+	"mana_regen": "Mana Regen", "move_speed": "Movement Speed", "boot_ms": "Movement Speed",
+	"move_speed_pct": "Movement Speed", "max_mana_pct": "Max Mana", "lifesteal": "Lifesteal", "range": "Attack Range",
+	"magic_resist": "Magic Resistance", "evasion": "Evasion"}
+
+const ITEM_TEXT := {"tango": "Eat a tree to regenerate 7 health per second for 16 seconds (32 seconds on a planted tree). The tree is destroyed and grows back after 3 minutes.",
+	"plant": "Plant a tree within 400 range. It stands for 20 seconds. Consumes the twig.",
+	"salve": "Regenerate 30 health per second for 13 seconds. Broken by damage from enemy heroes.",
+	"clarity": "Regenerate 6 mana per second for 25 seconds. Broken by damage from enemy heroes.",
+	"mango": "Restore 100 mana.", "faerie_fire": "Restore 85 health.", "ward": "Plant an invisible ward that sees 1600 range for 6 minutes.",
+	"chop": "Chop down a tree within 350 range; it grows back after 3 minutes. Passive: bonus attack damage against creeps.",
+	"stick": "Restore 15 health and mana per charge. Charges when enemy heroes cast spells nearby.",
+	"berserk": "Frenzy: +100 attack speed and +6% movement speed (+12% for melee heroes), but -7 armor for 6 seconds. Costs 25 mana.",
+	"switch": "Switch the bonus between strength, intelligence and agility.",
+	"slip": "For 3 seconds, walk through units and move 20% faster (10% for ranged heroes). 8 second cooldown.",
+	"restore": "Restore 150 mana to yourself and allies within 1200. 55 second cooldown.",
+	"mend": "Heal yourself and allies within 1200 for 250. Costs 100 mana, 50 second cooldown.",
+	"spikes": "For 5.5 seconds, 85% of all damage you take is sent back to whoever dealt it. Costs 25 mana, 25 second cooldown.",
+	"gold": "Kill an enemy creep (not an ancient) within 600 and gain 160 gold. Two charges, one comes back every 90 seconds.",
+	"push": "Push a unit 600 forward the way it faces, cutting trees in its path. Range 550 on allies (or yourself), 850 on enemies. Costs 150 mana, 19 second cooldown.",
+	"shield": "Immune to debuffs (stuns, slows, pushes) and 60% magic resistance; removes slows and silences. Lasts 9 seconds, one second less each use down to 7. Costs 50 mana, 95 second cooldown.",
+	"jump": "Teleport to a point up to 1200 away (a farther point jumps 960 toward it). Disabled for 3 seconds after taking damage from an enemy hero. 15 second cooldown.",
+	"sneak": "Turn invisible after 0.3 seconds for 17 seconds and move 20% faster. Attacking breaks it and the attack deals 175 extra damage. Costs 75 mana, 25 second cooldown."}
+
+const PASSIVE_TEXT := {"pierce": "Attacks have a 25% chance to never miss and deal 60 extra magic damage.",
+	"corruption": "Attacks lower the target's armor (the stronger of these items counts).",
+	"chain": "Attacks have a 25% chance to throw lightning: 110 magic damage, jumping to 4 enemies.",
+	"cleave": "Melee heroes: attacks also hit enemies in front for 60% of the damage (40% to creeps).",
+	"block": "60% chance to block 50 damage from each attack (25 for ranged heroes).",
+	"spikes": "Attackers take back 10 + 15% of the damage of their attacks."}
+
+func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 	var d := SimData.item(id)
 	var lines: Array = [[String(d.name), 20, U.GOLD, "title"]]
 	lines.append(["Cost %d" % int(d.cost), 14, U.GOLD, "bold"])
-	for k in d.stats:
-		var v = d.stats[k]
-		var label := String(k).replace("_", " ").capitalize()
-		var vs := ("+%d%%" % int(v * 100)) if float(v) < 1.0 and (k.ends_with("pct") or k == "lifesteal") else "+" + str(v)
+	if d.has("recipe_for"):
+		lines.append(["Combine with the parts of %s." % String(SimData.item(d.recipe_for).name), 14, U.TEXT, "body"])
+	var melee := h == null or not h.is_ranged()
+	var stats: Dictionary = d.stats.duplicate()
+	for k in d.get("stats_melee" if melee else "stats_ranged", {}):
+		stats[k] = float(stats.get(k, 0.0)) + float(d.get("stats_melee" if melee else "stats_ranged")[k])
+	for k in stats:
+		var v := float(stats[k])
+		var label := String(STAT_NAMES.get(k, String(k).replace("_", " ").capitalize()))
+		var pct: bool = k.ends_with("pct") or k == "lifesteal" or k == "magic_resist" or k == "evasion"
+		var vs := ("+%d%%" % roundi(v * 100.0)) if pct else "+" + str(snappedf(v, 0.01)).trim_suffix(".0")
 		lines.append([vs + " " + label, 15, U.TEXT, "body"])
+	if d.has("stats_melee"):
+		lines.append(["(melee and ranged heroes get different amounts)", 12, U.TEXT_DIM, "body"])
+	var v: Dictionary = d.values
+	if d.has("attr_from"):
+		var cur := ""
+		if h != null:
+			for it in h.inventory:
+				if it != null and it.id == id:
+					cur = String(it.get("attr", ""))
+		lines.append(["+%d to the chosen attribute%s" % [int(v.attr_bonus), (": " + {"str": "Strength", "agi": "Agility", "int": "Intelligence"}.get(cur, "")) if cur != "" else ""], 15, U.TEXT, "body"])
+	if d.has("aura"):
+		var aura := "+%s mana regen" % str(v.aura_mana_regen) if d.aura == "mana" else "+%s health regen" % str(v.aura_hp_regen)
+		lines.append(["Aura: %s to allies within %d" % [aura, int(v.aura_radius)], 14, Color(0.75, 0.85, 1.0), "body"])
 	var use := String(d.use)
-	var desc := {"tango": "Eat a tree to regenerate 7 health per second for 16 seconds (32 seconds on a planted tree). The tree is destroyed and grows back after 3 minutes.",
-		"plant": "Plant a tree within 400 range. It stands for 20 seconds. Consumes the twig.",
-		"salve": "Regenerate 30 health per second for 13 seconds. Broken by damage from enemy heroes.",
-		"clarity": "Regenerate 6 mana per second for 25 seconds. Broken by damage from enemy heroes.",
-		"mango": "Restore 100 mana.", "faerie_fire": "Restore 85 health.", "ward": "Plant an invisible ward that sees 1600 range for 6 minutes.",
-		"chop": "Chop down a tree within 350 range (4 second cooldown); it grows back after 3 minutes. Passive: +8 attack damage against creeps (+4 for ranged heroes).", "stick": "Restore 15 health and mana per charge. Charges when enemy heroes cast spells nearby.",
-		"berserk": "Frenzy: +100 attack speed and +6% movement speed, but -7 armor for 6 seconds."}
-	if desc.has(use):
-		for l in U.wrap(String(desc[use]), 320, 14):
+	if ITEM_TEXT.has(use):
+		for l in U.wrap(String(ITEM_TEXT[use]), wrap, 14):
 			lines.append([l, 14, Color(0.75, 0.9, 0.75), "body"])
+	var pas := String(d.get("passive", ""))
+	if PASSIVE_TEXT.has(pas):
+		var txt := String(PASSIVE_TEXT[pas])
+		if pas == "corruption":
+			txt = "Attacks lower the target's armor by %d for %d seconds (the stronger of these items counts)." % [int(v.armor_reduction), int(v.duration)]
+			if v.has("max_damage"):
+				txt += " Gains 2 damage for each corrupted enemy hero you kill (1 for an assist), up to 30."
+		for l in U.wrap("Passive: " + txt, wrap, 14):
+			lines.append([l, 14, Color(0.85, 0.8, 0.65), "body"])
+	if String(d.get("grants", "")) == "scepter":
+		lines.append(["Upgrades your hero's abilities while carried.", 14, Color(0.75, 0.9, 0.75), "body"])
+	elif String(d.get("grants", "")) == "shard":
+		lines.append(["Used at once: upgrades your hero's abilities for good. On sale from 15:00.", 14, Color(0.75, 0.9, 0.75), "body"])
 	if not (d.components as Array).is_empty():
 		var names := []
 		for c in d.components:
@@ -954,83 +1012,6 @@ class TopBar extends Control:
 					return
 
 # ======================================================================================================================
-
-class ShopPanel extends Control:
-	const W := 560.0
-	const H := 600.0
-	const CATS := [["consumables", "Consumables"], ["attributes", "Attributes"], ["armaments", "Armaments"],
-		["misc", "Magic"], ["upgrades", "Upgrades"], ["basics", "Basics"]]
-	var hud
-	var _rects := {}
-
-	func _ready() -> void:
-		size = Vector2(W, H)
-		mouse_filter = Control.MOUSE_FILTER_STOP
-
-	func _draw() -> void:
-		var h: SimUnit = hud.hero()
-		if h == null:
-			return
-		var w: SimWorld = hud.game.world
-		U.panel(self, Rect2(Vector2.ZERO, size), U.GOLD, 8)
-		U.text(self, "Shop", Vector2(18, 34), 26, U.GOLD, "title")
-		var here := w.shop.in_shop(h)
-		U.text(self, "Items go straight to you" if here else "Not at a shop: purchases go to your stash", Vector2(110, 32), 13, Color(0.7, 0.9, 0.7) if here else Color(1.0, 0.7, 0.5), "body")
-		U.text_r(self, "%d gold" % h.gold(), Vector2(W - 18, 34), 18, U.GOLD, "bold")
-		_rects.clear()
-		var y := 56.0
-		var m := get_local_mouse_position()
-		for cat in CATS:
-			var ids: Array = []
-			for id in SimData.items():
-				var d := SimData.item(id)
-				if String(d.category) == cat[0] and int(d.cost) > 0 or String(d.category) == cat[0] and id == "observer_ward":
-					ids.append(id)
-			if ids.is_empty():
-				continue
-			U.text(self, cat[1], Vector2(18, y + 16), 15, U.GOLD, "title")
-			y += 24
-			var x := 18.0
-			for id in ids:
-				if x + 62 > W - 10:
-					x = 18.0
-					y += 70
-				var r := Rect2(x, y, 60, 46)
-				_rects[id] = r
-				var price := w.shop.price(h, id)
-				var afford := h.gold() >= price
-				U.slot(self, r, r.has_point(m))
-				var ic: Texture2D = U.item_icon(id)
-				if ic:
-					draw_texture_rect(ic, Rect2(r.position + Vector2(10, 2), Vector2(42, 42)), false, Color(1, 1, 1) if afford else Color(0.5, 0.5, 0.5))
-				U.text_c(self, str(price), Vector2(r.get_center().x, r.end.y + 15), 13, U.GOLD if afford else Color(0.6, 0.5, 0.4), "bold")
-				if r.has_point(m):
-					hud.show_tip(get_global_mouse_position(), hud.item_tip(id, h))
-				x += 68
-			y += 76
-		# stash
-		var stash_y := H - 66
-		U.text(self, "Stash", Vector2(18, stash_y - 6), 14, U.TEXT_DIM, "title")
-		for i in 6:
-			var r2 := Rect2(18 + i * 66, stash_y, 60, 46)
-			U.slot(self, r2)
-			var it = h.stash[i]
-			if it != null:
-				var ic2: Texture2D = U.item_icon(it.id)
-				if ic2:
-					draw_texture_rect(ic2, Rect2(r2.position + Vector2(10, 2), Vector2(42, 42)), false)
-
-	func _gui_input(e: InputEvent) -> void:
-		if e is InputEventMouseButton and e.pressed:
-			var mb := e as InputEventMouseButton
-			for id in _rects:
-				if (_rects[id] as Rect2).has_point(mb.position):
-					var err: String = hud.game.world.shop.buy(hud.hero(), id)
-					if err != "":
-						hud.error(err)
-					accept_event()
-					return
-			accept_event()
 
 # ======================================================================================================================
 

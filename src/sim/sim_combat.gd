@@ -18,6 +18,8 @@ func _init(world: SimWorld) -> void:
 ## The attack point was reached: melee attacks land now, ranged attacks launch a projectile.
 func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 	var snap := _snapshot(u, mod)
+	if u.is_hero():
+		snap["sneak"] = w.items.break_sneak(u)
 	if mod != "":
 		w.abilities.pay_attack_modifier(u, mod)
 	if u.is_hero():
@@ -76,12 +78,14 @@ func _taint(u: SimUnit) -> int:
 func _quelling(u: SimUnit) -> float:
 	if not u.is_hero():
 		return 0.0
+	# Mini-Axe or Cleave Axe: bonus damage against creeps (the larger one; they do not stack)
+	var best := 0.0
 	for i in 6:
 		var it = u.inventory[i]
-		if it != null and it.id == "quelling_blade":
-			var v: Dictionary = SimData.item("quelling_blade").values
-			return float(v.creep_damage_ranged if u.is_ranged() else v.creep_damage_melee)
-	return 0.0
+		if it != null and SimData.item(it.id).values.has("creep_damage_melee"):
+			var v: Dictionary = SimData.item(it.id).values
+			best = maxf(best, float(v.creep_damage_ranged if u.is_ranged() else v.creep_damage_melee))
+	return best
 
 func update_projectiles() -> void:
 	for i in range(w.projectiles.size() - 1, -1, -1):
@@ -127,14 +131,16 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		return false
 	var src := w.get_unit(s.src)
 	var miss := false
-	if t.evasion > 0.0 and w.rng.randf() < t.evasion:
+	var pierced := w.items.roll_pierce(s)              # Spear: cannot miss
+	if not pierced and t.evasion > 0.0 and w.rng.randf() < t.evasion:
 		miss = true
-	elif int(s.level_h) < w.map.level_at(t.pos) and w.rng.randf() < C.UPHILL_MISS:
+	elif not pierced and int(s.level_h) < w.map.level_at(t.pos) and w.rng.randf() < C.UPHILL_MISS:
 		miss = true
 	if miss:
 		w.events.append({"t": "miss", "u": s.src, "target": t.id, "ranged": bool(s.ranged)})
 		return false
-	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus) + float(s.get("burst", 0.0))
+	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus) + float(s.get("burst", 0.0)) \
+		+ float(s.get("sneak", 0.0))
 	if s.mod != "":
 		dmg += w.abilities.attack_modifier_damage(s, t)
 	if t.is_creep() and t.team != s.team:
@@ -155,6 +161,8 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.attack_modifier_hit(s, t)
 	if int(s.get("taint", 0)) > 0 and not t.is_building() and t.team != s.team:
 		w.abilities.tainted_hit(s, t)
+	if bool(s.hero):
+		w.items.on_attack_landed(s, t, dmg, pierced)
 	if t.alive and t.is_hero() and src != null:
 		w.abilities.on_attacked(t, src)
 	return true
@@ -187,6 +195,9 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		return 0.0
 	if key == "":
 		key = "attack" if is_attack else "spell"
+	var raw := amount                                  # before any reduction (Spike Armor returns this)
+	if is_attack and dtype == C.DamageType.PHYSICAL and t.is_hero() and src_team != t.team:
+		amount = w.items.block_attack(t, amount)       # Block Shield, before armor
 	match dtype:
 		C.DamageType.PHYSICAL:
 			if not opts.get("ignore_armor", false):
@@ -234,6 +245,8 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		w.ai.neutral_provoked(t, src)
 	w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": amount, "type": dtype, "attack": is_attack,
 		"key": key, "reflected": reflected, "halved": reflect_amt})
+	if not reflected and t.is_hero():
+		w.items.on_damaged(t, src, raw, dtype, is_attack)
 	if t.hp <= 0.001:
 		t.hp = 0.0
 		kill(t, src)
@@ -301,6 +314,7 @@ func process_deaths() -> void:
 		w.events.append({"t": "death", "u": t.id, "killer": killer.id if killer else -1, "deny": deny})
 		if t.is_hero():
 			w.abilities.on_hero_death(t, killer, null if deny else kill_credit(t, killer))
+			w.items.on_hero_death(t, killer)
 			_hero_death(t, killer)
 		elif t.kind == K.COURIER:
 			t.respawn_at = w.time + C.COURIER_RESPAWN

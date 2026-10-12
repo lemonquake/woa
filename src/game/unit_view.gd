@@ -201,6 +201,23 @@ func hand_point(side: String) -> Vector3:
 		return w.global_position
 	return global_position + Vector3(0, bar_height * 0.5, 0)
 
+var _big := false
+var _faded := false
+
+## Lasting item states: Spell Shield makes the hero 30% bigger (as in Dota); an invisible unit of the player's team is
+## drawn faded (enemies never see it at all).
+func _item_states(u: SimUnit) -> void:
+	var big := not u.get_modifier("spell_shield").is_empty()
+	if big != _big:
+		_big = big
+		var tw := create_tween()
+		tw.tween_property(model, "scale", Vector3.ONE * _model_scale * (1.3 if big else 1.0), 0.25)
+	var faded := u.has_flag("invisible")
+	if faded != _faded:
+		_faded = faded
+		for gi: GeometryInstance3D in model.find_children("*", "GeometryInstance3D", true, false):
+			gi.transparency = 0.6 if faded else 0.0
+
 ## Hide a hand's weapon while it is away (Sludge's shuriken is flying on its chain).
 func hide_weapon(side: String, hidden: bool) -> void:
 	var w: Node3D = weapon_nodes.get(side)
@@ -321,7 +338,10 @@ func tick(u: SimUnit) -> void:
 		return
 	if _state == "leap":
 		_state = ""
-	if not u.knock.is_empty():
+	_item_states(u)
+	if not u.knock.is_empty() and not bool(u.knock.get("disable", true)) and not u.knock.get("phys", false):
+		pass                                     # a Push Staff slide is not a disable: no stagger
+	elif not u.knock.is_empty():
 		if u.knock.get("drag", false):
 			# caught by a Shuriken Hook: hauled along, limbs trailing
 			if _state != "drag":

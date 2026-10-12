@@ -24,6 +24,9 @@ func _init() -> void:
 				if e.t == "cast":
 					var k := "%s:%s" % ["A" if e.u == a.id else "B", e.ability]
 					casts[k] = int(casts.get(k, 0)) + 1
+				elif e.t == "item_use":
+					var k4 := "%s:item_%s" % ["A" if e.u == a.id else "B", e.item]
+					casts[k4] = int(casts.get(k4, 0)) + 1
 				elif e.t == "toggle" and bool(e.on):
 					var k3 := "%s:%s_on" % ["A" if e.u == a.id else "B", e.ability]
 					casts[k3] = int(casts.get(k3, 0)) + 1
@@ -38,5 +41,7 @@ func _init() -> void:
 			w.units.filter(func(u): return u.kind == C.Kind.TOWER and u.team == 0 and not u.alive).size(),
 			w.units.filter(func(u): return u.kind == C.Kind.TOWER and u.team == 1 and not u.alive).size()])
 		print("    casts: ", casts)
+		for hh in [a, b]:
+			print("    %s items: %s" % [hh.def.id, str(hh.inventory.filter(func(i): return i != null).map(func(i): return i.id))])
 		w.dispose()
 	quit()

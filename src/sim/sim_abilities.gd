@@ -185,6 +185,8 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> Stri
 		return "Stunned"
 	if u.has_flag("mute"):
 		return "Muted"
+	if u.mana < float(d.get("mana", 0.0)):
+		return "Not enough mana"
 	match String(d.use):
 		"stick":
 			if u.stick_charges <= 0:
@@ -198,6 +200,8 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> Stri
 		"plant":
 			if not w.map.can_plant(point):
 				return "Cannot plant a tree there"
+		_:
+			return w.items.error(u, it, d, target, point)
 	return ""
 
 ## Happens at once without a cast point or interrupting anything: no-target items, toggles (Stench) and immediate
@@ -212,17 +216,19 @@ func is_instant(u: SimUnit, aid: String, slot: int) -> bool:
 
 ## "none", "point" (ground / tree) or "unit".
 func item_target(item_id: String) -> String:
-	match String(SimData.item(item_id).get("use", "")):
+	var use := String(SimData.item(item_id).get("use", ""))
+	match use:
 		"tango", "chop", "ward", "plant":
 			return "point"
-	return "none"
+	return SimItems.target_kind(use)
 
-func cast_range(u: SimUnit, aid: String, slot: int) -> float:
+func cast_range(u: SimUnit, aid: String, slot: int, t: SimUnit = null) -> float:
 	if slot >= 0:
 		var it = u.inventory[slot]
 		if it == null:
 			return 0.0
-		match String(SimData.item(it.id).use):
+		var d := SimData.item(it.id)
+		match String(d.use):
 			"tango":
 				return 165.0
 			"chop":
@@ -231,7 +237,7 @@ func cast_range(u: SimUnit, aid: String, slot: int) -> float:
 				return 500.0
 			"plant":
 				return C.PLANT_RANGE
-		return 0.0
+		return w.items.cast_range(u, String(d.use), d, t)
 	if aid == "tp":
 		return INF
 	var a := SimData.ability(aid)
@@ -257,6 +263,7 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	var a := SimData.ability(aid)
 	var lv := u.ability_level_of(aid)
+	w.items.break_sneak(u)
 	if String(a.behavior) == "toggle":
 		set_toggle(u, aid, not bool(u.toggles.get(aid, false)))
 		return
@@ -318,6 +325,11 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 
 func _v(a: Dictionary, key: String, lv: int) -> float:
 	return _lvl_val(a, key, lv)
+
+## Whether an effect from `src_team` may put a debuff (stun, push, slow, curse) on `t`: never on a debuff-immune
+## enemy (Spell Shield) unless the effect pierces it (Shuriken Hook, Chomp).
+func can_debuff(t: SimUnit, src_team: int, pierces := false) -> bool:
+	return pierces or t.team == src_team or not t.debuff_immune
 
 ## Every hero spell cast charges enemy Spark Rods / Wands within range.
 func _charge_sticks(caster: SimUnit) -> void:
@@ -447,7 +459,7 @@ func _update_line(e: Dictionary) -> bool:
 			continue
 		w.combat.deal_damage(e.src, e.team, true, o, e.damage, C.DamageType.MAGICAL, false, String(e.ability))
 		w.events.append({"t": "gale_hit", "u": o.id, "src": e.src, "pos": o.pos, "dir": dir})
-		if o.alive and o.kind != K.TOWER:
+		if o.alive and o.kind != K.TOWER and can_debuff(o, int(e.team)):
 			var side := dir.orthogonal()
 			var off := (o.pos - cp).dot(side)
 			if absf(off) < 1.0:
@@ -495,7 +507,8 @@ func _dark_stomp(u: SimUnit, a: Dictionary, lv: int) -> void:
 			dir = Vector2.from_angle(u.facing)
 		var near := clampf(1.0 - u.pos.distance_to(o.pos) / r, 0.0, 1.0)
 		var speed := _v(a, "push_speed", lv) * lerpf(0.72, 1.0, near) / mass(o)
-		start_push(o, dir.normalized() * speed, u.id, u.team, "dark_stomp", lv, _cast_seq)
+		if can_debuff(o, u.team):
+			start_push(o, dir.normalized() * speed, u.id, u.team, "dark_stomp", lv, _cast_seq)
 
 var _cast_seq := 0
 var _impacted := {}                         # cast seq -> {unit id: true}: impact damage lands once per unit per cast
@@ -716,7 +729,7 @@ func _update_leap(u: SimUnit) -> void:
 			var lv := int(L.lv)
 			var dmg := _v(a, "damage", lv) + _v(a, "str_mult", lv) * u.str_total
 			w.combat.deal_damage(u.id, u.team, true, t, dmg, C.DamageType.PURE, false, "leap_strike")
-			if t.alive:
+			if t.alive and can_debuff(t, u.team):
 				t.add_modifier({"id": "leap_strike_slow", "source": u.id, "expires": w.time + _v(a, "slow_duration", lv),
 					"slow": _v(a, "slow", lv), "fx": "slow"})
 				if u.order == O.NONE:
@@ -729,7 +742,7 @@ func tainted_hit(s: Dictionary, t: SimUnit) -> void:
 	var a := SimData.ability("tainted_touch")
 	var lv := int(s.taint)
 	w.combat.deal_damage(s.src, s.team, bool(s.hero), t, _v(a, "bonus_damage", lv), C.DamageType.MAGICAL, false, "tainted_touch")
-	if t.alive:
+	if t.alive and can_debuff(t, int(s.team)):
 		t.add_modifier({"id": "tainted_curse", "source": s.src, "expires": w.time + _v(a, "curse_duration", lv),
 			"reveal": int(s.team), "reveal_r": _v(a, "curse_vision", lv), "fx": "curse"})
 		w.events.append({"t": "curse", "u": t.id, "src": s.src})
@@ -1044,8 +1057,8 @@ func set_toggle(u: SimUnit, aid: String, on: bool) -> void:
 			w.effects.append({"kind": "pulse", "ability": aid, "src": u.id, "next_tick": w.tick})
 	w.events.append({"t": "toggle", "u": u.id, "ability": aid, "on": on})
 
-## Stench, every 0.2 s while on: magic damage and a lingering slow to enemies around Sludge (not debuff-immune ones),
-## and the same damage to Sludge himself, which never kills him. Keeps working while he is stunned or channelling.
+## Stench, every 0.2 s while on: magic damage and a lingering slow to enemies around Sludge (a debuff-immune enemy
+## takes the damage but not the slow), and the same damage to Sludge himself, which never kills him. Keeps working while he is stunned or channelling.
 func _update_pulse(e: Dictionary) -> bool:
 	var u := w.get_unit(int(e.src))
 	var aid := String(e.ability)
@@ -1065,10 +1078,10 @@ func _update_pulse(e: Dictionary) -> bool:
 	for o: SimUnit in w.query(u.pos, r + 120.0, true):
 		if o == u or not o.alive or o.team == u.team or o.is_building() or o.is_ward() or o.kind == K.COURIER:
 			continue
-		if o.is_invulnerable() or o.debuff_immune or o.pos.distance_to(u.pos) > r + o.hull:
+		if o.is_invulnerable() or o.pos.distance_to(u.pos) > r + o.hull:
 			continue
 		w.combat.deal_damage(u.id, u.team, true, o, dmg, C.DamageType.MAGICAL, false, aid)
-		if o.alive:
+		if o.alive and can_debuff(o, u.team):
 			o.add_modifier({"id": "stench", "source": u.id, "expires": w.time + linger, "slow": slow, "heal_reduction": hr,
 				"debuff": true, "fx": "stench"})
 	w.combat.deal_damage(u.id, u.team, true, u, dmg, C.DamageType.MAGICAL, false, aid, false, {"non_lethal": true})
@@ -1122,6 +1135,9 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 	var d := SimData.item(it.id)
 	var v: Dictionary = d.values
 	it["ready"] = w.time + float(d.cooldown)
+	u.mana -= float(d.get("mana", 0.0))
+	if String(d.use) != "sneak":
+		w.items.break_sneak(u)
 	var consumed := false
 	match String(d.use):
 		"tango":
@@ -1172,8 +1188,11 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 			consumed = true
 		"berserk":
 			u.mana -= float(v.mana)
+			var bms := float(v.get("move_speed_pct_melee", v.move_speed_pct)) if not u.is_ranged() else float(v.move_speed_pct)
 			u.add_modifier({"id": "berserk", "source": u.id, "expires": w.time + float(v.duration),
-				"stats": {"attack_speed": float(v.attack_speed), "move_speed_pct": float(v.move_speed_pct), "armor": -float(v.armor_reduction)}, "fx": "berserk"})
+				"stats": {"attack_speed": float(v.attack_speed), "move_speed_pct": bms, "armor": -float(v.armor_reduction)}, "fx": "berserk"})
+		_:
+			consumed = w.items.use(u, it, d, t, p)
 	w.events.append({"t": "item_use", "u": u.id, "item": it.id})
 	if consumed:
 		it.charges = int(it.get("charges", 1)) - 1

@@ -664,6 +664,17 @@ func test_courier_delivery() -> void:
 	check(h.inventory.any(func(x): return x != null and x.id == "slippers"), "the courier delivered the slippers")
 	var c := w.get_unit(h.courier_id)
 	check(c.courier_state in ["return", "idle"], "courier heads home after delivering")
+	# the hero dies while the courier is on its way: the items go back to the stash, not stuck on the courier
+	w.shop.buy(h, "mantle")
+	w.courier_deliver(h)
+	run(w, 3.0)
+	check(c.inventory.any(func(x): return x != null), "courier picked up the Thinking Cap")
+	w.combat.kill(h, null)
+	w.combat.process_deaths()
+	run(w, 30.0)
+	check(c.courier_state == "idle" and not c.inventory.any(func(x): return x != null), "courier came home empty-handed")
+	# (the hero respawned in the fountain meanwhile, so the stash may already have emptied into the bags)
+	check((h.stash + h.inventory).any(func(x): return x != null and x.id == "mantle"), "the undelivered item came back to the hero")
 
 func test_stop_and_hard_stop() -> void:
 	var w := empty_world()
@@ -1916,3 +1927,474 @@ func test_sludge_talents_and_shard() -> void:
 	w3.command(s3.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": e3.pos})
 	run(w3, 1.0)
 	near(e30 - e3.hp, 360.0 + 0.2 * (1000.0 - 100.0 - 24.0), 30.0, "Upgrade Gem: +20% of the drag distance as damage")
+
+# ---- Combination items (Dota 7.41d items.txt, our names) ----------------------------------------------------------
+
+## A hero standing in its base shop with plenty of gold.
+func _shopper(w: SimWorld, id := "sludge", gold := 20000) -> SimUnit:
+	var h := w.spawn(id, C.DAWN, _map.fountains[0] + Vector2(200, 200))
+	h.gold_unreliable = gold
+	return h
+
+func _give(w: SimWorld, h: SimUnit, item_id: String, slot := -1) -> Dictionary:
+	var it := w.shop.new_item(item_id)
+	if slot < 0:
+		slot = h.inventory.find(null)
+	h.inventory[slot] = it
+	h.refresh_stats()
+	return it
+
+func _ids(arr: Array) -> Array:
+	return arr.filter(func(i): return i != null).map(func(i): return i.id)
+
+func test_item_costs_match_their_parts() -> void:
+	var bad: Array = []
+	for id in SimData.items():
+		var d := SimData.item(id)
+		for parts in SimShop.recipe_sets(id):
+			var sum := 0
+			for p in parts:
+				check(not SimData.item(p).is_empty(), "%s: part %s exists" % [id, p])
+				sum += int(SimData.item(p).cost)
+			if sum != int(d.cost):
+				bad.append("%s %d != %d" % [id, sum, int(d.cost)])
+		if int(d.recipe_cost) > 0:
+			check(SimData.item("recipe_" + id).get("recipe_for", "") == id, "%s has a recipe scroll" % id)
+	check(bad.is_empty(), "every recipe adds up to the item's price: %s" % str(bad))
+	# spot checks against Dota's prices
+	for pair in [["tough_band", 505], ["smart_band", 505], ["slip_boots", 1450], ["mana_boots", 1500], ["spell_shield", 4050],
+			["armor_breaker", 3500], ["cleave_axe", 3900], ["shock_hammer", 2950], ["gold_glove", 2200], ["spike_armor", 2400],
+			["upgrade_staff", 4200], ["sneak_blade", 3250], ["medic_kit", 1775], ["block_shield", 1700], ["push_staff", 2200],
+			["jump_knife", 2250], ["upgrade_gem", 1400], ["dragon_lance", 2000]]:
+		check(int(SimData.item(pair[0]).cost) == int(pair[1]), "%s costs %d" % pair)
+
+func test_recipe_scroll_buys_only_missing_parts() -> void:
+	var w := empty_world()
+	var h := _shopper(w, "sludge", 2000)
+	check(w.shop.buy(h, "circlet") == "", "bought a Headband")
+	check(w.shop.price(h, "tough_band") == 140 + 210, "Tough Band now costs Heavy Gloves + recipe (%d)" % w.shop.price(h, "tough_band"))
+	check(w.shop.buy(h, "tough_band") == "", "bought Tough Band")
+	check(_ids(h.inventory) == ["tough_band"], "parts and scroll combined into one item (%s)" % str(_ids(h.inventory)))
+	check(h.gold() == 2000 - 155 - 140 - 210, "paid 505 in total")
+	near(h.str_total, 25.0 + 5.0, 0.01, "+5 strength")
+	# the scroll on its own, then the parts: combines when the last part arrives
+	var w2 := empty_world()
+	var h2 := _shopper(w2, "sludge", 2000)
+	check(w2.shop.buy(h2, "recipe_smart_band") == "", "bought the recipe scroll alone")
+	check(_ids(h2.inventory) == ["recipe_smart_band"], "the scroll sits in the bags")
+	w2.shop.buy(h2, "circlet")
+	check(_ids(h2.inventory).size() == 2, "not yet")
+	w2.shop.buy(h2, "mantle")
+	check(_ids(h2.inventory) == ["smart_band"], "combined into Smart Band (%s)" % str(_ids(h2.inventory)))
+
+func test_recipe_parts_combine_per_pool() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))      # away from the shop
+	h.gold_unreliable = 2000
+	_give(w, h, "gauntlets")
+	check(w.shop.buy(h, "circlet") == "", "bought a Headband away from the shop")
+	check(_ids(h.stash) == ["circlet"], "it waits in the stash")
+	w.shop.buy(h, "recipe_tough_band")
+	check(_ids(h.inventory) == ["gauntlets"] and _ids(h.stash).size() == 2, "bags and stash do not combine away from the shop")
+	h.pos = _map.fountains[0] + Vector2(200, 200)
+	w.shop.update(h)
+	check(_ids(h.inventory) == ["tough_band"] and _ids(h.stash).is_empty(), "they combine in the shop (%s / %s)" % [str(_ids(h.inventory)), str(_ids(h.stash))])
+
+func test_buy_counts_partly_built_parts() -> void:
+	var w := empty_world()
+	var h := _shopper(w)
+	_give(w, h, "mana_stone")
+	check(w.shop.price(h, "cleave_axe") == 3900 - 700, "Cleave Axe: the Mana Stone inside its Steady Ring is owned (%d)" % w.shop.price(h, "cleave_axe"))
+	check(w.shop.buy(h, "cleave_axe") == "", "bought Cleave Axe")
+	check(_ids(h.inventory) == ["cleave_axe"], "built through Steady Ring in one go (%s)" % str(_ids(h.inventory)))
+	check(w.shop.buy(h, "dragon_lance") == "", "bought Long Spear")
+	check(_ids(h.inventory).has("dragon_lance") and _ids(h.inventory).size() == 2, "Long Spear = Quick Blade + Heavy Belt + recipe")
+
+func test_inventory_full_undoes_the_purchase() -> void:
+	var w := empty_world()
+	var h := _shopper(w, "sludge", 5000)
+	for i in 9:
+		_give(w, h, "branch", i)
+	for i in 6:
+		h.stash[i] = w.shop.new_item("clarity")
+	var g := h.gold()
+	check(w.shop.buy(h, "spell_shield") == "Inventory full", "no room for the parts")
+	check(h.gold() == g and _ids(h.inventory).size() == 9 and _ids(h.stash).size() == 6, "nothing bought, nothing lost")
+
+func test_switch_boots_recipes_attribute_and_speed() -> void:
+	var w := empty_world()
+	var h := _shopper(w, "sludge")
+	for p in ["boots", "gloves", "robe"]:
+		w.shop.buy(h, p)
+	check(_ids(h.inventory) == ["power_treads"], "Running Shoes + Fast Gloves + Wizard Robe make Switch Boots")
+	var it: Dictionary = h.inventory[0]
+	check(String(it.get("attr", "")) == "int", "built with a robe: intelligence")
+	var int0 := h.int_total
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	check(String(it.attr) == "agi", "the active switches intelligence -> agility")
+	near(int0 - h.int_total, 10.0, 0.01, "the +10 moved off intelligence")
+	near(h.move_speed, 280.0 + 55.0, 0.01, "melee heroes get 55 speed")
+	_give(w, h, "boots")
+	near(h.move_speed, 280.0 + 55.0, 0.01, "a second pair of boots adds nothing")
+	var w2 := empty_world()
+	var r := _shopper(w2, "blood_ranger")
+	w2.shop.buy(r, "power_treads")
+	check(String(r.inventory[0].attr) == "str", "bought whole: the Heavy Belt recipe (strength)")
+	near(r.move_speed, 300.0 + 45.0, 0.01, "ranged heroes get 45 speed")
+	# the bot no longer buys an item it already has
+	var w3 := empty_world()
+	var b := _shopper(w3, "sludge", 3000)
+	var bot := SimBot.new(w3, b.id)
+	bot.build = ["power_treads", "power_treads", "gloves"]
+	bot._shop(b)
+	check(_ids(b.inventory).count("power_treads") == 1, "bot: one pair (%s)" % str(_ids(b.inventory)))
+
+func test_smart_band_mana_and_upgrade_staff() -> void:
+	var w := empty_world()
+	var h := _shopper(w)
+	_give(w, h, "smart_band")
+	near(h.max_mana, (float(h.def.mana) + h.int_total * C.INT_MANA) * 1.03, 0.01, "Smart Band: +3% max mana")
+	check(not h.has_scepter(), "no upgrade yet")
+	w.shop.buy(h, "upgrade_staff")
+	check(_ids(h.inventory).has("upgrade_staff") and h.has_scepter(), "Upgrade Staff gives the upgrade")
+	# Upgrade Gem: on sale from 15:00, used up at once, only once
+	check(w.shop.buy(h, "upgrade_gem").begins_with("Not available"), "not before 15:00")
+	w.time = 900.0
+	var g := h.gold()
+	check(w.shop.buy(h, "upgrade_gem") == "" and h.shard, "bought at 15:00: Sludge has the shard upgrade")
+	check(not _ids(h.inventory).has("upgrade_gem") and g - h.gold() == 1400, "used up on purchase, 1400 gold")
+	check(w.shop.buy(h, "upgrade_gem") != "", "cannot buy a second")
+
+func test_slip_boots_and_frenzy_mask_melee() -> void:
+	var w := empty_world()
+	var h := _shopper(w, "sludge")
+	_give(w, h, "slip_boots", 0)
+	near(h.move_speed, 330.0, 0.01, "+50 speed")
+	near(h.bonus_damage, 18.0, 0.01, "+18 damage (melee)")
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	run(w, 0.1)
+	check(h.phased, "walks through units")
+	near(h.move_speed, 330.0 * 1.2, 0.5, "+20% speed for melee")
+	run(w, 3.0)
+	check(not h.phased, "3 seconds")
+	check(w.abilities.item_cooldown_left(h, 0) > 4.0, "8 s cooldown")
+	_give(w, h, "mask_of_madness", 1)
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 1})
+	run(w, 0.1)
+	near(h.move_speed, 330.0 * 1.12, 0.5, "Frenzy Mask: +12% speed for melee heroes")
+
+func test_mana_boots_and_medic_kit() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var ally := w.spawn("ezee", C.DAWN, Vector2(-1500, -4000))
+	var far := w.spawn("ezee", C.DAWN, Vector2(-500, -4000))
+	_give(w, h, "mana_boots", 0)
+	_give(w, h, "medic_kit", 1)
+	_give(w, h, "mana_ring", 2)
+	_give(w, h, "leaf_hat", 3)
+	run(w, 0.3)
+	check(not ally.get_modifier("aura_mana").is_empty(), "mana aura on an ally in range")
+	near(float(ally.get_modifier("aura_mana").mana_regen), 1.0, 0.001, "two mana auras do not stack")
+	near(float(ally.get_modifier("aura_regen").regen), 2.5, 0.001, "Medic Kit's aura wins over the Leaf Hat's")
+	check(far.get_modifier("aura_mana").is_empty(), "not past 1200")
+	ally.mana = 0.0
+	ally.hp = 100.0
+	far.hp = 100.0
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	near(ally.mana, 150.0, 1.0, "Mana Boots: +150 mana to allies")
+	var mana0 := h.mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 1})
+	near(ally.hp, 350.0, 1.0, "Medic Kit: heals allies 250")
+	near(mana0 - h.mana, 100.0, 0.01, "Medic Kit costs 100 mana")
+	near(far.hp, 100.0, 0.5, "out of range: not healed")
+	run(w, 1.0)
+	check(ally.get_modifier("aura_mana").is_empty() == false, "aura keeps refreshing")
+	h.inventory[0] = null
+	h.inventory[2] = null
+	h.refresh_stats()
+	run(w, 1.0)
+	check(ally.get_modifier("aura_mana").is_empty(), "the aura fades 0.5 s after the items leave")
+
+func test_block_shield_blocks_attacks() -> void:
+	var w := empty_world()
+	var h := _dummy(w, "sludge", C.DAWN, Vector2(-2000, -4000))
+	var src := _dummy(w, "blood_ranger", C.DUSK, Vector2(-1800, -4000))
+	_give(w, h, "block_shield")
+	var mult := C.armor_multiplier(h.armor)
+	var n := 2000
+	var blocked := 0
+	for i in n:
+		var d := w.combat.deal_damage(src.id, src.team, true, h, 100.0, C.DamageType.PHYSICAL, true, "attack")
+		if d < 99.0 * mult:
+			blocked += 1
+			near(d, 50.0 * mult, 0.01, "blocks 50 before armor (melee owner)")
+	near(float(blocked) / n, 0.6, 0.04, "about 60% of attacks are blocked")
+	var spell := w.combat.deal_damage(src.id, src.team, true, h, 100.0, C.DamageType.PHYSICAL, false, "spell")
+	near(spell, 100.0 * mult, 0.01, "spells are not blocked")
+
+func test_spike_armor_returns_damage() -> void:
+	var w := empty_world()
+	var h := _dummy(w, "sludge", C.DAWN, Vector2(-2000, -4000))
+	var src := _dummy(w, "blood_ranger", C.DUSK, Vector2(-1800, -4000))
+	_give(w, h, "spike_armor", 0)
+	var hp0 := src.hp
+	w.combat.deal_damage(src.id, src.team, true, h, 100.0, C.DamageType.PHYSICAL, true, "attack")
+	near(hp0 - src.hp, (10.0 + 15.0) * C.armor_multiplier(src.armor), 0.01, "passive: 10 + 15% of the attack, before reductions")
+	hp0 = src.hp
+	w.combat.deal_damage(src.id, src.team, true, h, 100.0, C.DamageType.MAGICAL, false, "spell")
+	check(src.hp == hp0, "passive ignores spells")
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	w.combat.deal_damage(src.id, src.team, true, h, 200.0, C.DamageType.MAGICAL, false, "spell")
+	near(hp0 - src.hp, 170.0 * (1.0 - src.magic_resist), 0.01, "active: 85% of any damage, same type")
+	hp0 = src.hp
+	var h_hp := h.hp
+	w.combat.deal_damage(src.id, src.team, true, h, 100.0, C.DamageType.PHYSICAL, true, "attack")
+	near(hp0 - src.hp, (10.0 + 15.0 + 85.0) * C.armor_multiplier(src.armor), 0.01, "active attacks: passive + 85%")
+	check(h.hp < h_hp, "the wearer still takes the damage")
+
+func test_spell_shield_debuff_immunity() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var t := w.spawn("sludge", C.DUSK, Vector2(-1800, -4000))
+	t.order = O.HOLD
+	_give(w, t, "spell_shield", 0)
+	var mr0 := t.magic_resist
+	w.command(t.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	near(1.0 - (1.0 - mr0) * 0.4, t.magic_resist, 0.01, "60% magic resistance on top")
+	check(t.debuff_immune, "debuff immune")
+	w.vision.update()
+	var p0 := t.pos
+	var hp0 := t.hp
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"})
+	run(w, 1.0)
+	check(t.hp < hp0, "Dark Stomp still damages")
+	check(t.knock.is_empty() and t.pos.distance_to(p0) < 30.0, "but cannot push a debuff-immune hero")
+	var m := t.get_modifier("spell_shield")
+	near(float(m.expires) - (w.time - 1.0), 9.0, 0.1, "first use lasts 9 s")
+	var it: Dictionary = t.inventory[0]
+	var durs: Array = []
+	for k in 4:
+		it.ready = -INF
+		t.mana = t.max_mana
+		w.command(t.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+		durs.append(snappedf(float(t.get_modifier("spell_shield").expires) - w.time, 0.01))
+	check(durs == [8.0, 7.0, 7.0, 7.0], "then 8 s and 7 s at the least (%s)" % str(durs))
+	# Stench still burns a debuff-immune enemy (through the magic resistance) but cannot slow it
+	var s := _sludge(w, t.pos + Vector2(-150, 0))
+	var hp1 := t.hp
+	w.command(s.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	run(w, 1.0)
+	check(t.hp < hp1, "Stench damages through Spell Shield")
+	check(t.get_modifier("stench").is_empty(), "but does not slow")
+
+func test_jump_knife() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	_give(w, h, "jump_knife", 0)
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": Vector2(-1000, -4000)})
+	run(w, 1.0)
+	near(h.pos.distance_to(Vector2(-1000, -4000)), 0.0, 40.0, "jumps 1000 to the point")
+	check(w.abilities.item_cooldown_left(h, 0) > 13.0, "15 s cooldown")
+	h.inventory[0].ready = -INF
+	var start := h.pos
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": start + Vector2(-2000, 0)})
+	run(w, 1.0)
+	near(start.distance_to(h.pos), 960.0, 40.0, "a point past 1200 lands 960 toward it")
+	h.inventory[0].ready = -INF
+	h.hero_damage_log[999] = w.time - 1.0
+	check(w.abilities.cast_error(h, "", 0, null, h.pos) == "Jump Knife is disabled", "disabled 3 s after hero damage")
+	h.hero_damage_log[999] = w.time - 3.5
+	check(w.abilities.cast_error(h, "", 0, null, h.pos) == "", "usable again after 3 s")
+
+func test_push_staff() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var e := w.spawn("ezee", C.DUSK, Vector2(-1500, -4000))
+	e.facing = 0.0
+	e.order = O.HOLD
+	_give(w, h, "push_staff", 0)
+	h.mana = h.max_mana
+	w.vision.update()
+	var p0 := e.pos
+	w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": 0, "target": e.id})
+	run(w, 0.2)
+	check(not e.is_stunned(), "not a disable")
+	run(w, 0.6)
+	near(e.pos.x - p0.x, 600.0, 15.0, "pushed 600 the way it faces")
+	near(e.pos.y, p0.y, 1.0, "in a straight line")
+	# trees in the way are cut
+	var spot := _tree_spot()
+	var w2 := empty_world()
+	var h2 := w2.spawn("sludge", C.DAWN, spot[1])
+	h2.facing = (spot[2] as Vector2).angle()
+	_give(w2, h2, "push_staff", 0)
+	h2.mana = h2.max_mana
+	w2.command(h2.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": 0, "target": h2.id})
+	run(w2, 1.0)
+	check(not _map.trees[spot[0]].alive, "the tree in the way is cut")
+	_map.regrow_tree(spot[0])
+
+func test_gold_glove() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1700, -4000))
+	c.order = O.HOLD
+	var foe := w.spawn("ezee", C.DUSK, Vector2(-1700, -3800))
+	_give(w, h, "gold_glove", 0)
+	w.vision.update()
+	check(int(h.inventory[0].charges) == 1, "starts with one charge")
+	check(w.abilities.cast_error(h, "", 0, foe, foe.pos) == "Must target an enemy creep", "not on heroes")
+	var rel := h.gold_reliable
+	w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": 0, "target": c.id})
+	run(w, 0.5)
+	check(not c.alive, "the creep dies")
+	check(h.gold_reliable - rel == 160, "160 reliable gold (got %d)" % (h.gold_reliable - rel))
+	check(h.last_hits == 0, "no bounty, no last hit")
+	check(int(h.inventory[0].charges) == 0, "a charge used")
+	run(w, 90.5)
+	check(int(h.inventory[0].charges) == 1, "a charge back after 90 s")
+	run(w, 90.5)
+	check(int(h.inventory[0].charges) == 2, "up to two")
+	run(w, 90.5)
+	check(int(h.inventory[0].charges) == 2, "never more than two")
+
+func test_corruption_and_armor_breaker_kill_damage() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var t := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	_give(w, h, "rust_stone", 0)
+	var a0 := t.armor
+	w.combat.land_attack(w.combat._snapshot(h, ""), t)
+	run(w, 0.1)
+	near(a0 - t.armor, 2.0, 0.01, "Rust Stone: -2 armor")
+	_give(w, h, "armor_breaker", 1)
+	w.combat.land_attack(w.combat._snapshot(h, ""), t)
+	run(w, 0.1)
+	near(a0 - t.armor, 6.0, 0.01, "Armor Breaker: -6 armor, the stronger one counts")
+	h.inventory[1] = null
+	h.refresh_stats()
+	w.combat.land_attack(w.combat._snapshot(h, ""), t)
+	run(w, 0.1)
+	near(a0 - t.armor, 6.0, 0.01, "a weaker one does not replace it")
+	run(w, 7.0)
+	near(a0 - t.armor, 0.0, 0.01, "gone after 7 s")
+	# kill damage: +2 per corrupted hero killed, +1 per assist, up to 30
+	var w2 := empty_world()
+	var k := w2.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var it := _give(w2, k, "armor_breaker", 0)
+	var dmg0 := k.bonus_damage
+	var v := w2.spawn("ezee", C.DUSK, Vector2(-1850, -4000))
+	w2.combat.land_attack(w2.combat._snapshot(k, ""), v)
+	w2.combat.deal_damage(k.id, k.team, true, v, 1e6, C.DamageType.PURE, false, "test")
+	run(w2, 0.1)
+	near(float(it.get("souls", 0.0)), 2.0, 0.01, "+2 for the kill")
+	near(k.bonus_damage - dmg0, 2.0, 0.01, "applied to attack damage")
+	it["souls"] = 29.0
+	var v2 := w2.spawn("ezee", C.DUSK, Vector2(-1850, -3900))
+	w2.combat.land_attack(w2.combat._snapshot(k, ""), v2)
+	w2.combat.deal_damage(v.id, v.team, true, v2, 1e6, C.DamageType.PURE, false, "test")
+	run(w2, 0.1)
+	near(float(it.souls), 30.0, 0.01, "capped at 30")
+
+func test_shock_hammer_chain_lightning() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	h.auto_attack = false
+	_give(w, h, "shock_hammer", 0)
+	var cs: Array = []
+	for i in 6:
+		var c := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1850 + i * 300, -4000))
+		cs.append(c)
+	var hp0: Array = cs.map(func(c): return c.hp)
+	w.items._start_chain(h, cs[0], SimData.item("shock_hammer").values)
+	run(w, 1.5)
+	var hit := 0
+	for i in cs.size():
+		var lost: float = hp0[i] - cs[i].hp
+		if lost > 0.0:
+			hit += 1
+			near(lost, 110.0 * (1.0 - cs[i].magic_resist), 2.0, "110 magic damage per strike")
+	check(hit == 4, "four strikes, each on a different unit (%d)" % hit)
+	# the proc: about 25% of attacks
+	var w2 := empty_world()
+	var h2 := w2.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	_give(w2, h2, "shock_hammer", 0)
+	var t2 := _dummy(w2, "dusk_melee", C.DUSK, Vector2(-1850, -4000))
+	var procs := 0
+	for i in 800:
+		w2.time += 0.25
+		var before := w2.items.chains.size()
+		w2.combat.land_attack(w2.combat._snapshot(h2, ""), t2)
+		if w2.items.chains.size() > before:
+			procs += 1
+		w2.items.chains.clear()
+	near(procs / 800.0, 0.25, 0.04, "25% of attacks")
+
+func test_cleave_axe() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	h.facing = 0.0
+	_give(w, h, "cleave_axe", 0)
+	var main := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1830, -4000))
+	var side := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1700, -3920))
+	var behind := _dummy(w, "dusk_melee", C.DUSK, Vector2(-2150, -4000))
+	var wide := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1830, -3700))
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1700, -4080))
+	var s := w.combat._snapshot(h, "")
+	s.dmg_min = 100.0
+	s.dmg_max = 100.0
+	s.bonus = 0.0
+	s.quell = 0.0
+	var h0 := side.hp
+	var f0 := foe.hp
+	w.combat.land_attack(s, main)
+	var mult := w.combat.attack_class_multiplier(s, side)
+	near(h0 - side.hp, 100.0 * mult * 0.4, 0.5, "40% to creeps in front, ignoring armor")
+	near(f0 - foe.hp, 100.0 * w.combat.attack_class_multiplier(s, foe) * 0.6, 0.5, "60% to heroes in front")
+	check(behind.hp == behind.max_hp, "nothing behind the attacker")
+	check(wide.hp == wide.max_hp, "nothing outside the cone")
+	near(w.combat._quelling(h), 10.0, 0.01, "Mini-Axe's creep bonus (10 melee)")
+	var r := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -3000))
+	_give(w, r, "cleave_axe", 0)
+	var m2 := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1500, -3000))
+	var n2 := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1400, -3000))
+	w.combat.land_attack(w.combat._snapshot(r, ""), m2)
+	check(n2.hp == n2.max_hp, "no cleave for ranged heroes")
+
+func test_sneak_blade() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1830, -4000))
+	_give(w, h, "sneak_blade", 0)
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	run(w, 0.1)
+	w.vision.update()
+	check(w.vision.sees(C.DUSK, h), "still visible while fading")
+	run(w, 0.3)
+	w.vision.update()
+	check(not w.vision.sees(C.DUSK, h), "invisible after 0.3 s")
+	near(h.move_speed, 280.0 * 1.2, 0.5, "+20% speed")
+	var s := w.combat._snapshot(h, "")
+	var hp0 := foe.hp
+	h.atk_target = foe.id
+	w.combat.release_attack(h, foe, "")
+	check(h.get_modifier("sneak_blade").is_empty(), "attacking ends it")
+	var dealt := hp0 - foe.hp
+	check(dealt > (float(s.dmg_min) + float(s.bonus) + 175.0) * C.armor_multiplier(foe.armor) - 1.0, "the breaking attack deals 175 more (%d)" % int(dealt))
+
+func test_spear_pierce() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	_give(w, h, "spear", 0)
+	var t := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1850, -4000))
+	t.add_modifier({"id": "test_evasion", "source": 0, "expires": INF, "stats": {"evasion": 1.0}})
+	t.refresh_stats()
+	var hits := 0
+	for i in 1000:
+		if w.combat.land_attack(w.combat._snapshot(h, ""), t):
+			hits += 1
+	near(hits / 1000.0, 0.25, 0.04, "25% of attacks pierce full evasion")

@@ -17,7 +17,9 @@ var _mod_seen := {}                        # "unit:modifier:expiry" -> game time
 
 const STATUS_ICONS := {"stun": "status/stunned", "slow": "status/slowed", "frost": "status/chilled",
 	"curse": "status/cursed", "taint": "status/empowered", "unholy": "status/titan", "fatigue": "status/weakened",
-	"heal": "status/regen", "mana": "status/arcane_charge", "berserk": "status/frenzy"}
+	"heal": "status/regen", "mana": "status/arcane_charge", "berserk": "status/frenzy", "slip": "status/haste",
+	"spell_shield": "status/rune_immune", "corruption": "status/armor_broken", "spikes": "status/aura_thorns",
+	"sneak": "status/stealth", "blubber": "status/fortified"}
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)

@@ -455,7 +455,13 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 			game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), true)
 	elif targeting.begins_with("item:"):
 		var slot := int(targeting.substr(5))
-		w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": ground, "queue": shift})
+		var it = h.inventory[slot]
+		if it != null and w.abilities.item_target(it.id) == "unit":
+			# Push Staff, Gold Glove: a unit (yourself included)
+			if tgt:
+				w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": tgt.id, "queue": shift})
+		else:
+			w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": ground, "queue": shift})
 	else:
 		var a := SimData.ability(targeting)
 		if String(a.behavior) == "autocast_attack" or String(a.behavior) == "unit":

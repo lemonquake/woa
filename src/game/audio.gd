@@ -187,6 +187,40 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			at("skeleton_rattle_1", View.to3(ep, game.terrain.height_at(ep)) + Vector3(0, 1.0, 0), -9.0, 0, 0.2)
 		"blubber":
 			at("block", _pos(w, e.u), -6.0, 2, 0.2)
+		# combination items
+		"jump":
+			var jf: Vector2 = e.from
+			var jt: Vector2 = e.to
+			at("blink", View.to3(jf, game.terrain.height_at(jf)) + Vector3(0, 1, 0), -4.0, 0, 0.1)
+			at("teleport_whoosh", View.to3(jt, game.terrain.height_at(jt)) + Vector3(0, 1, 0), -8.0, 0, 0.1)
+		"chain":
+			at("lightning_zap", _pos(w, e.u), -6.0, 2, 0.05)
+		"spell_shield":
+			at("holy_cast", _pos(w, e.u), -3.0, 0, 0.3)
+		"gold_glove":
+			at("gold_pickup", _pos(w, e.target), -2.0, 0, 0.2)
+		"mana_burst":
+			at("arcane_charge", _pos(w, e.u), -5.0, 0, 0.3)
+		"mend":
+			at("heal", _pos(w, e.u), -4.0, 0, 0.3)
+		"sneak_end":
+			at("shade_hiss", _pos(w, e.u), -8.0, 0, 0.2)
+		"combine":
+			if e.u == game.player_hero_id:
+				ui("ui_craft", -6.0)
+		"item_use":
+			match String(e.item):
+				"slip_boots":
+					at("wind_gust", _pos(w, e.u), -10.0, 0, 0.2)
+				"push_staff":
+					at("wind_gust", _pos(w, e.u), -4.0, 0, 0.2)
+				"spike_armor":
+					at("hit_armor", _pos(w, e.u), -4.0, 3, 0.2)
+				"sneak_blade":
+					at("shade_hiss", _pos(w, e.u), -6.0, 0, 0.2)
+				"power_treads":
+					if e.u == game.player_hero_id:
+						ui("ui_equip", -8.0)
 		"level_up":
 			if e.u == game.player_hero_id:
 				ui("level_up", -4.0)

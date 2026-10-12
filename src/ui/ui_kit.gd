@@ -23,6 +23,18 @@ const ITEM_ICONS := {
 	"magic_stick": "items/wand", "lifesteal": "items/amulet_2", "wraith_band": "items/aether_ring", "magic_wand": "items/aether_wand",
 	"power_treads": "items/set_guardian_boots", "mask_of_madness": "items/helm_plate_3", "yasha": "items/sword_3",
 	"dragon_lance": "items/bow_2",
+	"giant_axe": "items/axe_2", "wizard_staff": "items/staff", "greatsword": "items/greatsword_2",
+	"steel_hammer": "items/mat_iron_shard", "spear": "items/spear", "rust_stone": "status/armor_broken",
+	"brass_knuckles": "items/gloves_plate_2", "plate_vest": "items/armor_plate", "big_healing_ring": "items/ring_2",
+	"mana_stone": "items/frost_crystal", "health_crystal": "items/mat_ember_core", "big_gem": "items/storm_essence",
+	"pointy_hat": "items/helm_hood_2", "fur_hat": "items/helm_hood_3", "sneak_charm": "items/amulet",
+	"jump_knife": "items/dagger_3", "tough_band": "items/set_guardian_gloves", "smart_band": "items/set_sage_gloves",
+	"mana_ring": "status/aura_clarity", "leaf_hat": "items/set_sage_hood", "steady_ring": "items/aether_amulet",
+	"slip_boots": "items/boots_plate_2", "mana_boots": "items/set_sage_boots", "medic_kit": "status/aura_mending",
+	"block_shield": "items/shield", "spike_armor": "items/armor_plate_3", "gold_glove": "items/gold",
+	"push_staff": "items/staff_2", "spell_shield": "items/shield_3", "armor_breaker": "items/sword_2",
+	"shock_hammer": "status/shocked", "cleave_axe": "items/axe_3", "sneak_blade": "items/dagger",
+	"upgrade_staff": "items/aether_staff", "upgrade_gem": "items/quest_lance_shard",
 }
 const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
 	"masterful_archery": "skills/deadeye", "blood_ranger_ult": "skills/bs_blood_eclipse", "dark_stomp": "skills/tempo_wd_quake",
@@ -61,6 +73,8 @@ static func icon(path: String) -> Texture2D:
 	return t
 
 static func item_icon(id: String) -> Texture2D:
+	if id.begins_with("recipe_"):
+		return icon("items/quest_letter")
 	return icon(String(ITEM_ICONS.get(id, "items/charm")))
 
 static func ability_icon(id: String) -> Texture2D:

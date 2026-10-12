@@ -21,22 +21,24 @@ var _last_order := {}
 var skill_order := ["masterful_archery", "gale_impact", "burst_shot", "masterful_archery", "burst_shot",
 	"blood_ranger_ult", "burst_shot", "burst_shot", "masterful_archery", "masterful_archery", "blood_ranger_ult",
 	"gale_impact", "gale_impact", "gale_impact", "blood_ranger_ult"]
+# Builds use whole items where possible: buying one buys only its missing parts. Switch Boots are bought as parts so
+# they come out on agility (Elf Band).
 var build := ["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "branch",
-	"branch", "magic_wand", "boots", "gloves", "boots_elves", "power_treads", "blade_alacrity", "yasha",
-	"broadsword", "lifesteal", "mask_of_madness"]
+	"branch", "magic_wand", "boots", "gloves", "boots_elves", "dragon_lance", "shock_hammer", "spell_shield",
+	"mask_of_madness"]
 var _build_i := 0
 
 const EZEE_SKILLS := ["dark_stomp", "tainted_touch", "leap_strike", "dark_stomp", "dark_stomp", "unholy_might",
 	"dark_stomp", "leap_strike", "leap_strike", "leap_strike", "unholy_might", "tainted_touch", "tainted_touch",
 	"tainted_touch", "unholy_might"]
-const EZEE_BUILD := ["tango", "salve", "gauntlets", "quelling_blade", "circlet", "branch", "branch", "magic_stick",
-	"boots", "magic_wand", "belt_str", "ring_regen", "chainmail", "broadsword", "lifesteal", "mask_of_madness"]
+const EZEE_BUILD := ["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "branch", "branch",
+	"magic_stick", "magic_wand", "slip_boots", "spike_armor", "spell_shield", "armor_breaker"]
 
 # Sludge: Stench early for lane control, Shuriken Hook to level 4 next, Blubber last (a common Dota Pudge order)
 const SLUDGE_SKILLS := ["shuriken_hook", "stench", "stench", "blubber", "stench", "chomp", "stench", "shuriken_hook",
 	"shuriken_hook", "shuriken_hook", "chomp", "blubber", "blubber", "blubber", "chomp"]
-const SLUDGE_BUILD := ["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "boots", "magic_wand",
-	"belt_str", "ring_regen", "chainmail", "broadsword", "lifesteal", "mask_of_madness"]
+const SLUDGE_BUILD := ["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "circlet", "tough_band",
+	"magic_wand", "slip_boots", "jump_knife", "spell_shield", "medic_kit", "upgrade_staff"]
 # talent side per tier (0 left, 1 right): Stench slow, hook damage, hook cooldown, Chomp damage and heal
 const SLUDGE_TALENTS := [0, 0, 0, 1]
 
@@ -71,6 +73,7 @@ func think() -> void:
 	h.auto_attack = false
 	_learn(h)
 	_shop(h)
+	_items(h)
 	if h.hp < h.max_hp * 0.22 and state != "retreat":
 		state = "retreat"
 	if state == "retreat":
@@ -79,6 +82,9 @@ func think() -> void:
 		else:
 			if bool(h.toggles.get("stench", false)):
 				_order(h, {"type": O.CAST_NO_TARGET, "ability": "stench"}, true)
+			var slip := _ready_slot(h, "slip_boots")
+			if slip >= 0 and _enemy_hero_near(h, 900.0):
+				w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slip})
 			_go(h, w.map.fountains[h.team])
 			return
 	if w.time < 0.0 and not _enemy_hero_near(h, 1300.0):
@@ -126,6 +132,12 @@ func _shop(h: SimUnit) -> void:
 	while _build_i < build.size() and guard < 6:
 		guard += 1
 		var id: String = build[_build_i]
+		var d := SimData.item(id)
+		if w.shop.owns(h, id) and (not (d.components as Array).is_empty() or id == "jump_knife"):
+			_build_i += 1
+			continue
+		if w.shop.buy_error(h, id) != "":
+			break
 		var cost := w.shop.price(h, id)
 		if h.gold() < cost:
 			break
@@ -145,6 +157,59 @@ func _shop(h: SimUnit) -> void:
 	# drink a salve when hurt and not in the fountain
 	if h.hp < h.max_hp * 0.55:
 		_use_item(h, "salve")
+
+## The main slot holding an item whose active can be used now (no error), or -1.
+func _ready_slot(h: SimUnit, item_id: String, t: SimUnit = null, p := Vector2.INF) -> int:
+	for i in 6:
+		var it = h.inventory[i]
+		if it != null and it.id == item_id:
+			var at := p if p != Vector2.INF else (t.pos if t else h.pos)
+			return i if w.abilities.cast_error(h, "", i, t, at) == "" else -1
+	return -1
+
+## Item actives that do not depend on a fight: wand when hurt, Mana Boots when low on mana, Medic Kit when hurt, a
+## Gold Glove charge on the healthiest creep in reach.
+func _items(h: SimUnit) -> void:
+	if not h.alive or _busy(h):
+		return
+	for wid in ["magic_wand", "magic_stick"]:
+		var ws := _ready_slot(h, wid)
+		if ws >= 0 and h.stick_charges >= 4 and (h.hp < h.max_hp * 0.45 or h.mana < h.max_mana * 0.2):
+			w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": ws})
+	var ms := _ready_slot(h, "mana_boots")
+	if ms >= 0 and h.max_mana - h.mana >= 160.0:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": ms})
+	var mk := _ready_slot(h, "medic_kit")
+	if mk >= 0 and h.hp < h.max_hp * 0.6:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": mk})
+	for i in 6:
+		var it = h.inventory[i]
+		if it == null or it.id != "gold_glove" or int(it.charges) <= 0:
+			continue
+		var best: SimUnit = null
+		for c: SimUnit in w.query(h.pos, 600.0):
+			if c.alive and c.is_creep() and c.team != h.team and not bool(c.def.get("ancient", false)) \
+					and w.vision.sees(h.team, c) and (best == null or c.max_hp > best.max_hp):
+				best = c
+		if best != null and w.abilities.cast_error(h, "", i, best, best.pos) == "":
+			_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": i, "target": best.id}, true)
+			_cast_deadline = w.time + 1.0
+
+## Fight items, used when going after an enemy hero: Spell Shield, Frenzy Mask, Slip Boots to close in.
+func _fight_items(h: SimUnit, e: SimUnit) -> void:
+	var d := h.edge_distance(e)
+	var bkb := _ready_slot(h, "spell_shield")
+	if bkb >= 0 and d < 500.0 and (h.hp < h.max_hp * 0.75 or e.hp < e.max_hp * 0.5):
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": bkb})
+	var mom := _ready_slot(h, "mask_of_madness")
+	if mom >= 0 and d < h.attack_range + 100.0 and h.hp > h.max_hp * 0.5:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": mom})
+	var slip := _ready_slot(h, "slip_boots")
+	if slip >= 0 and d > h.attack_range + 50.0:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slip})
+	var sa := _ready_slot(h, "spike_armor")
+	if sa >= 0 and d < 400.0 and h.hp < h.max_hp * 0.7:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": sa})
 
 func _use_item(h: SimUnit, item_id: String) -> bool:
 	for i in 6:
@@ -406,6 +471,7 @@ func _ezee_spells(h: SimUnit, e: SimUnit) -> void:
 		_cast_deadline = w.time + 0.8
 
 func _spells_on(h: SimUnit, e: SimUnit) -> void:
+	_fight_items(h, e)
 	if kit == "ezee":
 		_ezee_spells(h, e)
 		return
@@ -418,6 +484,13 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 func _sludge_spells(h: SimUnit, e: SimUnit) -> void:
 	var ab := w.abilities
 	var d := h.edge_distance(e)
+	var jk := _ready_slot(h, "jump_knife", null, e.pos)
+	if jk >= 0 and d > 250.0 and d < 1100.0 and ab.cooldown_left(h, "chomp") <= 0.0 and h.ability_level_of("chomp") > 0 \
+			and h.mana >= ab.ability_mana(h, "chomp") and h.hp > h.max_hp * 0.5:
+		var land := e.pos + (h.pos - e.pos).normalized() * (h.hull + e.hull + 40.0)
+		_order(h, {"type": O.CAST_POINT, "ability": "", "item_slot": jk, "point": land}, true)
+		_cast_deadline = w.time + 0.6
+		return
 	if not bool(h.toggles.get("stench", false)) and h.ability_level_of("stench") > 0 and d < 300.0:
 		_order(h, {"type": O.CAST_NO_TARGET, "ability": "stench"}, true)
 	if ab.cast_error(h, "blubber", -1, null, h.pos) == "" and d < 500.0 and h.hp < h.max_hp * 0.8:

@@ -16,6 +16,7 @@ var atmosphere: Atmosphere
 var camera: CameraRig
 var fx: Fx
 var sludge_fx: SludgeFx
+var item_fx: ItemFx
 var status_fx: StatusFx
 var targeting_fx: TargetingFx
 var bars: UnitBars
@@ -80,6 +81,10 @@ func _ready() -> void:
 	foliage.game_fx = fx
 	add_child(fx)
 	add_child(sludge_fx)
+	item_fx = ItemFx.new()
+	item_fx.game = self
+	item_fx.fx = fx
+	add_child(item_fx)
 	status_fx = StatusFx.new()
 	status_fx.game = self
 	status_fx.fx = fx
@@ -285,6 +290,8 @@ func _drain_events() -> void:
 	for e in world.events:
 		if audio and _capture_frames < 0:
 			audio.event(e, world)
+		if e.t in ["jump", "chain", "spell_shield", "gold_glove", "mana_burst", "mend", "knockback", "sneak_end", "combine"]:
+			item_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -735,6 +742,21 @@ func _start_capture() -> void:
 		world.command(qh.id, {"type": C.Order.HOLD, "queue": true})
 	if args.has("pause"):
 		menus.toggle()
+	if args.has("shop"):
+		# --shop=tab[,item[,search]]: the shop open in the base with some gold and a few parts owned
+		var sv := String(args.shop).split(",")
+		var sh := world.get_unit(player_hero_id)
+		sh.pos = map.fountains[sh.team] + Vector2(250, 250) * (1.0 if sh.team == C.DAWN else -1.0)
+		sh.gold_unreliable = 3200
+		world.shop.buy(sh, "magic_wand")
+		world.shop.buy(sh, "circlet")
+		world.shop.buy(sh, "boots")
+		hud.shop.visible = true
+		hud.shop.tab = sv[0] if sv[0] != "" and sv[0] != "true" else "basics"
+		if sv.size() > 1:
+			hud.shop.selected = sv[1]
+		if sv.size() > 2:
+			hud.shop._search.text = sv[2]
 	if args.has("endscreen"):
 		world.winner = player_team
 		menus._end_shown = true

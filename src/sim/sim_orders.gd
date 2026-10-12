@@ -421,7 +421,7 @@ func _order_cast(u: SimUnit) -> void:
 		_finish_order(u)
 		return
 	var target_pos: Vector2 = t.pos if t else u.order_point
-	var rng := w.abilities.cast_range(u, aid, slot)
+	var rng := w.abilities.cast_range(u, aid, slot, t)
 	if u.order != O.CAST_NO_TARGET:
 		var d := u.pos.distance_to(target_pos) - (t.hull if t else 0.0) - u.hull
 		if d > rng:
@@ -429,7 +429,8 @@ func _order_cast(u: SimUnit) -> void:
 				return
 			_move_to(u, target_pos, 0.0)
 			return
-		if not _turn_towards(u, (target_pos - u.pos).angle()):
+		# a spell or item on oneself (Push Staff) needs no turn: it keeps the way the hero faces
+		if t != u and not _turn_towards(u, (target_pos - u.pos).angle()):
 			return
 	u.cast_phase = CP.WINDUP
 	u.cast_ability = aid

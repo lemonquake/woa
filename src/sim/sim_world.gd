@@ -36,6 +36,7 @@ var ai: SimAI
 var vision: SimVision
 var shop: SimShop
 var abilities: SimAbilities
+var items: SimItems
 var bots: Array = []                       # SimBot instances
 
 func _init(p_seed := 1, p_map: SimMap = null) -> void:
@@ -50,12 +51,13 @@ func _init(p_seed := 1, p_map: SimMap = null) -> void:
 	vision = SimVision.new(self)
 	shop = SimShop.new(self)
 	abilities = SimAbilities.new(self)
+	items = SimItems.new(self)
 
 func dispose() -> void:
 	for b in bots:
 		b.w = null
 	bots.clear()
-	for h in [orders, combat, ai, vision, shop, abilities]:
+	for h in [orders, combat, ai, vision, shop, abilities, items]:
 		h.w = null
 	units.clear()
 	by_id.clear()
@@ -175,6 +177,7 @@ func step() -> void:
 			orders.update(u)
 	combat.update_projectiles()
 	abilities.update_effects()
+	items.update()
 	combat.process_deaths()
 	_respawns()
 	if tick % C.VISION_UPDATE_TICKS == 0:
@@ -403,6 +406,13 @@ func _couriers() -> void:
 			"return":
 				goal = home
 				if c.pos.distance_to(home) < 300.0:
+					# anything it could not hand over (the hero died on the way) goes back to the stash
+					for k in c.inventory.size():
+						if c.inventory[k] != null:
+							var slot := h.stash.find(null)
+							if slot >= 0:
+								h.stash[slot] = c.inventory[k]
+								c.inventory[k] = null
 					c.courier_state = "idle"
 			"move":
 				goal = c.courier_goal

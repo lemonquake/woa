@@ -342,7 +342,7 @@ static func _build_items() -> void:
 		"values": {"channel": SimConst.TP_CHANNEL}})
 	_it("observer_ward", "Eye Ward", 0, {"use": "ward", "charges": 1, "consumable": true, "category": "consumables",
 		"cooldown": 1.0, "values": {"lifetime": 360.0}})
-	_it("branch", "Tree Twig", 55, {"use": "plant", "stats": {"str": 1.0, "agi": 1.0, "int": 1.0},
+	_it("branch", "Tree Twig", 55, {"use": "plant", "stats": {"str": 1.0, "agi": 1.0, "int": 1.0}, "category": "attributes",
 		"values": {"tree_duration": SimConst.PLANTED_TREE_DURATION, "range": SimConst.PLANT_RANGE}})
 	_it("slippers", "Slippers", 140, {"stats": {"agi": 3.0}, "category": "attributes"})
 	_it("gauntlets", "Heavy Gloves", 140, {"stats": {"str": 3.0}, "category": "attributes"})
@@ -361,23 +361,115 @@ static func _build_items() -> void:
 		"values": {"creep_damage_melee": 8.0, "creep_damage_ranged": 4.0, "chop_range": 350.0}})
 	_it("ring_regen", "Healing Ring", 175, {"stats": {"hp_regen": 1.25}, "category": "misc"})
 	_it("sobi_mask", "Calm Mask", 175, {"stats": {"mana_regen": 0.7}, "category": "misc"})
-	_it("boots", "Running Shoes", 500, {"stats": {"move_speed": 45.0}, "category": "misc"})
+	# boots: "boot_ms" does not stack (the fastest pair counts), as in Dota
+	_it("boots", "Running Shoes", 500, {"stats": {"boot_ms": 45.0}, "category": "misc"})
 	_it("magic_stick", "Zap Stick", 200, {"use": "stick", "cooldown": 17.0, "category": "misc",
 		"values": {"max_charges": 10, "restore_per_charge": 15.0, "charge_radius": 1200.0}})
 	_it("lifesteal", "Leech Mask", 900, {"stats": {"lifesteal": 0.18}, "category": "misc"})
+	# More basic parts for the combination items (Dota 7.41d items.txt; names are ours)
+	_it("giant_axe", "Giant Axe", 1000, {"stats": {"str": 10.0}, "category": "attributes"})
+	_it("wizard_staff", "Wizard Staff", 1000, {"stats": {"int": 10.0}, "category": "attributes"})
+	_it("greatsword", "Greatsword", 1350, {"stats": {"damage": 20.0}, "category": "armaments"})
+	_it("steel_hammer", "Steel Hammer", 1600, {"stats": {"damage": 24.0}, "category": "armaments"})
+	_it("spear", "Spear", 900, {"passive": "pierce", "category": "armaments",
+		"values": {"chance": 0.25, "damage": 60.0}})
+	_it("rust_stone", "Rust Stone", 300, {"passive": "corruption", "category": "armaments",
+		"values": {"armor_reduction": 2.0, "duration": 3.0}})
+	_it("brass_knuckles", "Brass Knuckles", 1000, {"stats": {"attack_speed": 35.0}, "category": "armaments"})
+	_it("plate_vest", "Plate Vest", 950, {"stats": {"armor": 7.0}, "category": "armaments"})
+	_it("big_healing_ring", "Big Healing Ring", 700, {"stats": {"hp_regen": 4.5}, "category": "misc"})
+	_it("mana_stone", "Mana Stone", 700, {"stats": {"mana_regen": 1.75}, "category": "misc"})
+	_it("health_crystal", "Health Crystal", 1000, {"stats": {"hp": 250.0}, "category": "misc"})
+	_it("big_gem", "Big Gem", 1200, {"stats": {"hp": 175.0, "mana": 175.0}, "category": "misc"})
+	_it("pointy_hat", "Pointy Hat", 250, {"stats": {"mana": 125.0}, "category": "misc"})
+	_it("fur_hat", "Fur Hat", 250, {"stats": {"hp": 125.0}, "category": "misc"})
+	_it("sneak_charm", "Sneak Charm", 900, {"category": "misc"})
+	_it("jump_knife", "Jump Knife", 2250, {"use": "jump", "cooldown": 15.0, "category": "misc",
+		"values": {"range": 1200.0, "clamp": 960.0, "hero_damage_lockout": 3.0}})
 	# Upgrades
 	_it("wraith_band", "Swift Band", 505, {"stats": {"agi": 5.0, "str": 2.0, "int": 2.0, "attack_speed": 6.0, "armor": 1.75},
 		"components": ["circlet", "slippers"], "recipe_cost": 210, "category": "upgrades"})
+	_it("tough_band", "Tough Band", 505, {"stats": {"str": 5.0, "agi": 2.0, "int": 2.0, "hp": 50.0, "hp_regen": 0.75},
+		"components": ["circlet", "gauntlets"], "recipe_cost": 210, "category": "upgrades"})
+	_it("smart_band", "Smart Band", 505, {"stats": {"int": 5.0, "str": 2.0, "agi": 2.0, "max_mana_pct": 0.03,
+		"mana_regen": 1.0}, "components": ["circlet", "mantle"], "recipe_cost": 210, "category": "upgrades"})
 	_it("magic_wand", "Zap Wand", 460, {"use": "stick", "cooldown": 15.0, "stats": {"str": 3.0, "agi": 3.0, "int": 3.0},
 		"components": ["magic_stick", "branch", "branch"], "recipe_cost": 150, "category": "upgrades",
 		"values": {"max_charges": 20, "restore_per_charge": 15.0, "charge_radius": 1200.0}})
-	_it("power_treads", "Switch Boots", 1400, {"stats": {"move_speed": 45.0, "agi": 10.0, "attack_speed": 25.0},
-		"components": ["boots", "gloves", "boots_elves"], "recipe_cost": 0, "category": "upgrades"})
+	_it("mana_ring", "Mana Ring", 425, {"stats": {"mana_regen": 0.25}, "aura": "mana", "category": "upgrades",
+		"components": ["sobi_mask"], "recipe_cost": 250, "values": {"aura_mana_regen": 1.0, "aura_radius": 1200.0}})
+	_it("leaf_hat", "Leaf Hat", 425, {"stats": {"hp_regen": 0.5}, "aura": "regen", "category": "upgrades",
+		"components": ["ring_regen"], "recipe_cost": 250, "values": {"aura_hp_regen": 2.0, "aura_radius": 1200.0}})
+	_it("steady_ring", "Steady Ring", 1400, {"stats": {"hp_regen": 5.5, "mana_regen": 2.25},
+		"components": ["big_healing_ring", "mana_stone"], "recipe_cost": 0, "category": "upgrades"})
+	# Switch Boots: 25 attack speed, 55 (melee) / 45 (ranged) speed and +10 to the chosen attribute. Built with a
+	# Heavy Belt it starts on strength, a Wizard Robe on intelligence, an Elf Band on agility; the active switches
+	# strength -> intelligence -> agility.
+	_it("power_treads", "Switch Boots", 1400, {"use": "switch", "stats": {"attack_speed": 25.0},
+		"stats_melee": {"boot_ms": 55.0}, "stats_ranged": {"boot_ms": 45.0}, "values": {"attr_bonus": 10.0},
+		"components": ["boots", "gloves", "belt_str"], "recipe_cost": 0, "category": "upgrades",
+		"recipes": [["boots", "gloves", "belt_str"], ["boots", "gloves", "robe"], ["boots", "gloves", "boots_elves"]],
+		"attr_from": {"belt_str": "str", "robe": "int", "boots_elves": "agi"}})
+	_it("slip_boots", "Slip Boots", 1450, {"use": "slip", "cooldown": 8.0, "stats": {"boot_ms": 50.0, "armor": 4.0},
+		"stats_melee": {"damage": 18.0}, "stats_ranged": {"damage": 12.0}, "category": "upgrades",
+		"components": ["boots", "chainmail", "blades_attack"], "recipe_cost": 0,
+		"values": {"move_speed_pct_melee": 0.2, "move_speed_pct_ranged": 0.1, "duration": 3.0}})
+	_it("mana_boots", "Mana Boots", 1500, {"use": "restore", "cooldown": 55.0, "aura": "mana",
+		"stats": {"boot_ms": 45.0, "mana_regen": 0.25, "mana": 125.0}, "category": "upgrades",
+		"components": ["boots", "mana_ring", "pointy_hat"], "recipe_cost": 325,
+		"values": {"amount": 150.0, "radius": 1200.0, "aura_mana_regen": 1.0, "aura_radius": 1200.0}})
+	_it("medic_kit", "Medic Kit", 1775, {"use": "mend", "cooldown": 50.0, "mana": 100.0, "aura": "regen",
+		"stats": {"armor": 5.0}, "category": "upgrades", "components": ["leaf_hat", "chainmail"], "recipe_cost": 850,
+		"values": {"heal": 250.0, "radius": 1200.0, "aura_hp_regen": 2.5, "aura_radius": 1200.0}})
+	_it("block_shield", "Block Shield", 1700, {"passive": "block", "stats": {"hp": 250.0, "hp_regen": 4.5},
+		"components": ["health_crystal", "big_healing_ring"], "recipe_cost": 0, "category": "upgrades",
+		"values": {"chance": 0.6, "block_melee": 50.0, "block_ranged": 25.0}})
+	_it("spike_armor", "Spike Armor", 2400, {"use": "spikes", "cooldown": 25.0, "mana": 25.0, "passive": "spikes",
+		"stats": {"damage": 15.0, "armor": 7.0}, "components": ["broadsword", "plate_vest"], "recipe_cost": 450,
+		"category": "upgrades", "values": {"duration": 5.5, "active_pct": 0.85, "passive_flat": 10.0, "passive_pct": 0.15}})
+	_it("gold_glove", "Gold Glove", 2200, {"use": "gold", "stats": {"attack_speed": 40.0}, "charges": 1,
+		"category": "upgrades", "components": ["gloves"], "recipe_cost": 1750,
+		"values": {"gold": 160.0, "range": 600.0, "max_charges": 2, "charge_time": 90.0}})
+	_it("push_staff", "Push Staff", 2200, {"use": "push", "cooldown": 19.0, "mana": 150.0,
+		"stats": {"int": 10.0, "hp": 175.0}, "components": ["wizard_staff", "fur_hat"], "recipe_cost": 950,
+		"category": "upgrades", "values": {"distance": 600.0, "time": 0.5, "range_ally": 550.0, "range_enemy": 850.0}})
+	_it("spell_shield", "Spell Shield", 4050, {"use": "shield", "cooldown": 95.0, "mana": 50.0,
+		"stats": {"str": 10.0, "damage": 24.0}, "components": ["steel_hammer", "giant_axe"], "recipe_cost": 1450,
+		"category": "upgrades", "values": {"durations": [9.0, 8.0, 7.0], "magic_resist": 0.6}})
+	_it("armor_breaker", "Armor Breaker", 3500, {"passive": "corruption", "stats": {"damage": 55.0},
+		"components": ["steel_hammer", "steel_hammer", "rust_stone"], "recipe_cost": 0, "category": "upgrades",
+		"values": {"armor_reduction": 6.0, "duration": 7.0, "damage_per_kill": 2.0, "damage_per_assist": 1.0,
+		"max_damage": 30.0}})
+	_it("shock_hammer", "Shock Hammer", 2950, {"passive": "chain", "stats": {"damage": 25.0, "attack_speed": 25.0},
+		"components": ["steel_hammer", "spear", "gloves"], "recipe_cost": 0, "category": "upgrades",
+		"values": {"chance": 0.25, "damage": 110.0, "strikes": 4, "radius": 650.0, "delay": 0.25, "cooldown": 0.2}})
+	# Cleave Axe: cleave works for melee heroes only; it also has the Mini-Axe's creep bonus and tree chop
+	_it("cleave_axe", "Cleave Axe", 3900, {"use": "chop", "cooldown": 3.0, "passive": "cleave",
+		"stats": {"damage": 50.0, "hp_regen": 7.5, "mana_regen": 2.75}, "category": "upgrades",
+		"components": ["steady_ring", "broadsword", "broadsword", "quelling_blade"], "recipe_cost": 400,
+		"values": {"creep_damage_melee": 10.0, "creep_damage_ranged": 5.0, "chop_range": 350.0, "cleave_pct": 0.6, "cleave_pct_creep": 0.4,
+		"start_width": 150.0, "end_width": 360.0, "distance": 650.0}})
+	_it("sneak_blade", "Sneak Blade", 3250, {"use": "sneak", "cooldown": 25.0, "mana": 75.0,
+		"stats": {"damage": 25.0, "attack_speed": 35.0}, "category": "upgrades",
+		"components": ["greatsword", "brass_knuckles", "sneak_charm"], "recipe_cost": 0,
+		"values": {"duration": 17.0, "fade": 0.3, "move_speed_pct": 0.2, "bonus_damage": 175.0}})
+	_it("upgrade_staff", "Upgrade Staff", 4200, {"grants": "scepter", "stats": {"str": 10.0, "agi": 10.0,
+		"int": 10.0, "hp": 175.0, "mana": 175.0}, "category": "upgrades",
+		"components": ["big_gem", "wizard_staff", "giant_axe", "blade_alacrity"], "recipe_cost": 0})
+	# Upgrade Gem: used up the moment it is bought (the hero keeps its upgrades for good); on sale from 15:00
+	_it("upgrade_gem", "Upgrade Gem", 1400, {"grants": "shard", "consume_on_buy": true, "available_at": 900.0,
+		"category": "upgrades"})
 	_it("mask_of_madness", "Frenzy Mask", 1900, {"use": "berserk", "cooldown": 16.0, "stats": {"damage": 20.0, "lifesteal": 0.22},
 		"components": ["broadsword", "lifesteal"], "recipe_cost": 0, "category": "upgrades",
-		"values": {"attack_speed": 100.0, "move_speed_pct": 0.06, "armor_reduction": 7.0, "duration": 6.0, "mana": 25.0}})
+		"values": {"attack_speed": 100.0, "move_speed_pct": 0.06, "move_speed_pct_melee": 0.12, "armor_reduction": 7.0,
+		"duration": 6.0, "mana": 25.0}})
 	_it("yasha", "Dancer Sword", 2100, {"stats": {"agi": 16.0, "attack_speed": 15.0, "move_speed_pct": 0.1},
 		"components": ["blade_alacrity", "boots_elves"], "recipe_cost": 650, "category": "upgrades"})
 	_it("dragon_lance", "Long Spear", 2000, {"stats": {"agi": 15.0, "str": 10.0, "range": 130.0},
-		"components": ["boots_elves", "boots_elves", "blade_alacrity"], "recipe_cost": 100, "category": "upgrades"})
-	# A Long Spear's components cost 1900 here; its recipe makes up the remaining 100 gold.
+		"components": ["blade_alacrity", "belt_str"], "recipe_cost": 550, "category": "upgrades"})
+	# Recipe scrolls: one per item whose recipe costs gold, bought on its own or as part of the item
+	for id in _items.keys():
+		var d: Dictionary = _items[id]
+		if int(d.recipe_cost) > 0:
+			_it("recipe_" + id, "Recipe: " + String(d.name), int(d.recipe_cost), {"category": "recipe", "recipe_for": id,
+				"icon": "recipe"})

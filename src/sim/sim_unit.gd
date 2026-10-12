@@ -253,8 +253,10 @@ func add_modifier(m: Dictionary) -> void:
 	for i in modifiers.size():
 		var o: Dictionary = modifiers[i]
 		if o.id == m.id and o.get("source", -1) == m.get("source", -1):
+			var same_stats: bool = o.get("stats", {}) == m.get("stats", {}) and o.get("slow", 0.0) == m.get("slow", 0.0)
 			modifiers[i] = m
-			stats_dirty = true
+			if not same_stats or o.keys().size() != m.keys().size():
+				stats_dirty = true
 			return
 	modifiers.append(m)
 	stats_dirty = true
@@ -334,16 +336,32 @@ func expire_modifiers(now: float) -> void:
 
 # ---- Stats ------------------------------------------------------------------------------------------------------------
 
+## Bonuses from the six main slots (the backpack gives none). Boot speed does not stack: the fastest pair counts.
+## Some items differ for melee and ranged heroes; Switch Boots add to their chosen attribute; Armor Breaker adds the
+## damage it has collected from kills.
 func _item_stats() -> Dictionary:
 	var out := {}
+	var melee := not is_ranged()
 	for i in mini(6, inventory.size()):
 		var it = inventory[i]
 		if it == null:
 			continue
 		var d := SimData.item(it.id)
-		for k in d.stats:
-			out[k] = float(out.get(k, 0.0)) + float(d.stats[k])
+		_add_item_stats(out, d.stats)
+		var extra: Dictionary = d.get("stats_melee" if melee else "stats_ranged", {})
+		_add_item_stats(out, extra)
+		if it.has("attr"):
+			out[it.attr] = float(out.get(it.attr, 0.0)) + float(d.values.attr_bonus)
+		if it.has("souls"):
+			out["damage"] = float(out.get("damage", 0.0)) + minf(float(it.souls), float(d.values.max_damage))
 	return out
+
+func _add_item_stats(out: Dictionary, st: Dictionary) -> void:
+	for k in st:
+		if k == "boot_ms":
+			out[k] = maxf(float(out.get(k, 0.0)), float(st[k]))
+		else:
+			out[k] = float(out.get(k, 0.0)) + float(st[k])
 
 func _mod_stat(k: String) -> float:
 	var s := 0.0
@@ -387,7 +405,7 @@ func refresh_stats() -> void:
 		base_dmg_min += primary
 		base_dmg_max += primary
 	max_hp = float(def.hp) + attr_hp + f.call("hp") + upgrade_hp()
-	max_mana = float(def.mana) + attr_mana + f.call("mana")
+	max_mana = (float(def.mana) + attr_mana + f.call("mana")) * (1.0 + f.call("max_mana_pct"))
 	hp = clampf(hp_old_frac * max_hp, 0.0, max_hp) if alive else 0.0
 	mana = clampf(mana_old_frac * max_mana, 0.0, max_mana)
 	armor = float(def.armor) + attr_armor + f.call("armor")
@@ -401,7 +419,7 @@ func refresh_stats() -> void:
 	var slow := 0.0
 	for m in modifiers:
 		slow = maxf(slow, float(m.get("slow", 0.0)))
-	var ms: float = (float(def.move_speed) + f.call("move_speed")) * (1.0 + f.call("move_speed_pct")) * (1.0 - slow)
+	var ms: float = (float(def.move_speed) + f.call("move_speed") + f.call("boot_ms")) * (1.0 + f.call("move_speed_pct")) * (1.0 - slow)
 	move_speed = clampf(ms, C.MOVE_SPEED_MIN, C.MOVE_SPEED_MAX) if float(def.move_speed) > 0.0 else 0.0
 	turn_rate = float(def.turn_rate)
 	hp_regen = float(def.hp_regen) + attr_hpr + f.call("hp_regen")
