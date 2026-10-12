@@ -55,7 +55,7 @@ func buy(u: SimUnit, item_id: String) -> String:
 		w.events.append({"t": "buy", "u": u.id, "item": item_id, "cost": cost})
 		return ""
 	if comps.is_empty():
-		if not _place(u, {"id": item_id, "charges": int(d.charges), "ready": 0.0, "bought": w.time}, here):
+		if not _place(u, {"id": item_id, "charges": int(d.charges), "ready": C.LONG_AGO, "bought": w.time}, here):
 			return "Inventory full"
 	else:
 		# take the components we own out of the bags, then place the finished item
@@ -64,7 +64,7 @@ func buy(u: SimUnit, item_id: String) -> String:
 			var taken = _take(u, comp)
 			if taken != null:
 				removed.append(taken)
-		if not _place(u, {"id": item_id, "charges": int(d.charges), "ready": 0.0, "bought": w.time}, here):
+		if not _place(u, {"id": item_id, "charges": int(d.charges), "ready": C.LONG_AGO, "bought": w.time}, here):
 			for r in removed:
 				_place(u, r, here)
 			return "Inventory full"
@@ -127,7 +127,7 @@ func _combine_all(u: SimUnit) -> void:
 			if ok:
 				for comp in comps:
 					_take(u, comp)
-				_place(u, {"id": id, "charges": 0, "ready": 0.0, "bought": w.time}, in_shop(u))
+				_place(u, {"id": id, "charges": 0, "ready": C.LONG_AGO, "bought": w.time}, in_shop(u))
 				changed = true
 
 func sell(u: SimUnit, slot: int) -> String:

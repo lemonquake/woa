@@ -20,7 +20,7 @@ var hull := 16.0
 var alive := true
 var removed := false
 var spawn_time := 0.0
-var death_at := 0.0
+var death_at := C.LONG_AGO
 var killer_id := -1
 
 # ---- Vital stats ----------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ var autocast := {}                         # id -> bool
 var inventory: Array = []                  # 9 slots (6 main + 3 backpack): null or {id, charges, ready}
 var stash: Array = []                      # 6 slots
 var respawn_at := -1.0
-var buyback_ready := 0.0
+var buyback_ready := C.LONG_AGO
 var kills := 0
 var deaths := 0
 var assists := 0
@@ -82,7 +82,7 @@ var dmg_in := {}                           # damage source key -> damage taken
 var recent_in: Array = []                  # heroes: [{t, src, key, type, amount}] for the death recap (last 20 s)
 var healed := 0.0                          # health restored by heals and lifesteal
 var gold_earned := 0                       # heroes: all gold gained (for gold per minute)
-var last_kill_at := -99.0                  # heroes: for multi-kills
+var last_kill_at := C.LONG_AGO                  # heroes: for multi-kills
 var multi_kill := 0
 
 # ---- Orders and actions -------------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ var order_queue: Array = []
 var path := PackedVector2Array()
 var path_i := 0
 var path_goal := Vector2(INF, INF)
-var repath_at := 0.0
+var repath_at := C.LONG_AGO
 var moving := false
 var blocked_time := 0.0
 
@@ -104,8 +104,8 @@ var atk_timer := 0.0
 var atk_target := -1
 var atk_modifier := ""                     # ability id riding on the current attack (orb)
 var orb_manual := ""                       # an attack modifier cast by hand: rides on the next attack, draws no aggro
-var next_attack_at := 0.0
-var prev_attack_at := 0.0
+var next_attack_at := C.LONG_AGO
+var prev_attack_at := C.LONG_AGO
 var cast_phase := CastPhase.NONE
 var cast_timer := 0.0
 var cast_ability := ""
@@ -120,15 +120,15 @@ var lane_return := Vector2(INF, INF)       # where a lane creep left its lane
 var camp_id := -1
 var home := Vector2.ZERO
 var home_facing := 0.0
-var think_at := 0.0
+var think_at := C.LONG_AGO
 var aggro_target := -1
-var aggro_until := 0.0
+var aggro_until := C.LONG_AGO
 var aggro_forced := false
-var aggro_cd_until := 0.0                  # heroes: creep aggro cooldown
-var tower_deaggro_at := 0.0
+var aggro_cd_until := C.LONG_AGO                  # heroes: creep aggro cooldown
+var tower_deaggro_at := C.LONG_AGO
 var last_seen := Vector2(INF, INF)         # last visible position of the chase target
 var neutral_state := 0                     # 0 idle, 1 aggro, 2 returning
-var neutral_aggro_at := 0.0
+var neutral_aggro_at := C.LONG_AGO
 var lane_tier := 0
 var building_lane := ""
 var upgrade := 0
@@ -142,7 +142,7 @@ var invulnerable := false
 var backdoor_active := false
 var backdoor_pool := 0.0
 var backdoor_off_until := 0.0
-var glyph_until := 0.0
+var glyph_until := C.LONG_AGO
 
 # ---- Effects ----------------------------------------------------------------------------------------------------------
 var modifiers: Array = []                  # see SimUnit.add_modifier
@@ -174,7 +174,7 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 		abilities = (def.abilities as Array).duplicate()
 		for a in abilities:
 			ability_level[a] = 0
-			ability_ready[a] = 0.0
+			ability_ready[a] = C.LONG_AGO
 			autocast[a] = false
 		ability_points = 1
 		inventory.resize(9)
@@ -184,7 +184,7 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 		tp_charges = 1
 	if kind == K.COURIER:
 		inventory.resize(6)
-		add_modifier({"id": "flying", "source": p_id, "expires": -1.0, "flying": true})
+		add_modifier({"id": "flying", "source": p_id, "expires": INF, "flying": true})
 	refresh_stats()
 	hp = max_hp
 	mana = max_mana
@@ -235,7 +235,7 @@ func is_night_vision(night: bool) -> float:
 
 # ---- Modifiers --------------------------------------------------------------------------------------------------------
 
-## A modifier: {id, source, expires (game time, <0 = forever), stats: {}, stun, root, silence, disarm, slow (0..1),
+## A modifier: {id, source, expires (game time, INF = forever; pre-game times are negative), stats: {}, stun, root, silence, disarm, slow (0..1),
 ## invulnerable, regen (hp/s), mana_regen (mana/s), break_on_damage, stack_key}. Same id + source refreshes.
 func add_modifier(m: Dictionary) -> void:
 	for i in modifiers.size():
@@ -286,8 +286,8 @@ func is_invulnerable() -> bool:
 
 func expire_modifiers(now: float) -> void:
 	for i in range(modifiers.size() - 1, -1, -1):
-		var e: float = modifiers[i].get("expires", -1.0)
-		if e >= 0.0 and now >= e:
+		var e: float = modifiers[i].get("expires", INF)
+		if now >= e:
 			modifiers.remove_at(i)
 			stats_dirty = true
 

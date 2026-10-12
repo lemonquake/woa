@@ -499,7 +499,7 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 	if np.distance_squared_to(u.pos) < 0.01:
 		u.blocked_time += C.DT
 		if u.blocked_time > 0.6:
-			u.repath_at = 0.0
+			u.repath_at = C.LONG_AGO
 			u.blocked_time = 0.0
 		return false
 	u.blocked_time = 0.0

@@ -213,8 +213,8 @@ func _unit_card() -> void:
 		var ic: Texture2D = U.icon(UnitBars.STATUS_ICONS[key])
 		if ic:
 			draw_texture_rect(ic, Rect2(sx, r.position.y + 58, 18, 18), false)
-			var left := float(m.get("expires", -1.0)) - w.time
-			if left > 0.0:
+			var left := float(m.get("expires", INF)) - w.time
+			if left > 0.0 and is_finite(left):
 				U.text(self, "%.0f" % ceilf(left), Vector2(sx + 20, r.position.y + 72), 11, U.TEXT_DIM, "bold")
 			sx += 44.0
 	if sel.is_building() and sel.is_invulnerable():

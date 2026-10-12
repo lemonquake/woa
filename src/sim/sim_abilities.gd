@@ -48,13 +48,13 @@ func _lvl_val(a: Dictionary, key: String, lv: int) -> float:
 	return float(arr[clampi(lv - 1, 0, arr.size() - 1)])
 
 func cooldown_left(u: SimUnit, aid: String) -> float:
-	return maxf(0.0, float(u.ability_ready.get(aid, 0.0)) - w.time)
+	return maxf(0.0, float(u.ability_ready.get(aid, C.LONG_AGO)) - w.time)
 
 func item_cooldown_left(u: SimUnit, slot: int) -> float:
 	var it = u.inventory[slot]
 	if it == null:
 		return 0.0
-	return maxf(0.0, float(it.get("ready", 0.0)) - w.time)
+	return maxf(0.0, float(it.get("ready", C.LONG_AGO)) - w.time)
 
 func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vector2, at_cast := false) -> String:
 	if slot >= 0:
@@ -151,6 +151,8 @@ func cast_range(u: SimUnit, aid: String, slot: int) -> float:
 	var a := SimData.ability(aid)
 	if a.behavior == "autocast_attack":
 		return u.attack_range
+	if a.get("direction", false):
+		return INF                               # aimed by direction only: cast from where the hero stands
 	return float(a.range)
 
 func cast_point(aid: String, slot: int) -> float:
@@ -180,7 +182,7 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 			var dir := (p - u.pos).normalized()
 			if dir == Vector2.ZERO:
 				dir = Vector2.from_angle(u.facing)
-			var reach := clampf(u.pos.distance_to(p), 300.0, _v(a, "distance", lv))
+			var reach := _v(a, "distance", lv)       # always the full range, wherever the player clicked
 			_cast_seq += 1
 			w.effects.append({"kind": "line", "ability": aid, "src": u.id, "team": u.team, "pos": u.pos, "dir": dir,
 				"speed": _v(a, "speed", lv), "left": reach, "width": _v(a, "width", lv), "damage": _v(a, "damage", lv),
@@ -707,7 +709,7 @@ func masterful_bonus(u: SimUnit, t: SimUnit) -> float:
 	var lv := u.ability_level_of("masterful_archery")
 	if lv <= 0 or t.is_building() or t.team == u.team:
 		return 0.0
-	if w.time < float(u.ability_ready.get("masterful_archery", 0.0)):
+	if w.time < float(u.ability_ready.get("masterful_archery", C.LONG_AGO)):
 		return 0.0
 	var a := SimData.ability("masterful_archery")
 	if w.rng.randf() >= _v(a, "chance", lv):
@@ -722,7 +724,7 @@ func on_attacked(t: SimUnit, attacker: SimUnit) -> void:
 	var m := t.get_modifier("blood_ranger")
 	if m.is_empty() or not t.hop.is_empty() or t.is_stunned() or t.is_leaping():
 		return
-	if w.time < float(t.get_meta("hop_ready", 0.0)):
+	if w.time < float(t.get_meta("hop_ready", C.LONG_AGO)):
 		return
 	if w.rng.randf() >= float(m.leap_chance):
 		return
@@ -819,7 +821,7 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 		"ward":
 			var ward := w.spawn("ward_observer", u.team, p)
 			ward.ward_expires = w.time + float(v.lifetime)
-			ward.add_modifier({"id": "ward_invis", "source": u.id, "expires": -1.0, "invisible": true})
+			ward.add_modifier({"id": "ward_invis", "source": u.id, "expires": INF, "invisible": true})
 			consumed = true
 		"berserk":
 			u.mana -= float(v.mana)

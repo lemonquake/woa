@@ -15,7 +15,7 @@ var hero_id := -1
 var lane := "mid"
 var name := "Bot"
 var state := "lane"
-var _next_think := 0.0
+var _next_think := C.LONG_AGO
 var _last_order := {}
 var skill_order := ["masterful_archery", "gale_impact", "burst_shot", "masterful_archery", "burst_shot",
 	"blood_ranger_ult", "burst_shot", "burst_shot", "masterful_archery", "masterful_archery", "blood_ranger_ult",
@@ -67,7 +67,8 @@ func think() -> void:
 		else:
 			_go(h, w.map.fountains[h.team])
 			return
-	if w.time < 0.0:
+	if w.time < 0.0 and not _enemy_hero_near(h, 1300.0):
+		# before the horn: wait by the tier 1 tower, but fight any hero that comes looking for a kill
 		_go(h, _waiting_spot(h))
 		return
 	_lane(h)
@@ -136,6 +137,12 @@ func _use_item(h: SimUnit, item_id: String) -> bool:
 
 # ---- Laning -------------------------------------------------------------------------------------------------------
 
+func _enemy_hero_near(h: SimUnit, r: float) -> bool:
+	for u: SimUnit in w.query(h.pos, r):
+		if u.alive and u.is_hero() and u.team != h.team and w.vision.sees(h.team, u):
+			return true
+	return false
+
 func _waiting_spot(h: SimUnit) -> Vector2:
 	var t1 := _own_tower(h, 1)
 	if t1 == null:
@@ -149,18 +156,18 @@ func _own_tower(h: SimUnit, tier: int) -> SimUnit:
 			return u
 	return null
 
-var _next_tango := 0.0
+var _next_tango := C.LONG_AGO
 
 ## Casting, channelling or walking to a cast target: let it finish rather than interrupt it.
 func _busy(h: SimUnit) -> bool:
 	return h.cast_phase != SimUnit.CastPhase.NONE or not h.channel.is_empty() 		or h.order in [O.CAST_POINT, O.CAST_NO_TARGET] and w.time < _cast_deadline
 
-var _cast_deadline := 0.0
+var _cast_deadline := C.LONG_AGO
 var _lh_id := -1
-var _lh_until := 0.0
+var _lh_until := C.LONG_AGO
 var _trade_id := -1
-var _trade_until := 0.0
-var _next_trade := 0.0
+var _trade_until := C.LONG_AGO
+var _next_trade := C.LONG_AGO
 
 func _lane(h: SimUnit) -> void:
 	if _busy(h):

@@ -171,8 +171,8 @@ func _status_icons(u: SimUnit, at: Vector2) -> void:
 		if tex == null:
 			continue
 		var left := 1.0
-		var exp_t := float(m.get("expires", -1.0))
-		if exp_t > 0.0:
+		var exp_t := float(m.get("expires", INF))
+		if is_finite(exp_t):
 			var mk := "%d:%s:%.2f" % [u.id, String(m.id), exp_t]
 			if not _mod_seen.has(mk):
 				if _mod_seen.size() > 400:

@@ -120,7 +120,7 @@ func frame() -> void:
 				_area.visible = true
 			elif vals.has("width"):
 				var width := float((vals.width as Array)[lv - 1]) * 2.0
-				var dist := clampf(h.pos.distance_to(mouse), 300.0, float((vals.distance as Array)[lv - 1]))
+				var dist := float((vals.distance as Array)[lv - 1])
 				var dir := (mouse - h.pos).normalized()
 				if dir == Vector2.ZERO:
 					dir = Vector2.from_angle(h.facing)

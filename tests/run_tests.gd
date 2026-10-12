@@ -1096,13 +1096,35 @@ func test_burst_shot_interrupts() -> void:
 	near(float(wand[1]), float(full[1]), 1.0, "and the channel ran its course")
 	check(rw.pos.x < -2030.0, "the queued move ran after the channel ended")
 
+func test_no_cooldown_lock_before_horn() -> void:
+	# Dota: only creeps and neutrals wait for the horn. Spells, items and attacks work from the first second.
+	var w := world(C.PREGAME_TIME)
+	w.next_wave_at = INF
+	w.next_neutral_at = INF
+	var r := _ranger(w, Vector2(-2000, -4000), {"gale_impact": 1})
+	var foe := _dummy(w, "blood_ranger", C.DUSK, Vector2(-1500, -4000), 5000.0)
+	w.vision.update()
+	check(w.time < -80.0, "the clock is in the pre-game (%.1f)" % w.time)
+	for aid in r.abilities:
+		near(w.abilities.cooldown_left(r, aid), 0.0, 1e-6, "%s is ready before the horn" % aid)
+	r.inventory[0] = {"id": "tango", "charges": 3, "ready": C.LONG_AGO}
+	near(w.abilities.item_cooldown_left(r, 0), 0.0, 1e-6, "items are ready before the horn")
+	check(w.abilities.cast_error(r, "gale_impact", -1, null, foe.pos) == "", "Gale Impact can be cast before the horn")
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": foe.pos})
+	run(w, 1.0)
+	check(foe.hp < foe.max_hp, "and it hits an enemy hero")
+	var hp1 := foe.hp
+	w.command(r.id, {"type": O.ATTACK_UNIT, "target": foe.id})
+	run(w, 2.5)
+	check(foe.hp < hp1, "attacks land before the horn too")
+
 func test_gale_impact() -> void:
 	var w := empty_world()
 	var r := _ranger(w, Vector2(-2000, -4000), {"gale_impact": 1})
 	var on_left := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1500, -3970), 550.0)
 	var on_right := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1200, -4030), 550.0)
 	w.vision.update()
-	near(w.abilities.cast_range(r, "gale_impact", -1), 2000.0, 0.1, "cast range 2000")
+	check(is_inf(w.abilities.cast_range(r, "gale_impact", -1)), "aimed by direction: no cast range to walk into")
 	w.command(r.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(-800, -4000)})
 	run(w, 1.6)
 	near(on_left.max_hp - on_left.hp, 120.0 * (1.0 - on_left.magic_resist), 1.0, "120 magic damage at level 1")
@@ -1113,14 +1135,25 @@ func test_gale_impact() -> void:
 	for e2 in [on_left, on_right]:
 		fx_hits += 1 if (e2 as SimUnit).hp < (e2 as SimUnit).max_hp else 0
 	check(fx_hits == 2, "the arrow pierces: both enemies are hit")
-	# distance: it stops at the target point (at most 2000)
+	# distance: it always flies the full 2000, even when the player clicks right beside the hero
 	var w2 := empty_world()
 	var r2 := _ranger(w2, Vector2(-2000, -4000))
-	var far_foe := _dummy(w2, "dusk_melee", C.DUSK, Vector2(-1000, -4000), 900.0)
+	var far_foe := _dummy(w2, "dusk_melee", C.DUSK, Vector2(-200, -4000), 900.0)
+	var past_max := _dummy(w2, "dusk_melee", C.DUSK, Vector2(250, -4000), 900.0)
 	w2.vision.update()
-	w2.command(r2.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(-1500, -4000)})
-	run(w2, 1.5)
-	check(far_foe.hp == far_foe.max_hp, "the arrow stops at the target point, short of an enemy beyond it")
+	var start := r2.pos
+	w2.command(r2.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(-1900, -4000)})
+	run(w2, 1.6)
+	check(r2.pos.distance_to(start) < 1.0, "a direction cast: the hero does not walk to the click")
+	check(far_foe.hp < far_foe.max_hp, "a click 100 away still sends the arrow its full range (enemy 1800 away hit)")
+	check(past_max.hp == past_max.max_hp, "but no further than 2000")
+	var w3 := empty_world()
+	var r3 := _ranger(w3, Vector2(-2000, -4000))
+	w3.vision.update()
+	w3.command(r3.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(3000, -4000)})
+	run(w3, 0.1)
+	check(r3.cast_phase != SimUnit.CastPhase.NONE or w3.abilities.cooldown_left(r3, "gale_impact") > 0.0,
+		"a click beyond 2000 casts at once instead of walking closer")
 
 func test_gale_impact_trees_and_crash() -> void:
 	var w := empty_world()
@@ -1193,7 +1226,7 @@ func test_masterful_archery() -> void:
 	near(bonus, r.agi_total * 0.45, 0.01, "bonus = 45% of agility at level 4")
 	check(gap_ok, "never twice within 0.8 s")
 	var rate := float(procs) / maxf(1.0, attacks)
-	check(rate > 0.2 and rate < 0.36, "about 30% of attacks burst (%.2f of %d)" % [rate, attacks])
+	check(rate > 0.2 and rate < 0.36, "about 30%% of attacks burst (%.2f of %d)" % [rate, int(attacks)])
 
 func test_blood_ranger_ult() -> void:
 	var w := empty_world()

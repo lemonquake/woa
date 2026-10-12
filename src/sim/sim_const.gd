@@ -164,6 +164,9 @@ const NEUTRAL_AGGRO_TIMEOUT := 3.0           # APPROX: return home after this lo
 # ---- Time of day ----------------------------------------------------------------------------------------------------
 const DAY_LENGTH := 600.0                    # full day-night cycle; day first half from 0:00
 const PREGAME_TIME := -90.0
+## "Ready since forever": the default for every cooldown and timer, so nothing is locked during the pre-game
+## (abilities, items, attacks and pathing all work from the first tick; only creeps and neutrals wait for 0:00).
+const LONG_AGO := -1.0e9
 
 # ---- Vision ---------------------------------------------------------------------------------------------------------
 const VISION_CELL := 128.0
