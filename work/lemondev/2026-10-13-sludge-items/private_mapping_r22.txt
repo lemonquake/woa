@@ -1,0 +1,3 @@
+r22_hook A = work/lemondev/2026-10-13-sludge-items/shots/c6_31.png
+r22_hook B = work/benchmark/pudge/frames/f097.png
+(benchmark cropped to 1920x1017, top 63 px removed)

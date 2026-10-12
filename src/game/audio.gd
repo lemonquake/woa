@@ -126,6 +126,10 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "ezee":
 				at("greatsword_hit", p2, -5.0, 3, 0.05)
 				return
+			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "sludge":
+				at("axe_hit", p2, -4.0, 3, 0.05)
+				at("hit_flesh", p2, -10.0, 3, 0.05)
+				return
 			if src2.is_ranged():
 				if src2.is_hero():
 					at("arrow_impact", p2, -6.0, 2, 0.05)
@@ -163,6 +167,26 @@ func event(e: Dictionary, w: SimWorld) -> void:
 		"deny":
 			if e.u == game.player_hero_id:
 				ui("parry", -6.0)
+		"hook_move":
+			# the spinning star whirs as it flies
+			if String(e.get("state", "")) == "out" and int(e.get("target", -1)) < 0 and w.tick % 4 == 0:
+				var hp: Vector2 = e.pos
+				at("attack_woosh", View.to3(hp, game.terrain.height_at(hp)) + Vector3(0, 1.0, 0), -14.0, 3, 0.11, 0.2)
+		"hook_latch":
+			var lp: Vector2 = e.pos
+			var l3 := View.to3(lp, game.terrain.height_at(lp)) + Vector3(0, 1.0, 0)
+			at("hit_metal", l3, -3.0, 3, 0.05)
+			if not bool(e.get("ally", false)):
+				at("hit_flesh", l3, 0.0, 3, 0.05)
+				at("spear_hit", l3, -2.0, 2, 0.05)
+			at("skeleton_rattle_2", l3, -5.0, 0, 0.1)
+		"hook_kill":
+			at("cleave", _pos(w, e.u), -2.0, 2, 0.1)
+		"hook_end":
+			var ep: Vector2 = e.pos
+			at("skeleton_rattle_1", View.to3(ep, game.terrain.height_at(ep)) + Vector3(0, 1.0, 0), -9.0, 0, 0.2)
+		"blubber":
+			at("block", _pos(w, e.u), -6.0, 2, 0.2)
 		"level_up":
 			if e.u == game.player_hero_id:
 				ui("level_up", -4.0)
@@ -181,6 +205,11 @@ func event(e: Dictionary, w: SimWorld) -> void:
 					at("drain", p4, -6.0, 0, 0.2)
 				"leap_strike":
 					at("attack_woosh", p4, -2.0, 3, 0.1)
+				"shuriken_hook":
+					at("swing_heavy", p4, -2.0, 3, 0.1)
+					at("skeleton_rattle_1", p4, -6.0, 0, 0.2, 0.12)
+				"chomp":
+					at("ghoul_growl", p4, -3.0, 2, 0.3, 0.05)
 				"tainted_touch":
 					at("dark_cast", p4, -4.0, 0, 0.2)
 		"stomp":

@@ -18,6 +18,7 @@ var anim: AnimationPlayer
 var skeleton: Skeleton3D
 var appearance: HeroAppearance
 var weapons: Array[Node3D] = []
+var weapon_nodes := {}                     # "R" / "L" -> the weapon in that hand
 var prev_pos := Vector2.ZERO
 var cur_pos := Vector2.ZERO
 var prev_facing := 0.0
@@ -147,6 +148,7 @@ func _weapons() -> void:
 		var w := ps.instantiate() as Node3D
 		at.add_child(w)
 		weapons.append(w)
+		weapon_nodes[side] = w
 		if cfg.has("weapon_tint"):
 			_tint_node(w, cfg.weapon_tint, 0.85)
 		if cfg.get("swing_trail", false) and side == "R":
@@ -186,6 +188,24 @@ func set_weapon_glow(on: bool, col := Color(0.6, 0.2, 1.0)) -> void:
 	for w in weapons:
 		for mi: MeshInstance3D in w.find_children("*", "MeshInstance3D", true, false):
 			mi.material_overlay = _glow_mat if on else null
+
+## Where a hand's weapon is held (the grip), in world space; the chest if that hand is empty.
+## Read from the skeleton's current pose (a BoneAttachment3D can trail the pose by a frame).
+func hand_point(side: String) -> Vector3:
+	if skeleton:
+		var bi := skeleton.find_bone("weapon." + side)
+		if bi >= 0:
+			return skeleton.global_transform * skeleton.get_bone_global_pose(bi).origin
+	var w: Node3D = weapon_nodes.get(side)
+	if w and is_instance_valid(w):
+		return w.global_position
+	return global_position + Vector3(0, bar_height * 0.5, 0)
+
+## Hide a hand's weapon while it is away (Sludge's shuriken is flying on its chain).
+func hide_weapon(side: String, hidden: bool) -> void:
+	var w: Node3D = weapon_nodes.get(side)
+	if w and is_instance_valid(w):
+		w.visible = not hidden
 
 func weapon_tip() -> Vector3:
 	if weapons.is_empty():
@@ -323,6 +343,9 @@ func tick(u: SimUnit) -> void:
 			_play("knockback", false, 1.2 / maxf(0.2, float(u.knock.dur)) * 0.55, 0.06, true)
 		return
 	# Burst Shot: the bow stays drawn while the channel lasts; each wave is a snap release, then a fresh draw
+	if not u.channel.is_empty() and String(u.channel.ability) == "chomp":
+		_state = "channel"
+		return
 	if not u.channel.is_empty() and String(u.channel.ability) == "burst_shot":
 		_state = "channel"
 		if now >= _redraw_at and _clip != "bow_draw_hold":
@@ -407,6 +430,11 @@ func on_attack_cancel() -> void:
 
 ## Burst Shot began: draw and hold.
 func on_channel_start(aid: String) -> void:
+	if aid == "chomp":
+		# Chomp: hold the victim and eat
+		_state = "channel"
+		_play("devour", true, 1.1, 0.08, true)
+		return
 	if aid != "burst_shot":
 		return
 	_state = "channel"

@@ -15,6 +15,7 @@ var foliage: Foliage
 var atmosphere: Atmosphere
 var camera: CameraRig
 var fx: Fx
+var sludge_fx: SludgeFx
 var status_fx: StatusFx
 var targeting_fx: TargetingFx
 var bars: UnitBars
@@ -73,8 +74,12 @@ func _ready() -> void:
 	await _stage(0.84, "Loading heroes")
 	fx = Fx.new()
 	fx.game = self
+	sludge_fx = SludgeFx.new()
+	sludge_fx.game = self
+	sludge_fx.fx = fx
 	foliage.game_fx = fx
 	add_child(fx)
+	add_child(sludge_fx)
 	status_fx = StatusFx.new()
 	status_fx.game = self
 	status_fx.fx = fx
@@ -144,8 +149,14 @@ func _ready() -> void:
 				for v in views.values():
 					if v is UnitView: v.visible = false
 	if args.has("noui"):
-		ui.visible = false
-		bars.visible = false
+		if args.has("bars"):
+			# health bars only: hide every other piece of the interface
+			for c in ui.get_children():
+				if c != bars and c is CanvasItem:
+					c.visible = false
+		else:
+			ui.visible = false
+			bars.visible = false
 		hud.visible = false
 	if args.has("capture"):
 		_start_capture()
@@ -346,6 +357,20 @@ func _drain_events() -> void:
 					fx.gale_move(int(e.get("src", -1)), e.pos, bool(e.get("done", false)))
 			"gale_impact":
 				fx.gale_launch(e)
+			"hook_launch":
+				sludge_fx.hook_launch(e)
+			"hook_latch":
+				sludge_fx.hook_latch(e)
+			"hook_kill":
+				sludge_fx.hook_kill(e)
+			"toggle":
+				sludge_fx.toggle(e)
+			"blubber":
+				sludge_fx.blubber(e)
+			"chomp_bite":
+				sludge_fx.chomp_bite(e)
+			"growing_gut":
+				sludge_fx.growing_gut(e)
 			"gale_hit":
 				fx.gale_hit(e)
 			"masterful_hit":
@@ -509,6 +534,7 @@ func _process(dt: float) -> void:
 					v.visible = world.vision.cell_visible(player_team, u.pos)
 	_t = _tm("views", _t)
 	fx.frame(world, alpha, dt)
+	sludge_fx.update(world, alpha, dt)
 	_t = _tm("fx", _t)
 	status_fx.frame(dt)
 	_t = _tm("status", _t)
@@ -748,6 +774,20 @@ func _demo_setup() -> void:
 				break
 	if args.has("treedemo"):
 		_tree_demo_setup(h)
+	if args.has("foe"):
+		# --foe=x,y: the enemy hero stands still at that point (open-ground ability captures)
+		var fv := String(args.foe).split(",")
+		for b in world.bots.duplicate():
+			if b.hero_id != player_hero_id:
+				world.bots.erase(b)
+		for eh in world.heroes:
+			if eh.team != h.team:
+				eh.pos = Vector2(float(fv[0]), float(fv[1]))
+				world.orders.clear(eh)
+				var ev = views.get(eh.id)
+				if ev is UnitView:
+					ev.prev_pos = eh.pos
+					ev.cur_pos = eh.pos
 	if args.has("at"):
 		var av := String(args.at).split(",")
 		if av[0] == "tree":
@@ -875,8 +915,11 @@ func _demo_casts() -> void:
 		if a.is_empty():
 			continue
 		match String(a.behavior):
-			"no_target":
+			"no_target", "toggle":
 				world.command(h.id, {"type": C.Order.CAST_NO_TARGET, "ability": aid})
+			"unit":
+				if near:
+					world.command(h.id, {"type": C.Order.CAST_UNIT, "ability": aid, "target": near.id})
 			"point":
 				var pt: Vector2 = near.pos if near else h.pos
 				if args.has("aim") and near:

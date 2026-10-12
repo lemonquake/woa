@@ -1,0 +1,3 @@
+r21_hook A = work/lemondev/2026-10-13-sludge-items/shots/c1_26.png
+r21_hook B = work/benchmark/pudge/frames/f097.png
+(benchmark cropped to 1920x1017 by removing the top 63 px, which holds two video-player icons, so both images match in size)

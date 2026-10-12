@@ -55,3 +55,13 @@ Review isolation: instruction-enforced (fresh subagents told to read only their 
 Review isolation: instruction-enforced (fresh subagents, packet folders only; each listed only its two packet images). Private mappings: `work/lemondev/2026-10-12-map-overhaul/private_mapping_r18.txt`, `_r19.txt`, `_r20.txt`. The r20 critic result was read from the subagent transcript after the previous session hit its usage limit.
 
 Integration (M4), working tree after 792086f: 59 tests pass; benchmark 77 fps, p95 16.67 ms (gate passed); bot duels 3 x 12 min complete (`duel.txt`); export and cold start of the exe clean (`export_run.txt`) after fixing the boot loading screen, which was never shown (add_child while the root was busy).
+
+## Session 2026-10-13 (Sludge, items, shop) — run `work/lemondev/2026-10-13-sludge-items/` (contract.md)
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Shuriken Hook visuals (S2) | 1 | f598fdf + working tree (sludge_fx.gd) | r21 hook (c1_26 vs Valve Meat Hook video frame 97) | benchmark / true | REJECT | H1: the hook does not visibly reach or hold the target; thin pale chain starting in the air beside the thrower; shuriken washed out by a white blur ring | Chain anchored to the fist from the live skeleton pose (the attachment lagged a frame), dark iron links, no white ring, shuriken lying flat, latched star kept in front of the victim |
+| Shuriken Hook visuals (S2) | 2 | same + fixes | r22 hook (c6_31 vs frame 97) | benchmark / true | REJECT | H1 again: the hook sits beside the target instead of gripping it; also called out: chain shadow doubles the line, thrower looks flat grey | **STOPPED: PLATEAU** (same defect in two consecutive valid rejections). Note: both candidate frames were taken a tick before the bite, while Valve's frame shows the hook already wrapped round the target. Next step needs your decision: recheck with the bite frame (and a shorter chain shadow), which is a new pass under a changed capture rule |
+
+Review isolation: instruction-enforced (fresh subagents, packet folders only; both listed only their two images). Private mappings: `private_mapping_r21.txt`, `_r22.txt`. Benchmark: `work/benchmark/pudge/pudge_meat_hook.mp4` (Valve CDN, see contract.md), frames extracted with Blender (`frames.py`).
+Evidence note: `research/liquipedia_pudge*.json` are Liquipedia rate-limit pages, not data; the Sludge numbers came from the Liquipedia wikitext read during the 2026-10-12 session and the game data file `npc_dota_hero_pudge.txt`.
