@@ -1,0 +1,12 @@
+seed 3 at 20:00: A(blood_ranger) 3/0/0 lvl 13 LH 83 DN 54 nw 7562 | B(ezee) 0/3/0 lvl 9 LH 36 DN 18 nw 4007 | towers lost A 2 B 2
+    casts: { "B:item_salve": 1, "B:item_tango": 3, "A:item_tango": 3, "A:item_salve": 1, "A:gale_impact": 11, "A:burst_shot": 3, "B:tainted_touch": 17, "B:dark_stomp": 9, "B:leap_strike": 5, "A:item_magic_wand": 5, "A:blood_ranger_ult": 8, "B:item_magic_wand": 4, "B:unholy_might": 5, "B:item_slip_boots": 13 }
+    blood_ranger items: ["power_treads", "magic_wand", "dragon_lance", "wraith_band", "quelling_blade", "shock_hammer"]
+    ezee items: ["magic_wand", "slip_boots", "quelling_blade", "tough_band"]
+seed 7 at 20:00: A(blood_ranger) 2/0/0 lvl 13 LH 88 DN 56 nw 7387 | B(ezee) 0/2/0 lvl 5 LH 10 DN 6 nw 2740 | towers lost A 1 B 2
+    casts: { "B:item_salve": 1, "B:item_tango": 3, "A:item_salve": 1, "A:gale_impact": 7, "A:burst_shot": 2, "B:dark_stomp": 7, "B:tainted_touch": 7, "A:item_tango": 3, "A:blood_ranger_ult": 4, "A:item_magic_wand": 2, "B:item_magic_wand": 2, "B:leap_strike": 1 }
+    blood_ranger items: ["dragon_lance", "magic_wand", "power_treads", "wraith_band", "quelling_blade"]
+    ezee items: ["slip_boots", "magic_wand", "quelling_blade", "tough_band"]
+seed 11 at 20:00: A(blood_ranger) 1/0/0 lvl 13 LH 90 DN 72 nw 4613 | B(ezee) 0/1/0 lvl 5 LH 11 DN 4 nw 3002 | towers lost A 2 B 3
+    casts: { "B:item_salve": 1, "B:item_tango": 3, "A:item_tango": 3, "A:item_salve": 1, "A:gale_impact": 5, "A:burst_shot": 2, "B:dark_stomp": 4, "B:tainted_touch": 7, "A:item_magic_wand": 2, "A:blood_ranger_ult": 2, "B:item_magic_wand": 1 }
+    blood_ranger items: ["power_treads", "magic_wand", "dragon_lance", "wraith_band", "quelling_blade"]
+    ezee items: ["slip_boots", "magic_wand", "quelling_blade", "tough_band"]

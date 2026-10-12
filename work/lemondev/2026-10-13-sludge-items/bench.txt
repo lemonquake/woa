@@ -1,0 +1,2 @@
+BENCH frames 4082 avg 12.25 ms (82 fps) p50 12.12 p95 14.24 p99 17.58 max 33.10 over16.7 49 units 155
+  per-frame means: views 1.30, fx 0.15, status 0.06, target 0.01, fog 0.05, sim 1.83, sync 0.71, gpu 6.98, rcpu 1.48, proc 15.98, phys 12.74, draws 1535.74, prims 2347892.28, trails 0.14, bars 0.30

@@ -1,6 +1,12 @@
-seed 3 at 12:00: A(sludge) 0/5/0 lvl 4 LH 10 DN 8 nw 2159 | B(blood_ranger) 5/0/0 lvl 10 LH 41 DN 34 nw 4036 | towers lost A 1 B 1
-    casts: { "B:gale_impact": 5, "A:shuriken_hook": 3, "B:burst_shot": 3, "A:stench_on": 15, "A:hooked_creep": 1, "B:blood_ranger_ult": 3, "A:hooked_hero": 1, "A:blubber": 1 }
-seed 7 at 12:00: A(sludge) 1/5/0 lvl 7 LH 25 DN 11 nw 3400 | B(blood_ranger) 5/1/0 lvl 9 LH 40 DN 24 nw 3988 | towers lost A 1 B 1
-    casts: { "B:gale_impact": 9, "A:shuriken_hook": 5, "A:hooked_hero": 3, "B:burst_shot": 4, "A:stench_on": 20, "A:blubber": 5, "A:hooked_creep": 2, "B:blood_ranger_ult": 1 }
-seed 11 at 12:00: A(sludge) 0/2/0 lvl 6 LH 31 DN 14 nw 2999 | B(blood_ranger) 2/0/0 lvl 9 LH 31 DN 24 nw 3905 | towers lost A 1 B 1
-    casts: { "B:gale_impact": 8, "B:burst_shot": 1, "A:shuriken_hook": 5, "A:hooked_hero": 2, "A:stench_on": 21, "A:hooked_creep": 3, "A:blubber": 5, "B:blood_ranger_ult": 2 }
+seed 3 at 20:00: A(sludge) 1/4/0 lvl 9 LH 47 DN 18 nw 5338 | B(blood_ranger) 3/1/1 lvl 13 LH 70 DN 48 nw 7383 | towers lost A 2 B 3
+    casts: { "A:item_salve": 1, "B:gale_impact": 10, "A:shuriken_hook": 9, "A:hooked_creep": 4, "B:burst_shot": 7, "A:stench_on": 31, "A:hooked_hero": 5, "B:item_tango": 3, "B:item_salve": 1, "A:item_tango": 3, "A:item_magic_wand": 5, "A:blubber": 7, "B:blood_ranger_ult": 3, "A:chomp": 3, "A:item_slip_boots": 13, "A:item_jump_knife": 2 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    blood_ranger items: ["dragon_lance", "power_treads", "wraith_band", "quelling_blade", "branch", "magic_wand"]
+seed 7 at 20:00: A(sludge) 3/5/0 lvl 13 LH 72 DN 49 nw 7347 | B(blood_ranger) 5/3/0 lvl 11 LH 55 DN 31 nw 6413 | towers lost A 1 B 2
+    casts: { "A:item_salve": 1, "B:gale_impact": 13, "A:item_tango": 3, "B:burst_shot": 7, "A:shuriken_hook": 13, "A:hooked_hero": 7, "A:stench_on": 51, "B:item_salve": 1, "A:item_magic_wand": 6, "B:item_tango": 3, "A:blubber": 8, "A:hooked_creep": 5, "B:blood_ranger_ult": 4, "A:item_slip_boots": 14, "A:chomp": 2, "A:item_jump_knife": 2 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    blood_ranger items: ["dragon_lance", "power_treads", "wraith_band", "quelling_blade", "branch", "magic_wand"]
+seed 11 at 20:00: A(sludge) 2/4/0 lvl 8 LH 29 DN 23 nw 4864 | B(blood_ranger) 4/2/0 lvl 12 LH 62 DN 48 nw 6488 | towers lost A 2 B 1
+    casts: { "A:item_salve": 1, "B:gale_impact": 10, "A:shuriken_hook": 7, "A:hooked_hero": 3, "B:burst_shot": 5, "A:stench_on": 26, "A:hooked_creep": 2, "B:item_salve": 1, "B:item_tango": 3, "A:item_tango": 3, "A:item_magic_stick": 1, "A:blubber": 5, "A:item_magic_wand": 3, "B:blood_ranger_ult": 3, "A:item_slip_boots": 11 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    blood_ranger items: ["dragon_lance", "power_treads", "wraith_band", "quelling_blade", "branch", "magic_wand"]

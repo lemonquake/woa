@@ -1,0 +1,5 @@
+[  98% ] savepack | Storing File: res://icon.svg
+[  98% ] savepack | Storing File: res://.godot/uid_cache.bin
+[  98% ] savepack | Storing File: res://project.binary
+[ DONE ] savepack
+

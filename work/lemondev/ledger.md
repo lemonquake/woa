@@ -65,3 +65,13 @@ Integration (M4), working tree after 792086f: 59 tests pass; benchmark 77 fps, p
 
 Review isolation: instruction-enforced (fresh subagents, packet folders only; both listed only their two images). Private mappings: `private_mapping_r21.txt`, `_r22.txt`. Benchmark: `work/benchmark/pudge/pudge_meat_hook.mp4` (Valve CDN, see contract.md), frames extracted with Blender (`frames.py`).
 Evidence note: `research/liquipedia_pudge*.json` are Liquipedia rate-limit pages, not data; the Sludge numbers came from the Liquipedia wikitext read during the 2026-10-12 session and the game data file `npc_dota_hero_pudge.txt`.
+
+Session resumed 2026-10-13 after a second cut-off (items and shop were in the working tree, uncommitted):
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Sludge mechanics (S1) | 1 | b68aecf + working tree | gate: headless tests | n/a | PASS (gate) | none | none |
+| Sludge bot (S3) | 1 | d82bd68 + working tree | gate: 20 min duels vs both heroes, 3 seeds | n/a | PASS (gate) | none; hooks heroes 3-7 times a game | none |
+| Items (I1) | 1 | working tree | gate: 92 tests (one per recipe path and active/passive) | n/a | PASS (gate) | spot-check against items.txt found Cleave Axe dealt 60% to creeps; Dota deals 40% (`cleave_damage_percent_creep`); fixed and tested before the gate | none |
+| Shop UI (I2) | 1 | working tree | gate: readable at 1080p and 2160p, every item buyable by mouse | n/a | PASS (gate); blind review UNVERIFIED (no Dota shop frame set up) | none | benchmark frame of Dota's shop for a blind review |
+| Integration (G) | 1 | working tree | tests 92/92, check.sh "Names OK", duels 9/9 complete, bench 82 fps p95 14.2 ms, export + cold start (Sludge match ready 9.7 s), Options persist across processes | n/a | PASS (gate) | ObjectDB leak warning at exit (188 instances, 184 before this run): pre-existing, not new | none |

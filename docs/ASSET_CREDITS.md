@@ -11,6 +11,8 @@
 | Terrain textures (leafy grass, aerial grass rock, rocky trail, forest ground 04, cliff side, cobblestone floor 08, burned ground 01, coast sand rocks 02, stone pathway 02) | `assets/textures/terrain/` | Poly Haven authors | polyhaven.com (URLs and MD5s in `work/downloads/polyhaven/terrain_sources.json`) | CC0 1.0 |
 | Building textures (castle brick, medieval blocks, dark rock, volcanic tiles, clay roof tiles, rough block wall, weathered planks) | `assets/textures/building/` | Poly Haven authors via beyond-heroes | polyhaven.com | CC0 1.0 |
 | Buildings (towers, barracks, Ancients, fountains, effigies, shop) | `assets/buildings/` | Warriors of Aether (procedural, Blender 5.2) | `tools/blender/buildings.py` | Project-owned |
+| Sludge's body (obese MakeHuman base mesh and targets, game-engine rig) | `assets/characters/hero/sludge.glb` | MakeHuman team, via MPFB 2 for Blender; shaped, rigged to the hero skeleton and dressed by `tools/blender/sludge.py` | makehuman.org, static.makehumancommunity.org/mpfb.html | CC0 1.0 (MakeHuman base mesh, targets and system assets) |
+| Sludge's cleaver, shuriken hook, shuriken and chain link | `assets/weapons/cleaver.glb`, `shuriken_hook.glb`, `shuriken.glb`, `chain_link.glb` | Warriors of Aether (procedural, Blender 5.2) | `tools/blender/sludge_gear.py` | Project-owned |
 | Fonts: Cinzel, Lato | `assets/ui/fonts/` | Natanael Gama (Cinzel); Łukasz Dziedzic (Lato) | Google Fonts | SIL Open Font License 1.1 (licence files included) |
 
 Game mechanics and numbers follow Dota 2. Rules and numbers are not copyrightable. Every name, model, icon and

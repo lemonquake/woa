@@ -1,0 +1,90 @@
+item_wraith_band {'ItemCost': '505', 'ItemShopTags': 'damage;int;agi;str'} {'bonus_agility': '5', 'bonus_strength': '2', 'bonus_intellect': '2', 'bonus_attack_speed': '6', 'bonus_armor': '1.75'}
+item_recipe_wraith_band {'ItemCost': '210', 'ItemRequirements': {'01': 'item_circlet;item_slippers'}, 'ItemShopTags': ''} {}
+item_bracer {'ItemCost': '505', 'ItemShopTags': 'damage;int;agi;str'} {'bonus_strength': '5', 'bonus_agility': '2', 'bonus_intellect': '2', 'bonus_damage': '0', 'bonus_health_regen': '0.75', 'bonus_health': '50'}
+item_recipe_bracer {'ItemCost': '210', 'ItemRequirements': {'01': 'item_circlet;item_gauntlets'}, 'ItemShopTags': ''} {}
+item_null_talisman {'ItemCost': '505', 'ItemShopTags': 'damage;int;agi;str'} {'bonus_intellect': '5', 'bonus_strength': '2', 'bonus_agility': '2', 'bonus_max_mana_percentage': '3', 'bonus_mana_regen': '1.0'}
+item_recipe_null_talisman {'ItemCost': '210', 'ItemRequirements': {'01': 'item_circlet;item_mantle'}, 'ItemShopTags': ''} {}
+item_magic_wand {'ItemCost': '460', 'AbilityCooldown': '15.0', 'ItemShopTags': 'regen_health;regen_mana;boost_health;boost_mana;int;agi;str;laning;regen_mana'} {'max_charges': '20', 'charge_radius': '1200', 'bonus_all_stats': '3', 'restore_per_charge': '15'}
+item_recipe_magic_wand {'ItemCost': '150', 'ItemRequirements': {'01': 'item_magic_stick*;item_branches;item_branches'}, 'ItemShopTags': ''} {}
+item_power_treads {'ItemCost': '1400', 'ItemShopTags': 'attack_speed;move_speed;int;agi;str;mobility'} {'bonus_movement_speed_ranged': '45', 'bonus_movement_speed_melee': '55', 'bonus_stat': '10', 'bonus_attack_speed': '25', 'bonus_damage': '0'}
+item_recipe_power_treads {'ItemCost': '0', 'ItemRequirements': {'01': 'item_boots*;item_gloves;item_belt_of_strength', '04': 'item_boots*;item_gloves;item_robe', '06': 'item_boots*;item_gloves;item_boots_of_elves'}, 'ItemShopTags': ''} {}
+item_phase_boots {'ItemCost': '1450', 'AbilityCooldown': '8.0', 'ItemShopTags': 'damage;move_speed;hard_to_tag;mobility'} {'bonus_movement_speed': '50', 'bonus_damage_melee': '18', 'bonus_damage_range': '12', 'phase_movement_speed': '20', 'phase_movement_speed_range': '10', 'phase_duration': '3.0', 'bonus_attack_speed': '0', 'bonus_armor': '4'}
+item_recipe_phase_boots {'ItemCost': '0', 'ItemRequirements': {'01': 'item_boots*;item_chainmail;item_blades_of_attack'}, 'ItemShopTags': ''} {}
+item_arcane_boots {'ItemCost': '1500', 'AbilityCooldown': '55.0', 'AbilityManaCost': '0', 'ItemShopTags': 'move_speed;boost_mana;mana_pool;mana;regen_mana'} {'bonus_movement': '45', 'mana_regen': '0.25', 'bonus_mana': '125', 'aura_mana_regen': '1', 'aura_radius': '1200', 'replenish_amount': '150', 'replenish_radius': '1200'}
+item_recipe_arcane_boots {'ItemCost': '325', 'ItemRequirements': {'01': 'item_boots*;item_ring_of_basilius;item_wizard_hat'}, 'ItemShopTags': ''} {}
+item_desolator {'ItemCost': '3500', 'ItemShopTags': 'damage;unique;dps'} {'bonus_damage': '55', 'corruption_armor': '-6', 'corruption_duration': '7.0', 'bonus_damage_per_kill': '2', 'bonus_damage_per_assist': '1', 'max_damage': '30'}
+item_recipe_desolator {'ItemCost': '0', 'ItemRequirements': {'01': 'item_mithril_hammer;item_mithril_hammer;item_blight_stone'}, 'ItemShopTags': ''} {}
+item_black_king_bar {'ItemCost': '4050', 'AbilityCooldown': '95', 'AbilityManaCost': '50', 'ItemShopTags': 'str;damage;hard_to_tag;teamfight;escape;tank'} {'bonus_strength': '10', 'bonus_damage': '24', 'duration': '9 8 7', 'max_level': '3', 'model_scale': '30', 'spell_reduce': '60'}
+item_recipe_black_king_bar {'ItemCost': '1450', 'ItemRequirements': {'01': 'item_mithril_hammer;item_ogre_axe'}, 'ItemShopTags': ''} {}
+item_blink {'ItemCost': '2250', 'AbilityCooldown': '15.0', 'AbilityManaCost': '0', 'AbilityCastRange': '1200', 'AbilityCastPoint': '0.0', 'ItemShopTags': 'teleport;mobility;escape'} {'blink_range': '1200', 'blink_damage_cooldown': '3.0', 'blink_range_clamp': '960'}
+item_force_staff {'ItemCost': '2200', 'AbilityCooldown': '19.0', 'AbilityManaCost': '150', 'AbilityCastRange': '550', 'AbilityCastPoint': '0.0', 'ItemShopTags': 'int;damage;hard_to_tag;mobility;escape;save'} {'bonus_intellect': '10', 'bonus_health': '175', 'push_length': '600', 'enemy_cast_range': '850', 'push_time': '0.5'}
+item_recipe_force_staff {'ItemCost': '950', 'ItemRequirements': {'01': 'item_staff_of_wizardry;item_fluffy_hat'}, 'ItemShopTags': ''} {}
+item_bfury {'ItemCost': '3900', 'AbilityCooldown': '3.0', 'AbilityCastRange': '350', 'AbilityCastPoint': '0.0', 'ItemShopTags': 'damage;health_regen;mana_regen;hard_to_tag;farming;dps'} {'bonus_damage': '50', 'bonus_health_regen': '7.5', 'bonus_mana_regen': '2.75', 'cleave_damage_percent': '60', 'cleave_damage_percent_creep': '40', 'quelling_bonus': '10', 'quelling_bonus_ranged': '5', 'cleave_starting_width': '150', 'cleave_ending_width': '360', 'cleave_distance': '650', 'upgraded_cleave_bonus': '25', 'upgraded_damage_bonus': '15'}
+item_recipe_bfury {'ItemCost': '400', 'ItemRequirements': {'01': 'item_pers;item_broadsword;item_broadsword;item_quelling_blade'}, 'ItemShopTags': ''} {}
+item_maelstrom {'ItemCost': '2950', 'ItemShopTags': 'damage;attack_speed;unique;farming;dps'} {'bonus_damage': '25', 'bonus_attack_speed': '25', 'chain_chance': '25', 'chain_damage': '110', 'chain_strikes': '4', 'chain_radius': '650', 'chain_delay': '0.25', 'chain_cooldown': '0.2', 'illusion_multiplier_pct': '100'}
+item_recipe_maelstrom {'ItemCost': '0', 'ItemRequirements': {'01': 'item_mithril_hammer;item_javelin;item_gloves'}, 'ItemShopTags': 'farming'} {}
+item_hand_of_midas {'ItemCost': '2200', 'AbilityCooldown': '0', 'AbilityManaCost': '0', 'AbilityCastRange': '600', 'AbilityCastPoint': '0.0', 'ItemInitialCharges': '1', 'ItemShopTags': 'attack_speed;hard_to_tag;farming'} {'bonus_attack_speed': '40', 'bonus_gold': '160'}
+item_recipe_hand_of_midas {'ItemCost': '1750', 'ItemRequirements': {'01': 'item_gloves*'}, 'ItemShopTags': ''} {}
+item_blade_mail {'ItemCost': '2400', 'AbilityCooldown': '25.0', 'AbilityManaCost': '25', 'ItemShopTags': 'damage;armor;int;hard_to_tag;tank'} {'bonus_damage': '15', 'bonus_armor': '7', 'bonus_intellect': '0', 'duration': '5.5', 'passive_reflection_constant': '10', 'passive_reflection_pct': '15', 'active_reflection_pct': '85'}
+item_recipe_blade_mail {'ItemCost': '450', 'ItemRequirements': {'01': 'item_broadsword;item_splintmail'}, 'ItemShopTags': ''} {}
+item_ultimate_scepter {'ItemCost': '4200', 'ItemShopTags': 'int;str;agi;mana_pool;health_pool;hard_to_tag'} {'bonus_all_stats': '10', 'bonus_health': '175', 'bonus_mana': '175'}
+item_recipe_ultimate_scepter {'ItemCost': '0', 'ItemRequirements': {'01': 'item_point_booster;item_staff_of_wizardry;item_ogre_axe;item_blade_of_alacrity'}, 'ItemShopTags': ''} {}
+item_aghanims_shard {'ItemCost': '1400', 'ItemShopTags': 'int;str;agi;mana_pool;health_pool;hard_to_tag'} {}
+item_invis_sword {'ItemCost': '3250', 'AbilityCooldown': '25.0', 'AbilityManaCost': '75', 'ItemShopTags': 'damage;attack_speed;movespeed;hard_to_tag;dps'} {'bonus_damage': '25', 'bonus_attack_speed': '35', 'windwalk_duration': '17.0', 'windwalk_movement_speed': '20', 'windwalk_fade_time': '0.3', 'windwalk_bonus_damage': '175'}
+item_recipe_invis_sword {'ItemCost': '0', 'ItemRequirements': {'01': 'item_claymore;item_blitz_knuckles;item_shadow_amulet*'}, 'ItemShopTags': ''} {}
+item_mekansm {'ItemCost': '1775', 'AbilityCooldown': '50.0', 'AbilityManaCost': '100', 'AbilityCastRange': '1200', 'ItemShopTags': 'agi;int;str;armor;boost_health;teamfight;save;tank'} {'bonus_armor': '5', 'aura_radius': '1200', 'aura_health_regen': '2.5', 'heal_amount': '250', 'heal_radius': '1200'}
+item_recipe_mekansm {'ItemCost': '850', 'ItemRequirements': {'01': 'item_headdress;item_chainmail'}, 'ItemShopTags': ''} {}
+item_vanguard {'ItemCost': '1700', 'ItemShopTags': 'regen_health;block;health_pool;tank'} {'bonus_health': '250', 'bonus_health_regen': '4.5', 'block_damage_melee': '50', 'block_damage_ranged': '25', 'block_chance': '60'}
+item_recipe_vanguard {'ItemCost': '0', 'ItemRequirements': {'01': 'item_vitality_booster;item_ring_of_health'}, 'ItemShopTags': ''} {}
+item_claymore {'ItemCost': '1350', 'ItemShopTags': 'damage'} {'bonus_damage': '20'}
+item_mithril_hammer {'ItemCost': '1600', 'ItemShopTags': 'damage'} {'bonus_damage': '24'}
+item_javelin {'ItemCost': '900', 'ItemShopTags': 'damage'} {'bonus_chance': '25', 'bonus_chance_damage': '60'}
+item_ogre_axe {'ItemCost': '1000', 'ItemShopTags': 'str'} {'bonus_strength': '10'}
+item_blight_stone {'ItemCost': '300', 'ItemShopTags': 'hard_to_tag'} {'corruption_armor': '-2', 'corruption_duration': '3.0'}
+item_ring_of_health {'ItemCost': '700', 'ItemShopTags': 'regen_health'} {'bonus_health_regen': '4.5'}
+item_void_stone {'ItemCost': '700', 'ItemShopTags': 'regen_mana'} {'bonus_mana_regen': '1.75'}
+item_pers {'ItemCost': '1400', 'ItemShopTags': 'regen_health;regen_mana'} {'bonus_health_regen': '5.5', 'bonus_mana_regen': '2.25'}
+item_recipe_pers {'ItemCost': '0', 'ItemRequirements': {'01': 'item_ring_of_health;item_void_stone'}, 'ItemShopTags': ''} {}
+item_vitality_booster {'ItemCost': '1000', 'ItemShopTags': 'health_pool'} {'bonus_health': '250'}
+item_point_booster {'ItemCost': '1200', 'ItemShopTags': 'mana_pool;health_pool'} {'bonus_mana': '175', 'bonus_health': '175'}
+item_staff_of_wizardry {'ItemCost': '1000', 'ItemShopTags': 'int'} {'bonus_intellect': '10'}
+item_ring_of_basilius {'ItemCost': '425', 'AbilityCastRange': '1200', 'ItemShopTags': 'regen_mana'} {'mana_regen': '0.25', 'aura_mana_regen': '1.0', 'aura_radius': '1200'}
+item_recipe_ring_of_basilius {'ItemCost': '250', 'ItemRequirements': {'01': 'item_sobi_mask'}, 'ItemShopTags': ''} {}
+item_wizard_hat {'ItemCost': '250', 'ItemShopTags': 'mana_pool'} {'bonus_mana': '125'}
+item_shadow_amulet {'ItemCost': '900', 'AbilityCooldown': '18.0', 'AbilityManaCost': '0', 'AbilityCastRange': '600', 'ItemShopTags': ''} {'fade_time': '1.25', 'movement_speed_reduction': '35', 'fade_duration': '3.5'}
+item_blitz_knuckles {'ItemCost': '1000', 'ItemShopTags': 'attack_speed'} {'bonus_attack_speed': '35'}
+item_fluffy_hat {'ItemCost': '250', 'ItemShopTags': 'health_pool'} {'bonus_health': '125'}
+item_headdress {'ItemCost': '425', 'AbilityCastRange': '1200', 'ItemShopTags': 'str;int;agi;regen_health'} {'health_regen': '0.5', 'aura_health_regen': '2.0', 'aura_radius': '1200'}
+item_recipe_headdress {'ItemCost': '250', 'ItemRequirements': {'01': 'item_ring_of_regen'}, 'ItemShopTags': ''} {}
+item_chainmail {'ItemCost': '500', 'ItemShopTags': 'armor'} {'bonus_armor': '4'}
+item_broadsword {'ItemCost': '1000', 'ItemShopTags': 'damage'} {'bonus_damage': '15'}
+item_quelling_blade {'ItemCost': '100', 'AbilityCooldown': '4.0', 'AbilityManaCost': '0', 'AbilityCastRange': '350', 'AbilityCastPoint': '0.0', 'ItemShopTags': 'damage'} {'damage_bonus': '8', 'damage_bonus_ranged': '4', 'quelling_range_tooltip': '350'}
+item_gloves {'ItemCost': '450', 'ItemShopTags': 'attack_speed'} {'bonus_attack_speed': '20'}
+item_boots {'ItemCost': '500', 'ItemShopTags': 'move_speed;mobility;laning'} {'bonus_movement_speed': '45'}
+item_belt_of_strength {'ItemCost': '450', 'ItemShopTags': 'str'} {'bonus_strength': '6'}
+item_robe {'ItemCost': '450', 'ItemShopTags': 'int'} {'bonus_intellect': '6'}
+item_boots_of_elves {'ItemCost': '450', 'ItemShopTags': 'agi'} {'bonus_agility': '6'}
+item_blades_of_attack {'ItemCost': '450', 'ItemShopTags': 'damage;tutorial'} {'bonus_damage': '9'}
+item_circlet {'ItemCost': '155', 'ItemShopTags': 'agi;int;str'} {'bonus_all_stats': '2'}
+item_slippers {'ItemCost': '140', 'ItemShopTags': 'agi'} {'bonus_agility': '3'}
+item_mantle {'ItemCost': '140', 'ItemShopTags': 'int'} {'bonus_intellect': '3'}
+item_gauntlets {'ItemCost': '140', 'ItemShopTags': 'str'} {'bonus_strength': '3'}
+item_branches {'ItemCost': '55', 'AbilityCooldown': '0.0', 'AbilityCastRange': '400', 'AbilityCastPoint': '0.0', 'ItemShopTags': 'agi;int;str'} {'bonus_all_stats': '1', 'tree_duration': '20'}
+item_magic_stick {'ItemCost': '200', 'AbilityCooldown': '17.0', 'ItemShopTags': 'regen_health;regen_mana;boost_health;boost_mana;laning;regen_mana'} {'max_charges': '10', 'charge_radius': '1200', 'restore_per_charge': '15'}
+item_ring_of_protection {'ItemCost': '175', 'ItemShopTags': 'armor'} {'bonus_armor': '2'}
+item_ring_of_regen {'ItemCost': '175', 'ItemShopTags': 'regen_health'} {'bonus_health_regen': '1.25'}
+item_sobi_mask {'ItemCost': '175', 'ItemShopTags': 'regen_mana'} {'bonus_mana_regen': '0.7'}
+item_energy_booster {'ItemCost': '800', 'ItemShopTags': 'mana_pool'} {'bonus_mana': '250'}
+item_dragon_lance {'ItemCost': '2000', 'ItemShopTags': 'damage'} {'bonus_agility': '15', 'bonus_strength': '10', 'base_attack_range': '130', 'base_attack_range_melee': '0'}
+item_recipe_dragon_lance {'ItemCost': '550', 'ItemRequirements': {'01': 'item_blade_of_alacrity;item_belt_of_strength'}, 'ItemShopTags': ''} {}
+item_yasha {'ItemCost': '2100', 'ItemShopTags': 'agi;attack_speed;move_speed'} {'bonus_agility': '16', 'bonus_attack_speed': '15', 'movement_speed_percent_bonus': '10'}
+item_recipe_yasha {'ItemCost': '650', 'ItemRequirements': {'01': 'item_blade_of_alacrity;item_boots_of_elves'}, 'ItemShopTags': ''} {}
+item_mask_of_madness {'ItemCost': '1900', 'AbilityCooldown': '16.0', 'AbilityManaCost': '25', 'ItemShopTags': 'unique;hard_to_tag;farming;dps'} {'bonus_damage': '20', 'lifesteal_percent': '22', 'berserk_bonus_attack_speed': '100', 'berserk_bonus_movement_speed_melee': '12', 'berserk_bonus_movement_speed': '6', 'berserk_armor_reduction': '7', 'berserk_slow_resist_melee': '30', 'berserk_slow_resist': '15', 'berserk_duration': '6.0'}
+item_recipe_mask_of_madness {'ItemCost': '0', 'ItemRequirements': {'01': 'item_broadsword;item_lifesteal'}, 'ItemShopTags': ''} {}
+item_lifesteal {'ItemCost': '900', 'ItemShopTags': 'unique'} {'lifesteal_percent': '18'}
+item_blade_of_alacrity {'ItemCost': '1000', 'ItemShopTags': 'agi'} {'bonus_agility': '10'}
+item_splintmail {'ItemCost': '950', 'ItemShopTags': 'armor'} {'bonus_armor': '7'}
+item_tango {'ItemCost': '90', 'AbilityCastRange': '165', 'AbilityCastPoint': '0.0', 'ItemInitialCharges': '3', 'ItemShopTags': 'consumable;laning'} {'health_regen': '7.0', 'buff_duration': '16.0', 'tooltip_charges': '3'}
+item_flask {'ItemCost': '100', 'AbilityCastRange': '250', 'AbilityCastPoint': '0.0', 'ItemInitialCharges': '1', 'ItemShopTags': 'consumable;laning'} {'buff_duration': '13', 'health_regen': '30', 'break_on_hero_damage': '1'}
+item_clarity {'ItemCost': '60', 'AbilityCastRange': '250', 'AbilityCastPoint': '0.0', 'ItemInitialCharges': '1', 'ItemShopTags': 'consumable;laning'} {'mana_regen': '6', 'buff_duration': '25'}
+item_faerie_fire {'ItemCost': '65', 'AbilityCooldown': '5.0', 'AbilityCastPoint': '0.0', 'ItemInitialCharges': '1', 'ItemShopTags': 'damage'} {'bonus_damage': '2', 'hp_restore': '85'}

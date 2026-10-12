@@ -1,0 +1,372 @@
+=================== Wraith_Band
+{{Item infobox
+| title = Wraith Band
+| image = Wraith Band itemicon dota2 gameasset.png
+| lore = A circlet with faint whispers echoing about it.
+| modifier = modifier_item_wraith_band
+| intern = item_wraith_band
+
+| type = Accessories
+| base = True
+| secret = False
+| neutral = False
+
+| bonus strength = 2
+| bonus agility = 5
+| bonus intelligence = 2
+| bonus armor = 1.75
+| bonus attack speed = 6
+
+| recipe 1 = Circlet
+| recipe 2 = Slippers of Agility
+| recipe cost = 210
+
+=================== Bracer
+{{Item infobox
+| title = Bracer
+| image = Bracer itemicon dota2 gameasset.png
+| lore = The bracer is a common choice to toughen up defenses and increase longevity.
+| modifier = modifier_item_bracer
+| intern = item_bracer
+
+| type = Accessories
+| base = True
+| secret = False
+| neutral = False
+
+| bonus strength = 5
+| bonus agility = 2
+| bonus intelligence = 2
+| bonus health = 50
+| bonus health regen = 0.75
+
+| recipe 1 = Circlet
+| recipe 2 = Gauntlets of Strength
+| recipe cost = 210
+
+=================== Null_Talisman
+{{Item infobox
+| title = Null Talisman
+| image = Null Talisman itemicon dota2 gameasset.png
+| lore = A small gemstone attached to several chains.
+| modifier = modifier_item_null_talisman
+| intern = item_null_talisman
+
+| type = Accessories
+| base = True
+| secret = False
+| neutral = False
+
+| bonus strength = 2
+| bonus agility = 2
+| bonus intelligence = 5
+| bonus mana = 3%
+| bonus mana regen = 1
+
+| recipe 1 = Circlet
+| recipe 2 = Mantle of Intelligence
+| recipe cost = 210
+
+=================== Desolator
+{{Item infobox
+| title = Desolator
+| image = Desolator itemicon dota2 gameasset.png
+| lore = A wicked weapon, used in torturing political criminals.
+| modifier = modifier_item_desolator
+| intern = item_desolator
+
+| type = Weapons
+| base = True
+| secret = False
+| neutral = False
+
+| passive = Corruption
+| passive2 = Soul Stealer
+
+| bonus attack damage = 55
+
+| recipe 1 = Mithril Hammer
+| recipe 2 = Mithril Hammer
+| recipe 3 = Orb of Blight
+
+target0 = Passive
+desc0 = The wielder's successful attack applies an armor reduction debuff on the affected enemy unit.
+trait1 = Armor Reduction
+value1 = 6
+trait2 = Duration
+value2 = 7
+target0 = Passive
+desc0 = Increases the item's bonus attack damage per debuff-affected enemy hero killed by Corruption.
+trait1 = Max Stacks
+value1 = 30
+trait2 = Stack per Kill
+value2 = 2
+trait3 = Attack Damage Bonus per Stack
+value3 = 1
+desc = Non-functional.<br><br>However, they copy the item's stack value upon creation for camouflaging purposes.
+=================== Magic_Wand
+{{Item infobox
+| title = Magic Wand
+| image = Magic Wand itemicon dota2 gameasset.png
+| lore = A simple wand used to channel magic energies, it is favored by apprentice wizards and great warlocks alike.
+| modifier = modifier_item_magic_wand
+| intern = item_magic_wand
+
+| type = Accessories
+| base = True
+| secret = False
+| neutral = False
+
+| active = Energy Charge
+
+| bonus strength = 3
+| bonus agility = 3
+| bonus intelligence = 3
+
+| used in 1 = Holy Locket
+| recipe 1 = Magic Stick
+| recipe 2 = Iron Branch
+| recipe 3 = Iron Branch
+| recipe cost = 150
+
+target0 = No
+desc0 = Uses up all charges to instantly heal and replenish the caster's health and mana based on the number of charges.
+trait1 = Max Charges
+value1 = {{#var:Energy Charge charges}}
+trait2 = Heal per Charge
+value2 = 15
+trait3 = Mana Restore per Charge
+value3 = {{#var:Energy Charge value2}}
+target1 = Passive
+desc1 = Has no recharge time. Cooldown resetting effects do not restore charges.<br>Instead, gains a charge whenever a visible enemy casts an ability nearby.
+type1 trait1 = Radius
+type1 value1 = 1200
+type1 trait2 = Charge Gain per Ability Cast
+type1 value2 = 1
+target2 = Passive
+desc2 = When upgraded to {{I|Holy Locket}}, all the current charges are carried over.
+mp = 0
+cd = 15
+charges = 20
+=================== Power_Treads
+{{Item infobox
+| game = Dota 2 Hidden
+| title = Power Treads
+| image1 = Power Treads itemicon dota2 gameasset.png
+| image2 = Power Treads (Strength) itemicon dota2 gameasset.png
+| image3 = Power Treads (Agility) itemicon dota2 gameasset.png
+| image4 = Power Treads (Intelligence) itemicon dota2 gameasset.png
+| lore = A pair of tough-skinned boots that change to meet the demands of the wearer.
+| modifier = modifier_item_power_treads
+| intern = item_power_treads
+
+| type = Accessories
+| base = True
+| secret = False
+| neutral = False
+
+| active = Switch Attribute
+
+| bonus movement speed flat ranged = 45
+| bonus movement speed flat melee = 55
+| bonus attack speed = 25
+
+| recipe 1 = Boots of Speed
+| recipe 2 = Gloves of Haste
+| recipe 3 = Belt of Strength
+
+target0 = No
+desc0 = Switches between granting {{M|strength}}, {{M|agility}}, and {{M|intelligence}}.
+trait1 = Selected Attribute Bonus
+value1 = 10
+target1 = Passive
+desc1 = Meepo Clones cannot cast this ability. However, the Clones instantly update their switched attribute whenever the Prime switches the item's attributes.
+cd = 0
+=================== Phase_Boots
+{{Item infobox
+| title = Phase Boots
+| image = Phase Boots itemicon dota2 gameasset.png
+| lore = Boots that allow the wearer to travel between the ether.
+| modifier = modifier_item_phase_boots
+| intern = item_phase_boots
+
+| type = Accessories
+| base = True
+| secret = False
+| neutral = False
+
+| active = Phase
+
+| bonus attack damage melee = 18
+| bonus attack damage ranged = 12
+| bonus armor = 4
+| bonus movement speed flat = 50
+
+| recipe 1 = Boots of Speed
+| recipe 2 = Chainmail
+| recipe 3 = Blades of Attack
+
+target0 = No
+desc0 = Increases the wielder's movement speed, and grants them phased movement for a while.
+trait1 = Move Speed Bonus
+value1 = 10%
+trait2 = Duration
+value2 = 3
+target1 = Passive
+desc1 = Grants even more movement speed, and greatly improves the turn rate if the wielder is melee.
+type1 trait1 = Move Speed Bonus
+type1 value1 = 20%
+type1 trait2 = Set Turn Rate
+type1 value2 = 1
+mp = 0
+cd = 8
+=================== Black_King_Bar
+| title = Black King Bar
+| active = Avatar
+| bonus strength = 10
+| bonus attack damage = 24
+| recipe 1 = Ogre Axe
+| recipe 2 = Mithril Hammer
+| recipe cost = 1450
+  trait1 = Magic Resist Bonus
+  value1 = 60%
+  cd = 95
+  mp = 50
+=================== Blink_Dagger
+| title = Blink Dagger
+| active = Blink
+| used in 1 = Overwhelming Blink
+| used in 2 = Swift Blink
+| used in 3 = Arcane Blink
+  trait1 = Max Blink Distance
+  value1 = 1200
+  cd = 15
+  mp = 0
+=================== Battle_Fury
+| title = Battle Fury
+| active = Chop Tree
+| passive = Quell
+| passive2 = Cleave
+| bonus attack damage = 50
+| bonus health regen = 7.5
+| bonus mana regen = 2.75
+| recipe 1 = Perseverance
+| recipe 2 = Broadsword
+| recipe 3 = Broadsword
+| recipe 4 = Quelling Blade
+| recipe cost = 400
+  cd = 3
+  trait1 = Attack Damage Bonus
+  value1 = 8
+  trait1 = Starting Radius
+  value1 = 150
+  trait2 = Distance
+  value2 = 650
+  trait3 = End Radius
+  value3 = 360
+  trait4 = Cleave Damage
+  value4 = 60%
+=================== Maelstrom
+| title = Maelstrom
+| passive = Chain Lightning
+| bonus attack damage = 25
+| bonus attack speed = 25
+| used in 1 = Mjollnir
+| recipe 1 = Mithril Hammer
+| recipe 2 = Javelin
+| recipe 3 = Gloves of Haste
+  trait1 = Proc Chance
+  value1 = 25%
+  trait2 = Bounce Distance
+  value2 = 650
+  trait3 = Number of Bounces
+  value3 = 4
+  trait4 = Bounce Interval
+  value4 = 0.25
+  trait5 = Damage
+  value5 = 110
+  cd = 0.2
+=================== Arcane_Boots
+| title = Arcane Boots
+| active = Replenish Mana
+| passive = Basilius Aura
+| bonus movement speed flat = 45
+| bonus mana regen = 0.25
+| bonus mana = 125
+| used in 1 = Guardian Greaves
+| recipe 1 = Boots of Speed
+| recipe 2 = Ring of Basilius
+| recipe 3 = Wizard Hat
+| recipe cost = 325
+  trait1 = Radius
+  value1 = 1200
+  trait2 = Mana Replenished
+  value2 = 150
+  mp = 0
+  cd = 55
+  trait1 = Radius
+  value1 = 1200
+  trait2 = Mana Regeneration Bonus
+  value2 = 1
+  trait3 = Aura Linger Duration
+  value3 = 0.5
+=================== Hand_of_Midas
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+=================== Aghanim%27s_Scepter
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+=================== Blade_Mail
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+=================== Orb_of_Blight
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lemon PC\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

@@ -96,7 +96,7 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 ## Channelling, forced movement, lifesteal
 
 * Channels (Town Portal, Burst Shot): mana and cooldown are spent when the channel starts. Any new order ends it
-  (move, attack, stop, hold, another cast), except an item that acts at once without a target (Spark Rod). Stuns,
+  (move, attack, stop, hold, another cast), except an item that acts at once without a target (Zap Stick). Stuns,
   silence, roots and pushes end it too. Shift-queued orders wait until it finishes. The HUD shows a channel bar.
 * Forced movement: a push (Dark Stomp, Gale Impact) disables the unit while it flies; Blood Ranger's back leap does
   not (she keeps her orders and can attack, but cannot walk until she lands).
@@ -112,7 +112,7 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
   from 350, 4 s cooldown, no cast point.
 * Vegan Picker (Tango): 90 gold for 3; eats a tree within 165 for 7 HP/s over 16 s (32 s on a planted tree); a new
   one refreshes the buff.
-* Ironwood Twig (Iron Branch): Plant Tree within 400, consumed; the planted tree stands 20 s, never regrows, cannot be
+* Tree Twig (Iron Branch): Plant Tree within 400, consumed; the planted tree stands 20 s, never regrows, cannot be
   planted in the fountain area, and units standing on its cell step aside.
 
 ## Vision (`sim_vision.gd`)
@@ -121,8 +121,47 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 * Heroes see 1800 by day and 800 by night. Tier 1 towers see 1900 by day and 800 by night; higher-tier towers see 1100 at night.
 * Units outside your team's vision cannot be targeted or seen. Buildings stay drawn in the fog.
 
-## Items and shop
+## Items and shop (`sim_shop.gd`, `sim_items.gd`)
 
-* Stats come from `items.txt`, with original names. Recipes combine automatically.
+* Stats, prices, recipes, actives and passives come from Dota 7.41d `items.txt`, checked against Liquipedia
+  (`work/lemondev/2026-10-13-sludge-items/research/`). Names are ours.
 * Inside the base shop's radius, purchases go straight to the inventory. Elsewhere they go to the stash, which empties into your bags when you return.
 * Full refund within 10 s of buying, half after that.
+* Recipes: an item with a recipe cost needs its scroll ("Recipe: X"), bought like any item. Parts combine on their own
+  the moment the last one arrives: in the inventory, in the stash alone, or across both while in the base. The result
+  takes the first part's slot. Buying a finished item buys only the parts (and scroll) you are missing, and is undone
+  when the result would not fit. Switch Boots have three recipes; the third part sets the starting attribute.
+* Boot speed does not stack (the fastest pair counts). Auras from two copies of an item do not stack; auras refresh
+  every 6 ticks and linger 0.5 s. Random procs roll only when the item is carried, so replays stay exact.
+* Spell Shield: debuff immunity, 60% magic resistance and a basic dispel for 9 s, one second less each use down to 7.
+  Jump Knife: 1200 range (farther points land 960 toward them), off for 3 s after damage from an enemy hero. Push
+  Staff: 600 over 0.5 s the way the target faces, not a disable, cuts trees. Cleave Axe (melee only): 60% of the attack
+  to other enemies in a cone (150 wide at the attacker, 360 wide 650 away), 40% to creeps, ignoring armor. Shock
+  Hammer: 25% for 110 magic damage chaining to 4 enemies within 650. Armor Breaker: -6 armor for 7 s, +2 damage per
+  hero kill (+1 per assist, up to 30). Spike Armor: returns 10 + 15% of attacks; active returns 85% of all damage for
+  5.5 s. Block Shield: 60% chance to block 50 (25 ranged). Sneak Blade: invisible after 0.3 s for 17 s, +20% speed, the
+  breaking attack deals 175 extra. Gold Glove: kills a non-ancient enemy creep for 160 gold, 2 charges, 90 s each.
+
+| Our name | Dota 2 | Our name | Dota 2 |
+|---|---|---|---|
+| Tough Band | Bracer | Spell Shield | Black King Bar |
+| Smart Band | Null Talisman | Jump Knife | Blink Dagger |
+| Swift Band | Wraith Band | Cleave Axe | Battle Fury |
+| Zap Wand | Magic Wand | Shock Hammer | Maelstrom |
+| Switch Boots | Power Treads | Gold Glove | Hand of Midas |
+| Slip Boots | Phase Boots | Spike Armor | Blade Mail |
+| Mana Boots | Arcane Boots | Upgrade Staff | Aghanim's Scepter |
+| Armor Breaker | Desolator | Upgrade Gem | Aghanim's Shard |
+| Push Staff | Force Staff | Sneak Blade | Shadow Blade |
+| Block Shield | Vanguard | Medic Kit | Mekansm |
+| Mana Ring | Ring of Basilius | Leaf Hat | Headdress |
+| Steady Ring | Perseverance | Greatsword | Claymore |
+| Steel Hammer | Mithril Hammer | Spear | Javelin |
+| Giant Axe | Ogre Axe | Rust Stone | Blight Stone |
+| Big Healing Ring | Ring of Health | Mana Stone | Void Stone |
+| Health Crystal | Vitality Booster | Big Gem | Point Booster |
+| Wizard Staff | Staff of Wizardry | Pointy Hat | Wizard Hat |
+| Sneak Charm | Shadow Amulet | Brass Knuckles | Blitz Knuckles |
+| Fur Hat | Fluffy Hat | Plate Vest | Splintmail |
+| Mini-Axe | Quelling Blade | Vegan Picker | Tango |
+| Tree Twig | Iron Branch | Frenzy Mask | Mask of Madness |
