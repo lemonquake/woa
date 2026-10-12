@@ -16,6 +16,11 @@ const MODELS := {
 		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
 		"death": "death", "R": "greatsword", "L": "", "bar": 2.4, "hero": true, "weapon_tint": Color(0.5, 0.44, 0.62),
 		"weapon_glow": Color(0.55, 0.2, 1.0), "swing_trail": true},
+	# Sludge: his own body (tools/blender/sludge.py) on the hero skeleton; cleaver right, shuriken hook left
+	"hero_sludge": {"scene": "res://assets/characters/hero/sludge.glb", "scale": 1.22, "attack": ["axe_1", "axe_2", "axe_3"],
+		"cast": "cast_quick", "idle": "idle_1h", "run": "hero_run", "run_female": "hero_run", "run_min": 0.72,
+		"death": "death", "R": "cleaver", "L": "shuriken_hook", "bar": 2.95, "skin_shader": "res://src/game/sludge_skin.gdshader",
+		"gear_materials": true, "swing_trail": true},
 	"dawn_melee": {"scene": UNITS + "knight.glb", "scale": 0.86, "attack": ["sword_1", "sword_2", "sword_3"], "idle": "idle_shield",
 		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88)},
 	"dawn_ranged": {"scene": UNITS + "mage.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",

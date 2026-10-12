@@ -86,6 +86,8 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		appearance = HeroAppearance.new(model)
 		appearance.apply(u.look.get("look", {}))
 		appearance.dress(u.look.get("outfit", {}), u.look.get("dyes", {}))
+	if cfg.has("skin_shader"):
+		_skin(model, String(cfg.skin_shader))
 	_weapons()
 	if cfg.has("tint"):
 		_tint(cfg.tint)
@@ -93,7 +95,7 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		_faction_colors(u.team)
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
-		if not is_hero:
+		if not is_hero or cfg.get("gear_materials", false):
 			GearMaterials.apply(mi)
 	_make_ring(u)
 	var shade := MeshInstance3D.new()
@@ -104,6 +106,29 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	shade.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(shade)
 	_play(String(cfg.idle), true)
+
+## A hero with its own body (Sludge) outside a match (Hero Select): skin shader and textured gear.
+static func dress_own_body(m: Node3D, c: Dictionary) -> void:
+	if c.has("skin_shader"):
+		_skin(m, String(c.skin_shader))
+	if c.get("gear_materials", false):
+		for mi in m.find_children("*", "MeshInstance3D", true, false):
+			GearMaterials.apply(mi)
+
+## A hero with its own body (Sludge): its skin surfaces get the hero's skin shader.
+static func _skin(model: Node3D, path: String) -> void:
+	var sh := load(path) as Shader
+	if sh == null:
+		return
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	for mi: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+		if mi.mesh == null:
+			continue
+		for i in mi.mesh.get_surface_count():
+			var src := mi.mesh.surface_get_material(i)
+			if src and src.resource_name.begins_with("SludgeSkin"):
+				mi.set_surface_override_material(i, m)
 
 func _weapons() -> void:
 	if skeleton == null:

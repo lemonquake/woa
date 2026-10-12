@@ -15,6 +15,9 @@ const INFO := {
 	"ezee": {"title": "the Dark Paladin", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
 		"accent": Color(0.66, 0.3, 1.0), "flourish": "boss_roar", "idle": "idle_2h",
 		"story": "Once a knight of the Ancient Light, Ezee broke his word to win a war the light was losing. The shadow he bargained with still answers when he calls, and it is always hungry."},
+	"sludge": {"title": "the Butcher", "role": "Melee  ·  Strength  ·  Disabler, Initiator, Durable, Nuker",
+		"accent": Color(0.55, 0.78, 0.3), "flourish": "hero_axe_smash", "idle": "idle_1h",
+		"story": "Sludge works the fields after every battle, hauling the fallen away on his chain. Nothing he catches gets away, and everything he eats makes him bigger."},
 }
 
 var vp: SubViewport
@@ -32,6 +35,7 @@ var _right: VBoxContainer
 var _tip: PanelContainer
 var _tip_label: RichTextLabel
 var _opp: OptionButton
+var _cust: Button
 var _t := 0.0
 var _capture_path := ""
 var _frames := 0
@@ -47,6 +51,8 @@ func _ready() -> void:
 			_capture_path = a.substr(10)
 		elif a.begins_with("--pick="):
 			GameSettings.select(a.substr(7))
+		elif a.begins_with("--yaw="):
+			_yaw = float(a.substr(6))
 		elif a == "--match":
 			# exported builds cannot take a scene path: this jumps straight into a match (automation, smoke tests)
 			get_tree().change_scene_to_file.call_deferred(MATCH)
@@ -190,21 +196,30 @@ void fragment() {
 func _spawn_model(id: String) -> void:
 	if model:
 		model.queue_free()
-	model = (load(HeroLook.MODEL) as PackedScene).instantiate()
+	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
+	var own := id in GameSettings.OWN_BODY
+	model = (load(String(cfg.scene) if own else HeroLook.MODEL) as PackedScene).instantiate()
 	stage.add_child(model)
 	model.rotation.y = _yaw
 	model.position.x = 0.0
 	var anims := model.find_children("*", "AnimationPlayer", true, false)
 	anim = anims[0] if not anims.is_empty() else null
-	var app := HeroAppearance.new(model)
-	var look: Dictionary = GameSettings.look_for(id).duplicate(true)
-	for a in OS.get_cmdline_user_args():
-		if a.begins_with("--armor="):
-			look.outfit["armor"] = a.substr(8)
-	app.apply(look.look)
-	app.dress(look.outfit, look.dyes)
-	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
-	var sk := app.skeleton
+	var sk: Skeleton3D = null
+	if own:
+		# a hero with its own body (Sludge): its skin shader and textured gear, scaled down to fit the stage
+		model.scale = Vector3.ONE * 0.92
+		var sks := model.find_children("*", "Skeleton3D", true, false)
+		sk = sks[0] if not sks.is_empty() else null
+		UnitView.dress_own_body(model, cfg)
+	else:
+		var app := HeroAppearance.new(model)
+		var look: Dictionary = GameSettings.look_for(id).duplicate(true)
+		for a in OS.get_cmdline_user_args():
+			if a.begins_with("--armor="):
+				look.outfit["armor"] = a.substr(8)
+		app.apply(look.look)
+		app.dress(look.outfit, look.dyes)
+		sk = app.skeleton
 	for side in ["R", "L"]:
 		var ps := ModelCatalog.weapon(String(cfg.get(side, "")))
 		if sk and ps and sk.find_bone("weapon." + side) >= 0:
@@ -332,6 +347,7 @@ func _build_ui() -> void:
 		GameSettings.save()
 		get_tree().change_scene_to_file(CREATOR))
 	bar.add_child(cust)
+	_cust = cust
 	var play := Button.new()
 	play.text = "Play"
 	play.custom_minimum_size = Vector2(260, 58)
@@ -406,6 +422,9 @@ func _select(id: String, flourish: bool) -> void:
 	ring_mat.emission = info.accent
 	_spawn_model(id)
 	_fill_right(id)
+	if _cust:
+		_cust.disabled = id in GameSettings.OWN_BODY
+		_cust.tooltip_text = "%s has his own body and cannot be customized" % String(SimData.unit(id).name) if _cust.disabled else ""
 
 func _fill_right(id: String) -> void:
 	for c in _right.get_children():

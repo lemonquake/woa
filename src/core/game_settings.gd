@@ -5,7 +5,9 @@ extends RefCounted
 ## {slot: {cloth, trim, leather, metal, gold}}. Saved to user://hero.json and read by the match.
 
 const PATH := "user://hero.json"
-const HEROES := ["blood_ranger", "ezee"]
+const HEROES := ["blood_ranger", "ezee", "sludge"]
+## Heroes with their own body: no Hero Creator look, outfit or dyes.
+const OWN_BODY := ["sludge"]
 
 static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id
@@ -15,6 +17,8 @@ static var custom := {}                    # hero ids whose look was changed in 
 static var _loaded := false
 
 static func default_look(id: String) -> Dictionary:
+	if id in OWN_BODY:
+		return {"display_name": String(SimData.unit(id).get("name", id)), "look": {}, "outfit": {}, "dyes": {}}
 	if id == "ezee":
 		var look := HeroLook.preset("veteran")
 		look.merge({"hair": "slick", "hair_color": "141016", "beard": "full", "beard_length": 0.7, "stubble": 0.6,
@@ -102,6 +106,8 @@ static func _load() -> void:
 static func _sanitize(d: Dictionary, id: String) -> Dictionary:
 	var out := default_look(id)
 	out["display_name"] = String(d.get("display_name", out.display_name)).substr(0, 24)
+	if id in OWN_BODY:
+		return out
 	out["look"] = HeroLook.sanitize(d.get("look", {}))
 	var outfit := {}
 	var cat := HeroAppearance.catalog()

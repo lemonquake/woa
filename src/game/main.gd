@@ -181,6 +181,10 @@ func _spawn_heroes() -> void:
 
 ## The bot's appearance: the hero's default look in Dusk colours.
 static func bot_look(id: String) -> Dictionary:
+	if id in GameSettings.OWN_BODY:
+		var o := GameSettings.default_look(id)
+		o.display_name = "Bot Gerald"
+		return o
 	if id == "ezee":
 		var e := GameSettings.default_look("ezee")
 		e.display_name = "Bot Gerald"

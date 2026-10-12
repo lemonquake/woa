@@ -26,7 +26,9 @@ const ITEM_ICONS := {
 }
 const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
 	"masterful_archery": "skills/deadeye", "blood_ranger_ult": "skills/bs_blood_eclipse", "dark_stomp": "skills/tempo_wd_quake",
-	"leap_strike": "skills/leap_slam", "tainted_touch": "skills/shadow_curse", "unholy_might": "skills/dg_black_dominion"}
+	"leap_strike": "skills/leap_slam", "tainted_touch": "skills/shadow_curse", "unholy_might": "skills/dg_black_dominion",
+	"shuriken_hook": "skills/crippling_star", "stench": "skills/venomcraft", "blubber": "skills/iron_skin",
+	"chomp": "skills/eviscerate", "growing_gut": "skills/toughness"}
 
 static var _fonts := {}
 static var _icons := {}
