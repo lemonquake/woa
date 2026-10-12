@@ -1189,6 +1189,47 @@ func test_keybinds_swap_and_templates() -> void:
 		all[Keybinds.binds[a]] = true
 	Keybinds.binds = saved
 
+func test_keybind_combinations() -> void:
+	Keybinds.load_all()
+	var saved: Dictionary = Keybinds.binds.duplicate()
+	Keybinds.binds = Keybinds.defaults()
+	var ev := InputEventKey.new()
+	ev.keycode = KEY_Q
+	ev.pressed = true
+	ev.ctrl_pressed = true
+	var m := Keybinds.match_event(ev)
+	check(m.action == "ability_1" and m.learn, "Ctrl + Q learns ability 1 while Ctrl + Q is unbound")
+	ev.ctrl_pressed = false
+	ev.shift_pressed = true
+	m = Keybinds.match_event(ev)
+	check(m.action == "ability_1" and not m.learn, "Shift + Q is still ability 1 (Shift only queues)")
+	var alt1 := InputEventKey.new()
+	alt1.keycode = KEY_1
+	alt1.alt_pressed = true
+	alt1.pressed = true
+	Keybinds.assign("item_1", Keybinds.binding_of(alt1))
+	check(Keybinds.action_for(alt1) == "item_1" and Keybinds.key_name("item_1") == "Alt + 1", "Alt + 1 binds an item")
+	var plain1 := InputEventKey.new()
+	plain1.keycode = KEY_1
+	plain1.pressed = true
+	check(Keybinds.action_for(plain1) == "", "plain 1 stays free for control groups")
+	var cq := InputEventKey.new()
+	cq.keycode = KEY_Q
+	cq.ctrl_pressed = true
+	cq.pressed = true
+	Keybinds.assign("shop", Keybinds.binding_of(cq))
+	m = Keybinds.match_event(cq)
+	check(m.action == "shop" and not m.learn, "a bound Ctrl + Q wins over learning")
+	var c1 := InputEventKey.new()
+	c1.keycode = KEY_1
+	c1.ctrl_pressed = true
+	check(Keybinds.refuse(Keybinds.binding_of(c1)) != "", "Ctrl + 1 is refused (control groups)")
+	var bare := InputEventKey.new()
+	bare.keycode = KEY_CTRL
+	bare.ctrl_pressed = true
+	check(Keybinds.binding_of(bare) == 0, "a bare modifier is not a binding")
+	Keybinds.binds = saved
+
 func test_debug_helpers() -> void:
 	var w := world(C.PREGAME_TIME)
 	var h := w.spawn_hero("blood_ranger", C.DAWN, {})
@@ -1218,6 +1259,39 @@ func test_debug_helpers() -> void:
 	SimDebug.set_flag(w, "reveal", true)
 	check(w.vision.cell_visible(C.DAWN, Vector2(6000, 6000)), "reveal shows the enemy base")
 	SimDebug.set_flag(w, "reveal", false)
+
+func test_shift_queue() -> void:
+	# Dota: Shift-queued orders run one after another; a queued order that cannot run (spell on cooldown) is skipped
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var p1 := Vector2(-1700, -4000)
+	var p2 := Vector2(-1700, -3700)
+	var p3 := Vector2(-2000, -3700)
+	w.command(e.id, {"type": O.MOVE, "point": p1})
+	w.command(e.id, {"type": O.MOVE, "point": p2, "queue": true})
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp", "queue": true})
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp", "queue": true})   # will be on cooldown: skipped
+	w.command(e.id, {"type": O.MOVE, "point": p3, "queue": true})
+	check(e.order_queue.size() == 4, "four orders wait in the queue (%d)" % e.order_queue.size())
+	var visited_p2 := false
+	var stomped_at := Vector2.INF
+	for i in int(8.0 * C.TICK_RATE):
+		w.step()
+		if e.pos.distance_to(p2) < 30.0:
+			visited_p2 = true
+		for ev in w.events:
+			if ev.t == "stomp" and stomped_at == Vector2.INF:
+				stomped_at = e.pos
+		w.events.clear()
+	check(visited_p2, "the second waypoint is reached")
+	check(stomped_at != Vector2.INF and stomped_at.distance_to(p2) < 60.0, "the queued spell is cast at the second waypoint")
+	check(e.pos.distance_to(p3) < 30.0, "the queue carries on past the spell that was still cooling down to the last waypoint")
+	check(e.order_queue.is_empty(), "the queue is empty at the end")
+	# a new order without Shift replaces the whole queue
+	w.command(e.id, {"type": O.MOVE, "point": p1})
+	w.command(e.id, {"type": O.MOVE, "point": p2, "queue": true})
+	w.command(e.id, {"type": O.MOVE, "point": p3})
+	check(e.order_queue.is_empty() and e.order_point == p3, "an order without Shift clears the queue")
 
 func test_gale_impact() -> void:
 	var w := empty_world()

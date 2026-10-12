@@ -155,9 +155,9 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif e is InputEventMouseButton:
 		var mb := e as InputEventMouseButton
 		if mb.pressed and mb.button_index in [MOUSE_BUTTON_XBUTTON1, MOUSE_BUTTON_XBUTTON2]:
-			var act := Keybinds.action_for(mb)
-			if act != "":
-				_action(act, h, mb.ctrl_pressed)
+			var mm := Keybinds.match_event(mb)
+			if String(mm.action) != "":
+				_action(String(mm.action), h, bool(mm.learn), mb.shift_pressed)
 			return
 		if mb.button_index == MOUSE_BUTTON_RIGHT and not mb.pressed:
 			_rmb_held = false
@@ -263,7 +263,8 @@ func _box_select(r: Rect2, shift: bool) -> void:
 
 func _key(k: InputEventKey, h: SimUnit) -> void:
 	var w: SimWorld = game.world
-	var act := Keybinds.action_for(k)
+	var m := Keybinds.match_event(k)
+	var act := String(m.action)
 	# control groups: Ctrl+1..9 stores your selected units, 1..9 recalls them (unless the digit is a hotkey),
 	# a double tap centres on them
 	if k.keycode >= KEY_1 and k.keycode <= KEY_9 and (k.ctrl_pressed or act == ""):
@@ -291,10 +292,11 @@ func _key(k: InputEventKey, h: SimUnit) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	if act != "":
-		_action(act, h, k.ctrl_pressed)
+		_action(act, h, bool(m.learn), k.shift_pressed)
 
-## Run a hotkey action (from a key or an extra mouse button). learn: Ctrl was held (Ctrl + ability key learns it).
-func _action(act: String, h: SimUnit, learn := false) -> void:
+## Run a hotkey action (from a key or an extra mouse button). learn: Ctrl + an ability's hotkey (learns it).
+## queue: Shift was held, so the order goes to the end of the hero's queue instead of replacing it (Dota).
+func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 	var w: SimWorld = game.world
 	if h == null:
 		return
@@ -311,7 +313,7 @@ func _action(act: String, h: SimUnit, learn := false) -> void:
 		"hold":
 			targeting = ""
 			if hero_selected():
-				w.command(h.id, {"type": O.HOLD})
+				w.command(h.id, {"type": O.HOLD, "queue": queue})
 		"attack":
 			if hero_selected():
 				targeting = "attack"
@@ -352,7 +354,7 @@ func _action(act: String, h: SimUnit, learn := false) -> void:
 		if learn:
 			w.abilities.learn(h, aid)
 		else:
-			begin_ability(aid)
+			begin_ability(aid, queue)
 		return
 	var ii := ITEM_ACTIONS.find(act)
 	if ii >= 0:
@@ -362,19 +364,23 @@ func _action(act: String, h: SimUnit, learn := false) -> void:
 				game.hud.toggle_shop()
 			return
 		if hero_selected():
-			use_item(ii)
+			use_item(ii, queue)
 
-func begin_ability(aid: String) -> void:
+## Start an ability: no-target spells are issued at once (queued with Shift), others enter targeting. A queued
+## spell may still be cooling down: the queue checks again when it reaches it.
+func begin_ability(aid: String, queue := false) -> void:
 	var h := hero()
 	var a := SimData.ability(aid)
 	var err: String = game.world.abilities.cast_error(h, aid, -1, null, h.pos)
+	if queue and err.ends_with("on cooldown"):
+		err = ""
 	if err != "" and err != "Must target an enemy unit":
 		if game.hud and game.hud.has_method("error"):
 			game.hud.error(err)
 		return
 	match String(a.behavior):
 		"no_target":
-			game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": aid})
+			game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": aid, "queue": queue})
 		"point", "unit", "autocast_attack":
 			targeting = aid
 
@@ -420,14 +426,14 @@ func move_selected(p: Vector2, shift := false) -> void:
 	if _courier_selected():
 		game.world.courier_move(hero(), p)
 
-func use_item(slot: int) -> void:
+func use_item(slot: int, queue := false) -> void:
 	var h := hero()
 	var it = h.inventory[slot]
 	if it == null:
 		return
 	var kind: String = game.world.abilities.item_target(it.id)
 	if kind == "none":
-		game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slot})
+		game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slot, "queue": queue})
 	else:
 		targeting = "item:%d" % slot
 
@@ -457,8 +463,8 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 				w.command(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
 		else:
 			w.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": ground, "queue": shift})
-	if not shift:
-		targeting = ""
+	# as in Dota, targeting ends after the click even with Shift held (press the hotkey again to queue another)
+	targeting = ""
 
 ## repeat: re-issued by holding the button. Repeats skip the ground marker and keep an order already aimed at the
 ## same unit (re-issuing an attack would restart its wind-up).

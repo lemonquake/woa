@@ -686,6 +686,15 @@ func _start_capture() -> void:
 		var dv := String(args.drag).split(",")
 		input.drag_rect = Rect2(float(dv[0]), float(dv[1]), float(dv[2]), float(dv[3]))
 		input._box_select(input.drag_rect, false)
+	if args.has("showqueue"):
+		# a Shift-queue demo: move, attack-move, a spell, then move back; the waypoints are drawn as if Shift were held
+		var qh := world.get_unit(player_hero_id)
+		var o0 := qh.pos
+		world.command(qh.id, {"type": C.Order.MOVE, "point": o0 + Vector2(500, 150)})
+		world.command(qh.id, {"type": C.Order.ATTACK_MOVE, "point": o0 + Vector2(900, 500), "queue": true})
+		world.command(qh.id, {"type": C.Order.CAST_POINT, "ability": qh.abilities[1], "point": o0 + Vector2(1300, 600), "queue": true})
+		world.command(qh.id, {"type": C.Order.MOVE, "point": o0 + Vector2(200, 650), "queue": true})
+		world.command(qh.id, {"type": C.Order.HOLD, "queue": true})
 	if args.has("pause"):
 		menus.toggle()
 	if args.has("endscreen"):

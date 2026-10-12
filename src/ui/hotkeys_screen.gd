@@ -52,7 +52,7 @@ func _ready() -> void:
 
 	var title := _label("Are you good to go?", 44, U.GOLD, "title")
 	root.add_child(title)
-	var sub := _label("These are your hotkeys for the match. Click a key and press a new one to change it (Esc cancels). A key that is already taken swaps places.", 17, U.TEXT_DIM)
+	var sub := _label("These are your hotkeys for the match. Click a key and press a new one to change it (Esc cancels); hold Ctrl and / or Alt for a combination such as Ctrl + Q or Alt + 1. A key that is already taken swaps places. Shift + any hotkey queues the order.", 17, U.TEXT_DIM)
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD
 	root.add_child(sub)
 
@@ -106,7 +106,7 @@ func _ready() -> void:
 	for g in order:
 		cols.add_child(_group_panel(g, groups[g]))
 
-	var fixed := _label("Fixed keys:  Ctrl + ability key learns it   ·   Shift queues orders   ·   Alt + click pings   ·   Ctrl + 1-9 sets a control group, 1-9 recalls it   ·   Esc or F10 opens the menu   ·   Hold right click to repeat the order", 15, U.TEXT_DIM)
+	var fixed := _label("Fixed keys:  Ctrl + ability key learns it (unless bound)   ·   Shift queues orders (hold it to see the queue)   ·   Alt + click pings   ·   Ctrl + 1-9 sets a control group, 1-9 recalls it   ·   Esc or F10 opens the menu   ·   Hold right click to repeat the order", 15, U.TEXT_DIM)
 	fixed.autowrap_mode = TextServer.AUTOWRAP_WORD
 	root.add_child(fixed)
 
@@ -206,11 +206,17 @@ func _input(e: InputEvent) -> void:
 			_refresh_keys()
 			get_viewport().set_input_as_handled()
 			return
-		if k.keycode in Keybinds.RESERVED:
-			_say("%s is reserved (menus and modifiers). Pick another key." % Keybinds.name_of(int(k.keycode)), Color(1.0, 0.45, 0.4))
+		if k.keycode in Keybinds.MODIFIER_KEYS:
+			# a modifier on its own: wait for the key it goes with (Shift stays the queue key)
+			_say("Hold Ctrl and / or Alt, then press the key. Shift queues orders, so it is not part of a hotkey.", U.GOLD)
 			get_viewport().set_input_as_handled()
 			return
 		bind = Keybinds.binding_of(k)
+		var why := Keybinds.refuse(bind)
+		if why != "":
+			_say(why + ". Pick another key.", Color(1.0, 0.45, 0.4))
+			get_viewport().set_input_as_handled()
+			return
 	elif e is InputEventMouseButton and e.pressed:
 		bind = Keybinds.binding_of(e)
 		if bind == 0:
@@ -222,11 +228,16 @@ func _input(e: InputEvent) -> void:
 	_listening = ""
 	var swapped := Keybinds.assign(act, bind)
 	Keybinds.save()
+	var learn_note := ""
+	if bind & KEY_MASK_CTRL:
+		var plain := Keybinds.action_for_binding(bind & ~KEY_MASK_CTRL)
+		if plain.begins_with("ability_"):
+			learn_note = "  (Ctrl + %s no longer learns %s: use its + button)" % [Keybinds.name_of(bind & ~KEY_MASK_CTRL), Keybinds.label(plain)]
 	if swapped != "":
-		_say("%s is now on %s; \"%s\" moved to %s" % [Keybinds.label(act), Keybinds.name_of(bind), Keybinds.label(swapped),
-			Keybinds.key_name(swapped)], Color(1.0, 0.85, 0.45))
+		_say("%s is now on %s; \"%s\" moved to %s%s" % [Keybinds.label(act), Keybinds.name_of(bind), Keybinds.label(swapped),
+			Keybinds.key_name(swapped), learn_note], Color(1.0, 0.85, 0.45))
 	else:
-		_say("%s is now on %s" % [Keybinds.label(act), Keybinds.name_of(bind)], Color(0.7, 1.0, 0.7))
+		_say("%s is now on %s%s" % [Keybinds.label(act), Keybinds.name_of(bind), learn_note], Color(0.7, 1.0, 0.7))
 	_refresh_keys()
 
 func _say(text: String, col: Color) -> void:

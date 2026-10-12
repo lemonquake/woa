@@ -38,9 +38,11 @@ func cancel_channel(u: SimUnit) -> void:
 		else:
 			w.events.append({"t": "channel_end", "u": u.id, "ability": aid, "cancelled": true})
 
-func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
+## Shift-queued orders (o.queue) wait at the end of the queue while the unit is busy; from_queue: this order was just
+## taken from the queue, so the rest of the queue stays.
+func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) -> void:
 	var type: int = o.get("type", O.NONE)
-	if o.get("queue", false) and (not u.is_idle() or not u.channel.is_empty()):
+	if o.get("queue", false) and (not u.is_idle() or not u.channel.is_empty() or not u.order_queue.is_empty()):
 		u.order_queue.append(o)
 		return
 	# any new order breaks a channel, except an item that acts at once without a target (Dota)
@@ -108,7 +110,8 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
 				u.last_seen = tgt.pos
 				u.orb_manual = aid
 				u.order_from_player = from_player
-				u.order_queue.clear()
+				if not from_queue:
+					u.order_queue.clear()
 				return
 			var slot := int(o.get("item_slot", -1))
 			var err := w.abilities.cast_error(u, aid, slot, tgt, o.get("point", u.pos))
@@ -128,7 +131,8 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
 		_:
 			return
 	u.order_from_player = from_player
-	u.order_queue.clear()
+	if not from_queue:
+		u.order_queue.clear()
 
 ## Why `u` may not attack `t` ("" = it may). An attack order on an ally is accepted: the unit follows it and only
 ## swings once the ally can be denied.
@@ -247,14 +251,20 @@ func update(u: SimUnit) -> void:
 		O.CAST_NO_TARGET, O.CAST_POINT, O.CAST_UNIT:
 			_order_cast(u)
 
+## The current order is done: start the next queued one. Orders that fail (a spell still on cooldown, a dead
+## target) or finish at once (instant items) are skipped over to the one after, as in Dota.
 func _finish_order(u: SimUnit) -> void:
 	u.order = O.NONE
 	u.order_target = -1
 	u.path = PackedVector2Array()
-	if not u.order_queue.is_empty():
+	var guard := 0
+	while not u.order_queue.is_empty() and guard < 32:
+		guard += 1
 		var nxt: Dictionary = u.order_queue.pop_front()
 		nxt.erase("queue")
-		issue(u, nxt, true)
+		issue(u, nxt, true, true)
+		if not u.is_idle() or not u.channel.is_empty() or u.order == O.HOLD:
+			return
 
 ## Idle or holding: attack whatever target the unit has (AI-chosen or auto-acquired), hold only within range.
 func _idle(u: SimUnit, hold: bool) -> void:

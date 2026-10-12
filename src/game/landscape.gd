@@ -50,6 +50,10 @@ func build(p_map: SimMap, p_terrain: TerrainBuilder, p_dressing: Dressing) -> vo
 		_plaza(team)
 		_road_dressing(team)
 		_gardens(team)
+	for team in [C.DAWN, C.DUSK]:
+		_stall(team)
+		_supplies(team)
+		_paving_edges(team)
 	_ramps()
 	_mountain_props()
 	_emit()
@@ -171,18 +175,33 @@ func _make_meshes() -> void:
 		# torch pillar: square shaft, capital and a fire bowl (the flame is a separate instance)
 		var pl := SurfaceTool.new()
 		pl.begin(Mesh.PRIMITIVE_TRIANGLES)
-		_box(pl, Vector3(0, -0.1, 0), Vector3(0.62, 0.4, 0.62))
-		_box(pl, Vector3(0, 0.75, 0), Vector3(0.42, 1.5, 0.42))
-		_box(pl, Vector3(0, 1.55, 0), Vector3(0.56, 0.16, 0.56))
-		_prism(pl, Vector3(0, 0, 0), 0.18, 1.63, 1.86, 8, 0.32)
+		_box(pl, Vector3(0, -0.15, 0), Vector3(0.78, 0.4, 0.78))
+		_box(pl, Vector3(0, 0.1, 0), Vector3(0.6, 0.16, 0.6))
+		_prism(pl, Vector3.ZERO, 0.2, 0.18, 1.75, 8, 0.17)
+		_prism(pl, Vector3.ZERO, 0.17, 1.75, 1.86, 8, 0.27)
+		_box(pl, Vector3(0, 1.9, 0), Vector3(0.5, 0.1, 0.5))
 		_meshes["pillar" + sfx] = _commit(pl, stone)
+		_shadow["pillar" + sfx] = true
+		var bowl := SurfaceTool.new()
+		bowl.begin(Mesh.PRIMITIVE_TRIANGLES)
+		_prism(bowl, Vector3.ZERO, 0.12, 1.95, 2.18, 10, 0.3)
+		for i in 4:
+			var a := TAU * i / 4.0 + 0.785
+			_box(bowl, Vector3(cos(a) * 0.27, 2.12, sin(a) * 0.27), Vector3(0.05, 0.22, 0.05))
+		var iron := StandardMaterial3D.new()
+		iron.albedo_color = Color(0.16, 0.14, 0.13) if team == C.DAWN else Color(0.1, 0.07, 0.07)
+		iron.metallic = 0.7
+		iron.roughness = 0.45
+		_meshes["bowl" + sfx] = _commit(bowl, iron)
+		_shadow["bowl" + sfx] = true
 		_shadow["pillar" + sfx] = true
 		# plaza border block and stair block
 		var bb := SurfaceTool.new()
 		bb.begin(Mesh.PRIMITIVE_TRIANGLES)
 		_box(bb, Vector3(0, 0, 0), Vector3(1, 1, 1))
-		var bm := _stone(team, "ph_rough_block_wall", 0.8, 0.0)
-		bm.set_shader_parameter("tint", Color(0.74, 0.73, 0.7) if team == C.DAWN else Color(0.36, 0.33, 0.36))
+		var bm := _stone(team, "ph_castle_brick_02_white", 0.45, 0.0)
+		bm.set_shader_parameter("tint", Color(0.8, 0.78, 0.74) if team == C.DAWN else Color(0.36, 0.33, 0.36))
+		bm.set_shader_parameter("side_dark", 0.42)
 		_meshes["block" + sfx] = _commit(bb, bm)
 		_shadow["block" + sfx] = true
 		# emblem slab
@@ -220,6 +239,60 @@ func _make_meshes() -> void:
 		cloth.material = cm
 		_meshes["cloth" + sfx] = cloth
 		_shadow["cloth" + sfx] = true
+		# quartermaster's stall: plank counter and posts, a striped cloth canopy, a patterned rug
+		var planks := ShaderMaterial.new()
+		planks.shader = BUILDING_SHADER
+		planks.set_shader_parameter("albedo_tex", load(TEX + "ph_weathered_planks_albedo.png"))
+		planks.set_shader_parameter("normal_tex", load(TEX + "ph_weathered_planks_normal.png"))
+		planks.set_shader_parameter("rough_tex", load(TEX + "ph_weathered_planks_rough.png"))
+		planks.set_shader_parameter("tint", Color(0.78, 0.6, 0.42) if team == C.DAWN else Color(0.4, 0.3, 0.28))
+		planks.set_shader_parameter("scale", 1.2)
+		planks.set_shader_parameter("blocks", 0.0)
+		planks.set_shader_parameter("base_y", -100.0)
+		var sl := SurfaceTool.new()
+		sl.begin(Mesh.PRIMITIVE_TRIANGLES)
+		_box(sl, Vector3(0, 0.45, 0.55), Vector3(3.2, 0.9, 0.7))
+		_box(sl, Vector3(0, 0.93, 0.55), Vector3(3.4, 0.08, 0.86))
+		for px in [-1.6, 1.6]:
+			for pz in [-0.9, 1.0]:
+				_box(sl, Vector3(px, 1.3, pz), Vector3(0.14, 2.6 if pz < 0.0 else 2.2, 0.14))
+		_box(sl, Vector3(-0.8, 0.35, -0.5), Vector3(1.0, 0.7, 0.8))
+		_meshes["stall" + sfx] = _commit(sl, planks)
+		_shadow["stall" + sfx] = true
+		var canopy := PlaneMesh.new()
+		canopy.size = Vector2(3.8, 2.4)
+		canopy.subdivide_width = 6
+		canopy.subdivide_depth = 4
+		var cs := ShaderMaterial.new()
+		cs.shader = BANNER_SHADER
+		cs.set_shader_parameter("cloth", Color(0.82, 0.74, 0.58) if team == C.DAWN else Color(0.35, 0.08, 0.1))
+		cs.set_shader_parameter("trim", Color(0.18, 0.36, 0.78) if team == C.DAWN else Color(0.1, 0.08, 0.08))
+		cs.set_shader_parameter("wind", 0.25)
+		cs.set_shader_parameter("emblem", 0.0)
+		cs.set_shader_parameter("stripes", 7.0)
+		cs.set_shader_parameter("notch", 0.0)
+		canopy.material = cs
+		var cst := SurfaceTool.new()
+		cst.create_from(canopy, 0)
+		var cmesh := cst.commit()
+		var cxf := Transform3D(Basis(Vector3(1, 0, 0), deg_to_rad(-14.0)), Vector3(0, 2.45, 0.05))
+		var cm2 := ArrayMesh.new()
+		var cst2 := SurfaceTool.new()
+		cst2.append_from(cmesh, 0, cxf)
+		cst2.commit(cm2)
+		cm2.surface_set_material(0, cs)
+		_meshes["canopy" + sfx] = cm2
+		_shadow["canopy" + sfx] = true
+		var rug := PlaneMesh.new()
+		rug.size = Vector2(1, 1)
+		var rm2 := ShaderMaterial.new()
+		rm2.shader = BANNER_SHADER
+		rm2.set_shader_parameter("cloth", Color(0.55, 0.16, 0.12) if team == C.DAWN else Color(0.18, 0.12, 0.2))
+		rm2.set_shader_parameter("trim", Color(0.92, 0.72, 0.36))
+		rm2.set_shader_parameter("wind", 0.0)
+		rm2.set_shader_parameter("notch", 0.0)
+		rug.material = rm2
+		_meshes["rug" + sfx] = rug
 		# flame
 		var q := QuadMesh.new()
 		q.size = Vector2(1, 1)
@@ -241,8 +314,14 @@ func _flame(p: Vector2, team: int, lift: float, size := 0.55) -> void:
 	flames.append([View.to3(p, 0.0) + Vector3(0, _h(p) + lift + size * 0.5, 0), team])
 
 func _pillar(p: Vector2, team: int, yaw := 0.0) -> void:
-	_put("pillar" + _sfx(team), p, yaw)
-	_flame(p, team, 1.78, 0.62)
+	_put("pillar" + _sfx(team), p, yaw + PI / 8.0)
+	_put("bowl" + _sfx(team), p, yaw)
+	_flame(p, team, 2.05, 0.7)
+	dressing.blob(p, 0.75)
+	# growth and a stone or two at its foot, so it stands in the ground rather than on it
+	for k in 2:
+		var g := p + Vector2.from_angle(_rng.randf() * TAU) * _rng.randf_range(45.0, 70.0)
+		dressing._add("Grass_Wispy_Short" if team == C.DAWN else "kd_mushrooms_pale", g, _rng.randf_range(0.6, 0.9), 0.0)
 
 ## A banner on a pole; the crossbar and cloth point along `out` (a sim direction).
 func _banner(p: Vector2, team: int, out: Vector2) -> void:
@@ -293,6 +372,9 @@ func _walls(team: int) -> void:
 				since_tower = 0
 			was_open = false
 			_put("wall" + sfx, pc, side(dir, team).angle(), Vector3.ONE, -0.15)
+			dressing.blob(pc, 1.0)
+			if _rng.randf() < 0.35:
+				dressing._add("Grass_Wispy_Tall" if team == C.DAWN else "Grass_Wispy_Short", pc - side(n, team) * 70.0, _rng.randf_range(0.7, 1.0), 0.0)
 			since_tower += 1
 			if since_tower >= 7 and i < count - 2:
 				_tower(side(a + dir * (i + 1) * WALL_LEN - n * inset, team), team, side(n, team))
@@ -303,6 +385,7 @@ func _tower(p: Vector2, team: int, out: Vector2) -> void:
 	var sfx := _sfx(team)
 	_put("tower" + sfx, p, _rng.randf() * TAU, Vector3.ONE, -0.1)
 	_put("roof" + sfx, p, 0.0, Vector3.ONE, -0.1)
+	dressing.blob(p, 1.3)
 	_banner(p + out * 80.0, team, out)
 
 # ---- Ramps ----------------------------------------------------------------------------------------------------------
@@ -331,28 +414,42 @@ func _ramps() -> void:
 			lo_h = minf(lo_h, hh)
 			hi_h = maxf(hi_h, hh)
 		var t0 := -rad * 1.3
-		var step := 70.0
+		var step := 85.0
 		var t := t0
+		var bottom := Vector2(INF, INF)
 		while t < rad * 1.3:
 			var p := c + up * t
 			var hh := map.height_at(p)
-			if hh > lo_h + 6.0 and hh < hi_h - 6.0:
+			if hh > lo_h + 8.0 and hh < hi_h - 8.0:
+				if bottom.x == INF:
+					bottom = p
+				# one step: a row of dressed slabs whose top is the walking height here, with a tall riser in front
 				var x := -width * 0.5
 				while x < width * 0.5 - 10.0:
-					var bw := _rng.randf_range(70.0, 130.0)
+					var bw := _rng.randf_range(90.0, 150.0)
 					bw = minf(bw, width * 0.5 - x)
-					var q := p + across * (x + bw * 0.5) + up * _rng.randf_range(-6.0, 6.0)
-					var yaw := across.angle() + _rng.randf_range(-0.04, 0.04)
-					_put("block" + sfx, q, yaw, Vector3(bw * View.S * 0.96, 0.32, step * View.S * 1.04), 0.03)
+					var q := p + across * (x + bw * 0.5)
+					var yaw := across.angle() + _rng.randf_range(-0.03, 0.03)
+					# the tread sits level with the ground at its back edge, so the slope never shows through
+					var back := (terrain.height_at(q + up * step * 0.5) - terrain.height_at(q)) * View.S
+					_put("block" + sfx, q, yaw, Vector3(bw * View.S * 0.97, 0.6, step * View.S * 1.06), back - 0.26)
 					x += bw
+				# low retaining walls along both sides, stepping with the stairs
+				for sd in [-1.0, 1.0]:
+					var wq: Vector2 = p + across * sd * (width * 0.5 + 28.0)
+					_put("block" + sfx, wq, across.angle(), Vector3(0.5, 1.0, step * View.S * 1.04), 0.0)
+					if _rng.randf() < 0.35:
+						dressing._add("Grass_Wispy_Short" if _rng.randf() < 0.5 else "Fern_1", wq + across * sd * 60.0, _rng.randf_range(0.7, 1.0), 0.0)
 				top = p
 			t += step
-		# pillars with torches on both sides of the top step, banners on base ramps
+		# pillars with torches on both sides of the top step (and the bottom one), banners on base ramps
 		for s in [-1.0, 1.0]:
 			var pp: Vector2 = top + up * 40.0 + across * s * (width * 0.5 + 45.0)
 			_pillar(pp, team)
 			if not plateau:
 				_banner(pp + up * 70.0, team, across * s)
+			if bottom.x != INF:
+				_pillar(bottom - up * 50.0 + across * s * (width * 0.5 + 45.0), team)
 		# a few loose stones and grass at the foot
 		for k in 6:
 			var fp := c - up * rad * 1.2 + across * _rng.randf_range(-width * 0.6, width * 0.6)
@@ -408,9 +505,17 @@ func _road_dressing(team: int) -> void:
 				for sd in [-1.0, 1.0]:
 					var e: Vector2 = p + nrm * sd * 262.0
 					if not in_plaza and _clear(e, 120.0):
-						# a kerb of dressed stones along the paving
+						# a kerb of dressed stones along the paving, tufts and ferns growing against it
 						_put("block" + _sfx(team), e, d.angle() + _rng.randf_range(-0.05, 0.05),
 							Vector3(0.62, 0.16, 0.3), 0.02)
+						var g: Vector2 = e + nrm * sd * _rng.randf_range(40.0, 110.0)
+						var r := _rng.randf() if not _in_plaza(g, team) else 1.0
+						if r < 0.35:
+							dressing._add("Grass_Wispy_Short" if team == C.DAWN else "Grass_Wispy_Tall", g, _rng.randf_range(0.7, 1.1), 0.0)
+						elif r < 0.5:
+							dressing._add("Fern_1" if team == C.DAWN else "kd_mushrooms_pale", g, _rng.randf_range(0.6, 0.9), 0.0)
+						elif r < 0.56:
+							dressing._add("Pebble_Round_2", g, _rng.randf_range(0.6, 1.0), 0.02)
 				if fmod(acc + s, 620.0) < 70.0 and not in_plaza:
 					var sd2 := 1.0 if int((acc + s) / 620.0) % 2 == 0 else -1.0
 					var bp := p + nrm * sd2 * 330.0
@@ -424,12 +529,110 @@ func _road_dressing(team: int) -> void:
 				s += 70.0
 			acc += length
 
+## Inside the emblem plaza (and its border) of a team's base.
+func _in_plaza(p: Vector2, team: int) -> bool:
+	var d := (p - side(Vector2(-6425, -6000), team)).rotated(-PI * 0.25)
+	return absf(d.x) < 400.0 and absf(d.y) < 400.0
+
 ## Nothing important (buildings, the fountain pool, lanes) within r of p.
 func _clear(p: Vector2, r: float) -> bool:
 	for b in map.buildings:
 		if p.distance_to(b.pos) < float(SimData.unit(b.unit).hull) + r:
 			return false
 	return map.level_at(p) != SimMap.MOUNTAIN and map.is_walkable(p)
+
+# ---- Lived-in clutter ---------------------------------------------------------------------------------------------
+
+## The quartermaster's stall at the side shop by the fountain: a plank counter under a striped canopy on four posts,
+## crates, barrels, a lantern, a rug and a brazier.
+func _stall(team: int) -> void:
+	var sfx := _sfx(team)
+	# beside the fountain, clear of the plaza (the shop's range covers the fountain area)
+	var c := side(Vector2(-7250, -5950), team)
+	var toward: Vector2 = ((map.fountains[team] as Vector2) - c).normalized()
+	var yaw := toward.orthogonal().angle()
+	_put("stall" + sfx, c, yaw)
+	_put("canopy" + sfx, c, yaw)
+	var side_v := toward.orthogonal()
+	dressing._add("kf_crate_a", c - toward * 170.0 + side_v * 200.0, 0.6, 0.0, true)
+	dressing._add("kf_crate_a", c - toward * 120.0 + side_v * 250.0, 0.45, 0.0, true)
+	dressing._add("kf_barrels", c - toward * 160.0 - side_v * 230.0, 0.7, 0.0, true)
+	dressing._add("kf_lantern", c + toward * 120.0 + side_v * 230.0, 0.9, 0.0, true)
+	dressing.blob(c, 2.2)
+	dressing._add("kf_crate_a", c + side_v * 60.0 - toward * 60.0, 0.4, -0.85, true)
+	dressing._add("Grass_Wispy_Short", c + toward * 200.0 + side_v * 120.0, 0.9, 0.0)
+	dressing._add("Grass_Wispy_Short", c - toward * 230.0 - side_v * 60.0, 0.8, 0.0)
+	if team == C.DAWN:
+		dressing._add("brazier", c + toward * 120.0 - side_v * 260.0, 0.8, 0.02, true)
+	else:
+		dressing._add("kd_fire_basket", c + toward * 120.0 - side_v * 260.0, 0.9, 0.02, true)
+	_flame(c + toward * 120.0 - side_v * 260.0, team, 0.9, 0.45)
+	_banner(c - toward * 60.0 + side_v * 330.0, team, toward)
+
+## Supplies stacked by each barracks and tier 3 / 4 tower (the side away from the lane): crates, barrels, a fence
+## stretch, a banner, and grass at the foot of it all.
+func _supplies(team: int) -> void:
+	for b in map.buildings:
+		if int(b.team) != team:
+			continue
+		var unit := String(b.unit)
+		if not (unit.ends_with("rax") or unit in ["tower3", "tower4"]):
+			continue
+		var p: Vector2 = b.pos
+		var hull := float(SimData.unit(unit).hull)
+		# the open side: away from the nearest lane
+		var best := Vector2.ZERO
+		var best_d := INF
+		for k in map.lanes:
+			var ln: PackedVector2Array = map.lanes[k]
+			for i in ln.size() - 1:
+				var q := Geometry2D.get_closest_point_to_segment(p, side(ln[i], team), side(ln[i + 1], team))
+				if q.distance_to(p) < best_d:
+					best_d = q.distance_to(p)
+					best = q
+		var away := (p - best).normalized() if best_d > 1.0 else Vector2.from_angle(_rng.randf() * TAU)
+		var tang := away.orthogonal()
+		var o := p + away * (hull + 150.0)
+		if not _clear(o, 60.0):
+			continue
+		dressing._add("kf_crate_a", o + tang * 90.0, _rng.randf_range(0.45, 0.6), 0.0, true, _rng.randf() * TAU)
+		dressing._add("kf_barrels", o - tang * 100.0, _rng.randf_range(0.55, 0.7), 0.0, true)
+		if _rng.randf() < 0.6:
+			dressing._add("kd_fence", o + away * 120.0, 0.9, 0.02, true, tang.angle())
+		if _rng.randf() < 0.5:
+			_banner(o + tang * 200.0, team, away)
+		for k in 3:
+			dressing._add("Grass_Wispy_Tall" if team == C.DAWN else "kd_mushrooms_pale",
+				o + Vector2.from_angle(_rng.randf() * TAU) * _rng.randf_range(80.0, 180.0), _rng.randf_range(0.7, 1.0), 0.0)
+
+## Where the base paving meets grass: loose flagstones, pebbles and tufts so the edge is worn rather than a line.
+func _paving_edges(team: int) -> void:
+	for b in map.buildings:
+		if int(b.team) != team:
+			continue
+		var def := SimData.unit(b.unit)
+		var r := float(def.hull) * 1.5 + 260.0
+		if b.unit == "fountain":
+			r = 1000.0
+		elif b.unit == "ancient":
+			r = 900.0
+		var n := int(r * TAU / 140.0)
+		for k in n:
+			if _rng.randf() > 0.55:
+				continue
+			var a := TAU * k / n + _rng.randf_range(-0.05, 0.05)
+			var p: Vector2 = (b.pos as Vector2) + Vector2.from_angle(a) * (r + _rng.randf_range(-90.0, 40.0))
+			if not _clear(p, 40.0) or _in_plaza(p, team):
+				continue
+			var x := _rng.randf()
+			if x < 0.25:
+				dressing._add("Fern_1" if team == C.DAWN else "Grass_Wispy_Tall", p, _rng.randf_range(0.6, 0.9), 0.0)
+			elif x < 0.7:
+				dressing._add("Grass_Wispy_Short" if team == C.DAWN else "Grass_Wispy_Tall", p, _rng.randf_range(0.7, 1.0), 0.0)
+			elif x < 0.85:
+				dressing._add("Pebble_Round_%d" % _rng.randi_range(1, 4), p, _rng.randf_range(0.5, 0.8), 0.04)
+			else:
+				dressing._add("Clover_1" if team == C.DAWN else "kd_mushrooms_pale", p, _rng.randf_range(0.7, 1.0), 0.0)
 
 # ---- Gardens --------------------------------------------------------------------------------------------------------
 

@@ -182,7 +182,7 @@ const ITEM_LIFESTEAL_CREEP_FACTOR := 0.4    # game constant "item lifesteal cree
 # ---- Map ------------------------------------------------------------------------------------------------------------
 const MAP_HALF := 8192.0
 const PATH_CELL := 64.0
-const LEVEL_HEIGHT := 128.0
+const LEVEL_HEIGHT := 200.0                  # rendered height per terrain level (visual only; the sim uses levels)
 
 static func xp_level(xp: float) -> int:
 	var lvl := 1

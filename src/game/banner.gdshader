@@ -7,6 +7,9 @@ render_mode diffuse_burley, specular_schlick_ggx, cull_disabled;
 uniform vec3 cloth : source_color = vec3(0.16, 0.32, 0.78);
 uniform vec3 trim : source_color = vec3(0.95, 0.76, 0.36);
 uniform float wind = 1.0;
+uniform float emblem = 1.0;               // 0: plain cloth (canopies, rugs)
+uniform float stripes = 0.0;              // > 0: that many trim-coloured stripes across the cloth
+uniform float notch = 1.0;                // 1: swallowtail cut at the free end
 
 varying float seed;
 
@@ -25,13 +28,16 @@ void fragment() {
 	col *= 0.9 + 0.1 * sin(uv.y * 160.0) * sin(uv.x * 120.0);
 	float border = step(min(min(uv.x, 1.0 - uv.x), 1.0 - uv.y), 0.07);
 	// swallowtail: cut a notch at the bottom
-	if (uv.y > 0.86 && abs(uv.x - 0.5) < (uv.y - 0.86) * 2.6) {
+	if (notch > 0.5 && uv.y > 0.86 && abs(uv.x - 0.5) < (uv.y - 0.86) * 2.6) {
 		discard;
 	}
 	vec2 e = (uv - vec2(0.5, 0.42)) * vec2(1.0, 0.55);
 	float emb = 1.0 - smoothstep(0.17, 0.18, length(e));
 	float emb_in = 1.0 - smoothstep(0.11, 0.12, length(e));
-	col = mix(col, trim, max(border, emb - emb_in * 0.6));
+	col = mix(col, trim, max(border, (emb - emb_in * 0.6) * emblem));
+	if (stripes > 0.0) {
+		col = mix(col, trim, step(0.5, fract(uv.x * stripes)) * (1.0 - border) * 0.85);
+	}
 	ALBEDO = col * (FRONT_FACING ? 1.0 : 0.8);
 	ROUGHNESS = 0.85;
 	BACKLIGHT = cloth * 0.3;

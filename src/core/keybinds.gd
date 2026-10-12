@@ -1,12 +1,16 @@
 class_name Keybinds
 extends RefCounted
-## The player's hotkeys: one key (or extra mouse button) per action, edited on the Hotkeys screen before a match and
-## saved to user://keybinds.json together with named templates. Modifiers stay fixed as in Dota: Ctrl + an ability
-## key learns it, Shift queues, Alt pings, Ctrl + 1..9 sets a control group.
+## The player's hotkeys: one key or key combination (Ctrl + key, Alt + key, Ctrl + Alt + key, or Mouse 4 / 5 with
+## those modifiers) per action, edited on the Hotkeys screen before a match and saved to user://keybinds.json together
+## with named templates. Shift is never part of a hotkey: as in Dota it queues the order (Shift + any hotkey queues it).
+## Fixed: Ctrl + an ability's hotkey learns it (unless that combination is itself bound), Alt + click pings,
+## Ctrl + 1..9 sets a control group.
 ##
-## A binding is an int: a Godot keycode, or a negative mouse button index (-MOUSE_BUTTON_XBUTTON1, ...).
+## A binding is an int: a Godot keycode, or MOUSE_BASE + a mouse button index, OR'ed with KEY_MASK_CTRL / KEY_MASK_ALT.
 
 const PATH := "user://keybinds.json"
+const MOUSE_BASE := 1 << 24
+const MODS := KEY_MASK_CTRL | KEY_MASK_ALT
 
 ## [action, label, group, default binding]. The order is the order shown on the Hotkeys screen.
 const ACTIONS := [
@@ -40,6 +44,18 @@ const ACTIONS := [
 
 ## Keys an action may never take: they open menus or are modifiers.
 const RESERVED := [KEY_ESCAPE, KEY_F10, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META, KEY_CAPSLOCK]
+const MODIFIER_KEYS := [KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META]
+
+## Why a binding cannot be used ("" = it can): menu keys, control groups, system shortcuts.
+static func refuse(b: int) -> String:
+	var base := b & ~MODS
+	if base in RESERVED:
+		return "%s is reserved (menus and modifiers)" % name_of(base)
+	if b & KEY_MASK_CTRL and not (b & KEY_MASK_ALT) and base >= KEY_1 and base <= KEY_9:
+		return "Ctrl + 1-9 set control groups"
+	if b & KEY_MASK_ALT and base in [KEY_F4, KEY_TAB]:
+		return "%s is a system shortcut" % name_of(b)
+	return ""
 
 static var binds := {}                     # action -> binding
 static var templates := {}                 # template name -> {action: binding}
@@ -101,7 +117,10 @@ static func _clean(d) -> Dictionary:
 	var known := defaults()
 	for k in d:
 		if known.has(String(k)) and (d[k] is float or d[k] is int):
-			out[String(k)] = int(d[k])
+			var v := int(d[k])
+			if v < 0:
+				v = MOUSE_BASE - v             # older saves stored mouse buttons as negative numbers
+			out[String(k)] = v
 	return out
 
 static func key(action: String) -> int:
@@ -139,10 +158,16 @@ static func delete_template(name: String) -> void:
 	templates.erase(name)
 	save()
 
-## The action an input event triggers ("" if none). Key events must be presses; mouse events extra buttons.
+## The action an input event triggers exactly (key and Ctrl / Alt state; Shift is ignored) or "".
 static func action_for(e: InputEvent) -> String:
 	load_all()
-	var b := binding_of(e)
+	return _lookup(binding_of(e))
+
+static func action_for_binding(b: int) -> String:
+	load_all()
+	return _lookup(b)
+
+static func _lookup(b: int) -> String:
 	if b == 0:
 		return ""
 	for a in ACTIONS:
@@ -150,26 +175,52 @@ static func action_for(e: InputEvent) -> String:
 			return a[0]
 	return ""
 
-## The binding an event represents (0 if it cannot be bound).
+## What an event does: {action, learn}. An exact binding wins; otherwise Ctrl + an ability's hotkey learns it.
+static func match_event(e: InputEvent) -> Dictionary:
+	load_all()
+	var b := binding_of(e)
+	var act := _lookup(b)
+	if act != "" or b == 0 or not (b & KEY_MASK_CTRL):
+		return {"action": act, "learn": false}
+	var plain := _lookup(b & ~KEY_MASK_CTRL)
+	if plain.begins_with("ability_"):
+		return {"action": plain, "learn": true}
+	return {"action": "", "learn": false}
+
+## The binding an event represents (0 if it cannot be bound, e.g. a bare modifier key).
 static func binding_of(e: InputEvent) -> int:
+	var mods := 0
+	if e is InputEventWithModifiers:
+		var m := e as InputEventWithModifiers
+		if m.ctrl_pressed:
+			mods |= KEY_MASK_CTRL
+		if m.alt_pressed:
+			mods |= KEY_MASK_ALT
 	if e is InputEventKey:
 		var k := e as InputEventKey
 		var code := int(k.keycode) if k.keycode != KEY_NONE else int(k.physical_keycode)
-		return code
+		if code in MODIFIER_KEYS:
+			return 0
+		return code | mods
 	if e is InputEventMouseButton:
 		var mb := e as InputEventMouseButton
 		if mb.button_index in [MOUSE_BUTTON_XBUTTON1, MOUSE_BUTTON_XBUTTON2]:
-			return -int(mb.button_index)
+			return (MOUSE_BASE + int(mb.button_index)) | mods
 	return 0
 
-## Whether an action's key is held right now (held actions: follow, scoreboard, camera pans).
+## Whether an action's key (with its modifiers) is held right now: follow, scoreboard, camera pans.
 static func held(action: String) -> bool:
 	var b := key(action)
-	if b > 0:
-		return Input.is_key_pressed(b)
-	if b < 0:
-		return Input.is_mouse_button_pressed(-b)
-	return false
+	if b == 0:
+		return false
+	if b & KEY_MASK_CTRL and not Input.is_key_pressed(KEY_CTRL):
+		return false
+	if b & KEY_MASK_ALT and not Input.is_key_pressed(KEY_ALT):
+		return false
+	var base := b & ~MODS
+	if base >= MOUSE_BASE:
+		return Input.is_mouse_button_pressed(base - MOUSE_BASE)
+	return Input.is_key_pressed(base)
 
 static func label(action: String) -> String:
 	for a in ACTIONS:
@@ -177,17 +228,23 @@ static func label(action: String) -> String:
 			return a[1]
 	return action
 
-## Short display name of a binding: "Q", "F1", "Space", "Mouse 4".
+## Short display name of a binding: "Q", "F1", "Ctrl + Q", "Alt + Mouse 4".
 static func name_of(b: int) -> String:
 	if b == 0:
 		return "-"
-	if b < 0:
-		match -b:
-			MOUSE_BUTTON_XBUTTON1: return "Mouse 4"
-			MOUSE_BUTTON_XBUTTON2: return "Mouse 5"
-		return "Mouse %d" % -b
-	var s := OS.get_keycode_string(b)
-	return s if s != "" else "Key %d" % b
+	var pre := ""
+	if b & KEY_MASK_CTRL:
+		pre += "Ctrl + "
+	if b & KEY_MASK_ALT:
+		pre += "Alt + "
+	var base := b & ~MODS
+	if base >= MOUSE_BASE:
+		match base - MOUSE_BASE:
+			MOUSE_BUTTON_XBUTTON1: return pre + "Mouse 4"
+			MOUSE_BUTTON_XBUTTON2: return pre + "Mouse 5"
+		return pre + "Mouse %d" % (base - MOUSE_BASE)
+	var s := OS.get_keycode_string(base)
+	return pre + (s if s != "" else "Key %d" % base)
 
 static func key_name(action: String) -> String:
 	return name_of(key(action))

@@ -17,6 +17,8 @@ uniform float paint_bias = 1.6;
 uniform float blocks = 1.0;
 uniform float block_w = 0.62;
 uniform float block_h = 0.34;
+// steps and kerbs: darken vertical faces so treads and risers read apart (0 = off)
+uniform float side_dark = 0.0;
 
 float hash12(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -76,6 +78,7 @@ void fragment() {
 	col *= mix(0.62, 1.0, smoothstep(0.0, 1.4, h));
 	// painted light: warmer tops, cooler shaded sides
 	col *= mix(vec3(0.9, 0.93, 1.02), vec3(1.06, 1.02, 0.94), clamp(wn.y * 0.5 + 0.5, 0.0, 1.0));
+	col *= mix(1.0 - side_dark, 1.0 + side_dark * 0.25, smoothstep(0.55, 0.85, wn.y));
 	RIM = 0.25;
 	RIM_TINT = 0.6;
 	col = mix(col, col * vec3(0.45, 0.4, 0.38), damage * 0.6);

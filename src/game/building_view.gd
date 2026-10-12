@@ -174,7 +174,25 @@ func _material_for(nm: String, src: Material) -> Material:
 		m.set_shader_parameter("tint", (d[1] as Color) * (Color(0.92, 0.88, 0.8) if nm.begins_with("WOA_Stone") else Color.WHITE))
 		_shaders.append(m)
 		return m
-	if nm.begins_with("WOA_Crystal") or nm == "WOA_Water":
+	if nm == "WOA_Water":
+		var wm := ShaderMaterial.new()
+		wm.shader = preload("res://src/game/water.gdshader")
+		var wn := NoiseTexture2D.new()
+		wn.width = 256
+		wn.height = 256
+		wn.seamless = true
+		wn.as_normal_map = true
+		wn.bump_strength = 5.0
+		var fnz := FastNoiseLite.new()
+		fnz.frequency = 0.03
+		fnz.fractal_octaves = 3
+		wn.noise = fnz
+		wm.set_shader_parameter("normal_tex", wn)
+		wm.set_shader_parameter("shallow", Color(0.4, 0.72, 0.78) if not nm.ends_with("Dusk") else Color(0.5, 0.2, 0.25))
+		wm.set_shader_parameter("deep", Color(0.06, 0.28, 0.4))
+		wm.set_shader_parameter("clarity", 0.12)
+		return wm
+	if nm.begins_with("WOA_Crystal"):
 		var c := ShaderMaterial.new()
 		c.shader = CRYSTAL_SHADER
 		var col := Color(1.0, 0.7, 0.22)

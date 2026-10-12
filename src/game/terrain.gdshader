@@ -108,7 +108,12 @@ void fragment() {
 	vec4 plaza = tex(L_PLAZA, uv_p);
 	vec4 dplaza = tex(L_DUSK_PLAZA, uv_p);
 	vec4 pl = mix(plaza, dplaza, step(0.0, wpos.x - wpos.z));
-	float plaza_w = smoothstep(0.5, 0.8, sp.b + plaza.r * 0.25);
+	float pedge = (macro.b - 0.5) * 0.5 + (texture(macro_tex, wpos.xz * 0.11).g - 0.5) * 0.45;
+	float plaza_w = smoothstep(0.45, 0.8, sp.b + plaza.r * 0.25 + pedge);
+	// grass and moss creep between the stones near the paving's edge; worn, darker flagstones in patches
+	float pcreep = smoothstep(0.55, 0.75, texture(macro_tex, wpos.xz * 0.16 + vec2(0.3, 0.1)).r) * (1.0 - smoothstep(0.75, 1.0, sp.b));
+	plaza_w *= 1.0 - pcreep * 0.8;
+	pl.rgb *= mix(0.86, 1.06, texture(macro_tex, wpos.xz * 0.06).b);
 	col = mix(col, pl, plaza_w);
 
 	// river bed by height

@@ -23,9 +23,15 @@ func _ready() -> void:
 		get_tree().change_scene_to_file.call_deferred(_path)
 		set_process(false)
 		return
+	# the root is still adding this scene during _ready, so the loading screen goes up on the next idle step
+	set_process(false)
+	_begin.call_deferred()
+
+func _begin() -> void:
 	LoadingScreen.open(get_tree())
 	LoadingScreen.progress(get_tree(), 0.05, "Loading")
 	ResourceLoader.load_threaded_request(_path)
+	set_process(true)
 
 func _process(dt: float) -> void:
 	_t += dt

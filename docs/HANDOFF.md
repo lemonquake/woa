@@ -4,28 +4,31 @@
 
 ## Status (keep this section current)
 
-**IMPLEMENTED, PARTLY VERIFIED** (2026-10-12, Blood Ranger / trees / tower scale session).
+**IMPLEMENTED, PARTLY VERIFIED** (2026-10-12, map overhaul / hotkeys / debug panel / Shift queue session).
 
 Verified:
-* 53 headless mechanics tests pass, 12 of them new: tree regrowth (180 s, waits for a clear 150 radius), planted trees,
-  Mini-Axe and Vegan Picker rules, Burst Shot (wave split, damage per arrow, channel length, every interrupt, instant
-  items and queued orders), Gale Impact (damage, sideways throw, piercing, stop at the target point, +20% crash
-  damage once, trees felled by the arrow and by thrown units), Masterful Archery (bonus, ~30% rate, 0.8 s gap), the
-  Blood Ranger ultimate (lifesteal, range, duration), the back leap (300 away, 1 s gap, ~30%, never into cliffs or
-  trees) and item lifesteal against creeps.
-* Bot duels (12 min, 3 seeds): the bot plays Blood Ranger's whole kit (Gale Impact, Burst Shot, the ultimate).
-* Benchmark (1080p, `--bench=50 --t=240 --autoplay`, RTX 4060): 76 fps average, p95 16.67 ms, p99 24.0 ms. The
-  previous measurement was 68-73 fps with p95 16.7-20.9 ms, so no regression.
-* Rendered captures of every new feature in `work/shots/br_*`.
+* 59 headless mechanics tests pass, including new ones for the map (elevation levels, left-right symmetry, every camp
+  and ramp reachable from both fountains), hotkey swaps and templates, Ctrl / Alt combinations with the Ctrl-learn
+  fallback, the Shift queue (moves, a spell, then a move; a queued spell still on cooldown is skipped) and the debug
+  helpers.
+* Benchmark on the new map (1080p, `--bench=50 --t=240 --autoplay`, RTX 4060): 77 fps average, p95 16.67 ms, p99
+  22.2 ms. Gate: no worse than 10% below 76 fps / p95 16.67 ms. Passed.
+* Bot duels on the new map (Blood Ranger vs Ezee, 12 min, 3 seeds): all three run the full 12 minutes, both bots
+  cast their whole kits and push towers (`work/lemondev/2026-10-12-map-overhaul/duel.txt`). The Ezee bot falls well
+  behind (level 3-5 against level 9).
+* The exported build is rebuilt (`build/WarriorsOfAether.exe`): exported with no errors; it boots to Hero Select and
+  `-- --match` builds a match in about 10 s and plays it (`export_run.txt`). Fixed on the way: the boot title card
+  ("by Aljay Leodones") never appeared, because the splash added it while the root was still adding the splash.
 
 Not met:
-* Blind review (`work/lemondev/ledger.md`):
-  * Burst Shot VFX vs a Dota 2 spell frame: 2 passes REJECTED on the same defect, **STOPPED: PLATEAU**. The critics
-    see a flat ground mark and numbers with no visible physical effect on the units hit.
-  * Tower scale: **UNVERIFIED**. The benchmark frame turned out to show no lane tower, so nothing was compared.
-* Tree, Gale Impact and back-leap visuals were checked in captures only (no independent review).
-* Earlier results still stand: Dark Stomp VFX STOPPED: LIMIT, Hero Select STOPPED: PLATEAU, lane scene STOPPED:
-  PLATEAU.
+* Blind review against Dota 2 frames (`work/lemondev/ledger.md`, run `work/lemondev/2026-10-12-map-overhaul/`):
+  * Base environment: 3 passes REJECTED, **STOPPED: PLATEAU**. The critics found the props primitive and placed on
+    the ground (striped awning, plain pillars) and the cobble a repeating tile with hard edges.
+  * Ramps and elevation: 2 passes REJECTED, **STOPPED: PLATEAU**. The height difference does not read from the
+    gameplay camera. Next step is your call: much taller levels (3-4 m) with rock cliff faces beside each ramp,
+    which changes the look of the whole map.
+* Earlier results still stand: Burst Shot VFX and Hero Select STOPPED: PLATEAU, Dark Stomp VFX STOPPED: LIMIT,
+  tower scale UNVERIFIED.
 
 ## Run it
 
@@ -39,8 +42,8 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 * The game opens on **Hero Select** (`src/ui/hero_select.tscn`): pick Blood Ranger or Ezee, pick the bot's hero (or
   Random), change your hero's look with **Customize look** (the Hero Creator), then **Play** against Bot Gerald.
 * Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
-* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 53 tests.
-* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured 2026-10-12 at 1080p on the RTX 4060 with the HUD (`--bench=50`): 76 fps average, p95 16.67 ms.
+* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 59 tests.
+* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured 2026-10-12 on the new map at 1080p on the RTX 4060 with the HUD (`--bench=50`): 77 fps average, p95 16.67 ms.
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
   * `--hero=ezee --bot_hero=galewarden` pick the heroes; `--frames=30,34,38` saves several frames;
     `--live` keeps the simulation running while capturing.
@@ -48,12 +51,15 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
     the enemy wave, between a creep and a tree, or beside the enemy hero (`--weaken=0.12`); `--cast=dark_stomp@4`
     (or `attack`) issues it at capture frame 4. `--board` shows the scoreboard, `--endscreen` the end screen,
     `--drag=x,y,w,h` a selection box, `--marker=x,y` a move marker.
-* Bot duels: `godot --headless --path . -s tests/tools/bot_duel.gd -- --a=galewarden --b=ezee --min=12`.
+* Bot duels: `godot --headless --path . -s tests/tools/bot_duel.gd -- --a=blood_ranger --b=ezee --min=12`.
+* `--showqueue` (capture flag) queues a few orders for your hero and draws the Shift waypoints.
 * Parse-check every script: `sh tools/check.sh`.
 * Rebuild the building models: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/buildings.py`.
 * Re-bake the terrain texture arrays (needs the GPU, not headless): `godot --path . -s tests/tools/bake_terrain_arrays.gd`.
 
 ## Controls (Dota defaults)
+
+Every hotkey can be changed on the **Hotkeys** screen shown before each match ("Are you good to go?"): one key, Mouse 4 / 5, or a combination with Ctrl, Alt or Ctrl + Alt. Shift is never part of a hotkey because it queues. Esc, F10, Ctrl + 1-9, Alt + F4 and Alt + Tab are refused. Layouts can be saved as named templates (`user://keybinds.json`). The table shows the defaults.
 
 | Key | Action |
 |---|---|
@@ -62,9 +68,9 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 | A, then left click | Attack-move (ground) or attack (unit). On an ally the order is accepted: your hero waits in range and only swings once the ally can be denied. Shows your attack range |
 | S | Stop (the hero still auto-attacks enemies in range). Hold S: hard stop, no auto-attack until your next order |
 | H | Hold position |
-| Shift | Queue the order |
+| Shift + any order or hotkey | Queue it, as in Dota: orders run one after another; a queued spell still cooling down is checked again when its turn comes. Holding Shift shows the queue as numbered waypoints (green move, red attack, blue spell or item, gold hold) |
 | Q W E R | Abilities. Point and unit abilities show a targeting cursor; right click or Esc cancels |
-| Ctrl + Q W E R, or the "+" above an ability | Learn the ability |
+| Ctrl + an ability's hotkey, or the "+" above an ability | Learn the ability (unless that Ctrl combination is bound to something else) |
 | Right click an ability button | Toggle autocast (Frost Quiver) |
 | Z X C V B N | Items. Right click an item slot to move it between the inventory and the backpack |
 | F4, the Shop button, or B with an empty slot 5 | Shop |
@@ -81,6 +87,8 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 | Space (hold) | Follow your hero |
 | Screen edges, arrow keys, middle-drag | Pan the camera |
 | Mouse wheel | Zoom |
+| Hold right click | Repeats the move or attack order at the cursor |
+| F9, or the Debug button (top right) | Debug panel: force start, creep waves, camps, level up, gold, refresh, god mode, free spells, reveal map, skip time, game speed |
 | Minimap | Left click or drag moves the camera; right click moves your hero |
 
 ## Architecture
@@ -187,15 +195,29 @@ marked here so you can change them:
 * Look: the customisable hero body in full plate (Warden Plate), visored greathelm, violet dyes and a darkened
   greatsword (`GameSettings.default_look("ezee")`). The bot plays Ezee with its own skill and item build.
 
+## Map (overhauled 2026-10-12)
+
+* Elevation: six jungle plateaus per side on high ground, reached by stone stairs with torch columns wherever a
+  walkway crosses their edge. Each terrain level renders 2 m high (`LEVEL_HEIGHT` 200, visual only;
+  the rules use levels).
+* Mountains: impassable massifs in the corners (the river leaves through gorges) and along the edges, with a ring of
+  peaks past the map edge, so there is no grey void. Mountain cells block movement and sight.
+* Bases: crenellated walls with towers, roofs and banners; gate towers at ramps; emblem plazas (sun for Dawn,
+  crescent for Dusk); paved roads with kerbs and braziers; a quartermaster stall and supply clusters. Dawn has
+  blossom gardens and flower beds, Dusk has dead trees, graves and basalt.
+* Shift queue and hotkey combinations: see Controls.
+
 ## Backlog: smallest next actions first
 
-1. Ezee's look on Hero Select: lighter or more reflective armour (the review plateaued on a dark silhouette).
-2. Dark Stomp art: hand-painted spike texture with ground mounds; units visibly lifted by the eruption.
-3. Performance: find the p95 spikes (p99 about 22-28 ms in both old and new builds).
-4. Art pass on buildings:
+1. Map art (both reviews plateaued): modelled props and hand-painted paving instead of procedural boxes; decide
+   whether to raise levels to 3-4 m with rock cliff faces beside the ramps.
+2. Ezee's look on Hero Select: lighter or more reflective armour (the review plateaued on a dark silhouette).
+3. Dark Stomp art: hand-painted spike texture with ground mounds; units visibly lifted by the eruption.
+4. Performance: find the p95 spikes (p99 about 22-28 ms in both old and new builds).
+5. Art pass on buildings:
    * Better Ancient design: floating crystal and rune ring instead of the stick arms.
    * Larger stone blocks on towers.
    * Replace the paving texture, which reads as a checkerboard.
-5. Done: Hero Creator, Hero Select, Town Portal, buyback, courier, pause and settings menus, end screen with damage
+6. Done: Hero Creator, Hero Select, Town Portal, buyback, courier, pause and settings menus, end screen with damage
    table. Still deferred: secret shop, runes, Roshan, scan, wards UI polish.
-6. More heroes (the bot plays Blood Ranger and Ezee, mid only).
+7. More heroes (the bot plays Blood Ranger and Ezee, mid only).

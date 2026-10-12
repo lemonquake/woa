@@ -170,9 +170,57 @@ func _draw() -> void:
 		U.text_c(self, "Respawning in %d" % ceili(t), Vector2(vs.x * 0.5, vs.y * 0.42), 34, Color(1, 1, 1, 0.92), "title")
 	if h and h.alive and not h.channel.is_empty():
 		_channel_bar(h, vs)
+	if h and h.alive and (Input.is_key_pressed(KEY_SHIFT) or game.args.has("showqueue")) and game.input and game.input.hero_selected():
+		_queue_waypoints(h)
 	if game.input and game.input.targeting != "":
 		var lab: String = "Attack" if game.input.targeting == "attack" else "Choose a target"
 		U.text(self, lab, get_viewport().get_mouse_position() + Vector2(22, 30), 16, Color(1, 0.9, 0.6), "bold")
+
+## Shift held: the hero's current order and its queue as waypoints joined by a line, as in Dota (green move,
+## red attack, blue spell or item, gold hold), numbered in the order they will run.
+func _queue_waypoints(h: SimUnit) -> void:
+	var w: SimWorld = game.world
+	var cam: Camera3D = game.camera.cam
+	var orders: Array = []
+	if h.order != O.NONE:
+		orders.append({"type": h.order, "target": h.order_target, "point": h.order_point, "ability": h.order_ability})
+	orders.append_array(h.order_queue)
+	if orders.is_empty():
+		return
+	var prev := h.pos
+	var prev_s := cam.unproject_position(View.to3(h.pos, game.terrain.height_at(h.pos)))
+	var n := 0
+	for o in orders:
+		var type := int(o.get("type", O.NONE))
+		var p := prev
+		var t := w.get_unit(int(o.get("target", -1)))
+		if type in [O.ATTACK_UNIT, O.MOVE_TO_UNIT, O.CAST_UNIT] and t:
+			p = t.pos
+		elif type in [O.MOVE, O.ATTACK_MOVE, O.CAST_POINT]:
+			p = o.get("point", prev)
+		var col := Color(0.35, 1.0, 0.45)
+		if type in [O.ATTACK_UNIT, O.ATTACK_MOVE]:
+			col = Color(1.0, 0.35, 0.3)
+		elif type in [O.CAST_NO_TARGET, O.CAST_POINT, O.CAST_UNIT]:
+			col = Color(0.4, 0.7, 1.0)
+		elif type == O.HOLD:
+			col = Color(1.0, 0.82, 0.3)
+		var wp := View.to3(p, game.terrain.height_at(p))
+		if cam.is_position_behind(wp):
+			continue
+		var sp := cam.unproject_position(wp)
+		n += 1
+		if sp.distance_to(prev_s) > 4.0:
+			draw_dashed_line(prev_s, sp, Color(col, 0.9), 3.0, 10.0)
+		draw_circle(sp, 13.0, Color(0, 0, 0, 0.55))
+		draw_arc(sp, 13.0, 0, TAU, 24, col, 3.0)
+		var aid := String(o.get("ability", ""))
+		var ic: Texture2D = U.ability_icon(aid) if aid != "" and aid != "tp" else null
+		if ic:
+			draw_texture_rect(ic, Rect2(sp + Vector2(10, -26), Vector2(20, 20)), false)
+		U.text_c(self, str(n), sp + Vector2(0, 6), 15, Color(1, 1, 1), "bold")
+		prev = p
+		prev_s = sp
 
 ## Dota's channel bar: the ability being channelled and the time left, just above the bottom panel.
 func _channel_bar(h: SimUnit, vs: Vector2) -> void:
