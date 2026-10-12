@@ -13,6 +13,7 @@ var w: SimWorld
 var visible: Array[PackedByteArray] = []   # per team (0, 1): VN*VN, 1 = in sight
 var _templates := {}                       # radius in cells -> Array of rays (PackedInt32Array of dx,dy pairs)
 var revealed := {}                         # unit id -> game time until which it is visible to everyone (attacking from fog)
+var sources: Array = []                    # timed sight not tied to a unit: {team, pos, r, until} (Shuriken Hook's catch)
 
 func _init(world: SimWorld) -> void:
 	w = world
@@ -47,6 +48,9 @@ func update() -> void:
 				continue
 			done[key] = r
 			_cast(vis, u.pos, r, u.has_flag("flying"))
+		for s in sources:
+			if int(s.team) == team and w.time < float(s.until):
+				_cast(vis, s.pos, float(s.r), true)
 		# cursed enemies (Tainted Touch) grant sight around themselves
 		for u in w.units:
 			if not u.alive or u.team == team:
@@ -56,6 +60,15 @@ func update() -> void:
 					_cast(vis, u.pos, float(m.get("reveal_r", 300.0)), true)
 					break
 		visible[team] = vis
+
+## Sight for `team` over `pos` (flying vision: sees over cliffs and trees) for `dur` seconds.
+func add_source(team: int, pos: Vector2, r: float, dur: float) -> void:
+	sources.append({"team": team, "pos": pos, "r": r, "until": w.time + dur})
+
+func prune_sources() -> void:
+	for i in range(sources.size() - 1, -1, -1):
+		if w.time >= float(sources[i].until):
+			sources.remove_at(i)
 
 func _rebuild_static(night: bool) -> void:
 	static_dirty = false

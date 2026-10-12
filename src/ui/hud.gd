@@ -225,7 +225,7 @@ func _queue_waypoints(h: SimUnit) -> void:
 ## Dota's channel bar: the ability being channelled and the time left, just above the bottom panel.
 func _channel_bar(h: SimUnit, vs: Vector2) -> void:
 	var aid := String(h.channel.ability)
-	var total := C.TP_CHANNEL if aid == "tp" else float(h.channel.interval) * float((h.channel.waves as Array).size())
+	var total := C.TP_CHANNEL if aid == "tp" else float(h.channel.get("dur", 1.0))
 	var left := maxf(0.0, float(h.channel.until) - game.world.time)
 	var name := "Teleport" if aid == "tp" else String(SimData.ability(aid).get("name", aid))
 	var r := Rect2(vs.x * 0.5 - 160, vs.y - BottomPanel.H - 58, 320, 18)

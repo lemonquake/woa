@@ -12,6 +12,7 @@ const AC = C.AttackClass
 static var _units := {}
 static var _items := {}
 static var _abilities := {}
+static var _talents := {}
 static var _ready := false
 
 static func _unit(id: String, d: Dictionary) -> Dictionary:
@@ -22,6 +23,7 @@ static func _unit(id: String, d: Dictionary) -> Dictionary:
 		"projectile_speed": 0.0, "move_speed": 300.0, "turn_rate": 0.5, "vision_day": 750.0, "vision_night": 750.0,
 		"xp": 0.0, "gold_min": 0, "gold_max": 0, "attack_class": AC.DEFAULT, "level": 1, "model": id,
 		"can_attack": true, "can_move": true, "flying": false, "abilities": [], "bounty_key": "",
+		"ancient": false, "innate": "", "talents": [],
 	}
 	u.merge(d, true)
 	return u
@@ -33,6 +35,7 @@ static func _ensure() -> void:
 	_build_units()
 	_build_items()
 	_build_abilities()
+	_build_talents()
 
 static func unit(id: String) -> Dictionary:
 	_ensure()
@@ -53,6 +56,11 @@ static func items() -> Dictionary:
 static func ability(id: String) -> Dictionary:
 	_ensure()
 	return _abilities.get(id, {})
+
+## A talent: {id, name, mods: [{ability, add: {key: n}, mult: {key: n}}], stats: {key: n}}.
+static func talent(id: String) -> Dictionary:
+	_ensure()
+	return _talents.get(id, {})
 
 # ---- Units --------------------------------------------------------------------------------------------------------
 
@@ -156,11 +164,11 @@ static func _build_units() -> void:
 	_add("cinder_wyrmling", _merged(neu, {"name": "Fire Imp", "hull": 24.0, "hp": 950.0, "hp_regen": 0.5,
 		"armor": 2.0, "magic_resist": 0.25, "dmg_min": 20.0, "dmg_max": 22.0, "attack_point": 0.5, "backswing": 0.5,
 		"acquire": 300.0, "range": 300.0, "projectile_speed": 900.0, "move_speed": 350.0, "xp": 95.0, "gold_min": 37,
-		"gold_max": 43, "level": 3}))
+		"gold_max": 43, "level": 3, "ancient": true}))
 	_add("elder_cinder_wyrm", _merged(neu, {"name": "Lava Golem", "hull": 40.0, "hp": 2000.0, "hp_regen": 2.0,
 		"mana": 500.0, "armor": 4.0, "magic_resist": 0.3, "dmg_min": 62.0, "dmg_max": 68.0, "attack_point": 0.5,
 		"backswing": 0.5, "acquire": 300.0, "range": 300.0, "projectile_speed": 1500.0, "move_speed": 300.0,
-		"xp": 124.0, "gold_min": 76, "gold_max": 80, "level": 6}))
+		"xp": 124.0, "gold_min": 76, "gold_max": 80, "level": 6, "ancient": true}))
 
 	# Heroes. Blood Ranger: a ranged agility archer (stats follow the classic ranged-agility carry template).
 	_add("blood_ranger", {"name": "Blood Ranger", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
@@ -180,6 +188,17 @@ static func _build_units() -> void:
 		"xp": 0.0, "primary": "str", "str": 24.0, "str_gain": 3.2, "agi": 16.0, "agi_gain": 2.0, "int": 18.0,
 		"int_gain": 1.7, "abilities": ["dark_stomp", "leap_strike", "tainted_touch", "unholy_might"],
 		"model": "hero_ezee"})
+	# Sludge, the Butcher: Dota 2's Pudge one to one (patch 7.41d, Liquipedia and the game's hero data), renamed.
+	_add("sludge", {"name": "Sludge", "title": "the Butcher", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 2.5, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 0.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 45.0, "dmg_max": 51.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.5, "backswing": 1.17, "acquire": 600.0, "range": 175.0,
+		"projectile_speed": 0.0, "move_speed": 280.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "str", "str": 25.0, "str_gain": 3.0, "agi": 13.0, "agi_gain": 1.4, "int": 16.0,
+		"int_gain": 1.8, "abilities": ["shuriken_hook", "stench", "blubber", "chomp"], "innate": "growing_gut",
+		"talents": [["sludge_stench_slow", "sludge_armor"], ["sludge_hook_damage", "sludge_spell_lifesteal"],
+			["sludge_hook_cooldown", "sludge_chomp_time"], ["sludge_gut_blubber", "sludge_chomp_power"]],
+		"model": "hero_sludge"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -202,7 +221,7 @@ static func _build_abilities() -> void:
 	# back leap of 300, 30 s. Everything else (mana, ranges, radii, timings, proc chance) is chosen; see docs/HANDOFF.md.
 	_abilities["burst_shot"] = {"id": "burst_shot", "name": "Burst Shot", "behavior": "point", "key": "Q",
 		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [17, 17, 17, 17], "cast_point": 0.2, "range": 900,
-		"anim": "bow_draw_hold", "damage_type": "physical", "channel": true,
+		"anim": "bow_draw_hold", "damage_type": "physical", "channel": true, "channel_breaks_on_root": true,
 		"values": {"arrows": [30, 30, 30, 30], "waves": [5, 5, 5, 5], "wave_min": [4, 4, 4, 4], "wave_max": [7, 7, 7, 7],
 		"attack_pct": [0.55, 0.65, 0.75, 0.85], "radius": [400, 400, 400, 400], "wave_interval": [0.4, 0.4, 0.4, 0.4],
 		"arrow_speed": [1800, 1800, 1800, 1800]},
@@ -250,6 +269,53 @@ static func _build_abilities() -> void:
 		"values": {"duration": [10, 10, 10], "chance": [0.3, 0.4, 0.5], "reflect_radius": [700, 700, 700],
 		"fatigue_slow": [0.5, 0.5, 0.5], "fatigue_duration": [2, 2, 2]},
 		"desc": "Ezee roars and is wrapped in a dark aura. Each instance of damage he takes has a chance to be halved, the other half striking a random nearby enemy as pure damage. When the aura fades he is slowed for 2 seconds."}
+	# Sludge, the Butcher (Pudge, 7.41d). Every number is Dota's; see docs/HANDOFF.md.
+	_abilities["growing_gut"] = {"id": "growing_gut", "name": "Growing Gut", "behavior": "innate", "key": "",
+		"max_level": 1, "mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0,
+		"values": {"str_per_stack": [2.0], "radius": [450.0]},
+		"desc": "Sludge gains 2 strength for good whenever an enemy hero dies within 450 of him, or anywhere if he gets the kill."}
+	_abilities["shuriken_hook"] = {"id": "shuriken_hook", "name": "Shuriken Hook", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [120, 120, 120, 120], "cooldown": [18, 16, 14, 12], "cast_point": 0.3, "range": 1300,
+		"anim": "cast_quick", "damage_type": "pure", "line": true,
+		"values": {"damage": [150, 220, 290, 360], "distance": [1300, 1300, 1300, 1300], "speed": [1600, 1600, 1600, 1600],
+		"width": [100, 100, 100, 100], "lock_pct": [0.65, 0.65, 0.65, 0.65], "vision_radius": [500, 500, 500, 500],
+		"vision_duration": [4, 4, 4, 4]},
+		"shard": {"drag_damage_pct": 0.2, "ally_cooldown_pct": 0.5},
+		"desc": "Sludge hurls a chain tipped with a spinning shuriken. It always flies its full 1300 range and catches the first unit it touches, dragging it back to where he threw it. Enemies take pure damage and are stunned while dragged; enemy creeps die at once; allies are pulled to safety unharmed. The chain flies over cliffs and trees."}
+	_abilities["stench"] = {"id": "stench", "name": "Stench", "behavior": "toggle", "key": "W",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"damage_type": "magical",
+		"values": {"radius": [250, 250, 250, 250], "dps": [30, 60, 90, 120], "slow": [0.14, 0.20, 0.26, 0.32],
+		"tick": [0.2, 0.2, 0.2, 0.2], "linger": [0.5, 0.5, 0.5, 0.5], "heal_reduction": [0.0, 0.0, 0.0, 0.0]},
+		"scepter": {"radius": 200.0, "dps": 90.0, "heal_reduction": 0.2},
+		"desc": "A toxic cloud pours off Sludge, damaging and slowing nearby enemies, and hurting Sludge himself (it can never kill him). Toggle it on and off. Keeps working while he is stunned."}
+	_abilities["blubber"] = {"id": "blubber", "name": "Blubber", "behavior": "no_target", "key": "E", "immediate": true,
+		"max_level": 4, "mana": [65, 70, 75, 80], "cooldown": [20, 19, 18, 17], "cast_point": 0.0, "range": 0,
+		"values": {"block": [8, 14, 20, 26], "duration": [4, 5, 6, 7]},
+		"desc": "Sludge's fat thickens: every instance of damage he takes, from any source, is reduced by a flat amount for a few seconds. Does not interrupt Chomp."}
+	_abilities["chomp"] = {"id": "chomp", "name": "Chomp", "behavior": "unit", "key": "R", "target_team": "enemy",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 130, 170], "cooldown": [30, 25, 20],
+		"cast_point": 0.3, "range": 200, "anim": "cast_channel", "damage_type": "magical", "channel": true,
+		"values": {"dps": [80, 100, 120], "str_mult": [0.3, 0.6, 0.9], "duration": [2.75, 2.75, 2.75], "ticks": [6, 6, 6],
+		"pull_speed": [75, 75, 75], "pull_min": [125, 125, 125], "damage_mult": [1.0, 1.0, 1.0]},
+		"desc": "Sludge grabs an enemy and eats it alive. Channelled for 2.75 seconds: the victim is stunned and pulled in, taking magic damage that grows with his strength, and Sludge heals for all of it."}
+
+# ---- Talents ---------------------------------------------------------------------------------------------------------
+
+static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
+	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}
+
+static func _build_talents() -> void:
+	# Sludge (Pudge's tree in 7.41d): level 10, 15, 20, 25; left and right.
+	_talent("sludge_stench_slow", "+10% Stench slow", [{"ability": "stench", "add": {"slow": 0.10}}])
+	_talent("sludge_armor", "+5 Armor", [], {"armor": 5.0})
+	_talent("sludge_hook_damage", "+150 Shuriken Hook damage", [{"ability": "shuriken_hook", "add": {"damage": 150.0}}])
+	_talent("sludge_spell_lifesteal", "8% Spell Lifesteal", [], {"spell_lifesteal": 0.08})
+	_talent("sludge_hook_cooldown", "-4s Shuriken Hook cooldown", [{"ability": "shuriken_hook", "add": {"cooldown": -4.0}}])
+	_talent("sludge_chomp_time", "+0.75s Chomp", [{"ability": "chomp", "add": {"duration": 0.75, "ticks": 2.0}}])
+	_talent("sludge_gut_blubber", "1.5x Growing Gut and Blubber", [{"ability": "growing_gut", "mult": {"str_per_stack": 1.5}},
+		{"ability": "blubber", "mult": {"block": 1.5}}])
+	_talent("sludge_chomp_power", "1.5x Chomp damage and heal", [{"ability": "chomp", "mult": {"damage_mult": 1.5}}])
 
 # ---- Items ----------------------------------------------------------------------------------------------------------
 ## Item data from items.txt. "stats": passive bonuses; "use": active effect; "recipe": components (recipe scroll cost

@@ -338,7 +338,8 @@ func _drain_events() -> void:
 				if h:
 					fx.level_up(View.to3(h.pos, terrain.height_at(h.pos)))
 			"effect_move":
-				fx.gale_move(int(e.get("src", -1)), e.pos, bool(e.get("done", false)))
+				if String(e.get("ability", "")) == "gale_impact":
+					fx.gale_move(int(e.get("src", -1)), e.pos, bool(e.get("done", false)))
 			"gale_impact":
 				fx.gale_launch(e)
 			"gale_hit":
@@ -356,7 +357,8 @@ func _drain_events() -> void:
 				var chv = views.get(e.u)
 				if chv is UnitView:
 					chv.on_channel_start(String(e.ability))
-				fx.burst_start(e)
+				if String(e.ability) == "burst_shot":
+					fx.burst_start(e)
 			"burst_wave":
 				var bwv = views.get(e.u)
 				if bwv is UnitView:
@@ -366,7 +368,8 @@ func _drain_events() -> void:
 				var cev = views.get(e.u)
 				if cev is UnitView:
 					cev.on_channel_end()
-				fx.burst_end(int(e.u))
+				if String(e.get("ability", "")) == "burst_shot":
+					fx.burst_end(int(e.u))
 			"blood_ranger_start":
 				fx.blood_ranger_start(int(e.u))
 			"back_leap":

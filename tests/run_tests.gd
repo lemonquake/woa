@@ -1532,3 +1532,387 @@ func test_options_audio_defaults() -> void:
 		check(i > 0, "bus %s exists" % b)
 		check(i > 0 and AudioServer.get_bus_send(i) == &"Master", "bus %s feeds Master" % b)
 	near(AudioServer.get_bus_volume_db(0), -10.0, 0.01, "Master bus at -10 dB on a fresh profile")
+
+# ---- Sludge, the Butcher (Dota 2's Pudge, patch 7.41d) -------------------------------------------------------------
+
+func _sludge(w: SimWorld, p: Vector2, levels := {}, team := C.DAWN) -> SimUnit:
+	var s := w.spawn("sludge", team, p)
+	s.level = 18
+	s.refresh_stats()
+	s.hp = s.max_hp
+	s.mana = s.max_mana
+	for aid in s.abilities:
+		s.ability_level[aid] = int(levels.get(aid, 4 if aid != "chomp" else 3))
+	s.refresh_stats()
+	s.auto_attack = false                      # spell tests: no swings at the dummies
+	return s
+
+## Damage dealt to `uid` by `key`, from the event stream (regeneration does not blur it).
+func _dmg_events(evs: Array, uid: int, key: String) -> float:
+	var t := 0.0
+	for ev in evs:
+		if ev.t == "damage" and int(ev.u) == uid and String(ev.get("key", "")) == key:
+			t += float(ev.amount)
+	return t
+
+func _events_of(w: SimWorld, kind: String) -> Array:
+	return w.events.filter(func(e): return e.t == kind)
+
+func test_sludge_base_stats() -> void:
+	var w := empty_world()
+	var s := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	near(s.str_total, 25.0, 0.001, "25 strength at level 1")
+	near(s.agi_total, 13.0, 0.001, "13 agility")
+	near(s.int_total, 16.0, 0.001, "16 intelligence")
+	near(s.max_hp, 120.0 + 25.0 * 22.0, 0.01, "health 120 + 22 per strength")
+	near(s.dmg_min, 70.0, 0.001, "damage 45 + 25 strength")
+	near(s.dmg_max, 76.0, 0.001, "damage 51 + 25 strength")
+	near(s.move_speed, 280.0, 0.001, "280 move speed")
+	near(s.attack_range, 175.0, 0.001, "175 melee range")
+	near(s.attack_speed, 113.0, 0.001, "100 attack speed plus 13 agility")
+	near(s.attack_point_time(), 0.5 / 1.13, 0.001, "0.5 attack point (scaled by attack speed)")
+	near(s.backswing_time(), 1.17 / 1.13, 0.001, "1.17 backswing (scaled by attack speed)")
+	near(s.armor, 13.0 / 6.0, 0.01, "0 base armor plus agility")
+	near(s.hp_regen, 2.5 + 2.5, 0.01, "2.5 base regen plus 0.1 per strength")
+	check(s.ability_level_of("growing_gut") == 1, "Growing Gut is innate (level 1 from the start)")
+	check(not w.abilities.can_learn(s, "growing_gut"), "and cannot be levelled")
+	s.level = 2
+	s.refresh_stats()
+	near(s.str_total, 28.0, 0.001, "+3 strength per level")
+
+func test_shuriken_hook_full_range_damage_and_drag() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-2000 + 1000, -4000))
+	w.vision.update()
+	var hp0 := e.hp
+	# clicked only 300 away: the hook still flies its full range and catches the hero at 1000
+	w.command(s.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": Vector2(-1700, -4000)})
+	var latch_t := -1.0
+	var end_t := -1.0
+	var stunned_while_dragged := false
+	var start_t := w.time
+	var hook_dmg := 0.0
+	for i in 120:
+		w.step()
+		hook_dmg += _dmg_events(w.events, e.id, "shuriken_hook")
+		for ev in w.events:
+			if ev.t == "hook_latch" and int(ev.u) == e.id:
+				latch_t = w.time - start_t
+			if ev.t == "hook_end":
+				end_t = w.time - start_t
+		w.events.clear()
+		if latch_t > 0.0 and end_t < 0.0 and e.is_stunned():
+			stunned_while_dragged = true
+		if end_t > 0.0:
+			break
+	near(latch_t, 0.3 + (1000.0 - 100.0 - 24.0) / 1600.0, 0.07, "caught after the 0.3 s cast point and the flight")
+	near(hook_dmg, 360.0, 0.01, "360 pure damage at level 4")
+	check(hp0 - e.hp > 355.0, "taken from its health")
+	check(stunned_while_dragged, "the enemy is stunned while dragged")
+	near(end_t - latch_t, (e.pos.distance_to(Vector2(-2000, -4000)) + 1000.0 - 100.0 - 24.0 - 48.0) / 1600.0, 0.1, "dragged back at hook speed")
+	near(e.pos.distance_to(Vector2(-2000, -4000)), 48.0, 8.0, "lands at Sludge's feet")
+	check(not e.is_stunned(), "free once it arrives")
+	check(w.abilities.cooldown_left(s, "shuriken_hook") > 10.0, "12 s cooldown at level 4")
+	near(s.mana, s.max_mana - 120.0, 4.0, "120 mana")
+
+func test_shuriken_hook_misses_returns_and_locks() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	w.vision.update()
+	w.command(s.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": Vector2(-1000, -4000)})
+	var cast_t := -1.0
+	for i in 30:
+		w.step()
+		if cast_t < 0.0 and not _events_of(w, "hook_launch").is_empty():
+			cast_t = w.time
+		w.events.clear()
+		if cast_t > 0.0 and w.time - cast_t >= 0.1:
+			break
+	var lock := s.get_modifier("hook_lock")
+	check(not lock.is_empty(), "while the hook flies out Sludge is locked")
+	check(s.is_rooted() and s.is_disarmed() and s.has_flag("mute") and s.has_flag("face_lock"), "rooted, disarmed, muted, cannot turn")
+	near(float(lock.get("expires", 0.0)) - cast_t, 1300.0 / 1600.0 * 0.65, 0.001, "for (1300 / 1600) x 65% = 0.53 s")
+	var f0 := s.facing
+	w.command(s.id, {"type": O.MOVE, "point": Vector2(-2000, -3000)})
+	run(w, 0.2)
+	near(s.facing, f0, 0.001, "cannot turn while locked")
+	near(s.pos.distance_to(Vector2(-2000, -4000)), 0.0, 1.0, "cannot walk while locked")
+	var ended := -1.0
+	for i in 90:
+		w.step()
+		for ev in w.events:
+			if ev.t == "hook_end":
+				ended = w.time
+		w.events.clear()
+	check(ended > 0.0, "a hook that catches nothing comes back")
+	check(s.get_modifier("hook_lock").is_empty(), "the lock wears off")
+
+func test_shuriken_hook_first_unit_ally_and_ancient() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	var ally := _dummy(w, "dawn_melee", C.DAWN, Vector2(-1600, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1100, -4000))
+	w.vision.update()
+	var a0 := ally.hp
+	var e0 := e.hp
+	w.command(s.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": Vector2(-1100, -4000)})
+	run(w, 2.0)
+	near(ally.hp, a0, 0.001, "an ally caught first is not hurt")
+	near(e.hp, e0, 0.001, "the enemy behind it is untouched")
+	near(ally.pos.distance_to(s.pos), s.hull + ally.hull, 10.0, "the ally is pulled to Sludge")
+	# an ancient creep in front is ignored; the hero behind it is caught
+	var w2 := empty_world()
+	var s2 := _sludge(w2, Vector2(-2000, -4000))
+	var anc := _dummy(w2, "cinder_wyrmling", C.NEUTRAL, Vector2(-1600, -4000))
+	var e2 := _dummy(w2, "ezee", C.DUSK, Vector2(-1100, -4000))
+	w2.vision.update()
+	var anc0 := anc.hp
+	var e20 := e2.hp
+	w2.command(s2.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": Vector2(-1100, -4000)})
+	run(w2, 2.2)
+	near(anc.hp, anc0, 0.001, "ancient creeps cannot be hooked")
+	check(e2.hp < e20, "the hero behind the ancient is caught")
+
+func test_shuriken_hook_kills_enemy_creep() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1400, -4000))
+	c.order = O.HOLD
+	w.vision.update()
+	var g0 := s.gold()
+	w.command(s.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": Vector2(-1400, -4000)})
+	run(w, 1.0)
+	check(not c.alive, "a non-ancient enemy creep dies on the spot")
+	check(s.last_hits == 1 and s.gold() > g0, "and Sludge gets the last hit and its gold")
+
+func test_shuriken_hook_flies_over_trees() -> void:
+	var w := empty_world()
+	var spot := _tree_spot()
+	check(not spot.is_empty(), "found a tree with open ground beside it")
+	if spot.is_empty():
+		return
+	var ti: int = spot[0]
+	var tree_pos: Vector2 = _map.trees[ti].pos
+	var dir: Vector2 = spot[2]
+	var s := _sludge(w, tree_pos - dir * 600.0)
+	var e := _dummy(w, "ezee", C.DUSK, tree_pos + dir * 200.0)
+	w.vision.update()
+	var e0 := e.hp
+	w.command(s.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": e.pos})
+	run(w, 2.0)
+	check(e.hp < e0, "the hook passes over the tree and catches the hero behind it")
+	check(w.map.trees[ti].alive, "and leaves the tree standing")
+
+func test_stench_damage_slow_self_damage_and_toggle() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1800, -4000))
+	var far := _dummy(w, "ezee", C.DUSK, Vector2(-2000 + 300 + 24 + 30, -4000))
+	w.vision.update()
+	var e0 := e.hp
+	var far0 := far.hp
+	var s0 := s.hp
+	w.command(s.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	check(bool(s.toggles.get("stench", false)), "toggled on at once (no cast point)")
+	var ticks := 0
+	var st_dmg := 0.0
+	var self_dmg := 0.0
+	for i in 30:
+		w.step()
+		for ev in w.events:
+			if ev.t == "damage" and int(ev.u) == e.id and ev.key == "stench":
+				ticks += 1
+		st_dmg += _dmg_events(w.events, e.id, "stench")
+		self_dmg += _dmg_events(w.events, s.id, "stench")
+		w.events.clear()
+	check(ticks == 5 or ticks == 6, "a tick every 0.2 s (%d in 1 s)" % ticks)
+	near(st_dmg, ticks * 120.0 * 0.2 * (1.0 - e.magic_resist), 0.01, "120 magic damage per second at level 4")
+	near(far.hp, far0, 0.001, "nothing beyond 250")
+	near(self_dmg, ticks * 120.0 * 0.2 * (1.0 - s.magic_resist), 0.01, "Sludge takes the same damage")
+	check(s.hp < s0, "from his own health")
+	var slow := e.get_modifier("stench")
+	near(float(slow.get("slow", 0.0)), 0.32, 0.001, "32% slow at level 4")
+	# while stunned it keeps burning
+	s.add_modifier({"id": "stun", "source": -1, "expires": w.time + 1.0, "stun": true})
+	var e1 := e.hp
+	run(w, 0.6)
+	check(e.hp < e1, "still burning while Sludge is stunned")
+	run(w, 0.6)
+	# off: no more damage; the slow lingers 0.5 s
+	w.command(s.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	check(not bool(s.toggles.get("stench", true)), "toggled off")
+	run(w, 0.25)
+	var e2 := e.hp
+	check(not e.get_modifier("stench").is_empty(), "the slow lingers")
+	run(w, 0.5)
+	near(e.hp, e2 + e.hp_regen * 0.5, 2.0, "no damage once off")
+	check(e.get_modifier("stench").is_empty(), "the slow fades after 0.5 s")
+	# never lethal to Sludge
+	s.hp = 5.0
+	w.command(s.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	run(w, 2.0)
+	check(s.alive and s.hp >= 1.0, "Stench never kills Sludge")
+
+func test_stench_scepter() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	s.scepter = true
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-2000 + 420, -4000))
+	w.vision.update()
+	near(w.abilities.val(s, "stench", "radius"), 450.0, 0.001, "Upgrade Staff: +200 radius")
+	near(w.abilities.val(s, "stench", "dps"), 210.0, 0.001, "Upgrade Staff: +90 damage per second")
+	var e0 := e.hp
+	w.command(s.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	run(w, 0.1)
+	check(e.hp < e0, "reaches 420 away")
+	e.hp = e.max_hp * 0.5
+	var before := e.hp
+	var got := w.combat.heal(e, 100.0)
+	near(got, 80.0, 0.01, "-20% healing on enemies inside")
+	near(e.hp - before, 80.0, 0.01, "applied to their health")
+
+func test_blubber_blocks_every_instance() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	w.vision.update()
+	w.command(s.id, {"type": O.CAST_NO_TARGET, "ability": "blubber"})
+	check(not s.get_modifier("blubber").is_empty(), "instant, no cast point")
+	near(s.mana, s.max_mana - 80.0, 0.5, "80 mana at level 4")
+	check(w.abilities.cooldown_left(s, "blubber") > 16.9, "17 s cooldown at level 4")
+	var h0 := s.hp
+	w.combat.deal_damage(-1, C.DUSK, false, s, 100.0, C.DamageType.PURE)
+	near(h0 - s.hp, 74.0, 0.01, "blocks 26 of a 100 damage hit")
+	var h1 := s.hp
+	w.combat.deal_damage(-1, C.DUSK, false, s, 20.0, C.DamageType.PURE)
+	near(h1 - s.hp, 0.0, 0.01, "a hit under 26 does nothing")
+	run(w, 7.1)
+	check(s.get_modifier("blubber").is_empty(), "lasts 7 s at level 4")
+
+func test_chomp_bites_heal_pull_and_end() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-2000 + 48 + 150, -4000))
+	w.vision.update()
+	s.hp = 200.0
+	var e0 := e.hp
+	var str0 := s.str_total
+	w.command(s.id, {"type": O.CAST_UNIT, "ability": "chomp", "target": e.id})
+	var bites := 0
+	var healed := 0.0
+	var stunned := false
+	var bite_dmg := 0.0
+	for i in int(0.3 * 30) + 2 + int(2.75 * 30) + 2:
+		w.step()
+		bite_dmg += _dmg_events(w.events, e.id, "chomp")
+		for ev in w.events:
+			if ev.t == "chomp_bite":
+				bites += 1
+				healed += float(ev.healed)
+		w.events.clear()
+		if e.has_flag("stun"):
+			stunned = true
+	var per_bite := (120.0 + 0.9 * str0) * 2.75 / 6.0
+	check(bites == 6, "6 bites over the 2.75 s channel (%d)" % bites)
+	near(bite_dmg, per_bite * 6.0 * (1.0 - e.magic_resist), 0.05, "(120 + 0.9 x strength) magic damage per second")
+	check(e0 - e.hp > bite_dmg - 15.0, "taken from its health")
+	near(healed, per_bite * 6.0, 1.0, "Sludge heals the full bite each time")
+	check(stunned, "the victim is stunned")
+	check(not e.has_flag("stun"), "and free when it ends")
+	near(e.pos.distance_to(s.pos), 125.0, 4.0, "pulled in to 125")
+	check(w.abilities.cooldown_left(s, "chomp") > 17.0, "20 s cooldown at level 3")
+	# cut short by a stun; Stench and Blubber do not break it
+	var w2 := empty_world()
+	var s2 := _sludge(w2, Vector2(-2000, -4000))
+	var e2 := _dummy(w2, "ezee", C.DUSK, Vector2(-2000 + 48 + 150, -4000))
+	w2.vision.update()
+	w2.command(s2.id, {"type": O.CAST_UNIT, "ability": "chomp", "target": e2.id})
+	run(w2, 0.6)
+	check(not s2.channel.is_empty(), "channelling")
+	w2.command(s2.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	w2.command(s2.id, {"type": O.CAST_NO_TARGET, "ability": "blubber"})
+	run(w2, 0.2)
+	check(not s2.channel.is_empty(), "Stench and Blubber do not break Chomp")
+	s2.add_modifier({"id": "stun", "source": -1, "expires": w2.time + 0.5, "stun": true})
+	run(w2, 0.1)
+	check(s2.channel.is_empty(), "a stun ends it")
+	check(not e2.has_flag("stun"), "and frees the victim")
+	# only enemies
+	var w3 := empty_world()
+	var s3 := _sludge(w3, Vector2(-2000, -4000))
+	var a3 := _dummy(w3, "dawn_melee", C.DAWN, Vector2(-1850, -4000))
+	w3.vision.update()
+	check(w3.abilities.cast_error(s3, "chomp", -1, a3, a3.pos) != "", "cannot Chomp an ally")
+
+func test_growing_gut_stacks() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	var str0 := s.str_total
+	# an enemy hero dies 400 away: +2 strength
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1600, -4000), 100.0)
+	w.combat.deal_damage(-1, C.NEUTRAL, false, e, 1000.0, C.DamageType.PURE)
+	w.combat.process_deaths()
+	near(s.str_total - str0, 2.0, 0.001, "an enemy hero dying within 450 gives 2 strength")
+	# far away and not his kill: nothing
+	var e2 := _dummy(w, "ezee", C.DUSK, Vector2(2000, 2000), 100.0)
+	w.combat.deal_damage(-1, C.NEUTRAL, false, e2, 1000.0, C.DamageType.PURE)
+	w.combat.process_deaths()
+	near(s.str_total - str0, 2.0, 0.001, "not for a death far away that is not his")
+	# far away but his kill: a stack
+	var e3 := _dummy(w, "ezee", C.DUSK, Vector2(2000, 2200), 100.0)
+	w.combat.deal_damage(s.id, s.team, true, e3, 1000.0, C.DamageType.PURE)
+	w.combat.process_deaths()
+	near(s.str_total - str0, 4.0, 0.001, "a kill of his anywhere counts")
+	check(int(s.stacks.get("growing_gut", 0)) == 2, "two stacks")
+	# kept through death
+	w.combat.deal_damage(-1, C.DUSK, false, s, 1e6, C.DamageType.PURE)
+	w.combat.process_deaths()
+	w.respawn(s)
+	near(s.str_total - str0, 4.0, 0.001, "the strength stays after Sludge dies")
+	# an allied hero dying near him: nothing
+	var a := _dummy(w, "ezee", C.DAWN, s.pos + Vector2(100, 0), 100.0)
+	w.combat.deal_damage(-1, C.DUSK, false, a, 1000.0, C.DamageType.PURE)
+	w.combat.process_deaths()
+	near(s.str_total - str0, 4.0, 0.001, "an ally's death does not count")
+
+func test_sludge_talents_and_shard() -> void:
+	var w := empty_world()
+	var s := _sludge(w, Vector2(-2000, -4000))
+	s.level = 9
+	s.ability_points = 4
+	check(not w.abilities.can_learn_talent(s, 0), "no talent before level 10")
+	s.level = 25
+	check(w.abilities.learn_talent(s, 0, 0), "level 10 talent")
+	near(w.abilities.val(s, "stench", "slow"), 0.42, 0.001, "+10% Stench slow")
+	check(not w.abilities.learn_talent(s, 0, 1), "one talent per tier")
+	check(w.abilities.learn_talent(s, 2, 0), "level 20 talent")
+	near(w.abilities.ability_cooldown(s, "shuriken_hook"), 8.0, 0.001, "-4 s hook cooldown")
+	check(w.abilities.learn_talent(s, 3, 0), "level 25 talent")
+	near(w.abilities.val(s, "growing_gut", "str_per_stack"), 3.0, 0.001, "1.5x Growing Gut")
+	near(w.abilities.val(s, "blubber", "block"), 39.0, 0.001, "1.5x Blubber")
+	check(w.abilities.learn_talent(s, 1, 1), "level 15 talent")
+	near(s.spell_lifesteal, 0.08, 0.001, "8% spell lifesteal")
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1800, -4000))
+	s.hp = 100.0
+	var dealt := w.combat.deal_damage(s.id, s.team, true, e, 500.0, C.DamageType.PURE, false, "shuriken_hook")
+	near(s.hp - 100.0, dealt * 0.08, 0.01, "heals 8% of spell damage to heroes")
+	check(s.ability_points == 0, "each talent costs an ability point")
+	var w2 := empty_world()
+	var s2 := _sludge(w2, Vector2(-2000, -4000))
+	s2.level = 25
+	s2.ability_points = 4
+	w2.abilities.learn_talent(s2, 2, 1)
+	near(w2.abilities.val(s2, "chomp", "duration"), 3.5, 0.001, "+0.75 s Chomp")
+	near(w2.abilities.val(s2, "chomp", "ticks"), 8.0, 0.001, "two more bites")
+	w2.abilities.learn_talent(s2, 1, 0)
+	near(w2.abilities.val(s2, "shuriken_hook", "damage"), 510.0, 0.001, "+150 hook damage")
+	# Upgrade Gem: the drag adds 20% of its distance as damage
+	var w3 := empty_world()
+	var s3 := _sludge(w3, Vector2(-2000, -4000))
+	s3.shard = true
+	var e3 := _dummy(w3, "ezee", C.DUSK, Vector2(-1000, -4000))
+	w3.vision.update()
+	var e30 := e3.hp
+	w3.command(s3.id, {"type": O.CAST_POINT, "ability": "shuriken_hook", "point": e3.pos})
+	run(w3, 1.0)
+	near(e30 - e3.hp, 360.0 + 0.2 * (1000.0 - 100.0 - 24.0), 30.0, "Upgrade Gem: +20% of the drag distance as damage")

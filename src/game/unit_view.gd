@@ -277,6 +277,12 @@ func tick(u: SimUnit) -> void:
 	if _state == "leap":
 		_state = ""
 	if not u.knock.is_empty():
+		if u.knock.get("drag", false):
+			# caught by a Shuriken Hook: hauled along, limbs trailing
+			if _state != "drag":
+				_state = "drag"
+				_play("knockback", false, 0.5, 0.06, true)
+			return
 		if u.knock.get("phys", false):
 			var airborne: bool = float(u.knock.z) > 0.0 or float(u.knock.vz) > 0.0
 			if now < _lock_until and _state == "wall":
@@ -305,7 +311,7 @@ func tick(u: SimUnit) -> void:
 	if _state == "hop":
 		_state = ""
 		_lock_until = maxf(_lock_until, now + 0.12)
-	if _state in ["air", "slide", "knock", "wall"]:
+	if _state in ["air", "slide", "knock", "wall", "drag"]:
 		_state = ""
 		if not u.has_flag("stun"):
 			# back on its feet

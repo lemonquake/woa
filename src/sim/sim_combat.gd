@@ -175,8 +175,9 @@ func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
 
 ## Apply damage after armor / magic resistance and building protections. Returns the health removed.
 ## key names the source for the damage tables ("attack", an ability or item id); reflected damage is not reflected again.
+## opts: ignore_armor (cleave), non_lethal (Stench on its owner), no_spell_lifesteal.
 func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount: float, dtype: int, is_attack := false,
-		key := "", reflected := false) -> float:
+		key := "", reflected := false, opts := {}) -> float:
 	if not t.alive or amount <= 0.0:
 		return 0.0
 	if t.is_invulnerable():
@@ -188,7 +189,8 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		key = "attack" if is_attack else "spell"
 	match dtype:
 		C.DamageType.PHYSICAL:
-			amount *= C.armor_multiplier(t.armor)
+			if not opts.get("ignore_armor", false):
+				amount *= C.armor_multiplier(t.armor)
 		C.DamageType.MAGICAL:
 			if t.is_building():
 				return 0.0
@@ -205,9 +207,20 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 			reflect_amt = amount * 0.5
 			amount -= reflect_amt
 			reflect_to = w.abilities.unholy_victim(t, float(um.radius))
+	# flat damage negation on every instance after reductions (Blubber), from any source
+	var blk := t.damage_block()
+	if blk > 0.0:
+		amount = maxf(0.0, amount - blk)
+	if opts.get("non_lethal", false):
+		amount = clampf(amount, 0.0, maxf(0.0, t.hp - 1.0))
 	amount = minf(amount, t.hp)
 	t.hp -= amount
 	var src := w.get_unit(src_id)
+	# spell lifesteal: heals from spell damage dealt to enemies (100% from heroes, 20% from creeps)
+	if src != null and src.alive and src != t and not is_attack and not reflected and src.spell_lifesteal > 0.0 \
+			and src_team != t.team and amount > 0.0 and not opts.get("no_spell_lifesteal", false) \
+			and not t.is_building() and not t.is_ward():
+		heal(src, amount * src.spell_lifesteal * (1.0 if t.is_hero() else 0.2))
 	_ledger(src, t, key, dtype, amount, src_id)
 	if src_hero and t.is_hero() and src_team != t.team:
 		t.hero_damage_log[src_id] = w.time
@@ -234,7 +247,7 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 func _ledger(src: SimUnit, t: SimUnit, key: String, dtype: int, amount: float, src_id: int) -> void:
 	if amount <= 0.0:
 		return
-	if src != null:
+	if src != null and src != t:
 		var row: Array = src.dmg_out.get(key, [0.0, 0.0, 0.0])
 		row[0 if t.is_hero() else (2 if t.is_building() else 1)] += amount
 		src.dmg_out[key] = row
@@ -245,11 +258,15 @@ func _ledger(src: SimUnit, t: SimUnit, key: String, dtype: int, amount: float, s
 		while not t.recent_in.is_empty() and (w.time - float(t.recent_in[0].t) > 20.0 or t.recent_in.size() > 80):
 			t.recent_in.pop_front()
 
-func heal(t: SimUnit, amount: float) -> void:
-	if t.alive:
-		var before := t.hp
-		t.hp = minf(t.max_hp, t.hp + amount)
-		t.healed += t.hp - before
+## Restore health (reduced by healing reduction on the unit). Returns the health actually restored.
+func heal(t: SimUnit, amount: float) -> float:
+	if not t.alive or amount <= 0.0:
+		return 0.0
+	amount *= 1.0 - t.heal_reduction()
+	var before := t.hp
+	t.hp = minf(t.max_hp, t.hp + amount)
+	t.healed += t.hp - before
+	return t.hp - before
 
 # ---- Death --------------------------------------------------------------------------------------------------------------
 
@@ -283,6 +300,7 @@ func process_deaths() -> void:
 		var deny := killer != null and killer.team == t.team
 		w.events.append({"t": "death", "u": t.id, "killer": killer.id if killer else -1, "deny": deny})
 		if t.is_hero():
+			w.abilities.on_hero_death(t, killer, null if deny else kill_credit(t, killer))
 			_hero_death(t, killer)
 		elif t.kind == K.COURIER:
 			t.respawn_at = w.time + C.COURIER_RESPAWN
@@ -372,17 +390,7 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 	t.streak = 0
 	if killer != null and killer.team == t.team:
 		return                                # denied hero: no rewards
-	# kill credit: an enemy hero who struck the killing blow, else the last enemy hero to damage us recently
-	var credit: SimUnit = killer if killer != null and killer.is_hero() else null
-	if credit == null:
-		var best_t := -INF
-		for hid in t.hero_damage_log:
-			var tt: float = t.hero_damage_log[hid]
-			if w.time - tt <= C.KILL_TIME_WINDOW and tt > best_t:
-				var h := w.get_unit(hid)
-				if h != null:
-					best_t = tt
-					credit = h
+	var credit := kill_credit(t, killer)
 	var enemy_team := 1 - t.team
 	var assisters: Array[SimUnit] = []
 	for h in w.heroes:
@@ -430,6 +438,20 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 	var xp := C.HERO_KILL_XP_BASE + C.HERO_KILL_XP_FACTOR * t.xp
 	_share_xp(t, xp, enemy_team, credit)
 	t.hero_damage_log.clear()
+
+## Kill credit: an enemy hero who struck the killing blow, else the last enemy hero to damage the victim recently.
+func kill_credit(t: SimUnit, killer: SimUnit) -> SimUnit:
+	var credit: SimUnit = killer if killer != null and killer.is_hero() and killer.team != t.team else null
+	if credit == null:
+		var best_t := -INF
+		for hid in t.hero_damage_log:
+			var tt: float = t.hero_damage_log[hid]
+			if w.time - tt <= C.KILL_TIME_WINDOW and tt > best_t:
+				var h := w.get_unit(hid)
+				if h != null:
+					best_t = tt
+					credit = h
+	return credit
 
 func _streak_gold(streak: int) -> float:
 	if streak < 3:

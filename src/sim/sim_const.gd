@@ -71,6 +71,8 @@ const INT_MAGIC_RESIST := 0.001
 const HERO_BASE_HP := 120.0
 const HERO_BASE_MANA := 75.0
 const HERO_BASE_MAGIC_RESIST := 0.25
+## Hero levels at which talent tiers open (one ability point picks one of the two talents in a tier).
+const TALENT_LEVELS := [10, 15, 20, 25]
 
 # ---- Experience -------------------------------------------------------------------------------------------------------
 ## Total XP needed to reach level i+1 (index 0 = level 1).

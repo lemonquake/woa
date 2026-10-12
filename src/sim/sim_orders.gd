@@ -31,11 +31,13 @@ func clear(u: SimUnit) -> void:
 ## Validate and apply an order. from_player: issued by a player or bot (as opposed to the unit's own AI).
 func cancel_channel(u: SimUnit) -> void:
 	if not u.channel.is_empty():
-		var aid := String(u.channel.ability)
+		var ch := u.channel
+		var aid := String(ch.ability)
 		u.channel = {}
 		if aid == "tp":
 			w.events.append({"t": "tp_cancel", "u": u.id})
 		else:
+			w.abilities.channel_cleanup(u, ch, true)
 			w.events.append({"t": "channel_end", "u": u.id, "ability": aid, "cancelled": true})
 
 ## Shift-queued orders (o.queue) wait at the end of the queue while the unit is busy; from_queue: this order was just
@@ -45,10 +47,11 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 	if o.get("queue", false) and (not u.is_idle() or not u.channel.is_empty() or not u.order_queue.is_empty()):
 		u.order_queue.append(o)
 		return
-	# any new order breaks a channel, except an item that acts at once without a target (Dota)
+	# any new order breaks a channel, except something that acts at once without a target: an item, a toggle (Stench)
+	# or an immediate spell (Blubber), as in Dota
 	if not u.channel.is_empty():
 		var islot := int(o.get("item_slot", -1))
-		var instant := type == O.CAST_NO_TARGET and islot >= 0 and w.abilities.is_instant(u, "", islot)
+		var instant := type == O.CAST_NO_TARGET and w.abilities.is_instant(u, String(o.get("ability", "")), islot)
 		if not instant:
 			cancel_channel(u)
 	# a hard stop (S held) keeps the unit from acquiring targets until it gets another order
@@ -180,15 +183,22 @@ func update(u: SimUnit) -> void:
 		u.moving = false
 		return
 	if not u.channel.is_empty() and String(u.channel.ability) != "tp":
-		# an ability channel (Burst Shot): stuns, pushes, silence and roots end it; the hero keeps facing the target
-		if u.is_stunned() or u.is_silenced() or u.has_flag("root"):
+		# an ability channel (Burst Shot, Chomp): stuns, pushes and silence end it (roots too, for abilities that say
+		# so); the hero keeps facing the target
+		var ch := u.channel
+		var breaks_on_root := bool(SimData.ability(String(ch.ability)).get("channel_breaks_on_root", false))
+		if u.is_stunned() or u.is_silenced() or (breaks_on_root and u.has_flag("root")):
 			cancel_channel(u)
 		else:
-			_turn_towards(u, ((u.channel.point as Vector2) - u.pos).angle())
-			w.abilities.update_burst(u)
-			if w.time >= float(u.channel.until) - 0.0001:
-				var aid := String(u.channel.ability)
+			if ch.has("point"):
+				_turn_towards(u, ((ch.point as Vector2) - u.pos).angle())
+			w.abilities.channel_tick(u)
+			if u.channel.is_empty():
+				pass                                   # ended inside the tick (the victim died)
+			elif w.time >= float(ch.until) - 0.0001:
+				var aid := String(ch.ability)
 				u.channel = {}
+				w.abilities.channel_cleanup(u, ch, false)
 				u.order = O.NONE
 				w.events.append({"t": "channel_end", "u": u.id, "ability": aid, "cancelled": false})
 				if not u.order_queue.is_empty():
@@ -460,6 +470,8 @@ func _update_cast(u: SimUnit) -> void:
 
 ## Turn towards `angle`; true once facing within the 11.5 degree tolerance.
 func _turn_towards(u: SimUnit, angle: float) -> bool:
+	if u.has_flag("face_lock"):
+		return false                               # Shuriken Hook's follow-through: no turning
 	var diff := wrapf(angle - u.facing, -PI, PI)
 	var step := u.turn_speed() * C.DT
 	if absf(diff) <= step:
@@ -540,6 +552,8 @@ func _free(u: SimUnit, p: Vector2, chase: SimUnit, near: Array, loose := false) 
 		return false
 	for o: SimUnit in near:
 		if o == u or o == chase or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if (u.phased or o.phased) and not o.is_building():
 			continue
 		var min_d := u.hull + o.hull - (8.0 if loose else 2.0)
 		if o.is_building():

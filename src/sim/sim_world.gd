@@ -178,6 +178,7 @@ func step() -> void:
 	combat.process_deaths()
 	_respawns()
 	if tick % C.VISION_UPDATE_TICKS == 0:
+		vision.prune_sources()
 		vision.update()
 	_cleanup()
 
@@ -331,6 +332,7 @@ func respawn(h: SimUnit) -> void:
 	h.modifiers.clear()
 	h.knock = {}
 	h.leap = {}
+	h.toggles.clear()
 	h.refresh_stats()
 	h.hp = h.max_hp
 	h.mana = h.max_mana

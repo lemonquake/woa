@@ -18,6 +18,8 @@ func can_learn(u: SimUnit, aid: String) -> bool:
 	if u.ability_points <= 0 or not u.ability_level.has(aid):
 		return false
 	var a := SimData.ability(aid)
+	if String(a.get("behavior", "")) == "innate":
+		return false
 	var lv := u.ability_level_of(aid)
 	if lv >= int(a.max_level):
 		return false
@@ -37,6 +39,33 @@ func learn(u: SimUnit, aid: String) -> bool:
 	w.events.append({"t": "learn", "u": u.id, "ability": aid, "level": u.ability_level[aid]})
 	return true
 
+## Talents: tier 0..3 opens at hero level 10 / 15 / 20 / 25 and costs one ability point; one of two per tier.
+func can_learn_talent(u: SimUnit, tier: int) -> bool:
+	var tree: Array = u.def.get("talents", [])
+	return tier >= 0 and tier < tree.size() and tier < C.TALENT_LEVELS.size() and not u.talents.has(tier) \
+		and u.ability_points > 0 and u.level >= int(C.TALENT_LEVELS[tier])
+
+func learn_talent(u: SimUnit, tier: int, side: int) -> bool:
+	if not can_learn_talent(u, tier) or side < 0 or side > 1:
+		return false
+	u.talents[tier] = String(u.def.talents[tier][side])
+	u.ability_points -= 1
+	rebuild_perm_stats(u)
+	w.events.append({"t": "learn_talent", "u": u.id, "tier": tier, "talent": u.talents[tier]})
+	return true
+
+## Stats that outlive death: Growing Gut's strength and the talents' flat bonuses.
+func rebuild_perm_stats(u: SimUnit) -> void:
+	var perm := {}
+	if u.ability_level.has("growing_gut"):
+		perm["str"] = float(u.stacks.get("growing_gut", 0)) * val(u, "growing_gut", "str_per_stack")
+	for tier in u.talents:
+		var tal := SimData.talent(String(u.talents[tier]))
+		for k in tal.get("stats", {}):
+			perm[k] = float(perm.get(k, 0.0)) + float(tal.stats[k])
+	u.perm_stats = perm
+	u.refresh_stats()
+
 func toggle_autocast(u: SimUnit, aid: String) -> void:
 	if SimData.ability(aid).get("behavior", "") == "autocast_attack" and u.ability_level_of(aid) > 0:
 		u.autocast[aid] = not bool(u.autocast.get(aid, false))
@@ -46,6 +75,34 @@ func toggle_autocast(u: SimUnit, aid: String) -> void:
 func _lvl_val(a: Dictionary, key: String, lv: int) -> float:
 	var arr: Array = a[key] if a.has(key) else a.values[key]
 	return float(arr[clampi(lv - 1, 0, arr.size() - 1)])
+
+## An ability value for this hero right now: the level's value plus the Upgrade Staff and Upgrade Gem bonuses, then
+## talents (added, then multiplied). Works for per-level keys in `values` and for "mana", "cooldown", "range".
+func val(u: SimUnit, aid: String, key: String) -> float:
+	var a := SimData.ability(aid)
+	if a.is_empty():
+		return 0.0
+	var v := 0.0
+	if a.has(key) and a[key] is Array or (a.get("values", {}) as Dictionary).has(key):
+		v = _lvl_val(a, key, maxi(1, u.ability_level_of(aid)))
+	elif a.has(key):
+		v = float(a[key])
+	if a.has("scepter") and (a.scepter as Dictionary).has(key) and u.has_scepter():
+		v += float(a.scepter[key])
+	if a.has("shard") and (a.shard as Dictionary).has(key) and u.shard:
+		v += float(a.shard[key])
+	for tier in u.talents:
+		for m in SimData.talent(String(u.talents[tier])).get("mods", []):
+			if String(m.ability) == aid:
+				v += float((m.get("add", {}) as Dictionary).get(key, 0.0))
+				v *= float((m.get("mult", {}) as Dictionary).get(key, 1.0))
+	return v
+
+func ability_mana(u: SimUnit, aid: String) -> float:
+	return val(u, aid, "mana")
+
+func ability_cooldown(u: SimUnit, aid: String) -> float:
+	return maxf(0.0, val(u, aid, "cooldown"))
 
 func cooldown_left(u: SimUnit, aid: String) -> float:
 	return maxf(0.0, float(u.ability_ready.get(aid, C.LONG_AGO)) - w.time)
@@ -81,8 +138,12 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		return "Silenced"
 	if cooldown_left(u, aid) > 0.0:
 		return "Ability on cooldown"
-	if u.mana < _lvl_val(a, "mana", lv):
+	if u.mana < ability_mana(u, aid):
 		return "Not enough mana"
+	if a.behavior == "unit":
+		var te := _target_error(u, a, target)
+		if te != "":
+			return te
 	if aid == "leap_strike":
 		if u.is_rooted():
 			return "Rooted"
@@ -91,6 +152,24 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 	if a.behavior == "autocast_attack":
 		if target == null or target.team == u.team or target.is_building():
 			return "Must target an enemy unit"
+	return ""
+
+## Unit-target spells (Chomp): the target must be alive, on the right team, a hero or creep, visible and not
+## invulnerable.
+func _target_error(u: SimUnit, a: Dictionary, t: SimUnit) -> String:
+	if t == null or not t.alive:
+		return "Must target a unit"
+	var team := String(a.get("target_team", "enemy"))
+	if team == "enemy" and t.team == u.team:
+		return "Must target an enemy"
+	if team == "ally" and t.team != u.team:
+		return "Must target an ally"
+	if t.is_building() or t.is_ward() or t.kind == K.COURIER:
+		return "Must target a hero or creep"
+	if t.is_invulnerable():
+		return "Target is invulnerable"
+	if not w.vision.sees(u.team, t):
+		return "Target not visible"
 	return ""
 
 func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> String:
@@ -104,6 +183,8 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> Stri
 		return "Item on cooldown"
 	if u.is_stunned():
 		return "Stunned"
+	if u.has_flag("mute"):
+		return "Muted"
 	match String(d.use):
 		"stick":
 			if u.stick_charges <= 0:
@@ -119,10 +200,15 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> Stri
 				return "Cannot plant a tree there"
 	return ""
 
+## Happens at once without a cast point or interrupting anything: no-target items, toggles (Stench) and immediate
+## spells (Blubber).
 func is_instant(u: SimUnit, aid: String, slot: int) -> bool:
-	if slot >= 0 and u.inventory[slot] != null:
-		return item_target(u.inventory[slot].id) == "none"
-	return false
+	if slot >= 0:
+		return u.inventory[slot] != null and item_target(u.inventory[slot].id) == "none"
+	if aid == "" or aid == "tp":
+		return false
+	var a := SimData.ability(aid)
+	return String(a.get("behavior", "")) == "toggle" or bool(a.get("immediate", false))
 
 ## "none", "point" (ground / tree) or "unit".
 func item_target(item_id: String) -> String:
@@ -171,8 +257,11 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	var a := SimData.ability(aid)
 	var lv := u.ability_level_of(aid)
-	u.mana -= _lvl_val(a, "mana", lv)
-	u.ability_ready[aid] = w.time + _lvl_val(a, "cooldown", lv)
+	if String(a.behavior) == "toggle":
+		set_toggle(u, aid, not bool(u.toggles.get(aid, false)))
+		return
+	u.mana -= ability_mana(u, aid)
+	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
 	_charge_sticks(u)
 	match aid:
@@ -206,6 +295,15 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 					"z": 0.0, "height": 150.0 + 0.12 * u.pos.distance_to(lt.pos)}
 				u.facing = (lt.pos - u.pos).angle()
 				w.events.append({"t": "leap_start", "u": u.id, "target": lt.id, "dur": u.leap.dur})
+		"shuriken_hook":
+			_start_hook(u, aid, lv, p)
+		"blubber":
+			var bdur := val(u, aid, "duration")
+			u.add_modifier({"id": "blubber", "source": u.id, "expires": w.time + bdur, "block_all": val(u, aid, "block"),
+				"fx": "blubber"})
+			w.events.append({"t": "blubber", "u": u.id, "dur": bdur})
+		"chomp":
+			_start_chomp(u, aid, lv, t)
 		"tainted_touch":
 			u.add_modifier({"id": "tainted_touch", "source": u.id, "expires": w.time + _v(a, "duration", lv), "tainted": lv,
 				"fx": "taint"})
@@ -310,6 +408,10 @@ func update_effects() -> void:
 				done = _update_line(e)
 			"delayed":
 				done = _update_delayed(e)
+			"hook":
+				done = _update_hook(e)
+			"pulse":
+				done = _update_pulse(e)
 		if done:
 			w.effects.remove_at(i)
 
@@ -438,6 +540,8 @@ func update_motion(u: SimUnit) -> void:
 	if u.knock.is_empty():
 		return
 	var k := u.knock
+	if k.get("drag", false):
+		return                                         # dragged by a Shuriken Hook: the hook moves it
 	if not k.get("phys", false):
 		k.t += C.DT
 		var f := clampf(k.t / k.dur, 0.0, 1.0)
@@ -649,7 +753,8 @@ func _start_burst(u: SimUnit, a: Dictionary, lv: int, p: Vector2) -> void:
 	var total := int(_v(a, "arrows", lv))
 	var split := burst_split(total, waves, int(_v(a, "wave_min", lv)), int(_v(a, "wave_max", lv)))
 	var interval := _v(a, "wave_interval", lv)
-	u.channel = {"ability": "burst_shot", "until": w.time + interval * waves, "point": p, "radius": _v(a, "radius", lv),
+	u.channel = {"ability": "burst_shot", "until": w.time + interval * waves, "start": w.time, "dur": interval * waves,
+		"point": p, "radius": _v(a, "radius", lv),
 		"waves": split, "next_wave": 0, "next_at": w.time, "interval": interval, "pct": _v(a, "attack_pct", lv),
 		"speed": _v(a, "arrow_speed", lv)}
 	u.facing = (p - u.pos).angle() if p.distance_to(u.pos) > 1.0 else u.facing
@@ -767,6 +872,248 @@ func _update_hop(u: SimUnit) -> void:
 	if f >= 1.0:
 		u.hop = {}
 		w.events.append({"t": "back_leap_land", "u": u.id, "pos": u.pos})
+
+# ---- Channels ---------------------------------------------------------------------------------------------------
+
+## One tick of an ability channel (Burst Shot's waves, Chomp's bites).
+func channel_tick(u: SimUnit) -> void:
+	match String(u.channel.ability):
+		"burst_shot":
+			update_burst(u)
+		"chomp":
+			_update_chomp(u)
+
+## A channel ended (finished, or cancelled by an order, stun, silence, push or death): undo what it holds.
+func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
+	match String(ch.ability):
+		"chomp":
+			var t := w.get_unit(int(ch.get("target", -1)))
+			if t != null:
+				_remove_mod(t, "chomp", u.id)
+
+func _remove_mod(t: SimUnit, mid: String, source: int) -> void:
+	for i in range(t.modifiers.size() - 1, -1, -1):
+		if t.modifiers[i].id == mid and int(t.modifiers[i].get("source", -1)) == source:
+			t.modifiers.remove_at(i)
+			t.stats_dirty = true
+
+# ---- Sludge, the Butcher (Dota 2's Pudge) -----------------------------------------------------------------------
+
+## Growing Gut: an enemy hero died. Every Sludge on the other team within 450 (alive) or credited with the kill grows.
+func on_hero_death(t: SimUnit, killer: SimUnit, credit: SimUnit) -> void:
+	for h in w.heroes:
+		if h.team == t.team or not h.ability_level.has("growing_gut"):
+			continue
+		var near := h.alive and h.pos.distance_to(t.pos) <= val(h, "growing_gut", "radius")
+		if near or h == killer or h == credit:
+			h.stacks["growing_gut"] = int(h.stacks.get("growing_gut", 0)) + 1
+			rebuild_perm_stats(h)
+			w.events.append({"t": "growing_gut", "u": h.id, "stacks": h.stacks.growing_gut,
+				"gain": val(h, "growing_gut", "str_per_stack")})
+
+## Shuriken Hook: the chain always flies its full range toward the target point. While it flies out Sludge is rooted,
+## disarmed, muted and cannot turn, for (range / speed) x 65% seconds, unless it catches something first.
+func _start_hook(u: SimUnit, aid: String, lv: int, p: Vector2) -> void:
+	var dir := p - u.pos
+	dir = Vector2.from_angle(u.facing) if dir.length() < 1.0 else dir.normalized()
+	var reach := val(u, aid, "distance")
+	var speed := val(u, aid, "speed")
+	_cast_seq += 1
+	u.facing = dir.angle()
+	u.add_modifier({"id": "hook_lock", "source": u.id, "expires": w.time + reach / speed * val(u, aid, "lock_pct"),
+		"root": true, "disarm": true, "mute": true, "face_lock": true})
+	w.effects.append({"kind": "hook", "ability": aid, "src": u.id, "team": u.team, "origin": u.pos, "pos": u.pos,
+		"dir": dir, "left": reach, "speed": speed, "width": val(u, aid, "width"), "damage": val(u, aid, "damage"),
+		"drag_pct": val(u, aid, "drag_damage_pct") if u.shard else 0.0,
+		"vision_r": val(u, aid, "vision_radius"), "vision_t": val(u, aid, "vision_duration"), "lv": lv,
+		"seq": _cast_seq, "state": "out", "target": -1, "src_hull": u.hull})
+	w.events.append({"t": "hook_launch", "u": u.id, "from": u.pos, "dir": dir, "dist": reach, "speed": speed,
+		"seq": _cast_seq})
+
+## The first unit the hook's tip touches between `from` and `to` (nearest along the flight, ties by id): living heroes
+## and creeps of either team, never buildings, wards, couriers, ancient creeps or invulnerable units. Fog, cliffs and
+## trees do not stop it.
+func hook_first_hit(team_src: int, origin: Vector2, dir: Vector2, from: Vector2, to: Vector2, width: float) -> SimUnit:
+	var best: SimUnit = null
+	var best_t := INF
+	var mid := (from + to) * 0.5
+	for o: SimUnit in w.query(mid, from.distance_to(to) * 0.5 + width + 80.0, true):
+		if not o.alive or o.id == team_src or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if bool(o.def.get("ancient", false)) or o.is_invulnerable():
+			continue
+		if (o.pos - origin).dot(dir) < -o.hull:
+			continue                                   # behind the thrower
+		var cp := Geometry2D.get_closest_point_to_segment(o.pos, from, to)
+		if cp.distance_to(o.pos) > width + o.hull:
+			continue
+		var along := (cp - from).length()
+		if along < best_t - 0.01 or (absf(along - best_t) <= 0.01 and best != null and o.id < best.id):
+			best_t = along
+			best = o
+	return best
+
+func _update_hook(e: Dictionary) -> bool:
+	var step: float = float(e.speed) * C.DT
+	var dir: Vector2 = e.dir
+	if e.state == "out":
+		var from: Vector2 = e.pos
+		var adv := minf(step, float(e.left))
+		var to: Vector2 = from + dir * adv
+		var hit := hook_first_hit(int(e.src), e.origin, dir, from, to, float(e.width))
+		if hit != null:
+			e.pos = from + dir * clampf((hit.pos - from).dot(dir), 0.0, adv)
+			_hook_latch(e, hit)
+		else:
+			e.pos = to
+			e.left = float(e.left) - adv
+			if float(e.left) <= 0.001:
+				e.state = "back"
+		w.events.append({"t": "hook_move", "src": e.src, "seq": e.seq, "pos": e.pos, "state": e.state, "target": e.target})
+		return false
+	# reeling in: the tip (and whatever it caught) returns to where Sludge threw it
+	var t := w.get_unit(int(e.target))
+	if t != null and (not t.alive or int(t.knock.get("seq", -1)) != int(e.seq) or not bool(t.knock.get("drag", false))):
+		t = null                                       # it died, or another push took it
+		e.target = -1
+	var origin: Vector2 = e.origin
+	var goal := origin + dir * ((float(e.src_hull) + t.hull) if t != null else 0.0)
+	var left := (e.pos as Vector2).distance_to(goal)
+	if left <= step:
+		e.pos = goal
+		if t != null:
+			_hook_release(t, goal)
+		w.events.append({"t": "hook_end", "src": e.src, "seq": e.seq, "pos": goal, "target": e.target})
+		return true
+	e.pos = (e.pos as Vector2) + (goal - (e.pos as Vector2)).normalized() * step
+	if t != null:
+		t.pos = e.pos
+	w.events.append({"t": "hook_move", "src": e.src, "seq": e.seq, "pos": e.pos, "state": e.state, "target": e.target})
+	return false
+
+## The tip catches `o`: sight there, Sludge is free to act again, and the catch is dragged back. Enemy heroes (and
+## ancient-free enemy units other than creeps) take pure damage and are stunned while dragged; enemy creeps die at
+## once; allies are pulled without harm (with the Upgrade Gem the hook's cooldown is halved).
+func _hook_latch(e: Dictionary, o: SimUnit) -> void:
+	e.state = "back"
+	e.target = o.id
+	var caster := w.get_unit(int(e.src))
+	if caster != null:
+		caster.remove_modifier("hook_lock")
+	w.vision.add_source(int(e.team), e.pos, float(e.vision_r), float(e.vision_t))
+	var ally := o.team == int(e.team)
+	w.events.append({"t": "hook_latch", "u": o.id, "src": e.src, "pos": e.pos, "seq": e.seq, "ally": ally})
+	if not ally and o.is_creep():
+		e.target = -1
+		w.events.append({"t": "hook_kill", "u": o.id, "src": e.src})
+		w.combat.kill(o, caster)
+		return
+	w.orders.cancel_channel(o)
+	o.leap = {}
+	o.hop = {}
+	o.path = PackedVector2Array()
+	o.knock = {"drag": true, "seq": int(e.seq), "disable": not ally, "src": int(e.src)}
+	if ally:
+		if caster != null and caster.shard:
+			var aid := String(e.ability)
+			var left := float(caster.ability_ready.get(aid, w.time)) - w.time
+			caster.ability_ready[aid] = w.time + maxf(0.0, left) * val(caster, aid, "ally_cooldown_pct")
+		return
+	var dmg := float(e.damage) + float(e.drag_pct) * (e.pos as Vector2).distance_to(e.origin)
+	w.combat.deal_damage(int(e.src), int(e.team), true, o, dmg, C.DamageType.PURE, false, String(e.ability))
+
+func _hook_release(t: SimUnit, at: Vector2) -> void:
+	t.knock = {}
+	var p := at
+	if not w.map.is_walkable(p):
+		var c := w.map.nearest_walkable(w.map.world_to_cell(p))
+		p = w.map.cell_center(c.x, c.y)
+	t.pos = p
+	t.path = PackedVector2Array()
+	w.events.append({"t": "hook_release", "u": t.id, "pos": p})
+
+## Toggle abilities (Stench): on adds a pulse effect that ticks while it stays on; off ends it.
+func set_toggle(u: SimUnit, aid: String, on: bool) -> void:
+	u.toggles[aid] = on
+	if on:
+		var exists := false
+		for e in w.effects:
+			if e.kind == "pulse" and int(e.src) == u.id and String(e.ability) == aid:
+				exists = true
+		if not exists:
+			w.effects.append({"kind": "pulse", "ability": aid, "src": u.id, "next_tick": w.tick})
+	w.events.append({"t": "toggle", "u": u.id, "ability": aid, "on": on})
+
+## Stench, every 0.2 s while on: magic damage and a lingering slow to enemies around Sludge (not debuff-immune ones),
+## and the same damage to Sludge himself, which never kills him. Keeps working while he is stunned or channelling.
+func _update_pulse(e: Dictionary) -> bool:
+	var u := w.get_unit(int(e.src))
+	var aid := String(e.ability)
+	if u == null or not u.alive or not bool(u.toggles.get(aid, false)):
+		if u != null:
+			u.toggles[aid] = false
+		return true
+	if w.tick < int(e.next_tick):
+		return false
+	var tick := val(u, aid, "tick")
+	e.next_tick = int(e.next_tick) + maxi(1, roundi(tick * C.TICK_RATE))
+	var r := val(u, aid, "radius")
+	var dmg := val(u, aid, "dps") * tick
+	var slow := val(u, aid, "slow")
+	var linger := val(u, aid, "linger")
+	var hr := val(u, aid, "heal_reduction")
+	for o: SimUnit in w.query(u.pos, r + 120.0, true):
+		if o == u or not o.alive or o.team == u.team or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if o.is_invulnerable() or o.debuff_immune or o.pos.distance_to(u.pos) > r + o.hull:
+			continue
+		w.combat.deal_damage(u.id, u.team, true, o, dmg, C.DamageType.MAGICAL, false, aid)
+		if o.alive:
+			o.add_modifier({"id": "stench", "source": u.id, "expires": w.time + linger, "slow": slow, "heal_reduction": hr,
+				"debuff": true, "fx": "stench"})
+	w.combat.deal_damage(u.id, u.team, true, u, dmg, C.DamageType.MAGICAL, false, aid, false, {"non_lethal": true})
+	return false
+
+## Chomp: the victim is stunned for as long as Sludge channels; bites land evenly from the start.
+func _start_chomp(u: SimUnit, aid: String, lv: int, t: SimUnit) -> void:
+	if t == null or not t.alive:
+		return
+	var dur := val(u, aid, "duration")
+	var ticks := maxi(1, roundi(val(u, aid, "ticks")))
+	u.channel = {"ability": aid, "until": w.time + dur, "start": w.time, "dur": dur, "target": t.id, "lv": lv,
+		"next_tick": w.tick + 1, "interval": maxi(1, roundi(dur / ticks * C.TICK_RATE)), "left": ticks, "ticks": ticks}
+	u.facing = (t.pos - u.pos).angle() if t.pos.distance_to(u.pos) > 1.0 else u.facing
+	w.orders.cancel_channel(t)
+	t.add_modifier({"id": "chomp", "source": u.id, "expires": INF, "stun": true, "debuff": true, "fx": "chomp"})
+	w.events.append({"t": "channel_start", "u": u.id, "ability": aid, "until": u.channel.until, "target": t.id})
+
+func _update_chomp(u: SimUnit) -> void:
+	var ch := u.channel
+	var aid := String(ch.ability)
+	var t := w.get_unit(int(ch.target))
+	if t == null or not t.alive or t.is_invulnerable() or u.pos.distance_to(t.pos) > 900.0:
+		u.channel = {}
+		channel_cleanup(u, ch, false)
+		u.order = O.NONE
+		w.events.append({"t": "channel_end", "u": u.id, "ability": aid, "cancelled": false})
+		return
+	var to := t.pos - u.pos
+	if to.length() > 1.0:
+		u.facing = to.angle()
+	# pull the victim in at 75 per second until 125 apart
+	var pull_min := val(u, aid, "pull_min")
+	if to.length() > pull_min and t.knock.is_empty():
+		var np := t.pos - to.normalized() * minf(val(u, aid, "pull_speed") * C.DT, to.length() - pull_min)
+		if w.map.is_walkable(np):
+			t.pos = np
+	if int(ch.left) > 0 and w.tick >= int(ch.next_tick):
+		ch.left = int(ch.left) - 1
+		ch.next_tick = int(ch.next_tick) + int(ch.interval)
+		var bite := (val(u, aid, "dps") + val(u, aid, "str_mult") * u.str_total) * float(ch.dur) / float(ch.ticks) \
+			* val(u, aid, "damage_mult")
+		w.combat.deal_damage(u.id, u.team, true, t, bite, C.DamageType.MAGICAL, false, aid)
+		var healed := w.combat.heal(u, bite)
+		w.events.append({"t": "chomp_bite", "u": u.id, "target": t.id, "amount": bite, "healed": healed})
 
 # ---- Items --------------------------------------------------------------------------------------------------------
 

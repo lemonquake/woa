@@ -47,6 +47,9 @@ var lifesteal := 0.0                       # from items (40% against creeps)
 var lifesteal_ability := 0.0               # from abilities (Blood Ranger)
 var evasion := 0.0
 var bat := 1.7
+var spell_lifesteal := 0.0                 # heals from spell damage dealt (100% vs heroes, 20% vs creeps)
+var debuff_immune := false                 # cached from modifiers in refresh_stats
+var phased := false                        # cached: walks through units
 
 # ---- Hero -----------------------------------------------------------------------------------------------------------
 var str_total := 0.0
@@ -57,9 +60,15 @@ var gold_reliable := 0
 var gold_unreliable := 0
 var ability_points := 0
 var abilities: Array = []                  # ability ids in slot order (Q W E R)
-var ability_level := {}                    # id -> learned level
+var ability_level := {}                    # id -> learned level (an innate ability is level 1 from the start)
 var ability_ready := {}                    # id -> game time the cooldown ends
 var autocast := {}                         # id -> bool
+var toggles := {}                          # id -> bool: toggle abilities that are on (Stench)
+var talents := {}                          # talent tier (0..3) -> chosen talent id
+var stacks := {}                           # permanent counters, e.g. "growing_gut" -> enemy hero deaths
+var perm_stats := {}                       # stats that survive death: talents and stacks (not modifiers)
+var shard := false                         # Upgrade Gem bought (Dota's Aghanim's Shard)
+var scepter := false                       # Upgrade Staff effect without the item (tests, Debug panel)
 var inventory: Array = []                  # 9 slots (6 main + 3 backpack): null or {id, charges, ready}
 var stash: Array = []                      # 6 slots
 var respawn_at := -1.0
@@ -176,6 +185,9 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 			ability_level[a] = 0
 			ability_ready[a] = C.LONG_AGO
 			autocast[a] = false
+		if String(def.get("innate", "")) != "":
+			ability_level[def.innate] = 1
+			ability_ready[def.innate] = C.LONG_AGO
 		ability_points = 1
 		inventory.resize(9)
 		stash.resize(6)
@@ -259,8 +271,9 @@ func has_flag(flag: String) -> bool:
 			return true
 	return false
 
+## Stunned: a stun modifier, or an eased push / drag that disables (a drag by an ally's hook does not).
 func is_stunned() -> bool:
-	return has_flag("stun") or not knock.is_empty()
+	return has_flag("stun") or (not knock.is_empty() and bool(knock.get("disable", true)))
 
 ## Leaping (Leap Strike): the unit flies to its target and takes no orders until it lands.
 func is_leaping() -> bool:
@@ -276,7 +289,35 @@ func is_silenced() -> bool:
 	return has_flag("silence") or is_stunned()
 
 func is_rooted() -> bool:
-	return has_flag("root") or is_stunned() or not hop.is_empty()
+	return has_flag("root") or is_stunned() or not hop.is_empty() or not knock.is_empty()
+
+## Muted: no item use (Shuriken Hook's follow-through).
+func is_muted() -> bool:
+	return has_flag("mute") or is_stunned()
+
+## The Upgrade Staff (Dota's Aghanim's Scepter) is in a main slot, or granted another way.
+func has_scepter() -> bool:
+	if scepter:
+		return true
+	for i in mini(6, inventory.size()):
+		var it = inventory[i]
+		if it != null and String(SimData.item(it.id).get("grants", "")) == "scepter":
+			return true
+	return false
+
+## The largest flat block on every damage instance (Blubber and similar), 0 if none.
+func damage_block() -> float:
+	var b := 0.0
+	for m in modifiers:
+		b = maxf(b, float(m.get("block_all", 0.0)))
+	return b
+
+## The strongest healing reduction on this unit (Stench with the Upgrade Staff), 0..1.
+func heal_reduction() -> float:
+	var r := 0.0
+	for m in modifiers:
+		r = maxf(r, float(m.get("heal_reduction", 0.0)))
+	return r
 
 func is_disarmed() -> bool:
 	return has_flag("disarm") or is_stunned()
@@ -315,7 +356,7 @@ func _mod_stat(k: String) -> float:
 ## Recompute derived stats from definition, level, attributes, items, abilities and modifiers.
 func refresh_stats() -> void:
 	var items := _item_stats() if kind == K.HERO else {}
-	var f := func(k: String) -> float: return float(items.get(k, 0.0)) + _mod_stat(k)
+	var f := func(k: String) -> float: return float(items.get(k, 0.0)) + _mod_stat(k) + float(perm_stats.get(k, 0.0))
 	var base_dmg_min := float(def.dmg_min) + creep_dmg_add
 	var base_dmg_max := float(def.dmg_max) + creep_dmg_add
 	var hp_old_frac := hp / max_hp if max_hp > 0.0 else 1.0
@@ -371,6 +412,9 @@ func refresh_stats() -> void:
 	lifesteal = float(items.get("lifesteal", 0.0)) + _mod_stat("lifesteal")
 	lifesteal_ability = _mod_stat("lifesteal_ability")
 	evasion = f.call("evasion")
+	spell_lifesteal = f.call("spell_lifesteal")
+	debuff_immune = has_flag("debuff_immune")
+	phased = has_flag("phased")
 	stats_dirty = false
 
 func upgrade_hp() -> float:
