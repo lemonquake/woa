@@ -1,0 +1,110 @@
+{{Tabs Item}}{{For|other uses|Iron}}
+
+'''Iron Branch''' is an [[item]] purchasable at the Base Shop, under [[Attributes (shop)|Attributes]].
+
+{{Item infobox
+| title = Iron Branch
+| image = Iron Branch itemicon dota2 gameasset.png
+| lore = A seemingly ordinary branch, its ironlike qualities are bestowed upon the bearer.
+| modifier = modifier_item_ironwood_branch
+| intern = item_branches
+| alias = gg branch
+
+| type = Attributes
+| base = True
+| secret = False
+| neutral = False
+
+| max stack = 1
+
+| item cost = 55
+
+| active = Plant Tree
+| charges = 1
+
+| bonus strength = 1
+| bonus agility = 1
+| bonus intelligence = 1
+
+| used in 1 = Magic Wand
+}}
+
+==Additional Information==
+{{Item stats|Iron Branch}}
+{{clr}}
+==Ability==
+===Plant Tree===
+{{Spellcard
+| name = Plant Tree
+| sound0 = Iron Branch Plant Tree 1 soundsample dota2 wikiasset
+| sound1 = Iron Branch Plant Tree 2 soundsample dota2 wikiasset
+
+| icon0 = Iron Branch Plant Tree wikiasset
+| type0 = itm
+| target0 = Point
+| affect0 = Trees
+| desc0 = Creates a temporarily planted-tree at the point-targeted location.<br><br>The item is consumed upon cast.
+
+| cast point = 0
+| cast backswing = 0
+| cast range = 400
+| cast range amp = true
+
+| trait1 = Planted Tree per Cast
+| value1 = 1
+| trait2 = Duration
+| value2 = 20
+
+| icon1 = Tango Devour wikiasset
+| type1 = alticon
+| target1 = Passive
+| desc1 = Tangoes are more effective when consuming a happy Iron Branch planted tree.
+
+| type1 trait1 = Ability Values Factor
+| type1 value1 = 2
+
+| icon2 = Arc Warden Tempest Double
+| type2 = alticon
+| target2 = Passive
+| desc2 = {{Show|A|Arc Warden|Cloned Consumable|desc0}}
+
+| is_piercesdbfim = yes
+
+| cd = 0
+
+| mechanics = * {{Symbol|Trees|Planted}}
+** Creates a [[planted tree]] at the {{Symbol|Target|Point}} point-targeted location.
+** Interacts with all abilities and mechanics like a regular tree.
+** Cannot be placed in the following areas:
+*** Within the {{M|fountain}} area.
+*** Within {{M|Roshan}}'s pit.
+
+| miscnotes = * {{Symbol|fx|v}}
+** The particles around the {{M|planted tree}} are visible to everyone.
+}}
+
+==Trivia==
+* This item is based on the [https://warcraft.wiki.gg/wiki/Ironwood_Branch Ironwood Branch] from {{wc3}}.
+** In DotA, the item is named <i>Ironwood Branch</i> as well. [https://warcraft.wiki.gg/wiki/Ironwood Ironwood] is a sturdy type of wood from the Warcraft universe.
+** The name was shortened to just <i>Iron Branch</i>, possibly to avoid copyright issues with "Blizzard Entertainment".
+* The ''happy little trees'' in the active ability description is a reference to [[wikipedia:Bob Ross|Bob Ross]], a popular painter who often used the phrase on his television program, [[wikipedia:The Joy of Painting|''The Joy of Painting'']].
+* The planted tree uses the same model as the {{A|Nature's Prophet|Sprout}} trees and is surrounded by the same effects as a tree enchanted with {{A|Treant Protector|Eyes In The Forest}}.
+* Typing in <code>GG</code> into the shop search bar will bring up the Iron Branch, in reference to their fan name of ''GG Branches'' due to DotA 1 giving them the description of <code>Buying one of these will ensure a good game.</code>.
+
+==Gallery==
+<gallery>
+Ingame model Iron Branch.png|<center>In-game model</center>
+Iron Branch tree.png|<center>Happy little tree from planting an Iron Branch</center>
+Iron Branch item icon progress.png|<center>Item icon progress</center>
+Iron Branch itemicon sketch dota2 gameasset.png|<center>Early concept sketch</center>
+Iron Branch itemicon concept dota2 gameasset.png|<center>Early concept art</center>
+Dark Carnival Tarot Cards 01 dota2 gameasset.png|<center>Tarot card from the [[Dark Carnival#The Oracle|Dark Carnival]] event, <i>The Magician</i><br>Iron Branches located on the table</center>
+</gallery>
+
+==Recent Changes==
+{{Main|Iron Branch/Changelogs}}
+{{Recent changes wrapper}}
+
+{{ItemNav}}
+[[Category:Shop items]]
+[[ru:Iron Branch]]

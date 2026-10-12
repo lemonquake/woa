@@ -114,6 +114,9 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> Stri
 		"tango", "chop":
 			if w.map.tree_at(point, 140.0) < 0:
 				return "Must target a tree"
+		"plant":
+			if not w.map.can_plant(point):
+				return "Cannot plant a tree there"
 	return ""
 
 func is_instant(u: SimUnit, aid: String, slot: int) -> bool:
@@ -124,7 +127,7 @@ func is_instant(u: SimUnit, aid: String, slot: int) -> bool:
 ## "none", "point" (ground / tree) or "unit".
 func item_target(item_id: String) -> String:
 	match String(SimData.item(item_id).get("use", "")):
-		"tango", "chop", "ward":
+		"tango", "chop", "ward", "plant":
 			return "point"
 	return "none"
 
@@ -140,6 +143,8 @@ func cast_range(u: SimUnit, aid: String, slot: int) -> float:
 				return 350.0
 			"ward":
 				return 500.0
+			"plant":
+				return C.PLANT_RANGE
 		return 0.0
 	if aid == "tp":
 		return INF
@@ -169,17 +174,27 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
 	_charge_sticks(u)
 	match aid:
-		"gale_shot":
+		"burst_shot":
+			_start_burst(u, a, lv, p)
+		"gale_impact":
 			var dir := (p - u.pos).normalized()
 			if dir == Vector2.ZERO:
 				dir = Vector2.from_angle(u.facing)
+			var reach := clampf(u.pos.distance_to(p), 300.0, _v(a, "distance", lv))
+			_cast_seq += 1
 			w.effects.append({"kind": "line", "ability": aid, "src": u.id, "team": u.team, "pos": u.pos, "dir": dir,
-				"speed": _v(a, "speed", lv), "left": _v(a, "distance", lv), "width": _v(a, "width", lv),
-				"damage": _v(a, "damage", lv), "push": _v(a, "knockback", lv), "push_t": _v(a, "knockback_time", lv), "hit": {}})
-		"arrow_storm":
-			w.effects.append({"kind": "volleys", "ability": aid, "src": u.id, "team": u.team, "pos": p,
-				"radius": _v(a, "radius", lv), "left": int(_v(a, "volleys", lv)), "interval": _v(a, "interval", lv),
-				"next": w.time + 0.25, "damage": _v(a, "damage", lv), "slow": _v(a, "slow", lv), "slow_t": _v(a, "slow_duration", lv)})
+				"speed": _v(a, "speed", lv), "left": reach, "width": _v(a, "width", lv), "damage": _v(a, "damage", lv),
+				"push_speed": _v(a, "push_speed", lv), "lv": lv, "seq": _cast_seq, "hit": {}})
+			w.events.append({"t": "gale_impact", "u": u.id, "from": u.pos, "dir": dir, "dist": reach,
+				"speed": _v(a, "speed", lv), "width": _v(a, "width", lv)})
+		"blood_ranger_ult":
+			var dur := _v(a, "duration", lv)
+			u.add_modifier({"id": "blood_ranger", "source": u.id, "expires": w.time + dur, "fx": "blood",
+				"stats": {"lifesteal_ability": _v(a, "lifesteal", lv), "range": _v(a, "bonus_range", lv)},
+				"leap_chance": _v(a, "leap_chance", lv), "leap_distance": _v(a, "leap_distance", lv),
+				"leap_time": _v(a, "leap_time", lv), "leap_cooldown": _v(a, "leap_cooldown", lv)})
+			u.refresh_stats()
+			w.events.append({"t": "blood_ranger_start", "u": u.id, "dur": dur})
 		"dark_stomp":
 			_dark_stomp(u, a, lv)
 		"leap_strike":
@@ -271,14 +286,16 @@ func attack_modifier_damage(s: Dictionary, t: SimUnit) -> float:
 	var a := SimData.ability(s.mod)
 	return _v(a, "bonus_damage", maxi(1, src.ability_level_of(s.mod)))
 
+## An attack modifier that slows ("slow" and "duration" values) applies it when the attack lands.
 func attack_modifier_hit(s: Dictionary, t: SimUnit) -> void:
 	var src := w.get_unit(s.src)
 	if src == null or t.is_building():
 		return
 	var a := SimData.ability(s.mod)
 	var lv := maxi(1, src.ability_level_of(s.mod))
-	t.add_modifier({"id": "frost_quiver_slow", "source": src.id, "expires": w.time + _v(a, "duration", lv),
-		"slow": _v(a, "slow", lv), "fx": "frost"})
+	if (a.values as Dictionary).has("slow"):
+		t.add_modifier({"id": String(s.mod) + "_slow", "source": src.id, "expires": w.time + _v(a, "duration", lv),
+			"slow": _v(a, "slow", lv), "fx": "slow"})
 
 # ---- Timed effects -----------------------------------------------------------------------------------------------------
 
@@ -289,53 +306,56 @@ func update_effects() -> void:
 		match e.kind:
 			"line":
 				done = _update_line(e)
-			"volleys":
-				done = _update_volleys(e)
 			"delayed":
 				done = _update_delayed(e)
 		if done:
 			w.effects.remove_at(i)
 
+## Gale Impact's arrow, one tick: it fells the trees it passes and strikes each enemy once, hurling it sideways off
+## the arrow's line (away from the side it stood on) with a little of the arrow's momentum.
 func _update_line(e: Dictionary) -> bool:
 	var step: float = e.speed * C.DT
 	var from: Vector2 = e.pos
 	var to: Vector2 = from + (e.dir as Vector2) * minf(step, e.left)
 	e.pos = to
 	e.left -= step
+	var dir: Vector2 = e.dir
+	# trees in the arrow's path
+	var r: float = e.width
+	var c0 := w.map.world_to_cell(Vector2(minf(from.x, to.x), minf(from.y, to.y)) - Vector2(r, r))
+	var c1 := w.map.world_to_cell(Vector2(maxf(from.x, to.x), maxf(from.y, to.y)) + Vector2(r, r))
+	for cy in range(c0.y, c1.y + 1):
+		for cx in range(c0.x, c1.x + 1):
+			var ti := w.map.tree_cell[cy * SimMap.N + cx]
+			if ti < 0 or not w.map.trees[ti].alive:
+				continue
+			var tp: Vector2 = w.map.trees[ti].pos
+			if Geometry2D.get_closest_point_to_segment(tp, from, to).distance_to(tp) <= r + 40.0:
+				w.cut_tree(ti, tp - dir * 100.0, true)
 	for o: SimUnit in w.query(to, e.width + 200.0, true):
-		if o.team == e.team or o.is_building() or o.is_ward() or e.hit.has(o.id):
+		if o.team == e.team or o.is_building() or o.is_ward() or o.kind == K.COURIER or e.hit.has(o.id) or not o.alive:
 			continue
 		var cp := Geometry2D.get_closest_point_to_segment(o.pos, from, to)
 		if cp.distance_to(o.pos) > e.width + o.hull:
 			continue
 		e.hit[o.id] = true
+		if o.is_invulnerable():
+			continue
 		w.combat.deal_damage(e.src, e.team, true, o, e.damage, C.DamageType.MAGICAL, false, String(e.ability))
+		w.events.append({"t": "gale_hit", "u": o.id, "src": e.src, "pos": o.pos, "dir": dir})
 		if o.alive and o.kind != K.TOWER:
-			var dest: Vector2 = o.pos + (e.dir as Vector2) * e.push
-			o.knock = {"from": o.pos, "to": dest, "t": 0.0, "dur": e.push_t}
-			w.events.append({"t": "knockback", "u": o.id})
+			var side := dir.orthogonal()
+			var off := (o.pos - cp).dot(side)
+			if absf(off) < 1.0:
+				off = 1.0 if w.rng.randf() < 0.5 else -1.0
+			var push := (side * signf(off) + dir * 0.3).normalized() * float(e.push_speed) / mass(o)
+			start_push(o, push, int(e.src), int(e.team), String(e.ability), int(e.lv), int(e.seq))
 		if o.kind == K.NEUTRAL_CREEP:
 			var src := w.get_unit(e.src)
 			if src:
 				w.ai.neutral_provoked(o, src)
-	w.events.append({"t": "effect_move", "ability": e.ability, "pos": to})
+	w.events.append({"t": "effect_move", "ability": e.ability, "pos": to, "src": e.src, "done": e.left <= 0.0})
 	return e.left <= 0.0
-
-func _update_volleys(e: Dictionary) -> bool:
-	if w.time < e.next:
-		return false
-	e.next = w.time + e.interval
-	e.left -= 1
-	w.events.append({"t": "volley", "pos": e.pos, "radius": e.radius, "src": e.src})
-	for o: SimUnit in w.query(e.pos, e.radius + 60.0, true):
-		if o.team == e.team or o.is_building() or o.is_ward():
-			continue
-		if o.pos.distance_to(e.pos) > e.radius + o.hull:
-			continue
-		w.combat.deal_damage(e.src, e.team, true, o, e.damage, C.DamageType.MAGICAL, false, "arrow_storm")
-		if o.alive:
-			o.add_modifier({"id": "arrow_storm_slow", "source": e.src, "expires": w.time + e.slow_t, "slow": e.slow})
-	return e.left <= 0
 
 func _update_delayed(e: Dictionary) -> bool:
 	if w.time < float(e.at):
@@ -408,6 +428,11 @@ func start_push(o: SimUnit, vel: Vector2, src_id: int, team: int, aid: String, l
 func update_motion(u: SimUnit) -> void:
 	if not u.leap.is_empty():
 		_update_leap(u)
+	if not u.hop.is_empty():
+		if not u.knock.is_empty() or not u.alive:
+			u.hop = {}
+		else:
+			_update_hop(u)
 	if u.knock.is_empty():
 		return
 	var k := u.knock
@@ -508,10 +533,10 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 	w.events.append({"t": "impact", "u": u.id, "what": what, "other": other, "pos": at, "speed": speed})
 	if what == "tree":
 		var ti := w.map.tree_at(at, 110.0)
-		if ti >= 0 and w.map.destroy_tree(ti, 300.0):
-			w.vision.static_dirty = true
-			w.events.append({"t": "tree", "i": ti, "alive": false, "smashed": true, "from": u.pos})
-	if u.team == int(k.team) or String(k.ability) != "dark_stomp":
+		if ti >= 0:
+			w.cut_tree(ti, u.pos, true)
+	var aid := String(k.ability)
+	if u.team == int(k.team) or not (aid in ["dark_stomp", "gale_impact"]):
 		return
 	var seq := int(k.seq)
 	if not _impacted.has(seq):
@@ -521,8 +546,13 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 	if _impacted[seq].has(u.id):
 		return
 	_impacted[seq][u.id] = true
-	var a := SimData.ability("dark_stomp")
+	var a := SimData.ability(aid)
 	var lv := int(k.lv)
+	if aid == "gale_impact":
+		# Gale Impact: the crash deals another 20% of the arrow's damage, no stun
+		w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "damage", lv) * _v(a, "impact_pct", lv),
+			C.DamageType.MAGICAL, false, "gale_impact")
+		return
 	w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "impact_damage", lv), C.DamageType.MAGICAL, false, "dark_stomp")
 	k.stun = _v(a, "impact_stun", lv)
 
@@ -608,6 +638,134 @@ func unholy_victim(t: SimUnit, radius: float) -> SimUnit:
 		return null
 	return pool[w.rng.randi_range(0, pool.size() - 1)]
 
+# ---- Blood Ranger -------------------------------------------------------------------------------------------------
+
+## Burst Shot: mana and cooldown are spent as the channel begins (Dota); the arrows go out in waves while it lasts.
+## The 30 arrows are split into 5 waves of 4-7 at random (the split always sums to 30).
+func _start_burst(u: SimUnit, a: Dictionary, lv: int, p: Vector2) -> void:
+	var waves := int(_v(a, "waves", lv))
+	var total := int(_v(a, "arrows", lv))
+	var split := burst_split(total, waves, int(_v(a, "wave_min", lv)), int(_v(a, "wave_max", lv)))
+	var interval := _v(a, "wave_interval", lv)
+	u.channel = {"ability": "burst_shot", "until": w.time + interval * waves, "point": p, "radius": _v(a, "radius", lv),
+		"waves": split, "next_wave": 0, "next_at": w.time, "interval": interval, "pct": _v(a, "attack_pct", lv),
+		"speed": _v(a, "arrow_speed", lv)}
+	u.facing = (p - u.pos).angle() if p.distance_to(u.pos) > 1.0 else u.facing
+	w.events.append({"t": "channel_start", "u": u.id, "ability": "burst_shot", "until": u.channel.until,
+		"point": p, "radius": u.channel.radius})
+
+## A random split of `total` into `n` parts each within [lo, hi] (falls back to an even split if impossible).
+func burst_split(total: int, n: int, lo: int, hi: int) -> Array:
+	var out: Array = []
+	if n <= 0:
+		return out
+	if total < lo * n or total > hi * n:
+		for k in n:
+			out.append(total / n + (1 if k < total % n else 0))
+		return out
+	var left := total
+	for k in n:
+		var rest := n - k - 1
+		var a := maxi(lo, left - hi * rest)
+		var b := mini(hi, left - lo * rest)
+		var take := w.rng.randi_range(a, b)
+		out.append(take)
+		left -= take
+	return out
+
+## One tick of a Burst Shot channel: fire the next wave when it is due. Each arrow picks a random enemy in the area
+## (heroes and creeps alike, never buildings or wards) or, with none there, a random spot on the ground.
+func update_burst(u: SimUnit) -> void:
+	var ch := u.channel
+	var waves: Array = ch.waves
+	if int(ch.next_wave) >= waves.size() or w.time + 0.0001 < float(ch.next_at):
+		return
+	var n := int(waves[int(ch.next_wave)])
+	ch.next_wave = int(ch.next_wave) + 1
+	ch.next_at = float(ch.next_at) + float(ch.interval)
+	var center: Vector2 = ch.point
+	var r: float = ch.radius
+	var pool: Array = []
+	for o: SimUnit in w.query(center, r, true):
+		if o.alive and o.team != u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER 				and not o.is_invulnerable() and o.pos.distance_to(center) <= r + o.hull:
+			pool.append(o)
+	var dmg := ((u.dmg_min + u.dmg_max) * 0.5 + u.bonus_damage) * float(ch.pct)
+	var targets: Array = []
+	for k in n:
+		if pool.is_empty():
+			var spot := center + Vector2.from_angle(w.rng.randf() * TAU) * sqrt(w.rng.randf()) * r
+			targets.append(spot)
+			w.combat.launch_spell_arrow(u, null, spot, dmg, float(ch.speed), "burst_shot")
+		else:
+			var t: SimUnit = pool[w.rng.randi_range(0, pool.size() - 1)]
+			targets.append(t.id)
+			w.combat.launch_spell_arrow(u, t, t.pos, dmg, float(ch.speed), "burst_shot")
+	w.events.append({"t": "burst_wave", "u": u.id, "wave": int(ch.next_wave), "count": n, "point": center, "radius": r})
+
+## Masterful Archery: rolled when an attack is released (so the arrow can show it); 0.8 s cooldown after a burst.
+func masterful_bonus(u: SimUnit, t: SimUnit) -> float:
+	var lv := u.ability_level_of("masterful_archery")
+	if lv <= 0 or t.is_building() or t.team == u.team:
+		return 0.0
+	if w.time < float(u.ability_ready.get("masterful_archery", 0.0)):
+		return 0.0
+	var a := SimData.ability("masterful_archery")
+	if w.rng.randf() >= _v(a, "chance", lv):
+		return 0.0
+	u.ability_ready["masterful_archery"] = w.time + _v(a, "proc_cooldown", lv)
+	return u.agi_total * _v(a, "agility_pct", lv)
+
+## Blood Ranger: an attack that hit her may make her leap back, away from the attacker (1 s apart at most).
+func on_attacked(t: SimUnit, attacker: SimUnit) -> void:
+	if not t.alive or attacker == null:
+		return
+	var m := t.get_modifier("blood_ranger")
+	if m.is_empty() or not t.hop.is_empty() or t.is_stunned() or t.is_leaping():
+		return
+	if w.time < float(t.get_meta("hop_ready", 0.0)):
+		return
+	if w.rng.randf() >= float(m.leap_chance):
+		return
+	var away := t.pos - attacker.pos
+	if away.length() < 1.0:
+		away = Vector2.from_angle(t.facing + PI)
+	away = away.normalized()
+	# the leap stops short of cliffs, trees and buildings
+	var dist := float(m.leap_distance)
+	var dest := t.pos
+	var step := 16.0
+	var d := step
+	while d <= dist:
+		var q := t.pos + away * d
+		if not w.map.is_walkable(q) or _building_at(q, t.hull):
+			break
+		dest = q
+		d += step
+	if dest.distance_to(t.pos) < 40.0:
+		return
+	t.set_meta("hop_ready", w.time + float(m.leap_cooldown))
+	t.hop = {"from": t.pos, "to": dest, "t": 0.0, "dur": float(m.leap_time) * dest.distance_to(t.pos) / dist, "z": 0.0}
+	t.path = PackedVector2Array()
+	w.events.append({"t": "back_leap", "u": t.id, "from": t.pos, "to": dest, "dur": float(t.hop.dur)})
+
+func _building_at(p: Vector2, hull: float) -> bool:
+	for b: SimUnit in w.query(p, 420.0):
+		if b.is_building() and b.pos.distance_to(p) < b.hull * 0.85 + hull:
+			return true
+	return false
+
+## The back leap: a quick arc that keeps her orders (she may keep turning and attacking, but not walk).
+func _update_hop(u: SimUnit) -> void:
+	var H := u.hop
+	H.t = float(H.t) + C.DT
+	var f := clampf(float(H.t) / maxf(0.05, float(H.dur)), 0.0, 1.0)
+	var e := 1.0 - (1.0 - f) * (1.0 - f)
+	u.pos = (H.from as Vector2).lerp(H.to, e)
+	H.z = sin(f * PI) * 70.0
+	if f >= 1.0:
+		u.hop = {}
+		w.events.append({"t": "back_leap_land", "u": u.id, "pos": u.pos})
+
 # ---- Items --------------------------------------------------------------------------------------------------------
 
 func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
@@ -618,12 +776,15 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 	var consumed := false
 	match String(d.use):
 		"tango":
+			# eat the tree: 7 hp/s for 16 s, 32 s if it was a planted tree; a new one refreshes the old
 			var ti := w.map.tree_at(p, 140.0)
+			var dur := float(v.duration)
 			if ti >= 0:
-				w.map.destroy_tree(ti, 240.0)
-				w.vision.static_dirty = true
-				w.events.append({"t": "tree", "i": ti, "alive": false})
-			u.add_modifier({"id": "tango", "source": u.id, "expires": w.time + float(v.duration), "regen": float(v.health_regen), "fx": "heal"})
+				if w.map.trees[ti].get("planted", false):
+					dur = float(v.planted_duration)
+				w.cut_tree(ti, Vector2.INF)
+			u.add_modifier({"id": "tango", "source": u.id, "expires": w.time + dur, "regen": float(v.health_regen), "fx": "heal"})
+			w.events.append({"t": "tango", "u": u.id, "tree": ti})
 			consumed = true
 		"salve":
 			u.add_modifier({"id": "salve", "source": u.id, "expires": w.time + float(v.duration), "regen": float(v.health_regen),
@@ -647,9 +808,14 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 		"chop":
 			var ti2 := w.map.tree_at(p, 140.0)
 			if ti2 >= 0:
-				w.map.destroy_tree(ti2, 300.0)
+				w.cut_tree(ti2, u.pos)
+		"plant":
+			var ti3 := w.map.plant_tree(p, w.time + float(v.tree_duration))
+			if ti3 >= 0:
 				w.vision.static_dirty = true
-				w.events.append({"t": "tree", "i": ti2, "alive": false, "from": u.pos})
+				w.nudge_out(w.map.trees[ti3].pos, SimMap.CELL * 0.75)
+				w.events.append({"t": "tree", "i": ti3, "alive": true, "planted": true})
+				consumed = true
 		"ward":
 			var ward := w.spawn("ward_observer", u.team, p)
 			ward.ward_expires = w.time + float(v.lifetime)

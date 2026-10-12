@@ -2,7 +2,7 @@ class_name Fx
 extends Node3D
 ## One-shot and travelling visual effects driven by simulation events: projectiles (arrows that stick into what they
 ## hit or into the ground when they miss, magic orbs, boulders, tower bolts), melee spark hits, debris, shockwaves,
-## ground cracks, lightning, ability effects (Gale Shot, Arrow Storm, Ezee's kit), level-up bursts and order markers.
+## ground cracks, lightning, ability effects (Blood Ranger's and Ezee's kits), level-up bursts and order markers.
 ##
 ## Debris, sparks and splinters are "bits": tiny meshes with velocity, gravity, a bounce and a short life, simulated
 ## here (no particle systems, so nothing drifts about aimlessly).
@@ -19,8 +19,9 @@ var _proj := {}                             # projectile id -> {node, start, h0,
 var _arrow_scene: PackedScene
 var _mats := {}
 var _meshes := {}
-var _gale: Node3D
-var _gale_prev := Vector3.ZERO
+var _gales := {}                            # caster id -> {node, prev, trails, spin}
+const BLOOD := Color(0.86, 0.06, 0.1)
+const BLOOD_HOT := Color(1.0, 0.32, 0.22)
 var _bits: Array = []                       # {node, vel, spin, life, max, bounce, streak, len}
 var _flyers: Array = []                     # arrows after the sim is done with them: {node, from, to, t, dur, arc, stick}
 var _stuck: Array = []                      # {node, until, sink}: arrows left in the ground or in a body
@@ -517,25 +518,35 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		style = "tower_dawn" if src.team == 0 else "tower_dusk"
 	elif src.kind == SimConst.Kind.FOUNTAIN:
 		style = "fountain"
-	if String(e.get("mod", "")) == "frost_quiver":
-		style = "frost_arrow"
+	if String(e.get("kind", "")) == "spell" and String(e.get("key", "")) == "burst_shot":
+		style = "blood_arrow"
+	elif bool(e.get("burst", false)):
+		style = "burst_arrow"
 	var node := Node3D.new()
 	var h0 := 1.4
 	var arc := 0.0
 	var trail: Trail3D = null
 	match style:
-		"arrow", "frost_arrow":
+		"arrow", "burst_arrow", "blood_arrow":
 			var a := _arrow_scene.instantiate() as Node3D
 			a.rotation.x = -PI * 0.5
 			a.scale = Vector3.ONE * 1.25
 			node.add_child(a)
-			if style == "frost_arrow":
-				node.add_child(_sphere(0.07, _glow(Color(0.5, 0.85, 1.0), 6.0)))
-				trail = Trail3D.make(node, Color(0.55, 0.85, 1.0, 0.85), 0.05, 0.22)
+			arc = 0.35
+			if style == "blood_arrow":
+				a.scale = Vector3.ONE * 1.7
+			if style == "burst_arrow":
+				# Masterful Archery: a charged arrow, hot core and a long crimson streak
+				node.add_child(_sphere(0.08, _glow(BLOOD_HOT, 7.0)))
+				trail = Trail3D.make(node, Color(1.0, 0.25, 0.2, 0.9), 0.07, 0.26)
+			elif style == "blood_arrow":
+				# Burst Shot: arrows loosed high so they rain down, each with a hot tip and a blood-red streak
+				node.add_child(_sphere(0.06, _glow(BLOOD_HOT, 6.0)))
+				trail = Trail3D.make(node, Color(1.0, 0.16, 0.16, 0.9), 0.1, 0.3)
+				arc = randf_range(2.4, 3.4)
 			else:
 				trail = Trail3D.make(node, Color(1.0, 0.97, 0.9, 0.35), 0.025, 0.12)
 			h0 = 1.45
-			arc = 0.35
 		"sun_orb":
 			node.add_child(_sphere(0.14, _glow(Color(1.0, 0.85, 0.4), 6.0)))
 			trail = Trail3D.make(node, Color(1.0, 0.75, 0.3, 0.8), 0.1, 0.2)
@@ -557,7 +568,8 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 			l.light_energy = 1.5
 			l.omni_range = 3.0
 			node.add_child(l)
-			h0 = 6.0
+			var bv = game.views.get(src.id)
+			h0 = (bv as BuildingView).bolt_height if bv is BuildingView else 4.0
 		"fountain":
 			node.add_child(_sphere(0.3, _glow(Color(0.7, 0.95, 1.0), 8.0)))
 			h0 = 4.0
@@ -589,7 +601,7 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		"trail": trail, "last": p0, "src_team": src.team}
 
 func _is_arrow(style: String) -> bool:
-	return style in ["arrow", "frost_arrow", "spear"]
+	return style in ["arrow", "burst_arrow", "blood_arrow", "spear"]
 
 func projectile_end(e: Dictionary) -> void:
 	var p = _proj.get(e.id)
@@ -608,8 +620,8 @@ func projectile_end(e: Dictionary) -> void:
 		dir = dir.normalized()
 		if hit:
 			_embed(node, int(e.get("target", p.target)), dir, p.trail)
-			if style == "frost_arrow":
-				sparks(at, -dir + Vector3.UP * 0.3, 6, Color(0.6, 0.9, 1.0), 3.0)
+			if style == "blood_arrow":
+				blood_hit(int(e.get("target", p.target)), dir)
 			return
 		# missed or the target died: the arrow flies on and sticks in the ground
 		var land2: Vector2 = e.get("pos", View.to2(at))
@@ -617,6 +629,10 @@ func projectile_end(e: Dictionary) -> void:
 		if flat == Vector2.ZERO:
 			flat = Vector2.RIGHT
 		var dist := randf_range(90.0, 200.0) if miss else randf_range(10.0, 50.0)
+		if bool(e.get("ground", false)):
+			dist = randf_range(4.0, 14.0)
+			if style == "blood_arrow" and _seen(land2):
+				debris(ground3(land2), 3, Color(0.4, 0.32, 0.24), 2.2, 0.4, "chip")
 		var end2 := land2 + flat * dist + Vector2(randf_range(-30, 30), randf_range(-30, 30))
 		var end := ground3(end2, 0.06)
 		var dur := clampf(at.distance_to(end) / 14.0, 0.08, 0.35)
@@ -720,13 +736,13 @@ func frame(w: SimWorld, alpha: float, dt: float) -> void:
 		if sp == null:
 			continue
 		var pos2: Vector2 = sp.pos
-		var tpos: Vector2 = tgt.pos if tgt else pos2
+		var tpos: Vector2 = tgt.pos if tgt and tgt.alive else (sp.get("point", pos2) as Vector2)
 		var total := maxf(1.0, (View.to2(v.start)).distance_to(tpos))
 		var left := pos2.distance_to(tpos)
 		var f := clampf(1.0 - left / total, 0.0, 1.0)
 		var ground: float = game.terrain.height_at(pos2) * View.S
 		var tv := _view_of(v.target)
-		var aim := 1.1 if tv == null else tv.bar_height * 0.5
+		var aim := (1.1 if int(v.target) >= 0 else 0.1) if tv == null else tv.bar_height * 0.5
 		var h := lerpf(v.h0, aim, f) + sin(f * PI) * float(v.arc) * minf(1.0, total / 600.0)
 		var np := View.to3(pos2) + Vector3(0, ground + h, 0)
 		var old := node.global_position
@@ -800,55 +816,373 @@ func melee_hit(src: SimUnit, t: SimUnit, amount: float) -> void:
 	if heavy:
 		impact(at, Color(1.0, 0.9, 0.7), 0.12)
 
-# ---- Galewarden ---------------------------------------------------------------------------------------------------
+# ---- Blood Ranger -------------------------------------------------------------------------------------------------
 
-func gale_move(pos: Vector2) -> void:
-	var p := View.to3(pos, game.terrain.height_at(pos)) + Vector3(0, 1.3, 0)
-	if _gale == null or not is_instance_valid(_gale):
-		_gale = Node3D.new()
-		var a := _arrow_scene.instantiate() as Node3D
-		a.rotation.x = -PI * 0.5
-		a.scale = Vector3.ONE * 2.2
-		_gale.add_child(a)
-		_gale.add_child(_sphere(0.25, _glow(Color(0.7, 1.0, 0.9), 3.0)))
-		add_child(_gale)
-		_gale.global_position = p
-		_gale_prev = p
-		var tr := Trail3D.make(_gale, Color(0.75, 1.0, 0.95, 0.75), 0.45, 0.4)
-		add_child(tr)
-		get_tree().create_timer(0.8).timeout.connect(func():
-			tr.stop()
-			if is_instance_valid(_gale):
-				_gale.queue_free())
-	var dir := p - _gale_prev
-	_gale.global_position = p
+## Gale Impact's great arrow: a long shaft wrapped in two corkscrewing wind ribbons and a pale light, kicking up grit
+## from the ground beneath it. One per caster (a mirror match can fire two at once).
+func gale_move(src: int, pos: Vector2, done: bool) -> void:
+	var p := View.to3(pos, game.terrain.height_at(pos)) + Vector3(0, 1.25, 0)
+	var g: Dictionary = _gales.get(src, {})
+	if g.is_empty() or not is_instance_valid(g.node):
+		var node := _great_arrow()
+		add_child(node)
+		node.global_position = p
+		var trails: Array = []
+		for k in 2:
+			var anchor := Node3D.new()
+			node.add_child(anchor)
+			var tr := Trail3D.make(anchor, Color(0.82, 1.0, 0.96, 0.55), 0.16, 0.45)
+			add_child(tr)
+			trails.append([anchor, tr])
+		var core := Trail3D.make(node, Color(1.0, 1.0, 1.0, 0.6), 0.32, 0.22)
+		add_child(core)
+		trails.append([node, core])
+		var l := OmniLight3D.new()
+		l.light_color = Color(0.75, 1.0, 0.95)
+		l.light_energy = 2.2
+		l.omni_range = 4.5
+		node.add_child(l)
+		g = {"node": node, "prev": p, "trails": trails, "spin": 0.0}
+		_gales[src] = g
+	var n: Node3D = g.node
+	var dir: Vector3 = p - (g.prev as Vector3)
+	n.global_position = p
 	if dir.length() > 0.01:
-		_gale.look_at(p + dir, Vector3.UP)
-	_gale_prev = p
+		n.look_at(p + dir, Vector3.UP)
+	g.prev = p
+	g.spin = float(g.spin) + 0.9
+	for k in 2:
+		var anchor: Node3D = g.trails[k][0]
+		var ang := float(g.spin) + k * PI
+		anchor.position = Vector3(cos(ang) * 0.38, sin(ang) * 0.38, 0.3)
+	if _seen(pos) and randf() < 0.6:
+		debris(ground3(pos, 0.05), 2, Color(0.5, 0.45, 0.36), 2.2, 0.35, "chip")
+	if done:
+		_end_gale(src)
 
-func volley(pos: Vector2, radius: float) -> void:
-	var center := ground3(pos)
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
-	for i in 14:
-		var off := Vector2.from_angle(rng.randf() * TAU) * sqrt(rng.randf()) * radius * View.S
-		var end := center + Vector3(off.x, 0.05, off.y)
-		var a := _arrow_scene.instantiate() as Node3D
+func _end_gale(src: int) -> void:
+	var g: Dictionary = _gales.get(src, {})
+	_gales.erase(src)
+	if g.is_empty() or not is_instance_valid(g.node):
+		return
+	for pair in g.trails:
+		var tr: Trail3D = pair[1]
+		if is_instance_valid(tr):
+			tr.stop()
+	var n: Node3D = g.node
+	var at := n.global_position
+	if _seen(View.to2(at)):
+		shockwave(ground3(View.to2(at)), 1.8, Color(0.8, 1.0, 0.95), 0.4, 0.12, 2.0)
+		sparks(at, -n.global_transform.basis.z + Vector3.UP * 0.3, 10, Color(0.8, 1.0, 0.95), 5.0)
+		debris(ground3(View.to2(at), 0.05), 5, Color(0.5, 0.45, 0.36), 3.0, 0.5, "chip")
+	n.queue_free()
+
+## Gale Impact's arrow: a long glowing shaft with a broad head and fletching inside a turning sheath of wind. It points
+## along -Z (look_at).
+func _great_arrow() -> Node3D:
+	var node := Node3D.new()
+	var core := _glow(Color(0.85, 1.0, 0.97), 3.5)
+	var shaft := MeshInstance3D.new()
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.04
+	cyl.bottom_radius = 0.04
+	cyl.height = 2.0
+	cyl.radial_segments = 6
+	shaft.mesh = cyl
+	shaft.material_override = core
+	shaft.rotation.x = PI * 0.5
+	shaft.position.z = 0.3
+	node.add_child(shaft)
+	var head := MeshInstance3D.new()
+	var cone := CylinderMesh.new()
+	cone.top_radius = 0.0
+	cone.bottom_radius = 0.16
+	cone.height = 0.5
+	cone.radial_segments = 4
+	head.mesh = cone
+	head.material_override = _glow(Color(1.0, 1.0, 1.0), 5.0)
+	head.rotation.x = -PI * 0.5
+	head.position.z = -0.92
+	node.add_child(head)
+	for k in 3:
+		var f := MeshInstance3D.new()
+		var q := QuadMesh.new()
+		q.size = Vector2(0.22, 0.45)
+		f.mesh = q
+		f.material_override = _glow(Color(0.7, 1.0, 0.9, 0.8), 2.5)
 		var holder := Node3D.new()
-		holder.add_child(a)
-		a.rotation.x = PI
-		a.scale = Vector3.ONE * 1.3
-		add_child(holder)
-		var start := end + Vector3(0.6, 9.0 + rng.randf() * 2.0, 0.3)
-		holder.global_position = start
-		var tw := holder.create_tween()
-		var delay := rng.randf() * 0.25
-		tw.tween_interval(delay)
-		tw.tween_property(holder, "global_position", end, 0.22)
-		tw.tween_callback(func():
-			debris(end, 2, Color(0.36, 0.28, 0.2), 1.4, 0.3, "chip")
-			_stuck.append({"node": holder, "until": Time.get_ticks_msec() / 1000.0 + 1.4, "sink": true}))
-	shockwave(center, radius * View.S, Color(1.0, 0.8, 0.4, 0.8), 0.45, 0.08, 1.6)
+		holder.rotation.z = k * TAU / 3.0
+		holder.add_child(f)
+		f.position = Vector3(0, 0.1, 1.1)
+		f.rotation = Vector3(0, PI * 0.5, 0)
+		node.add_child(holder)
+	var sheath := MeshInstance3D.new()
+	var sc := CylinderMesh.new()
+	sc.top_radius = 0.06
+	sc.bottom_radius = 0.5
+	sc.height = 2.2
+	sc.cap_top = false
+	sc.cap_bottom = false
+	sc.radial_segments = 16
+	sheath.mesh = sc
+	var sm := _glow(Color(0.8, 1.0, 0.95, 0.16), 1.5).duplicate() as StandardMaterial3D
+	sm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	sm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	sheath.material_override = sm
+	sheath.rotation.x = -PI * 0.5
+	sheath.position.z = 0.4
+	node.add_child(sheath)
+	for mi: MeshInstance3D in node.find_children("*", "MeshInstance3D", true, false):
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var spin := sheath.create_tween().set_loops()
+	spin.tween_property(sheath, "rotation:y", TAU, 0.25).from(0.0)
+	return node
+
+## Gale Impact leaves the bow: a gust ring at her feet and a flash at the string.
+func gale_launch(e: Dictionary) -> void:
+	var u: SimUnit = game.world.get_unit(int(e.u))
+	if u == null or not _seen(u.pos):
+		return
+	var at := ground3(u.pos)
+	shockwave(at, 2.2, Color(0.8, 1.0, 0.95), 0.4, 0.14, 2.0)
+	var d: Vector2 = e.dir
+	var front := at + Vector3(d.x, 0.0, -d.y) * 0.6 + Vector3(0, 1.4, 0)
+	flash_light(front, Color(0.8, 1.0, 0.95), 4.0, 6.0, 0.3)
+	sparks(front, Vector3(d.x, 0.2, -d.y), 8, Color(0.85, 1.0, 0.95), 6.0)
+	_shake(u.pos, 0.12, 0.12)
+
+## A unit struck by the gale arrow: a burst of wind and grit off its body.
+func gale_hit(e: Dictionary) -> void:
+	var p: Vector2 = e.pos
+	if not _seen(p):
+		return
+	var c := _chest(int(e.u))
+	impact(c, Color(0.85, 1.0, 0.95), 0.22)
+	var d: Vector2 = e.dir
+	sparks(c, Vector3(d.x, 0.4, -d.y), 10, Color(0.85, 1.0, 0.95), 6.0)
+	shockwave(ground3(p), 1.4, Color(0.8, 1.0, 0.95), 0.35, 0.2, 2.0)
+	flash_light(c, Color(0.8, 1.0, 0.95), 3.0, 4.0, 0.25)
+
+## Masterful Archery: the charged arrow bursts in a crimson star, a ring and a hot flash.
+func masterful_hit(e: Dictionary) -> void:
+	var t: SimUnit = game.world.get_unit(int(e.target))
+	if t == null or not _seen(t.pos):
+		return
+	var c := _chest(t.id)
+	impact(c, BLOOD_HOT, 0.22)
+	_spark_budget += 3
+	for i in 3:
+		sparks(c, Vector3(randf_range(-1, 1), randf_range(0.2, 1.0), randf_range(-1, 1)), 6,
+			BLOOD_HOT if i != 1 else Color(1.0, 0.8, 0.45), 7.0)
+	shockwave(ground3(t.pos), 1.6, BLOOD, 0.35, 0.22, 3.0)
+	flash_light(c, BLOOD_HOT, 6.0, 5.0, 0.3)
+	_shake(t.pos, 0.08, 0.1)
+
+## Lifesteal: a red pulse at the healed hero, at most four times a second.
+var _ls_next := {}
+
+func lifesteal(uid: int) -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	if now < float(_ls_next.get(uid, 0.0)):
+		return
+	_ls_next[uid] = now + 0.25
+	var u: SimUnit = game.world.get_unit(uid)
+	if u == null or not _seen(u.pos):
+		return
+	var c := _chest(uid, 0.5)
+	flash_light(c, Color(1.0, 0.1, 0.1), 2.0, 2.5, 0.2)
+	for i in 5:
+		_bit("sphere", _glow(Color(1.0, 0.15, 0.15), 5.0), c + Vector3(randf_range(-0.3, 0.3), randf_range(-0.4, 0.2), randf_range(-0.3, 0.3)),
+			Vector3(0, randf_range(1.2, 2.2), 0), randf_range(0.35, 0.55), 0.6, false)
+
+## Burst Shot: a crimson circle marks the area for the channel's length; each wave flashes at the bow.
+var _burst_marks := {}
+
+const BURST_MARK_CODE := """
+shader_type spatial;
+render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, shadows_disabled;
+uniform float fade = 1.0;
+uniform float notches = 1.0;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p) {
+	vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
+	return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+}
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float r = length(p);
+	float a = atan(p.y, p.x);
+	float n = noise(p * 5.0 + vec2(TIME * 0.3, 0.0)) * 0.6 + noise(p * 13.0) * 0.4;
+	// a stained, uneven crimson fill that thickens towards a ragged rim
+	float edge = 0.92 + (n - 0.5) * 0.08;
+	float inside = 1.0 - smoothstep(edge - 0.02, edge, r);
+	float rim = smoothstep(edge - 0.16, edge - 0.02, r) * inside;
+	// arrow-shaped notches pointing inwards around the rim
+	float notch = smoothstep(0.72, 0.9, abs(sin(a * 8.0))) * smoothstep(edge - 0.3, edge - 0.12, r) * inside;
+	float fill = inside * (0.05 + 0.12 * n * smoothstep(0.2, 0.95, r));
+	float alpha = clamp(fill * (2.2 - notches * 1.2) + rim * 0.55 + notch * 0.25 * notches, 0.0, 0.8) * fade;
+	vec3 col = mix(vec3(0.16, 0.0, 0.01), vec3(0.55, 0.02, 0.04), clamp(rim * 1.2 + n * 0.2, 0.0, 1.0));
+	ALBEDO = col;
+	ALPHA = alpha;
+}
+"""
+var _burst_mark_shader: Shader
+
+func burst_start(e: Dictionary) -> void:
+	burst_end(int(e.u))
+	var p: Vector2 = e.point
+	var u: SimUnit = game.world.get_unit(int(e.u))
+	if u == null:
+		return
+	if u.team != game.player_team and not _seen(u.pos) and not _seen(p):
+		return
+	if _burst_mark_shader == null:
+		_burst_mark_shader = Shader.new()
+		_burst_mark_shader.code = BURST_MARK_CODE
+	var mi := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	var r := float(e.radius) * View.S
+	q.size = Vector2(r * 2.0, r * 2.0)
+	q.orientation = PlaneMesh.FACE_Y
+	mi.mesh = q
+	var m := ShaderMaterial.new()
+	m.shader = _burst_mark_shader
+	m.render_priority = 2
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	mi.global_position = ground3(p, 0.05)
+	mi.scale = Vector3(0.6, 1, 0.6)
+	var tw := mi.create_tween()
+	tw.tween_property(mi, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_burst_marks[int(e.u)] = mi
+	shockwave(ground3(p), r, Color(0.9, 0.1, 0.12, 0.5), 0.45, 0.05, 1.2)
+
+func burst_wave(e: Dictionary) -> void:
+	var v := _view_of(int(e.u))
+	var u: SimUnit = game.world.get_unit(int(e.u))
+	if v == null or u == null or not _seen(u.pos):
+		return
+	var d := Vector2.from_angle(u.facing)
+	var bow := v.global_position + Vector3(d.x * 0.5, 1.5, -d.y * 0.5)
+	flash_light(bow, BLOOD_HOT, 3.5, 4.0, 0.18)
+	sparks(bow, Vector3(d.x, 0.9, -d.y), 5, Color(1.0, 0.35, 0.25), 4.5)
+
+func burst_end(uid: int) -> void:
+	var mi = _burst_marks.get(uid)
+	_burst_marks.erase(uid)
+	if mi != null and is_instance_valid(mi):
+		var m: MeshInstance3D = mi
+		var tw := m.create_tween()
+		tw.tween_interval(0.5)
+		tw.tween_method(func(k: float): (m.material_override as ShaderMaterial).set_shader_parameter("fade", k), 1.0, 0.0, 0.6)
+		tw.tween_callback(m.queue_free)
+
+## A Burst Shot arrow struck a unit: a spray of blood, a dark splash on the ground and a hot spark.
+func blood_hit(uid: int, dir: Vector3) -> void:
+	var u: SimUnit = game.world.get_unit(uid)
+	if u == null or not _seen(u.pos):
+		return
+	var c := _chest(uid, 0.6)
+	var mat := _glow(Color(0.75, 0.02, 0.05), 2.0)
+	for i in 6:
+		var v := (dir.normalized() * 0.8 + Vector3(randf_range(-0.7, 0.7), randf_range(0.3, 1.2), randf_range(-0.7, 0.7))) * randf_range(2.0, 3.6)
+		_bit("sphere", mat, c, v, randf_range(0.35, 0.6), randf_range(0.7, 1.3), false)
+	_splat(u.pos + Vector2(randf_range(-30, 30), randf_range(-30, 30)))
+	sparks(c, -dir + Vector3.UP * 0.3, 3, BLOOD_HOT, 3.5)
+
+var _splats: Array = []
+
+func _splat(p: Vector2) -> void:
+	if _burst_mark_shader == null:
+		return
+	var mi := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	var r := randf_range(0.25, 0.42)
+	q.size = Vector2(r * 2.0, r * 2.0)
+	q.orientation = PlaneMesh.FACE_Y
+	mi.mesh = q
+	var m := ShaderMaterial.new()
+	m.shader = _burst_mark_shader
+	m.set_shader_parameter("fade", 1.6)
+	m.set_shader_parameter("notches", 0.0)
+	m.render_priority = 3
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	mi.global_position = ground3(p, 0.06)
+	mi.rotation.y = randf() * TAU
+	var tw := mi.create_tween()
+	tw.tween_interval(2.0)
+	tw.tween_method(func(k: float): m.set_shader_parameter("fade", k), 1.6, 0.0, 1.0)
+	tw.tween_callback(mi.queue_free)
+	_splats.append(mi)
+	if _splats.size() > 40:
+		var old = _splats.pop_front()
+		if is_instance_valid(old):
+			(old as Node).queue_free()
+
+## Blood Ranger's ultimate: blood mist rising off her, a crimson ring and a short shake.
+func blood_ranger_start(uid: int) -> void:
+	var u: SimUnit = game.world.get_unit(uid)
+	if u == null or not _seen(u.pos):
+		return
+	var at := ground3(u.pos)
+	shockwave(at, 4.5, BLOOD, 0.6, 0.25, 3.0)
+	shockwave(at, 2.4, BLOOD_HOT, 0.4, 0.15, 3.5)
+	flash_light(at + Vector3(0, 1.4, 0), BLOOD_HOT, 7.0, 8.0, 0.5)
+	for i in 14:
+		var a := randf() * TAU
+		var o := Vector3(cos(a), 0.0, sin(a)) * randf_range(0.2, 0.6)
+		_bit("sphere", _glow(Color(0.85, 0.05, 0.1), 4.0), at + o + Vector3(0, randf_range(0.3, 1.6), 0),
+			o * 1.5 + Vector3(0, randf_range(2.0, 4.0), 0), randf_range(0.5, 0.9), randf_range(0.8, 1.4), false)
+	_shake(u.pos, 0.2, 0.2)
+
+## The back leap: a crimson streak through the air and a scuff of dust where she takes off and lands.
+var _hop_trails := {}
+
+func back_leap(e: Dictionary) -> void:
+	var uid := int(e.u)
+	var v := _view_of(uid)
+	if v == null:
+		return
+	var from: Vector2 = e.from
+	if _seen(from):
+		debris(ground3(from), 4, Color(0.4, 0.34, 0.28), 2.2, 0.4, "chip")
+	back_leap_land({"u": uid, "pos": Vector2.INF})
+	var anchor := Node3D.new()
+	v.add_child(anchor)
+	anchor.position = Vector3(0, 1.0, 0)
+	var tr := Trail3D.make(anchor, Color(0.9, 0.1, 0.14, 0.6), 0.22, 0.25)
+	add_child(tr)
+	_hop_trails[uid] = [anchor, tr]
+
+func back_leap_land(e: Dictionary) -> void:
+	var uid := int(e.u)
+	if _hop_trails.has(uid):
+		var arr: Array = _hop_trails[uid]
+		if is_instance_valid(arr[1]):
+			(arr[1] as Trail3D).stop()
+		if is_instance_valid(arr[0]):
+			(arr[0] as Node3D).queue_free()
+		_hop_trails.erase(uid)
+	var p: Vector2 = e.pos
+	if p != Vector2.INF and _seen(p):
+		debris(ground3(p), 5, Color(0.4, 0.34, 0.28), 2.0, 0.45, "chip")
+		shockwave(ground3(p), 0.9, Color(0.9, 0.15, 0.15), 0.3, 0.25, 2.0)
+
+## Vegan Picker: leaves stream from the eaten tree into the hero.
+func tango_eat(uid: int, tree_pos: Vector2) -> void:
+	var u: SimUnit = game.world.get_unit(uid)
+	if u == null or not _seen(u.pos):
+		return
+	var to := _chest(u.id, 0.6)
+	var from := ground3(tree_pos, 1.6)
+	for i in 10:
+		var start := from + Vector3(randf_range(-0.6, 0.6), randf_range(-0.4, 0.8), randf_range(-0.6, 0.6))
+		_bit("leaf", _solid(Color(0.3, 0.55, 0.18)), start, (to - start) * randf_range(1.6, 2.4) + Vector3(0, 1.5, 0),
+			randf_range(0.4, 0.6), 1.0, false)
+	impact(to, Color(0.5, 1.0, 0.45, 0.7), 0.3)
 
 func level_up(at: Vector3) -> void:
 	for i in 2:

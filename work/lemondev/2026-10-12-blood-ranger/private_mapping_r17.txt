@@ -1,0 +1,2 @@
+r17_vfx: A = candidate (work/shots/br_burst5_48.png)
+r17_vfx: B = benchmark (work/benchmark/dota_9.jpg)

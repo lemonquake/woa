@@ -36,7 +36,8 @@ var bar_height := 2.0
 var hidden_by_fog := false
 var _flash := 0.0
 var _lock_until := 0.0                    # an attack / cast / reaction clip plays to here before idle/run take over
-var _state := ""                          # "", "stun", "air", "slide", "knock", "leap"
+var _state := ""                          # "", "stun", "air", "slide", "knock", "leap", "channel", "hop"
+var _redraw_at := 0.0                     # Burst Shot: when the bow is drawn again after a wave's release
 var _flinch := Vector2.ZERO               # lean direction * strength (view space x/z)
 var _flinch_t := 1.0
 var _glow_mat: StandardMaterial3D
@@ -252,6 +253,8 @@ func tick(u: SimUnit) -> void:
 		cur_lift = float(u.knock.z) * View.S
 	elif not u.leap.is_empty():
 		cur_lift = float(u.leap.z) * View.S
+	elif not u.hop.is_empty():
+		cur_lift = float(u.hop.z) * View.S
 	if not u.alive:
 		if _knock_t >= 0.0:
 			return
@@ -288,6 +291,20 @@ func tick(u: SimUnit) -> void:
 			_state = "knock"
 			_play("knockback", false, 1.2 / maxf(0.2, float(u.knock.dur)) * 0.55, 0.06, true)
 		return
+	# Burst Shot: the bow stays drawn while the channel lasts; each wave is a snap release, then a fresh draw
+	if not u.channel.is_empty() and String(u.channel.ability) == "burst_shot":
+		_state = "channel"
+		if now >= _redraw_at and _clip != "bow_draw_hold":
+			_play("bow_draw_hold", true, 1.6, 0.08)
+		return
+	if _state == "channel":
+		_state = ""
+	if not u.hop.is_empty():
+		_state = "hop"
+		return
+	if _state == "hop":
+		_state = ""
+		_lock_until = maxf(_lock_until, now + 0.12)
 	if _state in ["air", "slide", "knock", "wall"]:
 		_state = ""
 		if not u.has_flag("stun"):
@@ -356,6 +373,32 @@ func on_attack_start(point_time: float) -> void:
 
 func on_attack_cancel() -> void:
 	_lock_until = 0.0
+
+## Burst Shot began: draw and hold.
+func on_channel_start(aid: String) -> void:
+	if aid != "burst_shot":
+		return
+	_state = "channel"
+	_redraw_at = 0.0
+	_play("bow_draw_hold", true, 1.6, 0.06, true)
+
+## A wave left the string: a quick release, then the next draw.
+func on_burst_wave() -> void:
+	_play("bow_release", false, 1.8, 0.03, true)
+	_redraw_at = _now() + 0.22
+
+func on_channel_end() -> void:
+	if _state == "channel":
+		_state = ""
+	_lock_until = _now() + 0.15
+
+## Blood Ranger's back leap: a quick crouch-and-spring clip stretched over the leap.
+func on_back_leap(dur: float) -> void:
+	var clip := "dodge_step" if anim and anim.has_animation("dodge_step") else "blink"
+	var length := float(ModelCatalog.clip(clip).get("length", 0.47))
+	_play(clip, false, clampf(length / maxf(0.12, dur + 0.12), 0.8, 3.0), 0.04, true)
+	_state = "hop"
+	_lock_until = _now() + dur + 0.1
 
 ## An ability's cast point began: play its clip so the release frame meets the cast point.
 func on_cast_start(aid: String, cast_point: float) -> void:

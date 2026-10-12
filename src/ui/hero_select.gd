@@ -8,9 +8,9 @@ const MATCH := "res://src/game/main.tscn"
 const CREATOR := "res://src/ui/hero_creator.tscn"
 
 const INFO := {
-	"galewarden": {"title": "the Wind Archer", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Disabler",
-		"accent": Color(0.35, 0.95, 0.7), "flourish": "bow_1", "idle": "idle_bow",
-		"story": "A ranger of the high passes who taught the wind to carry her arrows. Frost rides her string, and a gale follows every shot she looses."},
+	"blood_ranger": {"title": "the Crimson Huntress", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
+		"accent": Color(0.95, 0.22, 0.25), "flourish": "bow_1", "idle": "idle_bow",
+		"story": "She hunted the Dusk's beasts until the hunt hunted her back. Now the blood she spills keeps her standing, and every arrow she looses is a promise kept."},
 	"ezee": {"title": "the Dark Paladin", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
 		"accent": Color(0.66, 0.3, 1.0), "flourish": "boss_roar", "idle": "idle_2h",
 		"story": "Once a knight of the Dawn, Ezee broke his oath to win a war the light was losing. The shadow he bargained with still answers when he calls, and it is always hungry."},
@@ -42,7 +42,7 @@ func _ready() -> void:
 	_build_stage()
 	_build_ui()
 	for a in OS.get_cmdline_user_args():
-		if a.begins_with("--capture="):
+		if a.begins_with("--capture=") and not OS.get_cmdline_user_args().has("--match") and not OS.get_cmdline_args().has("--match"):
 			_capture_path = a.substr(10)
 		elif a.begins_with("--pick="):
 			GameSettings.select(a.substr(7))
@@ -477,7 +477,7 @@ func _show_tip(aid: String) -> void:
 		var parts := []
 		for val in a.values[k]:
 			var fv := float(val)
-			parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (String(k).contains("slow") or String(k).contains("chance") or String(k).contains("mult")) else str(val))
+			parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (String(k).contains("slow") or String(k).contains("chance") or String(k).contains("mult") or String(k).ends_with("pct") or String(k) == "lifesteal") else str(val))
 		lines.append("%s: [color=#e8d9a8]%s[/color]" % [String(k).replace("_", " ").capitalize(), " / ".join(parts)])
 	if String(a.behavior) != "passive":
 		lines.append("[color=#8fb0ff]Mana %s   Cooldown %s s[/color]" % [" / ".join(a.mana.map(func(x): return str(x))),

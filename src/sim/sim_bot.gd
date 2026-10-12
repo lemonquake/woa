@@ -3,8 +3,8 @@ extends RefCounted
 ## A laning bot for one hero. It thinks five times a second and acts only through the same orders a player issues
 ## (SimWorld.command, buy, learn), so it obeys every rule a player does.
 ##
-## Laning: stand behind its creep wave, last-hit with damage prediction, deny, harass with the hand-cast frost orb
-## (which draws no creep aggro), respect enemy tower range, retreat to heal, buy its build at the fountain.
+## Laning: stand behind its creep wave, last-hit with damage prediction, deny, harass with its spells, respect enemy
+## tower range, retreat to heal, buy its build at the fountain.
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
@@ -17,9 +17,9 @@ var name := "Bot"
 var state := "lane"
 var _next_think := 0.0
 var _last_order := {}
-var skill_order := ["frost_quiver", "gale_shot", "frost_quiver", "hunters_focus", "frost_quiver", "arrow_storm",
-	"frost_quiver", "gale_shot", "gale_shot", "gale_shot", "arrow_storm", "hunters_focus", "hunters_focus",
-	"hunters_focus", "arrow_storm"]
+var skill_order := ["masterful_archery", "gale_impact", "burst_shot", "masterful_archery", "burst_shot",
+	"blood_ranger_ult", "burst_shot", "burst_shot", "masterful_archery", "masterful_archery", "blood_ranger_ult",
+	"gale_impact", "gale_impact", "gale_impact", "blood_ranger_ult"]
 var build := ["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "branch",
 	"branch", "magic_wand", "boots", "gloves", "boots_elves", "power_treads", "blade_alacrity", "yasha",
 	"broadsword", "lifesteal", "mask_of_madness"]
@@ -31,7 +31,7 @@ const EZEE_SKILLS := ["dark_stomp", "tainted_touch", "leap_strike", "dark_stomp"
 const EZEE_BUILD := ["tango", "salve", "gauntlets", "quelling_blade", "circlet", "branch", "branch", "magic_stick",
 	"boots", "magic_wand", "belt_str", "ring_regen", "chainmail", "broadsword", "lifesteal", "mask_of_madness"]
 
-var kit := "galewarden"
+var kit := "blood_ranger"
 
 func _init(world: SimWorld, hid: int, p_lane := "mid", p_name := "Bot") -> void:
 	w = world
@@ -91,8 +91,6 @@ func _learn(h: SimUnit) -> void:
 					break
 		if not done:
 			break
-	if kit == "galewarden" and h.ability_level_of("frost_quiver") > 0:
-		h.autocast["frost_quiver"] = false
 
 func _wants(h: SimUnit, aid: String) -> bool:
 	# follow the skill order: count how many times this ability appears before the current level
@@ -213,7 +211,7 @@ func _lane(h: SimUnit) -> void:
 		_lh_id = lh.id
 		_lh_until = w.time + (1.3 if not h.is_ranged() else 0.0)
 		return
-	# 3. harass: Ezee trades blows when the enemy hero wanders into reach; Galewarden pokes with the hand-cast orb
+	# 3. harass: Ezee trades blows when the enemy hero wanders into reach; Blood Ranger pokes from range
 	if kit == "ezee":
 		for e in enemy_heroes:
 			var safe := not _under_enemy_tower(h, e.pos, enemy_towers) and not _under_enemy_tower(h, h.pos, enemy_towers)
@@ -230,12 +228,16 @@ func _lane(h: SimUnit) -> void:
 					_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
 				return
 	for e in enemy_heroes:
-		if h.edge_distance(e) <= h.attack_range and not _under_enemy_tower(h, h.pos, enemy_towers) and h.mana > h.max_mana * 0.35:
-			if h.ability_level_of("frost_quiver") > 0 and h.atk_phase == SimUnit.AtkPhase.NONE:
-				_order(h, {"type": O.CAST_UNIT, "ability": "frost_quiver", "target": e.id})
-				return
-		if h.edge_distance(e) <= 900.0 and h.mana > h.max_mana * 0.6:
+		var exposed := _under_enemy_tower(h, h.pos, enemy_towers)
+		# a free right click when the enemy hero stands in range and nothing needs last-hitting
+		if not exposed and h.edge_distance(e) <= h.attack_range and h.atk_phase == SimUnit.AtkPhase.NONE 				and w.time >= _next_trade and h.hp > h.max_hp * 0.5:
+			_next_trade = w.time + 2.5
+			_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
+			return
+		if h.edge_distance(e) <= 1100.0 and h.mana > h.max_mana * 0.6:
 			_spells_on(h, e)
+			if _busy(h):
+				return
 	# 4. push the tower when our creeps are tanking it
 	for tw in enemy_towers:
 		if tw.is_invulnerable():
@@ -365,13 +367,34 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 	if kit == "ezee":
 		_ezee_spells(h, e)
 		return
-	if w.abilities.cast_error(h, "arrow_storm", -1, null, e.pos) == "" and e.hp < e.max_hp * 0.7 and h.pos.distance_to(e.pos) < 900.0:
-		_order(h, {"type": O.CAST_POINT, "ability": "arrow_storm", "point": e.pos}, true)
-		_cast_deadline = w.time + 1.5
+	_ranger_spells(h, e)
+
+## Blood Ranger: the ultimate when a fight is on, Gale Impact through the enemy (leading a running target), and
+## Burst Shot into the enemy hero when few creeps stand around it to soak the arrows.
+func _ranger_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var d := h.pos.distance_to(e.pos)
+	if ab.cast_error(h, "blood_ranger_ult", -1, null, h.pos) == "" and d < h.attack_range + 350.0 			and (e.hp < e.max_hp * 0.6 or h.hp < h.max_hp * 0.5):
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "blood_ranger_ult"}, true)
+		_cast_deadline = w.time + 0.8
 		return
-	if w.abilities.cast_error(h, "gale_shot", -1, null, e.pos) == "" and h.pos.distance_to(e.pos) < 900.0:
-		_order(h, {"type": O.CAST_POINT, "ability": "gale_shot", "point": e.pos}, true)
-		_cast_deadline = w.time + 1.5
+	if ab.cast_error(h, "gale_impact", -1, null, e.pos) == "" and d < 1300.0:
+		var lead := e.pos
+		if e.moving:
+			lead += Vector2.from_angle(e.facing) * e.move_speed * (0.3 + d / 2400.0)
+		var aim := h.pos + (lead - h.pos).normalized() * minf(2000.0, h.pos.distance_to(lead) + 250.0)
+		_order(h, {"type": O.CAST_POINT, "ability": "gale_impact", "point": aim}, true)
+		_cast_deadline = w.time + 1.0
+		return
+	var a := SimData.ability("burst_shot")
+	if ab.cast_error(h, "burst_shot", -1, null, e.pos) == "" and d < float(a.range) + 100.0 and e.hp < e.max_hp * 0.85:
+		var crowd := 0
+		for o: SimUnit in w.query(e.pos, 400.0):
+			if o.alive and o.team == e.team and not o.is_building() and o != e:
+				crowd += 1
+		if crowd <= 2 or e.hp < e.max_hp * 0.35:
+			_order(h, {"type": O.CAST_POINT, "ability": "burst_shot", "point": e.pos}, true)
+			_cast_deadline = w.time + 2.6
 
 func _tango(h: SimUnit) -> bool:
 	for i in 6:

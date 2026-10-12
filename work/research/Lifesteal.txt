@@ -1,0 +1,284 @@
+{{#lst:Health|tabber}}
+
+[[File:Vampiric Spirit abilityicon dota2 gameasset.png|frame]]
+{{Quotation|Lifestealer|Your life is mine now.|sound=vo_life_stealer_lifest_kill_06.mp3}}
+
+<dfn>Lifesteal</dfn> heals the attacking unit while damaging an enemy. Certain [[attack modifier]]s that deal damage in a single instance as the attack damage may conditionally Lifesteal. A unit can gain Lifesteal from abilities, [[items]] or {{Symbol|Talent}} [[Lifesteal#Talent|talents]] granting percentage-based values (e.g. {{I|Morbid Mask}}).
+
+==Definition==
+{| <section begin=Definition /> class="wikitable" width="70%" style="text-align:center;"
+! style="width:20%;" | Mechanics
+! style="width:60%;" | Aspect / Definition
+! style="width:20%;" | Examples
+|-
+! [[Lifesteal]]
+| style="text-align:left;" | 
+* Heals the attacking unit while damaging an enemy with the unit's [[physical]] [[attack damage]].
+* Does not heal from magical attack damage.
+* [[Instant attack]] heals the attacking unit as long as the instant attack can be affected by [[attack modifier]]s.
+| {{A|Morbid Mask|Lifesteal}}
+|-
+! [[Lifesteal#Pseudo-Lifesteal|Pseudo-Lifesteal]]
+| style="text-align:left;" | 
+* Heals the unit conditionally using lifesteal following all properties of the mechanics.
+| {{A|Marci|Bodyguard}}
+|-
+! [[Lifesteal Manipulation]]
+| style="text-align:left;" | 
+* Manipulates the healing values of lifesteal sources.
+| {{I|Sange}}
+|-
+! [[Spell Lifesteal]]
+| style="text-align:left;" |  
+* Heals the unit while damaging an enemy with [[spell damage]].
+* Heals the attacking unit while damaging an enemy with the unit's [[magical]] [[attack damage]].
+| {{I|Voodoo Mask}}
+<section end=Definition />
+|}
+
+===Total Lifesteal===
+<section begin=intro />Percentage-based lifesteal sources from [[items]], abilities, and {{Symbol|Talent}} [[talent]]s stack independently and additively of each other after the sources' respectively creep lifesteal multiplier. All lifesteal sources are summed up, then [[lifesteal amplification]] is applied to the unit's lifesteal value as a multiplier. All lifesteal manipulation sources stack multiplicatively of each other.
+
+The heal value from lifesteal is based on a percentage of the [[Attack Damage#Total Attack Damage|total physical attack damage]] dealt to the attacked unit from the attacking unit. Therefore, if an attack damage instance exceeds the target's {{tooltip|current|(Current) / Max}} health and kills it, the heal value is based on the attack damage value the dying target would have received if it had not [[Death|died]]. Lifesteal heals more on [[critical strike]] procs and works conditionally on certain [[attack modifiers]].
+
+Neither heals from [[magical]] attack damage sources (e.g. {{I|Monkey King Bar}} procs) nor [[spell damage]] sources of all [[damage type]]s. Lifesteal only heals from [[physical]] attack damage.
+
+[[Instant attack]]s hitting secondary targets can heal from lifesteal as long as attack modifiers work with the instant attack source.
+
+However, the heal value from lifesteal is not affected by most [[damage manipulation]] effects on the attacked target (e.g. {{A|Undying|Flesh Golem}} or {{I|Aeon Disk}}). For example, for [[illusions]], their heal value from lifesteal is based on their {{Symbol|Outgoing Damage Manipulation}} [[outgoing damage manipulation]] values (i.e. total attack damage of the illusion), but the heal value from attacking illusions is not affected by the {{Symbol|Incoming Damage Manipulation}} incoming damage manipulation values (i.e. attacking illusions).
+
+There are currently no limits to how much a unit can heal from lifesteal.<section end=intro />
+
+Percentage-based lifesteal sources from items heals for {{#expr:{{G|item lifesteal creep factor}}*100}}% of their usual value when attacking creeps. Treats attack against [[clones]], [[illusions]] and [[creep-heroes]] as heroes, attacks against {{U|Roshan}} as creeps.
+
+Calculating the total lifesteal value of a unit involves using a few values and a multiplier and can be defined as:
+<br><br>
+{{Treelist}}
+* Total Lifesteal
+** ± Lifesteal Sources
+*** × Creep Lifesteal Multiplier
+** + Shared Lifesteal Sources
+*** × Creep Lifesteal Multiplier
+*** × Source Lifesteal Amplification
+** × Wielder [[Lifesteal Amplification]]
+{{Treelist/end}}
+
+===Lifesteal Manipulation===
+{{Main|Restoration Manipulation#Lifesteal Manipulation|l1=Lifesteal Manipulation}}
+{{#lst:Restoration Manipulation|Lifesteal Manipulation Intro}}
+{{SkillListHead|title=Lifesteal Manipulation Sources}}
+{{#lst:Restoration Manipulation|Lifesteal Manipulation Sources}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===Equations===
+The amount of healing granted from lifesteal to the attacking unit is calculated by a percentage of the 
+
+<span style="font-size:110%; font-weight:bold;">Total Heal = [[Attack Damage#Total Attack Damage|Total Attack Damage Dealt]] × Total Lifesteal-%based</span>
+
+<span style="font-size:110%; font-weight:bold;">Total Lifesteal = Self Lifesteal Amplification × Π<sub>i=1</sub><sup>n</sup>([[Lifesteal#Sources|Lifesteal]]-%based × Creep Multiplier)<sub>i</sub> + Π<sub>i=1</sub><sup>n</sup>(Source Lifesteal Amplification × [[Lifesteal#Psuedo-Lifesteal|Shared Lifesteal]]-%based × Creep Multiplier)<sub>i</sub></span>
+
+===Conditional Attack Damage Bonus===
+{{Main|Attack Damage#Conditional Attack Damage Bonus|l1=Conditional Attack Damage Bonus}}
+{{#lst:Attack Damage|Conditional Attack Damage Bonus Intro}} Only [[physical]] conditional attack damage bonuses increases the healing value from lifesteal.
+
+==Sources==
+Most Lifesteal sources considers {{M|Creep-Heroes}} as heroes and{{U|Roshan}} as creep.
+{{SkillListHead|title=Lifesteal Sources}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Sanguivore 
+| nametext = Sanguivore (Own Kill) <sup>4<sup>
+}}
+{{SkillListLite
+| source = Broodmother
+| name = Spider's Milk
+}}
+{{SkillListLite
+| source = Broodmother
+| name = Insatiable Hunger
+}}
+{{SkillListLite
+| source = Chaos Knight
+| name = Chaos Strike
+}}
+{{SkillListLite
+| source = Dawnbreaker
+| name = Luminosity 
+| nametext = Luminosity (Self)
+}}
+{{SkillListLite
+| source = Doom
+| name = Scorched Earth
+| nametext = Scorched Earth <sup>2b<sup>
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Blade Dance
+| nametext = Blade Dance <sup>1<sup>
+}}
+{{SkillListLite
+| source = Kez
+| name = Kazurai Katana
+| nametext = Kazurai Katana <sup>2b<sup>
+}}
+{{SkillListLite
+| source = Legion Commander
+| name = Moment of Courage
+}}
+{{SkillListLite
+| source = Lone Druid
+| name = Spirit Link
+}}
+{{SkillListLite
+| source = Lycan
+| name = Wolf Bite
+| nametext = Wolf Bite (Self)
+}}
+{{SkillListLite
+| source = Marci
+| name = Bodyguard
+| nametext = Bodyguard<sup>5<sup>
+}}
+{{SkillListLite
+| source = Meepo
+| name = Ransack
+| nametext = Ransack <sup>4<sup>
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Jingu Mastery
+}}
+{{SkillListLite
+| source = Troll Warlord
+| name = Battle Trance
+| nametext = Battle Trance <sup>6<sup>
+}}
+{{SkillListLite
+| source = Wraith King
+| name = Vampiric Spirit
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Lifesteal Sources without Creep Penalty}}
+{{SkillListLite
+| source = Ancient Prowler Acolyte
+| name = Prowler Aura
+}}
+{{SkillListLite
+| source = Lifestealer
+| name = Feast
+}}
+{{SkillListLite
+| source = Lifestealer
+| name = Open Wounds
+}}
+{{SkillListLite
+| source = Lycan
+| name = Wolf Bite
+| nametext= Wolf Bite [Shared]
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|4|Considers {{M|Creep-Heroes}} as creeps, {{H|Spirit Bear}} as Hero.}}
+{{Footnote|5|Doesn't Restore Health from Overkill Damage.}}
+{{Footnote|6|Can't Lifesteal from {{M|Creep-Heroes}} including {{H|Spirit Bear}}.}}
+
+===Items===
+{{SkillListHead|title=Lifesteal Item Sources}}
+{{SkillListLite
+| source = Mask of Madness
+| name = Lifesteal
+}}
+{{SkillListLite
+| source = Morbid Mask
+| name = Lifesteal
+}}
+{{SkillListLite
+| source = Satanic
+| name = Lifesteal
+}}
+{{SkillListLite
+| source = Satanic
+| name = Unholy Rage
+}}
+{{SkillListLite
+| source = Vampiric Enchantment
+| nametext = Lifesteal
+| type = Item
+}}
+{{SkillListLite
+| source = Vladmir's Offering
+| name = Vladmir's Aura
+}}
+{{SkillListTail}}
+
+===Talents===
+{{Spellcard
+| ID = 432, 6158, 433, 6289, 785, 6078, 6111, 6121, 8011, 7896, 6721
+| intern = special_bonus_lifesteal_8/10/12/15/18/20/25/30/35/40/100
+| name = Lifesteal
+
+| icon0 = t0
+| type0 = talent
+| target0 = Passive
+| affect0 = Self
+
+| trait1 = Lifesteal
+| value1 = Varies
+
+| is_illusionuses = no
+| interacts = {{Illusionnotes
+| name = Lifesteal
+| desc = Lifesteal is not functional despite particles being visible.
+}}
+
+| mechanics = * Grants the hero's attack lifesteal, healing them based on the attack damage they deal.
+
+* Stacks additively with other [[lifesteal]] sources.
+
+* Cannot lifesteal off of [[wards]], [[buildings]] and allied units.
+
+* The following lifesteal values exist:
+** 8%/10%/12%/15%/18%/20%/25%/30%/35%/40%/100%
+}}
+
+{{Talent bonus table|Lifesteal|lifesteal}}
+
+==Pseudo-Lifesteal==
+Some lifesteal sources work differently and conditionally, their mechanics are unique to the sources themselves. More information can be found in their ability's respective notes.<br/>
+{{SkillListHead}}
+{{SkillListRich
+| source = Lifestealer
+| name = Open Wounds
+| notes = Heals for physical, magical and pure damage dealt on the debuffed target.<br/>Not affected by Creep Penalty.
+}}
+{{SkillListRich
+| source = Lycan
+| name = Wolf Bite
+| notes = Grants regular lifesteal and shared lifesteal to both, the caster and the target.<br>The shared lifesteal not affected by Creep Penalty.
+}}
+{{SkillListTail}}
+
+==Spell Lifesteal==
+{{Main|Spell lifesteal|l1=Spell Lifesteal}}
+{{#lst:Spell lifesteal|intro}}
+
+==Gallery==
+<gallery>
+File:Lifesteal.png|Regular lifesteal particles
+File:Octarine Core effect.png|[[Spell lifesteal]] particles
+</gallery>
+
+==Recent Changes==
+{{Main|Lifesteal/Changelogs}}
+{{Recent changes wrapper}}
+
+{{MechanicsNav}}
+
+[[Category:Mechanics]]
+
+[[ru:Вампиризм]]

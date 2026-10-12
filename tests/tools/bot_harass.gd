@@ -5,8 +5,8 @@ func _init() -> void:
 	m.build(1)
 	var w := SimWorld.new(7, m)
 	w.setup_match()
-	var a := w.spawn_hero("galewarden", C.DAWN)
-	var b := w.spawn_hero("galewarden", C.DUSK)
+	var a := w.spawn_hero("blood_ranger", C.DAWN)
+	var b := w.spawn_hero("blood_ranger", C.DUSK)
 	w.bots.append(SimBot.new(w, a.id, "mid", "A"))
 	w.bots.append(SimBot.new(w, b.id, "mid", "B"))
 	var dmg := {"a2b": 0.0, "b2a": 0.0, "creep2a": 0.0, "tower2a": 0.0}

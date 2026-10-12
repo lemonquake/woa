@@ -24,8 +24,8 @@ const ITEM_ICONS := {
 	"power_treads": "items/set_guardian_boots", "mask_of_madness": "items/helm_plate_3", "yasha": "items/sword_3",
 	"dragon_lance": "items/bow_2",
 }
-const ABILITY_ICONS := {"frost_quiver": "skills/frost_arrow", "gale_shot": "skills/gale_burst",
-	"hunters_focus": "skills/keen_eye", "arrow_storm": "skills/arrow_rain", "dark_stomp": "skills/tempo_wd_quake",
+const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
+	"masterful_archery": "skills/deadeye", "blood_ranger_ult": "skills/bs_blood_eclipse", "dark_stomp": "skills/tempo_wd_quake",
 	"leap_strike": "skills/leap_slam", "tainted_touch": "skills/shadow_curse", "unholy_might": "skills/dg_black_dominion"}
 
 static var _fonts := {}

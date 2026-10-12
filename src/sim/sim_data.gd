@@ -162,14 +162,14 @@ static func _build_units() -> void:
 		"backswing": 0.5, "acquire": 300.0, "range": 300.0, "projectile_speed": 1500.0, "move_speed": 300.0,
 		"xp": 124.0, "gold_min": 76, "gold_max": 80, "level": 6}))
 
-	# Heroes. Galewarden: a ranged agility archer (stats follow the classic ranged-agility carry template).
-	_add("galewarden", {"name": "Galewarden", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+	# Heroes. Blood Ranger: a ranged agility archer (stats follow the classic ranged-agility carry template).
+	_add("blood_ranger", {"name": "Blood Ranger", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
 		"hp_regen": 0.25, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 0.0,
 		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 27.0, "dmg_max": 34.0, "bat": 1.7,
 		"attack_speed": 100.0, "attack_point": 0.5, "backswing": 0.55, "acquire": 800.0, "range": 625.0,
 		"projectile_speed": 1250.0, "move_speed": 300.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
 		"xp": 0.0, "primary": "agi", "str": 16.0, "str_gain": 1.9, "agi": 24.0, "agi_gain": 2.8, "int": 15.0,
-		"int_gain": 1.4, "abilities": ["frost_quiver", "gale_shot", "hunters_focus", "arrow_storm"],
+		"int_gain": 1.4, "abilities": ["burst_shot", "gale_impact", "masterful_archery", "blood_ranger_ult"],
 		"model": "hero"})
 	# Ezee, the Dark Paladin: a melee strength fighter (stats follow the classic melee-strength template).
 	_add("ezee", {"name": "Ezee", "title": "the Dark Paladin", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
@@ -196,25 +196,35 @@ static func _merged(a: Dictionary, b: Dictionary) -> Dictionary:
 ## behaviour: "passive", "no_target", "point", "unit", "autocast_attack"; values are per level arrays.
 
 static func _build_abilities() -> void:
-	_abilities["frost_quiver"] = {"id": "frost_quiver", "name": "Frost Quiver", "behavior": "autocast_attack",
-		"key": "Q", "max_level": 4, "mana": [12, 12, 12, 12], "cooldown": [0, 0, 0, 0], "cast_point": 0.0,
-		"range": 0, "values": {"bonus_damage": [8, 16, 24, 32], "slow": [0.12, 0.24, 0.36, 0.48], "duration": [1.5, 1.5, 1.5, 1.5]},
-		"desc": "Arrows of frost slow the target. Autocast, or cast on an enemy to fire one without drawing creep attention."}
-	_abilities["gale_shot"] = {"id": "gale_shot", "name": "Gale Shot", "behavior": "point", "key": "W",
-		"max_level": 4, "mana": [90, 90, 90, 90], "cooldown": [16, 14, 12, 10], "cast_point": 0.25,
-		"range": 1000, "anim": "bow_1", "damage_type": "magical", "values": {"damage": [70, 130, 190, 250], "width": [150, 150, 150, 150], "speed": [1800, 1800, 1800, 1800],
-		"distance": [1000, 1000, 1000, 1000], "knockback": [300, 325, 350, 375], "knockback_time": [0.4, 0.4, 0.4, 0.4]},
-		"desc": "Looses a gust-laden arrow in a line, damaging and pushing back every enemy it passes through."}
-	_abilities["hunters_focus"] = {"id": "hunters_focus", "name": "Hunter's Focus", "behavior": "passive", "key": "E",
-		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
-		"values": {"bonus_range": [40, 80, 120, 160], "agility_pct": [0.06, 0.09, 0.12, 0.15]},
-		"desc": "Sharpened senses extend attack range and amplify agility."}
-	_abilities["arrow_storm"] = {"id": "arrow_storm", "name": "Arrow Storm", "behavior": "point", "key": "R",
-		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 175, 200], "cooldown": [70, 60, 50],
-		"cast_point": 0.35, "range": 900, "anim": "cast_heavy", "damage_type": "magical",
-		"values": {"radius": [325, 325, 325], "volleys": [4, 4, 4], "interval": [0.5, 0.5, 0.5],
-		"damage": [60, 95, 130], "slow": [0.3, 0.35, 0.4], "slow_duration": [1.0, 1.0, 1.0]},
-		"desc": "Darkens the sky with arrows: volleys strike an area, damaging and slowing enemies inside."}
+	# Blood Ranger. Values the owner specified: Burst Shot 30 arrows in 5 waves of 4-7, 55% + 10% per level of attack
+	# damage, channelled, 17 s; Gale Impact 2000 range, 120 + 80 per level, +20% on impact, 12 s; Masterful Archery
+	# (8% + 10% per level) of agility, 0.8 s cooldown; Blood Ranger 15 s, 40% + 10% lifesteal, +200 + 100 range, 30%
+	# back leap of 300, 30 s. Everything else (mana, ranges, radii, timings, proc chance) is chosen; see docs/HANDOFF.md.
+	_abilities["burst_shot"] = {"id": "burst_shot", "name": "Burst Shot", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [17, 17, 17, 17], "cast_point": 0.2, "range": 900,
+		"anim": "bow_draw_hold", "damage_type": "physical", "channel": true,
+		"values": {"arrows": [30, 30, 30, 30], "waves": [5, 5, 5, 5], "wave_min": [4, 4, 4, 4], "wave_max": [7, 7, 7, 7],
+		"attack_pct": [0.55, 0.65, 0.75, 0.85], "radius": [400, 400, 400, 400], "wave_interval": [0.4, 0.4, 0.4, 0.4],
+		"arrow_speed": [1800, 1800, 1800, 1800]},
+		"desc": "Blood Ranger plants her feet and looses 30 arrows over five waves of four to seven into the target area. Each arrow strikes a random enemy there for a share of her attack damage. Channelled: moving, attacking, stopping, a stun, silence or a push ends it."}
+	_abilities["gale_impact"] = {"id": "gale_impact", "name": "Gale Impact", "behavior": "point", "key": "W",
+		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.3, "range": 2000,
+		"anim": "bow_1", "damage_type": "magical", "line": true,
+		"values": {"damage": [120, 200, 280, 360], "impact_pct": [0.2, 0.2, 0.2, 0.2], "width": [110, 110, 110, 110],
+		"speed": [2000, 2000, 2000, 2000], "distance": [2000, 2000, 2000, 2000], "push_speed": [1150, 1150, 1150, 1150]},
+		"desc": "Looses a great arrow to the target point (up to 2000 away). Every enemy it passes is struck for magic damage and hurled aside; an enemy that crashes into a wall, unit, building or tree takes another 20% of that damage. The arrow fells every tree in its path, and so do the units it throws."}
+	_abilities["masterful_archery"] = {"id": "masterful_archery", "name": "Masterful Archery", "behavior": "passive",
+		"key": "E", "max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0.8, 0.8, 0.8, 0.8], "cast_point": 0.0,
+		"range": 0, "damage_type": "physical",
+		"values": {"chance": [0.3, 0.3, 0.3, 0.3], "agility_pct": [0.08, 0.18, 0.28, 0.38], "proc_cooldown": [0.8, 0.8, 0.8, 0.8]},
+		"desc": "Her attacks have a chance to burst for bonus physical damage based on her agility. Cooldown after each burst."}
+	_abilities["blood_ranger_ult"] = {"id": "blood_ranger_ult", "name": "Blood Ranger", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [30, 30, 30],
+		"cast_point": 0.3, "range": 0, "anim": "war_cry",
+		"values": {"duration": [15, 15, 15], "lifesteal": [0.4, 0.5, 0.6], "bonus_range": [200, 300, 400],
+		"leap_chance": [0.3, 0.3, 0.3], "leap_distance": [300, 300, 300], "leap_time": [0.3, 0.3, 0.3],
+		"leap_cooldown": [1.0, 1.0, 1.0]},
+		"desc": "Blood Ranger gives in to the hunt: for 15 seconds her attacks steal life and reach much further. When an attack hits her she may leap back out of reach."}
 	# Ezee, the Dark Paladin
 	_abilities["dark_stomp"] = {"id": "dark_stomp", "name": "Dark Stomp", "behavior": "no_target", "key": "Q",
 		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.45, "range": 0,
@@ -252,8 +262,8 @@ static func _it(id: String, name: String, cost: int, d: Dictionary) -> void:
 	_items[id] = it
 
 static func _build_items() -> void:
-	_it("tango", "Grove Leaves", 90, {"use": "tango", "charges": 3, "consumable": true, "category": "consumables",
-		"values": {"health_regen": 7.0, "duration": 16.0}})
+	_it("tango", "Vegan Picker", 90, {"use": "tango", "charges": 3, "consumable": true, "category": "consumables",
+		"values": {"health_regen": 7.0, "duration": 16.0, "planted_duration": 32.0, "range": 165.0}})
 	_it("salve", "Mending Salve", 100, {"use": "salve", "charges": 1, "consumable": true, "category": "consumables",
 		"values": {"health_regen": 30.0, "duration": 13.0}})
 	_it("clarity", "Clear Mind Draught", 60, {"use": "clarity", "charges": 1, "consumable": true, "category": "consumables",
@@ -266,7 +276,8 @@ static func _build_items() -> void:
 		"values": {"channel": SimConst.TP_CHANNEL}})
 	_it("observer_ward", "Watcher Ward", 0, {"use": "ward", "charges": 1, "consumable": true, "category": "consumables",
 		"cooldown": 1.0, "values": {"lifetime": 360.0}})
-	_it("branch", "Ironwood Twig", 55, {"stats": {"str": 1.0, "agi": 1.0, "int": 1.0}})
+	_it("branch", "Ironwood Twig", 55, {"use": "plant", "stats": {"str": 1.0, "agi": 1.0, "int": 1.0},
+		"values": {"tree_duration": SimConst.PLANTED_TREE_DURATION, "range": SimConst.PLANT_RANGE}})
 	_it("slippers", "Quickstep Slippers", 140, {"stats": {"agi": 3.0}, "category": "attributes"})
 	_it("gauntlets", "Bracers of Might", 140, {"stats": {"str": 3.0}, "category": "attributes"})
 	_it("mantle", "Scholar's Mantle", 140, {"stats": {"int": 3.0}, "category": "attributes"})
@@ -280,7 +291,7 @@ static func _build_items() -> void:
 	_it("gloves", "Hasted Gloves", 450, {"stats": {"attack_speed": 20.0}, "category": "armaments"})
 	_it("ring_protection", "Warding Ring", 175, {"stats": {"armor": 2.0}, "category": "armaments"})
 	_it("chainmail", "Ringmail", 500, {"stats": {"armor": 4.0}, "category": "armaments"})
-	_it("quelling_blade", "Woodsman's Hatchet", 100, {"use": "chop", "cooldown": 4.0, "category": "armaments",
+	_it("quelling_blade", "Mini-Axe", 100, {"use": "chop", "cooldown": 4.0, "category": "armaments",
 		"values": {"creep_damage_melee": 8.0, "creep_damage_ranged": 4.0, "chop_range": 350.0}})
 	_it("ring_regen", "Ring of Renewal", 175, {"stats": {"hp_regen": 1.25}, "category": "misc"})
 	_it("sobi_mask", "Calm Mask", 175, {"stats": {"mana_regen": 0.7}, "category": "misc"})

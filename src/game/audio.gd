@@ -167,10 +167,14 @@ func event(e: Dictionary, w: SimWorld) -> void:
 		"cast":
 			var p4 := _pos(w, e.u)
 			match String(e.ability):
-				"gale_shot":
-					at("wind_gust", p4, -2.0, 0, 0.2, 0.02)
-				"arrow_storm":
-					at("bow_attack", p4, -2.0, 3)
+				"gale_impact":
+					at("bow_release", p4, -1.0, 0, 0.1)
+					at("wind_gust", p4, -1.0, 0, 0.2, 0.02)
+				"burst_shot":
+					at("bow_draw", p4, -4.0, 0, 0.2)
+				"blood_ranger_ult":
+					at("war_cry", p4, -4.0, 0, 0.2)
+					at("drain", p4, -6.0, 0, 0.2)
 				"leap_strike":
 					at("attack_woosh", p4, -2.0, 3, 0.1)
 				"tainted_touch":
@@ -240,7 +244,17 @@ func event(e: Dictionary, w: SimWorld) -> void:
 				at("potion_drink", _pos(w, e.u), -6.0)
 			elif it == "observer_ward":
 				at("item_pickup", _pos(w, e.u), -6.0)
+		"burst_wave":
+			at("bow_attack", _pos(w, e.u), -3.0, 3, 0.05)
+			at("crossbow_fire", _pos(w, e.u), -9.0, 2, 0.05)
+		"gale_hit":
+			at("hit_heavy", _pos(w, e.u), -3.0, 2, 0.08)
+		"masterful_hit":
+			at("crit_hit", _pos(w, e.target), -3.0, 0, 0.1)
+		"back_leap":
+			at("dodge_roll", _pos(w, e.u), -6.0, 0, 0.2)
+		"tree":
+			if not bool(e.alive) and e.has("from"):
+				at("break_wood", View.to3(game.map.trees[int(e.i)].pos, game.terrain.height_at(game.map.trees[int(e.i)].pos)), -4.0, 2, 0.1)
 		"attack_start":
-			var a := w.get_unit(e.u)
-			if a and a.is_hero() and String(e.get("mod", "")) == "frost_quiver":
-				at("cast_ice", _pos(w, e.u), -10.0, 0, 0.1)
+			pass

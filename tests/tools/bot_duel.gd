@@ -1,9 +1,9 @@
 extends SceneTree
 ## Let two laning bots play for N minutes and report the scoreline and ability use:
-##   godot --headless --path . -s tests/tools/bot_duel.gd -- [--a=galewarden] [--b=ezee] [--min=15]
+##   godot --headless --path . -s tests/tools/bot_duel.gd -- [--a=blood_ranger] [--b=ezee] [--min=15]
 const C = preload("res://src/sim/sim_const.gd")
 func _init() -> void:
-	var opts := {"a": "galewarden", "b": "ezee", "min": "15"}
+	var opts := {"a": "blood_ranger", "b": "ezee", "min": "15"}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--") and arg.contains("="):
 			var kv := arg.substr(2).split("=")

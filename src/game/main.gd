@@ -57,6 +57,7 @@ func _ready() -> void:
 	dressing.build(map, terrain)
 	fx = Fx.new()
 	fx.game = self
+	foliage.game_fx = fx
 	add_child(fx)
 	status_fx = StatusFx.new()
 	status_fx.game = self
@@ -139,16 +140,16 @@ func _spawn_heroes() -> void:
 	var automated := args.has("capture") or args.has("bench")
 	var my_id := String(args.get("hero", GameSettings.selected))
 	if not (my_id in GameSettings.HEROES):
-		my_id = "galewarden"
+		my_id = "blood_ranger"
 	var mine: Dictionary = GameSettings.default_look(my_id) if automated else GameSettings.look_for(my_id)
 	var p := world.spawn_hero(my_id, C.DAWN, mine.duplicate(true))
 	p.player = true
 	player_hero_id = p.id
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
-	var bot_id := String(args.get("bot_hero", "galewarden" if automated else GameSettings.opponent_hero(rng)))
+	var bot_id := String(args.get("bot_hero", "blood_ranger" if automated else GameSettings.opponent_hero(rng)))
 	if not (bot_id in GameSettings.HEROES):
-		bot_id = "galewarden"
+		bot_id = "blood_ranger"
 	var b := world.spawn_hero(bot_id, C.DUSK, bot_look(bot_id))
 	world.bots.append(SimBot.new(world, b.id, "mid", "Bot Gerald"))
 	if args.has("autoplay"):
@@ -311,7 +312,48 @@ func _drain_events() -> void:
 				if h:
 					fx.level_up(View.to3(h.pos, terrain.height_at(h.pos)))
 			"effect_move":
-				fx.gale_move(e.pos)
+				fx.gale_move(int(e.get("src", -1)), e.pos, bool(e.get("done", false)))
+			"gale_impact":
+				fx.gale_launch(e)
+			"gale_hit":
+				fx.gale_hit(e)
+			"masterful_hit":
+				fx.masterful_hit(e)
+				var mt := world.get_unit(int(e.target))
+				if mt and (int(e.u) == player_hero_id or mt.id == player_hero_id):
+					var mv = views.get(mt.id)
+					var mh: float = (mv.bar_height + 0.9) if mv is UnitView else 2.6
+					bars.popup("+%d!" % int(e.amount), _head(mt.pos, mh), Color(1.0, 0.3, 0.22), 24, 0.7, 1.0, Vector2(-36, 0), true)
+			"lifesteal":
+				fx.lifesteal(int(e.u))
+			"channel_start":
+				var chv = views.get(e.u)
+				if chv is UnitView:
+					chv.on_channel_start(String(e.ability))
+				fx.burst_start(e)
+			"burst_wave":
+				var bwv = views.get(e.u)
+				if bwv is UnitView:
+					bwv.on_burst_wave()
+				fx.burst_wave(e)
+			"channel_end":
+				var cev = views.get(e.u)
+				if cev is UnitView:
+					cev.on_channel_end()
+				fx.burst_end(int(e.u))
+			"blood_ranger_start":
+				fx.blood_ranger_start(int(e.u))
+			"back_leap":
+				var blv = views.get(e.u)
+				if blv is UnitView:
+					blv.on_back_leap(float(e.dur))
+				fx.back_leap(e)
+			"back_leap_land":
+				fx.back_leap_land(e)
+			"tango":
+				var ti := int(e.get("tree", -1))
+				if ti >= 0:
+					fx.tango_eat(int(e.u), map.trees[ti].pos)
 			"tp_start":
 				var tu := world.get_unit(e.u)
 				if tu and (tu.team == player_team or world.vision.sees(player_team, tu)):
@@ -327,12 +369,16 @@ func _drain_events() -> void:
 					v3.cur_pos = e.pos
 			"tp_cancel":
 				fx.tp_end(e.u)
-			"volley":
-				fx.volley(e.pos, float(e.radius))
 			"tree":
-				if not bool(e.alive) and e.has("from"):
-					fx.tree_fell(int(e.i), e.from)
-				foliage.set_tree_alive(int(e.i), bool(e.alive))
+				# felled (topples away from the blow), eaten or withered (shrinks away), regrown or planted (grows in)
+				var tidx := int(e.i)
+				if bool(e.alive):
+					foliage.grow_tree(tidx)
+				elif e.has("from"):
+					fx.tree_fell(tidx, e.from)
+					foliage.set_tree_alive(tidx, false)
+				else:
+					foliage.shrink_tree(tidx)
 			"hero_kill":
 				if hud and hud.has_method("on_kill"):
 					hud.on_kill(e)
@@ -382,7 +428,8 @@ func _on_damage(e: Dictionary) -> void:
 	var dv = views.get(e.u)
 	var atk := bool(e.get("attack", false))
 	if dv is UnitView:
-		dv.on_hit(su.pos if su else tu.pos, amt, tu.max_hp, atk)
+		# Burst Shot's arrows flash and jolt the body like attacks do
+		dv.on_hit(su.pos if su else tu.pos, amt, tu.max_hp, atk or String(e.get("key", "")) == "burst_shot")
 		if atk and su and not su.is_ranged() and dv.visible:
 			fx.melee_hit(su, tu, amt)
 	if not (tu.team == player_team or world.vision.sees(player_team, tu)):
@@ -398,7 +445,7 @@ func _on_damage(e: Dictionary) -> void:
 		style = "spell"
 	if style != "":
 		var hgt: float = (dv.bar_height + 0.35) if dv is UnitView else 2.2
-		bars.damage_number(amt, int(e.get("type", 0)), _head(tu.pos, hgt), style, tu.id)
+		bars.damage_number(amt, int(e.get("type", 0)), _head(tu.pos, hgt), style, tu.id, String(e.get("key", "")))
 	if float(e.get("halved", 0.0)) > 0.0:
 		var hv = views.get(e.u)
 		bars.popup("½", _head(tu.pos, (hv.bar_height if hv is UnitView else 2.2) + 0.6), Color(0.8, 0.5, 1.0), 26, 0.8, 0.8, Vector2(30, 0), true)
@@ -624,6 +671,15 @@ var _demo_cam := Vector2(INF, INF)
 
 func _demo_setup() -> void:
 	var h := world.get_unit(player_hero_id)
+	if args.has("nobot"):
+		# the enemy hero waits in its fountain (ability captures without it walking into the shot)
+		for b in world.bots.duplicate():
+			if b.hero_id != player_hero_id:
+				world.bots.erase(b)
+		for eh in world.heroes:
+			if eh.team != h.team:
+				eh.pos = map.fountains[eh.team]
+				world.orders.clear(eh)
 	if args.has("lvl"):
 		var lv := int(args.lvl)
 		world.combat.give_xp(h, float(C.XP_TABLE[lv - 1]) - h.xp)
@@ -640,6 +696,8 @@ func _demo_setup() -> void:
 			if b.hero_id == player_hero_id:
 				world.bots.erase(b)
 				break
+	if args.has("treedemo"):
+		_tree_demo_setup(h)
 	if args.has("at"):
 		var av := String(args.at).split(",")
 		if av[0] == "tree":
@@ -697,7 +755,55 @@ func _demo_setup() -> void:
 			h.facing = deg_to_rad(float(args.face))
 		world.vision.update()
 
+## --treedemo: the hero stands by the forest edge with a Mini-Axe and an Ironwood Twig. At capture frame 4 it chops the
+## nearest tree and plants a twig; a third tree that fell earlier grows back during the capture.
+var _tree_demo := {}
+
+func _tree_demo_setup(h: SimUnit) -> void:
+	var best := -1
+	var dir := Vector2.ZERO
+	for i in map.trees.size():
+		var tr: Dictionary = map.trees[i]
+		if not tr.alive or tr.pos.distance_to(Vector2(-2400, -3600)) > 2500.0:
+			continue
+		for k in 8:
+			var d := Vector2.from_angle(k * TAU / 8.0)
+			var ok := true
+			for st in range(2, 9):
+				if not map.is_walkable(tr.pos + d * (st * 64.0)):
+					ok = false
+					break
+			if ok:
+				best = i
+				dir = d
+				break
+		if best >= 0:
+			break
+	if best < 0:
+		return
+	var tp: Vector2 = map.trees[best].pos
+	h.pos = tp + dir * 260.0
+	h.facing = (-dir).angle()
+	h.inventory[0] = {"id": "quelling_blade", "charges": 0}
+	h.inventory[1] = {"id": "branch", "charges": 0}
+	h.refresh_stats()
+	# a neighbour of the chopped tree fell a while ago and is about to grow back
+	var other := map.tree_at(tp + dir.orthogonal() * 140.0, 130.0)
+	if other == best or other < 0:
+		other = map.tree_at(tp - dir.orthogonal() * 140.0, 130.0)
+	if other >= 0 and other != best:
+		world.cut_tree(other, Vector2.INF)
+		map.trees[other].regrow = 1.6
+		foliage.set_tree_alive(other, false)
+	_tree_demo = {"tree": best, "dir": dir, "plant": h.pos + dir * 230.0}
+	_demo_cam = h.pos - dir * 120.0
+	world.events.clear()
+
 func _demo_casts() -> void:
+	if not _tree_demo.is_empty() and _capture_frames == 4:
+		var h0 := world.get_unit(player_hero_id)
+		world.command(h0.id, {"type": C.Order.CAST_POINT, "ability": "", "item_slot": 0, "point": map.trees[int(_tree_demo.tree)].pos})
+		world.command(h0.id, {"type": C.Order.CAST_POINT, "ability": "", "item_slot": 1, "point": _tree_demo.plant, "queue": true})
 	if not args.has("cast"):
 		return
 	var spec := String(args.cast).split("@")
@@ -722,7 +828,10 @@ func _demo_casts() -> void:
 			"no_target":
 				world.command(h.id, {"type": C.Order.CAST_NO_TARGET, "ability": aid})
 			"point":
-				world.command(h.id, {"type": C.Order.CAST_POINT, "ability": aid, "point": near.pos if near else h.pos})
+				var pt: Vector2 = near.pos if near else h.pos
+				if args.has("aim") and near:
+					pt = h.pos + (near.pos - h.pos).normalized() * float(args.aim)
+				world.command(h.id, {"type": C.Order.CAST_POINT, "ability": aid, "point": pt})
 			_:
 				if near:
 					world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id, "queue": true})

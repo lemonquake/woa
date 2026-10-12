@@ -1,0 +1,271 @@
+{{Tabber
+| link1 = Trees
+| name1 = Trees
+| link2 = Trees/Changelogs
+| name2 = Changelogs
+}}
+
+[[File:Monkey King Mischief abilityicon dota2 gameasset.png|frame]]
+{{Quotation|Nature's Prophet|I speak for the trees.|sound=vo_furion_furi_spawn_01.mp3}}
+<section begin=intro /><dfn>Trees</dfn> are a prominent terrain feature in Dota 2. They make up a large amount of the map and are very prominent in the forests that separate the lanes and border the map. Trees block vision and are normally impassable.<section end=intro />
+
+==Mechanics==
+[[File:tree_size.png|thumb|300px|Trees on the Navigation Mesh.]]
+Trees cannot be targeted by normal attacks and most abilities, except for a handful of abilities (e.g. {{A|Monkey King|Tree Dance}}).
+
+<section begin=collision />Despite the varying appearance and apparent size of the various trees, all permanent trees have an block size of a {{G|tree collision size}}x{{G|tree collision size}} unit square.<section end=collision />
+
+* Strictly speaking, trees do not have collision size. They are driven by the clip mesh like impassable terrain, affecting the navigation grid square it contacts.
+
+The [[console command]] to respawn all destroyed trees on the map is <code>dota_treerespawn</code> (requires cheats to be turned on).
+
+===Respawn Time===
+Trees regrow {{#expr:{{G|tree respawn time}}/60}} minutes after they were destroyed except if a unit is standing within {{G|tree respawn radius}} range of where they would spawn. In this case, the tree respawns once the unit gets out of range. This is to prevent the unit from getting stuck in the trees.
+{{SkillListHead|title=Modifying Tree Respawn Time}}
+{{SkillListRich
+| source = Treant Protector
+| name = Eyes In The Forest
+| trait1 = Set Respawn Time
+| value1 = {{Show|A|Treant Protector|Eyes In The Forest|value4}}
+| notes = Respawns all trees globally upon acquiring item.<br>Passively set the respawn time of all natural trees, does not affect [[Trees#Planted Trees|planted trees]]. This is [[innate]] to {{H|Treant Protector}}, and requires Eyes In The Forest to be unlocked.
+}}
+{{SkillListTail}}
+
+===Tree Count===
+[[File:Trees.jpeg|thumb|300px|Trees on the {{M|Radiant}} and {{M|Dire}} sides of the map.]]
+Each tree has a <code>ent_dota_tree</code> classname in the {{tooltip|map entity file|dota.vpk/maps/dota/entities/default_ents.vents_c}}. There are currently '''2357''' trees in the map since [[{{Updates|version}}]]. The {{M|Radiant}} has a total of 8 different types of assorted Bamboo Tree, Oak Tree, and Pine Tree in use, with a total of 1215 trees; while the {{M|Dire}} has 3 types of trees currently in use, with a total of 1142 trees.
+{| class="wikitable" width="70%" style="text-align:center;"
+! style="width:20%;" | Faction
+! style="width:20%;" | Tree Types
+! style="width:20%;" | Model
+! style="width:40%;" | Count
+|-
+! rowspan="6" | {{M|Radiant}}
+| rowspan="2" | Bamboo Tree
+| <code>{{tooltip|00|tree_bamboo_00}}</code> / <code>{{tooltip|03|tree_bamboo_03}}</code>
+| 0
+|-
+| <code>{{tooltip|01|tree_bamboo_01}}</code> / <code>{{tooltip|02|tree_bamboo_02}}</code> 
+| 34 / 78
+|-
+| rowspan="2" | Oak Tree
+| <code>{{tooltip|01|tree_oak_01}}</code> / <code>{{tooltip|01b|tree_oak_01b}}</code> / <code>{{tooltip|02|tree_oak_02}}</code>
+| 112 / 173 / 112
+|-
+| <code>{{tooltip|03|tree_oak_03}}</code> / <code>{{tooltip|04|tree_oak_04}}</code> / <code>{{tooltip|05|tree_oak_05}}</code> / <code>{{tooltip|06|tree_oak_06}}</code>
+| 0
+|-
+| rowspan="2" | Pine Tree
+| <code>{{tooltip|01|tree_pine_01}}</code> / <code>{{tooltip|02|tree_pine_02}}</code> / <code>{{tooltip|03b|tree_pine_03b}}</code>
+| 501 / 149 / 56
+|-
+| <code>{{tooltip|04|tree_pine_04}}</code> / <code>{{tooltip|05|tree_pine_05}}</code>
+| 0
+|-
+! rowspan="2" | {{M|Dire}}
+| colspan="2" | <code>{{tooltip|001|dire_tree001}}</code> / <code>{{tooltip|002|dire_tree002}}</code> / <code>{{tooltip|003|dire_tree003}}</code> / <code>{{tooltip|005|dire_tree005}}</code> / <code>{{tooltip|006|dire_tree006}}</code> / <code>{{tooltip|009|dire_tree009}}</code> / <code>{{tooltip|010|dire_tree010}}</code> / <code>{{tooltip|011|dire_tree011}}</code> / <code>{{tooltip|012|dire_tree01269}}</code>
+| 0
+|-
+| colspan="2" | <code>{{tooltip|004|dire_tree004}}</code> / <code>{{tooltip|007|dire_tree007}}</code> / <code>{{tooltip|008|dire_tree008}}</code>
+| 757 / 139 / 246
+|}
+
+==Tree-Walking==
+Certain abilities grant tree-walking, a buff that allows unobstructed movement through trees. All [[flying]] or [[unobstructed movement]] sources also grants tree-walking while active.
+<section begin=Tree-Walking Sources />{{SkillListHead|title=Tree-Walking Sources}}
+{{SkillListRich
+| source = Hoodwink
+| name = Scurry
+| trait1 = Passive Tree Search Radius
+| value1 = {{Show|A|Hoodwink|Scurry|value1}}
+| trait2 = Active Move Speed Bonus
+| value2 = {{Show|A|Hoodwink|Scurry|value3}}
+| notes = Grants [[phased]] movement.
+}}
+{{SkillListRich
+| source = Treant Protector
+| name = Nature's Guise
+| trait1 = Tree Search Radius
+| value1 = {{Show|A|Treant Protector|Nature's Guise|value1}}
+| trait2 = Move Speed Bonus
+| value2 = {{Show|A|Treant Protector|Nature's Guise|value2}} ({{Symbol|Aghshard}} {{Show|A|Treant Protector|Nature's Guise|value2 shard}})
+| notes = This is an innate ability and does not need to be learned. Does not grant phased movement.
+}}
+{{SkillListRich
+| source = Roshan
+| name = Strength of the Immortal
+| notes = The status buff also grants [[phase]]d movement.
+}}
+{{SkillListTail}}<section end=Tree-Walking Sources />
+
+==Planted Trees==
+{{anchor|Planted Tree}}Besides the naturally occurring trees on the map, some abilities can plant trees that usually last a limited amount of time. These trees have several differences from the regular trees on the map.
+
+<section begin=planted />Planted trees have a smaller collision size and block less vision than regular trees.
+{{SkillListHead|title=Planted Tree Sources}}
+{{SkillListRich
+| source = Hoodwink
+| name = Acorn Shot
+| notes = Creates a tree when targeting the ground.
+}}
+{{SkillListRich
+| source = Hoodwink
+| name = Decoy
+| notes = Send a decoy illusion to the target location. When the illusion is attacked or hit by a unit-targeted ability, it is destroyed and plants a tree in its place that applies a lesser {{A|Hoodwink|Bushwhack}} to enemy heroes around it.
+}}
+{{SkillListRich
+| source = Iron Branch
+| name = Plant Tree
+| notes = Consumes the item upon cast and plants a tree, with a smaller collision size.<br>{{I|Tango}} doubles the health regeneration bonus duration when cast on an Ironwood Tree.
+}}
+{{SkillListRich
+| source = Nature's Prophet
+| name = Sprout
+| notes = Creates a ring of trees around the targeted point or unit.
+}}
+{{SkillListTail}}<section end=planted />
+
+==Trees Interacting Abilities==
+The following abilities interact with trees or grant certain bonuses while interacting with trees. More information can be found on the abilities' respective notes.
+{{SkillListHead|title=Tree Interacting Abilities}}
+{{SkillListLite
+| source = Hoodwink
+| name = Bushwhack
+}}
+{{SkillListLite
+| source = Hoodwink
+| name = Scurry
+}}
+{{SkillListLite
+| source = Mars
+| name = Spear of Mars
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Mischief
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Tree Dance
+}}
+{{SkillListLite
+| source = Muerta
+| name = Dead Shot
+}}
+{{SkillListLite
+| source = Nature's Prophet
+| name = Nature's Call
+}}
+{{SkillListLite
+| source = Nature's Prophet
+| name = Curse of the Oldgrowth
+}}
+{{SkillListLite
+| source = Tango
+| name = Devour
+}}
+{{SkillListLite
+| source = Tango (Shared)
+| name = Devour
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Timber Chain
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Whirling Death
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Grab
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Volley
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Nature's Grasp
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Nature's Guise
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Eyes In The Forest
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Overgrowth
+| nametext = Overgrowth<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Windranger
+| name = Shackleshot
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+===Destroying Trees===
+Most [[forced movement]] sources continuously destroy trees the entities or affected units directly collide with, while certain abilities destroy trees in a single instance. More information can be found in the abilities' respective notes. The following listed abilities interact directly with trees and destroy them uniquely.
+
+{{SkillListHead|title=Unique Tree Destroying Sources}}
+{{SkillListLite
+| source = Battle Fury
+| name = Chop Tree
+}}
+{{SkillListLite
+| source = Quelling Blade
+| name = Chop Tree
+}}
+{{SkillListLite
+| source = Tango
+| name = Devour
+}}
+{{SkillListLite
+| source = Tango (Shared)
+| name = Devour
+}}
+{{SkillListLite
+| source = Muerta
+| name = Dead Shot
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Timber Chain
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Flamethrower
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Grab
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Volley
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+==Trivia==
+* Among the tree species in Dota's world are pine trees,<ref>[[Dota 2 X Monster Hunter/Hero Atlas#Lone Druid|Dota 2 X Monster Hunter: Hero Atlas - Lone Druid]]</ref><ref>[[Dota 2 X Monster Hunter/Hero Atlas#Timbersaw|Dota 2 X Monster Hunter: Hero Atlas - Timbersaw]]</ref> elm trees,<ref>[[Dota 2 X Monster Hunter/Hero Atlas#Viper|Dota 2 X Monster Hunter: Hero Atlas - Viper]]</ref> and [[Ironwood]] trees.
+
+==Recent Changes==
+{{Main|Trees/Changelogs}}
+{{Recent changes wrapper}}
+
+==References==
+<references />
+
+[[Category:Gameplay]]
+[[Category:Mechanics]]
+
+[[ru:Деревья]]

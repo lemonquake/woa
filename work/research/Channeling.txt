@@ -1,0 +1,650 @@
+[[File:Solar Guardian abilityicon dota2 gameasset.png|frame]]
+{{Quotation|Tinker|Initializing in… 3..2..1!|sound=vo_tinker_tink_ability_rearm_11.mp3}}
+'''Channeling''' causes the caster to stop acting for the duration of the the ability. 
+
+<section begin=intro />Channeled abilities may be ended early when the channeling unit performs another action or is interrupted by another ability or [[disable]]s. While abilities are being channeled, a time remaining bar will appear on the screen, indicating how much time is left in the channel. [[Silence]] stops ability channeling, while [[Mute]] stops item channeling.<section end=intro />
+
+==Interrupting Channeled Abilities==
+Performing the following actions while channeling abilities will interrupt the channel:
+* Issuing another command (i.e. to move, {{Key press|mouseleft}} on ground, stop, attack, {{Key press|A}} on target).
+* Casting other abilities or using items (with certain exceptions).
+* Any [[disable]]s that would normally prevent a unit from casting abilities.
+<br>
+If the channel is interrupted before the ability's effects occur, the mana and cooldown will be wasted, and the ability's effect will be cut short, and in some cases will not perform their effects at all. This is in contrast to other, non-channeled abilities with high [[Cast animation|cast times]] (e.g. {{A|Sniper|Assassinate}} and {{A|Shadow Fiend|Requiem of Souls}}) which will not expend mana or go on cooldown until the ability has been completed. Certain channeled abilities (e.g. {{A|Keeper of the Light|Illuminate}} and {{A|Windranger|Powershot}}) will still perform their effect even if they are canceled, usually at the cost of damage.
+
+Any disable that would normally prevent a unit from casting the spell in question will also interrupt channeling. This includes [[stun]]s, [[cyclone]]s, [[hex]]es, [[sleep]]s, and getting [[hidden]]. Though they do not prevent casting, most [[root]] effects will also interrupt channeling. [[Silence]] will interrupt channeling from abilities only, while [[mute]] will interrupt channeling from items. 
+
+Some abilities that applies [[Forced Movement]] (e.g. {{A|Dark Seer|Vacuum}} or {{A|Kunkka|X Marks the Spot}}) will interrupt channeling as well, even if used on friendly units; however, other abilities like {{I|Force Staff}} and {{A|Earth Spirit|Boulder Smash}}, will not interrupt channeling, apply forced movement and not causing an interrupt state.
+
+{{SkillListHead|title=Non-obvious spells that interrupt channeling}}
+{{SkillListLite
+| source = Anti-Mage
+| name = Mana Void
+}}
+{{SkillListLite
+| source = Dark Seer
+| name = Normal Punch
+}}
+{{SkillListLite
+| source = Doom
+| name = Infernal Blade
+}}
+{{SkillListLite
+| source = Night Stalker
+| name = Void
+}}
+{{SkillListLite
+| source = Sniper
+| name = Concussive Grenade
+}}
+{{SkillListLite
+| source = Sniper
+| name = Assassinate
+}}
+{{SkillListLite
+| source = Treant Protector
+| name = Overgrowth
+}}
+{{SkillListTail}}
+{{SkillListHead|title=}}
+{{SkillListLite
+| source = Dark Seer
+| name = Vacuum
+}}
+{{SkillListLite
+| source = Disruptor
+| name = Glimpse
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Earth Splitter
+}}
+{{SkillListLite
+| source = Io
+| name = Relocate
+}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Recall
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Return
+}}
+{{SkillListLite
+| source = Vengeful Spirit
+| name = Nether Swap
+}}
+{{SkillListHead|title=Breaks channeling {{A|Riki|Tricks of the Trade}} and {{A|Puck|Phase Shift}} despite "Require hold/cancel to stop" setting}}
+{{SkillListLite
+| source = Shadow Blade
+| name = Shadow Walk
+}}
+{{SkillListLite
+| source = Silver Edge
+| name = Shadow Walk
+}}
+{{SkillListLite
+| source = Shiva's Guard
+| name = Arctic Blast
+}}
+{{SkillListTail}}
+{{SkillListTail}}
+===Usable Unit Abilities While Channeling=== 
+Toggle-able ({{Key special|onoff}}) abilities and abilities granting [[invisibility]] generally do not interrupt channeling.<br/>
+Note: To use some abilities while channeling, you may need to disable the "Channeled Abilities Require Hold/Stop" setting.
+
+The following is a list of abilities that can be used without interrupting channeling:
+
+{{SkillListHead|title=Usable Unit Abilities While Channeling}}
+{{SkillListLite
+| source = Astral Spirit
+| name = Return Astral Spirit
+}}
+{{SkillListLite
+| source = Bane
+| name = Nightmare End
+}}
+{{SkillListLite
+| source = Brewmaster
+| name = Drunken Brawler
+}}
+{{SkillListLite
+| source = Crystal Maiden
+| name = Crystal Clone
+}}
+{{SkillListLite
+| source = Dark Willow
+| name = Shadow Realm
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Move Astral Spirit
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Return Astral Spirit
+}}
+{{SkillListLite
+| source = Invoker
+| name = Quas
+}}
+{{SkillListLite
+| source = Invoker
+| name = Wex
+}}
+{{SkillListLite
+| source = Invoker
+| name = Exort
+}}
+{{SkillListLite
+| source = Invoker
+| name = Invoke
+}}
+{{SkillListLite
+| source = Juggernaut
+| name = Blade Fury
+}}
+{{SkillListLite
+| source = Naga Siren
+| name = Deluge
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Trample
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Uproar
+}}
+{{SkillListLite
+| source = Rubick
+| name = Telekinesis Land
+}}
+{{SkillListLite
+| source = Slardar
+| name = Guardian Sprint
+}}
+{{SkillListLite
+| source = Templar Assassin
+| name = Trap
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Return Chakram
+}}
+{{SkillListLite
+| source = Visage
+| name = Stone Form
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Invisibility}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Friendly Shadow
+}}
+{{SkillListLite
+| source = Bounty Hunter
+| name = Shadow Walk
+}}
+{{SkillListLite
+| source = Clinkz
+| name = Skeleton Walk
+}}
+{{SkillListLite
+| source = Invoker
+| name = Ghost Walk
+| nametext = Ghost Walk<sup>6<sup>
+}}
+{{SkillListLite
+| source = Nyx Assassin
+| name = Vendetta
+| nametext = Vendetta<sup>6<sup>
+}}
+{{SkillListLite
+| source = Visage
+| name = Silent as the Grave
+| nametext = Silent as the Grave<sup>6<sup>
+}}
+{{SkillListLite
+| source = Weaver
+| name = Shukuchi
+| nametext = Shukuchi<sup>6<sup>
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Toggle}}
+{{#lst:Abilities|Unit Toggle Sources}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|Requires selecting the corresponding facet.}}
+
+{{SkillListHead|title=Usable Hero Abilities While Channeling [CONDITIONAL]}}
+{{SkillListLite
+| source = Lich
+| name = Frost Blast
+}}
+{{SkillListLite
+| source = Lich
+| name = Frost Shield
+}}
+{{SkillListLite
+| source = Lich
+| name = Ice Spire
+}}
+{{SkillListLite
+| source = Lich
+| name = Chain Frost
+}}
+{{SkillListLite
+| source = Lone Druid	
+| name = Savage Roar
+}}
+{{SkillListLite
+| source = Spirit Bear
+| name = Savage Roar
+}}
+{{SkillListLite
+| source = Pugna
+| name = Decrepify
+}}
+{{SkillListLite
+| source = Pugna
+| name = Nether Blast
+}}
+{{SkillListLite
+| source = Pugna
+| name = Nether Ward
+}}
+{{SkillListLite
+| source = Riki
+| name = Smoke Screen
+}}
+{{SkillListTail}}
+
+===Usable Items While Channeling===
+Toggle-able ({{Key special|onoff}}) items and items granting [[invisibility]] generally do not interrupt channeling.<br/>
+Note: To use some abilities while channeling, you may need to disable the "Channeled Abilities Require Hold/Stop" setting.<br/>
+All of these abilities still interrupt channeling {{A|Riki|Tricks of the Trade}}.
+
+The following is a list of abilities that can be used without interrupting channeling:
+{{SkillListHead|title=Usable Item Abilities While Channeling}}
+{{SkillListLite
+| source = Blade Mail
+| name = Damage Return
+}}
+{{SkillListLite
+| source = Boots of Bearing
+| name = Endurance
+}}
+{{SkillListLite
+| source = Bottle
+| name = Regenerate
+| nametext = Regenerate (With Smart Double Tap)
+}}
+{{SkillListLite
+| source = Clarity
+| name = Replenish
+}}
+{{SkillListLite
+| source = Drum of Endurance
+| name = Endurance
+}}
+{{SkillListLite
+| source = Enchanted Mango
+| name = Eat Mango
+| nametext = Eat Mango (With Smart Double Tap)
+}}
+{{SkillListLite
+| source = Healing Salve
+| name = Salve	
+}}
+{{SkillListLite
+| source = Holy Locket
+| name = Energy Charge
+}}
+{{SkillListLite
+| source = Mask of Madness
+| name = Berserk
+| nametext = Berserk<small><sup>4</sup></small>
+}}
+{{SkillListLite
+| source = Mana Draught
+| name = Bottoms Up
+}}
+{{SkillListLite
+| source = Pavise
+| name = Protect
+}}
+{{SkillListLite
+| source = Phase Boots
+| name = Phase
+}}
+{{SkillListLite
+| source = Solar Crest
+| name = Shine
+}}
+{{SkillListLite
+| source = Shiva's Guard
+| name = Arctic Blast
+}}
+{{SkillListLite
+| source = Veil of Discord
+| name = Magic Weakness
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Invisibility}}
+{{SkillListLite
+| source = Glimmer Cape
+| name = Glimmer
+| nametext = Glimmer<sup>7<sup>
+}}
+{{SkillListLite
+| source = Shadow Amulet
+| name = Fade
+| nametext = Fade<sup>7<sup>
+}}
+{{SkillListLite
+| source = Shadow Blade
+| name = Shadow Walk
+| nametext = Shadow Walk
+}}
+{{SkillListLite
+| source = Silver Edge
+| name = Shadow Walk
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Toggle}}
+{{#lst:Abilities|Item Toggle Sources}}
+{{SkillListTail}}
+{{Footnote|4|Note that even though these items do not interrupt channeling upon cast, their effects after cast (i.e. self-silence) may still interrupt the channeling.}}
+
+==Requires hold/stop to cancel==
+{{SkillListHead|title=Requires hold/stop setting prevents these abilities from being used while Channeling, although they do not interrupt Channeling}}
+{{SkillListLite
+| source = Bottle
+| name = Regenerate
+| nametext = Regenerate (With Smart Double Tap)
+}}
+{{SkillListLite
+| source = Clarity
+| name = Replenish
+}}
+{{SkillListLite
+| source = Enchanted Mango
+| name = Eat Mango
+| nametext = Eat Mango (With Smart Double Tap)
+}}
+{{SkillListLite
+| source = Healing Salve
+| name = Salve	
+}}
+{{SkillListLite
+| source = Holy Locket
+| name = Energy Charge
+}}
+{{SkillListLite
+| source = Mana Draught
+| name = Bottoms Up
+| nametext = Bottoms Up (With Smart Double Tap)
+}}
+{{SkillListLite
+| source = Pavise
+| name = Protect
+}}
+{{SkillListLite
+| source = Solar Crest
+| name = Shine
+}}
+{{SkillListLite
+| source = Veil of Discord
+| name = Magic Weakness
+}}
+{{SkillListLite
+| source = Riki
+| name = Smoke Screen
+| nametext = Smoke Screen (During Tricks of the Trade)
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Requires hold/stop setting prevents these abilities from being used while Pugna is Channeling, although they do not interrupt Pugna's Channeling}}
+{{SkillListLite
+| source = Bottle
+| name = Regenerate
+}}
+{{SkillListLite
+| source = Crimson Guard
+| name = Guard
+}}
+{{SkillListLite
+| source = Dust of Appearance
+| name = Reveal
+}}
+{{SkillListLite
+| source = Enchanted Mango
+| name = Eat Mango
+}}
+{{SkillListLite
+| source = Healing Lotus
+| name = Eat Lotus
+}}
+{{SkillListLite
+| source = Mana Draught
+| name = Bottoms Up
+}}
+{{SkillListLite
+| source = Mekansm
+| name = Restore
+}}
+{{SkillListLite
+| source = Pipe of Insight
+| name = Barrier
+}}
+{{SkillListLite
+| source = Veil of Discord
+| name = Spell Weakness
+}}
+{{SkillListTail}}
+
+==Channeled Abilities==
+Channeled abilities require the caster to stay still while the ability is active. 
+
+Some channeling abilities do nothing if the channel is interrupted while consuming [[mana]] and the ability goes on [[cooldown]], while other channeling abilities' max power or potency is based on the channeled time.
+
+{{SkillListHead|title=Do Nothing When Channeling is Interrupted}}
+{{SkillListLite
+| source = Astral Spirit
+| name = Echo Stomp
+}}
+{{SkillListLite
+| source = Elder Titan
+| name = Echo Stomp
+}}
+{{SkillListLite
+| source = Fiend's Gate
+| name = Warp
+}}
+{{SkillListLite
+| source = Meteor Hammer
+| name = Meteor Hammer
+}}
+{{SkillListLite
+| source = Outpost
+| name = Watch Tower
+}}
+{{SkillListLite
+| source = Spirit Bear
+| name = Return
+}}
+{{SkillListLite
+| source = Templar Assassin
+| name = Psionic Projection
+}}
+{{SkillListLite
+| source = Tinker
+| name = Keen Conveyance
+}}
+{{SkillListLite
+| source = Tinker
+| name = Rearm
+}}
+{{SkillListLite
+| source = Town Portal Scroll
+| name = Teleport
+}}
+{{SkillListLite
+| source = Trusty Shovel
+| name = Dig
+}}
+{{SkillListLite
+| source = Twin Gate
+| name = Warp
+}}
+{{SkillListLite
+| source = Watcher
+| name = Lantern of Sight
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+{{SkillListHead|title=Max Power Based on Channeled Time}}
+{{SkillListLite
+| source = Bane
+| name = Fiend's Grip
+}}
+{{SkillListLite
+| source = Clinkz
+| name = Burning Barrage
+}}
+{{SkillListLite
+| source = Crystal Maiden
+| name = Freezing Field
+| nametext = Freezing Field<sup>3</sup>
+}}
+{{SkillListLite
+| source = Chen
+| name = Hand of God
+| nametext = Hand of God<sup>2a<sup>
+}}
+{{SkillListLite
+| source = Dawnbreaker
+| name = Solar Guardian
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Multishot
+}}
+{{SkillListLite
+| source = Enigma
+| name = Black Hole
+}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Illuminate
+}}
+{{SkillListLite
+| source = Lich
+| name = Sinister Gaze
+}}
+{{SkillListLite
+| source = Lion
+| name = Mana Drain
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Primal Spring
+}}
+{{SkillListLite
+| source = Naga Siren
+| name = Reel In
+}}
+{{SkillListLite
+| source = Oracle
+| name = Fortune's End
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Pulverize
+}}
+{{SkillListLite
+| source = Puck
+| name = Phase Shift
+}}
+{{SkillListLite
+| source = Pudge
+| name = Dismember
+}}
+{{SkillListLite
+| source = Pugna
+| name = Life Drain
+}}
+{{SkillListLite
+| source = Riki
+| name = Tricks of the Trade
+}}
+{{SkillListLite
+| source = Shadow Shaman
+| name = Shackles
+}}
+{{SkillListLite
+| source = Tiny
+| name = Tree Volley
+}}
+{{SkillListLite
+| source = Warlock
+| name = Upheaval
+}}
+{{SkillListLite
+| source = Wildwing
+| name = Tornado
+}}
+{{SkillListLite
+| source = Windranger
+| name = Powershot
+}}
+{{SkillListLite
+| source = Witch Doctor
+| name = Death Ward
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+{{Footnote|3|No longer a channeling ability when{{Symbol|Aghanim}} upgraded.}}
+
+==Version History==
+{{VersionTableStart}}
+{{VersionTableElement|7.07|
+* Added a new option to require stop or hold command to interrupt own channeling abilities.
+}}
+{{VersionTableEnd}}
+
+==Patch History==
+{{PatchTableStart}}
+{{PatchTableElement|2025-05-29|
+* "Capturing Structures Require Hold/Stop to Cancel" now only affect capturing Watchers and Outposts.
+** Channel cancel behavior of {{U|Twin Gate|text=Twin Gates}} and {{A|Underlord|Fiend's Gate}} has moved back to "Teleports Require Hold/Stop to Cancel".
+}}
+{{PatchTableElement|2025-05-21|
+* Added new game setting: <i>Channeling Structures Require Hold/Stop</i>
+** Changes whether or not channeling a structure can be canceled by any order, or with only Stop/Hold commands.
+** Channeling structures are: {{U|Outpost|text=Outposts}}, {{U|Watcher|text=Watchers}}, {{U|Twin Gate|text=Twing Gates}}, and {{A|Underlord|Fiend's Gate}}.
+}}
+{{PatchTableElement|2018-11-27|
+* Fixed status resistance affecting the duration of the next cast of channeled abilities.
+}}
+{{PatchTableElement|2018-08-03|
+* Fixed a bug where non-stun interrupts did not reliably cancel channeled abilities if cast an instant before the end of the channel.
+** E.g. Casting {{A|Vengeful Spirit|Nether Swap}} on a target at the last tick of channeling {{I|Town Portal Scroll}}.
+}}
+{{PatchTableElement|2017-06-02|
+* Fixed a case where channeling would not be interrupted correctly with a non-stun interruption on the very last tick of the channeling duration.
+}}
+{{PatchTableEnd}}
+
+{{MechanicsNav}}
+[[Category:Gameplay]]
+
+[[ru:Прерываемые способности]]

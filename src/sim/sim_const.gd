@@ -169,6 +169,13 @@ const PREGAME_TIME := -90.0
 const VISION_CELL := 128.0
 const VISION_UPDATE_TICKS := 3
 
+# ---- Trees ----------------------------------------------------------------------------------------------------------
+const TREE_REGROW := 180.0                  # game constant "tree respawn time" (Liquipedia, 2026)
+const TREE_REGROW_CLEAR := 150.0            # "tree respawn radius": a tree waits while a unit stands this close
+const PLANTED_TREE_DURATION := 20.0         # items.txt item_branches tree_duration
+const PLANT_RANGE := 400.0                  # items.txt item_branches AbilityCastRange
+const ITEM_LIFESTEAL_CREEP_FACTOR := 0.4    # game constant "item lifesteal creep factor"
+
 # ---- Map ------------------------------------------------------------------------------------------------------------
 const MAP_HALF := 8192.0
 const PATH_CELL := 64.0

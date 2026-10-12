@@ -4,33 +4,28 @@
 
 ## Status (keep this section current)
 
-**IMPLEMENTED, PARTLY VERIFIED** (revision after 7197a04, 2026-10-12).
+**IMPLEMENTED, PARTLY VERIFIED** (2026-10-12, Blood Ranger / trees / tower scale session).
 
 Verified:
-* 42 headless mechanics tests pass, including 7 for Ezee (push distance and direction, tree impact with tree smash and
-  2.8 s stun, unit collision with momentum transfer, Leap Strike targeting and pure damage, Tainted Touch damage and
-  curse vision through invisibility, Unholy Might halving rate and the fatigue slow) and 3 for the new controls
-  (ally attack orders, tap / hold Stop, neutrals waking only on damage). 10k-tick run: about 2.8 ms per tick.
-* The exported Windows build (`build/WarriorsOfAether.exe`) starts on Hero Select and plays a match (smoke-tested with
-  captures).
-* Every new feature was checked in rendered captures under `work/shots/` (e*, s*, r*, k1*, sb1, end1, h1, q1*).
+* 53 headless mechanics tests pass, 12 of them new: tree regrowth (180 s, waits for a clear 150 radius), planted trees,
+  Mini-Axe and Vegan Picker rules, Burst Shot (wave split, damage per arrow, channel length, every interrupt, instant
+  items and queued orders), Gale Impact (damage, sideways throw, piercing, stop at the target point, +20% crash
+  damage once, trees felled by the arrow and by thrown units), Masterful Archery (bonus, ~30% rate, 0.8 s gap), the
+  Blood Ranger ultimate (lifesteal, range, duration), the back leap (300 away, 1 s gap, ~30%, never into cliffs or
+  trees) and item lifesteal against creeps.
+* Bot duels (12 min, 3 seeds): the bot plays Blood Ranger's whole kit (Gale Impact, Burst Shot, the ultimate).
+* Benchmark (1080p, `--bench=50 --t=240 --autoplay`, RTX 4060): 76 fps average, p95 16.67 ms, p99 24.0 ms. The
+  previous measurement was 68-73 fps with p95 16.7-20.9 ms, so no regression.
+* Rendered captures of every new feature in `work/shots/br_*`.
 
 Not met:
-* Performance gate (p95 frame time under 16.7 ms at 1080p): not met on 2026-10-12, for this build or for the previous
-  revision (39a200f) run back-to-back on the same machine. Interleaved runs (50 s, 4:00, autoplay): new 68 / 73 fps
-  (p95 20.9 / 16.7 ms); old 71 / 69 fps (p95 19.1 / 21.9 ms). So there is no measurable regression from this
-  session, but the earlier 86 fps result did not reproduce today.
-* Blind visual review (lemondev, `work/lemondev/ledger.md`):
-  * Dark Stomp VFX vs a Dota 2 ground-eruption frame: 8 passes, all REJECTED, **STOPPED: LIMIT**. The remaining gap:
-    in the jungle framing the ring is partly hidden by canopy, and the spikes read flat and pastel next to Dota's
-    painted ones.
-  * Hero Select vs Dota 2's hero page: 2 passes REJECTED on the same defect, **STOPPED: PLATEAU**. Ezee's all-black
-    armour stays a low-contrast silhouette; fixing it needs an art-direction call (lighter or more reflective
-    armour).
-  * The earlier lane-scene review (7 passes) remains STOPPED on PLATEAU.
-* Known issue: on the first launch right after a fresh export, the release build may log "Parameter material is null"
-  (16 lines) while pipelines compile. It does not reproduce on later launches or in the editor, and nothing visible
-  is missing.
+* Blind review (`work/lemondev/ledger.md`):
+  * Burst Shot VFX vs a Dota 2 spell frame: 2 passes REJECTED on the same defect, **STOPPED: PLATEAU**. The critics
+    see a flat ground mark and numbers with no visible physical effect on the units hit.
+  * Tower scale: **UNVERIFIED**. The benchmark frame turned out to show no lane tower, so nothing was compared.
+* Tree, Gale Impact and back-leap visuals were checked in captures only (no independent review).
+* Earlier results still stand: Dark Stomp VFX STOPPED: LIMIT, Hero Select STOPPED: PLATEAU, lane scene STOPPED:
+  PLATEAU.
 
 ## Run it
 
@@ -41,11 +36,11 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 
 * Or run the exported build: `build/WarriorsOfAether.exe` (rebuild it with
   `godot --headless --path . --export-release "Windows Desktop" build/WarriorsOfAether.exe`).
-* The game opens on **Hero Select** (`src/ui/hero_select.tscn`): pick Galewarden or Ezee, pick the bot's hero (or
+* The game opens on **Hero Select** (`src/ui/hero_select.tscn`): pick Blood Ranger or Ezee, pick the bot's hero (or
   Random), change your hero's look with **Customize look** (the Hero Creator), then **Play** against Bot Gerald.
-* Exported builds ignore scene paths on the command line: `--match` jumps straight into a match (for automation).
-* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 33 tests.
-* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured at 1080p on the RTX 4060 with the HUD: 86 fps average, p95 14.8 ms (`--noui`: 104 fps).
+* Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
+* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 53 tests.
+* Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured 2026-10-12 at 1080p on the RTX 4060 with the HUD (`--bench=50`): 76 fps average, p95 16.67 ms.
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
   * `--hero=ezee --bot_hero=galewarden` pick the heroes; `--frames=30,34,38` saves several frames;
     `--live` keeps the simulation running while capturing.
@@ -99,7 +94,7 @@ src/sim/      deterministic 30 Hz simulation (no nodes). Rules, numbers and sour
   sim_combat  projectiles, attack classes, armor, damage, deaths, bounties, XP, kill and assist gold
   sim_ai      waves, lane creep targeting and aggro, towers, neutral camps (stacking)
   sim_vision  fog of war (raycast grid, trees and high ground block sight, day and night ranges)
-  sim_abilities  Galewarden's kit, items' active abilities, attack modifier (orb) rules
+  sim_abilities  Blood Ranger's and Ezee's kits, channels, pushes and leaps, item actives (trees, planting)
   sim_shop    buying, recipes, stash, selling        sim_bot   laning bot (last-hits, denies, harass, retreat, build)
 src/game/     presentation (reads the sim, never writes it except through commands)
   main        boot, 30 Hz stepping in _physics_process, event dispatch, fog texture, capture mode
@@ -137,6 +132,41 @@ tools/        blender/buildings.py, build_wear_catalog.py, itch_dl.sh, kv.py (re
 
 See `docs/ASSET_CREDITS.md`.
 
+## Blood Ranger (replaced Galewarden on 2026-10-12)
+
+Ranged agility hero (Galewarden's base stats), crimson-haired huntress. Your numbers are used as given; level 1
+takes the base value ("55% + 10% per level" = 55/65/75/85%). Numbers you did not give are marked *chosen*:
+
+* **Burst Shot (Q)**: point target, cast range 900 *chosen*, area radius 400 *chosen*. Channels 2 s *chosen*: 5 waves
+  0.4 s apart, each a random 4-7 arrows, 30 in all. Each arrow hits a random enemy in the area (or the ground) for
+  55/65/75/85% of her average attack damage as physical damage (a spell: no lifesteal, no Masterful Archery).
+  Ended by move, attack, stop or hold orders, other casts, stuns, silence, roots and pushes. 17 s cooldown, mana
+  90-120 *chosen*.
+* **Gale Impact (W)**: a great arrow to the target point (300-2000 range), speed 2000 and radius 110 *chosen*,
+  pierces. 120/200/280/360 magic damage, then hurls each enemy sideways off the arrow's line (with a little forward
+  push). A thrown enemy that hits a cliff, tree, building or unit takes another 20% of the arrow's damage once.
+  Trees on the path and trees that thrown units hit are felled. 12 s cooldown, mana 100-130 *chosen*.
+* **Masterful Archery (E)**: passive, 30% chance *chosen* per attack to add 8/18/28/38% of her agility as physical
+  damage (charged arrow, crimson burst, a red "+N!" number), 0.8 s cooldown (the E icon shows it).
+* **Blood Ranger (R)**: 15 s of 40/50/60% lifesteal and +200/300/400 attack range. Each attack that hits her has a 30%
+  chance to make her leap 300 back, away from the attacker (stopped short by cliffs, trees and buildings). *Chosen*:
+  at most one leap per second, so creep fire cannot chain them; the leap keeps her orders. 30 s cooldown, mana
+  100-150 *chosen*.
+* Your Masterful Archery wording ("8% + 10 per level agility") had no chance value and could also be read
+  differently; at level 4 with 100 agility the burst adds 38 damage. Tell me if you meant something stronger.
+
+## Trees, Mini-Axe and Vegan Picker
+
+Trees are destructible as in Dota (see `docs/MECHANICS.md`, "Trees"): they fall to the Mini-Axe (Quelling Blade),
+Vegan Picker (Tango), Gale Impact and thrown units, and grow back after 180 s (current Dota value; it was 5 minutes in
+older patches), waiting while a unit stands within 150. Ironwood Twig (Iron Branch) plants a 20 s tree. Regrowth and
+planting animate in; eaten trees shrink away; felled trees topple away from the blow.
+
+## Towers
+
+Tower models are 40% smaller (scale 0.6; tier growth kept); the health bar, crystal light and bolt launch point
+follow. Their footprint in the simulation is unchanged.
+
 ## Ezee, the Dark Paladin (added 2026-10-12)
 
 Melee strength hero (`src/sim/sim_data.gd`, abilities in `src/sim/sim_abilities.gd`). Numbers you did not specify are
@@ -169,4 +199,4 @@ marked here so you can change them:
    * Replace the paving texture, which reads as a checkerboard.
 5. Done: Hero Creator, Hero Select, Town Portal, buyback, courier, pause and settings menus, end screen with damage
    table. Still deferred: secret shop, runes, Roshan, scan, wards UI polish.
-6. More heroes (the bot plays Galewarden and Ezee, mid only).
+6. More heroes (the bot plays Blood Ranger and Ezee, mid only).

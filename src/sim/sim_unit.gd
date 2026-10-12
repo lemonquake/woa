@@ -43,7 +43,8 @@ var mana_regen := 0.0
 var vision_day := 750.0
 var vision_night := 750.0
 var acquire_range := 500.0
-var lifesteal := 0.0
+var lifesteal := 0.0                       # from items (40% against creeps)
+var lifesteal_ability := 0.0               # from abilities (Blood Ranger)
 var evasion := 0.0
 var bat := 1.7
 
@@ -148,7 +149,8 @@ var modifiers: Array = []                  # see SimUnit.add_modifier
 var stats_dirty := true                    # recompute derived stats before the next tick
 var knock: Dictionary = {}                 # {from, to, t, dur} (eased push) or {phys, vel, z, vz, ...} (physics push)
 var leap: Dictionary = {}                  # {target, from, to, t, dur, ability, lv}: a leap in progress (Leap Strike)
-var channel: Dictionary = {}               # {ability, until, dest}: channelling (Town Portal)
+var hop: Dictionary = {}                   # {from, to, t, dur, z}: Blood Ranger's back leap (keeps orders, no walking)
+var channel: Dictionary = {}               # {ability, until, ...}: channelling (Town Portal, Burst Shot)
 var tp_charges := 0                        # Town Portal scrolls in the dedicated slot
 var courier_id := -1                       # heroes: their courier
 var owner_id := -1                         # couriers: their hero
@@ -274,7 +276,7 @@ func is_silenced() -> bool:
 	return has_flag("silence") or is_stunned()
 
 func is_rooted() -> bool:
-	return has_flag("root") or is_stunned()
+	return has_flag("root") or is_stunned() or not hop.is_empty()
 
 func is_disarmed() -> bool:
 	return has_flag("disarm") or is_stunned()
@@ -329,11 +331,6 @@ func refresh_stats() -> void:
 	if kind == K.HERO:
 		var lv := float(level - 1)
 		var agi_pct := 0.0
-		if ability_level.get("hunters_focus", 0) > 0:
-			var a := SimData.ability("hunters_focus")
-			var li: int = ability_level.hunters_focus - 1
-			agi_pct = a.values.agility_pct[li]
-			range_bonus += float(a.values.bonus_range[li])
 		str_total = float(def.str) + float(def.str_gain) * lv + f.call("str")
 		var agi_base := float(def.agi) + float(def.agi_gain) * lv
 		agi_total = agi_base + f.call("agi") + agi_base * agi_pct
@@ -371,7 +368,8 @@ func refresh_stats() -> void:
 	vision_day = float(def.vision_day)
 	vision_night = float(def.vision_night)
 	acquire_range = float(def.acquire)
-	lifesteal = f.call("lifesteal")
+	lifesteal = float(items.get("lifesteal", 0.0)) + _mod_stat("lifesteal")
+	lifesteal_ability = _mod_stat("lifesteal_ability")
 	evasion = f.call("evasion")
 	stats_dirty = false
 

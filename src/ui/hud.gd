@@ -164,9 +164,22 @@ func _draw() -> void:
 	if h and not h.alive:
 		var t := maxf(0.0, h.respawn_at - game.world.time)
 		U.text_c(self, "Respawning in %d" % ceili(t), Vector2(vs.x * 0.5, vs.y * 0.42), 34, Color(1, 1, 1, 0.92), "title")
+	if h and h.alive and not h.channel.is_empty():
+		_channel_bar(h, vs)
 	if game.input and game.input.targeting != "":
 		var lab: String = "Attack" if game.input.targeting == "attack" else "Choose a target"
 		U.text(self, lab, get_viewport().get_mouse_position() + Vector2(22, 30), 16, Color(1, 0.9, 0.6), "bold")
+
+## Dota's channel bar: the ability being channelled and the time left, just above the bottom panel.
+func _channel_bar(h: SimUnit, vs: Vector2) -> void:
+	var aid := String(h.channel.ability)
+	var total := C.TP_CHANNEL if aid == "tp" else float(h.channel.interval) * float((h.channel.waves as Array).size())
+	var left := maxf(0.0, float(h.channel.until) - game.world.time)
+	var name := "Town Portal" if aid == "tp" else String(SimData.ability(aid).get("name", aid))
+	var r := Rect2(vs.x * 0.5 - 160, vs.y - BottomPanel.H - 58, 320, 18)
+	U.panel(self, r.grow(4), U.GOLD_DIM, 4)
+	U.bar(self, r, 1.0 - left / maxf(0.01, total), Color(0.95, 0.78, 0.3))
+	U.text_c(self, "%s   %.1f" % [name, left], r.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
 
 ## Info card for a selected unit that is not your hero (creeps, towers, neutrals, enemy heroes).
 func _unit_card() -> void:
@@ -421,7 +434,7 @@ class BottomPanel extends Control:
 			var parts := []
 			for v in vals:
 				var fv := float(v)
-				parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (k.contains("slow") or k.ends_with("pct")) else str(v))
+				parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (k.contains("slow") or k.ends_with("pct") or k.contains("chance") or k == "lifesteal") else str(v))
 			lines.append(["%s: %s" % [k.replace("_", " ").capitalize(), " / ".join(parts)], 13, Color(0.8, 0.85, 0.75), "body"])
 		if a.behavior != "passive":
 			lines.append(["Mana: %s    Cooldown: %s" % [" / ".join(a.mana.map(func(x): return str(x))), " / ".join(a.cooldown.map(func(x): return str(x)))], 13, Color(0.6, 0.75, 1.0), "body"])
@@ -597,11 +610,12 @@ func item_tip(id: String, h: SimUnit) -> Array:
 		var vs := ("+%d%%" % int(v * 100)) if float(v) < 1.0 and (k.ends_with("pct") or k == "lifesteal") else "+" + str(v)
 		lines.append([vs + " " + label, 15, U.TEXT, "body"])
 	var use := String(d.use)
-	var desc := {"tango": "Eat a tree to regenerate 7 health per second for 16 seconds.",
+	var desc := {"tango": "Eat a tree to regenerate 7 health per second for 16 seconds (32 seconds on a planted tree). The tree is destroyed and grows back after 3 minutes.",
+		"plant": "Plant a tree within 400 range. It stands for 20 seconds. Consumes the twig.",
 		"salve": "Regenerate 30 health per second for 13 seconds. Broken by damage from enemy heroes.",
 		"clarity": "Regenerate 6 mana per second for 25 seconds. Broken by damage from enemy heroes.",
 		"mango": "Restore 100 mana.", "faerie_fire": "Restore 85 health.", "ward": "Plant an invisible ward that sees 1600 range for 6 minutes.",
-		"chop": "Cut down a tree. Bonus attack damage against creeps.", "stick": "Restore 15 health and mana per charge. Charges when enemy heroes cast spells nearby.",
+		"chop": "Chop down a tree within 350 range (4 second cooldown); it grows back after 3 minutes. Passive: +8 attack damage against creeps (+4 for ranged heroes).", "stick": "Restore 15 health and mana per charge. Charges when enemy heroes cast spells nearby.",
 		"berserk": "Frenzy: +100 attack speed and +6% movement speed, but -7 armor for 6 seconds."}
 	if desc.has(use):
 		for l in U.wrap(String(desc[use]), 320, 14):

@@ -299,3 +299,101 @@ func set_tree_alive(index: int, alive: bool) -> void:
 	(s[0] as MultiMesh).set_instance_transform(s[1], xf)
 	if s.size() > 3:
 		(s[3] as MultiMesh).set_instance_transform(s[1], xf)
+
+## A tree grows back (after 180 s) or is planted: it rises out of the ground and springs up to full size.
+## Planted trees (Ironwood Twig) get their own small tree and a ring of glowing leaves at the base while they stand.
+func grow_tree(index: int) -> void:
+	if not _tree_slot.has(index):
+		if index < 0 or index >= map.trees.size() or not map.trees[index].get("planted", false):
+			return
+		_make_planted(index)
+	var s: Array = _tree_slot[index]
+	var xf: Transform3D = s[2]
+	_tween_tree(index, 0.05, 1.0, 1.1, Tween.TRANS_BACK)
+	var p := View.to2(xf.origin)
+	if game_fx != null and game_fx._seen(p):
+		game_fx.debris(game_fx.ground3(p), 6, Color(0.36, 0.28, 0.2), 2.0, 0.5, "chip")
+		game_fx.debris(game_fx.ground3(p, 0.6), 6, Color(0.3, 0.55, 0.2), 1.6, 0.9, "leaf")
+
+## A tree eaten (Vegan Picker) or a planted tree withering: it shrinks into the ground.
+func shrink_tree(index: int) -> void:
+	if not _tree_slot.has(index):
+		return
+	var s: Array = _tree_slot[index]
+	var p := View.to2((s[2] as Transform3D).origin)
+	if game_fx != null and game_fx._seen(p):
+		game_fx.debris(game_fx.ground3(p, 1.2), 8, Color(0.3, 0.55, 0.2), 1.8, 1.0, "leaf")
+	_tween_tree(index, 1.0, 0.0, 0.45, Tween.TRANS_QUAD)
+
+var _tree_tweens := {}
+
+func _tween_tree(index: int, from: float, to: float, dur: float, trans: int) -> void:
+	if _tree_tweens.has(index) and (_tree_tweens[index] as Tween).is_valid():
+		(_tree_tweens[index] as Tween).kill()
+	var tw := create_tween()
+	tw.tween_method(_scale_tree.bind(index), from, to, dur).set_trans(trans).set_ease(Tween.EASE_OUT if to > from else Tween.EASE_IN)
+	if to <= 0.0:
+		tw.tween_callback(_tree_gone.bind(index))
+	_tree_tweens[index] = tw
+
+func _scale_tree(k: float, index: int) -> void:
+	if not _tree_slot.has(index):
+		return
+	var s: Array = _tree_slot[index]
+	var xf: Transform3D = s[2]
+	var shown := Transform3D(xf.basis.scaled(Vector3.ONE * maxf(k, 0.0001)), xf.origin - Vector3(0, (1.0 - clampf(k, 0.0, 1.0)) * 0.4, 0))
+	(s[0] as MultiMesh).set_instance_transform(s[1], shown)
+	if s.size() > 3 and s[3] is MultiMesh:
+		(s[3] as MultiMesh).set_instance_transform(s[1], shown)
+
+func _tree_gone(index: int) -> void:
+	set_tree_alive(index, false)
+	if _planted.has(index):
+		for n in _planted[index]:
+			if is_instance_valid(n):
+				(n as Node).queue_free()
+		_planted.erase(index)
+		_tree_slot.erase(index)
+
+var _planted := {}                          # tree index -> [nodes]
+var game_fx: Fx
+
+func _make_planted(index: int) -> void:
+	var t: Dictionary = map.trees[index]
+	var p: Vector2 = t.pos
+	var model := "CommonTree_2"
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_custom_data = true
+	mm.mesh = _mesh(model)
+	mm.instance_count = 1
+	var xf := Transform3D(Basis(Vector3.UP, randf() * TAU).scaled(Vector3.ONE * 0.36), View.to3(p, terrain.height_at(p) - 8.0))
+	mm.set_instance_transform(0, xf)
+	mm.set_instance_custom_data(0, Color(randf(), 0, 0, 0))
+	var mmi := MultiMeshInstance3D.new()
+	mmi.multimesh = mm
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	add_child(mmi)
+	# Dota's planted trees glow faintly at the base so everyone can tell them apart
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.55
+	tm.outer_radius = 0.62
+	tm.rings = 32
+	tm.ring_segments = 4
+	ring.mesh = tm
+	ring.scale = Vector3(1, 0.05, 1)
+	var rm := StandardMaterial3D.new()
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rm.albedo_color = Color(0.55, 1.0, 0.45, 0.5)
+	rm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	rm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	ring.material_override = rm
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(ring)
+	ring.position = View.to3(p, terrain.height_at(p)) + Vector3(0, 0.06, 0)
+	var spin := ring.create_tween().set_loops()
+	spin.tween_property(rm, "albedo_color:a", 0.2, 0.9)
+	spin.tween_property(rm, "albedo_color:a", 0.5, 0.9)
+	_tree_slot[index] = [mm, 0, xf]
+	_planted[index] = [mmi, ring]

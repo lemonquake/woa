@@ -1,7 +1,8 @@
 class_name StatusFx
 extends Node3D
 ## Visuals that last as long as a unit's modifier does: a ring of stars circling a stunned unit's head, a violet
-## sigil under a cursed one, Ezee's enchanted sword (glow, light, crackling arcs) and his Unholy Might aura.
+## sigil under a cursed one, Ezee's enchanted sword (glow, light, crackling arcs), his Unholy Might aura and Blood
+## Ranger's crimson aura while her ultimate lasts.
 ## Rebuilt from the simulation's modifiers every frame, so nothing outlives the state it shows.
 
 const AURA_SHADER := preload("res://src/game/dark_aura.gdshader")
@@ -83,7 +84,9 @@ func _scan() -> void:
 				"taint":
 					seen_taint[id] = true
 				"unholy":
-					seen_aura[id] = true
+					seen_aura[id] = "unholy"
+				"blood":
+					seen_aura[id] = "blood"
 		if not u.knock.is_empty() and float(u.knock.get("stun", 0.0)) > 0.0:
 			seen_stun[id] = true
 	_sync(_stun, seen_stun, _make_stun)
@@ -211,16 +214,21 @@ func _sync_aura(want: Dictionary, dt: float) -> void:
 			var m := ShaderMaterial.new()
 			m.shader = AURA_SHADER
 			m.render_priority = 4
+			var blood := String(want[id]) == "blood"
+			if blood:
+				# a thinner crimson flame, so her silhouette stays readable
+				m.set_shader_parameter("core", Color(0.12, 0.0, 0.02))
+				m.set_shader_parameter("rim", Color(0.6, 0.015, 0.05))
 			mi.material_override = m
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			add_child(mi)
 			var l := OmniLight3D.new()
-			l.light_color = Color(0.5, 0.2, 0.9)
+			l.light_color = Color(1.0, 0.2, 0.15) if blood else Color(0.5, 0.2, 0.9)
 			l.light_energy = 1.4
 			l.omni_range = 4.0
 			mi.add_child(l)
 			l.position = Vector3(0, 0.2, 0)
-			_aura[id] = {"node": mi, "mat": m, "k": 0.0, "on": true}
+			_aura[id] = {"node": mi, "mat": m, "k": 0.0, "on": true, "max": 0.6 if blood else 1.0}
 	for id in _aura.keys():
 		var a: Dictionary = _aura[id]
 		a.on = want.has(id)
@@ -232,4 +240,4 @@ func _sync_aura(want: Dictionary, dt: float) -> void:
 			_aura.erase(id)
 			continue
 		n.global_position = v.global_position + Vector3(0, 1.25, 0)
-		(a.mat as ShaderMaterial).set_shader_parameter("strength", float(a.k))
+		(a.mat as ShaderMaterial).set_shader_parameter("strength", float(a.k) * float(a.max))

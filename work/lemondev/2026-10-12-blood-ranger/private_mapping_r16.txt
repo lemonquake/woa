@@ -1,0 +1,4 @@
+r16_tower: A = candidate (work/shots/br_tower3.png)
+r16_tower: B = benchmark (work/benchmark/dota_3.jpg)
+r16_vfx: A = benchmark (work/benchmark/dota_9.jpg)
+r16_vfx: B = candidate (work/shots/br_burst3.png)

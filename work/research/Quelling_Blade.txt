@@ -1,0 +1,122 @@
+{{Tabs Item}}{{For|other uses|Blade}}
+
+'''Quelling Blade''' is an [[item]] purchasable at the Base Shop, under [[Items#Equipment|Equipment]].
+
+{{Item infobox
+| title = Quelling Blade
+| image = Quelling Blade itemicon dota2 gameasset.png
+| lore = The axe of a fallen gnome, it allows you to effectively maneuver the forest.
+| modifier = modifier_item_quelling_blade
+| intern = item_quelling_blade
+| alias = QB
+
+| type = Equipment
+| base = True
+| secret = False
+| neutral = False
+
+| item cost = 100
+
+| active = Chop Tree
+| passive = Quell
+
+| used in 1 = Battle Fury
+}}
+{{clr}}
+
+==Abilities==
+===Chop Tree===
+{{Spellcard
+| name = Chop Tree
+| sound0 = Quelling Blade Chop Tree 1 soundsample dota2 wikiasset
+
+| icon0 = Quelling Blade Chop Tree wikiasset
+| type0 = itm
+| target0 = Unit
+| affect0 = Trees
+| desc0 = Instantly destroys the targeted tree.
+
+| cast point = 0
+| cast backswing = 0
+| cast range = 350
+| cast range amp = true
+
+| mp = 0
+| cd = 4
+
+| mechanics = * Does not share cooldown with {{A|Quelling Blade|Chop Tree}}.
+}}
+
+===Quell===
+{{Spellcard
+| name = Quell
+
+| icon0 = Quelling Blade Quell wikiasset
+| type0 = itm
+| target0 = Passive
+| affect0 = Enemies
+| damage0 = Attack;Physical
+| desc0 = Grants the wielder bonus attack damage against non-hero units.
+
+| trait1 = Attack Damage Bonus
+| value1 = 8
+
+| icon1 = Ranged Factor
+| type1 = bsc
+| target1 = Passive
+| desc1 = Quell is less effective if its wielder is a ranged hero.
+
+| type1 traitamp = ranged
+| type1 trait1 = Attack Damage Bonus
+| type1 value1 = 4
+
+| is_illusionuses = no
+
+| mechanics = * Quell is considered as a [[Attack damage#Conditional Attack Damage Bonus|conditional]] attack damage bonus.
+** Although the attack damage bonus values are not displayed in the HUD, it is still considered and directly added to wielder's attack damage.
+** The attack damage bonus values are considered by [[critical strike]], [[cleave]], [[splash]], [[lifesteal]] and with certain abilities (e.g. {{A|Templar Assassin|Psi Blades}} and {{A|Luna|Moon Glaives}})
+** It can be reduced only by flat reductions (e.g. [[damage block]]).
+** Since it is considered bonus attack damage, it is not affected by percentage-based attack damage bonuses or reductions.
+
+* The attack damage bonus adapts immediately depending on the wielder's range type ({{Symbol|Melee}} [[melee]] or {{Symbol|Ranged}} [[ranged]]).
+
+| miscnotes = * Stacks with the Quell of {{I|Battle Fury}}, but not with additional Quelling Blades.
+
+* Does not work against the following units:
+** {{M|Buildings}}
+** {{M|Ward-type units}}
+** {{M|Illusions}}
+** {{H|Spirit Bear}}
+** {{U|Courier|text=Couriers}}
+** Allied units
+}}
+
+==Recommended Heroes==
+Quelling Blade is usually purchased by {{Symbol|Melee}} [[melee]] carries who need to ensure that they can get last hits in the lane.
+{{Recommended
+| hero0 = Anti-Mage
+| hero1 = Bloodseeker
+| hero2 = Chaos Knight
+| hero3 = Dawnbreaker
+| hero4 = Ember Spirit
+| hero5 = Faceless Void
+| hero6 = Juggernaut
+| hero7 = Spectre
+| hero8 = Ursa
+| hero9 = Wraith King
+}}
+
+==Gallery==
+<gallery>
+Ingame model Quelling Blade.png|<center>In-game model</center>
+Quelling Blade item icon progress.png|<center>Item icon progress</center>
+Quelling Blade itemicon concept dota2 gameasset.png|<center>Early concept art</center>
+</gallery>
+
+==Recent Changes==
+{{Main|Quelling Blade/Changelogs}}
+{{Recent changes wrapper}}
+
+{{ItemNav}}
+[[Category:Shop items]]
+[[ru:Quelling Blade]]

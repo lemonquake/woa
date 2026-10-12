@@ -11,7 +11,7 @@ be checked against the game files. They are kept in one place so they are easy t
 | Dota 2 game data (`scripts/npc/npc_units.txt`, `npc_abilities.txt`, `items.txt`, `heroes/*.txt`) via the public d2vpkr mirror on GitHub | Exact unit stats (creeps, towers, barracks, Ancient, fountain, neutrals), creep attack classes (`creep_irresolute`, `creep_piercing`, `creep_siege`), backdoor protection, flagbearer aura, item stats and costs, hero base stats | `work/research/` (local research cache, not shipped) |
 | Liquipedia Dota 2 wiki pages, fetched through the MediaWiki API before Liquipedia rate-limited the requests | Wave timing and composition, lane creep target priority and aggro rules, tower targeting, attack animation and turn-rate formulas, XP table, deny XP, gold sources, time of day, stacking | `work/research/*.txt` |
 
-Liquipedia blocked further automated requests, and its notice asks automated tools to stop rather than solve the CAPTCHA, so no more pages were fetched. Global constants that only exist there as `{{G|...}}` templates (aggro radius, kill-gold formula and similar) use best-known values and are marked APPROX.
+Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (gzip, spaced requests, as its API terms require) answered again; it gave the Trees, Quelling Blade, Tango, Iron Branch, Channeling, Lifesteal and Forced movement pages and four game constants: tree respawn time 180, tree respawn radius 150, item lifesteal creep factor 0.4, tree collision size 128. Global constants that only exist there as `{{G|...}}` templates (aggro radius, kill-gold formula and similar) use best-known values and are marked APPROX.
 
 ## Time and space
 
@@ -92,6 +92,28 @@ Liquipedia blocked further automated requests, and its notice asks automated too
   * They give up when they get 1100 from home (APPROX).
   * They also give up when the target has been out of acquisition range for 3 s (APPROX).
 * Measured stacking window in tests: pulling at :53.5 stacks a medium camp. That matches Dota's usual :53–:55.
+
+## Channelling, forced movement, lifesteal
+
+* Channels (Town Portal, Burst Shot): mana and cooldown are spent when the channel starts. Any new order ends it
+  (move, attack, stop, hold, another cast), except an item that acts at once without a target (Spark Rod). Stuns,
+  silence, roots and pushes end it too. Shift-queued orders wait until it finishes. The HUD shows a channel bar.
+* Forced movement: a push (Dark Stomp, Gale Impact) disables the unit while it flies; Blood Ranger's back leap does
+  not (she keeps her orders and can attack, but cannot walk until she lands).
+* Lifesteal heals from the physical attack damage after armor (in full even when the blow kills), never from spells,
+  buildings or wards. Item lifesteal heals 40% against creeps; ability lifesteal (Blood Ranger) does not.
+
+## Trees (`sim_map.gd`, `sim_world.gd`)
+
+* Trees block movement (one 64-unit pathing cell each) and sight (their 128-unit vision cell).
+* Any tree that falls (Mini-Axe, Vegan Picker, Gale Impact, a unit hurled into it) grows back 180 s later. It waits
+  while any unit stands within 150 of it, then grows the moment the ground is clear.
+* Mini-Axe (Quelling Blade): 100 gold; +8 attack damage against creeps for melee heroes, +4 for ranged; Chop Tree
+  from 350, 4 s cooldown, no cast point.
+* Vegan Picker (Tango): 90 gold for 3; eats a tree within 165 for 7 HP/s over 16 s (32 s on a planted tree); a new
+  one refreshes the buff.
+* Ironwood Twig (Iron Branch): Plant Tree within 400, consumed; the planted tree stands 20 s, never regrows, cannot be
+  planted in the fountain area, and units standing on its cell step aside.
 
 ## Vision (`sim_vision.gd`)
 

@@ -1,0 +1,789 @@
+[[File:Telekinesis icon.png|frame]]
+{{Quotation|Pudge|Get over here!|sound=vo_pudge_pud_ability_hook_04.mp3}}
+<section begin=Intro /><dfn>Forced Movement</dfn> is a status effect that changes a unit's position. This movement is completely unrelated to the unit's [[movement speed]] and works on them while disabled. Most forced movement abilities prevent the affected unit from acting during, but some still allows the unit to attack, turn and cast abilities (and items).<section end=Intro />
+
+In general, almost all forced movement effects override each other. The later applied one nullifies the previous ones, with a few exceptions.
+
+Forced movements are also bound to the buff or debuff the abilities place, so if the buff or debuff is [[dispel]]lable, doing so also stops the forced movement.
+
+==Definition==
+{| <section begin=Definition /> class="wikitable" style="text-align:center;" width="70%" 
+! style="width:20%;" | Forced Movement
+! style="width:60%;" | Disabled Aspect / Definition
+! style="width:20%;" | Examples
+|-
+! [[Forced movement#Fully Disabling Forced Movement|Fully Disabling]]
+| style="text-align:left;" | 
+* <section begin=Fully Disabling Desc />Behaves like a stun, preventing the unit from performing any action, but continuing with them once the effect expires.<section end=Fully Disabling Desc />
+| {{A|Pudge|Meat Hook}}<br>affecting enemies
+|-
+! [[Forced movement#Non-disabling Forced Movement|Non-disabling]]
+| style="text-align:left;" | 
+* Allows the affected unit to still perform any action, except for moving. The unit can still turn, attack (depending on situations), cast abilities and items. 
+|  {{A|Pudge|Meat Hook}}<br>affecting allies
+|-
+! [[Forced movement#Upward Movement|Upward Movement]]
+| style="text-align:left;" |  
+* Move a unit upwards, changing their Z-position. 
+| [[Cyclone]] Sources
+|-
+! [[Forced movement#Pulling|Pulling]]
+| style="text-align:left;" |  
+* Allows the affected unit to move normally but affects the speed depending on the direction of movement.
+| {{A|Windranger|Gale Force}}
+<section end=Definition />
+|}
+
+==Mechanics==
+There are two types of forced movement — non-disabling and fully disabling forced movement sources.
+
+Movement orders can be given, but the effect of the forced movement completely negates any moving attempt of the unit. However, the move orders do not get canceled, so that the unit will move where ordered once the effect expires.
+
+Forced movement generally ignores terrain and any other obstacle, moving the unit straight through everything, similar to [[unobstructed movement]] (although some abilities may have custom restrictions (e.g. {{A|Pangolier|Rolling Thunder}} bouncing off of cliffs).
+
+The effects of forced movement on the same planes (x and y axis, and the [[z-axis]]) do not stack. This means when a unit is already being moved on a horizontal plane by an ability, applying a new instant of horizontal forced movement cancels the previous one completely. Units may be affected by two sources of forced movement only when one source applies vertical movement and the other horizontal movement, resulting in a parabolic motion.
+
+Besides interrupting each other, forced movement can also be interrupted by some other abilities that do not apply forced movement themselves.
+
+{{SkillListHead|title=Abilities Able to Cancel Forced Movement}}
+{{SkillListLite
+| source = Faceless Void
+| name = Chronosphere
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Time Zone
+}}
+{{SkillListLite
+| source = Grimstroke
+| name = Soulbind
+| nametext = Soulbind<sup>2</sup>
+}}
+{{SkillListLite
+| source = Pudge
+| name = Dismember
+}}
+{{SkillListLite
+| source = Slark
+| name = Pounce
+| nametext = Pounce<sup>2</sup>
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2|{{A|Grimstroke|Soulbind}} and {{A|Slark|Pounce}} cancel forced movement upon expiring, not upon getting applied.}}
+
+==Lane Creeps==
+{{Main|Lane creeps|l1=Lane Creeps}}
+{{#lst:Lane creeps|death_knockback}}
+
+==Fully Disabling Forced Movement==
+The following abilities disable units while moving them.
+{{SkillListHead|title= Stun [Enemy]}}
+{{SkillListLite
+| source = Batrider
+| name = Flaming Lasso
+}}
+{{SkillListLite
+| source = Beastmaster
+| name = Primal Roar
+}}
+{{SkillListLite
+| source = Clockwerk
+| name = Power Cogs
+}}
+{{SkillListLite
+| source = Dark Seer
+| name = Vacuum
+}}
+{{SkillListLite
+| source = Enigma
+| name = Black Hole
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Torrent
+}}
+{{SkillListLite
+| source = Lion
+| name = Earth Spike
+}}
+{{SkillListLite
+| source = Magnus
+| name = Skewer
+| nametext = Skewer (Skewered Hero)
+}}
+{{SkillListLite
+| source = Magnus
+| name = Horn Toss
+}}
+{{SkillListLite
+| source = Marci
+| name = Dispose
+}}
+{{SkillListLite
+| source = Mars
+| name = Spear of Mars
+| nametext = Spear of Mars (Skewered Hero)
+}}
+{{SkillListLite
+| source = Morphling
+| name = Adaptive Strike
+}}
+{{SkillListLite
+| source = Nyx Assassin
+| name = Impale
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Rolling Thunder
+}}
+{{SkillListLite
+| source = Pudge
+| name = Dismember
+}}
+{{SkillListLite
+| source = Pudge
+| name = Meat Hook
+| nametext = Meat Hook <sup>4<sup>
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Onslaught
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Pulverize
+}}
+{{SkillListLite
+| source = Rubick
+| name = Telekinesis
+}}
+{{SkillListLite
+| source = Sand King
+| name = Burrowstrike
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Firesnap Cookie
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Spit Out
+}}
+{{SkillListLite
+| source = Spirit Breaker
+| name = Greater Bash
+}}
+{{SkillListLite
+| source = Storm Spirit
+| name = Electric Vortex
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Ravage
+}}
+{{SkillListLite
+| source = Tiny
+| name = Toss
+}}
+{{SkillListLite
+| source = Tusk
+| name = Walrus Kick
+}}
+{{SkillListLite
+| source = Tusk
+| name = Walrus PUNCH!
+}}
+{{#lst:Cyclone|Sources}}
+{{SkillListTail}}
+{{SkillListHead|title= Can't Act [Enemy]}}
+{{SkillListLite
+| source = Lich
+| name = Sinister Gaze
+}}
+{{SkillListLite
+| source = Ringmaster
+| name = Wheel of Wonder
+}}
+{{SkillListLite
+| source = Void Spirit
+| name = Aether Remnant
+}}
+{{SkillListTail}}
+{{SkillListHead|title= Silence [Enemy]}}
+{{SkillListLite
+| source = Snapfire
+| name = Gobble Up
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Stun [Ally/Self]}}
+{{SkillListLite
+| source = Brewmaster
+| name = Primal Split
+}}
+{{SkillListLite
+| source = Earthshaker
+| name = Enchant Totem
+| nametext = Enchant Totem <sup>2a<sup>
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Time Walk
+}}
+{{SkillListLite
+| source = Faceless Void
+| name = Reverse Time Walk
+}}
+{{SkillListLite
+| source = Kez
+| name = Grappling Claw
+}}
+{{SkillListLite
+| source = Marci
+| name = Rebound
+}}
+{{SkillListLite
+| source = Marci
+| name = Rebound (Alt-Cast)
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Tree Dance
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Boundless Strike (Alt-Cast)
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Primal Spring
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Swashbuckle
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Shield Crash
+}}
+{{SkillListLite
+| source = Rubick
+| name = Telekinesis
+| nametext = Telekinesis <sup>2b<sup>
+}}
+{{SkillListLite
+| source = Sand King
+| name = Burrowstrike
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Firesnap Cookie
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Spit Out
+}}
+{{SkillListLite
+| source = Sven
+| name = Storm Hammer (Alt-Cast)
+}}
+{{SkillListLite
+| source = Techies
+| name = Blast Off!
+}}
+{{SkillListLite
+| source = Tiny
+| name = Toss
+}}
+{{SkillListLite
+| source = Viper
+| name = Nosedive
+}}
+{{SkillListLite
+| source = Eul's Scepter of Divinity
+| name = Cyclone
+}}
+{{SkillListLite
+| source = Wind Waker
+| name = Cyclone
+}}
+{{SkillListTail}}
+{{SkillListHead|title= Can't Act [Ally/Self]}}
+{{SkillListLite
+| source = Lifestealer
+| name = Infest
+}}
+{{SkillListLite
+| source = Magnus
+| name = Skewer
+}}
+{{SkillListLite
+| source = Tusk
+| name = Snowball
+}}
+{{SkillListTail}}
+{{SkillListHead|title= Silence [Ally]}}
+{{SkillListLite
+| source = Snapfire
+| name = Gobble Up
+}}
+{{SkillListTail}}
+{{Footnote|4|If interrupted the unit is forcefully {{M|teleports}} to the ability cast location after the hook returns.}}
+
+==Non-disabling Forced Movement==
+The following abilities do not fully disable units while moving them. Some do not disable at all, while some disable only partially.
+
+{{SkillListHead|title=Non-Disabling Forced Movement Sources [Enemy]}}
+{{SkillListLite
+| source = Batrider
+| name = Flamebreak
+}}
+{{SkillListLite
+| source = Beastmaster
+| name = Primal Roar
+}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Rupture
+| nametext = Rupture <sup>3<sup>
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Gust
+}}
+{{SkillListLite
+| source = Earth Spirit
+| name = Boulder Smash
+}}
+{{SkillListLite
+| source = Enigma
+| name = Black Hole
+| nametext= Black Hole <sup>2a<sup>
+}}
+{{SkillListLite
+| source = Force Staff
+| name = Force
+}}
+{{SkillListLite
+| source = Hurricane Pike
+| name = Hurricane Thrust
+}}
+{{SkillListLite
+| source = Huskar
+| name = Inner Fire
+}}
+{{SkillListLite
+| source = Invoker
+| name = Deafening Blast
+}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Blinding Light
+}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Will-O-Wisp
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Tidal Wave
+}}
+{{SkillListLite
+| source = Magnus
+| name = Shockwave
+}}
+{{SkillListLite
+| source = Mars
+| name = Arena of Blood
+}}
+{{SkillListLite
+| source = Mars
+| name = God's Rebuke
+}}
+{{SkillListLite
+| source = Mars
+| name = Spear of Mars
+}}
+{{SkillListLite
+| source = Puck
+| name = Waning Rift
+| nametext = Waning Rift <sup>3<sup>
+}}
+{{SkillListLite
+| source = Queen of Pain
+| name = Sonic Wave
+}}
+{{SkillListLite
+| source = Sniper
+| name = Headshot
+}}
+{{SkillListLite
+| source = Wildwing Ripper
+| name = Hurricane
+}}
+{{SkillListTail}}
+{{SkillListHead|title=Non-Disabling Forced Movement Sources [Ally/Self]}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Rupture
+| nametext = Rupture <sup>3<sup>
+}}
+{{SkillListLite
+| source = Clockwerk
+| name = Hookshot
+}}
+{{SkillListLite
+| source = Crystal Maiden
+| name = Crystal Clone
+}}
+{{SkillListLite
+| source = Dawnbreaker
+| name = Converge
+}}
+{{SkillListLite
+| source = Earth Spirit
+| name = Boulder Smash
+}}
+{{SkillListLite
+| source = Earth Spirit
+| name = Rolling Boulder
+}}
+{{SkillListLite
+| source = Ember Spirit
+| name = Activate Fire Remnant
+}}
+{{SkillListLite
+| source = Enchantress
+| name = Sproink
+}}
+{{SkillListLite
+| source = Force Staff
+| name = Force
+}}
+{{SkillListLite
+| source = Hurricane Pike
+| name = Hurricane Thrust
+}}
+{{SkillListLite
+| source = Huskar
+| name = Life Break
+}}
+{{SkillListLite
+| source = Io
+| name = Tether
+}}
+{{SkillListLite
+| source = Mirana
+| name = Leap
+}}
+{{SkillListLite
+| source = Morphling
+| name = Waveform
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Shield Crash
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Rolling Thunder
+}}
+{{SkillListLite
+| source = Phoenix
+| name = Icarus Dive
+}}
+{{SkillListLite
+| source = Phoenix
+| name = Toggle Movement
+}}
+{{SkillListLite
+| source = Pudge
+| name = Meat Hook
+| nametext = Meat Hook <sup>4<sup>
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Onslaught
+}}
+{{SkillListLite
+| source = Ringmaster
+| name = Whoopee Cushion
+}}
+{{SkillListLite
+| source = Slark
+| name = Pounce
+}}
+{{SkillListLite
+| source = Spirit Breaker
+| name = Charge of Darkness
+}}
+{{SkillListLite
+| source = Storm Spirit
+| name = Ball Lightning
+}}
+{{SkillListLite
+| source = Timbersaw
+| name = Timber Chain
+}}
+{{SkillListLite
+| source = Ursa
+| name = Earthshock
+}}
+{{SkillListLite
+| source = Wildwing Ripper
+| name = Hurricane
+}}
+{{SkillListLite
+| source = Zeus
+| name = Heavenly Jump
+}}
+{{SkillListTail}}
+{{Footnote|4|If interrupted the unit is forcefully {{M|teleports}} to the ability cast location after the hook returns.}}
+
+==Pulling==
+Forced Movement sources generally ignore terrain and any other obstacle, moving the unit toward its intended direction and through everything. Certain Pulling sources may move (or pull) the affected target(s) through impassable terrain, but it does not grant the affected unit(s) [[unobstructed movement]].
+
+Pulling sources can be affected by the unit's movement speed, if the pulling direction is the same as the movement direction, the affected unit may be pulled faster.
+
+Forced Movement sources have a higher priority than pulling sources, and it overrides Pulling sources regardless of the source ability's cast order.
+
+
+{{SkillListHead|title=Pulling Sources}}
+{{SkillListLite
+| source = Enigma
+| name = Black Hole
+| nametext = Black Hole<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Invoker
+| name = E.M.P.
+| nametext = E.M.P.<sup>2b 3</sup>
+}}
+{{SkillListLite
+| source = Naga Siren
+| name = Reel In
+}}
+{{SkillListLite
+| source = Windranger
+| name = Gale Force
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+==Upward Movement==
+Several abilities move a unit upwards, changing their Z position. Changes to a unit's Z position affect several things such as the travel time of projectiles, as they always fly towards the center of the unit and the unit's ability to block pathing of other units, as a unit can only block another unit when they are on roughly the same Z position.
+
+However, it does not affect any abilities which affect or search units inside an area. A unit thrown in the air by a {{A|Kunkka|Torrent}} is still fully affected by other area abilities like {{A|Nyx Assassin|Impale}}. Attacks of any unit also do not consider the height of the attack target. Although the attack projectiles have to travel for longer in order to reach the target, a unit with 600 range can still start attack on an airborn unit from 600 range away, ignoring its height.
+
+This section below only lists abilities which move units upwards. Details can be found in the lists above.
+{{SkillListHead|title=Upward Movement (Z-axis) Sources|column=2}}
+{{SkillListLite
+| source = Batrider
+| name = Flamebreak
+}}
+{{SkillListLite
+| source = Earthshaker
+| name = Enchant Totem
+| nametext = Enchant Totem<sup>2a</sup>
+}}
+{{SkillListLite
+| source = Enchantress
+| name = Sproink
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Torrent
+}}
+{{SkillListLite
+| source = Lion
+| name = Earth Spike
+}}
+{{SkillListLite
+| source = Magnus
+| name = Horn Toss
+}}
+{{SkillListLite
+| source = Mirana
+| name = Leap
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Tree Dance
+}}
+{{SkillListLite
+| source = Monkey King
+| name = Primal Spring
+}}
+{{SkillListLite
+| source = Nyx Assassin
+| name = Impale
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Shield Crash
+}}
+{{SkillListLite
+| source = Pangolier
+| name = Rolling Thunder
+}}
+{{SkillListLite
+| source = Rubick
+| name = Telekinesis
+}}
+{{SkillListLite
+| source = Sand King
+| name = Burrowstrike
+}}
+{{SkillListLite
+| source = Slark
+| name = Pounce
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Firesnap Cookie
+}}
+{{SkillListLite
+| source = Snapfire
+| name = Spit Out
+}}
+{{SkillListLite
+| source = Spirit Breaker
+| name = Greater Bash
+}}
+{{SkillListLite
+| source = Techies
+| name = Blast Off!
+}}
+{{SkillListLite
+| source = Tidehunter
+| name = Ravage
+}}
+{{SkillListLite
+| source = Tiny
+| name = Toss
+}}
+{{SkillListLite
+| source = Tusk
+| name = Walrus Kick
+}}
+{{SkillListLite
+| source = Tusk
+| name = Walrus PUNCH!
+}}
+{{SkillListLite
+| source = Ursa
+| name = Earthshock
+}}
+{{#lst:Cyclone|Sources}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Talent}} [[talent]].}}
+{{Footnote|2a|Requires {{I|Aghanim's Scepter}}.}}
+{{Footnote|2b|Requires {{I|Aghanim's Shard}}.}}
+
+==Knockback Resistance==
+Knockback Resistance is an attribute of a hero that reduces the distance you are pushed by many enemy status debuffs. By default, every unit has a base knockback resistance of 0. Currently Knockback Resistance is only granted by the tier 4 [[Tough Enchantment]] and [[Solid Core]]
+
+{{SkillListHead|title=Abilities Affected by Knockback Resistance}}
+{{SkillListLite
+| source = Batrider
+| name = Flamebreak
+}}
+{{SkillListLite
+| source = Beastmaster
+| name = Primal Roar
+}}
+{{SkillListLite
+| source = Bloodseeker
+| name = Bloodrage
+| nametext = Bloodrage<sup>1</sup> (Arterial Spray)
+}}
+{{SkillListLite
+| source = Clockwerk
+| name = Power Cogs
+}}
+{{SkillListLite
+| source = Disruptor
+| name = Electromagnetic Repulsion
+}}
+{{SkillListLite
+| source = Drow Ranger
+| name = Gust
+}}
+{{SkillListLite
+| source = Earth Spirit
+| name = Boulder Smash
+}}
+{{SkillListLite
+| source = Keeper of the Light
+| name = Blinding Light
+}}
+{{SkillListLite
+| source = Invoker
+| name = Deafening Blast
+}}
+{{SkillListLite
+| source = Kunkka
+| name = Tidal Wave
+}}
+{{SkillListLite
+| source = Magnus
+| name = Shockwave
+}}
+{{SkillListLite
+| source = Mars
+| name = Arena of Blood
+}}
+{{SkillListLite
+| source = Mars
+| name = God's Rebuke
+}}
+{{SkillListLite
+| source = Morphling
+| name = Adaptive Strike
+}}
+{{SkillListLite
+| source = Primal Beast
+| name = Pulverize
+}}
+{{SkillListLite
+| source = Puck
+| name = Waning Rift
+| nametext = Waning Rift<sup>1</sup> (Jostling Rift)
+}}
+{{SkillListLite
+| source = Queen of Pain
+| name = Sonic Wave
+}}
+{{SkillListLite
+| source = Sniper
+| name = Concussive Grenade
+}}
+{{SkillListLite
+| source = Sniper
+| name = Headshot
+}}
+{{SkillListLite
+| source = Spirit Breaker
+| name = Greater Bash
+}}
+{{SkillListLite
+| source = Tusk
+| name = Walrus Kick
+}}
+{{SkillListLite
+| source = Force Staff
+| name = Force
+}}
+{{SkillListLite
+| source = Hurricane Pike
+| name = Hurricane Thrust
+}}
+{{SkillListTail}}
+{{Footnote|1|Requires {{Symbol|Facet}} [[facet]].}}
+
+{{MechanicsNav}}
+[[Category:Mechanics]]
+
+[[ru:Принудительное движение]]

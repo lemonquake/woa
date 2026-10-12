@@ -31,3 +31,13 @@ r1 empty ground -> r2 scattered dressing, but not grounded -> r3 contact pools, 
 ### Session notes
 * Review isolation was instruction-enforced (each critic was a fresh subagent told to read only its packet folder; packets held only the two anonymised images). Private mappings: work/private_mapping_r8..r15.txt.
 * Pass 1 vfx evidence (e1_stomp_44) predates the crack-shader rewrite; later passes used captures from the revision under review.
+
+## Session 2026-10-12 b (Blood Ranger, destructible trees, tower scale) — run `work/lemondev/2026-10-12-blood-ranger/`
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Tower scale (C1) | 1 | working tree after e4bfdc6 | r16 tower (br_tower3 vs dota_3) | candidate / true | UNVERIFIED | Benchmark invalid: the critic found no identifiable tower in dota_3, so scale could not be compared | Needs a Dota 2 frame that shows a lane tower beside heroes; no pass is claimed |
+| Burst Shot VFX (C3) | 1 | same | r16 vfx (br_burst3 vs dota_9) | benchmark / true | REJECT | B1: the area reads as thin outline rings plus numbers; no volume, no visible effect on the units hit | Painted ground stain, bigger arrows, blood bursts, hit flinch |
+| Burst Shot VFX (C3) | 2 | same + fix | r17 vfx (br_burst5_48 vs dota_9) | benchmark / true | REJECT | B1 again: a flat red ring on the ground and numbers; units inside show no hit, lift or impact | **STOPPED: PLATEAU** (same defect in two consecutive valid rejections). Note: dota_9 is an eruption-type spell, a still frame of an arrow volley mostly shows arrows already landed. Next step needs a decision: an arrow-volley benchmark (or a motion clip comparison) and stronger per-hit reactions |
+
+Review isolation: instruction-enforced (fresh subagents told to read only their packet folder; each reported only the two packet images in `files_read`). Private mappings: `work/lemondev/2026-10-12-blood-ranger/private_mapping_r16.txt`, `_r17.txt`.

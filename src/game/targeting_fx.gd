@@ -86,8 +86,14 @@ func frame() -> void:
 	if aid == "attack":
 		_place_ring(_range, h.pos, h.attack_range + h.hull)
 		return
+	if aid.begins_with("item:"):
+		# Mini-Axe, Vegan Picker, Ironwood Twig, wards: their cast range
+		var r: float = game.world.abilities.cast_range(h, "", int(aid.substr(5)))
+		if r > 0.0 and r < 5000.0:
+			_place_ring(_range, h.pos, r + h.hull)
+		return
 	var hovered := false
-	if aid == "" or aid == "attack" or aid.begins_with("item:") or aid == "tp":
+	if aid == "" or aid == "attack" or aid == "tp":
 		aid = String(input.get("hover_ability"))
 		hovered = true
 	if aid == "":
@@ -114,7 +120,7 @@ func frame() -> void:
 				_area.visible = true
 			elif vals.has("width"):
 				var width := float((vals.width as Array)[lv - 1]) * 2.0
-				var dist := float((vals.distance as Array)[lv - 1])
+				var dist := clampf(h.pos.distance_to(mouse), 300.0, float((vals.distance as Array)[lv - 1]))
 				var dir := (mouse - h.pos).normalized()
 				if dir == Vector2.ZERO:
 					dir = Vector2.from_angle(h.facing)

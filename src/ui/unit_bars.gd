@@ -37,11 +37,26 @@ const DMG_COLORS := [Color(1.0, 0.86, 0.62), Color(0.5, 0.68, 1.0), Color(1.0, 0
 ## spells you can see), "reflect" (Unholy Might's deflected half).
 var _stack := {}                           # target key -> [time of last number, how many stacked]
 
-func damage_number(amount: float, dtype: int, at: Vector3, style: String, target := -1) -> void:
+var _merge := {}                            # target:style:source -> {p: the live popup, at: last hit time}
+
+func damage_number(amount: float, dtype: int, at: Vector3, style: String, target := -1, src_key := "") -> void:
 	if amount < 0.5:
 		return
-	# numbers on the same unit in quick succession stack upwards instead of overprinting each other
 	var now := Time.get_ticks_msec() / 1000.0
+	# rapid hits from one spell on one unit (Burst Shot's arrows) count up in a single number that pops on each hit
+	if src_key != "" and src_key != "attack":
+		var mk := "%d:%s:%s" % [target, style, src_key]
+		var live = _merge.get(mk)
+		if live != null and now - float(live.at) < 0.6 and popups.has(live.p):
+			var mp: Dictionary = live.p
+			mp.amount = float(mp.amount) + amount
+			mp.text = ("-" if style == "in" else "") + str(int(round(float(mp.amount))))
+			mp.size = int(clampf(15.0 + log(float(mp.amount) + 1.0) * 2.6, 16.0, 34.0)) if style != "in" else mp.size
+			mp.t = minf(float(mp.t), 0.12)
+			mp.pos = at
+			live.at = now
+			return
+	# numbers on the same unit in quick succession stack upwards instead of overprinting each other
 	var key := "%d:%s" % [target, style]
 	var st: Array = _stack.get(key, [-9.0, 0])
 	var level: int = st[1] + 1 if now - float(st[0]) < 0.35 else 0
@@ -61,8 +76,15 @@ func damage_number(amount: float, dtype: int, at: Vector3, style: String, target
 			size = int(size * 0.85)
 		"reflect":
 			col = Color(0.78, 0.45, 1.0)
-	popups.append({"text": text, "pos": at, "t": 0.0, "color": col, "size": size, "rise": 1.1, "life": 1.05,
-		"drift": drift, "pop": true, "offset": Vector2(0, -level * (size + 2))})
+	var pd := {"text": text, "pos": at, "t": 0.0, "color": col, "size": size, "rise": 1.1, "life": 1.05,
+		"drift": drift, "pop": true, "offset": Vector2(0, -level * (size + 2)), "amount": amount}
+	popups.append(pd)
+	if src_key != "" and src_key != "attack":
+		_merge["%d:%s:%s" % [target, style, src_key]] = {"p": pd, "at": now}
+		if _merge.size() > 48:
+			for k in _merge.keys():
+				if now - float(_merge[k].at) > 1.0:
+					_merge.erase(k)
 	if popups.size() > 90:
 		popups.pop_front()
 

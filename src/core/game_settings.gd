@@ -5,9 +5,9 @@ extends RefCounted
 ## {slot: {cloth, trim, leather, metal, gold}}. Saved to user://hero.json and read by the match.
 
 const PATH := "user://hero.json"
-const HEROES := ["galewarden", "ezee"]
+const HEROES := ["blood_ranger", "ezee"]
 
-static var selected := "galewarden"        # the hero you play
+static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id
 static var looks := {}                     # hero id -> appearance
 static var hero := {}                      # the selected hero's appearance (what the Hero Creator edits)
@@ -32,22 +32,23 @@ static func default_look(id: String) -> Dictionary:
 				"helm": {"metal": "3a3448", "cloth": "3c1458", "trim": "a060f0"},
 				"inner_garment": {"metal": "3a3444", "cloth": "2a1040"}},
 		}
+	# Blood Ranger: a pale huntress in blood-red leathers with crimson hair and faintly glowing red eyes
 	var g := HeroLook.preset("huntress")
-	g["hair"] = "ponytail"
-	g["hair_color"] = "e8d28a"
-	g["eye_color"] = "3a7a6a"
+	g.merge({"hair": "long", "hair_color": "861620", "hair_length": 1.0, "skin": "e8c2a8", "eye": "cat",
+		"eye_color": "e0202c", "eye_glow": 0.55, "lip_color": "8a2028", "marking": "none", "build": -0.35}, true)
 	return {
-		"display_name": "Galewarden",
-		"look": g,
-		"outfit": {"inner_garment": "silk_undershirt", "armor": "tc_trackers_leathers", "leggings": "hide_leggings",
-			"boots": "wayfarer_boot", "gloves": "silk_glove", "accessory_1": "windrider_feather"},
-		"dyes": {"armor": {"cloth": "2f6f4a", "leather": "3a2414"}, "leggings": {"cloth": "2a3424", "leather": "2a1a10"},
-			"boots": {"leather": "3a2414"}, "inner_garment": {"cloth": "4a5638"}, "gloves": {"cloth": "3a2a1a", "leather": "2a1a10"}},
+		"display_name": "Blood Ranger",
+		"look": HeroLook.sanitize(g),
+		"outfit": {"inner_garment": "silk_undershirt", "armor": "tc_trackers_leathers", "leggings": "trackers_breeches",
+			"boots": "wayfarer_boot", "gloves": "silk_glove", "accessory_1": "tc_bloodmoon_signet"},
+		"dyes": {"armor": {"cloth": "8a1018", "leather": "3a1c16", "trim": "c8a060", "metal": "6a5a50"},
+			"leggings": {"cloth": "2e1414", "leather": "2a1610"}, "boots": {"leather": "2a1610"},
+			"inner_garment": {"cloth": "5a1016"}, "gloves": {"cloth": "3a1012", "leather": "2a1610"}},
 	}
 
-## Kept for callers that want Galewarden's default look.
+## Kept for callers that want Blood Ranger's default look.
 static func default_hero() -> Dictionary:
-	return default_look("galewarden")
+	return default_look("blood_ranger")
 
 static func look_for(id: String) -> Dictionary:
 	_load()
@@ -84,7 +85,7 @@ static func _load() -> void:
 	if not (d is Dictionary):
 		return
 	if d.has("looks"):
-		selected = String(d.get("selected", "galewarden")) if String(d.get("selected", "")) in HEROES else "galewarden"
+		selected = String(d.get("selected", "blood_ranger")) if String(d.get("selected", "")) in HEROES else "blood_ranger"
 		var opp := String(d.get("opponent", "random"))
 		opponent = opp if opp == "random" or opp in HEROES else "random"
 		var src: Dictionary = d.looks if d.looks is Dictionary else {}
@@ -94,9 +95,9 @@ static func _load() -> void:
 				looks[id] = _sanitize(src[id], id)
 				custom[id] = true
 	else:
-		# the older single-hero file: Galewarden's look
-		looks["galewarden"] = _sanitize(d, "galewarden")
-		custom["galewarden"] = true
+		# the older single-hero file: Blood Ranger's look
+		looks["blood_ranger"] = _sanitize(d, "blood_ranger")
+		custom["blood_ranger"] = true
 
 static func _sanitize(d: Dictionary, id: String) -> Dictionary:
 	var out := default_look(id)

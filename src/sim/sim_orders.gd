@@ -31,17 +31,24 @@ func clear(u: SimUnit) -> void:
 ## Validate and apply an order. from_player: issued by a player or bot (as opposed to the unit's own AI).
 func cancel_channel(u: SimUnit) -> void:
 	if not u.channel.is_empty():
+		var aid := String(u.channel.ability)
 		u.channel = {}
-		w.events.append({"t": "tp_cancel", "u": u.id})
+		if aid == "tp":
+			w.events.append({"t": "tp_cancel", "u": u.id})
+		else:
+			w.events.append({"t": "channel_end", "u": u.id, "ability": aid, "cancelled": true})
 
 func issue(u: SimUnit, o: Dictionary, from_player: bool) -> void:
 	var type: int = o.get("type", O.NONE)
 	if o.get("queue", false) and (not u.is_idle() or not u.channel.is_empty()):
 		u.order_queue.append(o)
 		return
-	# any new order breaks a channel
+	# any new order breaks a channel, except an item that acts at once without a target (Dota)
 	if not u.channel.is_empty():
-		cancel_channel(u)
+		var islot := int(o.get("item_slot", -1))
+		var instant := type == O.CAST_NO_TARGET and islot >= 0 and w.abilities.is_instant(u, "", islot)
+		if not instant:
+			cancel_channel(u)
 	# a hard stop (S held) keeps the unit from acquiring targets until it gets another order
 	u.no_acquire = type == O.STOP and bool(o.get("hard", false))
 	var tgt: SimUnit = w.get_unit(int(o.get("target", -1)))
@@ -168,6 +175,22 @@ func update(u: SimUnit) -> void:
 	if u.is_leaping():
 		u.moving = false
 		return
+	if not u.channel.is_empty() and String(u.channel.ability) != "tp":
+		# an ability channel (Burst Shot): stuns, pushes, silence and roots end it; the hero keeps facing the target
+		if u.is_stunned() or u.is_silenced() or u.has_flag("root"):
+			cancel_channel(u)
+		else:
+			_turn_towards(u, ((u.channel.point as Vector2) - u.pos).angle())
+			w.abilities.update_burst(u)
+			if w.time >= float(u.channel.until) - 0.0001:
+				var aid := String(u.channel.ability)
+				u.channel = {}
+				u.order = O.NONE
+				w.events.append({"t": "channel_end", "u": u.id, "ability": aid, "cancelled": false})
+				if not u.order_queue.is_empty():
+					_finish_order(u)
+			u.moving = false
+			return
 	if not u.channel.is_empty():
 		if u.is_stunned():
 			cancel_channel(u)
@@ -414,7 +437,8 @@ func _update_cast(u: SimUnit) -> void:
 		u.cast_timer = 0.3
 		u.order = O.NONE
 		u.order_target = -1
-		if not u.order_queue.is_empty():
+		# a channel that just began keeps queued orders waiting until it ends
+		if not u.order_queue.is_empty() and u.channel.is_empty():
 			u.cast_phase = CP.NONE
 			_finish_order(u)
 		return

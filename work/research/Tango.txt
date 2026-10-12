@@ -1,0 +1,114 @@
+{{Tabs Item
+| custom1 = Tango (Shared)
+}}
+
+The '''Tango''' is an [[item]] purchasable at the Base Shop, under [[Consumables]].
+
+{{Item infobox
+| title = Tango
+| image = Tango itemicon dota2 gameasset.png
+| lore = Forage to survive on the battlefield.
+| intern = item_tango
+
+| type = Consumables
+| base = True
+| secret = False
+| neutral = False
+
+| item cost = 90
+
+| initial stock = 10
+| max stock = 10
+| restock time = 120
+| max stack = False
+
+| active = Devour
+| charges = 3
+}}
+
+==Additional Information==
+* A full set of Tangos is not [[Item sharing|shareable]]. However, it is possible to give allies a charge, {{I|Tango (Shared)}}, by casting it on them.
+{{clr}}
+==Ability==
+===Devour===
+{{Spellcard
+| name = Devour
+| sound0 = Tango Devour 1 soundsample dota2 wikiasset
+
+| icon0 = Tango Devour wikiasset
+| type0 = itm
+| target0 = Unit
+| affect0 = Self;Trees
+| desc0 = Consumes the target tree to gain health regeneration for some time. The tree is destroyed in the process.
+
+| cast point = 0
+| cast backswing = 0 
+| cast immediate = true
+| cast range = 165
+| cast range amp = true
+
+| trait1 = Health Regen Bonus
+| value1 = 7
+| trait2 = Duration
+| value2 = 16
+
+| icon1 = Tango (Shared) Devour wikiasset
+| type1 = itm
+| target1 = Unit
+| desc1 = Can target allied heroes as well. Doing so gives one Tango charge to them, however, this single Tango expires after a while.
+
+| type1 trait1 = Shared Tango Duration
+| type1 value1 = 40
+
+| icon2 = Iron Branch Plant Tree wikiasset
+| type2 = itm
+| target2 = Unit
+| desc2 = When cast on an {{I|Iron Branch}} tree the health regen duration is greatly increased.
+
+| type2 trait1 = Increased Duration
+| type2 value1 = 32
+
+| buff1 = modifier_tango_heal
+| buff1text = Tango: Restoring x health per second.
+| buff1dispel = Death
+
+| charges = {{Show|I|Tango|Charges}}
+| cd = 0
+| mp = 0
+
+| mechanics = * The buff of successive casts do not stack but refresh the duration instead.
+
+* Can [[Health Regeneration|regenerate]] up to {{#expr:{{#var:Devour value1}}*{{#var:Devour value2}}}} ([[Trees#Planted Tree|{{#expr:{{#var:Devour value1}}*{{#var:Devour type2 value1}}}}]]) health over its full duration.
+** All {{#var:Devour charges}} charges can regenerate up to {{#expr:{{#var:Devour value1}}*{{#var:Devour value2}}*{{#var:Devour charges}}}} ([[Trees#Planted Tree|{{#expr:{{#var:Devour value1}}*{{#var:Devour type2 value1}}*{{#var:Devour charges}}}}]]) health.
+
+* When targeting an allied hero, it grants them a {{I|Tango (Shared)}} in their inventory, instead of granting health regeneration.
+** If the targeted ally's inventory is full, the item is dropped on the ground.
+** Treats the {{H|Spirit Bear}} as heroes, and [[illusions]] as creeps.
+*** Although it can be cast on other [[creep-heroes]] and [[clones]] with inventory, but doing so has no effect.
+** A shared Tango disappears {{#var:Devour type1 value1}} seconds after being created.
+*** Once created, a countdown appears on the item's icon, visible to everyone, showing the remaining duration on the shared Tango.
+}}
+
+==Trivia==
+* The {{emote|Herald}} [[Matchmaking/Seasonal Rankings|Herald Rank]]'s symbol is based on Tango.
+* In the original DotA, Tango's full name was "Ancient Tango of Essifation".
+* Tango's active ability was called "Eat a Tree or Ward" before [[July 19, 2017 Patch]].
+* {{I|Ancient Knowledge Stone}} may have inspired the creation of Tango.
+
+==Gallery==
+<gallery>
+Tango use.png|<center>Restoring health with Tango</center>
+Ingame model Tango.png|<center>In-game model</center>
+Tango item icon progress.png|<center>Item icon progress</center>
+Tango (Shared) item icon progress.png|<center>Item icon progress</center>
+Tango itemicon sketch colored dota2 gameasset.png|<center>Early concept sketch (colored)</center>
+Dark Carnival Tarot Cards 00 dota2 gameasset.png|<center>Tarot card from the [[Dark Carnival#The Oracle|Dark Carnival]] event, <i>The Fool</i><br>{{H|Ogre Magi}} is holding Tangoes</center>
+</gallery>
+
+==Recent Changes==
+{{Main|Tango/Changelogs}}
+{{Recent changes wrapper}}
+
+{{ItemNav}}
+[[Category:Shop items]]
+[[ru:Tango]]

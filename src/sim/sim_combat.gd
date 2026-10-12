@@ -20,12 +20,15 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 	var snap := _snapshot(u, mod)
 	if mod != "":
 		w.abilities.pay_attack_modifier(u, mod)
+	if u.is_hero():
+		snap["burst"] = w.abilities.masterful_bonus(u, t)
 	if u.is_ranged():
 		var p := {"id": _next_proj, "src": u.id, "target": t.id, "pos": u.pos + Vector2.from_angle(u.facing) * u.hull,
 			"speed": float(u.def.projectile_speed), "snap": snap, "kind": "attack", "model": u.def.model, "mod": mod}
 		_next_proj += 1
 		w.projectiles.append(p)
-		w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": t.id, "kind": "attack", "mod": mod})
+		w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": t.id, "kind": "attack", "mod": mod,
+			"burst": float(snap.get("burst", 0.0)) > 0.0})
 		# glyph: tier 2+ towers also fire at extra nearby enemies
 		if u.kind == K.TOWER and u.lane_tier >= 2 and w.time < u.glyph_until:
 			_glyph_multishot(u, t, snap)
@@ -52,7 +55,18 @@ func _glyph_multishot(u: SimUnit, main: SimUnit, snap: Dictionary) -> void:
 func _snapshot(u: SimUnit, mod: String) -> Dictionary:
 	return {"src": u.id, "team": u.team, "hero": u.is_hero(), "kind": u.kind, "dmg_min": u.dmg_min, "dmg_max": u.dmg_max,
 		"bonus": u.bonus_damage, "class": int(u.def.attack_class), "level_h": w.map.level_at(u.pos), "mod": mod,
-		"lifesteal": u.lifesteal, "ranged": u.is_ranged(), "quell": _quelling(u), "taint": _taint(u)}
+		"lifesteal": u.lifesteal, "lifesteal_ab": u.lifesteal_ability, "ranged": u.is_ranged(), "quell": _quelling(u),
+		"taint": _taint(u)}
+
+## A spell arrow (Burst Shot): a projectile that homes on `t`, or flies to `spot` when t is null, and deals `dmg`
+## physical spell damage (no lifesteal, cannot miss; Dota's rule for spells).
+func launch_spell_arrow(u: SimUnit, t: SimUnit, spot: Vector2, dmg: float, speed: float, key: String) -> void:
+	var p := {"id": _next_proj, "src": u.id, "team": u.team, "target": t.id if t else -1, "point": spot,
+		"pos": u.pos + Vector2.from_angle(u.facing) * u.hull, "speed": speed, "kind": "spell", "dmg": dmg, "key": key}
+	_next_proj += 1
+	w.projectiles.append(p)
+	w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": p.target, "kind": "spell", "key": key,
+		"point": spot})
 
 ## Tainted Touch: the level of the enchantment riding on this attack (0 = none), fixed when the blow is released.
 func _taint(u: SimUnit) -> int:
@@ -72,6 +86,9 @@ func _quelling(u: SimUnit) -> float:
 func update_projectiles() -> void:
 	for i in range(w.projectiles.size() - 1, -1, -1):
 		var p: Dictionary = w.projectiles[i]
+		if p.kind == "spell":
+			_update_spell_arrow(i, p)
+			continue
 		var t := w.get_unit(p.target)
 		if t == null or not t.alive:
 			# the target died first: the projectile flies on to where it was and falls there (presentation only)
@@ -88,6 +105,22 @@ func update_projectiles() -> void:
 		else:
 			p.pos += to.normalized() * step
 
+func _update_spell_arrow(i: int, p: Dictionary) -> void:
+	var t := w.get_unit(int(p.target))
+	var goal: Vector2 = t.pos if t != null and t.alive else p.point
+	if t != null and t.alive:
+		p.point = t.pos
+	var to: Vector2 = goal - p.pos
+	var step: float = p.speed * C.DT
+	if to.length() > step + (t.hull * 0.5 if t != null and t.alive else 0.0):
+		p.pos += to.normalized() * step
+		return
+	w.projectiles.remove_at(i)
+	var hit := t != null and t.alive and not t.is_invulnerable()
+	if hit:
+		deal_damage(int(p.src), int(p.team), true, t, float(p.dmg), C.DamageType.PHYSICAL, false, String(p.key))
+	w.events.append({"t": "projectile_end", "id": p.id, "hit": hit, "pos": goal, "target": int(p.target), "ground": not hit})
+
 ## An attack connects: miss chance (evasion, uphill), damage, lifesteal and attack modifiers. False on a miss.
 func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if not t.alive:
@@ -101,19 +134,29 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if miss:
 		w.events.append({"t": "miss", "u": s.src, "target": t.id, "ranged": bool(s.ranged)})
 		return false
-	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus)
+	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus) + float(s.get("burst", 0.0))
 	if s.mod != "":
 		dmg += w.abilities.attack_modifier_damage(s, t)
 	if t.is_creep() and t.team != s.team:
 		dmg += float(s.quell)
 	dmg *= attack_class_multiplier(s, t)
 	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, C.DamageType.PHYSICAL, true, "attack")
-	if dealt > 0.0 and float(s.lifesteal) > 0.0 and src != null and src.alive and not t.is_building():
-		heal(src, dealt * float(s.lifesteal))
+	# lifesteal heals from the blow after armor (not after other damage manipulation, and in full even when the blow
+	# kills); item lifesteal heals 40% against creeps; never from buildings or wards
+	var ls := float(s.lifesteal) * (C.ITEM_LIFESTEAL_CREEP_FACTOR if t.is_creep() else 1.0) + float(s.get("lifesteal_ab", 0.0))
+	if dealt > 0.0 and ls > 0.0 and src != null and src.alive and not t.is_building() and not t.is_ward():
+		var before := src.hp
+		heal(src, dmg * C.armor_multiplier(t.armor) * ls)
+		if src.hp - before >= 1.0:
+			w.events.append({"t": "lifesteal", "u": src.id, "target": t.id, "amount": src.hp - before})
+	if float(s.get("burst", 0.0)) > 0.0:
+		w.events.append({"t": "masterful_hit", "u": s.src, "target": t.id, "amount": float(s.burst)})
 	if s.mod != "" and t.alive:
 		w.abilities.attack_modifier_hit(s, t)
 	if int(s.get("taint", 0)) > 0 and not t.is_building() and t.team != s.team:
 		w.abilities.tainted_hit(s, t)
+	if t.alive and t.is_hero() and src != null:
+		w.abilities.on_attacked(t, src)
 	return true
 
 func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
@@ -223,6 +266,9 @@ func kill(t: SimUnit, killer: SimUnit) -> void:
 	t.order = C.Order.NONE
 	t.path = PackedVector2Array()
 	t.leap = {}
+	t.hop = {}
+	if not t.channel.is_empty():
+		w.orders.cancel_channel(t)
 	_deaths.append({"u": t, "killer": killer})
 
 func process_deaths() -> void:

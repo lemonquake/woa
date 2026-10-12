@@ -19,6 +19,8 @@ const STONE := {
 	"WOA_Bone": ["ph_rough_block_wall", Color(1.0, 0.95, 0.85), 1.2, 0.0],
 }
 
+const TOWER_SCALE := 0.6
+
 static var _mats := {}
 static var _scenes := {}
 
@@ -28,6 +30,7 @@ var team := 0
 var model: Node3D
 var light: OmniLight3D
 var bar_height := 7.0
+var bolt_height := 4.0                     # where tower bolts leave the crystal (m above the base)
 var _shaders: Array[ShaderMaterial] = []
 var _crystals: Array[ShaderMaterial] = []
 var _dead := false
@@ -70,8 +73,9 @@ func setup(u: SimUnit, terrain: TerrainBuilder) -> void:
 	var s := 1.0
 	match u.kind:
 		SimConst.Kind.TOWER:
-			s = 1.0 + 0.04 * (u.lane_tier - 1)
-			bar_height = 8.6 * s
+			# 40% smaller than the Blender model: about 2.3 hero heights, as in Dota (footprint unchanged)
+			s = TOWER_SCALE * (1.0 + 0.04 * (u.lane_tier - 1))
+			bar_height = 7.0 * s + 0.45
 		SimConst.Kind.BARRACKS:
 			bar_height = 4.6
 		SimConst.Kind.ANCIENT:
@@ -90,6 +94,8 @@ func setup(u: SimUnit, terrain: TerrainBuilder) -> void:
 	light.light_energy = (1.1 if team == 0 else 0.8) if u.kind != SimConst.Kind.ANCIENT else (1.6 if team == 0 else 1.1)
 	light.omni_range = 6.0 if u.kind != SimConst.Kind.ANCIENT else 9.0
 	light.position.y = 6.8 * s if u.kind == SimConst.Kind.TOWER else (6.6 * s if u.kind == SimConst.Kind.ANCIENT else 4.4)
+	light.omni_range *= clampf(s * 1.4, 0.8, 1.0) if u.kind == SimConst.Kind.TOWER else 1.0
+	bolt_height = light.position.y + 0.2
 	light.shadow_enabled = false
 	add_child(light)
 

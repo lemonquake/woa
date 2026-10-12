@@ -22,7 +22,8 @@ var level := PackedByteArray()             # N*N terrain level per path cell
 var height := PackedFloat32Array()         # (N+1)*(N+1) smooth corner heights in game units (for rendering + z)
 var walkable := PackedByteArray()          # N*N 1 = walkable for ground units (static: terrain + trees + buildings)
 var tree_cell := PackedInt32Array()        # N*N index into trees or -1
-var trees: Array = []                      # [{pos: Vector2, alive: bool, kind: int, scale: float, regrow: float}]
+var trees: Array = []                      # [{pos, alive, kind, scale, regrow (s left, <= 0 = not regrowing), rot,
+                                           #   planted: true for Ironwood Twig trees, expires, under (cell's old index)}]
 var astar := AStarGrid2D.new()
 var vision_block := PackedByteArray()      # VN*VN 1 = a tree stands here (blocks sight beyond)
 var vision_level := PackedByteArray()      # VN*VN terrain level
@@ -354,16 +355,24 @@ func set_block_circle(center: Vector2, radius: float, open: bool) -> void:
 				if astar.region.size.x > 0:
 					astar.set_point_solid(Vector2i(cx, cy), not open)
 
-## Cut down a tree (it regrows after `regrow` seconds when that is > 0). Returns false if there was none.
+## Cut down a tree (it regrows after `regrow_time` seconds when that is > 0; planted trees never regrow). Returns
+## false if there was none.
 func destroy_tree(index: int, regrow_time: float) -> bool:
 	if index < 0 or index >= trees.size() or not trees[index].alive:
 		return false
 	var t: Dictionary = trees[index]
 	t.alive = false
-	t.regrow = regrow_time
+	t.regrow = 0.0 if t.get("planted", false) else regrow_time
 	var c := world_to_cell(t.pos)
 	walkable[c.y * N + c.x] = 1
 	astar.set_point_solid(c, false)
+	if t.get("planted", false):
+		# give the cell back to the natural tree (alive or not) that stood there before
+		tree_cell[c.y * N + c.x] = int(t.get("under", -1))
+		var u := int(t.get("under", -1))
+		if u >= 0 and trees[u].alive:
+			walkable[c.y * N + c.x] = 0
+			astar.set_point_solid(c, true)
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 0
 	_refresh_vision_cell(v)
@@ -372,11 +381,44 @@ func destroy_tree(index: int, regrow_time: float) -> bool:
 func regrow_tree(index: int) -> void:
 	var t: Dictionary = trees[index]
 	t.alive = true
+	t.regrow = 0.0
 	var c := world_to_cell(t.pos)
 	walkable[c.y * N + c.x] = 0
 	astar.set_point_solid(c, true)
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 1
+
+## Whether a fallen natural tree may grow back now: its cell must not hold a planted tree.
+func can_regrow(index: int) -> bool:
+	var c := world_to_cell(trees[index].pos)
+	var cur := tree_cell[c.y * N + c.x]
+	return cur == index
+
+## Whether a tree may be planted at p: open, walkable ground away from the fountains (Dota bars the fountain area).
+func can_plant(p: Vector2) -> bool:
+	var c := world_to_cell(p)
+	if c.x <= 1 or c.y <= 1 or c.x >= N - 2 or c.y >= N - 2 or is_cliff_cell(c.x, c.y):
+		return false
+	if walkable[c.y * N + c.x] == 0:
+		return false
+	for f in fountains:
+		if p.distance_to(f) < 1200.0:
+			return false
+	return true
+
+## Ironwood Twig: a planted tree at p for `duration` seconds (expires at game time `until`). Returns its index, or -1
+## when the ground cannot take a tree (cliff, building, water's edge, another living tree).
+func plant_tree(p: Vector2, until: float) -> int:
+	if not can_plant(p):
+		return -1
+	var c := world_to_cell(p)
+	var under := tree_cell[c.y * N + c.x]
+	var idx := trees.size()
+	trees.append({"pos": cell_center(c.x, c.y), "alive": false, "kind": 0, "scale": 0.8, "regrow": 0.0, "rot": 0.0,
+		"planted": true, "expires": until, "under": under})
+	tree_cell[c.y * N + c.x] = idx
+	regrow_tree(idx)
+	return idx
 
 func _refresh_vision_cell(v: Vector2i) -> void:
 	# another living tree may still stand in this vision cell

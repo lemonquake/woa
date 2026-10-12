@@ -105,7 +105,7 @@ func test_map_symmetry() -> void:
 
 func test_turn_rate() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	h.facing = 0.0
 	w.command(h.id, {"type": O.MOVE, "point": h.pos + Vector2(-600, 0)})
 	var ticks := 0
@@ -118,7 +118,7 @@ func test_turn_rate() -> void:
 
 func test_attack_interval_and_point() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	var dummy := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
 	dummy.def = dummy.def.duplicate()
 	dummy.def.hp = 1e6
@@ -150,7 +150,7 @@ func test_attack_interval_and_point() -> void:
 
 func test_cancel_windup_keeps_cooldown() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
 	c.order = O.HOLD
 	c.def = c.def.duplicate()
@@ -172,7 +172,7 @@ func test_cancel_windup_keeps_cooldown() -> void:
 
 func test_backswing_cancel_free() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
 	c.order = O.HOLD
 	h.facing = 0.0
@@ -189,7 +189,7 @@ func test_backswing_cancel_free() -> void:
 
 func test_deny_rules() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	var ally := w.spawn("dawn_melee", C.DAWN, Vector2(-1700, -4000))
 	ally.order = O.HOLD
 	w.vision.update()
@@ -209,7 +209,7 @@ func test_attack_class_matrix() -> void:
 	var w := empty_world()
 	var ranged := w.spawn("dawn_ranged", C.DAWN, Vector2(-2000, -4000))
 	var melee := w.spawn("dusk_melee", C.DUSK, Vector2(-1600, -4000))
-	var hero := w.spawn("galewarden", C.DUSK, Vector2(-1500, -4100))
+	var hero := w.spawn("blood_ranger", C.DUSK, Vector2(-1500, -4100))
 	var tower := w.spawn("tower1", C.DUSK, Vector2(-1000, -4000))
 	var s := w.combat._snapshot(ranged, "")
 	near(w.combat.attack_class_multiplier(s, melee), 1.5, 1e-6, "piercing vs creep")
@@ -224,7 +224,7 @@ func test_attack_class_matrix() -> void:
 
 func test_last_hit_gold_and_xp() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
 	c.order = O.HOLD
 	c.hp = 1.0
@@ -241,8 +241,8 @@ func test_last_hit_gold_and_xp() -> void:
 
 func test_deny_xp_halved() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-2000, -3500))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
+	var foe := w.spawn("blood_ranger", C.DUSK, Vector2(-2000, -3500))
 	foe.order = O.HOLD
 	var c := w.spawn("dawn_melee", C.DAWN, Vector2(-1500, -4000))
 	c.order = O.HOLD
@@ -258,7 +258,7 @@ func test_deny_xp_halved() -> void:
 
 func test_creep_kill_no_gold() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2600, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2600, -4000))
 	h.order = O.HOLD
 	var a := w.spawn("dawn_melee", C.DAWN, Vector2(-1650, -4000))
 	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
@@ -303,8 +303,8 @@ func test_wave_composition() -> void:
 
 func test_creep_aggro_attack_order() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1300, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
+	var foe := w.spawn("blood_ranger", C.DUSK, Vector2(-1300, -4000))
 	foe.order = O.HOLD
 	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-2000, -3700))
 	c.lane = "mid"
@@ -319,37 +319,11 @@ func test_creep_aggro_attack_order() -> void:
 	w.command(h.id, {"type": O.ATTACK_UNIT, "target": foe.id})
 	check(not c2.aggro_forced, "no new aggro while the 3 s cooldown runs")
 
-func test_orb_walk_no_aggro() -> void:
-	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
-	h.ability_level["frost_quiver"] = 1
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1500, -4000))
-	foe.order = O.HOLD
-	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-2000, -3700))
-	c.lane = "mid"
-	c.order = O.HOLD
-	var bait := w.spawn("dawn_melee", C.DAWN, Vector2(-2000, -3580))
-	bait.order = O.HOLD
-	bait.def = bait.def.duplicate()
-	bait.def.hp = 1e6
-	bait.refresh_stats()
-	bait.hp = bait.max_hp
-	h.facing = 0.0
-	w.vision.update()
-	run(w, 0.4)
-	check(c.atk_target == bait.id, "the creep is busy with the bait creep")
-	w.command(h.id, {"type": O.CAST_UNIT, "ability": "frost_quiver", "target": foe.id})
-	check(not c.aggro_forced, "hand-cast orb draws no creep aggro")
-	run(w, 1.0)
-	check(c.atk_target == bait.id, "nor does its attack swing")
-	var slowed := foe.modifiers.any(func(m): return m.id == "frost_quiver_slow")
-	check(slowed, "frost orb slowed the target")
-
 func test_tower_protects_heroes() -> void:
 	var w := empty_world()
 	var tw := w.spawn("tower1", C.DUSK, Vector2(-1000, -4000))
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-1500, -4000))
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1500, -3550))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-1500, -4000))
+	var foe := w.spawn("blood_ranger", C.DUSK, Vector2(-1500, -3550))
 	foe.order = O.HOLD
 	var creep := w.spawn("dawn_melee", C.DAWN, Vector2(-1250, -4000))
 	creep.order = O.HOLD
@@ -380,7 +354,7 @@ func test_neutral_spawn_and_block() -> void:
 	w.time = 59.0
 	w.next_wave_at = INF
 	var camp: Dictionary = _map.camps[0]
-	var blocker := w.spawn("galewarden", C.DAWN, camp.pos)
+	var blocker := w.spawn("blood_ranger", C.DAWN, camp.pos)
 	blocker.order = O.HOLD
 	run(w, 1.2)
 	var in_camp := w.units.filter(func(u): return u.camp_id == camp.id).size()
@@ -401,7 +375,7 @@ func test_neutral_stack() -> void:
 	w.next_wave_at = INF
 	run(w, 1.2)
 	var camp: Dictionary = _map.camps[1]
-	var h := w.spawn("galewarden", C.DAWN, camp.pos + Vector2(-500, 0))
+	var h := w.spawn("blood_ranger", C.DAWN, camp.pos + Vector2(-500, 0))
 	w.time = 113.5
 	w.vision.update()
 	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
@@ -450,7 +424,7 @@ func test_glyph() -> void:
 
 func test_shop_recipe() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, _map.fountains[0] + Vector2(200, 200))
+	var h := w.spawn("blood_ranger", C.DAWN, _map.fountains[0] + Vector2(200, 200))
 	h.gold_unreliable = 2000
 	check(w.shop.buy(h, "circlet") == "", "bought circlet")
 	check(w.shop.buy(h, "slippers") == "", "bought slippers")
@@ -467,7 +441,7 @@ func test_starting_gold_and_passive() -> void:
 	var w := SimWorld.new(1, _map)
 	w.time = -1.0
 	w.next_neutral_at = INF
-	var h := w.spawn_hero("galewarden", C.DAWN)
+	var h := w.spawn_hero("blood_ranger", C.DAWN)
 	check(h.gold() == 600, "600 starting gold")
 	run(w, 61.0)
 	var passive := h.gold_reliable
@@ -477,15 +451,15 @@ func test_starting_gold_and_passive() -> void:
 
 func test_vision_high_ground() -> void:
 	var w := empty_world()
-	var low := w.spawn("galewarden", C.DAWN, Vector2(-500, 500))       # river
+	var low := w.spawn("blood_ranger", C.DAWN, Vector2(-500, 500))       # river
 	var high_p := Vector2(-4600, -4600)
 	w.vision.update()
 	check(not w.vision.cell_visible(C.DAWN, Vector2(-400, 1200)) or true, "sanity")
-	var up := w.spawn("galewarden", C.DUSK, Vector2(-200, -200))
+	var up := w.spawn("blood_ranger", C.DUSK, Vector2(-200, -200))
 	w.vision.update()
 	check(w.vision.sees(C.DAWN, up), "sees units on the same level nearby")
-	var cliff_top := w.spawn("galewarden", C.DUSK, Vector2(-5200, -4000))
-	var below := w.spawn("galewarden", C.DAWN, Vector2(-5200, -3350))
+	var cliff_top := w.spawn("blood_ranger", C.DUSK, Vector2(-5200, -4000))
+	var below := w.spawn("blood_ranger", C.DAWN, Vector2(-5200, -3350))
 	w.vision.update()
 	check(_map.level_at(cliff_top.pos) == SimMap.HIGH and _map.level_at(below.pos) == SimMap.GROUND, "test spots on high and low ground")
 	check(not w.vision.sees(C.DAWN, cliff_top), "low ground cannot see onto high ground")
@@ -493,8 +467,8 @@ func test_vision_high_ground() -> void:
 
 func test_night_vision() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2500, -6350))
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1300, -6350))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2500, -6350))
+	var foe := w.spawn("blood_ranger", C.DUSK, Vector2(-1300, -6350))
 	w.time = 100.0
 	w.vision.update()
 	var seen_day := w.vision.sees(C.DAWN, foe)
@@ -508,8 +482,8 @@ func test_night_vision() -> void:
 func test_long_match_10000_ticks() -> void:
 	var w := SimWorld.new(7, _map)
 	w.setup_match()
-	var a := w.spawn_hero("galewarden", C.DAWN)
-	var b := w.spawn_hero("galewarden", C.DUSK)
+	var a := w.spawn_hero("blood_ranger", C.DAWN)
+	var b := w.spawn_hero("blood_ranger", C.DUSK)
 	w.bots.append(SimBot.new(w, a.id, "mid", "Bot Pip"))
 	w.bots.append(SimBot.new(w, b.id, "mid", "Bot Gerald"))
 	var t0 := Time.get_ticks_msec()
@@ -536,8 +510,8 @@ func test_long_match_10000_ticks() -> void:
 func test_zprofile() -> void:
 	var w := SimWorld.new(7, _map)
 	w.setup_match()
-	var a := w.spawn_hero("galewarden", C.DAWN)
-	var b := w.spawn_hero("galewarden", C.DUSK)
+	var a := w.spawn_hero("blood_ranger", C.DAWN)
+	var b := w.spawn_hero("blood_ranger", C.DUSK)
 	w.bots.append(SimBot.new(w, a.id, "mid", "Bot Pip"))
 	w.bots.append(SimBot.new(w, b.id, "mid", "Bot Gerald"))
 	for i in 30 * 300:
@@ -588,7 +562,7 @@ func test_town_portal() -> void:
 	w.time = 100.0
 	w.next_wave_at = INF
 	w.next_neutral_at = INF
-	var h := w.spawn_hero("galewarden", C.DAWN)
+	var h := w.spawn_hero("blood_ranger", C.DAWN)
 	check(h.tp_charges == 1, "heroes start with one Town Portal scroll")
 	var t1: SimUnit = null
 	for u in w.units:
@@ -602,7 +576,7 @@ func test_town_portal() -> void:
 	run(w, 0.4)
 	check(h.pos.distance_to(t1.pos) < 500.0, "arrives next to the chosen building after 3 s")
 	check(h.tp_charges == 0, "scroll spent")
-	var h2 := w.spawn_hero("galewarden", C.DAWN)
+	var h2 := w.spawn_hero("blood_ranger", C.DAWN)
 	h2.tp_charges = 1
 	h2.mana = h2.max_mana
 	w.command(h2.id, {"type": O.CAST_POINT, "ability": "tp", "point": t1.pos})
@@ -615,7 +589,7 @@ func test_town_portal() -> void:
 func test_buyback() -> void:
 	var w := SimWorld.new(1, _map)
 	w.time = 600.0
-	var h := w.spawn_hero("galewarden", C.DAWN)
+	var h := w.spawn_hero("blood_ranger", C.DAWN)
 	h.gold_unreliable = 2000
 	w.combat.kill(h, null)
 	w.combat.process_deaths()
@@ -634,7 +608,7 @@ func test_courier_delivery() -> void:
 	w.time = 30.0
 	w.next_wave_at = INF
 	w.next_neutral_at = INF
-	var h := w.spawn_hero("galewarden", C.DAWN)
+	var h := w.spawn_hero("blood_ranger", C.DAWN)
 	h.pos = Vector2(-1500, -1300)
 	h.gold_unreliable = 1000
 	check(w.shop.buy(h, "slippers") == "", "bought away from the shop")
@@ -647,7 +621,7 @@ func test_courier_delivery() -> void:
 
 func test_stop_and_hard_stop() -> void:
 	var w := empty_world()
-	var h := w.spawn("galewarden", C.DAWN, Vector2(-2000, -4000))
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
 	var foe := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
 	foe.order = O.HOLD
 	foe.def = foe.def.duplicate()
@@ -671,7 +645,7 @@ func test_neutrals_wake_on_damage_only() -> void:
 	w.next_wave_at = INF
 	run(w, 1.2)
 	var camp: Dictionary = _map.camps[1]
-	var h := w.spawn("galewarden", C.DAWN, camp.pos + Vector2(-500, 0))
+	var h := w.spawn("blood_ranger", C.DAWN, camp.pos + Vector2(-500, 0))
 	w.vision.update()
 	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
 	w.command(h.id, {"type": O.ATTACK_UNIT, "target": n[0].id})
@@ -818,7 +792,7 @@ func test_ezee_leap_strike_targeting() -> void:
 func test_ezee_leap_strike_damage() -> void:
 	var w := empty_world()
 	var e := _ezee(w, Vector2(-2000, -4000))
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1450, -4000))
+	var foe := w.spawn("blood_ranger", C.DUSK, Vector2(-1450, -4000))
 	foe.order = O.HOLD
 	w.vision.update()
 	var hp0 := foe.hp
@@ -840,7 +814,7 @@ func test_ezee_leap_strike_damage() -> void:
 func test_ezee_tainted_touch_and_curse() -> void:
 	var w := empty_world()
 	var e := _ezee(w, Vector2(-2000, -4000))
-	var foe := w.spawn("galewarden", C.DUSK, Vector2(-1820, -4000))
+	var foe := w.spawn("blood_ranger", C.DUSK, Vector2(-1820, -4000))
 	foe.order = O.HOLD
 	w.vision.update()
 	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "tainted_touch"})
@@ -882,3 +856,456 @@ func test_ezee_unholy_might() -> void:
 	check(e.get_modifier("unholy_might").is_empty(), "the aura fades after 10 s")
 	check(not e.get_modifier("unholy_fatigue").is_empty(), "then Ezee is slowed")
 	near(e.move_speed, maxf(100.0, float(e.def.move_speed) * 0.5), 1.0, "slowed by 50%")
+
+# ---- Trees (Dota: regrow after 180 s, wait for a clear 150 radius; Ironwood Twig plants a 20 s tree) ----------------
+
+func _restore_tree(i: int) -> void:
+	if i >= 0 and not _map.trees[i].alive and not _map.trees[i].get("planted", false):
+		_map.regrow_tree(i)
+
+func test_tree_regrow_180() -> void:
+	var w := empty_world()
+	var spot := _tree_spot()
+	var ti: int = spot[0]
+	var tp: Vector2 = _map.trees[ti].pos
+	check(w.cut_tree(ti, tp + Vector2(100, 0)), "the tree falls")
+	check(_map.is_walkable(tp), "its ground becomes walkable")
+	check(_map.vision_block[_map.world_to_vcell(tp).y * SimMap.VN + _map.world_to_vcell(tp).x] == 0 or _map.tree_at(tp, 90.0) >= 0,
+		"it stops blocking sight (unless another tree shares the vision cell)")
+	run(w, 178.0)
+	check(not _map.trees[ti].alive, "still down at 2:58")
+	run(w, 3.0)
+	check(_map.trees[ti].alive, "grown back by 3:01")
+	check(not _map.is_walkable(tp), "and blocks the path again")
+	# a unit standing within 150 holds the regrowth back until it leaves
+	w.cut_tree(ti, tp)
+	var c := w.spawn("dawn_melee", C.DAWN, spot[1])
+	c.pos = tp + (spot[1] - tp).normalized() * 120.0
+	c.order = O.HOLD
+	run(w, 185.0)
+	check(not _map.trees[ti].alive, "a unit within 150 keeps the tree from growing")
+	c.pos = tp + (spot[1] - tp).normalized() * 400.0
+	run(w, 1.5)
+	check(_map.trees[ti].alive, "it grows once the unit steps away")
+	_restore_tree(ti)
+
+func test_mini_axe_and_vegan_picker() -> void:
+	check(String(SimData.item("quelling_blade").name) == "Mini-Axe", "Quelling Blade is called Mini-Axe")
+	check(String(SimData.item("tango").name) == "Vegan Picker", "Tango is called Vegan Picker")
+	var w := empty_world()
+	var spot := _tree_spot()
+	var ti: int = spot[0]
+	var tp: Vector2 = _map.trees[ti].pos
+	var h := w.spawn("blood_ranger", C.DAWN, tp + (spot[1] - tp).normalized() * 600.0)
+	h.inventory[0] = {"id": "quelling_blade", "charges": 0}
+	h.inventory[1] = {"id": "tango", "charges": 3}
+	h.refresh_stats()
+	near(w.abilities.cast_range(h, "", 0), 350.0, 0.1, "Mini-Axe chops from 350")
+	near(w.abilities.cast_range(h, "", 1), 165.0, 0.1, "Vegan Picker eats from 165")
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": tp})
+	run(w, 2.0)
+	check(not _map.trees[ti].alive, "the hero walks into range and chops the tree")
+	var cd := w.abilities.item_cooldown_left(h, 0)
+	check(cd > 1.0 and cd <= 4.0, "Chop Tree has a 4 s cooldown (%.2f left)" % cd)
+	_restore_tree(ti)
+	# the passive: +4 against creeps for a ranged hero
+	var s := {"src": h.id, "team": h.team, "hero": true, "dmg_min": 50.0, "dmg_max": 50.0, "bonus": 0.0, "class": 0,
+		"level_h": 1, "mod": "", "lifesteal": 0.0, "ranged": true, "quell": w.combat._quelling(h), "taint": 0}
+	near(float(s.quell), 4.0, 0.01, "ranged heroes get +4 creep damage from the Mini-Axe")
+	# Vegan Picker: 7 hp/s for 16 s, the tree is eaten
+	h.pos = tp + (spot[1] - tp).normalized() * 150.0
+	h.hp = h.max_hp * 0.3
+	var hp0 := h.hp
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 1, "point": tp})
+	run(w, 0.2)
+	check(not _map.trees[ti].alive, "the tree is eaten")
+	check(int(h.inventory[1].charges) == 2, "one charge used")
+	var m := h.get_modifier("tango")
+	near(float(m.expires) - w.time, 16.0 - 0.2, 0.1, "regeneration lasts 16 s")
+	run(w, 10.0)
+	near(h.hp - hp0, 10.2 * (7.0 + h.hp_regen), 6.0, "about 7 hp/s on top of normal regeneration")
+	_restore_tree(ti)
+
+func test_planted_tree() -> void:
+	var w := empty_world()
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
+	h.inventory[0] = {"id": "branch", "charges": 0}
+	h.inventory[1] = {"id": "tango", "charges": 3}
+	h.refresh_stats()
+	var p := Vector2(-1750, -4000)
+	var bystander := w.spawn("dawn_melee", C.DAWN, _map.cell_center(_map.world_to_cell(p).x, _map.world_to_cell(p).y))
+	bystander.order = O.HOLD
+	check(w.abilities.item_target("branch") == "point", "Ironwood Twig targets the ground")
+	near(w.abilities.cast_range(h, "", 0), 400.0, 0.1, "planted within 400")
+	var n0 := _map.trees.size()
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": p})
+	run(w, 0.2)
+	check(_map.trees.size() == n0 + 1 and _map.trees[n0].get("planted", false), "a planted tree stands")
+	check(h.inventory[0] == null, "the twig is consumed")
+	check(not _map.is_walkable(p), "it blocks the path")
+	check(_map.is_walkable(bystander.pos), "a unit standing there steps out of it")
+	h.pos = p + Vector2(-150, 0)
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 1, "point": p})
+	run(w, 0.2)
+	near(float(h.get_modifier("tango").expires) - w.time, 32.0 - 0.2, 0.1, "Vegan Picker on a planted tree lasts 32 s")
+	check(_map.is_walkable(p), "eaten: the ground is open again")
+	# a second one withers by itself after 20 s and never regrows
+	h.inventory[0] = {"id": "branch", "charges": 0}
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": p + Vector2(0, 200)})
+	run(w, 0.2)
+	var ti := _map.trees.size() - 1
+	check(_map.trees[ti].alive, "planted again")
+	run(w, 19.0)
+	check(_map.trees[ti].alive, "still standing at 19 s")
+	run(w, 2.0)
+	check(not _map.trees[ti].alive, "withered after 20 s")
+	run(w, 200.0)
+	check(not _map.trees[ti].alive, "planted trees never regrow")
+	check(not w.map.can_plant(_map.fountains[0] + Vector2(300, 0)), "no planting in the fountain area")
+
+# ---- Blood Ranger -----------------------------------------------------------------------------------------------------
+
+func _ranger(w: SimWorld, p: Vector2, levels := {}, team := C.DAWN) -> SimUnit:
+	var r := w.spawn("blood_ranger", team, p)
+	r.level = 18
+	r.refresh_stats()
+	r.hp = r.max_hp
+	r.mana = r.max_mana
+	for aid in r.abilities:
+		r.ability_level[aid] = int(levels.get(aid, 4 if aid != "blood_ranger_ult" else 3))
+	r.refresh_stats()
+	return r
+
+func _dummy(w: SimWorld, id: String, team: int, p: Vector2, hp := 1e6) -> SimUnit:
+	var d := w.spawn(id, team, p)
+	d.def = d.def.duplicate()
+	d.def.hp = hp
+	d.def["can_attack"] = false
+	d.refresh_stats()
+	d.hp = d.max_hp
+	d.order = O.HOLD
+	return d
+
+func test_burst_shot_split() -> void:
+	var w := empty_world()
+	for k in 400:
+		var sp: Array = w.abilities.burst_split(30, 5, 4, 7)
+		var sum := 0
+		var ok := sp.size() == 5
+		for n in sp:
+			sum += int(n)
+			ok = ok and int(n) >= 4 and int(n) <= 7
+		if not ok or sum != 30:
+			check(false, "split %s is not five waves of 4-7 summing to 30" % str(sp))
+			return
+	check(true, "400 random splits: five waves of 4-7 that always sum to 30")
+
+func test_burst_shot_channel() -> void:
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000), {"burst_shot": 1})
+	var foe := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	w.vision.update()
+	var mana0 := r.mana
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "burst_shot", "point": foe.pos})
+	var arrows := 0
+	var waves: Array = []
+	var ended := -1.0
+	var started := -1.0
+	var hits := 0
+	var per_hit: Array = []
+	for i in 120:
+		w.step()
+		for ev in w.events:
+			if ev.t == "channel_start" and ev.u == r.id:
+				started = w.time
+			if ev.t == "burst_wave":
+				waves.append(int(ev.count))
+			if ev.t == "projectile" and ev.get("kind", "") == "spell":
+				arrows += 1
+			if ev.t == "damage" and ev.u == foe.id and String(ev.get("key", "")) == "burst_shot":
+				hits += 1
+				per_hit.append(float(ev.amount))
+			if ev.t == "channel_end" and ev.u == r.id and not ev.cancelled:
+				ended = w.time
+		w.events.clear()
+	check(started > 0.0, "the channel starts after the 0.2 s cast point")
+	near(r.mana, mana0 - 90.0 + r.mana_regen * 4.0, 3.0, "90 mana at level 1, spent as the channel starts")
+	near(w.abilities.cooldown_left(r, "burst_shot"), 17.0 - (w.time - started), 0.1, "17 s cooldown")
+	check(waves.size() == 5, "five waves (%d)" % waves.size())
+	check(arrows == 30, "30 arrows (%d)" % arrows)
+	near(ended - started, 2.0, 0.05, "a 2 s channel")
+	check(hits == 30, "every arrow strikes the only enemy in the area (%d)" % hits)
+	var expect := ((r.dmg_min + r.dmg_max) * 0.5 + r.bonus_damage) * 0.55 * C.armor_multiplier(foe.armor)
+	if not per_hit.is_empty():
+		near(float(per_hit[0]), expect, 0.5, "each arrow: 55% of attack damage at level 1, physical")
+	check(r.dmg_out.has("burst_shot"), "recorded as Burst Shot in the damage table")
+	# level 4: 85%
+	var w2 := empty_world()
+	var r2 := _ranger(w2, Vector2(-2000, -4000))
+	var foe2 := _dummy(w2, "dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	w2.vision.update()
+	w2.command(r2.id, {"type": O.CAST_POINT, "ability": "burst_shot", "point": foe2.pos})
+	run(w2, 3.0)
+	var row: Array = r2.dmg_out.get("burst_shot", [0, 0, 0])
+	near(float(row[1]), 30.0 * ((r2.dmg_min + r2.dmg_max) * 0.5 + r2.bonus_damage) * 0.85 * C.armor_multiplier(foe2.armor), 2.0,
+		"30 arrows at 85% of attack damage at level 4")
+
+func _burst_then(order: Dictionary, setup: Callable) -> Array:
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000))
+	var foe := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	w.vision.update()
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "burst_shot", "point": foe.pos})
+	run(w, 0.6)
+	var arrows_before := w.projectiles.size()
+	setup.call(w, r, foe)
+	if not order.is_empty():
+		w.command(r.id, order)
+	run(w, 2.0)
+	var row: Array = r.dmg_out.get("burst_shot", [0, 0, 0])
+	return [r, float(row[1]), arrows_before]
+
+func test_burst_shot_interrupts() -> void:
+	var dmg_full := 30.0
+	var none := func(_w, _r, _f): pass
+	var moved := _burst_then({"type": O.MOVE, "point": Vector2(-2600, -4000)}, none)
+	check((moved[0] as SimUnit).channel.is_empty(), "a move order ends the channel")
+	var stopped := _burst_then({"type": O.STOP}, none)
+	check((stopped[0] as SimUnit).channel.is_empty(), "stop ends it")
+	var held := _burst_then({"type": O.HOLD}, none)
+	check((held[0] as SimUnit).channel.is_empty(), "hold ends it")
+	var attacked := _burst_then({"type": O.ATTACK_MOVE, "point": Vector2(-1500, -4000)}, none)
+	check((attacked[0] as SimUnit).channel.is_empty(), "an attack order ends it")
+	var stunned := _burst_then({}, func(w2, r, _f): r.add_modifier({"id": "stun", "source": -1, "expires": w2.time + 0.5, "stun": true}))
+	check((stunned[0] as SimUnit).channel.is_empty(), "a stun ends it")
+	var silenced := _burst_then({}, func(w2, r, _f): r.add_modifier({"id": "sil", "source": -1, "expires": w2.time + 0.5, "silence": true}))
+	check((silenced[0] as SimUnit).channel.is_empty(), "silence ends it")
+	var pushed := _burst_then({}, func(w2, r, f): w2.abilities.start_push(r, Vector2(-600, 0), f.id, f.team, "dark_stomp", 1, 99))
+	check((pushed[0] as SimUnit).channel.is_empty(), "a push ends it")
+	# full channel for comparison: interrupted ones dealt less
+	var full := _burst_then({}, none)
+	check(float(moved[1]) < float(full[1]) * 0.7, "cut short, fewer arrows land (%.0f vs %.0f)" % [float(moved[1]), float(full[1])])
+	# an instant item does not break it; a queued order waits for it
+	var wand := _burst_then({}, func(w2, r, _f):
+		r.inventory[0] = {"id": "magic_stick", "charges": 0}
+		r.stick_charges = 3
+		w2.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+		w2.command(r.id, {"type": O.MOVE, "point": Vector2(-2600, -4000), "queue": true}))
+	var rw: SimUnit = wand[0]
+	check(rw.stick_charges == 0, "the Spark Rod was used mid-channel")
+	near(float(wand[1]), float(full[1]), 1.0, "and the channel ran its course")
+	check(rw.pos.x < -2030.0, "the queued move ran after the channel ended")
+
+func test_gale_impact() -> void:
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000), {"gale_impact": 1})
+	var on_left := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1500, -3970), 550.0)
+	var on_right := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1200, -4030), 550.0)
+	w.vision.update()
+	near(w.abilities.cast_range(r, "gale_impact", -1), 2000.0, 0.1, "cast range 2000")
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(-800, -4000)})
+	run(w, 1.6)
+	near(on_left.max_hp - on_left.hp, 120.0 * (1.0 - on_left.magic_resist), 1.0, "120 magic damage at level 1")
+	check(on_left.pos.y > -3970.0 + 120.0, "an enemy left of the arrow is thrown further left (y %.0f)" % on_left.pos.y)
+	check(on_right.pos.y < -4030.0 - 120.0, "one right of it is thrown right (y %.0f)" % on_right.pos.y)
+	check(w.abilities.cooldown_left(r, "gale_impact") > 10.0, "12 s cooldown")
+	var fx_hits := 0
+	for e2 in [on_left, on_right]:
+		fx_hits += 1 if (e2 as SimUnit).hp < (e2 as SimUnit).max_hp else 0
+	check(fx_hits == 2, "the arrow pierces: both enemies are hit")
+	# distance: it stops at the target point (at most 2000)
+	var w2 := empty_world()
+	var r2 := _ranger(w2, Vector2(-2000, -4000))
+	var far_foe := _dummy(w2, "dusk_melee", C.DUSK, Vector2(-1000, -4000), 900.0)
+	w2.vision.update()
+	w2.command(r2.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(-1500, -4000)})
+	run(w2, 1.5)
+	check(far_foe.hp == far_foe.max_hp, "the arrow stops at the target point, short of an enemy beyond it")
+
+func test_gale_impact_trees_and_crash() -> void:
+	var w := empty_world()
+	var spot := _tree_spot()
+	var ti: int = spot[0]
+	var tp: Vector2 = _map.trees[ti].pos
+	var away: Vector2 = -(spot[2] as Vector2)              # from the tree out over open ground
+	# the enemy stands just off the tree on the open side; the arrow passes beside it so the push throws it at the tree
+	var foe := _dummy(w, "dusk_melee", C.DUSK, tp + away * 170.0, 2000.0)
+	var side := away.orthogonal()
+	var r := _ranger(w, foe.pos + away * 120.0 - side * 700.0)
+	w.vision.update()
+	var crashed := false
+	var felled := false
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": foe.pos + away * 120.0 + side * 700.0})
+	for i in 90:
+		w.step()
+		for ev in w.events:
+			if ev.t == "impact" and ev.u == foe.id and ev.what == "tree":
+				crashed = true
+			if ev.t == "tree" and int(ev.i) == ti and not ev.alive:
+				felled = true
+		w.events.clear()
+	var row: Array = r.dmg_out.get("gale_impact", [0, 0, 0])
+	if crashed:
+		near(float(row[1]), 360.0 * 1.2 * (1.0 - foe.magic_resist), 2.0, "the crash adds 20% of the damage once")
+		check(felled, "the tree it crashed into is destroyed")
+	else:
+		check(false, "the enemy was thrown into the tree")
+	_restore_tree(ti)
+	# the arrow itself fells every tree on its line
+	var w2 := empty_world()
+	var spot2 := _tree_spot()
+	var ti2: int = spot2[0]
+	var tp2: Vector2 = _map.trees[ti2].pos
+	var out2: Vector2 = -(spot2[2] as Vector2)
+	var r2 := _ranger(w2, tp2 + out2 * 500.0)
+	w2.vision.update()
+	w2.command(r2.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": tp2 - out2 * 300.0})
+	run(w2, 1.0)
+	check(not _map.trees[ti2].alive, "a tree on the arrow's path falls")
+	for i in _map.trees.size():
+		_restore_tree(i)
+
+func test_masterful_archery() -> void:
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000), {"masterful_archery": 4})
+	var foe := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1600, -4000))
+	foe.def.armor = 0.0
+	foe.refresh_stats()
+	w.vision.update()
+	var procs := 0
+	var bonus := 0.0
+	var attacks := 0
+	var last_proc := -99.0
+	var gap_ok := true
+	w.command(r.id, {"type": O.ATTACK_UNIT, "target": foe.id})
+	for i in int(240.0 * C.TICK_RATE):
+		w.step()
+		for ev in w.events:
+			if ev.t == "projectile" and ev.src == r.id and ev.get("kind", "") == "attack":
+				attacks += 1
+			if ev.t == "masterful_hit":
+				procs += 1
+				bonus = float(ev.amount)
+				if w.time - last_proc < 0.8 - 0.001:
+					gap_ok = false
+				last_proc = w.time
+		w.events.clear()
+	near(bonus, r.agi_total * 0.38, 0.01, "bonus = 38% of agility at level 4")
+	check(gap_ok, "never twice within 0.8 s")
+	var rate := float(procs) / maxf(1.0, attacks)
+	check(rate > 0.2 and rate < 0.36, "about 30% of attacks burst (%.2f of %d)" % [rate, attacks])
+
+func test_blood_ranger_ult() -> void:
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000), {"blood_ranger_ult": 1})
+	var foe := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1300, -4000))
+	w.vision.update()
+	var range0 := r.attack_range
+	w.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "blood_ranger_ult"})
+	run(w, 0.4)
+	check(not r.get_modifier("blood_ranger").is_empty(), "the ultimate is active")
+	near(r.attack_range - range0, 200.0, 0.1, "+200 attack range at level 1")
+	near(r.lifesteal_ability, 0.4, 0.001, "40% lifesteal at level 1")
+	near(w.abilities.cooldown_left(r, "blood_ranger_ult"), 29.8, 0.3, "30 s cooldown")
+	# lifesteal: a hit heals 40% of the damage after armor (no 40% creep factor for ability lifesteal)
+	r.hp = r.max_hp * 0.5
+	var s := w.combat._snapshot(r, "")
+	s.dmg_min = 100.0
+	s.dmg_max = 100.0
+	s.bonus = 0.0
+	s.quell = 0.0
+	var hp0 := r.hp
+	w.combat.land_attack(s, foe)
+	near(r.hp - hp0, 100.0 * C.armor_multiplier(foe.armor) * 0.4, 0.5, "heals 40% of the blow")
+	run(w, 15.0)
+	check(r.get_modifier("blood_ranger").is_empty(), "ends after 15 s")
+	near(r.attack_range, range0, 0.1, "range back to normal")
+
+## A point with open ground for `dist` to its west (for leap tests).
+func _open_west(dist: float) -> Vector2:
+	for y in range(-4400, -3000, 64):
+		for x in range(-3000, -1000, 64):
+			var p := Vector2(x, y)
+			var ok := true
+			for d in range(-160, int(dist) + 40, 16):
+				if not _map.is_walkable(p + Vector2(-d, 0)):
+					ok = false
+					break
+			if ok:
+				return p
+	return Vector2(-2000, -4000)
+
+func test_blood_ranger_back_leap() -> void:
+	var w := empty_world()
+	var at := _open_west(300.0)
+	var r := _ranger(w, at)
+	var foe := _dummy(w, "dusk_melee", C.DUSK, at + Vector2(120, 0))
+	w.vision.update()
+	w.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "blood_ranger_ult"})
+	run(w, 0.4)
+	var m := r.get_modifier("blood_ranger")
+	m.leap_chance = 1.0                              # force the roll for the test
+	var p0 := r.pos
+	w.abilities.on_attacked(r, foe)
+	check(not r.hop.is_empty(), "an attack that hits her makes her leap")
+	check(r.is_rooted() and not r.is_stunned(), "the leap is not a disable")
+	run(w, 0.4)
+	check(r.hop.is_empty(), "landed within 0.4 s")
+	near(r.pos.distance_to(p0), 300.0, 20.0, "300 back")
+	check(r.pos.x < p0.x - 250.0, "away from the attacker")
+	w.abilities.on_attacked(r, foe)
+	check(r.hop.is_empty(), "not again within 1 s")
+	run(w, 1.0)
+	w.abilities.on_attacked(r, foe)
+	check(not r.hop.is_empty(), "again after 1 s")
+	run(w, 0.5)
+	# the chance is 30%
+	m = r.get_modifier("blood_ranger")
+	m.leap_chance = 0.3
+	var leaps := 0
+	for i in 400:
+		r.set_meta("hop_ready", 0.0)
+		r.hop = {}
+		r.pos = p0
+		w.abilities.on_attacked(r, foe)
+		if not r.hop.is_empty():
+			leaps += 1
+	r.hop = {}
+	check(leaps > 90 and leaps < 150, "about 30%% of hits (%d of 400)" % leaps)
+	# a cliff stops the leap short
+	var w2 := empty_world()
+	var base := Vector2(-5200, -3350)
+	var r2 := _ranger(w2, base)
+	var foe2 := _dummy(w2, "dusk_melee", C.DUSK, base + Vector2(0, 120))
+	w2.command(r2.id, {"type": O.CAST_NO_TARGET, "ability": "blood_ranger_ult"})
+	run(w2, 0.4)
+	r2.get_modifier("blood_ranger").leap_chance = 1.0
+	var start := r2.pos
+	var blocked := false
+	for d in range(16, 301, 16):
+		if not _map.is_walkable(start + Vector2(0, -d)):
+			blocked = true
+	w2.abilities.on_attacked(r2, foe2)
+	run(w2, 0.5)
+	check(_map.is_walkable(r2.pos), "she never lands inside a cliff or tree")
+	if blocked:
+		check(r2.pos.distance_to(start) < 290.0, "a cliff behind her cuts the leap short")
+
+func test_item_lifesteal_vs_creeps() -> void:
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000))
+	r.inventory[0] = {"id": "lifesteal", "charges": 0}
+	r.refresh_stats()
+	var foe := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1600, -4000))
+	var hero := _dummy(w, "ezee", C.DUSK, Vector2(-1600, -3900))
+	r.hp = r.max_hp * 0.5
+	for t in [foe, hero]:
+		var s := w.combat._snapshot(r, "")
+		s.dmg_min = 100.0
+		s.dmg_max = 100.0
+		s.bonus = 0.0
+		s.quell = 0.0
+		var hp0 := r.hp
+		w.combat.land_attack(s, t)
+		var expect := 100.0 * C.armor_multiplier((t as SimUnit).armor) * 0.18 * (0.4 if (t as SimUnit).is_creep() else 1.0)
+		near(r.hp - hp0, expect, 0.5, "Leech Charm heals 18%% (40%% of that against creeps) vs %s" % (t as SimUnit).name)

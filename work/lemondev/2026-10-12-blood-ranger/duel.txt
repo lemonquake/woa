@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3 at 12:00: A(blood_ranger) 3/0/0 lvl 9 LH 22 DN 8 nw 4036 | B(ezee) 0/3/0 lvl 6 LH 18 DN 10 nw 2421 | towers lost A 1 B 2
+    casts: { "A:gale_impact": 7, "B:tainted_touch": 5, "B:dark_stomp": 4, "B:leap_strike": 3, "A:burst_shot": 4, "B:unholy_might": 1, "A:blood_ranger_ult": 1 }
+seed 7 at 12:00: A(blood_ranger) 0/0/0 lvl 9 LH 35 DN 26 nw 3534 | B(ezee) 0/0/0 lvl 5 LH 11 DN 9 nw 2153 | towers lost A 1 B 2
+    casts: { "A:gale_impact": 6, "B:tainted_touch": 6, "B:dark_stomp": 4, "A:blood_ranger_ult": 1 }
+seed 11 at 12:00: A(blood_ranger) 2/0/0 lvl 9 LH 27 DN 26 nw 3882 | B(ezee) 0/2/0 lvl 6 LH 17 DN 7 nw 2312 | towers lost A 1 B 1
+    casts: { "B:dark_stomp": 6, "B:tainted_touch": 9, "A:gale_impact": 8, "A:burst_shot": 2, "A:blood_ranger_ult": 2, "B:leap_strike": 2 }

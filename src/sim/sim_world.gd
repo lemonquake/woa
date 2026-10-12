@@ -198,19 +198,50 @@ func _clock() -> void:
 				_gold_acc[h.id] -= g
 				h.gold_reliable += g
 				h.gold_earned += g
-	# trees regrow
+	# trees regrow (Dota: 180 s after they fall, waiting while any unit stands within 150); planted trees wither
 	if tick % 30 == 0:
 		for i in map.trees.size():
 			var t: Dictionary = map.trees[i]
-			if not t.alive and t.regrow > 0.0:
-				t.regrow -= 1.0
-				if t.regrow <= 0.0 and not _units_near(t.pos, 80.0):
+			if t.alive:
+				if t.get("planted", false) and time >= float(t.expires):
+					map.destroy_tree(i, 0.0)
+					vision.static_dirty = true
+					events.append({"t": "tree", "i": i, "alive": false, "planted": true})
+				continue
+			if t.regrow <= 0.0:
+				continue
+			t.regrow = maxf(0.0, t.regrow - 1.0)
+			if t.regrow <= 0.0:
+				t.regrow = 0.001          # still waiting: checked again next second
+				if map.can_regrow(i) and not _units_near(t.pos, C.TREE_REGROW_CLEAR):
 					map.regrow_tree(i)
+					vision.static_dirty = true
 					events.append({"t": "tree", "i": i, "alive": true})
+
+## Fell a tree (Mini-Axe, Vegan Picker, Gale Impact, a hurled unit). Natural trees regrow after 180 s; `from` is
+## where the blow came from (the fall direction; INF = it was eaten and simply vanishes).
+func cut_tree(i: int, from: Vector2, smashed := false) -> bool:
+	if not map.destroy_tree(i, C.TREE_REGROW):
+		return false
+	vision.static_dirty = true
+	var e := {"t": "tree", "i": i, "alive": false, "smashed": smashed}
+	if from != Vector2.INF:
+		e["from"] = from
+	events.append(e)
+	return true
+
+## Units standing in a cell that just became blocked (a planted tree) step out to the nearest open cell.
+func nudge_out(p: Vector2, r: float) -> void:
+	for u in query(p, r + 40.0, true):
+		if u.is_building() or u.is_ward() or u.kind == K.COURIER or map.is_walkable(u.pos):
+			continue
+		var c := map.nearest_walkable(map.world_to_cell(u.pos))
+		u.pos = map.cell_center(c.x, c.y)
+		u.path = PackedVector2Array()
 
 func _units_near(p: Vector2, r: float) -> bool:
 	for u in query(p, r):
-		if u.alive and not u.is_building():
+		if u.alive and not u.is_building() and not u.is_ward() and u.kind != K.COURIER:
 			return true
 	return false
 
@@ -240,7 +271,7 @@ func _pre_unit(u: SimUnit) -> void:
 	if u.kind == K.WARD and time >= u.ward_expires:
 		combat.kill(u, null)
 	# pushes and leaps
-	if not u.knock.is_empty() or not u.leap.is_empty():
+	if not u.knock.is_empty() or not u.leap.is_empty() or not u.hop.is_empty():
 		abilities.update_motion(u)
 
 ## Backdoor protection: a building takes half damage and heals what enemies did unless enemy lane creeps are near.
