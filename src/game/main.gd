@@ -43,6 +43,8 @@ func _stage(p: float, text: String) -> void:
 
 func _ready() -> void:
 	_parse_args()
+	Options.install(get_tree())
+	Options.apply_audio()
 	var t0 := Time.get_ticks_msec()
 	await _stage(0.08, "Loading terrain")
 	map = SimMap.new()
@@ -54,6 +56,7 @@ func _ready() -> void:
 	atmosphere = Atmosphere.new()
 	add_child(atmosphere)
 	atmosphere.build()
+	Options.apply_environment(atmosphere.env)
 	await _stage(0.3, "Loading mountains")
 	terrain = TerrainBuilder.new(map)
 	terrain.build(self)
@@ -80,6 +83,8 @@ func _ready() -> void:
 	targeting_fx.game = self
 	add_child(targeting_fx)
 	camera = CameraRig.new()
+	camera.edge_pan_enabled = bool(Options.get_value("edge_pan"))
+	camera.edge_speed = float(Options.get_value("camera_speed"))
 	add_child(camera)
 	camera.height_at = func(p: Vector2) -> float: return terrain.height_at(p)
 	camera.follow = func():

@@ -40,7 +40,7 @@ var _stack := {}                           # target key -> [time of last number,
 var _merge := {}                            # target:style:source -> {p: the live popup, at: last hit time}
 
 func damage_number(amount: float, dtype: int, at: Vector3, style: String, target := -1, src_key := "") -> void:
-	if amount < 0.5:
+	if amount < 0.5 or not bool(Options.get_value("damage_numbers")):
 		return
 	var now := Time.get_ticks_msec() / 1000.0
 	# rapid hits from one spell on one unit (Burst Shot's arrows) count up in a single number that pops on each hit

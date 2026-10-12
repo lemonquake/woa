@@ -1517,3 +1517,18 @@ func test_item_lifesteal_vs_creeps() -> void:
 		w.combat.land_attack(s, t)
 		var expect := 100.0 * C.armor_multiplier((t as SimUnit).armor) * 0.18 * (0.4 if (t as SimUnit).is_creep() else 1.0)
 		near(r.hp - hp0, expect, 0.5, "Leech Charm heals 18%% (40%% of that against creeps) vs %s" % (t as SimUnit).name)
+
+## Options: sound starts at half loudness (Master 50% = -10 dB) and every game sound has its own bus.
+func test_options_audio_defaults() -> void:
+	check(float(Options.DEFAULTS.master) == 0.5, "Master volume defaults to 50%")
+	near(Options.to_db(0.5), -10.0, 0.001, "50% is half as loud (-10 dB)")
+	near(Options.to_db(1.0), 0.0, 0.001, "100% is unchanged")
+	near(Options.to_db(0.25), -20.0, 0.001, "25% is a quarter as loud")
+	check(Options.to_db(0.0) <= -79.0, "0% is silent")
+	Options.reset()
+	Options.apply_audio()
+	for b in ["Effects", "Interface", "Ambience"]:
+		var i := AudioServer.get_bus_index(b)
+		check(i > 0, "bus %s exists" % b)
+		check(i > 0 and AudioServer.get_bus_send(i) == &"Master", "bus %s feeds Master" % b)
+	near(AudioServer.get_bus_volume_db(0), -10.0, 0.01, "Master bus at -10 dB on a fresh profile")

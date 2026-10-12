@@ -905,10 +905,10 @@ class TopBar extends Control:
 			kills[h.team] += h.kills
 		U.panel(self, Rect2(W * 0.5 - 220, 0, 120, 46), Color(0.25, 0.4, 0.6), 6)
 		U.panel(self, Rect2(W * 0.5 + 100, 0, 120, 46), Color(0.6, 0.25, 0.22), 6)
-		U.text_c(self, SimConst.TEAM_NAMES[0], Vector2(W * 0.5 - 160, 18), 12, U.DAWN, "title")
-		U.text_c(self, str(kills[0]), Vector2(W * 0.5 - 130, 34), 26, U.TEXT, "bold")
-		U.text_c(self, SimConst.TEAM_NAMES[1], Vector2(W * 0.5 + 160, 18), 12, U.DUSK, "title")
-		U.text_c(self, str(kills[1]), Vector2(W * 0.5 + 190, 34), 26, U.TEXT, "bold")
+		U.text_c(self, SimConst.TEAM_NAMES[0], Vector2(W * 0.5 - 160, 15), 11, U.DAWN, "title")
+		U.text_c(self, str(kills[0]), Vector2(W * 0.5 - 160, 41), 22, U.TEXT, "bold")
+		U.text_c(self, SimConst.TEAM_NAMES[1], Vector2(W * 0.5 + 160, 15), 11, U.DUSK, "title")
+		U.text_c(self, str(kills[1]), Vector2(W * 0.5 + 160, 41), 22, U.TEXT, "bold")
 		tiles.clear()
 		var slot := [0, 0]
 		for h in w.heroes:

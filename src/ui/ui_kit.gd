@@ -150,6 +150,34 @@ static func wrap(s: String, width: float, size: int, kind := "body") -> PackedSt
 		out.append(line)
 	return out
 
+## An on/off switch for CheckButton: a 56 x 30 capsule, gold with the knob on the right when on, dark with a grey
+## knob on the left when off (both clearly visible on the dark panels).
+static func _switch_icon(on: bool) -> ImageTexture:
+	var w := 56
+	var h := 30
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	var r := h * 0.5 - 1.0
+	var kx := (w - h * 0.5) if on else h * 0.5
+	var track := Color(0.62, 0.48, 0.2) if on else Color(0.1, 0.1, 0.12)
+	var rim := Color(0.9, 0.72, 0.36) if on else Color(0.45, 0.42, 0.38)
+	var knob := Color(1.0, 0.93, 0.74) if on else Color(0.62, 0.6, 0.58)
+	for y in h:
+		for x in w:
+			var px := Vector2(x + 0.5, y + 0.5)
+			var cx := clampf(px.x, h * 0.5, w - h * 0.5)
+			var d := px.distance_to(Vector2(cx, h * 0.5))
+			var c := Color(0, 0, 0, 0)
+			if d < r + 0.5:
+				c = rim if d > r - 1.6 else track
+				c.a = clampf(r + 0.5 - d, 0.0, 1.0)
+			var kd := px.distance_to(Vector2(kx, h * 0.5))
+			if kd < r - 3.0:
+				var kc := knob
+				kc.a = clampf(r - 3.0 - kd, 0.0, 1.0)
+				c = c.blend(kc) if c.a > 0.0 else kc
+			img.set_pixel(x, y, c)
+	return ImageTexture.create_from_image(img)
+
 ## The Control theme for menus: dark panels with a gold rim, Lato text, Cinzel headings, gold sliders and buttons.
 static var _theme: Theme
 
@@ -182,6 +210,18 @@ static func theme() -> Theme:
 		t.set_color("font_hover_color", cls, GOLD)
 		t.set_color("font_pressed_color", cls, GOLD)
 	t.set_stylebox("hover_pressed", "Button", sb.call(Color(0.3, 0.24, 0.13), GOLD))
+	t.set_icon("checked", "CheckButton", _switch_icon(true))
+	t.set_icon("unchecked", "CheckButton", _switch_icon(false))
+	t.set_icon("checked_disabled", "CheckButton", _switch_icon(true))
+	t.set_icon("unchecked_disabled", "CheckButton", _switch_icon(false))
+	for cls in ["CheckButton", "CheckBox"]:
+		t.set_color("font_color", cls, TEXT)
+		t.set_color("font_hover_color", cls, GOLD)
+		t.set_color("font_pressed_color", cls, TEXT)
+		t.set_color("font_hover_pressed_color", cls, GOLD)
+		var clear: StyleBoxFlat = sb.call(Color(0, 0, 0, 0), Color(0, 0, 0, 0), 0)
+		for st in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
+			t.set_stylebox(st, cls, clear)
 	t.set_color("font_color", "Label", TEXT)
 	t.set_font_size("font_size", "Label", 15)
 	var slider_bg: StyleBoxFlat = sb.call(Color(0.02, 0.02, 0.03), Color(0.25, 0.22, 0.18), 1, 3, 0)

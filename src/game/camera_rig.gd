@@ -25,6 +25,8 @@ var _shake_dur := 0.0
 
 ## Shake the view: strength in metres of jitter, decaying over `dur` seconds (the stronger shake wins).
 func shake(strength: float, dur: float) -> void:
+	if not bool(Options.get_value("screen_shake")):
+		return
 	var cur := _shake * (_shake_left / maxf(0.001, _shake_dur)) if _shake_left > 0.0 else 0.0
 	if strength >= cur:
 		_shake = strength

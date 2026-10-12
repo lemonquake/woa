@@ -19,6 +19,7 @@ var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	name = "Audio"
+	Options.ensure_buses()
 	listener = AudioListener3D.new()
 	add_child(listener)
 	listener.make_current()
@@ -28,10 +29,12 @@ func _ready() -> void:
 		p.max_distance = 46.0
 		p.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 		p.panning_strength = 0.8
+		p.bus = "Effects"
 		add_child(p)
 		_pool.append(p)
 	for i in 6:
 		var u := AudioStreamPlayer.new()
+		u.bus = "Interface"
 		add_child(u)
 		_ui.append(u)
 	var amb := AudioStreamPlayer.new()
@@ -42,6 +45,7 @@ func _ready() -> void:
 		st.loop_end = st.get_length() * st.mix_rate if st.mix_rate > 0 else 0
 		amb.stream = st
 		amb.volume_db = -14.0
+		amb.bus = "Ambience"
 		add_child(amb)
 		amb.play()
 

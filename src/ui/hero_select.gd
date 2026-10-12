@@ -315,11 +315,20 @@ func _build_ui() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bar.add_child(sp)
+	var opts := Button.new()
+	opts.text = "Options"
+	opts.custom_minimum_size = Vector2(160, 54)
+	opts.add_theme_font_size_override("font_size", 20)
+	opts.pressed.connect(func():
+		Options.click()
+		add_child(OptionsPanel.new()))
+	bar.add_child(opts)
 	var cust := Button.new()
 	cust.text = "Customize look"
 	cust.custom_minimum_size = Vector2(200, 54)
 	cust.add_theme_font_size_override("font_size", 20)
 	cust.pressed.connect(func():
+		Options.click()
 		GameSettings.save()
 		get_tree().change_scene_to_file(CREATOR))
 	bar.add_child(cust)
@@ -328,7 +337,9 @@ func _build_ui() -> void:
 	play.custom_minimum_size = Vector2(260, 58)
 	play.add_theme_font_override("font", U.font("title"))
 	play.add_theme_font_size_override("font_size", 30)
-	play.pressed.connect(_on_play)
+	play.pressed.connect(func():
+		Options.click()
+		_on_play())
 	bar.add_child(play)
 	_tip = PanelContainer.new()
 	_tip.visible = false
@@ -504,6 +515,14 @@ func _process(dt: float) -> void:
 		_tip.position = get_viewport().get_mouse_position() + Vector2(-400, 18)
 	if _capture_path != "":
 		_frames += 1
+		if _frames == 3:
+			for a in OS.get_cmdline_user_args():
+				if a.begins_with("--options"):
+					var op := OptionsPanel.new()
+					add_child(op)
+					var tab := a.get_slice("=", 1)
+					if tab != "" and tab != "--options":
+						(func(): op.get_child(1).get_child(0).get_child(0).get_child(1).current_tab = int(tab)).call_deferred()
 		if _frames == int(OS.get_environment("WOA_FRAMES") if OS.get_environment("WOA_FRAMES") != "" else "70"):
 			var img := get_viewport().get_texture().get_image()
 			var path := ProjectSettings.globalize_path("res://" + _capture_path)

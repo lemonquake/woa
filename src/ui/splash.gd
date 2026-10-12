@@ -12,6 +12,7 @@ var _path := HERO_SELECT
 var _quick := false
 
 func _ready() -> void:
+	Options.apply_all(get_tree())
 	var args := OS.get_cmdline_user_args()
 	if args.has("--match") or OS.get_cmdline_args().has("--match"):
 		_path = MATCH

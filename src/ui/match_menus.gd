@@ -1,12 +1,12 @@
 extends Control
-## In-match menus: the pause menu (Esc / F10: Resume, Settings, Hero Creator, Quit) and the end-of-match screen
+## In-match menus: the pause menu (Esc / F10: Resume, Options, Hero Select, Quit) and the end-of-match screen
 ## (winner, then each hero's level, kills / deaths / assists, last hits / denies, net worth).
 
 const U = preload("res://src/ui/ui_kit.gd")
 
 var game: Node
 var _pause: PanelContainer
-var _settings: PanelContainer
+var _options: OptionsPanel
 var _end: PanelContainer
 var _end_shown := false
 
@@ -17,34 +17,10 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_pause = _panel("Paused")
 	var col: VBoxContainer = _pause.get_child(0)
-	for b in [["Resume", _resume], ["Settings", _open_settings], ["Hero Select", _to_creator], ["Quit to desktop", func(): get_tree().quit()]]:
+	for b in [["Resume", _resume], ["Options", _open_options], ["Hero Select", _to_creator], ["Quit to desktop", func(): get_tree().quit()]]:
 		col.add_child(_button(b[0], b[1]))
-	_settings = _panel("Settings")
-	var sc: VBoxContainer = _settings.get_child(0)
-	_slider(sc, "Master volume", AudioServer.get_bus_volume_db(0), func(v): AudioServer.set_bus_volume_db(0, v))
-	var edge := CheckBox.new()
-	edge.text = "Pan the camera at the screen edges"
-	edge.button_pressed = true
-	edge.toggled.connect(func(on): game.camera.edge_pan_enabled = on)
-	sc.add_child(edge)
-	var speed_row := HBoxContainer.new()
-	var sl := Label.new()
-	sl.text = "Camera speed"
-	sl.custom_minimum_size = Vector2(160, 0)
-	speed_row.add_child(sl)
-	var s := HSlider.new()
-	s.min_value = 12
-	s.max_value = 60
-	s.value = 32
-	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	s.value_changed.connect(func(v): game.camera.edge_speed = v)
-	speed_row.add_child(s)
-	sc.add_child(speed_row)
-	sc.add_child(_button("Back", func():
-		_settings.visible = false
-		_pause.visible = true))
 	_end = _panel("")
-	for p in [_pause, _settings, _end]:
+	for p in [_pause, _end]:
 		p.visible = false
 
 func _panel(title: String) -> PanelContainer:
@@ -73,26 +49,13 @@ func _button(text: String, cb: Callable) -> Button:
 	b.text = text
 	b.custom_minimum_size = Vector2(0, 48)
 	b.add_theme_font_size_override("font_size", 20)
-	b.pressed.connect(cb)
+	b.pressed.connect(func():
+		Options.click()
+		cb.call())
 	return b
 
-func _slider(v: VBoxContainer, label: String, value: float, cb: Callable) -> void:
-	var row := HBoxContainer.new()
-	var l := Label.new()
-	l.text = label
-	l.custom_minimum_size = Vector2(160, 0)
-	row.add_child(l)
-	var s := HSlider.new()
-	s.min_value = -40
-	s.max_value = 6
-	s.value = value
-	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	s.value_changed.connect(cb)
-	row.add_child(s)
-	v.add_child(row)
-
 func is_open() -> bool:
-	return _pause.visible or _settings.visible
+	return _pause.visible or (_options != null and is_instance_valid(_options))
 
 func toggle() -> void:
 	if _end.visible:
@@ -106,13 +69,20 @@ func toggle() -> void:
 
 func _resume() -> void:
 	_pause.visible = false
-	_settings.visible = false
+	if _options and is_instance_valid(_options):
+		_options.queue_free()
+	_options = null
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	game.world.paused = false
 
-func _open_settings() -> void:
+func _open_options() -> void:
 	_pause.visible = false
-	_settings.visible = true
+	_options = OptionsPanel.new()
+	_options.game = game
+	_options.closed.connect(func():
+		_options = null
+		_pause.visible = true)
+	add_child(_options)
 
 func _to_creator() -> void:
 	get_tree().paused = false
