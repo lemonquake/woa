@@ -14,9 +14,11 @@ var minimap: Control
 var topbar: Control
 var shop: Control
 var tip: Control
+var to_buy: Control
 var kill_feed: KillFeed
 var scoreboard: Scoreboard
 var debug: DebugPanel
+var chat: ChatPanel
 var portrait_vp: SubViewport
 var portrait_cam: Camera3D
 var _msg := ""
@@ -47,6 +49,9 @@ func _ready() -> void:
 	shop.hud = self
 	shop.visible = false
 	add_child(shop)
+	to_buy = ToBuyPanel.new()
+	to_buy.hud = self
+	add_child(to_buy)
 	kill_feed = KillFeed.new()
 	kill_feed.hud = self
 	add_child(kill_feed)
@@ -56,10 +61,14 @@ func _ready() -> void:
 	debug = DebugPanel.new()
 	debug.game = game
 	add_child(debug)
+	chat = ChatPanel.new()
+	chat.hud = self
+	add_child(chat)
 	tip = Tip.new()
 	tip.hud = self
 	add_child(tip)
 	_portrait()
+	bottom.make_overlay()
 
 func _portrait() -> void:
 	var svc := SubViewportContainer.new()
@@ -126,8 +135,13 @@ func _process(dt: float) -> void:
 	var vs := get_viewport_rect().size
 	bottom.position = Vector2(roundf((vs.x - BottomPanel.W) * 0.5), vs.y - BottomPanel.H)
 	minimap.position = Vector2(6, vs.y - Minimap.S - 6)
+	chat.position = Vector2(14, minimap.position.y - chat.size.y - 56)
 	topbar.position = Vector2(roundf((vs.x - TopBar.W) * 0.5), 0)
 	shop.position = Vector2(vs.x - ShopPanel.W - 10, vs.y - BottomPanel.H - ShopPanel.H - 8)
+	# To Buy: at the right edge above the bottom panel, or left of the shop while it is open
+	to_buy.visible = to_buy.wanted()
+	var tbx: float = shop.position.x - ToBuyPanel.W - 8 if shop.visible else vs.x - ToBuyPanel.W - 10
+	to_buy.position = Vector2(tbx, vs.y - BottomPanel.H - 72 - to_buy.size.y)
 	_update_portrait()
 	_tip_lines = []
 	queue_redraw()
@@ -173,8 +187,10 @@ func _draw() -> void:
 	if h and h.alive and (Input.is_key_pressed(KEY_SHIFT) or game.args.has("showqueue")) and game.input and game.input.hero_selected():
 		_queue_waypoints(h)
 	if game.input and game.input.targeting != "":
-		var lab: String = "Attack" if game.input.targeting == "attack" else "Choose a target"
-		U.text(self, lab, get_viewport().get_mouse_position() + Vector2(22, 30), 16, Color(1, 0.9, 0.6), "bold")
+		var team: String = game.input.targeting_team()
+		var lab: String = "Attack" if game.input.targeting == "attack" else ("Choose an enemy" if team == "enemy" else ("Choose a target" if team == "any" else "Choose an ally or a place"))
+		var tcol := Color(1.0, 0.55, 0.5) if team == "enemy" else Color(0.6, 1.0, 0.6)
+		U.text(self, lab, get_viewport().get_mouse_position() + Vector2(26, 34), 15, tcol, "bold")
 
 ## Shift held: the hero's current order and its queue as waypoints joined by a line, as in Dota (green move,
 ## red attack, blue spell or item, gold hold), numbered in the order they will run.
@@ -239,6 +255,9 @@ func _unit_card() -> void:
 	var sel: SimUnit = w.get_unit(game.selected_id)
 	if sel == null or sel.id == game.player_hero_id or not sel.alive or sel.is_hero():
 		return
+	var mh := hero()
+	if mh and sel.id == mh.courier_id:
+		return
 	var vs := get_viewport_rect().size
 	var r := Rect2(vs.x * 0.5 - 230, vs.y - BottomPanel.H - 92, 460, 80)
 	U.panel(self, r, U.GOLD_DIM, 6)
@@ -290,6 +309,10 @@ var _msg_col := Color(1.0, 0.35, 0.3)
 func announce(title: String, sub := "", col := U.GOLD) -> void:
 	kill_feed.banner(title, sub, col)
 
+## A team chat line (bots and you), from the world's "chat" event.
+func on_chat(e: Dictionary) -> void:
+	chat.add(e)
+
 func on_kill(e: Dictionary) -> void:
 	kill_feed.on_hero_kill(e, game.world, game.player_team)
 
@@ -309,7 +332,11 @@ func over_hud(p: Vector2) -> bool:
 	for c: Control in [bottom, minimap, topbar]:
 		if c.get_global_rect().has_point(p):
 			return true
+	if bottom.covers_extra(p - bottom.global_position):
+		return true
 	if shop.visible and shop.get_global_rect().has_point(p):
+		return true
+	if to_buy.visible and to_buy.get_global_rect().has_point(p):
 		return true
 	return debug.covers(p)
 
@@ -322,81 +349,220 @@ func show_tip(at: Vector2, lines: Array) -> void:
 # ======================================================================================================================
 
 class BottomPanel extends Control:
-	const W := 1080.0
+	## Laid out like Dota's: the hero's name above the portrait, the level in a circle at the portrait's lower left
+	## with the experience ring round it and an experience bar along the portrait's foot; stats; the talent tree
+	## button left of the abilities; health and mana; six item slots, the backpack and the Teleport slot; gold, Shop,
+	## Courier. The stash sits above the items (shown when it holds something, in the base, or with the shop open).
+	## With your courier selected the panel shows the courier: its commands and what it carries.
+	## Items: click uses, drag moves (to another slot, the stash, the ground, an ally hero or your courier), right
+	## click moves to or from the backpack.
+	const W := 1140.0
 	const H := 206.0
+	const PORTRAIT := Rect2(14, 24, 166, 170)
+	const ABIL_X := 404.0
+	const ABIL_STEP := 80.0
+	const ABIL_SIZE := 72.0
+	const ITEM_X := 734.0
+	const SIDE_X := 986.0
+	const TALENT_C := Vector2(374, 70)
+	const STASH_Y := -58.0
+	const COURIER_CMDS := [["return", "Return to Base", "ui/back", "ability_1", "Home"], ["retrieve", "Retrieve Items", "ui/load", "ability_2", "Retrieve"],
+		["stash", "Return Items to Stash", "ui/save", "ability_3", "To Stash"], ["deliver", "Deliver Items", "ui/teleport", "ability_4", "Deliver"],
+		["transfer", "Transfer Items", "ui/split", "item_1", "Transfer"], ["burst", "Speed Burst", "status/haste", "item_2", "Burst"],
+		["shield", "Shield", "status/shielded", "item_3", "Shield"], ["auto", "Auto Deliver", "ui/check", "item_4", "Auto"]]
 	var hud
 	var portrait_box: Control
+	var overlay: Control                       # drawn above the 3D portrait: name, level, experience
 	var _abil_rects: Array = []
 	var _was_cooling := {}
 	var _ready_at := {}
 	var _learn_rects: Array = []
 	var _item_rects: Array = []
+	var _stash_rects: Array = []
+	var _grab_rect := Rect2()
+	var _cmd_rects: Array = []
 	var _shop_rect := Rect2()
 	var _tp_rect := Rect2()
 	var _courier_rect := Rect2()
 	var _buyback_rect := Rect2()
+	var _talent_rect := Rect2()
+	var talents_open := false
+	var _talent_rows: Array = []               # [rect, tier, side]
+	# drag and drop of items
+	var _press_slot := -1                      # 0..8 inventory, 100+ stash
+	var _press_at := Vector2.ZERO
+	var _dragging := false
 
 	func _ready() -> void:
 		size = Vector2(W, H)
 		mouse_filter = Control.MOUSE_FILTER_STOP
+		_layout()
+
+	func make_overlay() -> void:
+		overlay = PortraitOverlay.new()
+		overlay.panel = self
+		add_child(overlay)
 
 	func _layout() -> void:
 		_abil_rects.clear()
 		_learn_rects.clear()
 		for i in 4:
-			var r := Rect2(352 + i * 84, 34, 76, 76)
+			var r := Rect2(ABIL_X + i * ABIL_STEP, 34, ABIL_SIZE, ABIL_SIZE)
 			_abil_rects.append(r)
-			_learn_rects.append(Rect2(r.position.x + 22, 8, 32, 22))
+			_learn_rects.append(Rect2(r.position.x + 20, 8, 32, 22))
 		_item_rects.clear()
 		for i in 6:
-			_item_rects.append(Rect2(706 + (i % 3) * 80, 30 + (i / 3) * 62, 74, 56))
+			_item_rects.append(Rect2(ITEM_X + (i % 3) * 80, 30 + (i / 3) * 62, 74, 56))
 		for i in 3:
-			_item_rects.append(Rect2(706 + i * 80, 158, 74, 36))
-		_shop_rect = Rect2(956, 132, 112, 62)
-		_tp_rect = Rect2(956, 96, 52, 32)
-		_courier_rect = Rect2(1012, 96, 56, 32)
-		_buyback_rect = Rect2(352, 132, 330, 50)
+			_item_rects.append(Rect2(ITEM_X + i * 80, 158, 74, 36))
+		_stash_rects.clear()
+		for i in 6:
+			_stash_rects.append(Rect2(ITEM_X + i * 40, STASH_Y + 14, 36, 30))
+		_grab_rect = Rect2(ITEM_X + 244, STASH_Y + 14, 64, 30)
+		_cmd_rects.clear()
+		for i in 8:
+			_cmd_rects.append(Rect2(ABIL_X + (i % 4) * ABIL_STEP, 30 + (i / 4) * 62, ABIL_SIZE, 56))
+		_shop_rect = Rect2(SIDE_X, 132, 140, 62)
+		_tp_rect = Rect2(SIDE_X, 96, 60, 32)
+		_courier_rect = Rect2(SIDE_X + 64, 96, 76, 32)
+		_buyback_rect = Rect2(ABIL_X, 132, 312, 50)
+		_talent_rect = Rect2(TALENT_C - Vector2(22, 22), Vector2(44, 44))
+
+	## The courier when it is what the player has selected (the panel then shows it).
+	func courier_shown() -> SimUnit:
+		var h: SimUnit = hud.hero()
+		if h == null:
+			return null
+		var c: SimUnit = hud.game.world.get_unit(h.courier_id)
+		if c != null and hud.game.selected_id == c.id:
+			return c
+		return null
+
+	func stash_visible(h: SimUnit) -> bool:
+		if h == null or h.id != hud.game.player_hero_id:
+			return false
+		if hud.shop.visible:
+			return false                       # the open shop shows the stash itself
+		return h.stash.any(func(x): return x != null) or hud.game.world.shop.in_shop(h)
 
 	func _draw() -> void:
-		_layout()
 		var h: SimUnit = hud.shown()
 		if h == null:
 			return
-		var mine: bool = h.id == hud.game.player_hero_id
 		var w: SimWorld = hud.game.world
+		var cour := courier_shown()
+		var mine: bool = h.id == hud.game.player_hero_id
 		U.panel(self, Rect2(0, 10, W, H - 10), U.GOLD_DIM if mine or h.team == hud.game.player_team else Color(0.6, 0.22, 0.2))
-		# portrait frame and level ring
 		if portrait_box:
-			portrait_box.position = Vector2(14, 24)
+			portrait_box.position = PORTRAIT.position
+			portrait_box.visible = cour == null
 			portrait_box.modulate = Color(1, 1, 1) if h.alive else Color(0.35, 0.35, 0.38)
-		draw_rect(Rect2(12, 22, 170, 174), U.GOLD_DIM, false, 2.0)
-		_level_ring(h, Vector2(22, 32))
-		var nm: String = hud._name(h)
-		U.text(self, nm, Vector2(24, 190), 15, U.GOLD, "title")
+		draw_rect(PORTRAIT.grow(2), U.GOLD_DIM, false, 2.0)
+		if cour != null:
+			_courier_panel(h, cour, w)
+			_gold(h)
+			_tp_and_courier(h, w)
+			if overlay:
+				overlay.queue_redraw()
+			return
 		_stats(h)
+		_talent_button(h, w)
 		_abilities(h, w)
 		_bars(h)
 		_items(h, w)
 		if mine:
+			_stash(h, w)
 			_gold(h)
 			_tp_and_courier(h, w)
 			if not h.alive:
 				_buyback(h, w)
 		else:
-			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(960, 70), 15, U.TEXT_DIM, "bold")
-			U.text(self, Keybinds.key_name("select_hero") + " or the portrait: back to your hero", Vector2(960, 94), 12, U.TEXT_DIM, "body")
+			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(SIDE_X, 70), 15, U.TEXT_DIM, "bold")
+			U.text(self, Keybinds.key_name("select_hero") + " or the portrait:", Vector2(SIDE_X, 94), 12, U.TEXT_DIM, "body")
+			U.text(self, "back to your hero", Vector2(SIDE_X, 110), 12, U.TEXT_DIM, "body")
+		if talents_open:
+			_talent_tree(h, w)
+		if _dragging and _press_slot >= 0:
+			var it = _drag_item(h)
+			if it != null:
+				var ic: Texture2D = U.item_icon(it.id)
+				if ic:
+					draw_texture_rect(ic, Rect2(get_local_mouse_position() - Vector2(22, 22), Vector2(44, 44)), false, Color(1, 1, 1, 0.85))
+		if overlay:
+			overlay.queue_redraw()
 
-	func _level_ring(h: SimUnit, c: Vector2) -> void:
-		draw_circle(c, 20, Color(0.04, 0.04, 0.05, 0.95))
-		var need := float(C.XP_TABLE[mini(h.level, C.MAX_LEVEL - 1)]) - float(C.XP_TABLE[h.level - 1])
-		var have := h.xp - float(C.XP_TABLE[h.level - 1])
-		var frac := 1.0 if h.level >= C.MAX_LEVEL else clampf(have / maxf(1.0, need), 0.0, 1.0)
-		draw_arc(c, 18, -PI * 0.5, -PI * 0.5 + TAU, 48, Color(0.25, 0.22, 0.15), 4.0, true)
-		draw_arc(c, 18, -PI * 0.5, -PI * 0.5 + TAU * frac, 48, Color(0.65, 0.4, 1.0), 4.0, true)
-		U.text_c(self, str(h.level), c + Vector2(0, 7), 19, U.GOLD, "bold")
-		if h.ability_points > 0:
-			draw_circle(c + Vector2(16, 14), 7, Color(1.0, 0.82, 0.3))
-			U.text_c(self, str(h.ability_points), c + Vector2(16, 18.5), 11, Color(0, 0, 0), "bold", false)
+	# ---- Portrait overlay: name plate, level circle with the experience ring, experience bar -------------------
+
+	func draw_overlay(ci: CanvasItem) -> void:
+		var h: SimUnit = hud.shown()
+		if h == null:
+			return
+		var cour := courier_shown()
+		var unit: SimUnit = cour if cour != null else h
+		# name plate above the portrait, like Dota's
+		var nm := "Courier" if cour != null else String(h.def.get("name", h.name))
+		var f := U.font("title")
+		var tw := f.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 17).x
+		var plate := Rect2(PORTRAIT.position.x - 2, -12, maxf(tw + 26, 110), 26)
+		U.panel(ci, plate, U.GOLD_DIM, 4)
+		U.text(ci, nm, plate.position + Vector2(13, 19), 17, U.GOLD, "title")
+		if cour != null:
+			_courier_portrait(ci, h, cour)
+			return
+		# experience bar along the portrait's foot, always readable
+		var need := 0.0
+		var have := 0.0
+		var frac := 1.0
+		if h.level < C.MAX_LEVEL:
+			need = float(C.XP_TABLE[h.level]) - float(C.XP_TABLE[h.level - 1])
+			have = h.xp - float(C.XP_TABLE[h.level - 1])
+			frac = clampf(have / maxf(1.0, need), 0.0, 1.0)
+		var xr := Rect2(PORTRAIT.position.x + 46, PORTRAIT.end.y - 18, PORTRAIT.size.x - 48, 16)
+		ci.draw_rect(xr, Color(0, 0, 0, 0.72))
+		ci.draw_rect(Rect2(xr.position, Vector2(xr.size.x * frac, xr.size.y)), Color(0.55, 0.36, 0.95, 0.9))
+		var xt := "Max level" if h.level >= C.MAX_LEVEL else "%d / %d XP" % [int(have), int(need)]
+		U.text_c(ci, xt, xr.get_center() + Vector2(4, 5.5), 12, U.TEXT, "bold")
+		# level circle at the lower left, with the experience ring round it
+		var c := Vector2(PORTRAIT.position.x + 22, PORTRAIT.end.y - 20)
+		ci.draw_circle(c, 23, Color(0.03, 0.03, 0.04, 0.96))
+		ci.draw_arc(c, 20, 0, TAU, 48, Color(0.22, 0.2, 0.26), 4.0, true)
+		ci.draw_arc(c, 20, -PI * 0.5, -PI * 0.5 + TAU * frac, 48, Color(0.65, 0.42, 1.0), 4.0, true)
+		ci.draw_arc(c, 23, 0, TAU, 48, U.GOLD_DIM, 1.5, true)
+		U.text_c(ci, str(h.level), c + Vector2(0, 7.5), 21, U.GOLD, "bold")
+		if h.ability_points > 0 and h.id == hud.game.player_hero_id:
+			var bp := c + Vector2(18, -18)
+			ci.draw_circle(bp, 9, Color(1.0, 0.82, 0.3))
+			U.text_c(ci, str(h.ability_points), bp + Vector2(0, 4.5), 12, Color(0, 0, 0), "bold", false)
+		var m := ci.get_local_mouse_position()
+		if c.distance_to(m) < 24 or xr.has_point(m):
+			var lines: Array = [["Level %d" % h.level, 18, U.GOLD, "title"]]
+			if h.level < C.MAX_LEVEL:
+				lines.append(["Experience %d / %d (%d to level %d)" % [int(have), int(need), int(need - have), h.level + 1], 14, U.TEXT, "body"])
+			lines.append(["Total experience %d" % int(h.xp), 13, U.TEXT_DIM, "body"])
+			if h.ability_points > 0:
+				lines.append(["%d ability point%s to spend" % [h.ability_points, "" if h.ability_points == 1 else "s"], 13, Color(1.0, 0.85, 0.4), "body"])
+			hud.show_tip(ci.get_global_mouse_position(), lines)
+
+	func _courier_portrait(ci: CanvasItem, h: SimUnit, c: SimUnit) -> void:
+		var r := PORTRAIT
+		ci.draw_rect(r, Color(0.07, 0.08, 0.1))
+		var ic: Texture2D = U.icon("status/windstep")
+		if ic:
+			ci.draw_texture_rect(ic, Rect2(r.get_center() - Vector2(48, 58), Vector2(96, 96)), false, U.GOLD if c.alive else Color(0.35, 0.35, 0.35))
+		var state := "Dead: back in %ds" % ceili(c.respawn_at - hud.game.world.time) if not c.alive else _state_name(c.courier_state)
+		U.text_c(ci, state, Vector2(r.get_center().x, r.end.y - 34), 14, U.TEXT, "bold")
+		U.text_c(ci, ("Flying" if c.has_flag("flying") else "Walking") + "  speed %d" % int(c.move_speed), Vector2(r.get_center().x, r.end.y - 14), 12, U.TEXT_DIM, "body")
+		var lc := Vector2(r.position.x + 22, r.position.y + 22)
+		ci.draw_circle(lc, 18, Color(0.03, 0.03, 0.04, 0.96))
+		ci.draw_arc(lc, 18, 0, TAU, 32, U.GOLD_DIM, 1.5, true)
+		U.text_c(ci, str(h.level), lc + Vector2(0, 7), 18, U.GOLD, "bold")
+
+	static func _state_name(s: String) -> String:
+		return {"idle": "Waiting", "move": "Moving", "return": "Going home", "retrieve": "Fetching the stash",
+			"fetch": "Fetching the stash", "collect": "Picking up items", "deliver": "Delivering", "transfer": "Delivering",
+			"stash": "Returning items"}.get(s, s.capitalize())
+
+	# ---- Stats, talents, abilities, bars ---------------------------------------------------------------------------
 
 	func _stats(h: SimUnit) -> void:
 		var x := 196.0
@@ -404,33 +570,94 @@ class BottomPanel extends Control:
 		var dmg := "%d-%d" % [int(h.dmg_min), int(h.dmg_max)]
 		if h.bonus_damage > 0.0:
 			dmg += " +%d" % int(h.bonus_damage)
-		_stat_row("ui/level", "Damage", dmg, Vector2(x, y))
-		_stat_row("status/fortified", "Armor", "%.1f" % h.armor, Vector2(x, y + 24))
-		_stat_row("status/haste", "Speed", str(int(h.move_speed)), Vector2(x, y + 48))
-		var r := Rect2(x - 4, y + 64, 148, 64)
+		_stat_row("ui/level", dmg, Vector2(x, y))
+		_stat_row("status/fortified", "%.1f" % h.armor, Vector2(x, y + 24))
+		_stat_row("status/haste", str(int(h.move_speed)), Vector2(x, y + 48))
+		var r := Rect2(x - 4, y + 64, 152, 64)
 		draw_rect(r, Color(0, 0, 0, 0.35))
 		var attrs := [["attributes/strength", h.str_total, Color(0.95, 0.35, 0.3)], ["attributes/agility", h.agi_total, Color(0.4, 0.95, 0.45)],
 			["attributes/intelligence", h.int_total, Color(0.4, 0.7, 1.0)]]
 		for i in 3:
 			var a: Array = attrs[i]
-			var p := Vector2(x + 2 + i * 48, y + 72)
+			var p := Vector2(x + 2 + i * 50, y + 72)
 			var ic: Texture2D = U.icon(a[0])
 			if ic:
 				draw_texture_rect(ic, Rect2(p, Vector2(22, 22)), false, a[2])
 			U.text(self, str(int(a[1])), p + Vector2(2, 44), 16, U.TEXT, "bold")
 		if Rect2(r.position + Vector2(0, -72), Vector2(150, 136)).has_point(get_local_mouse_position()):
 			hud.show_tip(get_global_mouse_position(), [
+				["Damage %s   Armor %.1f   Speed %d" % [dmg, h.armor, int(h.move_speed)], 14, U.TEXT, "body"],
 				["Attack speed %d (%.2f s per attack)" % [int(h.attack_speed), h.attack_interval()], 14, U.TEXT, "body"],
 				["Attack range %d" % int(h.attack_range), 14, U.TEXT, "body"],
 				["Magic resistance %d%%" % int(h.magic_resist * 100.0), 14, U.TEXT, "body"],
 				["Health regen %.1f  Mana regen %.1f" % [h.hp_regen, h.mana_regen], 14, U.TEXT, "body"],
 				["Physical damage taken x%.2f" % C.armor_multiplier(h.armor), 14, U.TEXT_DIM, "body"]])
 
-	func _stat_row(ic_path: String, label: String, val: String, p: Vector2) -> void:
+	func _stat_row(ic_path: String, val: String, p: Vector2) -> void:
 		var ic: Texture2D = U.icon(ic_path)
 		if ic:
 			draw_texture_rect(ic, Rect2(p + Vector2(0, -15), Vector2(18, 18)), false, U.GOLD)
 		U.text(self, val, p + Vector2(24, 0), 16, U.TEXT, "bold")
+
+	## Dota's talent tree button: lit while a talent can be learned.
+	func _talent_button(h: SimUnit, w: SimWorld) -> void:
+		var tree: Array = h.def.get("talents", [])
+		if tree.is_empty():
+			return
+		var can := false
+		for t in tree.size():
+			if w.abilities.can_learn_talent(h, t):
+				can = true
+		var pulse := 0.6 + 0.4 * sin(Time.get_ticks_msec() / 220.0) if can and h.id == hud.game.player_hero_id else 0.0
+		draw_circle(TALENT_C, 22, Color(0.05, 0.05, 0.06))
+		draw_arc(TALENT_C, 22, 0, TAU, 40, U.GOLD if can else U.GOLD_DIM, 2.0 + 2.0 * pulse, true)
+		var ic: Texture2D = U.icon("ui/favorite")
+		if ic:
+			draw_texture_rect(ic, Rect2(TALENT_C - Vector2(13, 13), Vector2(26, 26)), false, U.GOLD if h.talents.size() > 0 or can else Color(0.55, 0.55, 0.55))
+		U.text_c(self, "Talents", TALENT_C + Vector2(0, 38), 11, U.TEXT_DIM, "bold")
+		if _talent_rect.has_point(get_local_mouse_position()) and not talents_open:
+			hud.show_tip(get_global_mouse_position(), [["Talents", 18, U.GOLD, "title"],
+				["Click to open. At levels 10, 15, 20 and 25 spend an ability point on one of two talents.", 14, U.TEXT, "body"]])
+
+	## The open tree: level 25 at the top, each row a choice of two.
+	func _talent_tree(h: SimUnit, w: SimWorld) -> void:
+		var tree: Array = h.def.get("talents", [])
+		_talent_rows.clear()
+		if tree.is_empty():
+			return
+		var pw := 520.0
+		var rh := 40.0
+		var top := -(tree.size() * (rh + 6) + 44)
+		var r := Rect2(TALENT_C.x - pw * 0.5 + 60, top, pw, tree.size() * (rh + 6) + 36)
+		U.panel(self, r, U.GOLD, 6)
+		U.text(self, "Talents", r.position + Vector2(14, 22), 16, U.GOLD, "title")
+		var m := get_local_mouse_position()
+		for row in tree.size():
+			var tier: int = tree.size() - 1 - row
+			var y := r.position.y + 30 + row * (rh + 6)
+			var lvl := int(C.TALENT_LEVELS[tier])
+			var lc := Vector2(r.get_center().x, y + rh * 0.5)
+			draw_circle(lc, 17, Color(0.05, 0.05, 0.06))
+			draw_arc(lc, 17, 0, TAU, 32, U.GOLD_DIM, 1.5, true)
+			U.text_c(self, str(lvl), lc + Vector2(0, 6), 15, U.GOLD if h.level >= lvl else U.TEXT_DIM, "bold")
+			var can: bool = w.abilities.can_learn_talent(h, tier) and h.id == hud.game.player_hero_id
+			for side in 2:
+				var tid := String(tree[tier][side])
+				var tr := Rect2(r.position.x + 10 + side * (pw * 0.5 + 12), y, pw * 0.5 - 32, rh)
+				if side == 1:
+					tr.position.x = lc.x + 22
+				var picked := String(h.talents.get(tier, "")) == tid
+				var other := h.talents.has(tier) and not picked
+				var col := Color(0.12, 0.1, 0.06) if picked else Color(0.07, 0.07, 0.09)
+				draw_rect(tr, col)
+				var rim := U.GOLD if picked else (Color(1.0, 0.85, 0.4, 0.6 + 0.4 * sin(Time.get_ticks_msec() / 200.0)) if can else U.GOLD_DIM)
+				if can and tr.has_point(m):
+					rim = Color(1, 1, 1)
+				draw_rect(tr, rim, false, 2.0)
+				var nm := String(SimData.talent(tid).get("name", tid))
+				var tc := U.GOLD if picked else (Color(0.45, 0.45, 0.45) if other else U.TEXT)
+				U.text_c(self, nm, tr.get_center() + Vector2(0, 5), 14, tc, "bold")
+				_talent_rows.append([tr, tier, side])
 
 	func _abilities(h: SimUnit, w: SimWorld) -> void:
 		var m := get_local_mouse_position()
@@ -441,7 +668,8 @@ class BottomPanel extends Control:
 			var r: Rect2 = _abil_rects[i]
 			var lv := h.ability_level_of(aid)
 			var auto := bool(h.autocast.get(aid, false))
-			U.slot(self, r.grow(2), auto or hud.game.input.targeting == aid)
+			var toggled := bool(h.toggles.get(aid, false))
+			U.slot(self, r.grow(2), auto or toggled or hud.game.input.targeting == aid)
 			var ic: Texture2D = U.ability_icon(aid)
 			var col := Color(1, 1, 1) if lv > 0 else Color(0.32, 0.32, 0.34)
 			var mana_cost := float(a.mana[maxi(lv - 1, 0)])
@@ -464,18 +692,18 @@ class BottomPanel extends Control:
 					var k := 1.0 - since / 0.45
 					draw_rect(r, Color(1.0, 1.0, 0.9, 0.55 * k))
 					draw_rect(r.grow(3.0 * k), Color(1.0, 0.9, 0.5, k), false, 2.0)
-			if auto:
+			if auto or toggled:
 				var t := Time.get_ticks_msec() / 1000.0
-				draw_rect(r.grow(1), Color(1.0, 0.85, 0.3, 0.6 + 0.4 * sin(t * 6.0)), false, 3.0)
+				var tcol := Color(0.55, 1.0, 0.45) if toggled else Color(1.0, 0.85, 0.3)
+				draw_rect(r.grow(1), Color(tcol, 0.6 + 0.4 * sin(t * 6.0)), false, 3.0)
 			U.text(self, Keybinds.key_name("ability_%d" % (i + 1)), r.position + Vector2(4, 15), 14, Color(1, 1, 1), "bold")
 			if mana_cost > 0:
 				U.text_r(self, str(int(mana_cost)), r.end + Vector2(-3, -4), 12, Color(0.55, 0.75, 1.0), "bold")
-			# level pips
 			var mx := int(a.max_level)
 			for k in mx:
 				var px := r.position.x + r.size.x * 0.5 + (k - (mx - 1) * 0.5) * 12.0
 				draw_rect(Rect2(px - 4, r.end.y + 6, 8, 5), U.GOLD if k < lv else Color(0.2, 0.2, 0.22))
-			if w.abilities.can_learn(h, aid):
+			if w.abilities.can_learn(h, aid) and h.id == hud.game.player_hero_id:
 				var lr: Rect2 = _learn_rects[i]
 				var pulse := 0.75 + 0.25 * sin(Time.get_ticks_msec() / 200.0)
 				draw_rect(lr, Color(0.95, 0.75, 0.25, pulse))
@@ -489,8 +717,12 @@ class BottomPanel extends Control:
 		var lv := h.ability_level_of(aid)
 		var lines: Array = [[String(a.name), 20, U.GOLD, "title"]]
 		var kind := {"autocast_attack": "Attack modifier (autocast)", "point": "Point target", "passive": "Passive",
-			"unit": "Unit target", "no_target": "No target"}
-		lines.append([String(kind.get(a.behavior, "")) + "    Level %d / %d" % [lv, int(a.max_level)], 13, U.TEXT_DIM, "body"])
+			"unit": "Unit target", "no_target": "No target", "toggle": "Toggle"}
+		var team := String(a.get("target_team", "enemy"))
+		var aim := ""
+		if String(a.behavior) in ["unit", "point", "autocast_attack"]:
+			aim = "    Targets: " + ("enemies" if team == "enemy" else ("allies" if team == "ally" else "any unit"))
+		lines.append([String(kind.get(a.behavior, "")) + aim + "    Level %d / %d" % [lv, int(a.max_level)], 13, U.TEXT_DIM, "body"])
 		for l in U.wrap(String(a.desc), 330, 15):
 			lines.append([l, 15, U.TEXT, "body"])
 		for k in a.values:
@@ -504,67 +736,104 @@ class BottomPanel extends Control:
 			lines.append(["Mana: %s    Cooldown: %s" % [" / ".join(a.mana.map(func(x): return str(x))), " / ".join(a.cooldown.map(func(x): return str(x)))], 13, Color(0.6, 0.75, 1.0), "body"])
 		if a.behavior == "autocast_attack":
 			lines.append(["Right-click to toggle autocast. Cast by hand on a hero to attack without drawing creep aggro.", 12, U.TEXT_DIM, "body"])
+		if a.behavior == "toggle":
+			lines.append(["Press again to turn it off.", 12, U.TEXT_DIM, "body"])
 		lines.append(["Ctrl + %s to learn" % Keybinds.ability_key_name(String(a.key)), 12, U.TEXT_DIM, "body"])
 		return lines
 
 	func _bars(h: SimUnit) -> void:
-		var hr := Rect2(352, 132, 330, 24)
+		var bw := 4 * ABIL_STEP - 8
+		var hr := Rect2(ABIL_X, 132, bw, 24)
 		U.bar(self, hr, h.hp / maxf(1.0, h.max_hp), U.HP)
 		U.text_c(self, "%d / %d" % [int(h.hp), int(h.max_hp)], hr.get_center() + Vector2(0, 7), 16, U.TEXT, "bold")
 		U.text_r(self, "+%.1f" % h.hp_regen, Vector2(hr.end.x - 4, hr.position.y + 17), 12, Color(0.8, 1.0, 0.8), "body")
-		var mr := Rect2(352, 162, 330, 20)
+		var mr := Rect2(ABIL_X, 162, bw, 20)
 		U.bar(self, mr, h.mana / maxf(1.0, h.max_mana), U.MANA)
 		U.text_c(self, "%d / %d" % [int(h.mana), int(h.max_mana)], mr.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
 		U.text_r(self, "+%.1f" % h.mana_regen, Vector2(mr.end.x - 4, mr.position.y + 15), 12, Color(0.8, 0.88, 1.0), "body")
+
+	# ---- Items, stash ----------------------------------------------------------------------------------------------
 
 	func _items(h: SimUnit, w: SimWorld) -> void:
 		var keys: Array = range(6).map(func(i): return Keybinds.key_name("item_%d" % (i + 1)))
 		var m := get_local_mouse_position()
 		for i in 9:
 			var r: Rect2 = _item_rects[i]
-			U.slot(self, r)
+			U.slot(self, r, _dragging and r.has_point(m))
 			var it = h.inventory[i]
 			if it == null:
 				if i < 6:
 					U.text(self, keys[i], r.position + Vector2(4, 14), 11, Color(0.5, 0.5, 0.5), "bold")
 				continue
-			var ic: Texture2D = U.item_icon(it.id)
-			var dim := Color(1, 1, 1) if i < 6 else Color(0.5, 0.5, 0.5)
-			if ic:
-				var sq := minf(r.size.x, r.size.y) - 6
-				draw_texture_rect(ic, Rect2(r.get_center() - Vector2(sq, sq) * 0.5, Vector2(sq, sq)), false, dim)
+			_item_icon(it, r, i >= 6, h, w, i)
 			if i < 6:
-				var cd := w.abilities.item_cooldown_left(h, i)
-				var d := SimData.item(it.id)
-				if cd > 0.0 and float(d.cooldown) > 0.0:
-					U.cooldown(self, r, cd / float(d.cooldown), cd)
 				U.text(self, keys[i], r.position + Vector2(4, 14), 11, Color(1, 1, 1), "bold")
-			if int(it.get("charges", 0)) > 1 or SimData.item(it.id).consumable and int(it.get("charges", 0)) > 0:
-				U.text_r(self, str(it.charges), r.end + Vector2(-3, -3), 14, Color(1, 1, 1), "bold")
-			if String(SimData.item(it.id).use) == "stick":
-				U.text_r(self, str(h.stick_charges), r.end + Vector2(-3, -3), 14, Color(0.7, 0.9, 1.0), "bold")
-			if r.has_point(m):
-				hud.show_tip(get_global_mouse_position(), hud.item_tip(it.id, h))
+			if r.has_point(m) and not _dragging:
+				var tip: Array = hud.item_tip(it.id, h)
+				tip.append(["Drag to move, drop on the ground or give it to an ally. Right click: %s." % ("to the inventory" if i >= 6 else "to the backpack"), 12, U.TEXT_DIM, "body"])
+				hud.show_tip(get_global_mouse_position(), tip)
+		if h.id == hud.game.player_hero_id:
+			U.text(self, "Backpack", Vector2(ITEM_X, 156), 10, U.TEXT_DIM, "body")
+
+	func _item_icon(it: Dictionary, r: Rect2, dim: bool, h: SimUnit, w: SimWorld, slot: int) -> void:
+		var ic: Texture2D = U.item_icon(it.id)
+		if ic:
+			var sq := minf(r.size.x, r.size.y) - 6
+			draw_texture_rect(ic, Rect2(r.get_center() - Vector2(sq, sq) * 0.5, Vector2(sq, sq)), false,
+				Color(0.5, 0.5, 0.5) if dim else Color(1, 1, 1, 0.35 if _dragging and _press_slot == slot else 1.0))
+		var d := SimData.item(it.id)
+		if slot >= 0 and slot < 9 and h != null:
+			var cd := w.abilities.item_cooldown_left(h, slot) if slot < 6 else maxf(0.0, float(it.get("ready", C.LONG_AGO)) - w.time)
+			var total := maxf(float(d.cooldown), C.BACKPACK_SWAP_COOLDOWN)
+			if cd > 0.0:
+				U.cooldown(self, r, clampf(cd / total, 0.0, 1.0), cd)
+		if int(it.get("charges", 0)) > 1 or d.consumable and int(it.get("charges", 0)) > 0:
+			U.text_r(self, str(it.charges), r.end + Vector2(-3, -3), 14, Color(1, 1, 1), "bold")
+		if String(d.use) == "stick" and h != null:
+			U.text_r(self, str(h.stick_charges), r.end + Vector2(-3, -3), 14, Color(0.7, 0.9, 1.0), "bold")
+
+	## Dota's stash above the inventory: six slots and Grab All.
+	func _stash(h: SimUnit, w: SimWorld) -> void:
+		if not stash_visible(h):
+			return
+		var m := get_local_mouse_position()
+		var here := w.shop.in_shop(h)
+		var r := Rect2(ITEM_X - 8, STASH_Y - 8, 330, 56)
+		U.panel(self, r, U.GOLD_DIM, 4)
+		U.text(self, "Stash" + ("" if here or not h.alive else "  (courier: %s)" % Keybinds.key_name("courier_deliver")), Vector2(ITEM_X, STASH_Y + 6), 11, U.TEXT_DIM, "bold")
+		for i in 6:
+			var sr: Rect2 = _stash_rects[i]
+			U.slot(self, sr, sr.has_point(m) and (h.stash[i] != null or _dragging))
+			var it = h.stash[i]
+			if it != null:
+				_item_icon(it, sr, not here and h.alive, null, w, 100 + i)
+				if sr.has_point(m) and not _dragging:
+					var tip: Array = hud.item_tip(it.id, h)
+					tip.append(["Click: take it (in the base). Drag it to a slot. The courier (%s) brings the stash to you." % Keybinds.key_name("courier_deliver"), 12, U.TEXT_DIM, "body"])
+					hud.show_tip(get_global_mouse_position(), tip)
+		var can := (here or not h.alive) and h.stash.any(func(x): return x != null)
+		U.panel(self, _grab_rect, U.GOLD if can and _grab_rect.has_point(m) else U.GOLD_DIM, 3)
+		U.text_c(self, "Grab All", _grab_rect.get_center() + Vector2(0, 5), 12, U.GOLD if can else U.TEXT_DIM, "bold")
 
 	func _gold(h: SimUnit) -> void:
 		var gi: Texture2D = U.icon("ui/gold")
 		if gi:
-			draw_texture_rect(gi, Rect2(960, 40, 26, 26), false, U.GOLD)
-		U.text(self, str(h.gold()), Vector2(992, 62), 24, U.GOLD, "bold")
-		U.text(self, "reliable %d" % h.gold_reliable, Vector2(960, 86), 12, U.TEXT_DIM, "body")
+			draw_texture_rect(gi, Rect2(SIDE_X, 40, 26, 26), false, U.GOLD)
+		U.text(self, str(h.gold()), Vector2(SIDE_X + 32, 62), 24, U.GOLD, "bold")
+		U.text(self, "reliable %d" % h.gold_reliable, Vector2(SIDE_X, 86), 12, U.TEXT_DIM, "body")
 		var hover := _shop_rect.has_point(get_local_mouse_position())
 		U.panel(self, _shop_rect, U.GOLD if hover else U.GOLD_DIM, 4)
 		var si: Texture2D = U.icon("ui/shop")
 		if si:
-			draw_texture_rect(si, Rect2(_shop_rect.position + Vector2(8, 14), Vector2(32, 32)), false, U.GOLD)
-		U.text(self, "Shop", _shop_rect.position + Vector2(48, 38), 18, U.GOLD, "title")
+			draw_texture_rect(si, Rect2(_shop_rect.position + Vector2(10, 14), Vector2(32, 32)), false, U.GOLD)
+		U.text(self, "Shop", _shop_rect.position + Vector2(54, 38), 18, U.GOLD, "title")
 
 	func _tp_and_courier(h: SimUnit, w: SimWorld) -> void:
 		var m := get_local_mouse_position()
 		U.slot(self, _tp_rect, hud.game.input.targeting == "tp")
 		var ti: Texture2D = U.icon("ui/teleport")
 		if ti:
-			draw_texture_rect(ti, Rect2(_tp_rect.position + Vector2(10, 2), Vector2(28, 28)), false, U.DAWN if h.tp_charges > 0 else Color(0.4, 0.4, 0.4))
+			draw_texture_rect(ti, Rect2(_tp_rect.position + Vector2(14, 2), Vector2(28, 28)), false, U.DAWN if h.tp_charges > 0 else Color(0.4, 0.4, 0.4))
 		var cd := w.abilities.cooldown_left(h, "tp")
 		if cd > 0.0:
 			U.cooldown(self, _tp_rect, cd / SimConst.TP_COOLDOWN, cd)
@@ -576,12 +845,13 @@ class BottomPanel extends Control:
 				["Charges %d. Cooldown 80 s. Mana 75. Buy more in the shop (100 gold). Hotkey %s." % [h.tp_charges, Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"]])
 		var c := w.get_unit(h.courier_id)
 		U.slot(self, _courier_rect, c != null and c.courier_state != "idle")
-		var state := "Dead" if c == null or not c.alive else c.courier_state.capitalize()
-		U.text_c(self, "Courier", _courier_rect.get_center() + Vector2(0, -2), 11, U.GOLD, "bold")
-		U.text_c(self, state, _courier_rect.get_center() + Vector2(0, 12), 10, U.TEXT_DIM, "body")
+		var state := "Dead" if c == null or not c.alive else _state_name(c.courier_state)
+		U.text_c(self, "Deliver", _courier_rect.get_center() + Vector2(0, -2), 12, U.GOLD, "bold")
+		U.text_c(self, state, _courier_rect.get_center() + Vector2(0, 12), 9, U.TEXT_DIM, "body")
 		if _courier_rect.has_point(m):
 			hud.show_tip(get_global_mouse_position(), [["Courier", 18, U.GOLD, "title"],
-				["Click (or %s) to have your courier fetch the stash and fly it to you." % Keybinds.key_name("courier_deliver"), 14, U.TEXT, "body"]])
+				["Click (or %s): the courier picks up your items lying in the fountain area, takes the stash and flies it all to you." % Keybinds.key_name("courier_deliver"), 14, U.TEXT, "body"],
+				["%s selects the courier for its other commands." % Keybinds.key_name("select_courier"), 13, U.TEXT_DIM, "body"]])
 
 	func _buyback(h: SimUnit, w: SimWorld) -> void:
 		var cost := w.buyback_cost(h)
@@ -592,21 +862,133 @@ class BottomPanel extends Control:
 		var label := "Buyback  %d gold" % cost if ready else "Buyback in %ds" % ceili(h.buyback_ready - w.time)
 		U.text_c(self, label, _buyback_rect.get_center() + Vector2(0, 8), 20, U.GOLD if can else U.TEXT_DIM, "title")
 
+	# ---- Courier panel ---------------------------------------------------------------------------------------------
+
+	func _courier_panel(h: SimUnit, c: SimUnit, w: SimWorld) -> void:
+		var m := get_local_mouse_position()
+		# hits left (couriers count hits, not health)
+		var hr := Rect2(196, 40, 190, 20)
+		U.bar(self, hr, c.hp / maxf(1.0, c.max_hp), U.HP)
+		U.text_c(self, "%d / %d hits" % [int(ceil(c.hp)), int(c.max_hp)], hr.get_center() + Vector2(0, 6), 13, U.TEXT, "bold")
+		U.text(self, "Dies to 1 melee hero hit,", Vector2(196, 82), 12, U.TEXT_DIM, "body")
+		U.text(self, "2 ranged hero hits or 6 others.", Vector2(196, 98), 12, U.TEXT_DIM, "body")
+		U.text(self, "Flies from level %d." % C.COURIER_FLY_LEVEL, Vector2(196, 120), 12, U.TEXT_DIM, "body")
+		for i in COURIER_CMDS.size():
+			var cmd: Array = COURIER_CMDS[i]
+			var r: Rect2 = _cmd_rects[i]
+			var locked: bool = (cmd[0] == "burst" and h.level < C.COURIER_BURST_LEVEL) or (cmd[0] == "shield" and h.level < C.COURIER_SHIELD_LEVEL)
+			var on: bool = cmd[0] == "auto" and c.courier_auto
+			U.slot(self, r, r.has_point(m) or on)
+			var ic: Texture2D = U.icon(cmd[2])
+			if ic:
+				draw_texture_rect(ic, Rect2(r.get_center() - Vector2(18, 20), Vector2(36, 36)), false,
+					Color(0.35, 0.35, 0.35) if locked or not c.alive else (Color(0.55, 1.0, 0.45) if on else U.GOLD))
+			var cdl := 0.0
+			if cmd[0] == "burst":
+				cdl = c.courier_burst_ready - w.time
+				if cdl > 0.0:
+					U.cooldown(self, r, cdl / C.COURIER_BURST_COOLDOWN, cdl)
+			elif cmd[0] == "shield":
+				cdl = c.courier_shield_ready - w.time
+				if cdl > 0.0:
+					U.cooldown(self, r, cdl / C.COURIER_SHIELD_COOLDOWN, cdl)
+			U.text(self, Keybinds.key_name(cmd[3]), r.position + Vector2(4, 13), 11, Color(1, 1, 1), "bold")
+			U.text_c(self, String(cmd[4]), Vector2(r.get_center().x, r.end.y - 3), 10, U.TEXT_DIM, "body")
+			if r.has_point(m):
+				var tip := {"return": "Fly back to the fountain.", "retrieve": "Pick up your items lying in the fountain area and take the stash, then wait at the fountain.",
+					"stash": "Fly home and put everything it carries into your stash.", "deliver": "Pick up your items in the fountain area, take the stash and bring it all to you.",
+					"transfer": "Bring what it carries to you.", "burst": "+50%% movement speed for 6 seconds. 120 second cooldown. From level %d." % C.COURIER_BURST_LEVEL,
+					"shield": "Invulnerable for 2 seconds. 200 second cooldown. From level %d." % C.COURIER_SHIELD_LEVEL,
+					"auto": "While on, the courier sets out by itself whenever the stash or its bags hold something."}
+				hud.show_tip(get_global_mouse_position(), [[String(cmd[1]), 18, U.GOLD, "title"], [String(tip.get(cmd[0], "")), 14, U.TEXT, "body"],
+					["Hotkey %s" % Keybinds.key_name(cmd[3]), 12, U.TEXT_DIM, "body"]])
+		# what it carries
+		for i in 6:
+			var r: Rect2 = _item_rects[i]
+			U.slot(self, r)
+			var it = c.inventory[i]
+			if it != null:
+				_item_icon(it, r, not c.alive, null, w, -1)
+				if r.has_point(m):
+					hud.show_tip(get_global_mouse_position(), hud.item_tip(it.id, h))
+		U.text(self, "Carrying", Vector2(ITEM_X, 24), 11, U.TEXT_DIM, "bold")
+
+	# ---- Input -----------------------------------------------------------------------------------------------------
+
+	func _drag_item(h: SimUnit):
+		if _press_slot >= 100:
+			return h.stash[_press_slot - 100]
+		if _press_slot >= 0:
+			return h.inventory[_press_slot]
+		return null
+
+	func _slot_at(p: Vector2, h: SimUnit) -> int:
+		for i in 9:
+			if (_item_rects[i] as Rect2).has_point(p):
+				return i
+		if stash_visible(h):
+			for i in 6:
+				if (_stash_rects[i] as Rect2).has_point(p):
+					return 100 + i
+		return -1
+
+	## Whether a point (local) is over the stash row or the open talent tree (they stick out above the panel).
+	func covers_extra(p: Vector2) -> bool:
+		var h: SimUnit = hud.hero()
+		if stash_visible(h) and Rect2(ITEM_X - 8, STASH_Y - 8, 330, 56).has_point(p):
+			return true
+		if talents_open and not _talent_rows.is_empty():
+			for tr in _talent_rows:
+				if (tr[0] as Rect2).grow(8).has_point(p):
+					return true
+		return false
+
+	func _has_point(p: Vector2) -> bool:
+		return Rect2(Vector2.ZERO, size).has_point(p) or covers_extra(p)
+
 	func _gui_input(e: InputEvent) -> void:
+		var h: SimUnit = hud.hero()
+		var w: SimWorld = hud.game.world
+		if e is InputEventMouseMotion and _press_slot >= 0:
+			if not _dragging and (e as InputEventMouseMotion).position.distance_to(_press_at) > 6.0:
+				_dragging = true
+			if _dragging:
+				queue_redraw()
+			return
 		if e is InputEventMouseButton and not e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 			hud.portrait_release()
+			if _press_slot >= 0:
+				_release_item((e as InputEventMouseButton).position, h, w)
+				accept_event()
 			return
 		if not (e is InputEventMouseButton and e.pressed):
 			return
 		var mb := e as InputEventMouseButton
-		var h: SimUnit = hud.hero()
-		var w: SimWorld = hud.game.world
 		var p := mb.position
-		if mb.button_index == MOUSE_BUTTON_LEFT and Rect2(12, 22, 170, 174).has_point(p):
+		if mb.button_index == MOUSE_BUTTON_LEFT and PORTRAIT.has_point(p) and courier_shown() == null:
 			hud.portrait_press()
 			accept_event()
 			return
-		if hud.shown() != h:
+		if talents_open and mb.button_index == MOUSE_BUTTON_LEFT:
+			for tr in _talent_rows:
+				if (tr[0] as Rect2).has_point(p):
+					if w.abilities.learn_talent(h, int(tr[1]), int(tr[2])) and hud.game.audio:
+						hud.game.audio.ui("ui_click", -2.0)
+					accept_event()
+					return
+		if _talent_rect.has_point(p) and mb.button_index == MOUSE_BUTTON_LEFT and not (hud.shown().def.get("talents", []) as Array).is_empty():
+			talents_open = not talents_open
+			accept_event()
+			return
+		talents_open = false
+		var cour := courier_shown()
+		if cour != null:
+			for i in COURIER_CMDS.size():
+				if (_cmd_rects[i] as Rect2).has_point(p):
+					hud.game.input.courier_cmd(String(COURIER_CMDS[i][0]))
+					accept_event()
+					return
+		if hud.shown() != h and cour == null:
 			accept_event()
 			return
 		if not h.alive and _buyback_rect.has_point(p):
@@ -620,9 +1002,20 @@ class BottomPanel extends Control:
 			accept_event()
 			return
 		if _courier_rect.has_point(p):
-			var err2 := w.courier_deliver(h)
-			if err2 != "":
-				hud.error(err2)
+			hud.game.input.courier_cmd("deliver")
+			accept_event()
+			return
+		if _shop_rect.has_point(p):
+			hud.toggle_shop()
+			accept_event()
+			return
+		if stash_visible(h) and _grab_rect.has_point(p):
+			var gerr: String = w.shop.grab_all(h)
+			if gerr != "":
+				hud.error(gerr)
+			accept_event()
+			return
+		if cour != null:
 			accept_event()
 			return
 		for i in 4:
@@ -640,29 +1033,190 @@ class BottomPanel extends Control:
 					if mb.ctrl_pressed:
 						w.abilities.learn(h, aid)
 					else:
-						hud.game.input.begin_ability(aid)
+						hud.game.input.begin_ability(aid, mb.shift_pressed)
 				accept_event()
 				return
-		for i in 9:
-			if (_item_rects[i] as Rect2).has_point(p):
-				if mb.button_index == MOUSE_BUTTON_LEFT and i < 6:
-					hud.game.input.use_item(i)
-				elif mb.button_index == MOUSE_BUTTON_RIGHT:
-					# right-click moves an item between the inventory and the backpack
-					var dest := -1
-					var lo := 6 if i < 6 else 0
-					var hi := 9 if i < 6 else 6
-					for k in range(lo, hi):
-						if h.inventory[k] == null:
-							dest = k
-							break
-					if dest >= 0:
-						w.shop.swap(h, i, dest)
-				accept_event()
-				return
-		if _shop_rect.has_point(p):
-			hud.toggle_shop()
+		var s := _slot_at(p, h)
+		if s >= 0:
+			if mb.button_index == MOUSE_BUTTON_LEFT:
+				# a click uses the item (on release, so a drag can move it instead)
+				if (s < 100 and h.inventory[s] != null) or (s >= 100 and h.stash[s - 100] != null):
+					_press_slot = s
+					_press_at = p
+					_dragging = false
+			elif mb.button_index == MOUSE_BUTTON_RIGHT and s < 9:
+				# right-click moves an item between the inventory and the backpack
+				var dest := -1
+				var lo := 6 if s < 6 else 0
+				var hi := 9 if s < 6 else 6
+				for k in range(lo, hi):
+					if h.inventory[k] == null:
+						dest = k
+						break
+				if dest >= 0:
+					w.shop.swap(h, s, dest)
 			accept_event()
+			return
+		accept_event()
+
+	## Finish a click or a drag that began on an item.
+	func _release_item(p: Vector2, h: SimUnit, w: SimWorld) -> void:
+		var from := _press_slot
+		var dragged := _dragging
+		_press_slot = -1
+		_dragging = false
+		queue_redraw()
+		if not dragged:
+			if from < 6:
+				hud.game.input.use_item(from, Input.is_key_pressed(KEY_SHIFT))
+			elif from >= 100:
+				var err0: String = w.shop.from_stash(h, from - 100)
+				if err0 != "":
+					hud.error(err0)
+			return
+		var to := _slot_at(p, h)
+		var err := ""
+		if to >= 0:
+			if from < 100 and to < 100:
+				w.shop.swap(h, from, to)
+			elif from < 100 and to >= 100:
+				err = w.shop.to_stash(h, from)
+			elif from >= 100 and to < 100:
+				err = w.shop.from_stash(h, from - 100, to)
+		elif not _has_point(p) and from < 100 and not hud.over_hud(get_global_transform() * p):
+			# dropped on the world: give it to an ally hero or your courier under the cursor, otherwise drop it there
+			hud.game.input.drop_or_give(from, get_global_transform() * p)
+		if err != "":
+			hud.error(err)
+
+
+class PortraitOverlay extends Control:
+	var panel
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		position = Vector2.ZERO
+		size = Vector2(BottomPanel.W, BottomPanel.H)
+
+	func _draw() -> void:
+		panel.draw_overlay(self)
+
+
+class ToBuyPanel extends Control:
+	## The To Buy list at the side of the screen (Dota's quick buy): Shift + click an item in the shop to add it,
+	## broken into the parts you still need. Shows up to 8 entries. Left click buys an entry now, right click sets it
+	## to buy itself as soon as you have the gold (the courier takes it if it waits at the fountain while you are
+	## away), Ctrl + click (or the x) removes it.
+	const W := 236.0
+	const ROW := 46.0
+	var hud
+	var _rows: Array = []                      # [rect, index, kind] kind: "buy" or "remove"
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_STOP
+
+	func wanted() -> bool:
+		var h: SimUnit = hud.hero()
+		return h != null and (not h.to_buy.is_empty() or hud.shop.visible)
+
+	func _process(_dt: float) -> void:
+		var h: SimUnit = hud.hero()
+		var n := 0 if h == null else mini(h.to_buy.size(), C.TO_BUY_SHOWN)
+		var more := h != null and h.to_buy.size() > C.TO_BUY_SHOWN
+		size = Vector2(W, 40 + maxi(n, 1) * ROW + (22 if more else 0) + 30)
+
+	func _draw() -> void:
+		_rows.clear()
+		var h: SimUnit = hud.hero()
+		if h == null:
+			return
+		var w: SimWorld = hud.game.world
+		var m := get_local_mouse_position()
+		U.panel(self, Rect2(Vector2.ZERO, size), U.GOLD_DIM, 6)
+		U.text(self, "To Buy", Vector2(12, 24), 17, U.GOLD, "title")
+		var total := 0
+		for e in h.to_buy:
+			total += int(SimData.item(String(e.id)).cost)
+		if total > 0:
+			U.text_r(self, "%d gold" % total, Vector2(W - 12, 24), 13, U.GOLD, "bold")
+		if h.to_buy.is_empty():
+			U.text(self, "Shift + click an item", Vector2(12, 52), 12, U.TEXT_DIM, "body")
+			U.text(self, "in the shop to add it here.", Vector2(12, 68), 12, U.TEXT_DIM, "body")
+		var y := 36.0
+		for i in mini(h.to_buy.size(), C.TO_BUY_SHOWN):
+			var e: Dictionary = h.to_buy[i]
+			var id := String(e.id)
+			var d := SimData.item(id)
+			var r := Rect2(8, y, W - 16, ROW - 4)
+			var price := w.shop.price(h, id)
+			var afford := h.gold() >= price
+			var auto := bool(e.auto)
+			var hover := r.has_point(m)
+			draw_rect(r, Color(0.08, 0.09, 0.11, 0.95) if not hover else Color(0.13, 0.13, 0.16, 0.98))
+			var rim := U.GOLD_DIM
+			if auto:
+				var t := Time.get_ticks_msec() / 1000.0
+				rim = Color(0.45, 1.0, 0.5, 0.65 + 0.35 * sin(t * 5.0))
+			draw_rect(r, rim, false, 2.0 if auto else 1.0)
+			var ic: Texture2D = U.item_icon(id)
+			if ic:
+				draw_texture_rect(ic, Rect2(r.position + Vector2(5, 4), Vector2(34, 34)), false, Color(1, 1, 1) if afford else Color(0.55, 0.55, 0.55))
+			var nm := String(d.get("name", id))
+			if nm.length() > 18:
+				nm = nm.substr(0, 17) + "."
+			U.text(self, nm, r.position + Vector2(46, 18), 13, U.TEXT if afford else U.TEXT_DIM, "bold")
+			U.text(self, "%d" % price, r.position + Vector2(46, 35), 12, U.GOLD if afford else Color(0.65, 0.5, 0.4), "bold")
+			if auto:
+				U.text_r(self, "Auto", Vector2(r.end.x - 26, r.position.y + 35), 11, Color(0.5, 1.0, 0.55), "bold")
+			var xr := Rect2(r.end.x - 22, r.position.y + 4, 18, 18)
+			draw_rect(xr, Color(0.25, 0.08, 0.06) if xr.has_point(m) else Color(0.12, 0.1, 0.1))
+			U.text_c(self, "x", xr.get_center() + Vector2(0, 5), 13, U.TEXT, "bold")
+			_rows.append([xr, i, "remove"])
+			_rows.append([r, i, "buy"])
+			if hover and not xr.has_point(m):
+				var tip: Array = hud.item_tip(id, h)
+				tip.append(["Left click: buy now (%d gold). Right click: %s. Ctrl + click: remove." % [price,
+					"stop buying it automatically" if auto else "buy it automatically when you have the gold"], 12, Color(0.75, 0.9, 0.75), "body"])
+				hud.show_tip(get_global_mouse_position(), tip)
+			y += ROW
+		if h.to_buy.size() > C.TO_BUY_SHOWN:
+			U.text(self, "+%d more" % (h.to_buy.size() - C.TO_BUY_SHOWN), Vector2(14, y + 14), 12, U.TEXT_DIM, "bold")
+			y += 22
+		if not h.to_buy.is_empty():
+			var cr := Rect2(8, size.y - 30, W - 16, 24)
+			U.slot(self, cr, cr.has_point(m))
+			U.text_c(self, "Clear", cr.get_center() + Vector2(0, 5), 12, U.TEXT_DIM, "bold")
+			_rows.append([cr, -1, "clear"])
+
+	func _gui_input(e: InputEvent) -> void:
+		if not (e is InputEventMouseButton and e.pressed):
+			return
+		var mb := e as InputEventMouseButton
+		var h: SimUnit = hud.hero()
+		var w: SimWorld = hud.game.world
+		for r in _rows:
+			if not (r[0] as Rect2).has_point(mb.position):
+				continue
+			var i: int = r[1]
+			match String(r[2]):
+				"clear":
+					h.to_buy.clear()
+				"remove":
+					w.shop.remove_to_buy(h, i)
+				"buy":
+					if mb.button_index == MOUSE_BUTTON_RIGHT:
+						w.shop.toggle_auto_buy(h, i)
+					elif mb.ctrl_pressed:
+						w.shop.remove_to_buy(h, i)
+					elif mb.button_index == MOUSE_BUTTON_LEFT:
+						var err: String = w.shop.buy_listed(h, i)
+						if err != "":
+							hud.error(err)
+			queue_redraw()
+			accept_event()
+			return
+		accept_event()
+
 
 const STAT_NAMES := {"str": "Strength", "agi": "Agility", "int": "Intelligence", "damage": "Damage",
 	"attack_speed": "Attack Speed", "armor": "Armor", "hp": "Health", "mana": "Mana", "hp_regen": "Health Regen",
@@ -873,14 +1427,23 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				draw_circle(p, 3.0, Color(1.0, 0.9, 0.3))
 			else:
 				draw_rect(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), (U.DAWN if u.team == 0 else U.DUSK).lightened(0.1))
-		# pings: pulsing rings for three seconds
-		for pg in hud.game.input.pings:
+		# neutral camps: Dota's tier marks (a triangle; one bar for medium, two for large, a triangle in a triangle for
+		# ancient); with Shift held, the spawn boxes too
+		var show_boxes: bool = hud.game.camps != null and hud.game.camps.boxes_wanted()
+		for c in w.map.camps:
+			_camp_mark(c, show_boxes)
+		# pings from the whole team: pulsing rings for three seconds (gold: here, red: attack or danger, green: defend)
+		for pg in w.pings:
 			var age: float = w.time - float(pg.t)
-			if age < 3.0:
-				var mp := _to_mm(pg.pos)
-				var k := fmod(age, 0.75) / 0.75
-				draw_arc(mp, 4.0 + k * 14.0, 0.0, TAU, 24, Color(1.0, 0.85, 0.3, 1.0 - k), 2.0)
-				draw_circle(mp, 3.0, Color(1.0, 0.85, 0.3))
+			if int(pg.team) != team or age >= 3.0:
+				continue
+			var mp := _to_mm(pg.pos)
+			var k := fmod(age, 0.75) / 0.75
+			var pc: Color = {"attack": Color(1.0, 0.35, 0.3), "danger": Color(1.0, 0.2, 0.2), "defend": Color(0.4, 1.0, 0.5)}.get(String(pg.kind), Color(1.0, 0.85, 0.3))
+			draw_arc(mp, 4.0 + k * 14.0, 0.0, TAU, 24, Color(pc, 1.0 - k), 2.0)
+			draw_circle(mp, 3.0, pc)
+			if String(pg.kind) == "danger":
+				U.text_c(self, "!", mp + Vector2(0, -8), 16, pc, "bold")
 		# camera frame
 		var cam: CameraRig = hud.game.camera
 		var vs := get_viewport_rect().size
@@ -904,6 +1467,28 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				["Your buildings take no damage for 7 seconds and your lane creeps for 3.", 14, U.TEXT, "body"],
 				["Tier 2+ towers attack 5 extra targets. Cooldown 5 minutes. (%s)" % Keybinds.key_name("glyph"), 13, U.TEXT_DIM, "body"]])
 
+	func _camp_mark(c: Dictionary, boxes: bool) -> void:
+		var p := _to_mm(c.pos)
+		var col := Color(1.0, 0.86, 0.35, 0.95)
+		var sz := 5.0 if c.kind != "ancient" else 7.0
+		var tri := PackedVector2Array([p + Vector2(0, -sz), p + Vector2(sz * 0.9, sz * 0.6), p + Vector2(-sz * 0.9, sz * 0.6)])
+		draw_colored_polygon(tri, Color(0, 0, 0, 0.75))
+		draw_polyline(PackedVector2Array([tri[0], tri[1], tri[2], tri[0]]), col, 1.4)
+		match String(c.kind):
+			"medium":
+				draw_line(p + Vector2(-sz * 0.8, sz + 2.0), p + Vector2(sz * 0.8, sz + 2.0), col, 1.4)
+			"large":
+				draw_line(p + Vector2(-sz * 0.8, sz + 2.0), p + Vector2(sz * 0.8, sz + 2.0), col, 1.4)
+				draw_line(p + Vector2(-sz * 0.8, sz + 4.5), p + Vector2(sz * 0.8, sz + 4.5), col, 1.4)
+			"ancient":
+				var t2 := PackedVector2Array([p + Vector2(0, -sz * 0.45), p + Vector2(sz * 0.4, sz * 0.3), p + Vector2(-sz * 0.4, sz * 0.3), p + Vector2(0, -sz * 0.45)])
+				draw_polyline(t2, col, 1.2)
+		if boxes:
+			var b: Vector2 = c.box
+			var a2 := _to_mm((c.pos as Vector2) + Vector2(-b.x, b.y))
+			var b2 := _to_mm((c.pos as Vector2) + Vector2(b.x, -b.y))
+			draw_rect(Rect2(a2, b2 - a2), Color(1.0, 0.86, 0.3, 0.9), false, 1.2)
+
 	func _gui_input(e: InputEvent) -> void:
 		var gr := Rect2(S - 38, -46, 38, 38)
 		if e is InputEventMouseButton:
@@ -913,7 +1498,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				accept_event()
 				return
 			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed and mb.alt_pressed:
-				hud.game.input.ping(_from_mm(mb.position))
+				hud.game.input.ping(_from_mm(mb.position), -1, mb.ctrl_pressed)
 				accept_event()
 				return
 			if mb.button_index == MOUSE_BUTTON_LEFT:

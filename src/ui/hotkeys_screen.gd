@@ -2,11 +2,11 @@ extends Control
 ## Hotkeys: shown after Play on Hero Select, before the match loads. Every rebindable key is listed by group; click a
 ## key, then press the new key (or Mouse 4 / Mouse 5). A key already in use swaps with the old one, so no action is
 ## left without a key. Templates: load a built-in or saved layout, save the current one under a name, delete it.
-## "Good to go" saves and starts the match; Back returns to Hero Select.
+## "Good to go" saves and starts the match; Back returns to Game Setup.
 
 const U = preload("res://src/ui/ui_kit.gd")
 const MATCH := "res://src/game/main.tscn"
-const HERO_SELECT := "res://src/ui/hero_select.tscn"
+const HERO_SELECT := "res://src/ui/game_setup.tscn"
 
 var _buttons := {}                         # action -> Button
 var _listening := ""

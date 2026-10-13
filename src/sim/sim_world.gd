@@ -20,6 +20,7 @@ var heroes: Array[SimUnit] = []
 var wave := 0
 var next_wave_at := 0.0
 var next_neutral_at := C.NEUTRAL_FIRST_SPAWN
+var next_neutral_upgrade_at := C.NEUTRAL_UPGRADE_INTERVAL
 var glyph_ready_at := [C.GLYPH_INITIAL_COOLDOWN, C.GLYPH_INITIAL_COOLDOWN]
 var rax_dead := {}                         # "team:lane:melee" -> true
 var first_blood := false
@@ -38,6 +39,10 @@ var shop: SimShop
 var abilities: SimAbilities
 var items: SimItems
 var bots: Array = []                       # SimBot instances
+var brains := [null, null]                 # SimTeamAI per team (made when the team's first bot joins)
+var chat_log: Array = []                   # [{team, u, name, text, t}] team chat, newest last (all teams)
+var pings: Array = []                      # [{id, team, pos, kind, target, from, t}] newest last
+var _next_ping := 1
 
 func _init(p_seed := 1, p_map: SimMap = null) -> void:
 	rng.seed = p_seed
@@ -57,6 +62,10 @@ func dispose() -> void:
 	for b in bots:
 		b.w = null
 	bots.clear()
+	for tb in brains:
+		if tb != null:
+			tb.w = null
+	brains = [null, null]
 	for h in [orders, combat, ai, vision, shop, abilities, items]:
 		h.w = null
 	units.clear()
@@ -100,6 +109,7 @@ func spawn_hero(def_id: String, team: int, look := {}) -> SimUnit:
 	var c := spawn("courier", team, map.fountains[team] + Vector2(150, 420) * (1.0 if team == C.DAWN else -1.0))
 	c.owner_id = u.id
 	u.courier_id = c.id
+	u.courier_items = c.inventory
 	return u
 
 ## Buy back a dead hero: 200 + net worth / 13 gold (reliable first), 8 minute cooldown.
@@ -124,20 +134,113 @@ func buyback(h: SimUnit) -> String:
 
 ## Order the hero's courier to fly to a point and wait there.
 func courier_move(h: SimUnit, p: Vector2) -> String:
-	var c := get_unit(h.courier_id)
-	if c == null or not c.alive:
+	var c := _courier_of(h)
+	if c == null:
 		return "Courier is dead"
 	c.courier_state = "move"
 	c.courier_goal = p
+	c.courier_next = ""
 	return ""
 
-## Send the hero's courier to fetch the stash and bring it to them.
-func courier_deliver(h: SimUnit) -> String:
+func _courier_of(h: SimUnit) -> SimUnit:
+	if h == null:
+		return null
 	var c := get_unit(h.courier_id)
 	if c == null or not c.alive:
+		return null
+	return c
+
+## The courier's commands, as in Dota (abilities.txt courier_*): "return" (Return to Base), "retrieve" (Retrieve
+## Items: take the stash and the owner's items lying in the fountain area, then wait at base), "stash" (Return Items
+## to Stash), "transfer" (Transfer Items: carry what it holds to the hero), "deliver" (take the stash, then transfer),
+## "burst" (Speed Burst, from level 10), "shield" (Shield, from level 20), "auto" (Auto Deliver on / off).
+func courier_command(h: SimUnit, cmd: String) -> String:
+	if h == null:
+		return "No hero"
+	if cmd == "auto":
+		var cc := get_unit(h.courier_id)
+		if cc == null:
+			return "No courier"
+		cc.courier_auto = not cc.courier_auto
+		events.append({"t": "courier_auto", "u": cc.id, "on": cc.courier_auto})
+		return ""
+	var c := _courier_of(h)
+	if c == null:
 		return "Courier is dead"
-	c.courier_state = "fetch"
+	match cmd:
+		"return":
+			c.courier_state = "return"
+		"stash", "transfer":
+			if not _has_items(c.inventory):
+				return "The courier carries nothing"
+			c.courier_state = cmd
+		"retrieve", "deliver":
+			c.courier_state = "collect"
+			c.courier_next = cmd
+		"burst":
+			if h.level < C.COURIER_BURST_LEVEL:
+				return "Speed Burst needs level %d" % C.COURIER_BURST_LEVEL
+			if time < c.courier_burst_ready:
+				return "Speed Burst on cooldown"
+			c.courier_burst_ready = time + C.COURIER_BURST_COOLDOWN
+			c.add_modifier({"id": "courier_burst", "source": c.id, "expires": time + C.COURIER_BURST_TIME, "fx": "slip"})
+			events.append({"t": "courier_burst", "u": c.id})
+		"shield":
+			if h.level < C.COURIER_SHIELD_LEVEL:
+				return "Shield needs level %d" % C.COURIER_SHIELD_LEVEL
+			if time < c.courier_shield_ready:
+				return "Shield on cooldown"
+			c.courier_shield_ready = time + C.COURIER_SHIELD_COOLDOWN
+			c.add_modifier({"id": "courier_shield", "source": c.id, "expires": time + C.COURIER_SHIELD_TIME,
+				"invulnerable": true, "fx": "spell_shield"})
+			events.append({"t": "courier_shield", "u": c.id})
+		_:
+			return "Unknown command"
+	if cmd in ["return", "stash", "transfer", "retrieve", "deliver"]:
+		events.append({"t": "courier_order", "u": c.id, "cmd": cmd})
 	return ""
+
+## Send the hero's courier to fetch the stash (and the hero's items lying in the fountain area) and bring it to them.
+func courier_deliver(h: SimUnit) -> String:
+	return courier_command(h, "deliver")
+
+static func _has_items(arr: Array) -> bool:
+	for it in arr:
+		if it != null:
+			return true
+	return false
+
+## Whether the courier waits at its fountain (purchases made away from the shop go to it).
+func courier_at_base(c: SimUnit) -> bool:
+	return c != null and c.alive and c.pos.distance_to(map.fountains[c.team]) <= C.COURIER_BASE_RADIUS \
+		and c.courier_state in ["idle", "retrieve", "return", "stash"]
+
+# ---- Items on the ground --------------------------------------------------------------------------------------------
+
+var ground_items: Array = []                # {gid, item, pos, owner}: dropped items (anyone may pick them up)
+var _next_gid := 1
+
+func drop_item(it: Dictionary, p: Vector2, owner_id: int) -> Dictionary:
+	var g := {"gid": _next_gid, "item": it, "pos": p, "owner": int(it.get("owner", owner_id))}
+	_next_gid += 1
+	ground_items.append(g)
+	events.append({"t": "item_drop", "gid": g.gid, "item": it.id, "pos": p})
+	return g
+
+func ground_item(gid: int) -> Dictionary:
+	for g in ground_items:
+		if int(g.gid) == gid:
+			return g
+	return {}
+
+func take_ground_item(gid: int, by: SimUnit) -> Dictionary:
+	for i in ground_items.size():
+		if int(ground_items[i].gid) == gid:
+			var g: Dictionary = ground_items[i]
+			ground_items.remove_at(i)
+			events.append({"t": "item_pickup", "gid": gid, "u": by.id if by else -1})
+			return g
+	return {}
 
 func get_unit(uid: int) -> SimUnit:
 	return by_id.get(uid)
@@ -167,13 +270,19 @@ func step() -> void:
 		if u.alive:
 			_pre_unit(u)
 	ai.think()
+	for tb in brains:
+		if tb != null:
+			tb.think()
 	for b in bots:
 		b.think()
 	_couriers()
+	if tick % 6 == 0:
+		for h in heroes:
+			shop.auto_buy(h)
 	if not debug_flags.is_empty():
 		SimDebug.tick(self)
 	for u in units:
-		if u.alive:
+		if u.alive and u.kind != K.COURIER:
 			orders.update(u)
 	combat.update_projectiles()
 	abilities.update_effects()
@@ -191,10 +300,13 @@ func _clock() -> void:
 		wave += 1
 		ai.spawn_wave(wave)
 		next_wave_at = wave * C.WAVE_INTERVAL
-	# neutral camps at every minute from 1:00
+	# neutral camps at every minute from 1:00; neutrals grow every 7:30
 	if time >= next_neutral_at:
 		next_neutral_at += C.NEUTRAL_SPAWN_INTERVAL
 		ai.spawn_neutrals()
+	if time >= next_neutral_upgrade_at:
+		next_neutral_upgrade_at += C.NEUTRAL_UPGRADE_INTERVAL
+		ai.upgrade_neutrals()
 	# passive gold (reliable) from 0:00
 	if time >= 0.0:
 		var per_tick := C.passive_gpm(time) / 60.0 * C.DT
@@ -331,6 +443,7 @@ func _respawns() -> void:
 func respawn(h: SimUnit) -> void:
 	h.alive = true
 	h.respawn_at = -1.0
+	h.was_in_shop = false                     # respawning in the fountain counts as arriving: the stash empties
 	h.pos = map.fountains[h.team] + Vector2(250, 250) * (1.0 if h.team == C.DAWN else -1.0)
 	h.modifiers.clear()
 	h.knock = {}
@@ -352,11 +465,15 @@ func _cleanup() -> void:
 
 # ---- Couriers ------------------------------------------------------------------------------------------------------
 
-## Couriers fly straight (no pathing): fetch the owner's stash at the fountain, carry it to the owner, return home.
+## Couriers: their level is the owner's; they walk (with pathing) until level 4, then fly straight. Tasks:
+## collect (pick up the owner's items lying in the fountain area) -> fetch / retrieve (take the stash) -> deliver /
+## transfer (fly to the hero and hand over what fits) -> return; stash (put everything back in the stash); move; idle.
+## Auto Deliver sends it out whenever it waits at base and the stash, its bags or the Well hold something.
 func _couriers() -> void:
 	for c in units:
 		if c.kind != K.COURIER:
 			continue
+		var h := get_unit(c.owner_id)
 		if not c.alive:
 			if c.respawn_at >= 0.0 and time >= c.respawn_at:
 				c.alive = true
@@ -365,65 +482,132 @@ func _couriers() -> void:
 				c.hp = c.max_hp
 				c.pos = map.fountains[c.team] + Vector2(150, 420) * (1.0 if c.team == C.DAWN else -1.0)
 				c.courier_state = "idle"
+				c.path = PackedVector2Array()
 				events.append({"t": "respawn", "u": c.id})
 			continue
-		var h := get_unit(c.owner_id)
 		if h == null:
 			continue
+		var lvl := h.level
+		c.level = lvl
+		var flying := lvl >= C.COURIER_FLY_LEVEL
+		if flying != not c.get_modifier("flying").is_empty():
+			c.remove_modifier("flying")
+			if flying:
+				c.add_modifier({"id": "flying", "source": c.id, "expires": INF, "flying": true})
+				events.append({"t": "courier_fly", "u": c.id})
+		c.move_speed = (C.COURIER_SPEED + C.COURIER_SPEED_PER_LEVEL * lvl) \
+			* (1.0 + C.COURIER_BURST_SPEED if not c.get_modifier("courier_burst").is_empty() else 1.0)
 		var home: Vector2 = map.fountains[c.team]
+		# healed fully in the fountain (couriers never regenerate elsewhere)
+		if c.pos.distance_to(home) < C.FOUNTAIN_AURA_RADIUS:
+			c.hp = c.max_hp
+		if c.courier_auto and c.courier_state == "idle" and c.pos.distance_to(home) <= C.COURIER_BASE_RADIUS \
+				and h.alive and (_has_items(h.stash) or _has_items(c.inventory) or not _owner_items_in_well(h).is_empty()):
+			c.courier_state = "collect"
+			c.courier_next = "deliver"
 		var goal := c.pos
+		var stop := 30.0
 		match c.courier_state:
-			"fetch":
+			"collect":
+				# the owner's items lying in the fountain area, nearest first, then on to the stash
+				var g: Dictionary = {}
+				var gd := INF
+				for x in _owner_items_in_well(h):
+					var d: float = c.pos.distance_to(x.pos)
+					if d < gd:
+						gd = d
+						g = x
+				if g.is_empty() or c.inventory.find(null) < 0:
+					c.courier_state = "retrieve" if c.courier_next == "retrieve" else "fetch"
+					goal = home
+				else:
+					goal = g.pos
+					stop = 60.0
+					if gd <= C.ITEM_REACH:
+						var got := take_ground_item(int(g.gid), c)
+						c.inventory[c.inventory.find(null)] = got.item
+			"fetch", "retrieve":
 				goal = home
 				if c.pos.distance_to(home) < 500.0:
-					for i in h.stash.size():
-						if h.stash[i] != null:
-							for k in c.inventory.size():
-								if c.inventory[k] == null:
-									c.inventory[k] = h.stash[i]
-									h.stash[i] = null
-									break
-					c.courier_state = "deliver" if c.inventory.any(func(x): return x != null) else "idle"
-			"deliver":
+					_courier_take_stash(c, h)
+					if c.courier_state == "fetch":
+						c.courier_state = "deliver" if _has_items(c.inventory) else "idle"
+					else:
+						c.courier_state = "idle"
+			"deliver", "transfer":
 				if not h.alive:
 					c.courier_state = "return"
 				else:
 					goal = h.pos
-					if c.pos.distance_to(h.pos) < 220.0:
+					stop = 120.0
+					if c.pos.distance_to(h.pos) < C.COURIER_REACH:
+						var gave := false
 						for k in c.inventory.size():
 							var it = c.inventory[k]
-							if it == null:
-								continue
-							for s in 9:
-								if h.inventory[s] == null:
-									h.inventory[s] = it
-									c.inventory[k] = null
-									break
-						shop._combine_all(h)
+							if it != null and shop.place_in_bags(h, it):
+								c.inventory[k] = null
+								gave = true
+						shop.combine_all(h)
 						h.refresh_stats()
-						events.append({"t": "delivered", "u": h.id})
+						if gave:
+							events.append({"t": "delivered", "u": h.id})
+						# anything that did not fit stays on the courier, as in Dota
 						c.courier_state = "return"
 			"return":
 				goal = home
 				if c.pos.distance_to(home) < 300.0:
-					# anything it could not hand over (the hero died on the way) goes back to the stash
+					c.courier_state = "idle"
+			"stash":
+				goal = home
+				if c.pos.distance_to(home) < 500.0:
 					for k in c.inventory.size():
 						if c.inventory[k] != null:
 							var slot := h.stash.find(null)
 							if slot >= 0:
 								h.stash[slot] = c.inventory[k]
 								c.inventory[k] = null
+					shop.combine_all(h)
 					c.courier_state = "idle"
 			"move":
 				goal = c.courier_goal
 				if c.pos.distance_to(goal) < 40.0:
 					c.courier_state = "idle"
-		var to := goal - c.pos
+		_courier_step(c, goal, stop, flying)
+
+func _courier_take_stash(c: SimUnit, h: SimUnit) -> void:
+	for i in h.stash.size():
+		if h.stash[i] == null:
+			continue
+		var k := c.inventory.find(null)
+		if k < 0:
+			break
+		c.inventory[k] = h.stash[i]
+		h.stash[i] = null
+
+## Ground items that belong to the hero and lie in its fountain area (the Well).
+func _owner_items_in_well(h: SimUnit) -> Array:
+	var out: Array = []
+	var home: Vector2 = map.fountains[h.team]
+	for g in ground_items:
+		if int(g.owner) == h.id and (g.pos as Vector2).distance_to(home) <= C.WELL_RADIUS:
+			out.append(g)
+	return out
+
+## Fly straight when flying; walk the pathing grid before that (ground couriers do not collide with units).
+func _courier_step(c: SimUnit, goal: Vector2, stop: float, flying: bool) -> void:
+	var to := goal - c.pos
+	if to.length() <= stop:
+		c.moving = false
+		c.path = PackedVector2Array()
+		return
+	if flying:
 		var step := c.move_speed * C.DT
-		c.moving = to.length() > 30.0
-		if c.moving:
-			c.facing = to.angle()
-			c.pos += to.normalized() * minf(step, to.length())
+		c.moving = true
+		c.facing = to.angle()
+		c.pos += to.normalized() * minf(step, to.length())
+		return
+	c.moving = false
+	orders.move_toward(c, goal, stop)
 
 # ---- Spatial queries ----------------------------------------------------------------------------------------------
 
@@ -480,6 +664,49 @@ func glyph(team: int) -> bool:
 			u.glyph_until = time + C.GLYPH_CREEP_DURATION
 	events.append({"t": "glyph", "team": team})
 	return true
+
+# ---- Team chat and pings -------------------------------------------------------------------------------------------
+
+## The team's brain (lane plan, calls, ping replies), made on first use.
+func brain(team: int) -> SimTeamAI:
+	if team < 0 or team > 1:
+		return null
+	if brains[team] == null:
+		brains[team] = SimTeamAI.new(self, team)
+	return brains[team]
+
+## A team chat line from a hero (or -1 for the game). Teams only read their own lines.
+func chat(team: int, from_id: int, text: String) -> void:
+	var u := get_unit(from_id)
+	var who := ""
+	if u != null:
+		who = u.bot_name if u.bot_name != "" else String(u.look.get("display_name", u.def.get("name", "")))
+	var line := {"team": team, "u": from_id, "name": who, "text": text, "t": time}
+	chat_log.append(line)
+	if chat_log.size() > 80:
+		chat_log.pop_front()
+	events.append({"t": "chat", "team": team, "u": from_id, "name": who, "text": text})
+	if brains[team] != null and u != null and not u.bot:
+		brains[team].on_player_chat(u, text)
+
+## A ping for the team: kind "move" (ground), "attack" (an enemy unit or building), "defend" (one of ours), "danger"
+## (Ctrl + Alt: get out of here). The kind is worked out from what lies under the ping when not given.
+func ping(team: int, pos: Vector2, from_id: int, target_id := -1, kind := "") -> Dictionary:
+	var t := get_unit(target_id)
+	if kind == "":
+		if t != null and t.alive:
+			kind = "attack" if t.team != team else "defend"
+		else:
+			kind = "move"
+	var pg := {"id": _next_ping, "team": team, "pos": pos, "kind": kind, "target": target_id, "from": from_id, "t": time}
+	_next_ping += 1
+	pings.append(pg)
+	while pings.size() > 30:
+		pings.pop_front()
+	events.append({"t": "ping", "team": team, "pos": pos, "kind": kind, "target": target_id, "u": from_id})
+	if brains[team] != null:
+		brains[team].on_ping(pg)
+	return pg
 
 # ---- Building rules -----------------------------------------------------------------------------------------------
 

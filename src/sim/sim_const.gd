@@ -39,7 +39,8 @@ const SIEGE_TAKEN_FROM_BASIC := 0.7
 enum DamageType { PHYSICAL, MAGICAL, PURE }
 
 # ---- Orders ---------------------------------------------------------------------------------------------------------
-enum Order { NONE, MOVE, ATTACK_UNIT, ATTACK_MOVE, HOLD, STOP, CAST_NO_TARGET, CAST_POINT, CAST_UNIT, MOVE_TO_UNIT }
+enum Order { NONE, MOVE, ATTACK_UNIT, ATTACK_MOVE, HOLD, STOP, CAST_NO_TARGET, CAST_POINT, CAST_UNIT, MOVE_TO_UNIT,
+	DROP_ITEM, PICKUP_ITEM, GIVE_ITEM }
 
 # ---- Movement & attack ---------------------------------------------------------------------------------------------
 ## A unit only starts walking, attacking or casting when its target is within this angle of its facing (11.5 deg).
@@ -148,8 +149,33 @@ const TOWER_DENY_FACTOR := 0.5
 const TP_CHANNEL := 3.0                     # items.txt tooltip_channel_time
 const TP_COOLDOWN := 80.0                   # items.txt AbilityCooldown
 const TP_MANA := 75.0                       # items.txt AbilityManaCost
-const COURIER_BOUNTY := 75                  # APPROX
-const COURIER_RESPAWN := 60.0               # APPROX
+# Courier (Dota 7.23 rework, 7.27 flying level, 7.35 hit counts and respawn; npc_units.txt for speed and vision).
+# Its level is its owner's level.
+const COURIER_SPEED := 290.0                # npc_units.txt MovementSpeed
+const COURIER_SPEED_PER_LEVEL := 10.0       # APPROX (wiki: 290 + 10 per level)
+const COURIER_FLY_LEVEL := 4                # 7.27: flying from level 4 (was 5)
+const COURIER_HITS := 6                     # 7.35: 1 melee hero attack, 2 ranged hero attacks, 6 other attacks
+const COURIER_RESPAWN_BASE := 60.0          # 7.35: 60 + 6 x level
+const COURIER_RESPAWN_PER_LEVEL := 6.0
+const COURIER_BOUNTY_BASE := 25             # APPROX (7.23 notes: 25 + 5 x level to every enemy hero)
+const COURIER_BOUNTY_PER_LEVEL := 5
+const COURIER_VISION := 200.0               # npc_units.txt VisionDaytimeRange / VisionNighttimeRange
+const COURIER_BURST_LEVEL := 10             # 7.23: Speed Burst from level 10
+const COURIER_BURST_SPEED := 0.5            # abilities.txt courier_burst: +50% for 6 s, 120 s cooldown
+const COURIER_BURST_TIME := 6.0
+const COURIER_BURST_COOLDOWN := 120.0
+const COURIER_SHIELD_LEVEL := 20            # 7.23: Shield from level 20
+const COURIER_SHIELD_TIME := 2.0            # abilities.txt courier_shield: 2 s, 200 s cooldown
+const COURIER_SHIELD_COOLDOWN := 200.0
+const COURIER_REACH := 220.0                # hand-over distance to its hero
+const COURIER_BASE_RADIUS := 600.0          # "at the fountain": within this of the fountain
+
+# ---- Items on the ground, giving, the stash -------------------------------------------------------------------------
+const ITEM_REACH := 150.0                   # drop, pick up and give range (Dota: 150)
+const WELL_RADIUS := 1000.0                 # the fountain area the courier sweeps for its owner's items (= shop radius)
+const BACKPACK_SWAP_COOLDOWN := 6.0         # an item moved out of the backpack waits 6 s before it can be used
+const TO_BUY_MAX := 24                      # entries kept in the To Buy list (8 are shown)
+const TO_BUY_SHOWN := 8
 
 # ---- Fountain -------------------------------------------------------------------------------------------------------
 const FOUNTAIN_AURA_RADIUS := 1200.0
@@ -160,8 +186,19 @@ const SHOP_RADIUS := 1000.0
 # ---- Neutrals ---------------------------------------------------------------------------------------------------------
 const NEUTRAL_SPAWN_INTERVAL := 60.0
 const NEUTRAL_FIRST_SPAWN := 60.0
-const NEUTRAL_LEASH := 1100.0                # APPROX: a neutral gives up a chase this far from its camp
-const NEUTRAL_AGGRO_TIMEOUT := 3.0           # APPROX: return home after this long without a reachable target
+## Dota 2 neutral rules (Liquipedia "Neutral Creeps", 2026; research/camps.md in run 2026-10-13-camps-ai-setup)
+const NEUTRAL_GUARD_RADIUS := 400.0          # a neutral's guard distance from its spawn spot
+const NEUTRAL_CHASE_TIME := 5.0              # aggro drops this long after leaving the guard radius (resets inside it)
+const NEUTRAL_REAGGRO_LOCK := 3.0            # after a leash, damage cannot wake it again for this long
+const NEUTRAL_REAGGRO_CHASE := 3.0           # woken again while walking home: it chases for only this long
+const NEUTRAL_PROXIMITY_AGGRO := 240.0       # by day, an enemy this close wakes a camp (at night they sleep)
+const NEUTRAL_CAMPMATE_RADIUS := 500.0       # campmates this close to a damaged neutral join the fight
+const NEUTRAL_UPGRADE_INTERVAL := 450.0      # every 7:30 from the horn, up to 30 times
+const NEUTRAL_MAX_UPGRADES := 30
+## Per neutral upgrade: [hp, armor, damage, attack speed, gold, xp]
+const NEUTRAL_UPGRADE := [30.0, 0.5, 3.0, 5.0, 1.0, 5.0]
+const STACK_BOUNTY_PENALTY := 0.2            # creeps from a stack give 20% less gold and xp (7.39e)
+const STACKER_SHARE := 0.3                   # the stacker gets 30% of what an ally earned from them
 
 # ---- Time of day ----------------------------------------------------------------------------------------------------
 const DAY_LENGTH := 600.0                    # full day-night cycle; day first half from 0:00

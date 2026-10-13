@@ -317,6 +317,8 @@ func tick(u: SimUnit) -> void:
 		cur_lift = float(u.leap.z) * View.S
 	elif not u.hop.is_empty():
 		cur_lift = float(u.hop.z) * View.S
+	if model == null:
+		return                              # a ward: just its glowing eye, nothing to animate
 	if not u.alive:
 		if _knock_t >= 0.0:
 			return

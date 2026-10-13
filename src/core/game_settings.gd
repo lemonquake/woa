@@ -144,3 +144,131 @@ static func save() -> void:
 			if looks.has(id):
 				saved[id] = looks[id]
 		f.store_string(JSON.stringify({"selected": selected, "opponent": opponent, "looks": saved, "custom": custom.keys()}, "\t"))
+
+# ---- Game Setup -----------------------------------------------------------------------------------------------------
+# Who plays the match: two teams of five slots, each You, Bot or Empty, with a hero (or Random; bots may pick the same
+# hero), a bot skill (Dota's bot difficulties) and, for you, the lane you mean to take (the bots leave it to you).
+# Saved in user://setup.json.
+
+const SETUP_PATH := "user://setup.json"
+const BOT_NAMES := ["Bot Gerald", "Bot Kevin", "Bot Doris", "Bot Nigel", "Bot Wanda", "Bot Mabel", "Bot Hank",
+	"Bot Tilly", "Bot Barry", "Bot Pip"]
+const SKILLS := ["passive", "easy", "medium", "hard", "unfair"]
+const SKILL_NAMES := ["Passive", "Easy", "Medium", "Hard", "Unfair"]
+const LANES := ["", "safe", "mid", "off"]
+const LANE_NAMES := ["Any lane", "Safe lane", "Mid", "Off lane"]
+const ROLES := ["", "1", "2", "3", "4", "5"]
+const ROLE_NAMES := ["Any role", "Safe lane carry", "Mid", "Off lane", "Roamer", "Safe lane support"]
+const KINDS := ["you", "bot", "empty"]
+const KIND_NAMES := ["You", "Bot", "Empty"]
+
+static var setup := {}
+static var _setup_loaded := false
+
+static func default_setup() -> Dictionary:
+	var teams := [[], []]
+	var n := 1
+	for t in 2:
+		for i in 5:
+			var slot := {"kind": "bot", "hero": "random", "skill": "hard", "name": "", "lane": "", "role": ""}
+			if t == 0 and i == 0:
+				slot.kind = "you"
+				slot.hero = selected
+			elif t == 1 and i == 0:
+				slot.name = "Bot Gerald"
+				slot.hero = opponent
+			else:
+				slot.name = BOT_NAMES[n]
+				n += 1
+			teams[t].append(slot)
+	return {"teams": teams}
+
+## The classic duel: you against Bot Gerald in the middle lane.
+static func duel_setup() -> Dictionary:
+	var s := default_setup()
+	for t in 2:
+		for i in range(1, 5):
+			s.teams[t][i].kind = "empty"
+	s.teams[0][0].lane = "mid"
+	s.teams[1][0].hero = opponent
+	return s
+
+static func load_setup() -> Dictionary:
+	if _setup_loaded:
+		return setup
+	_setup_loaded = true
+	_load()
+	setup = default_setup()
+	if not FileAccess.file_exists(SETUP_PATH):
+		return setup
+	var d = JSON.parse_string(FileAccess.get_file_as_string(SETUP_PATH))
+	if not (d is Dictionary) or not (d.get("teams") is Array) or (d.teams as Array).size() != 2:
+		return setup
+	var you := 0
+	for t in 2:
+		var src: Array = d.teams[t] if d.teams[t] is Array else []
+		for i in mini(5, src.size()):
+			if not (src[i] is Dictionary):
+				continue
+			var s: Dictionary = setup.teams[t][i]
+			var kind := String(src[i].get("kind", s.kind))
+			s.kind = kind if kind in KINDS else "empty"
+			var hero_id := String(src[i].get("hero", "random"))
+			s.hero = hero_id if hero_id == "random" or hero_id in HEROES else "random"
+			var sk := String(src[i].get("skill", "hard"))
+			s.skill = sk if sk in SKILLS else "hard"
+			s.name = String(src[i].get("name", s.name)).substr(0, 20)
+			var ln := String(src[i].get("lane", ""))
+			s.lane = ln if ln in LANES else ""
+			var rl := String(src[i].get("role", ""))
+			s.role = rl if rl in ROLES else ""
+			if s.kind == "you":
+				you += 1
+				if you > 1:
+					s.kind = "bot"
+	if you == 0:
+		setup.teams[0][0].kind = "you"
+	for t in 2:
+		for s in setup.teams[t]:
+			if s.kind == "you":
+				s.hero = selected
+	return setup
+
+static func save_setup() -> void:
+	var f := FileAccess.open(SETUP_PATH, FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(setup, "\t"))
+
+## The slot you play in: [team, index].
+static func your_slot() -> Array:
+	load_setup()
+	for t in 2:
+		for i in 5:
+			if setup.teams[t][i].kind == "you":
+				return [t, i]
+	return [0, 0]
+
+## Every filled slot with Random resolved: [{team, kind, hero, skill, name, lane}].
+static func match_slots(rng: RandomNumberGenerator) -> Array:
+	load_setup()
+	var out := []
+	var used_names := {}
+	for t in 2:
+		for s in setup.teams[t]:
+			if s.kind == "empty":
+				continue
+			var hero_id := String(s.hero)
+			if s.kind == "you":
+				hero_id = selected
+			elif hero_id == "random" or not (hero_id in HEROES):
+				hero_id = HEROES[rng.randi_range(0, HEROES.size() - 1)]
+			var nm := String(s.name)
+			if s.kind == "bot" and (nm == "" or used_names.has(nm)):
+				for b in BOT_NAMES:
+					if not used_names.has(b):
+						nm = b
+						break
+			used_names[nm] = true
+			out.append({"team": t, "kind": s.kind, "hero": hero_id, "skill": s.skill, "name": nm, "lane": s.lane,
+				"role": String(s.get("role", ""))})
+	return out

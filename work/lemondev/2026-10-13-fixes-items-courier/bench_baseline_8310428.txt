@@ -1,0 +1,2 @@
+BENCH frames 3800 avg 13.16 ms (76 fps) p50 12.50 p95 16.67 p99 22.47 max 40.72 over16.7 137 units 155
+  per-frame means: views 1.36, fx 0.16, status 0.06, target 0.02, fog 0.05, sim 2.10, sync 0.81, gpu 7.15, rcpu 1.55, proc 17.62, phys 14.52, draws 1538.23, prims 2350323.20, trails 0.14, bars 0.33

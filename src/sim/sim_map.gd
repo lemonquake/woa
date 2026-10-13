@@ -42,7 +42,19 @@ var vision_level := PackedByteArray()      # VN*VN terrain level
 var lanes := {}                            # "top"/"mid"/"bot" -> PackedVector2Array from Dawn's base to Dusk's
 var ramps: Array = []                      # [{pos: Vector2, radius: float}]
 var buildings: Array = []                  # [{id, team, pos, lane, tier, name}]
-var camps: Array = []                      # [{id, team_side, kind, pos, box_half, units: [ids]}]
+var camps: Array = []                      # [{id, side, kind, pos, box (half size), box_half, pull, units: the first spawn's group}]
+
+## The creep groups a camp of each kind can spawn (a camp picks one at random each time, never the same twice in a
+## row), after Dota's groups: small = kobolds / hill trolls with a kobold foreman; medium = wolves, centaurs, trolls
+## with an ogre; large = centaurs, ogres; ancient = black dragons.
+const CAMP_GROUPS := {
+	"small": [["mudling", "mudling", "mudling", "mudling_digger", "mudling_foreman"],
+		["hill_troll", "hill_troll", "mudling_foreman"]],
+	"medium": [["ashfang", "ashfang", "ashfang_alpha"], ["strider", "strider_warlord"],
+		["hill_troll", "hill_troll", "ogre_brute"]],
+	"large": [["strider", "strider", "strider_warlord"], ["ogre_brute", "ogre_brute", "strider_warlord"]],
+	"ancient": [["cinder_wyrmling", "cinder_wyrmling", "elder_cinder_wyrm"]],
+}
 var fountains := [Vector2(-7050, -6650), Vector2(7050, 6650)]
 var shops := [Vector2(-6700, -6200), Vector2(6700, 6200)]
 var paths: Array = []                      # jungle walkways (PackedVector2Array), kept clear of trees
@@ -108,21 +120,33 @@ func _layout() -> void:
 			# rotated 180 degrees, Dawn's bottom lane becomes the north edge: Dusk's end of the top lane
 			var lane: String = b[2] if team == C.DAWN else mirror_lane[b[2]]
 			buildings.append({"unit": b[0], "team": team, "lane": lane, "tier": b[3], "pos": p})
-	# Neutral camps. kind: small / medium / large / ancient. The south-east jungle is Dawn's, the north-west Dusk's.
+	# Neutral camps, as in Dota 2 (7.41): 14 a side, 3 small, 7 medium, 3 large, 1 ancient. The south-east jungle
+	# (between mid and the bottom lane) is Dawn's main jungle, the "triangle" between the top lane and mid its off-lane
+	# jungle; Dusk's are the same rotated 180 degrees. [kind, centre, spawn box half size, pull camp]. Pull camps sit
+	# beside the safe lane's tier 1 tower: lane creeps fight only their neutrals (research/camps.md).
 	var dawn_camps := [
-		["small", Vector2(1150, -4500), ["mudling", "mudling", "mudling_digger", "mudling_foreman"]],
-		["medium", Vector2(-1350, -4150), ["ashfang", "ashfang", "ashfang_alpha"]],
-		["large", Vector2(2700, -3900), ["strider", "strider", "strider_warlord"]],
-		["ancient", Vector2(450, -2350), ["cinder_wyrmling", "cinder_wyrmling", "elder_cinder_wyrm"]],
-		["medium", Vector2(-4450, -650), ["hill_troll", "hill_troll", "ogre_brute"]],
-		["large", Vector2(-3250, 1050), ["ogre_brute", "ogre_brute", "strider_warlord"]],
+		["small", Vector2(3300, -5600), Vector2(260, 220), true],      # small pull camp by the safe tier 1
+		["medium", Vector2(-1350, -4150), Vector2(300, 260), false],   # main jungle, between the tier 2 towers
+		["large", Vector2(1900, -5800), Vector2(330, 270), true],      # large pull camp by the safe tier 1
+		["medium", Vector2(800, -2150), Vector2(300, 260), false],     # by the river, below the mid tier 1
+		["medium", Vector2(-5150, -1250), Vector2(300, 260), false],   # off-lane jungle below the bluff
+		["large", Vector2(-3670, 910), Vector2(330, 270), false],      # off-lane bluff (high ground)
+		["medium", Vector2(2350, -4750), Vector2(300, 260), false],    # main jungle high ground
+		["large", Vector2(-700, -2900), Vector2(330, 270), false],     # main jungle by the mid tier 1
+		["medium", Vector2(-2400, -5100), Vector2(300, 260), false],   # west ridge near the base (high ground)
+		["medium", Vector2(500, -5450), Vector2(300, 260), false],     # by the safe lane's tier 2
+		["medium", Vector2(-2700, -900), Vector2(300, 260), false],    # triangle, by the mid tier 1
+		["ancient", Vector2(-3900, 2000), Vector2(360, 300), false],   # triangle ancient camp
+		["small", Vector2(-5200, -2250), Vector2(260, 220), false],    # by the off lane's gate near the base
+		["small", Vector2(1500, -7150), Vector2(260, 220), false],     # outside the safe lane, by the map edge
 	]
 	camps.clear()
 	var i := 0
 	for side in [C.DAWN, C.DUSK]:
 		for c in dawn_camps:
 			var p: Vector2 = c[1] if side == C.DAWN else -(c[1] as Vector2)
-			camps.append({"id": i, "side": side, "kind": c[0], "pos": p, "box_half": 260.0, "units": c[2]})
+			camps.append({"id": i, "side": side, "kind": c[0], "pos": p, "box": c[2], "box_half": maxf(c[2].x, c[2].y),
+				"pull": c[3], "units": CAMP_GROUPS[c[0]][i % (CAMP_GROUPS[c[0]] as Array).size()]})
 			i += 1
 	# Jungle walkways: from lanes to camps and between camps, plus river crossings.
 	var dawn_paths := [
@@ -136,6 +160,17 @@ func _layout() -> void:
 		[Vector2(-3400, -2900), Vector2(-4450, -650)],
 		[Vector2(-3250, 1050), Vector2(-2600, 2600)],
 		[Vector2(-5600, -2600), Vector2(-3400, -2900)],
+		# walkways to the camps added for the 14-camp layout
+		[Vector2(800, -6300), Vector2(500, -5450), Vector2(1150, -4500)],
+		[Vector2(1900, -5800), Vector2(2300, -6300)],
+		[Vector2(3300, -5600), Vector2(3300, -6300)],
+		[Vector2(-700, -2900), Vector2(-1450, -2900)],
+		[Vector2(-700, -2900), Vector2(450, -2350)],
+		[Vector2(-2700, -900), Vector2(-2250, -1600)],
+		[Vector2(-3900, 2000), Vector2(-3250, 1050)],
+		[Vector2(-3900, 2000), Vector2(-6400, 1700)],
+		[Vector2(-5200, -2250), Vector2(-5600, -2600)],
+		[Vector2(1500, -7150), Vector2(1500, -6400)],
 	]
 	paths.clear()
 	for side in [1.0, -1.0]:

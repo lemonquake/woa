@@ -75,3 +75,30 @@ Session resumed 2026-10-13 after a second cut-off (items and shop were in the wo
 | Items (I1) | 1 | working tree | gate: 92 tests (one per recipe path and active/passive) | n/a | PASS (gate) | spot-check against items.txt found Cleave Axe dealt 60% to creeps; Dota deals 40% (`cleave_damage_percent_creep`); fixed and tested before the gate | none |
 | Shop UI (I2) | 1 | working tree | gate: readable at 1080p and 2160p, every item buyable by mouse | n/a | PASS (gate); blind review UNVERIFIED (no Dota shop frame set up) | none | benchmark frame of Dota's shop for a blind review |
 | Integration (G) | 1 | working tree | tests 92/92, check.sh "Names OK", duels 9/9 complete, bench 82 fps p95 14.2 ms, export + cold start (Sludge match ready 9.7 s), Options persist across processes | n/a | PASS (gate) | ObjectDB leak warning at exit (188 instances, 184 before this run): pre-existing, not new | none |
+
+## Session 2026-10-13 b (Sludge input fixes, cursors, To Buy, stash, courier, HUD) — run `work/lemondev/2026-10-13-fixes-items-courier/` (contract.md)
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Ability input (A1) | 1 | 8310428 | gate: live input probe through InputController | n/a | REJECT (baseline) | Stench never issued (toggle not handled); Chomp hotkey refused before a target was picked | fix begin_ability, cast_error check_target |
+| Ability input (A1) | 2 | working tree | gate: live input probe, 3 heroes | n/a | PASS (gate) | none (Sludge 10/10, Blood Ranger 7/7, Ezee 4/4) | none |
+| Talent tree (A2) | 1 | working tree | gate: HUD flow probe click learns +5 Armor; capture talents.png | n/a | PASS (gate); blind review UNVERIFIED | none | Dota talent tree frame for a blind review |
+| Targeting cursor (B) | 1 | working tree | gate: cursor frames rendered (cursor_enemy.png, cursor_ally.png); colour per targeting_team | n/a | PASS (gate); blind review UNVERIFIED | none | — |
+| To Buy, stash, items (C1, C2) | 1 | working tree | gate: 8 new sim tests + HUD flow probe 13/13 | n/a | PASS (gate) | test expectation error (parts order Headband first) fixed in the probe, not the code | none |
+| Courier (C3) | 1 | working tree | gate: sim tests (speed, flying, burst, shield, hits, respawn, bounty, items kept, Well sweep) | n/a | PASS (gate) | old test expected undelivered items back in the stash; Dota keeps them on the courier: test updated to Dota | none |
+| HUD overhaul (D) | 1 | working tree | gate: captures hud/talents/courier/shop at 1080p | n/a | REJECT (self-check) | Blubber shell opaque, Stench cloud invisible, two courier buttons both labelled "Return", shop hint overlapping, HUD stash under the open shop | fixed, recaptured |
+| HUD overhaul (D) | 2 | working tree | gate: recaptures | n/a | PASS (gate); blind review UNVERIFIED (no Dota frames of stash / quick buy) | none | Dota frames for a blind review |
+
+Notes: no critic subagent was run this session (no benchmark frames for the new UI); every visual gate above is a
+builder self-check and is reported as UNVERIFIED for review.
+| Integration (G) | 1 | working tree | tests 100/100, check.sh Names OK, input probes 3 heroes, HUD flow probe 13/13, duels 9/9 complete, bench 77/76 fps p95 15.15/16.67 vs same-session baseline 76 fps p95 16.67, export + cold start 12.6 s, true 4K captures | n/a | PASS (gate) | p95 gate against the old session's 14.2 ms failed on one run; a same-session control of the baseline matched the new build, so the machine, not the change, moved | none |
+
+## Session 2026-10-13 c (camera, camps, Game Setup, team bots, chat, pings, learning) — run `work/lemondev/2026-10-13-camps-ai-setup/` (contract.md)
+
+Session cut off during integration; on resume the owner asked to cut the remaining tests, finish and build.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| AI2 hero bots | n | working tree | gate: 10 x 5v5 bot games, 40 min | n/a | REJECT (gate) | no Ancient falls in any game; Bot Cat and Bot Jo idle in lane from 0:21 in all ten | fix the idle-in-lane bug first |
+| Integration (G) | 1 | working tree | bench 1v1 48-53 fps, 5v5 39-58 fps; names OK; export | n/a | INCOMPLETE (cut by owner) | bench below the 10% gate; tests and probes not rerun | rerun tests, probes, bench |
+| CAM, NC1, NC2, GS, AI1, AI3, CH | — | working tree | captures only | n/a | UNVERIFIED | gates not rerun at the end | rerun the probes |

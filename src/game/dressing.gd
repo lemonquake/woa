@@ -2,7 +2,7 @@ class_name Dressing
 extends Node3D
 ## Ground dressing that makes the battlefield feel lived-in: pebbles, stones and tufts breaking up the lane edges,
 ## flagstones embedded in the roads, rocks and reeds on the river banks, scanned rock faces on the base cliffs,
-## roots / stumps / fallen trunks at forest edges, camp props at neutral camps, and faction landmarks (Dawn lanterns
+## roots / stumps / fallen trunks at forest edges, and faction landmarks (neutral camps: Camps) (Dawn lanterns
 ## and statues, Dusk graves and bones). Purely visual (the simulation never sees it); placed deterministically from
 ## the simulation map and MultiMesh-instanced per chunk.
 
@@ -37,7 +37,6 @@ func build(p_map: SimMap, p_terrain: TerrainBuilder) -> void:
 	_river_banks()
 	_cliffs()
 	_forest_edges()
-	_camps()
 	_landmarks()
 	_tree_blobs()
 	landscape = Landscape.new()
@@ -432,23 +431,6 @@ func _forest_edges() -> void:
 			_add("kf_fern", p, _rng.randf_range(0.7, 1.1), 0.0)
 		else:
 			_add("Rock_Medium_1", p, _rng.randf_range(0.1, 0.18), 0.08, true)
-
-## Neutral camps: a fire pit, a tent and some crates (or bones on the Dusk side).
-func _camps() -> void:
-	for c in map.camps:
-		var p: Vector2 = c.pos
-		var away: Vector2 = (p - map.fountains[c.side]).normalized()
-		var side: Vector2 = away.orthogonal()
-		_add("kf_fire_pit", p + away * 300.0, 0.7, 0.05, true)
-		# a log seat by the fire and a caged lantern on a post (the old tent read as a flat box)
-		_add("kd_log", p + away * 420.0 + side * 120.0, 0.9, 0.05, true, side.angle())
-		_add("kf_lantern_cage", p + away * 470.0 - side * 200.0, 0.9, 0.0, true, (-away).angle())
-		if c.side == SimConst.DUSK:
-			_add("bones_scatter", p + side * -260.0, 0.6, 0.02)
-			_add("kd_grave_broken", p + side * -320.0 + away * 120.0, 0.8, 0.05, true)
-		else:
-			_add("kf_crate_a", p + side * -280.0, 0.55, 0.0, true)
-			_add("kf_barrels", p + side * -320.0 + away * 90.0, 0.6, 0.0, true)
 
 ## Faction landmarks along lanes and jungle paths: Dawn lantern posts and a statue, Dusk graves and bones.
 func _landmarks() -> void:

@@ -1,0 +1,4 @@
+BENCH frames 1945 avg 25.72 ms (39 fps) p50 24.24 p95 36.11 p99 60.00 max 77.74 over16.7 1886 units 235
+  per-frame means: views 2.30, fx 0.23, status 0.11, target 0.02, fog 0.06, sim 7.23, sync 2.40, gpu 7.57, rcpu 2.00, proc 26.25, phys 23.95, draws 3049.67, prims 4302122.76, trails 0.17, bars 0.52
+BENCH frames 2900 avg 17.24 ms (58 fps) p50 16.67 p95 23.80 p99 32.24 max 56.11 over16.7 1149 units 235
+  per-frame means: views 1.73, fx 0.17, status 0.08, target 0.01, fog 0.04, sim 4.31, sync 1.26, gpu 7.13, rcpu 1.63, proc 18.28, phys 19.14, draws 3043.23, prims 4289796.11, trails 0.13, bars 0.38

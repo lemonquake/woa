@@ -126,8 +126,9 @@ static func _build_units() -> void:
 		"move_speed": 0.0, "dmg_min": 290.0, "dmg_max": 310.0, "bat": 0.15, "attack_point": 0.0, "backswing": 0.0,
 		"acquire": 1200.0, "range": 1200.0, "projectile_speed": 1400.0, "vision_day": 1800.0, "vision_night": 1800.0,
 		"turn_rate": 1.0, "attack_class": AC.REINFORCED})
-	_add("courier", {"name": "Courier", "kind": K.COURIER, "hull": 8.0, "hp": 75.0, "can_attack": false,
-		"move_speed": 380.0, "turn_rate": 1.0, "vision_day": 500.0, "vision_night": 500.0, "model": "courier", "flying": true})
+	# health counts hits (7.35): a melee hero's attack takes 6, a ranged hero's 3, anything else 1
+	_add("courier", {"name": "Courier", "kind": K.COURIER, "hull": 8.0, "hp": 6.0, "hp_regen": 0.0, "can_attack": false,
+		"move_speed": 290.0, "turn_rate": 0.5, "vision_day": 200.0, "vision_night": 200.0, "model": "courier", "flying": true})
 	_add("ward_observer", {"name": "Eye Ward", "kind": K.WARD, "hull": 8.0, "hp": 200.0, "can_attack": false,
 		"can_move": false, "move_speed": 0.0, "vision_day": 1600.0, "vision_night": 1600.0, "xp": 0.0})
 
@@ -427,10 +428,10 @@ static func _build_items() -> void:
 	_it("spike_armor", "Spike Armor", 2400, {"use": "spikes", "cooldown": 25.0, "mana": 25.0, "passive": "spikes",
 		"stats": {"damage": 15.0, "armor": 7.0}, "components": ["broadsword", "plate_vest"], "recipe_cost": 450,
 		"category": "upgrades", "values": {"duration": 5.5, "active_pct": 0.85, "passive_flat": 10.0, "passive_pct": 0.15}})
-	_it("gold_glove", "Gold Glove", 2200, {"use": "gold", "stats": {"attack_speed": 40.0}, "charges": 1,
+	_it("gold_glove", "Gold Glove", 2200, {"use": "gold", "target_team": "enemy", "stats": {"attack_speed": 40.0}, "charges": 1,
 		"category": "upgrades", "components": ["gloves"], "recipe_cost": 1750,
 		"values": {"gold": 160.0, "range": 600.0, "max_charges": 2, "charge_time": 90.0}})
-	_it("push_staff", "Push Staff", 2200, {"use": "push", "cooldown": 19.0, "mana": 150.0,
+	_it("push_staff", "Push Staff", 2200, {"use": "push", "target_team": "any", "cooldown": 19.0, "mana": 150.0,
 		"stats": {"int": 10.0, "hp": 175.0}, "components": ["wizard_staff", "fur_hat"], "recipe_cost": 950,
 		"category": "upgrades", "values": {"distance": 600.0, "time": 0.5, "range_ally": 550.0, "range_enemy": 850.0}})
 	_it("spell_shield", "Spell Shield", 4050, {"use": "shield", "cooldown": 95.0, "mana": 50.0,

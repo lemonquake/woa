@@ -1,0 +1,330 @@
+seed 3: no winner at 40:00 (1954.0 s real)
+  Ancient Light (towers lost 4):
+    Bot Ann  sludge        role 2 mid   4/ 4/11 lvl 15 LH  95 DN 16 nw  8518 | lane 21%, fight 6%, retreat 15%, task 12%, heal 18%, farm 29%
+             items: ["spell_shield", "magic_wand", "slip_boots", "tough_band", "salve"]
+    Bot Bob  ezee          role 3 top   3/10/ 8 lvl 13 LH  50 DN 34 nw  6665 | lane 17%, retreat 10%, fight 7%, task 19%, farm 41%, heal 5%
+             items: ["spell_shield", "slip_boots", "quelling_blade", "tough_band", "magic_wand"]
+    Bot Cat  blood_ranger  role 1 bot   9/10/ 3 lvl 14 LH  61 DN 28 nw  7270 | lane 21%, fight 8%, retreat 8%, task 16%, heal 3%, farm 44%
+             items: ["magic_wand", "spell_shield", "power_treads", "wraith_band", "quelling_blade"]
+    Bot Dan  sludge        role 5 bot   7/ 4/ 7 lvl 14 LH  85 DN  1 nw  8346 | lane 15%, fight 6%, task 18%, retreat 13%, stack 8%, pull 1%, heal 9%, ward 2%, farm 28%
+             items: ["spike_armor", "slip_boots", "jump_knife", "medic_kit", "magic_wand", "observer_ward"]
+    Bot Eve  ezee          role 4 top   3/ 5/ 8 lvl 12 LH   8 DN 13 nw  5652 | lane 13%, retreat 15%, task 16%, fight 5%, stack 11%, ward 8%, farm 28%, heal 5%
+             items: ["spike_armor", "magic_wand", "slip_boots"]
+  Black Sun (towers lost 3):
+    Bot Fay  blood_ranger  role 2 mid  11/ 6/ 7 lvl 17 LH 112 DN 32 nw 11389 | lane 19%, fight 10%, task 20%, retreat 6%, heal 5%, farm 39%
+             items: ["power_treads", "magic_wand", "spell_shield", "wraith_band", "quelling_blade", "dragon_lance"]
+    Bot Gus  ezee          role 3 bot   4/ 4/ 4 lvl 14 LH  33 DN 36 nw  6541 | lane 15%, retreat 14%, task 16%, heal 9%, fight 7%, farm 39%
+             items: ["spell_shield", "quelling_blade", "tough_band", "magic_wand", "salve"]
+    Bot Hal  sludge        role 5 top  12/ 2/ 6 lvl 15 LH  97 DN  7 nw  9184 | lane 15%, fight 5%, retreat 11%, task 15%, heal 14%, stack 9%, ward 12%, farm 18%
+             items: ["slip_boots", "jump_knife", "observer_ward", "medic_kit", "magic_wand"]
+    Bot Ivy  ezee          role 4 bot   1/ 9/14 lvl 11 LH  10 DN  8 nw  4458 | lane 11%, retreat 12%, task 14%, fight 8%, stack 14%, heal 4%, ward 8%, farm 29%
+             items: ["tango", "spike_armor", "observer_ward", "slip_boots", "magic_wand"]
+    Bot Jo   blood_ranger  role 1 top   4/ 8/11 lvl 14 LH  53 DN 28 nw  7519 | lane 20%, fight 7%, task 24%, retreat 10%, heal 2%, farm 37%
+             items: ["power_treads", "magic_wand", "spell_shield", "wraith_band", "quelling_blade"]
+  at 10:00 LH/net worth: Ann 21/1771, Bob 7/1124, Cat 5/967, Dan 4/1349, Eve 0/1170, Fay 10/1820, Gus 4/1253, Hal 2/1970, Ivy 2/962, Jo 10/2202 | team net worth 6381 vs 8207
+  at 20:00 LH/net worth: Ann 35/3152, Bob 20/2789, Cat 20/3262, Dan 10/3258, Eve 4/1911, Fay 39/5024, Gus 10/1802, Hal 29/4285, Ivy 3/1750, Jo 19/3103 | team net worth 14372 vs 15964
+  totals: kills 26 vs 32, net worth 36451 vs 39091
+  stuck: ["Bot Cat stuck at (4352.0, -6303.0) (lane) from 0:21", "Bot Jo stuck at (-4353.0, 6303.0) (lane) from 0:21", "Bot Ivy stuck at (6328.0, -4940.0) (farm) from 18:52"]
+  chat lines: 301
+    [-1:29] Ancient Light Bot Ann: I'll go mid.
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Cat in the bottom lane.
+    [-1:29] Ancient Light Bot Eve: I'll support Bot Bob in the top lane.
+    [-1:29] Black Sun Bot Fay: I'll go mid.
+    [-1:29] Black Sun Bot Gus: I'll go bottom.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Jo in the top lane.
+    [-1:29] Black Sun Bot Ivy: I'll support Bot Gus in the bottom lane.
+    [-1:29] Black Sun Bot Jo: I'll farm the top lane (safe lane).
+    [0:33] Ancient Light Bot Ann: They're hitting our bottom tower. Defend!
+    [0:33] Black Sun Bot Fay: They're hitting our top tower. Defend!
+    [0:35] Ancient Light Bot Dan: Going for Ezee.
+    [0:37] Black Sun Bot Jo: Going for Ezee.
+    [0:48] Ancient Light Bot Cat: Ezee is missing from bottom! Careful.
+    [0:51] Black Sun Bot Hal: Ezee is missing from top! Careful.
+    [0:55] Black Sun Bot Fay: Sludge is missing from mid! Careful.
+    [1:08] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [1:13] Ancient Light Bot Dan: Ezee is missing from bottom! Careful.
+    [1:13] Black Sun Bot Fay: They're hitting our bottom tower. Defend!
+    [1:27] Black Sun Bot Fay: Going for Sludge.
+    [1:33] Ancient Light Bot Cat: Going for Blood Ranger.
+    [1:36] Black Sun Bot Gus: Sludge is missing from bottom! Careful.
+    [1:59] Black Sun Bot Fay: They're hitting our mid tower. Defend!
+    [2:01] Ancient Light Bot Eve: Their Ezee is alone in the bottom lane. Going for the kill, Bot Dan come too.
+    [2:01] Black Sun Bot Ivy: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Hal come too.
+    [2:12] Ancient Light Bot Cat: Going for Ezee.
+    [2:13] Black Sun Bot Ivy: Backing off, too dangerous.
+    [2:17] Black Sun Bot Hal: Going for Blood Ranger.
+    [2:22] Ancient Light Bot Dan: Backing off, too dangerous.
+    [2:32] Black Sun Bot Fay: Sludge is missing from mid! Careful.
+    [2:45] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [3:07] Ancient Light Bot Bob: Sludge is missing from top! Careful.
+    [3:22] Black Sun Bot Jo: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Ivy come too.
+    [3:59] Ancient Light Bot Eve: Their Ezee is alone in the bottom lane. Going for the kill, Bot Dan come too.
+    [4:03] Black Sun Bot Ivy: Their Ezee is alone in the top lane. Going for the kill, Bot Jo come too.
+    [4:13] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [4:16] Black Sun Bot Jo: Going for Ezee.
+    [4:19] Ancient Light Bot Ann: Coming to defend (TP).
+    [4:19] Black Sun Bot Fay: They're hitting our bottom tower. Defend!
+    [4:21] Ancient Light Bot Dan: Going for Ezee.
+    [4:30] Black Sun Bot Jo: Going for Sludge.
+    [4:30] Ancient Light Bot Dan: Backing off, too dangerous.
+    [4:38] Ancient Light Bot Ann: Going for Ezee.
+    [4:48] Black Sun Bot Ivy: Going home to heal.
+    [4:52] Black Sun Bot Fay: Blood Ranger is missing from mid! Careful.
+    [5:03] Ancient Light Bot Eve: 3 of them together near mid! Back off.
+    [5:03] Black Sun Bot Fay: They're hitting our mid tower. Defend!
+    [5:21] Black Sun Bot Fay: They're hitting our bottom tower. Defend!
+    [5:32] Ancient Light Bot Dan: Going home to heal.
+    [6:01] Black Sun Bot Ivy: Stacked the medium camp for Bot Gus.
+    [6:07] Ancient Light Bot Cat: Ezee is missing from bottom! Careful.
+    [6:19] Black Sun Bot Fay: They're hitting our bottom tower. Defend!
+    [6:29] Ancient Light Bot Bob: 3 of them together near top! Back off.
+    [6:30] Black Sun Bot Ivy: Their Ezee is alone in the top lane. Going for the kill, Bot Hal and Bot Jo come too.
+    [6:32] Black Sun Bot Hal: Sludge is missing from top! Careful.
+    [6:37] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [6:39] Black Sun Bot Jo: Backing off, too dangerous.
+    [6:47] Black Sun Bot Hal: Their Blood Ranger is low (18%) in the top lane. Going for the kill, Bot Ivy and Bot Jo come too.
+    [6:52] Ancient Light Bot Dan: Coming to defend (TP).
+    [6:58] Ancient Light Bot Bob: Going for Ezee.
+    [7:05] Black Sun Bot Gus: 3 of them together near top! Back off.
+    [7:09] Ancient Light Bot Bob: Ezee is missing from top! Careful.
+    [7:16] Ancient Light Bot Bob: Blood Ranger is missing from top! Careful.
+    [7:22] Ancient Light Bot Bob: Their Sludge is low (18%) in the top lane. Going for the kill, Bot Eve come too.
+    [7:25] Black Sun Bot Gus: 3 of them together near top! Back off.
+    [7:36] Ancient Light Bot Bob: Their Ezee is alone in the top lane. Going for the kill, Bot Eve come too.
+    [7:45] Black Sun Bot Gus: 3 of them together near top! Back off.
+    [7:46] Ancient Light Bot Bob: Backing off, too dangerous.
+    [7:51] Black Sun Bot Fay: They're hitting our top tower. Defend!
+    [7:56] Black Sun Bot Hal: Going for Ezee.
+    [8:09] Black Sun Bot Hal: Ezee is missing from top! Careful.
+    [8:11] Ancient Light Bot Ann: Blood Ranger is missing from mid! Careful.
+    [8:15] Black Sun Bot Fay: They're hitting our mid tower. Defend!
+    [8:18] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [8:20] Ancient Light Bot Bob: 3 of them together near top! Back off.
+    [8:26] Black Sun Bot Jo: Going for Sludge.
+    [8:35] Black Sun Bot Fay: Coming to defend, 3 s.
+    [8:36] Ancient Light Bot Bob: Their Sludge is alone in the top lane. Going for the kill, Bot Eve come too.
+    [8:39] Black Sun Bot Hal: 3 of them together near top! Back off.
+    [8:43] Ancient Light Bot Bob: Ezee is missing from top! Careful.
+    [8:50] Ancient Light Bot Bob: Sludge is missing from top! Careful.
+    [9:15] Ancient Light Bot Ann: Their Ezee is alone in the mid lane. Going for the kill, Bot Eve come too.
+    [9:17] Black Sun Bot Hal: Ezee is missing from top! Careful.
+    [9:39] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [9:41] Ancient Light Bot Bob: Coming to defend, 16 s.
+    [9:48] Black Sun Bot Fay: Their Ezee is alone in the mid lane. Going for the kill, Bot Ivy come too.
+    [9:49] Ancient Light Bot Cat: Ezee is missing from bottom! Careful.
+    [9:53] Black Sun Bot Hal: Going for Ezee.
+    [9:55] Ancient Light Bot Eve: 3 of them together near mid! Back off.
+    [10:06] Ancient Light Bot Bob: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Dan and Bot Cat come too.
+    [10:15] Black Sun Bot Jo: 3 of them together near top! Back off.
+    [10:16] Ancient Light Bot Cat: Going for Blood Ranger.
+    [10:46] Black Sun Bot Fay: They're hitting our top tower. Defend!
+    [10:49] Ancient Light Bot Bob: Their Blood Ranger is alone in the mid lane. Going for the kill, Bot Eve come too.
+    [10:52] Black Sun Bot Gus: 3 of them together near top! Back off.
+    [10:58] Ancient Light Bot Eve: Backing off, too dangerous.
+    [10:58] Black Sun Bot Fay: Their Ezee is low (20%) in the mid lane. Going for the kill.
+    [11:01] Black Sun Bot Hal: Stacked the medium camp for Bot Jo.
+    [11:07] Black Sun Bot Gus: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Jo come too.
+    [11:26] Ancient Light Bot Cat: Their Ezee is alone in the top lane. Going for the kill, Bot Dan and Bot Ann come too.
+    [11:29] Black Sun Bot Jo: On my way.
+    [11:40] Black Sun Bot Jo: Backing off, too dangerous.
+    [11:49] Ancient Light Bot Dan: On my way.
+    [12:18] Black Sun Bot Gus: Their Ezee is alone in the mid lane. Going for the kill, Bot Ivy come too.
+    [12:40] Black Sun Bot Ivy: On my way.
+    [12:47] Black Sun Bot Gus: Going for Ezee.
+    [12:47] Ancient Light Bot Dan: Their Ezee is alone in the mid lane. Going for the kill, Bot Eve and Bot Cat come too.
+    [12:52] Black Sun Bot Ivy: Backing off, too dangerous.
+    [12:54] Ancient Light Bot Ann: They're hitting our mid tower. Defend!
+    [13:01] Ancient Light Bot Ann: Their Ezee is low (36%) in the mid lane. Going for the kill.
+    [13:02] Black Sun Bot Gus: 3 of them together near mid! Back off.
+    [13:04] Ancient Light Bot Dan: Going for Ezee.
+    [13:16] Ancient Light Bot Ann: Backing off, too dangerous.
+    [13:20] Black Sun Bot Ivy: Their Sludge is alone in the mid lane. Going for the kill, Bot Jo and Bot Fay come too.
+    [13:23] Black Sun Bot Fay: Going for Sludge.
+    [13:32] Ancient Light Bot Cat: Going for Blood Ranger.
+    [13:37] Black Sun Bot Ivy: Backing off, too dangerous.
+    [13:40] Ancient Light Bot Ann: They're hitting our mid tower. Defend!
+    [13:42] Black Sun Bot Fay: On my way.
+    [13:43] Ancient Light Bot Dan: Coming to defend, 12 s.
+    [13:49] Black Sun Bot Fay: Backing off, too dangerous.
+    [14:19] Ancient Light Bot Cat: Their Ezee is alone in the mid lane. Going for the kill, Bot Dan come too.
+    [14:26] Ancient Light Bot Cat: Backing off, too dangerous.
+    [14:27] Black Sun Bot Ivy: Their Ezee is alone in the mid lane. Going for the kill, Bot Hal come too.
+    [14:40] Black Sun Bot Fay: Their Sludge is low (37%) in the mid lane. Going for the kill.
+    [14:48] Ancient Light Bot Dan: Their Sludge is alone in the mid lane. Going for the kill, Bot Bob and Bot Ann come too.
+    [14:49] Black Sun Bot Hal: Going for Ezee.
+    [14:57] Ancient Light Bot Dan: Going for Ezee.
+    [14:57] Black Sun Bot Fay: Backing off, too dangerous.
+    [15:08] Black Sun Bot Fay: They're hitting our mid tower. Defend!
+    [15:10] Black Sun Bot Jo: Coming to defend, 18 s.
+    [15:15] Black Sun Bot Ivy: Their Ezee is low (38%) in the mid lane. Going for the kill.
+    [15:27] Black Sun Bot Ivy: Their Ezee is alone in the mid lane. Going for the kill, Bot Jo and Bot Hal come too.
+    [15:35] Ancient Light Bot Eve: 3 of them together near mid! Back off.
+    [15:36] Black Sun Bot Fay: We have more heroes up. Let's push mid and take their tower.
+    [16:10] Ancient Light Bot Ann: They're hitting our mid tower. Defend!
+    [16:16] Ancient Light Bot Ann: 4 of them together near mid! Back off.
+    [16:22] Ancient Light Bot Eve: Coming to defend (TP).
+    [16:27] Ancient Light Bot Dan: Going for Ezee.
+    [16:28] Black Sun Bot Fay: 5 of them together near mid! Back off.
+    [16:31] Ancient Light Bot Bob: On my way.
+    [16:42] Ancient Light Bot Dan: Their Ezee is alone in the mid lane. Going for the kill, Bot Bob and Bot Eve come too.
+    [16:46] Ancient Light Bot Bob: 2 of them are dead. Let's push bottom and take their tower.
+    [17:00] Ancient Light Bot Eve: Going home to heal.
+    [17:03] Black Sun Bot Ivy: Their Ezee is alone in the bottom lane. Going for the kill, Bot Fay come too.
+    [17:06] Ancient Light Bot Bob: Going for Sludge.
+    [17:31] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [17:34] Ancient Light Bot Cat: Coming to defend (TP).
+    [17:39] Ancient Light Bot Bob: Their Blood Ranger is low (24%) in the top lane. Going for the kill.
+    [18:01] Ancient Light Bot Dan: Stacked the medium camp for Bot Cat.
+    [18:12] Black Sun Bot Jo: Their Ezee is alone in the top lane. Going for the kill, Bot Gus come too.
+    [18:34] Black Sun Bot Gus: Going for Ezee.
+    [18:40] Ancient Light Bot Cat: Going for Ezee.
+    [18:52] Black Sun Bot Hal: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Jo come too.
+    [18:55] Ancient Light Bot Dan: Their Blood Ranger is alone in the bottom lane. Going for the kill, Bot Eve and Bot Ann come too.
+    [19:00] Ancient Light Bot Ann: They're hitting our bottom tower. Defend!
+    [19:02] Black Sun Bot Hal: Got my Jump Knife.
+    [19:06] Black Sun Bot Fay: Going for Sludge.
+    [19:11] Black Sun Bot Hal: 2 of them are dead. Let's push top and take their tower.
+    [19:15] Black Sun Bot Fay: Going for Ezee.
+    [19:32] Ancient Light Bot Bob: Their Blood Ranger is alone in the bottom lane. Going for the kill, Bot Cat come too.
+    [19:39] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [19:55] Black Sun Bot Hal: Going home to heal.
+    [19:55] Ancient Light Bot Ann: Going for Sludge.
+    [20:02] Ancient Light Bot Bob: We're stronger now. Let's push bottom and take their tower.
+    [20:24] Black Sun Bot Fay: They're hitting our bottom tower. Defend!
+    [20:33] Ancient Light Bot Bob: 3 of them together near bottom! Back off.
+    [20:35] Black Sun Bot Ivy: Their Ezee is low (16%) in the bottom lane. Going for the kill, Bot Jo come too.
+    [20:40] Black Sun Bot Jo: On my way.
+    [21:01] Black Sun Bot Hal: Stacked the medium camp for Bot Jo.
+    [21:25] Black Sun Bot Hal: Their Ezee is alone in the mid lane. Going for the kill, Bot Gus and Bot Ivy come too.
+    [21:28] Ancient Light Bot Dan: Got my Spike Armor.
+    [21:41] Black Sun Bot Fay: Going for Ezee.
+    [21:48] Black Sun Bot Ivy: On my way.
+    [21:49] Ancient Light Bot Eve: 4 of them together near mid! Back off.
+    [21:55] Ancient Light Bot Cat: Their Sludge is alone in the mid lane. Going for the kill, Bot Bob come too.
+    [22:02] Black Sun Bot Fay: Their Blood Ranger is alone in the mid lane. Going for the kill, Bot Gus come too.
+    [22:18] Ancient Light Bot Dan: Their Ezee is low (36%) in the mid lane. Going for the kill, Bot Eve come too.
+    [22:18] Black Sun Bot Fay: Their Ezee is alone in the mid lane. Going for the kill, Bot Gus come too.
+    [22:21] Ancient Light Bot Bob: Their Blood Ranger is low (21%) in the mid lane. Going for the kill, Bot Cat come too.
+    [22:21] Black Sun Bot Gus: Backing off, too dangerous.
+    [22:25] Ancient Light Bot Cat: Going for Blood Ranger.
+    [22:34] Black Sun Bot Fay: Going home to heal.
+    [22:42] Ancient Light Bot Dan: Going home to heal.
+    [23:00] Ancient Light Bot Cat: Their Blood Ranger is alone in the bottom lane. Going for the kill, Bot Ann come too.
+    [23:06] Ancient Light Bot Ann: They're hitting our bottom tower. Defend!
+    [24:01] Black Sun Bot Jo: Their Ezee is alone in the top lane. Going for the kill, Bot Gus and Bot Ivy come too.
+    [24:10] Black Sun Bot Fay: Their Blood Ranger is alone in the bottom lane. Going for the kill, Bot Hal come too.
+    [24:11] Ancient Light Bot Bob: 3 of them together near top! Back off.
+    [24:17] Black Sun Bot Jo: Going for Ezee.
+    [24:21] Ancient Light Bot Ann: Going home to heal.
+    [24:23] Black Sun Bot Jo: On my way.
+    [24:28] Black Sun Bot Ivy: Their Ezee is alone in the top lane. Going for the kill, Bot Gus and Bot Jo come too.
+    [24:35] Black Sun Bot Ivy: Backing off, too dangerous.
+    [24:36] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [24:38] Ancient Light Bot Eve: 3 of them together near top! Back off.
+    [24:46] Ancient Light Bot Dan: Going for Ezee.
+    [24:59] Ancient Light Bot Bob: 2 of them are dead. Let's push mid and take their tower.
+    [25:03] Ancient Light Bot Dan: Their Blood Ranger is alone in the bottom lane. Going for the kill, Bot Eve and Bot Cat come too.
+    [25:09] Black Sun Bot Fay: 3 of them together near bottom! Back off.
+    [25:15] Ancient Light Bot Dan: Backing off, too dangerous.
+    [25:23] Black Sun Bot Jo: Their Ezee is alone in the mid lane. Going for the kill, Bot Ivy come too.
+    [25:31] Black Sun Bot Fay: Their Blood Ranger is alone in the bottom lane. Going for the kill.
+    [25:33] Black Sun Bot Ivy: We're stronger now. Let's push top and take their tower.
+    [25:43] Black Sun Bot Hal: Their Sludge is alone in the mid lane. Going for the kill, Bot Gus come too.
+    [26:25] Ancient Light Bot Ann: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Bob and Bot Eve come too.
+    [26:29] Ancient Light Bot Bob: Going for Blood Ranger.
+    [26:29] Black Sun Bot Ivy: 3 of them together near top! Back off.
+    [26:36] Ancient Light Bot Ann: Going for Ezee.
+    [26:44] Ancient Light Bot Ann: We're stronger now. Let's push mid and take their tower.
+    [26:50] Ancient Light Bot Ann: Going home to heal.
+    [26:59] Black Sun Bot Ivy: Going home to heal.
+    [27:03] Black Sun Bot Fay: We're stronger now. Let's push top and take their tower.
+    [27:19] Black Sun Bot Jo: 3 of them together near top! Back off.
+    [27:22] Black Sun Bot Fay: Their Sludge is alone in the mid lane. Going for the kill, Bot Gus and Bot Hal come too.
+    [27:26] Ancient Light Bot Dan: 3 of them together near mid! Back off.
+    [27:34] Ancient Light Bot Bob: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Cat and Bot Eve come too.
+    [27:38] Black Sun Bot Hal: Their Sludge is alone in the mid lane. Going for the kill, Bot Fay and Bot Gus come too.
+    [27:47] Ancient Light Bot Ann: 3 of them together near mid! Back off.
+    [27:49] Ancient Light Bot Eve: Got my Spike Armor.
+    [28:00] Black Sun Bot Fay: Their Ezee is alone in the top lane. Going for the kill.
+    [28:07] Black Sun Bot Gus: 2 of them are dead. Let's push top and take their tower.
+    [28:07] Ancient Light Bot Bob: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Eve and Bot Dan come too.
+    [28:10] Black Sun Bot Fay: Going for Ezee.
+    [28:11] Ancient Light Bot Eve: Backing off, too dangerous.
+    [28:21] Black Sun Bot Gus: Going for Sludge.
+    [28:27] Black Sun Bot Ivy: Got my Spike Armor.
+    [28:36] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [28:40] Ancient Light Bot Bob: Their Ezee is low (39%) in the top lane. Going for the kill, Bot Cat come too.
+    [28:44] Ancient Light Bot Cat: Going for Ezee.
+    [28:48] Ancient Light Bot Bob: Coming (TP).
+    [28:54] Black Sun Bot Hal: Going home to heal.
+    [28:55] Ancient Light Bot Cat: Going for Sludge.
+    [28:58] Ancient Light Bot Dan: We have more heroes up. Let's push mid and take their tower.
+    [29:13] Black Sun Bot Jo: Their Ezee is alone in the mid lane. Going for the kill, Bot Fay come too.
+    [29:22] Black Sun Bot Jo: Going for Ezee.
+    [29:32] Black Sun Bot Fay: We're stronger now. Let's push top and take their tower.
+    [29:51] Black Sun Bot Ivy: Coming to defend (TP).
+    [30:00] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [30:01] Black Sun Bot Jo: Their Ezee is low (33%) in the top lane. Going for the kill.
+    [30:05] Black Sun Bot Fay: On my way.
+    [30:19] Ancient Light Bot Eve: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Ann come too.
+    [30:25] Ancient Light Bot Eve: Backing off, too dangerous.
+    [30:28] Black Sun Bot Jo: Their Ezee is low (19%) in the top lane. Going for the kill.
+    [30:29] Ancient Light Bot Cat: Coming to defend (TP).
+    [30:32] Ancient Light Bot Ann: Going for Blood Ranger.
+    [30:32] Black Sun Bot Gus: We're stronger now. Let's push top and take their tower.
+    [30:38] Ancient Light Bot Ann: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Bob come too.
+    [30:41] Ancient Light Bot Bob: Going for Blood Ranger.
+    [30:42] Black Sun Bot Gus: 3 of them together near top! Back off.
+    [30:45] Ancient Light Bot Cat: Their Ezee is low (25%) in the top lane. Going for the kill.
+    [30:54] Ancient Light Bot Ann: 2 of them are dead. Let's push mid and take their tower.
+    [31:01] Black Sun Bot Ivy: Stacked the medium camp for Bot Gus.
+    [31:11] Black Sun Bot Ivy: Going home to heal.
+    [31:31] Black Sun Bot Fay: Their Ezee is alone in the mid lane. Going for the kill, Bot Hal come too.
+    [31:38] Black Sun Bot Fay: Got my Long Spear.
+    [31:50] Black Sun Bot Fay: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Gus come too.
+    [31:56] Ancient Light Bot Cat: 3 of them together near top! Back off.
+    [32:00] Ancient Light Bot Eve: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Dan come too.
+    [32:04] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [32:04] Black Sun Bot Fay: Their Ezee is alone in the top lane. Going for the kill, Bot Jo and Bot Gus come too.
+    [32:06] Ancient Light Bot Dan: Coming to defend, 1 s.
+    [32:14] Ancient Light Bot Ann: We're stronger now. Let's push mid and take their tower.
+    [32:14] Black Sun Bot Fay: Going for Sludge.
+    [32:20] Black Sun Bot Fay: Backing off, too dangerous.
+    [32:29] Ancient Light Bot Eve: Coming to defend (TP).
+    [32:35] Black Sun Bot Fay: Their Sludge is low (15%) in the top lane. Going for the kill.
+    [32:40] Ancient Light Bot Cat: Their Ezee is low (25%) in the top lane. Going for the kill.
+    [32:44] Black Sun Bot Fay: Backing off, too dangerous.
+    [32:46] Black Sun Bot Ivy: Coming to defend (TP).
+    [32:48] Ancient Light Bot Ann: They're hitting our top tower. Defend!
+    [32:56] Ancient Light Bot Ann: Their Ezee is alone in the mid lane. Going for the kill, Bot Bob come too.
+    [33:03] Ancient Light Bot Bob: Got my Spell Shield.
+    [33:05] Black Sun Bot Jo: Coming to defend (TP).
+    [33:17] Ancient Light Bot Dan: 2 of them are dead. Let's push mid and take their tower.
+    [33:28] Black Sun Bot Jo: Got my Spell Shield.
+    [33:44] Black Sun Bot Jo: Their Ezee is alone in the mid lane. Going for the kill, Bot Ivy come too.
+    [33:49] Black Sun Bot Fay: They're hitting our mid tower. Defend!
+    [33:51] Black Sun Bot Jo: Going for Ezee.
+    [33:54] Black Sun Bot Hal: Coming (TP).
+    [33:58] Ancient Light Bot Dan: 4 of them together near mid! Back off.
+    [34:13] Black Sun Bot Gus: Got my Spell Shield.
+    [35:01] Ancient Light Bot Eve: Stacked the medium camp for Bot Bob.
+    [35:35] Ancient Light Bot Bob: We're stronger now. Let's push top and take their tower.
+    [35:52] Black Sun Bot Ivy: Their Blood Ranger is alone in the top lane. Going for the kill, Bot Fay and Bot Jo come too.
+    [36:01] Black Sun Bot Hal: Stacked the medium camp for Bot Jo.
+    [36:04] Ancient Light Bot Bob: Going home to heal.
+    [36:48] Ancient Light Bot Cat: Going for Blood Ranger.
+    [36:53] Ancient Light Bot Cat: Buying back to defend.
+    [37:01] Black Sun Bot Ivy: Stacked the medium camp for Bot Gus.
+    [38:01] Ancient Light Bot Eve: Stacked the small camp for Bot Bob.
+    [39:01] Ancient Light Bot Dan: Stacked the medium camp for Bot Cat.
+    [39:08] Black Sun Bot Hal: We're stronger now. Let's push mid and take their tower.
+    [39:20] Ancient Light Bot Bob: Their Ezee is alone in the mid lane. Going for the kill, Bot Eve and Bot Cat come too.
+    [39:24] Black Sun Bot Ivy: 3 of them together near mid! Back off.
+    [39:36] Ancient Light Bot Bob: Going for Ezee.
+    [39:40] Black Sun Bot Hal: Their Blood Ranger is low (35%) in the mid lane. Going for the kill.
+    [39:40] Ancient Light Bot Cat: Backing off, too dangerous.
+    [39:56] Ancient Light Bot Eve: Their Sludge is low (30%) in the mid lane. Going for the kill.
+    [39:58] Black Sun Bot Hal: Going home to heal.
+wins: Ancient Light 0, Black Sun 0

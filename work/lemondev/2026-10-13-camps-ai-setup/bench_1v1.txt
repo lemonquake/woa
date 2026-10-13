@@ -1,0 +1,2 @@
+BENCH frames 2401 avg 20.83 ms (48 fps) p50 18.24 p95 37.25 p99 51.23 max 88.22 over16.7 1464 units 207
+BENCH frames 2654 avg 18.85 ms (53 fps) p50 18.18 p95 26.13 p99 38.16 max 61.13 over16.7 1632 units 207

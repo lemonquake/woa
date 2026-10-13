@@ -30,10 +30,14 @@ var _pressing := false
 var _dragging := false
 var _s_down := -1.0
 var _s_hard := false
+var _target_queue := false                 # Shift was held when the targeted spell or item was started
 var _groups := {}                           # control group key (1..9) -> unit ids
 var _group_tap := {}                        # key -> time of the last recall (double tap centres the camera)
 const ITEM_ACTIONS := ["item_1", "item_2", "item_3", "item_4", "item_5", "item_6"]
 const ABILITY_ACTIONS := ["ability_1", "ability_2", "ability_3", "ability_4"]
+## With the courier selected, the ability and item keys give its commands (the bottom panel shows them).
+const COURIER_KEYS := {"ability_1": "return", "ability_2": "retrieve", "ability_3": "stash", "ability_4": "deliver",
+	"item_1": "transfer", "item_2": "burst", "item_3": "shield", "item_4": "auto"}
 ## Holding right click repeats the order: first repeat after RMB_DELAY, then every RMB_REPEAT seconds.
 const RMB_DELAY := 0.22
 const RMB_REPEAT := 0.1
@@ -89,16 +93,23 @@ func _rmb_repeat() -> void:
 		return
 	_right_click(m, _rmb_shift, true)
 
+var _tcursor := TargetingCursor.new()
+
 func _cursor() -> void:
 	var shape := Input.CURSOR_ARROW
-	if targeting != "":
-		shape = Input.CURSOR_CROSS
-	elif hover_id >= 0:
+	var team := targeting_team()
+	if team == "any":
+		# green, but red while it points at an enemy (Push Staff)
+		var hu: SimUnit = game.world.get_unit(hover_id)
+		team = "enemy" if hu and hu.team != game.player_team else "ally"
+	if team == "" and hover_id >= 0:
 		var u: SimUnit = game.world.get_unit(hover_id)
 		if u and u.team != game.player_team:
 			shape = Input.CURSOR_CROSS
 		else:
 			shape = Input.CURSOR_POINTING_HAND
+	# hardware cursors are in screen pixels: scale with the real window, not the stretched 1080p canvas
+	_tcursor.update(team, DisplayServer.window_get_size().y / 1080.0)
 	Input.set_default_cursor_shape(shape)
 
 ## The unit under a screen point: the closest one whose upright capsule the camera ray passes through.
@@ -180,7 +191,7 @@ func _unhandled_input(e: InputEvent) -> void:
 			elif _pressing:
 				_pressing = false
 				if not _dragging and mb.alt_pressed:
-					ping(game.camera.ground_at(mb.position))
+					ping(game.camera.ground_at(mb.position), pick(mb.position), mb.ctrl_pressed)
 					drag_rect = Rect2()
 					return
 				if _dragging:
@@ -263,6 +274,12 @@ func _box_select(r: Rect2, shift: bool) -> void:
 
 func _key(k: InputEventKey, h: SimUnit) -> void:
 	var w: SimWorld = game.world
+	# Enter: type to your team (the chat line takes the keys until it closes)
+	if (k.keycode == KEY_ENTER or k.keycode == KEY_KP_ENTER) and game.hud and game.hud.get("chat") != null:
+		if not game.hud.chat.is_open():
+			game.hud.chat.open()
+		get_viewport().set_input_as_handled()
+		return
 	var m := Keybinds.match_event(k)
 	var act := String(m.action)
 	# control groups: Ctrl+1..9 stores your selected units, 1..9 recalls them (unless the digit is a hotkey),
@@ -340,12 +357,16 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			if hero_selected():
 				begin_tp()
 		"courier_deliver":
-			var err: String = w.courier_deliver(h)
-			if err != "" and game.hud and game.hud.has_method("error"):
-				game.hud.error(err)
+			courier_cmd("deliver")
 		"debug":
 			if game.hud and game.hud.has_method("toggle_debug"):
 				game.hud.toggle_debug()
+	var cs2 := _courier_selected()
+	if cs2 and not hero_selected():
+		var cmd := COURIER_KEYS.get(act, "") as String
+		if cmd != "":
+			courier_cmd(cmd)
+			return
 	var ai := ABILITY_ACTIONS.find(act)
 	if ai >= 0 and ai < h.abilities.size():
 		if not hero_selected():
@@ -366,23 +387,48 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 		if hero_selected():
 			use_item(ii, queue)
 
-## Start an ability: no-target spells are issued at once (queued with Shift), others enter targeting. A queued
-## spell may still be cooling down: the queue checks again when it reaches it.
+## Start an ability: no-target spells and toggles (Stench) are issued at once (queued with Shift), others enter
+## targeting. The target is not checked yet (the player has not picked one). A queued spell may still be cooling
+## down: the queue checks again when it reaches it.
 func begin_ability(aid: String, queue := false) -> void:
 	var h := hero()
+	if h == null or not h.alive:
+		return
 	var a := SimData.ability(aid)
-	var err: String = game.world.abilities.cast_error(h, aid, -1, null, h.pos)
+	var err: String = game.world.abilities.cast_error(h, aid, -1, null, h.pos, false, false)
 	if queue and err.ends_with("on cooldown"):
 		err = ""
-	if err != "" and err != "Must target an enemy unit":
-		if game.hud and game.hud.has_method("error"):
-			game.hud.error(err)
+	if err != "":
+		_error(err)
 		return
 	match String(a.behavior):
-		"no_target":
+		"no_target", "toggle":
+			targeting = ""
 			game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": aid, "queue": queue})
 		"point", "unit", "autocast_attack":
 			targeting = aid
+			_target_queue = queue
+
+func _error(msg: String) -> void:
+	if game.hud and game.hud.has_method("error"):
+		game.hud.error(msg)
+
+## Who the pending targeted order is meant for, which colours the cursor: "enemy" (red), "ally" (green), or "any"
+## (green, red over an enemy). Abilities say so in their data ("target_team"); point and unit spells default to enemy.
+func targeting_team() -> String:
+	if targeting == "":
+		return ""
+	if targeting == "attack":
+		return "enemy"
+	if targeting == "tp":
+		return "ally"
+	if targeting.begins_with("item:"):
+		var h := hero()
+		var it = h.inventory[int(targeting.substr(5))] if h else null
+		if it == null:
+			return "ally"
+		return String(SimData.item(it.id).get("target_team", "ally"))
+	return String(SimData.ability(targeting).get("target_team", "enemy"))
 
 func begin_tp() -> void:
 	var h := hero()
@@ -396,6 +442,7 @@ func begin_tp() -> void:
 ## Issue the pending targeted order at a sim point (used by the minimap too).
 func target_point(p: Vector2, shift := false) -> void:
 	var h := hero()
+	shift = shift or _target_queue
 	if targeting == "tp":
 		game.world.command(h.id, {"type": O.CAST_POINT, "ability": "tp", "point": p, "queue": shift})
 	elif targeting == "attack":
@@ -406,16 +453,23 @@ func target_point(p: Vector2, shift := false) -> void:
 		game.world.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": p, "queue": shift})
 	targeting = ""
 
-## Alt+click (ground or minimap): a ping your team sees, with a sound and a ring on the ground and minimap.
-var pings: Array = []                       # [{pos: Vector2, t: game time}]
+## Alt+click (ground or minimap): a ping your team sees, with a sound and a ring on the ground and minimap. On an
+## enemy hero or building it says "attack", on one of ours "defend", Ctrl + Alt + click warns of danger. The team's bots
+## hear it (SimTeamAI) and answer in chat. At most five pings in three seconds.
+var pings: Array = []                       # [{pos: Vector2, t: game time, kind}] your own recent pings
 
-func ping(p: Vector2) -> void:
+func ping(p: Vector2, target_id := -1, danger := false) -> void:
 	var now: float = game.world.time
 	pings = pings.filter(func(x): return now - float(x.t) < 3.0)
 	if pings.size() >= 5:
 		return
-	pings.append({"pos": p, "t": now})
-	game.fx.ping(p)
+	var t: SimUnit = game.world.get_unit(target_id)
+	if t != null and (t.team == C.NEUTRAL or t.kind == C.Kind.COURIER or t.is_ward()):
+		target_id = -1
+	var pg: Dictionary = game.world.ping(game.player_team, p if t == null else t.pos, game.player_hero_id, target_id,
+		"danger" if danger else "")
+	pings.append({"pos": pg.pos, "t": now, "kind": pg.kind})
+	game.fx.ping(pg.pos)
 	if game.audio:
 		game.audio.ui("ui_click", -2.0)
 
@@ -428,14 +482,61 @@ func move_selected(p: Vector2, shift := false) -> void:
 
 func use_item(slot: int, queue := false) -> void:
 	var h := hero()
+	if h == null or not h.alive:
+		return
 	var it = h.inventory[slot]
 	if it == null:
 		return
+	var err: String = game.world.abilities.cast_error(h, "", slot, null, h.pos, false, false)
+	if queue and err.ends_with("on cooldown"):
+		err = ""
+	if err != "":
+		_error(err)
+		return
 	var kind: String = game.world.abilities.item_target(it.id)
 	if kind == "none":
+		targeting = ""
 		game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slot, "queue": queue})
 	else:
 		targeting = "item:%d" % slot
+		_target_queue = queue
+
+## A courier command for your courier (see SimWorld.courier_command).
+func courier_cmd(cmd: String) -> void:
+	var err: String = game.world.courier_command(hero(), cmd)
+	if err != "":
+		_error(err)
+	elif game.audio:
+		game.audio.ui("ui_click", -6.0)
+
+## An item dragged out of the inventory onto the world: given to an allied hero or your courier under the cursor,
+## otherwise dropped on the ground there (the hero walks over first).
+func drop_or_give(slot: int, screen: Vector2) -> void:
+	var h := hero()
+	if h == null or not h.alive or h.inventory[slot] == null:
+		return
+	var t: SimUnit = game.world.get_unit(pick(screen))
+	if t != null and t != h and t.team == h.team and (t.is_hero() or t.id == h.courier_id):
+		game.world.command(h.id, {"type": O.GIVE_ITEM, "item_slot": slot, "target": t.id})
+		return
+	var ground: Vector2 = game.camera.ground_at(screen)
+	game.world.command(h.id, {"type": O.DROP_ITEM, "item_slot": slot, "point": ground})
+	game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
+
+## The item lying on the ground under a screen point (-1 if none).
+func pick_ground_item(screen: Vector2) -> int:
+	var cam: Camera3D = game.camera.cam
+	var best := -1
+	var bd := 34.0
+	for g in game.world.ground_items:
+		var p3 := View.to3(g.pos, game.terrain.height_at(g.pos)) + Vector3(0, 0.35, 0)
+		if cam.is_position_behind(p3):
+			continue
+		var d := cam.unproject_position(p3).distance_to(screen)
+		if d < bd:
+			bd = d
+			best = int(g.gid)
+	return best
 
 func _left_click(pos: Vector2, shift: bool) -> void:
 	var w: SimWorld = game.world
@@ -443,6 +544,7 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 	var target_id := pick(pos)
 	var ground: Vector2 = game.camera.ground_at(pos)
 	var tgt := w.get_unit(target_id)
+	shift = shift or _target_queue
 	if targeting == "tp":
 		target_point(ground, shift)
 		return
@@ -457,16 +559,23 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 		var slot := int(targeting.substr(5))
 		var it = h.inventory[slot]
 		if it != null and w.abilities.item_target(it.id) == "unit":
-			# Push Staff, Gold Glove: a unit (yourself included)
-			if tgt:
-				w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": tgt.id, "queue": shift})
+			# Push Staff, Gold Glove: a unit (yourself included). A miss keeps the cursor, as in Dota.
+			var ierr: String = w.abilities.cast_error(h, "", slot, tgt, ground)
+			if ierr != "" and not ierr.ends_with("on cooldown"):
+				_error(ierr)
+				return
+			w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": tgt.id, "queue": shift})
 		else:
 			w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": ground, "queue": shift})
 	else:
 		var a := SimData.ability(targeting)
 		if String(a.behavior) == "autocast_attack" or String(a.behavior) == "unit":
-			if tgt:
-				w.command(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
+			# a click that misses a valid target keeps the targeting cursor and says why, as in Dota
+			var uerr: String = w.abilities.cast_error(h, targeting, -1, tgt, ground)
+			if uerr != "" and not uerr.ends_with("on cooldown") and uerr != "Not enough mana":
+				_error(uerr)
+				return
+			w.command(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
 		else:
 			w.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": ground, "queue": shift})
 	# as in Dota, targeting ends after the click even with Shift held (press the hotkey again to queue another)
@@ -487,6 +596,10 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 		return
 	var id := pick(pos)
 	var tgt := w.get_unit(id)
+	var gid := pick_ground_item(pos) if not repeat else -1
+	if gid >= 0 and (tgt == null or tgt.team == h.team):
+		w.command(h.id, {"type": O.PICKUP_ITEM, "gid": gid, "queue": shift})
+		return
 	if tgt and tgt != h:
 		if tgt.team != h.team or w.orders.can_deny(h, tgt):
 			if repeat and h.order == O.ATTACK_UNIT and h.order_target == tgt.id:

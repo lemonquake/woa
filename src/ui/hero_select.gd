@@ -1,12 +1,13 @@
 extends Control
 ## Main menu: Hero Select. A lit stage shows the chosen hero on a pedestal (drag to turn it); the left column lists the
 ## heroes, the right panel their role, story, starting stats and abilities (hover an ability for its numbers). Pick
-## the bot's hero, open the Hero Creator to change your hero's look, or Play.
+## open the Hero Creator to change your hero's look, or Play (Game Setup: the teams, the bots and their heroes).
 
 const U = preload("res://src/ui/ui_kit.gd")
 const MATCH := "res://src/game/main.tscn"
 const CREATOR := "res://src/ui/hero_creator.tscn"
 const HOTKEYS := "res://src/ui/hotkeys_screen.tscn"
+const SETUP := "res://src/ui/game_setup.tscn"
 
 const INFO := {
 	"blood_ranger": {"title": "the Archer", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
@@ -313,20 +314,6 @@ func _build_ui() -> void:
 	bar.offset_bottom = -30
 	bar.add_theme_constant_override("separation", 12)
 	add_child(bar)
-	var ol := _label("Opponent", 20, U.TEXT, "bold")
-	ol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	bar.add_child(ol)
-	_opp = OptionButton.new()
-	_opp.custom_minimum_size = Vector2(220, 50)
-	_opp.add_item("Random hero")
-	for id in GameSettings.HEROES:
-		_opp.add_item(String(SimData.unit(id).name))
-	var oi := GameSettings.HEROES.find(GameSettings.opponent)
-	_opp.selected = oi + 1 if oi >= 0 else 0
-	_opp.item_selected.connect(func(i):
-		GameSettings.opponent = "random" if i == 0 else GameSettings.HEROES[i - 1]
-		GameSettings.save())
-	bar.add_child(_opp)
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bar.add_child(sp)
@@ -562,7 +549,7 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif e is InputEventMouseMotion and _drag:
 		_yaw += (e as InputEventMouseMotion).relative.x * 0.01
 
-## Play: the Hotkeys screen comes next ("Are you good to go?"), then the match loads.
+## Play: Game Setup comes next (who plays on each team), then the Hotkeys screen ("Are you good to go?") and the match.
 func _on_play() -> void:
 	GameSettings.save()
-	get_tree().change_scene_to_file(HOTKEYS)
+	get_tree().change_scene_to_file(SETUP)

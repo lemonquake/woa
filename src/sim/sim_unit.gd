@@ -85,6 +85,8 @@ var player := false
 var auto_attack := true                    # idle heroes attack enemies in acquisition range (Dota "Standard")
 var no_acquire := false                    # set by a hard stop (S held): no auto-attack until the next order
 var bot := false
+var gain_mult := 1.0                       # gold and experience earned (Unfair bots: 1.25)
+var bot_name := ""                         # a bot hero's player name (shown in chat and on the scoreboard)
 var look := {}                             # appearance dictionary (HeroLook) for the renderer
 var dmg_out := {}                          # damage source key -> [to heroes, to other units, to buildings]
 var dmg_in := {}                           # damage source key -> damage taken
@@ -138,6 +140,10 @@ var tower_deaggro_at := C.LONG_AGO
 var last_seen := Vector2(INF, INF)         # last visible position of the chase target
 var neutral_state := 0                     # 0 idle, 1 aggro, 2 returning
 var neutral_aggro_at := C.LONG_AGO
+var leash_since := -1.0                    # neutrals: when they left their 400 guard radius on this chase (-1 inside)
+var no_reaggro_until := C.LONG_AGO         # neutrals: damage cannot wake them again until then (after a leash)
+var stacked := false                       # neutrals: spawned by a stack (20% less bounty)
+var stacker_id := -1                       # neutrals: the hero who stacked them (gets 30% of an ally's bounty)
 var lane_tier := 0
 var building_lane := ""
 var upgrade := 0
@@ -163,8 +169,15 @@ var channel: Dictionary = {}               # {ability, until, ...}: channelling 
 var tp_charges := 0                        # Town Portal scrolls in the dedicated slot
 var courier_id := -1                       # heroes: their courier
 var owner_id := -1                         # couriers: their hero
-var courier_state := "idle"
+var courier_state := "idle"               # idle, move, return, retrieve, deliver, transfer, stash, collect
 var courier_goal := Vector2.ZERO           # couriers: where a move order sends them
+var courier_next := ""                     # couriers: the task after collecting ground items ("deliver", "retrieve")
+var courier_auto := false                  # couriers: Auto Deliver is on
+var courier_burst_ready := C.LONG_AGO      # couriers: Speed Burst / Shield cooldowns end
+var courier_shield_ready := C.LONG_AGO
+var to_buy: Array = []                     # heroes: the To Buy list, [{id, auto}] in order (Dota's quick buy)
+var was_in_shop := false                   # heroes: in the shop's range last tick (the stash empties on arrival)
+var order_gid := -1                        # PICKUP_ITEM: the ground item
 var ward_expires := 0.0
 
 func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float) -> void:
@@ -195,8 +208,7 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 		gold_unreliable = C.STARTING_GOLD
 		tp_charges = 1
 	if kind == K.COURIER:
-		inventory.resize(6)
-		add_modifier({"id": "flying", "source": p_id, "expires": INF, "flying": true})
+		inventory.resize(6)                    # flying is granted by the world from its owner's level 4
 	refresh_stats()
 	hp = max_hp
 	mana = max_mana
@@ -409,6 +421,9 @@ func refresh_stats() -> void:
 	hp = clampf(hp_old_frac * max_hp, 0.0, max_hp) if alive else 0.0
 	mana = clampf(mana_old_frac * max_mana, 0.0, max_mana)
 	armor = float(def.armor) + attr_armor + f.call("armor")
+	if kind == K.NEUTRAL_CREEP:
+		armor += C.NEUTRAL_UPGRADE[1] * upgrade
+		attr_as += C.NEUTRAL_UPGRADE[3] * upgrade
 	var mr: float = 1.0 - (1.0 - float(def.magic_resist)) * (1.0 - attr_mr) * (1.0 - f.call("magic_resist"))
 	magic_resist = mr
 	dmg_min = base_dmg_min
@@ -436,6 +451,8 @@ func refresh_stats() -> void:
 	stats_dirty = false
 
 func upgrade_hp() -> float:
+	if kind == K.NEUTRAL_CREEP:
+		return C.NEUTRAL_UPGRADE[0] * upgrade
 	return 0.0 if not is_lane_creep() else _upgrade_val(0)
 
 func _upgrade_val(i: int) -> float:
@@ -470,11 +487,14 @@ func edge_distance(o: SimUnit) -> float:
 
 func networth() -> int:
 	var w := gold()
-	for arr in [inventory, stash]:
+	for arr in [inventory, stash, courier_items]:
 		for it in arr:
 			if it != null:
 				w += int(SimData.item(it.id).cost)
 	return w
+
+## Heroes: what their courier carries (kept up to date by the world; counts toward net worth and the shop's plans).
+var courier_items: Array = []
 
 func xp_to_next() -> float:
 	if level >= C.MAX_LEVEL:

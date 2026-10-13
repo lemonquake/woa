@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3 at 20:00: A(sludge) 0/4/0 lvl 6 LH 14 DN 10 nw 3045 | B(blood_ranger) 4/0/0 lvl 13 LH 79 DN 64 nw 7949 | towers lost A 3 B 2
+    casts: { "A:item_salve": 1, "B:gale_impact": 6, "B:burst_shot": 3, "A:item_tango": 3, "A:stench_on": 17, "A:shuriken_hook": 2, "A:hooked_hero": 2, "B:item_tango": 1, "B:item_salve": 1, "A:blubber": 4, "A:item_magic_wand": 2, "B:blood_ranger_ult": 3 }
+    sludge items: ["slip_boots", "magic_wand", "tough_band"]
+    blood_ranger items: ["tango", "power_treads", "dragon_lance", "wraith_band", "quelling_blade", "shock_hammer", "magic_wand"]
+seed 7 at 20:00: A(sludge) 3/3/0 lvl 11 LH 61 DN 31 nw 6897 | B(blood_ranger) 3/3/0 lvl 10 LH 44 DN 32 nw 5479 | towers lost A 1 B 2
+    casts: { "A:item_salve": 1, "B:gale_impact": 9, "A:shuriken_hook": 10, "A:hooked_hero": 7, "B:burst_shot": 5, "A:item_tango": 3, "B:item_tango": 3, "B:item_salve": 1, "A:hooked_creep": 2, "A:stench_on": 46, "A:item_magic_wand": 3, "A:blubber": 6, "A:item_slip_boots": 12, "B:blood_ranger_ult": 3, "A:item_jump_knife": 1, "A:chomp": 1 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    blood_ranger items: ["dragon_lance", "power_treads", "wraith_band", "quelling_blade", "magic_wand"]
+seed 11 at 20:00: A(sludge) 0/4/0 lvl 9 LH 39 DN 27 nw 4353 | B(blood_ranger) 4/0/0 lvl 10 LH 47 DN 24 nw 6104 | towers lost A 2 B 3
+    casts: { "A:item_salve": 1, "B:gale_impact": 11, "A:shuriken_hook": 12, "A:hooked_hero": 7, "B:burst_shot": 4, "A:item_tango": 3, "A:stench_on": 25, "B:item_tango": 3, "B:item_salve": 1, "A:item_magic_stick": 1, "A:blubber": 6, "A:item_magic_wand": 3, "A:hooked_creep": 5, "B:blood_ranger_ult": 2, "A:item_slip_boots": 14 }
+    sludge items: ["slip_boots", "magic_wand", "tough_band"]
+    blood_ranger items: ["dragon_lance", "power_treads", "wraith_band", "quelling_blade", "magic_wand"]

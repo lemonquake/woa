@@ -392,6 +392,12 @@ func _splat() -> Image:
 			var steps := int(a.distance_to(b) / (px * 2.0)) + 1
 			for s in steps + 1:
 				stamp.call(road, a.lerp(b, float(s) / steps), 170.0, 0.75)
+	# neutral camps: a trampled earth clearing around the spawn box
+	for c in map.camps:
+		var cb: Vector2 = c.box
+		stamp.call(road, c.pos, cb.length() * 1.25, 0.8)
+		for k in 5:
+			stamp.call(road, (c.pos as Vector2) + Vector2.from_angle(k * TAU / 5.0 + float(c.id)) * cb.length() * 0.7, cb.length() * 0.55, 0.6)
 	for t in map.trees:
 		stamp.call(forest, t.pos, 230.0, 1.0)
 	# paved plazas only around base buildings; open grass (Dawn) or ash (Dusk) between them

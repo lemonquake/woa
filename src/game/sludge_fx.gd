@@ -16,7 +16,7 @@ const LINK_SCALE := 2.4
 const LINK_STEP := 0.148                    # metres between link centres
 const MAX_LINKS := 150
 const STEEL := Color(0.86, 0.9, 1.0)
-const STENCH := Color(0.42, 0.5, 0.18)
+const STENCH := Color(0.38, 0.46, 0.13)
 const IRON := Color(0.16, 0.15, 0.145)       # the chain: dark, heavy iron that reads against grass and stone
 
 var game: Node
@@ -344,18 +344,41 @@ func _cloud(uid: int) -> void:
 	m.albedo_texture = gt
 	m.proximity_fade_enabled = true
 	m.proximity_fade_distance = 0.6
+	# a sickly stain on the ground showing the area the cloud hurts
+	var stain := MeshInstance3D.new()
+	var sq := QuadMesh.new()
+	sq.size = Vector2(2.0, 2.0)
+	sq.orientation = PlaneMesh.FACE_Y
+	stain.mesh = sq
+	var sm := StandardMaterial3D.new()
+	sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var sg := GradientTexture2D.new()
+	var sgr := Gradient.new()
+	sgr.offsets = PackedFloat32Array([0.0, 0.7, 0.9, 1.0])
+	sgr.colors = PackedColorArray([Color(1, 1, 1, 0.25), Color(1, 1, 1, 0.4), Color(1, 1, 1, 0.75), Color(1, 1, 1, 0.0)])
+	sg.gradient = sgr
+	sg.fill = GradientTexture2D.FILL_RADIAL
+	sg.fill_from = Vector2(0.5, 0.5)
+	sg.fill_to = Vector2(1.0, 0.5)
+	sm.albedo_texture = sg
+	sm.albedo_color = Color(0.3, 0.36, 0.08, 0.0)
+	stain.material_override = sm
+	stain.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	stain.position.y = 0.06
+	node.add_child(stain)
 	var puffs: Array = []
-	for i in 22:
+	for i in 26:
 		var mi := MeshInstance3D.new()
 		var q := QuadMesh.new()
-		q.size = Vector2(1.6, 1.6)
+		q.size = Vector2(1.75, 1.75)
 		mi.mesh = q
 		mi.material_override = m
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		node.add_child(mi)
 		puffs.append({"mi": mi, "phase": randf() * TAU, "r": randf_range(0.2, 1.0), "a": randf() * TAU,
 			"h": randf_range(0.15, 0.9), "s": randf_range(0.8, 1.5)})
-	_clouds[uid] = {"node": node, "puffs": puffs, "mat": m, "fade": 0.0, "off": false}
+	_clouds[uid] = {"node": node, "puffs": puffs, "mat": m, "fade": 0.0, "off": false, "stain": stain, "stain_mat": sm}
 
 func _end_cloud(uid: int) -> void:
 	var c: Dictionary = _clouds.get(uid, {})
@@ -372,7 +395,8 @@ func _update_clouds(w: SimWorld, dt: float) -> void:
 			c.off = true
 		c.fade = clampf(float(c.fade) + (dt * 3.0 if not c.off else -dt * 2.0), 0.0, 1.0)
 		var m: StandardMaterial3D = c.mat
-		m.albedo_color = Color(STENCH.r, STENCH.g, STENCH.b, 0.42 * float(c.fade))
+		m.albedo_color = Color(STENCH.r, STENCH.g, STENCH.b, 0.4 * float(c.fade))
+		(c.stain_mat as StandardMaterial3D).albedo_color.a = 0.32 * float(c.fade)
 		if c.off and float(c.fade) <= 0.0:
 			(c.node as Node3D).queue_free()
 			_clouds.erase(uid)
@@ -385,6 +409,9 @@ func _update_clouds(w: SimWorld, dt: float) -> void:
 		var node: Node3D = c.node
 		node.global_position = centre
 		node.visible = fx._seen(u.pos)
+		var st: MeshInstance3D = c.stain
+		st.global_position = Vector3(centre.x, fx.ground_y(u.pos) + 0.06, centre.z)
+		st.scale = Vector3(radius, 1.0, radius)
 		for p in c.puffs:
 			var a := float(p.a) + t * 0.35 * (1.0 if int(p.phase * 10.0) % 2 == 0 else -1.0)
 			var r: float = float(p.r) * radius * (0.85 + 0.15 * sin(t * 1.3 + float(p.phase)))
@@ -400,9 +427,13 @@ func blubber(e: Dictionary) -> void:
 	if u == null or not fx._seen(u.pos):
 		return
 	var c := fx._chest(u.id, 0.45)
-	fx.shockwave(fx.ground3(u.pos, 0.05), 1.6, Color(0.75, 0.68, 0.45), 0.45, 0.2, 1.6)
-	fx.impact(c, Color(0.9, 0.85, 0.6), 0.5)
-	game.audio.at("armor_rustle_2", c, -6.0, 0, 0.3)
+	fx.shockwave(fx.ground3(u.pos, 0.05), 2.2, Color(0.95, 0.82, 0.5), 0.55, 0.3, 1.8)
+	fx.impact(c, Color(1.0, 0.9, 0.6), 0.8)
+	var v := fx._view_of(u.id)
+	var at := v.global_position + Vector3(0, v.bar_height + 0.35, 0) if v else c + Vector3(0, 1.0, 0)
+	game.bars.popup("Blubber", at, Color(1.0, 0.86, 0.5), 22, 1.0, 1.2)
+	game.audio.at("armor_rustle_2", c, -3.0, 0, 0.3)
+	game.audio.at("hit_flesh", c, -8.0, 0, 0.2)
 
 func chomp_bite(e: Dictionary) -> void:
 	var t: SimUnit = game.world.get_unit(int(e.target))

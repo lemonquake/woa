@@ -195,6 +195,18 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		return 0.0
 	if key == "":
 		key = "attack" if is_attack else "spell"
+	if t.kind == K.COURIER:
+		# couriers count hits, not damage (7.35): 1 melee hero attack, 2 ranged hero attacks, 6 of anything else
+		var src_u := w.get_unit(src_id)
+		var hits := 1.0
+		if is_attack and src_hero and src_u != null:
+			hits = 6.0 if not src_u.is_ranged() else 3.0
+		t.hp = maxf(0.0, t.hp - hits)
+		w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": hits, "type": dtype, "attack": is_attack,
+			"key": key, "reflected": reflected, "halved": 0.0})
+		if t.hp <= 0.001:
+			kill(t, src_u)
+		return hits
 	var raw := amount                                  # before any reduction (Spike Armor returns this)
 	if is_attack and dtype == C.DamageType.PHYSICAL and t.is_hero() and src_team != t.team:
 		amount = w.items.block_attack(t, amount)       # Block Shield, before armor
@@ -317,12 +329,17 @@ func process_deaths() -> void:
 			w.items.on_hero_death(t, killer)
 			_hero_death(t, killer)
 		elif t.kind == K.COURIER:
-			t.respawn_at = w.time + C.COURIER_RESPAWN
+			# it keeps what it carries (out of reach until it respawns); every enemy hero gets the bounty. Its level is
+			# its owner's.
+			var owner := w.get_unit(t.owner_id)
+			var lvl := owner.level if owner else t.level
+			t.respawn_at = w.time + C.COURIER_RESPAWN_BASE + C.COURIER_RESPAWN_PER_LEVEL * lvl
 			t.removed = false
-			for i in t.inventory.size():
-				t.inventory[i] = null
-			if killer != null and killer.is_hero() and killer.team != t.team:
-				give_gold(killer, C.COURIER_BOUNTY, false, t.pos)
+			t.courier_state = "idle"
+			if killer != null and killer.team != t.team:
+				for eh in w.heroes:
+					if eh.team == killer.team:
+						give_gold(eh, C.COURIER_BOUNTY_BASE + C.COURIER_BOUNTY_PER_LEVEL * lvl, false, t.pos)
 		elif t.is_creep():
 			_creep_death(t, killer, deny)
 		elif t.is_building():
@@ -338,6 +355,13 @@ func _creep_death(t: SimUnit, killer: SimUnit, deny: bool) -> void:
 		return
 	if hero_killer and hero_killer.team != t.team:
 		var g := w.rng.randi_range(int(t.def.gold_min), int(t.def.gold_max)) + int(t.bounty_gold_add)
+		if t.stacked:
+			# a stack's new creeps give 20% less; the stacker gets 30% of what an ally earned
+			g = int(round(g * (1.0 - C.STACK_BOUNTY_PENALTY)))
+			var st := w.get_unit(t.stacker_id)
+			if st != null and st != hero_killer and st.team == hero_killer.team:
+				give_gold(st, int(round(g * C.STACKER_SHARE)), false, st.pos)
+				give_xp(st, floorf(_xp_value(t) * C.STACKER_SHARE))
 		give_gold(hero_killer, g, false, t.pos)
 		hero_killer.last_hits += 1
 		w.events.append({"t": "last_hit", "u": hero_killer.id, "target": t.id, "gold": g})
@@ -349,7 +373,7 @@ func _creep_death(t: SimUnit, killer: SimUnit, deny: bool) -> void:
 	_share_xp(t, _xp_value(t), _enemy_team_of(t, killer))
 
 func _xp_value(t: SimUnit) -> float:
-	return float(t.def.xp) + t.bounty_xp_add
+	return (float(t.def.xp) + t.bounty_xp_add) * (1.0 - C.STACK_BOUNTY_PENALTY if t.stacked else 1.0)
 
 ## Which team's heroes are rewarded with experience for this death.
 func _enemy_team_of(t: SimUnit, killer: SimUnit) -> int:
@@ -373,6 +397,7 @@ func _share_xp(t: SimUnit, amount: float, team: int, always: SimUnit = null) -> 
 func give_xp(h: SimUnit, amount: float) -> void:
 	if amount <= 0.0 or h.level >= C.MAX_LEVEL:
 		return
+	amount *= h.gain_mult
 	h.xp += amount
 	w.events.append({"t": "xp", "u": h.id, "amount": amount})
 	var lvl := C.xp_level(h.xp)
@@ -385,6 +410,8 @@ func give_xp(h: SimUnit, amount: float) -> void:
 func give_gold(h: SimUnit, amount: int, reliable: bool, at: Vector2) -> void:
 	if amount == 0:
 		return
+	if amount > 0 and h.gain_mult != 1.0:
+		amount = int(round(amount * h.gain_mult))
 	if reliable:
 		h.gold_reliable += amount
 	else:

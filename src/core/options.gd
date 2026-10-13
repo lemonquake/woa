@@ -5,7 +5,8 @@ extends RefCounted
 ## Sound: four buses (Master, Effects, Interface, Ambience). Sliders are 0-100%; loudness follows the ear, so every
 ## halving of a slider halves how loud it sounds (about -10 dB): db = 10 * log2(p). Master starts at 50%.
 ## Video: window mode, resolution, V-Sync, frame limit, render scale, quality preset, FPS counter.
-## Game: edge pan, camera speed, screen shake, damage numbers.
+## Game: edge pan, camera speed, centre the camera on the hero at respawn, screen shake, damage numbers.
+## Bots: learn from games (BotMemory, on by default), show their team chat.
 ## Automated runs (--capture, --bench) keep the project's window and quality settings so captures stay comparable.
 
 const PATH := "user://options.json"
@@ -19,7 +20,8 @@ const DEFAULTS := {
 	"master": 0.5, "effects": 1.0, "interface": 1.0, "ambience": 1.0, "mute_unfocused": true,
 	"window_mode": 0, "resolution": 0, "vsync": true, "frame_limit": 5, "render_scale": 1.0, "quality": 2,
 	"show_fps": false,
-	"edge_pan": true, "camera_speed": 32.0, "screen_shake": true, "damage_numbers": true,
+	"edge_pan": true, "camera_speed": 32.0, "screen_shake": true, "damage_numbers": true, "center_on_respawn": true,
+	"bots_learn": true, "bot_chat": true,
 }
 
 static var data := {}
@@ -49,7 +51,8 @@ static func _sanitize() -> void:
 	data.quality = clampi(int(data.quality), 0, QUALITIES.size() - 1)
 	data.render_scale = clampf(float(data.render_scale), 0.5, 1.0)
 	data.camera_speed = clampf(float(data.camera_speed), 12.0, 60.0)
-	for k in ["mute_unfocused", "vsync", "show_fps", "edge_pan", "screen_shake", "damage_numbers"]:
+	for k in ["mute_unfocused", "vsync", "show_fps", "edge_pan", "screen_shake", "damage_numbers", "center_on_respawn",
+			"bots_learn", "bot_chat"]:
 		data[k] = bool(data[k])
 
 static func get_value(key: String):

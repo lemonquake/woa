@@ -664,17 +664,19 @@ func test_courier_delivery() -> void:
 	check(h.inventory.any(func(x): return x != null and x.id == "slippers"), "the courier delivered the slippers")
 	var c := w.get_unit(h.courier_id)
 	check(c.courier_state in ["return", "idle"], "courier heads home after delivering")
-	# the hero dies while the courier is on its way: the items go back to the stash, not stuck on the courier
+	# the hero dies while the courier is on its way: as in Dota the courier keeps the item and brings it home
 	w.shop.buy(h, "mantle")
 	w.courier_deliver(h)
-	run(w, 3.0)
+	for i in 600:
+		w.step()
+		if c.inventory.any(func(x): return x != null):
+			break
 	check(c.inventory.any(func(x): return x != null), "courier picked up the Thinking Cap")
 	w.combat.kill(h, null)
 	w.combat.process_deaths()
-	run(w, 30.0)
-	check(c.courier_state == "idle" and not c.inventory.any(func(x): return x != null), "courier came home empty-handed")
-	# (the hero respawned in the fountain meanwhile, so the stash may already have emptied into the bags)
-	check((h.stash + h.inventory).any(func(x): return x != null and x.id == "mantle"), "the undelivered item came back to the hero")
+	run(w, 40.0)
+	check(c.courier_state == "idle" and _ids(c.inventory) == ["mantle"], "courier came home still carrying it (%s, %s)" % [c.courier_state, str(_ids(c.inventory))])
+	check(h.courier_items.has(c.inventory[0]) and h.networth() >= int(SimData.item("mantle").cost), "it still counts as the hero's")
 
 func test_stop_and_hard_stop() -> void:
 	var w := empty_world()
@@ -927,7 +929,12 @@ func test_tree_regrow_180() -> void:
 	var tp: Vector2 = _map.trees[ti].pos
 	check(w.cut_tree(ti, tp + Vector2(100, 0)), "the tree falls")
 	check(_map.is_walkable(tp), "its ground becomes walkable")
-	check(_map.vision_block[_map.world_to_vcell(tp).y * SimMap.VN + _map.world_to_vcell(tp).x] == 0 or _map.tree_at(tp, 90.0) >= 0,
+	var vc := _map.world_to_vcell(tp)
+	var shared := false
+	for j in _map.trees.size():
+		if j != ti and _map.trees[j].alive and _map.world_to_vcell(_map.trees[j].pos) == vc:
+			shared = true
+	check(_map.vision_block[vc.y * SimMap.VN + vc.x] == 0 or shared,
 		"it stops blocking sight (unless another tree shares the vision cell)")
 	run(w, 178.0)
 	check(not _map.trees[ti].alive, "still down at 2:58")
@@ -2398,3 +2405,510 @@ func test_spear_pierce() -> void:
 		if w.combat.land_attack(w.combat._snapshot(h, ""), t):
 			hits += 1
 	near(hits / 1000.0, 0.25, 0.04, "25% of attacks pierce full evasion")
+
+# ---- Courier, stash, To Buy, items on the ground (2026-10-13 b) -----------------------------------------------------
+
+func _courier_world() -> Array:
+	var w := SimWorld.new(1, _map)
+	w.time = 30.0
+	w.next_wave_at = INF
+	w.next_neutral_at = INF
+	var h := w.spawn_hero("sludge", C.DAWN)
+	var c := w.get_unit(h.courier_id)
+	return [w, h, c]
+
+func test_courier_speed_flying_and_level() -> void:
+	var a := _courier_world()
+	var w: SimWorld = a[0]
+	var h: SimUnit = a[1]
+	var c: SimUnit = a[2]
+	w.step()
+	near(c.move_speed, 290.0 + 10.0 * 1, 0.01, "level 1 courier speed 290 + 10 x level")
+	check(not c.has_flag("flying"), "walks before level 4")
+	w.combat.give_xp(h, float(C.XP_TABLE[3]) - h.xp)
+	w.step()
+	check(h.level == 4 and c.has_flag("flying"), "flies from its owner's level 4")
+	near(c.move_speed, 290.0 + 40.0, 0.01, "level 4 speed")
+	check(w.courier_command(h, "burst").begins_with("Speed Burst needs level"), "no Speed Burst before level 10")
+	check(w.courier_command(h, "shield").begins_with("Shield needs level"), "no Shield before level 20")
+	w.combat.give_xp(h, float(C.XP_TABLE[19]) - h.xp)
+	w.step()
+	check(w.courier_command(h, "burst") == "", "Speed Burst at level %d" % h.level)
+	w.step()
+	near(c.move_speed, (290.0 + 10.0 * h.level) * 1.5, 0.01, "Speed Burst: +50%")
+	check(w.courier_command(h, "burst") == "Speed Burst on cooldown", "120 s cooldown")
+	run(w, 6.1)
+	near(c.move_speed, 290.0 + 10.0 * h.level, 0.01, "lasts 6 s")
+	check(w.courier_command(h, "shield") == "", "Shield at level 20")
+	w.step()
+	check(c.is_invulnerable(), "Shield: invulnerable")
+	run(w, 2.1)
+	check(not c.is_invulnerable(), "for 2 s")
+
+func test_courier_dies_to_hit_counts_and_keeps_items() -> void:
+	var a := _courier_world()
+	var w: SimWorld = a[0]
+	var h: SimUnit = a[1]
+	var c: SimUnit = a[2]
+	var melee := w.spawn("sludge", C.DUSK, c.pos + Vector2(100, 0))
+	var ranged := w.spawn("blood_ranger", C.DUSK, c.pos + Vector2(100, 0))
+	var creep := w.spawn("dusk_melee", C.DUSK, c.pos + Vector2(100, 0))
+	w.combat.deal_damage(creep.id, C.DUSK, false, c, 9999.0, C.DamageType.PHYSICAL, true)
+	check(c.alive and is_equal_approx(c.hp, 5.0), "a creep's attack takes one of six hits")
+	w.combat.deal_damage(ranged.id, C.DUSK, true, c, 1.0, C.DamageType.PHYSICAL, true)
+	check(c.alive and is_equal_approx(c.hp, 2.0), "a ranged hero's attack takes three")
+	c.hp = c.max_hp
+	c.inventory[0] = w.shop.new_item("boots")
+	h.level = 7
+	var g0 := melee.gold()
+	w.combat.deal_damage(melee.id, C.DUSK, true, c, 1.0, C.DamageType.PHYSICAL, true)
+	w.combat.process_deaths()
+	check(not c.alive, "one melee hero attack kills it")
+	near(c.respawn_at - w.time, 60.0 + 6.0 * 7, 0.05, "respawns in 60 + 6 x level")
+	check(_ids(c.inventory) == ["boots"], "keeps what it carried")
+	check(melee.gold() - g0 == 25 + 5 * 7 and ranged.gold() > 0, "every enemy hero gets 25 + 5 x level")
+	check(w.courier_deliver(h) == "Courier is dead", "no orders while dead")
+
+func test_deliver_sweeps_owner_items_in_the_well() -> void:
+	var a := _courier_world()
+	var w: SimWorld = a[0]
+	var h: SimUnit = a[1]
+	var c: SimUnit = a[2]
+	var fountain: Vector2 = _map.fountains[0]
+	h.pos = Vector2(-1500, -1300)
+	var mine := w.shop.new_item("gauntlets")
+	mine["owner"] = h.id
+	w.drop_item(mine, fountain + Vector2(500, 300), h.id)
+	var far := w.shop.new_item("slippers")
+	far["owner"] = h.id
+	w.drop_item(far, fountain + Vector2(2500, 2500), h.id)          # outside the Well
+	var other := w.shop.new_item("mantle")
+	other["owner"] = 999
+	w.drop_item(other, fountain + Vector2(450, 250), 999)          # someone else's
+	h.stash[0] = w.shop.new_item("circlet")
+	check(w.courier_deliver(h) == "", "deliver ordered")
+	var got := false
+	for i in 30 * 120:
+		w.step()
+		if h.inventory.any(func(x): return x != null and x.id == "gauntlets"):
+			got = true
+			break
+	check(got, "the hero received the item dropped in the Well")
+	check(h.inventory.any(func(x): return x != null and x.id == "circlet"), "and the stash")
+	check(w.ground_items.size() == 2, "the item outside the Well and another player's item stay on the ground")
+
+func test_drop_pick_up_and_give() -> void:
+	var w := empty_world()
+	var h := w.spawn_hero("sludge", C.DAWN)
+	var ally := w.spawn_hero("ezee", C.DAWN)
+	h.pos = Vector2(-600, -600)
+	ally.pos = h.pos + Vector2(600, 0)
+	_give(w, h, "boots", 0)
+	w.command(h.id, {"type": O.DROP_ITEM, "item_slot": 0, "point": h.pos + Vector2(400, 0)})
+	run(w, 3.0)
+	check(h.inventory[0] == null and w.ground_items.size() == 1, "walked over and dropped it")
+	var g: Dictionary = w.ground_items[0]
+	check((g.pos as Vector2).distance_to(Vector2(-200, -600)) < 1.0, "lies where it was dropped")
+	w.command(ally.id, {"type": O.PICKUP_ITEM, "gid": g.gid})
+	run(w, 3.0)
+	check(_ids(ally.inventory) == ["boots"] and w.ground_items.is_empty(), "an ally picks it up")
+	near(ally.move_speed - ally.def.move_speed, 45.0, 0.01, "and gets its bonus")
+	w.command(ally.id, {"type": O.GIVE_ITEM, "item_slot": ally.inventory.find(ally.inventory.filter(func(x): return x != null)[0]), "target": h.id})
+	run(w, 3.0)
+	check(_ids(h.inventory) == ["boots"], "gives it back")
+	var foe := w.spawn_hero("blood_ranger", C.DUSK)
+	foe.pos = h.pos + Vector2(100, 0)
+	w.command(h.id, {"type": O.GIVE_ITEM, "item_slot": 0, "target": foe.id})
+	check(_ids(h.inventory) == ["boots"], "never to an enemy")
+
+func test_to_buy_breakdown_and_auto_buy() -> void:
+	var a := _courier_world()
+	var w: SimWorld = a[0]
+	var h: SimUnit = a[1]
+	var c: SimUnit = a[2]
+	h.pos = Vector2(-1500, -1300)                                   # away from the shop
+	h.gold_unreliable = 0
+	h.gold_reliable = 0
+	_give(w, h, "gauntlets", 0)
+	check(w.shop.add_to_buy(h, "tough_band") == "", "Shift-click adds Tough Band")
+	check(h.to_buy.map(func(e): return e.id) == ["circlet", "recipe_tough_band"], "broken into the missing parts (%s)" % str(h.to_buy.map(func(e): return e.id)))
+	check(w.shop.add_to_buy(h, "tough_band") == "You already have the parts" or h.to_buy.size() >= 3, "a second Shift-click adds only what is still missing")
+	h.to_buy.resize(2)
+	w.shop.toggle_auto_buy(h, 0)
+	run(w, 1.0)
+	check(h.to_buy.size() == 2, "nothing bought without gold")
+	h.gold_unreliable = 150
+	run(w, 1.0)
+	check(h.to_buy.size() == 2, "150 gold is short of the Headband's 155")
+	h.gold_unreliable = 155
+	run(w, 1.0)
+	check(h.to_buy.size() == 1 and String(h.to_buy[0].id) == "recipe_tough_band", "auto-bought the Headband when gold allowed")
+	check(_ids(c.inventory) == ["circlet"], "the courier waiting at the fountain holds it (%s / stash %s)" % [str(_ids(c.inventory)), str(_ids(h.stash))])
+	h.gold_unreliable = 500
+	check(w.shop.buy(h, "recipe_tough_band") == "", "bought the recipe by hand")
+	check(h.to_buy.is_empty(), "a manual purchase removes its entry")
+	# the courier is out: an auto-buy waits in the stash
+	w.courier_command(h, "transfer")
+	run(w, 1.0)
+	w.shop.add_to_buy(h, "slippers")
+	w.shop.toggle_auto_buy(h, 0)
+	run(w, 0.5)
+	check(_ids(h.stash).has("slippers"), "with the courier away, the stash takes it")
+	for i in 30:
+		w.shop.add_to_buy(h, "branch")
+	check(h.to_buy.size() == C.TO_BUY_MAX, "the list keeps at most %d" % C.TO_BUY_MAX)
+
+func test_stash_rules() -> void:
+	var w := empty_world()
+	var h := w.spawn_hero("sludge", C.DAWN)
+	h.pos = Vector2(-1500, -1300)
+	h.gold_unreliable = 3000
+	w.shop.buy(h, "boots")
+	check(_ids(h.stash) == ["boots"], "away from the shop: stash")
+	check(w.shop.grab_all(h) == "Must be in the base", "no Grab All in the field")
+	var g0 := h.gold()
+	check(w.shop.sell_stash(h, 0) == "" and h.gold() - g0 == 500, "stashed items sell from anywhere (full price in 10 s)")
+	w.shop.buy(h, "boots")
+	h.pos = _map.fountains[0] + Vector2(200, 200)
+	run(w, 1.0)
+	check(_ids(h.inventory) == ["boots"] and _ids(h.stash).is_empty(), "the stash empties when the hero arrives")
+	check(w.shop.to_stash(h, 0) == "", "move to the stash in the base")
+	run(w, 1.0)
+	check(_ids(h.stash) == ["boots"], "and it stays there")
+	check(w.shop.from_stash(h, 0, 4) == "" and h.inventory[4] != null and h.inventory[4].id == "boots", "take it into a chosen slot")
+	w.shop.to_stash(h, 4)
+	check(w.shop.grab_all(h) == "" and _ids(h.inventory) == ["boots"], "Grab All")
+
+func test_backpack_swap_cooldown() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-600, -600))
+	_give(w, h, "jump_knife", 6)
+	w.shop.swap(h, 6, 0)
+	check(w.abilities.item_cooldown_left(h, 0) > 5.9, "6 s cooldown after leaving the backpack")
+	_give(w, h, "boots", 1)
+	w.shop.swap(h, 1, 2)
+	check(w.abilities.item_cooldown_left(h, 2) <= 0.0, "no cooldown moving between main slots")
+
+func test_unit_spell_hotkey_ignores_missing_target() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-600, -600))
+	h.ability_level["chomp"] = 1
+	h.ability_level["stench"] = 1
+	h.level = 6
+	h.mana = 500
+	check(w.abilities.cast_error(h, "chomp", -1, null, h.pos, false, false) == "", "Chomp: R starts targeting without a target")
+	check(w.abilities.cast_error(h, "chomp", -1, null, h.pos) == "Must target a unit", "the click still needs a unit")
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "stench"})
+	check(bool(h.toggles.get("stench", false)), "Stench toggles on from a no-target order")
+
+# ---- Neutral camps (Dota 2, 7.41: research/camps.md of run 2026-10-13-camps-ai-setup) ---------------------------
+
+func test_camp_layout_14_a_side() -> void:
+	for side in [C.DAWN, C.DUSK]:
+		var kinds := {}
+		var pulls := 0
+		for c in _map.camps:
+			if c.side == side:
+				kinds[c.kind] = int(kinds.get(c.kind, 0)) + 1
+				if bool(c.pull):
+					pulls += 1
+		check(kinds == {"small": 3, "medium": 7, "large": 3, "ancient": 1}, "side %d: 3 small, 7 medium, 3 large, 1 ancient (%s)" % [side, str(kinds)])
+		check(pulls == 2, "two pull camps by the safe lane")
+	for c in _map.camps:
+		check(_map.is_walkable(c.pos) and not _map.in_ramp(c.pos), "camp %d stands on open ground" % c.id)
+
+func test_camp_groups_vary_never_twice() -> void:
+	var w := world(59.0)
+	w.next_wave_at = INF
+	var cid := 1                               # a medium camp: three groups
+	var last := -1
+	var seen := {}
+	for minute in 6:
+		for u in w.units:
+			if u.camp_id == cid:
+				u.alive = false
+		w._rebuild_grid()
+		w.ai.spawn_neutrals()
+		var g := int(w.ai.camp_group[cid])
+		check(g != last, "minute %d: not the same group twice in a row" % minute)
+		last = g
+		seen[g] = true
+	check(seen.size() >= 2, "the camp spawns different groups (%d)" % seen.size())
+
+func test_courier_does_not_block_a_camp() -> void:
+	var w := world(59.0)
+	w.next_wave_at = INF
+	var camp: Dictionary = _map.camps[0]
+	var c := w.spawn("courier", C.DAWN, camp.pos)
+	c.courier_state = "move"
+	c.courier_goal = camp.pos
+	run(w, 1.2)
+	check(w.units.filter(func(u): return u.camp_id == camp.id and u.alive).size() == w.ai.camp_units(0).size(), "a courier in the box does not block the spawn")
+
+func test_neutrals_proximity_day_and_sleep_at_night() -> void:
+	var w := world(59.0)
+	w.next_wave_at = INF
+	run(w, 1.2)
+	var camp: Dictionary = _map.camps[1]
+	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
+	var h := w.spawn("blood_ranger", C.DAWN, n[0].pos + Vector2(200, 0))
+	h.order = O.HOLD
+	h.no_acquire = true
+	run(w, 0.6)
+	check(n[0].neutral_state == 1 and n[0].atk_target == h.id, "by day a hero walking within 240 wakes the camp")
+	var w2 := world(359.0)
+	w2.next_wave_at = INF
+	w2.next_neutral_at = 360.0
+	run(w2, 1.2)
+	var n2 := w2.units.filter(func(u): return u.camp_id == camp.id and u.alive)
+	var h2 := w2.spawn("blood_ranger", C.DAWN, n2[0].pos + Vector2(200, 0))
+	h2.order = O.HOLD
+	h2.no_acquire = true                     # it does not attack them either
+	run(w2, 1.0)
+	check(n2.all(func(u): return u.neutral_state == 0), "at night they sleep through it")
+
+func test_neutral_leash_400_then_5s() -> void:
+	var w := world(59.0)
+	w.next_wave_at = INF
+	run(w, 1.2)
+	var camp: Dictionary = _map.camps[1]
+	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
+	var h := w.spawn("blood_ranger", C.DAWN, camp.pos + Vector2(-450, 0))
+	w.vision.update()
+	w.command(h.id, {"type": O.ATTACK_UNIT, "target": n[0].id})
+	run(w, 1.2)
+	check(n[0].neutral_state == 1, "awake")
+	# run far away: it leaves its 400 guard radius and gives up 5 s later, then cannot be woken by damage for 3 s
+	w.command(h.id, {"type": O.MOVE, "point": camp.pos + Vector2(-3000, 0)})
+	var left_at := -1.0
+	var gave_up_at := -1.0
+	for i in 30 * 14:
+		w.step()
+		if left_at < 0.0 and n[0].pos.distance_to(n[0].home) > C.NEUTRAL_GUARD_RADIUS:
+			left_at = w.time
+		if gave_up_at < 0.0 and n[0].neutral_state == 2:
+			gave_up_at = w.time
+	check(left_at > 0.0 and gave_up_at > 0.0, "it left and gave up")
+	near(gave_up_at - left_at, C.NEUTRAL_CHASE_TIME, 0.4, "gives up 5 s after leaving its guard radius")
+	check(n[0].no_reaggro_until >= gave_up_at + 2.9, "and cannot be woken by damage for 3 s")
+
+func test_neutrals_grow_every_7_30() -> void:
+	var w := world(449.0)
+	w.next_wave_at = INF
+	w.next_neutral_at = 449.5
+	run(w, 0.6)
+	var n := w.units.filter(func(u): return u.kind == K.NEUTRAL_CREEP and u.alive and u.def.id == "mudling")
+	check(not n.is_empty(), "goblins up")
+	if n.is_empty():
+		return
+	var hp0: float = n[0].max_hp
+	var arm0: float = n[0].armor
+	run(w, 1.0)
+	near(n[0].max_hp - hp0, 30.0, 0.01, "+30 health at 7:30")
+	near(n[0].armor - arm0, 0.5, 0.01, "+0.5 armor at 7:30")
+	near(n[0].creep_dmg_add, 3.0, 0.01, "+3 damage")
+	near(n[0].bounty_gold_add, 1.0, 0.01, "+1 gold")
+
+func test_stack_bounty_and_stacker_share() -> void:
+	var w := world(5.0)
+	w.next_wave_at = INF
+	w.next_neutral_at = INF
+	var a := w.spawn("blood_ranger", C.DAWN, Vector2(-600, -600))
+	var b := w.spawn("ezee", C.DAWN, Vector2(-500, -600))
+	var c := w.spawn("mudling", C.NEUTRAL, Vector2(-550, -500))
+	c.stacked = true
+	c.stacker_id = a.id
+	var g0a := a.gold()
+	var g0b := b.gold()
+	w.combat.kill(c, b)
+	w.combat.process_deaths()
+	var got_b := b.gold() - g0b
+	var got_a := a.gold() - g0a
+	check(got_b >= int(round(3 * 0.8)) and got_b <= int(round(5 * 0.8)), "a stacked goblin gives 20%% less (%d)" % got_b)
+	check(got_a == int(round(got_b * C.STACKER_SHARE)), "the stacker gets 30%% of what the ally got (%d of %d)" % [got_a, got_b])
+
+func test_lane_creeps_fight_only_pull_camps() -> void:
+	var w := empty_world()
+	var pull := -1
+	var other := -1
+	for c in _map.camps:
+		if c.side == C.DAWN and bool(c.pull) and pull < 0:
+			pull = c.id
+		elif c.side == C.DAWN and not bool(c.pull) and other < 0:
+			other = c.id
+	for cid in [pull, other]:
+		var camp: Dictionary = _map.camps[cid]
+		var n := w.spawn("mudling", C.NEUTRAL, camp.pos)
+		n.camp_id = cid
+		n.home = camp.pos
+		var lc := w.spawn("dawn_melee", C.DAWN, camp.pos + Vector2(250, 0))
+		lc.lane = "bot"
+		lc.lane_i = 1
+		w._rebuild_grid()
+		w.vision.update()
+		var t := w.ai._pick(lc, lc.acquire_range)
+		if cid == pull:
+			check(t == n, "a lane creep attacks a pull camp's neutral")
+		else:
+			check(t != n, "but ignores other camps' neutrals")
+		n.alive = false
+		lc.alive = false
+		w._rebuild_grid()
+
+# ---- Team brain, bots, learning ---------------------------------------------------------------------------------
+
+func _team_world(dawn: Array, dusk: Array, human_dawn := false) -> SimWorld:
+	var w := SimWorld.new(5, _map)
+	w.setup_match()
+	var i := 0
+	for team in [C.DAWN, C.DUSK]:
+		for id in (dawn if team == C.DAWN else dusk):
+			var h := w.spawn_hero(id, team)
+			if team == C.DAWN and human_dawn and i == 0:
+				h.player = true
+			else:
+				w.bots.append(SimBot.new(w, h.id, "mid", "Bot %d" % i))
+			i += 1
+	if human_dawn:
+		w.brain(C.DAWN)
+	return w
+
+func test_every_lane_covered() -> void:
+	BotMemory.active = false
+	var w := _team_world(["sludge", "ezee", "blood_ranger", "sludge", "ezee"], ["ezee", "ezee", "ezee"])
+	run(w, 1.0)
+	for team in [C.DAWN, C.DUSK]:
+		var lanes := {}
+		for b in w.bots:
+			if b.hero().team == team:
+				lanes[b.lane] = int(lanes.get(b.lane, 0)) + 1
+		check(lanes.has("top") and lanes.has("mid") and lanes.has("bot"), "team %d: every lane has someone (%s)" % [team, str(lanes)])
+	var mids := 0
+	for b in w.bots:
+		if b.hero().team == C.DAWN and b.lane == "mid":
+			mids += 1
+	check(mids == 1, "one hero in mid")
+
+func test_bots_leave_the_players_lane() -> void:
+	BotMemory.active = false
+	var w := _team_world(["blood_ranger", "sludge", "ezee", "sludge"], ["ezee"], true)
+	var me := w.heroes[0]
+	run(w, 1.0)
+	var mid_bot: SimBot = null
+	for b in w.bots:
+		if b.hero().team == C.DAWN and b.lane == "mid":
+			mid_bot = b
+	check(mid_bot != null, "a bot planned to go mid")
+	# the player walks into the middle lane and stays
+	w.time = 10.0
+	me.pos = Vector2(-1200, -1050)
+	me.order = O.HOLD
+	run(w, 4.5)
+	var lanes := {}
+	for b in w.bots:
+		if b.hero().team == C.DAWN:
+			lanes[b.lane] = true
+	check(not lanes.has("mid"), "no bot stays mid once the player takes it (%s)" % str(lanes))
+	check(lanes.has("top") and lanes.has("bot"), "and both side lanes stay covered")
+	var said := w.chat_log.filter(func(l): return String(l.text).begins_with("You're mid?"))
+	check(not said.is_empty(), "the bot says so in chat")
+
+func test_ping_replies_with_reasons() -> void:
+	BotMemory.active = false
+	var w := _team_world(["blood_ranger", "sludge", "ezee"], ["ezee"], true)
+	var me := w.heroes[0]
+	run(w, 1.0)
+	w.time = 700.0
+	var foe: SimUnit = null
+	for h in w.heroes:
+		if h.team == C.DUSK:
+			foe = h
+	foe.pos = Vector2(3000, 3000)
+	w.vision.reveal_all = true
+	w.vision.update()
+	# one bot dead, one without TP and far away
+	var dead: SimUnit = w.heroes[1]
+	w.combat.kill(dead, null)
+	dead.respawn_at = w.time + 20.0
+	var far: SimUnit = w.heroes[2]
+	far.pos = w.map.fountains[C.DAWN]
+	far.tp_charges = 0
+	w.chat_log.clear()
+	w.ping(C.DAWN, foe.pos, me.id, foe.id)
+	run(w, 1.0)
+	var texts := w.chat_log.map(func(l): return String(l.text))
+	check(texts.any(func(t): return t.begins_with("I'm dead, back in")), "a dead bot says when it is back (%s)" % str(texts))
+	check(texts.any(func(t): return t.contains("no TP") and t.contains("too far")), "a far bot without a TP says why")
+
+func test_chat_is_rate_limited() -> void:
+	var w := _team_world(["sludge"], ["ezee"])
+	var b := w.brain(C.DAWN)
+	var h := w.heroes[0]
+	check(b.say(h, "one", "k1", 30.0), "first line goes out")
+	check(not b.say(h, "two", "k2", 30.0), "a second line from the same bot right after is held back")
+	check(b.say(h, "three", "k3", 30.0, true), "urgent lines (ping replies) are not held back")
+	check(not b.say(h, "one again", "k1", 30.0, true), "the same line is not repeated within its period")
+
+func test_bot_memory_learns_and_persists() -> void:
+	var path := "user://test_bot_memory.json"
+	BotMemory.path = path
+	BotMemory.reset()
+	BotMemory.active = true
+	var x := [1.0, 0.5, 0.4, 0.9, 0.25, 0.0, 0.0, 0.2, 1.0]
+	var p0 := BotMemory.fight_p(x)
+	for i in 30:
+		BotMemory.learn_fight(x, 0.0)
+	check(BotMemory.fight_p(x) < p0 - 0.1, "losing that fight lowers its odds (%.2f -> %.2f)" % [p0, BotMemory.fight_p(x)])
+	BotMemory.note_death(C.DAWN, Vector2(1000, -3000))
+	BotMemory.note_death(C.DUSK, Vector2(-1000, 3000))
+	check(BotMemory.danger(C.DAWN, Vector2(1000, -3000)) >= 0.99, "deaths mark the place dangerous, both teams folded together")
+	check(BotMemory.pick_build("sludge:core", 2) == 0, "an untried build first")
+	BotMemory.reward_build("sludge:core", 0, 0.1)
+	check(BotMemory.pick_build("sludge:core", 2) == 1, "then the other untried one")
+	BotMemory.reward_build("sludge:core", 1, 0.9)
+	BotMemory.save()
+	var w_before: Array = (BotMemory.data.fight_w as Array).duplicate()
+	BotMemory.data = {}
+	BotMemory.load_data()
+	var same := true
+	for i in w_before.size():
+		same = same and absf(float(BotMemory.data.fight_w[i]) - float(w_before[i])) < 1e-5
+	check(same, "fight weights survive a save and load")
+	check(BotMemory.build_stats("sludge:core", 2)[1][0] == 1, "build scores too")
+	BotMemory.active = false
+	check(BotMemory.danger(C.DAWN, Vector2(1000, -3000)) == 0.0 and BotMemory.fight_weights() == BotMemory.FIGHT_DEFAULT, "learning off: built-in values")
+	BotMemory.reset()
+	BotMemory.path = BotMemory.DEFAULT_PATH
+
+func test_unfair_bots_earn_more() -> void:
+	var w := empty_world()
+	var h := w.spawn("ezee", C.DAWN, Vector2(-600, -600))
+	w.bots.append(SimBot.new(w, h.id, "mid", "Bot", "unfair"))
+	var g0 := h.gold()
+	w.combat.give_gold(h, 100, false, h.pos)
+	check(h.gold() - g0 == 125, "Unfair: +25% gold")
+	var x0 := h.xp
+	w.combat.give_xp(h, 100.0)
+	near(h.xp - x0, 125.0, 0.01, "Unfair: +25% experience")
+
+func test_game_setup_roles_are_kept() -> void:
+	BotMemory.active = false
+	var w := SimWorld.new(5, _map)
+	w.setup_match()
+	var ids: Array = []
+	for id in ["blood_ranger", "sludge", "ezee"]:
+		var h := w.spawn_hero(id, C.DAWN)
+		w.bots.append(SimBot.new(w, h.id, "mid", "Bot"))
+		ids.append(h.id)
+	var foe := w.spawn_hero("ezee", C.DUSK)
+	w.bots.append(SimBot.new(w, foe.id, "mid", "Bot Gerald"))
+	# Blood Ranger would be the carry; set as the mid player instead
+	w.brain(C.DAWN).fixed_role[ids[0]] = 2
+	run(w, 1.0)
+	var b0: SimBot = w.brain(C.DAWN).bot_of(ids[0])
+	check(b0.role == 2 and b0.lane == "mid", "a role chosen in Game Setup is kept (%d %s)" % [b0.role, b0.lane])
+	var lanes := {}
+	for b in w.bots:
+		if b.hero().team == C.DAWN:
+			lanes[b.lane] = true
+	check(lanes.size() == 3, "the others still cover the other lanes (%s)" % str(lanes))

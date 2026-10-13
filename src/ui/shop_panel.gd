@@ -2,8 +2,9 @@ class_name ShopPanel
 extends Control
 ## The shop, laid out like Dota's: Basics and Upgrades tabs with item columns, a search box, and a pane that shows
 ## the selected item (price, bonuses, what it is made from and what it builds into) with Buy, or Sell for an item
-## the hero carries. Left click selects, right click (or double click) buys. The stash is at the bottom; clicking a
-## stashed item in the shop moves it to the bags.
+## the hero carries. Left click selects, right click (or double click) buys, Shift + click adds the item to the To Buy
+## list broken into the parts still missing. The stash is at the bottom: click a stashed item to take it (in the
+## base), right click to sell it (from anywhere).
 
 const U = preload("res://src/ui/ui_kit.gd")
 const W := 820.0
@@ -149,7 +150,7 @@ func _draw_pane(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 	var pw := W - x - 16
 	var y := 108.0
 	if selected == "" or SimData.item(selected).is_empty():
-		for l in U.wrap("Left click an item to see what it does and what it is made from. Right click buys it.", pw, 14):
+		for l in U.wrap("Left click an item to see what it does and what it is made from. Right click buys it. Shift + click adds it to To Buy, broken into the parts you still need.", pw, 14):
 			U.text(self, l, Vector2(x, y + 14), 14, U.TEXT_DIM, "body")
 			y += 20
 		_draw_bags(h, x, H - 228, m)
@@ -232,6 +233,7 @@ func _draw_pane(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 		var label := "Buy for %d gold" % price if err == "" else err
 		U.text_c(self, label, br.get_center() + Vector2(0, 7), 17, U.GOLD if ok else Color(0.65, 0.55, 0.45), "title")
 		_pane_rects.append([br, "buy", selected])
+		U.text_c(self, "Shift + click an item: add it to To Buy", br.position + Vector2(br.size.x * 0.5, -8), 12, U.TEXT_DIM, "body")
 	_draw_bags(h, x, H - 228, m)
 
 ## The hero's nine slots, small: click one to sell it.
@@ -277,8 +279,9 @@ func _draw_stash(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 			_pane_rects.append([r, "stash", i])
 			if r.has_point(m):
 				hud.show_tip(get_global_mouse_position(), hud.item_tip(it.id, h))
-	U.text(self, "The courier (F3) brings the stash to you." if not here else "Click a stashed item to take it.",
-		Vector2(500, y + 28), 13, U.TEXT_DIM, "body")
+	U.text(self, ("The courier (%s) brings the stash to you. " % Keybinds.key_name("courier_deliver")) if not here else "Click: take it. ",
+		Vector2(494, y + 18), 13, U.TEXT_DIM, "body")
+	U.text(self, "Right click: sell it.", Vector2(494, y + 36), 13, U.TEXT_DIM, "body")
 
 func _owned(h: SimUnit) -> Array:
 	var out: Array = []
@@ -292,6 +295,16 @@ func _buy(id: String) -> void:
 	var err: String = hud.game.world.shop.buy(_hero(), id)
 	if err != "":
 		hud.error(err)
+
+## Shift + click: put the item's missing parts on the To Buy list.
+func _to_buy(id: String) -> void:
+	var h := _hero()
+	var n: int = h.to_buy.size()
+	var err: String = hud.game.world.shop.add_to_buy(h, id)
+	if err != "":
+		hud.error(err)
+	else:
+		hud.notice("To Buy: %s (%d part%s)" % [String(SimData.item(id).name), h.to_buy.size() - n, "" if h.to_buy.size() - n == 1 else "s"])
 
 func _gui_input(e: InputEvent) -> void:
 	if not (e is InputEventMouseButton and e.pressed):
@@ -308,7 +321,9 @@ func _gui_input(e: InputEvent) -> void:
 			var now := Time.get_ticks_msec()
 			var dbl: bool = _last_click.id == id and now - int(_last_click.t) < 350
 			_last_click = {"id": id, "t": now}
-			if right or dbl or mb.double_click:
+			if mb.shift_pressed:
+				_to_buy(id)
+			elif right or dbl or mb.double_click:
 				_buy(id)
 			selected = id
 			sell_slot = -1
@@ -325,7 +340,10 @@ func _gui_input(e: InputEvent) -> void:
 				tab = String(pr[2])
 				_search.text = ""
 			"buy":
-				_buy(String(pr[2]))
+				if mb.shift_pressed:
+					_to_buy(String(pr[2]))
+				else:
+					_buy(String(pr[2]))
 			"sell":
 				var err: String = w.shop.sell(h, int(pr[2]))
 				if err != "":
@@ -337,14 +355,21 @@ func _gui_input(e: InputEvent) -> void:
 					selected = it.id
 					sell_slot = int(pr[2])
 			"select":
-				if right:
+				if mb.shift_pressed:
+					_to_buy(String(pr[2]))
+				elif right:
 					_buy(String(pr[2]))
 				else:
 					selected = String(pr[2])
 					sell_slot = -1
 			"stash":
-				if w.shop.in_shop(h):
-					w.shop.update(h)
+				var serr := ""
+				if right:
+					serr = w.shop.sell_stash(h, int(pr[2]))
+				else:
+					serr = w.shop.from_stash(h, int(pr[2]))
+				if serr != "":
+					hud.error(serr)
 		queue_redraw()
 		accept_event()
 		return

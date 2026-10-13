@@ -172,6 +172,10 @@ func _note_leave(u: SimUnit) -> void:
 func _valid_target(u: SimUnit, t: SimUnit) -> bool:
 	if not t.alive or t.team == u.team or t.kind == K.FOUNTAIN:
 		return false
+	if t.team == C.NEUTRAL and t.kind == K.NEUTRAL_CREEP:
+		# towers never attack neutrals; lane creeps fight only the pull camps' neutrals
+		if u.is_building() or t.camp_id < 0 or not bool(w.map.camps[t.camp_id].get("pull", false)):
+			return false
 	if t.is_building() and t.is_invulnerable():
 		return false
 	if t.has_flag("invisible"):
@@ -293,44 +297,128 @@ func _tower(u: SimUnit) -> void:
 		u.atk_target = best.id
 
 # ---- Neutral camps --------------------------------------------------------------------------------------------------
+# Dota 2's rules (research/camps.md of run 2026-10-13-camps-ai-setup): camps spawn at 1:00 and on every minute when
+# nothing stands in their spawn box; each spawn picks one of the camp kind's groups (never the same twice in a row);
+# by day an enemy within 240 wakes a camp (they sleep at night); damage wakes the neutral and its campmates within 500;
+# a neutral chases until it has been outside its 400 guard radius for 5 s, then walks home and cannot be woken by
+# damage for 3 s. Neutrals grow every 7:30. A stack's new creeps give 20% less, and their stacker gets 30% of an ally's
+# bounty from them.
+
+var camp_group := {}                       # camp id -> index of the group it spawned last
+var camp_puller := {}                      # camp id -> hero id who first woke its current creeps (stack credit)
+
+## The creep ids a camp spawns next (or spawned last).
+func camp_units(camp_id: int) -> Array:
+	var c: Dictionary = w.map.camps[camp_id]
+	var groups: Array = SimMap.CAMP_GROUPS[c.kind]
+	return groups[int(camp_group.get(camp_id, camp_id % groups.size()))]
 
 func spawn_neutrals() -> void:
+	var ups := mini(int(maxf(0.0, w.time) / C.NEUTRAL_UPGRADE_INTERVAL), C.NEUTRAL_MAX_UPGRADES)
 	for c in w.map.camps:
 		if _camp_occupied(c):
 			continue
-		var n: int = c.units.size()
+		var groups: Array = SimMap.CAMP_GROUPS[c.kind]
+		var gi := int(c.id) % groups.size()
+		if camp_group.has(c.id) and groups.size() > 1:
+			# a random group, but never the one it spawned last
+			gi = (int(camp_group[c.id]) + 1 + w.rng.randi_range(0, groups.size() - 2)) % groups.size()
+		camp_group[c.id] = gi
+		# creeps of this camp still alive outside the box: this spawn is a stack
+		var stacker := -1
+		var stacking := false
+		for o in w.units:
+			if o.alive and o.camp_id == c.id and o.kind == K.NEUTRAL_CREEP:
+				stacking = true
+				break
+		if stacking:
+			stacker = int(camp_puller.get(c.id, -1))
+		else:
+			camp_puller.erase(c.id)
+		var list: Array = groups[gi]
+		var n := list.size()
+		var box: Vector2 = c.box
 		for i in n:
 			var a := TAU * float(i) / n + float(c.id)
-			var p: Vector2 = c.pos + Vector2.from_angle(a) * (60.0 if n > 1 else 0.0) * (1.0 + i * 0.35)
-			var u := w.spawn(c.units[i], C.NEUTRAL, p)
+			var r := (0.0 if n == 1 else minf(box.x, box.y) * 0.45) * (0.75 + 0.25 * float(i % 2))
+			var p: Vector2 = c.pos + Vector2.from_angle(a) * r
+			var u := w.spawn(list[i], C.NEUTRAL, p)
 			u.camp_id = c.id
 			u.home = p
 			u.home_facing = (Vector2.ZERO - p).angle() + float(i) * 0.7
 			u.facing = u.home_facing
-		w.events.append({"t": "camp_spawn", "camp": c.id})
+			u.stacked = stacking
+			u.stacker_id = stacker
+			if ups > 0:
+				_grow(u, ups)
+				u.hp = u.max_hp
+		w.events.append({"t": "camp_spawn", "camp": c.id, "stack": stacking})
 
-## A camp only spawns when nothing stands inside its spawn box (heroes, creeps, wards or its own neutrals).
+func _grow(u: SimUnit, ups: int) -> void:
+	u.upgrade = ups
+	u.creep_dmg_add = C.NEUTRAL_UPGRADE[2] * ups
+	u.bounty_gold_add = C.NEUTRAL_UPGRADE[4] * ups
+	u.bounty_xp_add = C.NEUTRAL_UPGRADE[5] * ups
+	u.refresh_stats()
+
+## Grow every living neutral at each 7:30 mark (new spawns get the current count).
+func upgrade_neutrals() -> void:
+	var ups := mini(int(maxf(0.0, w.time) / C.NEUTRAL_UPGRADE_INTERVAL), C.NEUTRAL_MAX_UPGRADES)
+	for u in w.units:
+		if u.alive and u.kind == K.NEUTRAL_CREEP and u.upgrade < ups:
+			var before := u.max_hp
+			var hp := u.hp
+			_grow(u, ups)
+			u.hp = minf(u.max_hp, hp + u.max_hp - before)
+
+## A camp only spawns when nothing stands inside its spawn box: heroes, creeps, wards and its own neutrals block it,
+## couriers do not.
 func _camp_occupied(c: Dictionary) -> bool:
-	var h: float = c.box_half
-	for u: SimUnit in w.query(c.pos, h * 1.5):
-		if u.is_building():
+	return not box_units(c).is_empty()
+
+## Units standing inside a camp's spawn box (the ones that would block its spawn).
+func box_units(c: Dictionary) -> Array:
+	var box: Vector2 = c.box
+	var out: Array = []
+	for u: SimUnit in w.query(c.pos, box.length() + 10.0):
+		if u.is_building() or u.kind == K.COURIER:
 			continue
 		var d: Vector2 = u.pos - c.pos
-		if absf(d.x) <= h and absf(d.y) <= h:
-			return true
-	return false
+		if absf(d.x) <= box.x and absf(d.y) <= box.y:
+			out.append(u)
+	return out
 
 func camp_occupied(camp_id: int) -> bool:
 	return _camp_occupied(w.map.camps[camp_id])
 
-## Attacked or damaged: this neutral and its idle campmates turn on the attacker.
+## Whether a point lies in a camp's spawn box.
+static func in_box(c: Dictionary, p: Vector2) -> bool:
+	var d: Vector2 = p - c.pos
+	return absf(d.x) <= (c.box as Vector2).x and absf(d.y) <= (c.box as Vector2).y
+
+## Attacked or damaged: this neutral and its campmates within 500 turn on the attacker (not for 3 s after a leash).
 func neutral_provoked(n: SimUnit, src: SimUnit) -> void:
-	if src.team == C.NEUTRAL:
+	if src.team == C.NEUTRAL or n.kind != K.NEUTRAL_CREEP:
 		return
-	for m in w.units:
-		if not m.alive or m.camp_id != n.camp_id or m.kind != K.NEUTRAL_CREEP:
+	if w.time < n.no_reaggro_until:
+		return
+	_wake(n, src)
+
+func _wake(n: SimUnit, src: SimUnit) -> void:
+	if src.is_hero() and not camp_puller.has(n.camp_id):
+		camp_puller[n.camp_id] = src.id
+	for m: SimUnit in w.query(n.pos, C.NEUTRAL_CAMPMATE_RADIUS + 10.0):
+		if not m.alive or m.camp_id != n.camp_id or m.kind != K.NEUTRAL_CREEP or m.is_disarmed():
+			continue
+		if m != n and w.time < m.no_reaggro_until:
 			continue
 		if m == n or m.neutral_state != 1 or not w.valid(m.atk_target):
+			if m.neutral_state == 2:
+				# woken again on the way home: it gives up 3 s after leaving its guard radius
+				m.leash_since = w.time - (C.NEUTRAL_CHASE_TIME - C.NEUTRAL_REAGGRO_CHASE) \
+					if m.pos.distance_to(m.home) > C.NEUTRAL_GUARD_RADIUS else -1.0
+			elif m.neutral_state == 0:
+				m.leash_since = -1.0
 			m.neutral_state = 1
 			m.neutral_aggro_at = w.time
 			_retarget(m, src.id)
@@ -342,34 +430,64 @@ func _neutral(u: SimUnit) -> void:
 	match u.neutral_state:
 		0:
 			u.atk_target = -1
+			# by day an enemy walking within 240 wakes the camp (they sleep at night); looked at twice a second
+			if not w.is_night() and not u.is_disarmed() and (w.tick + u.id) % 15 < 3:
+				var near := _neutral_nearest(u, C.NEUTRAL_PROXIMITY_AGGRO)
+				if near != null:
+					_wake(u, near)
 		1:
 			var t := w.get_unit(u.atk_target)
-			var give_up := t == null or not t.alive or t.team == C.NEUTRAL
-			if not give_up:
-				var far := u.pos.distance_to(u.home) > C.NEUTRAL_LEASH or t.pos.distance_to(u.home) > C.NEUTRAL_LEASH + 600.0
-				var stale := w.time - u.neutral_aggro_at > C.NEUTRAL_AGGRO_TIMEOUT and u.edge_distance(t) > u.acquire_range
-				give_up = far or stale
-			if give_up:
-				# another enemy hitting the camp right now keeps the fight going
+			var give_up := t == null or not t.alive or t.team == C.NEUTRAL or t.is_invulnerable() \
+				or t.has_flag("invisible") and not w.vision.sees(C.NEUTRAL, t)
+			if u.pos.distance_to(u.home) > C.NEUTRAL_GUARD_RADIUS:
+				if u.leash_since < 0.0:
+					u.leash_since = w.time
+				elif w.time - u.leash_since >= C.NEUTRAL_CHASE_TIME:
+					give_up = true
+			else:
+				u.leash_since = -1.0
+			if give_up and u.leash_since < 0.0:
+				# the target is gone while we are home: the next enemy fighting the camp, or the closest one in reach
 				var alt := _neutral_alt(u)
+				if alt == null:
+					alt = _neutral_nearest(u, u.acquire_range)
 				if alt != null:
 					_retarget(u, alt.id)
 					u.neutral_aggro_at = w.time
-				else:
-					u.neutral_state = 2
-					u.atk_target = -1
-					u.order = O.MOVE
-					u.order_point = u.home
+					return
+			if give_up:
+				u.neutral_state = 2
+				u.atk_target = -1
+				u.leash_since = -1.0
+				u.no_reaggro_until = w.time + C.NEUTRAL_REAGGRO_LOCK
+				u.order = O.MOVE
+				u.order_point = u.home
 		2:
 			# home, or as close as the stack around it allows
-			var close := u.pos.distance_to(u.home) < 20.0 or (u.pos.distance_to(u.home) < 160.0 and u.blocked_time > 0.0) 				or u.pos.distance_to(u.home) < 110.0
+			var close := u.pos.distance_to(u.home) < 20.0 or (u.pos.distance_to(u.home) < 160.0 and u.blocked_time > 0.0) \
+				or u.pos.distance_to(u.home) < 110.0
 			if u.order != O.MOVE or close:
 				u.order = O.NONE
 				u.neutral_state = 0
 				u.facing = u.home_facing
 
+## The closest enemy a neutral may attack within r (heroes and lane creeps; not wards, couriers or buildings).
+func _neutral_nearest(u: SimUnit, r: float) -> SimUnit:
+	var best: SimUnit = null
+	var bd := INF
+	for o: SimUnit in w.query(u.pos, r + 60.0, true):
+		if o.team == C.NEUTRAL or not o.alive or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if o.is_invulnerable() or o.has_flag("invisible"):
+			continue
+		var d := u.edge_distance(o)
+		if d <= r and d < bd:
+			bd = d
+			best = o
+	return best
+
 func _neutral_alt(u: SimUnit) -> SimUnit:
-	for o: SimUnit in w.query(u.home, C.NEUTRAL_LEASH):
+	for o: SimUnit in w.query(u.home, C.NEUTRAL_GUARD_RADIUS + 600.0):
 		if o.team == C.NEUTRAL or not o.alive or o.is_building() or o.is_ward():
 			continue
 		var tt := w.get_unit(o.atk_target)

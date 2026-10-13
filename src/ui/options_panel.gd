@@ -119,8 +119,24 @@ func _game_tab() -> void:
 			game.camera.edge_speed = float(Options.get_value("camera_speed"))
 	_check(v, "Pan the camera at the screen edges", "edge_pan", cam)
 	_slider(v, "Camera speed", "camera_speed", 12.0, 60.0, 1.0, func(x): return str(roundi(x)), cam)
+	_check(v, "Center camera on hero at respawn", "center_on_respawn", Callable())
 	_check(v, "Screen shake", "screen_shake", Callable())
 	_check(v, "Damage numbers", "damage_numbers", Callable())
+	_check(v, "Show bot chat", "bot_chat", Callable())
+	_check(v, "Bots learn from games", "bots_learn", func():
+		BotMemory.active = bool(Options.get_value("bots_learn")) and game != null)
+	_note(v, "Bots learn what worked: their fights, where they died, which items won, how far their skill shots land and which lane you like. It is saved on this computer.")
+	var learned := Label.new()
+	learned.text = "
+".join(BotMemory.summary())
+	learned.add_theme_color_override("font_color", U.TEXT_DIM)
+	learned.add_theme_font_size_override("font_size", 15)
+	v.add_child(learned)
+	var reset := _button("Forget what bots learned", func():
+		BotMemory.reset()
+		learned.text = "
+".join(BotMemory.summary()), 320)
+	v.add_child(reset)
 
 func _controls_tab() -> void:
 	var v := _page("Controls")

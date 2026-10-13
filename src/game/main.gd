@@ -12,6 +12,7 @@ var map: SimMap
 var world: SimWorld
 var terrain: TerrainBuilder
 var foliage: Foliage
+var camps: Camps
 var atmosphere: Atmosphere
 var camera: CameraRig
 var fx: Fx
@@ -54,6 +55,8 @@ func _ready() -> void:
 	world = SimWorld.new(1, map)
 	world.setup_match()
 	_spawn_heroes()
+	if args.has("reveal"):
+		SimDebug.set_flag(world, "reveal", true)
 	await _stage(0.22, "Loading sky")
 	atmosphere = Atmosphere.new()
 	add_child(atmosphere)
@@ -72,6 +75,10 @@ func _ready() -> void:
 	dressing.foliage = foliage
 	add_child(dressing)
 	dressing.build(map, terrain)
+	camps = Camps.new()
+	camps.game = self
+	add_child(camps)
+	camps.build(map, terrain)
 	await _stage(0.84, "Loading heroes")
 	fx = Fx.new()
 	fx.game = self
@@ -96,6 +103,7 @@ func _ready() -> void:
 	camera.edge_pan_enabled = bool(Options.get_value("edge_pan"))
 	camera.edge_speed = float(Options.get_value("camera_speed"))
 	add_child(camera)
+	camera.set_process(false)              # held still until the match is shown (edge pan while loading moved it)
 	camera.height_at = func(p: Vector2) -> float: return terrain.height_at(p)
 	camera.follow = func():
 		var h := world.get_unit(player_hero_id)
@@ -134,6 +142,9 @@ func _ready() -> void:
 	for i in 3:
 		await get_tree().process_frame
 	LoadingScreen.close(get_tree())
+	# the match opens on your hero (Dota does the same)
+	center_on_hero()
+	camera.set_process(true)
 	for f in String(args.get("off", "")).split(",", false):
 		match f:
 			"ssao": atmosphere.env.ssao_enabled = false
@@ -148,6 +159,7 @@ func _ready() -> void:
 					if mmi and ((f == "decor") == (mmi.visibility_range_end > 0.0)):
 						mmi.visible = false
 			"water": get_node("River").visible = false
+			"camps": camps.visible = false
 			"fow": _fog_quad.visible = false
 			"terrain": get_node("Terrain").visible = false
 			"units":
@@ -168,34 +180,98 @@ func _ready() -> void:
 	elif args.has("bench"):
 		_start_bench()
 
+## Leaving the match (quit, restart, back to the menu): keep what the bots learned in fights so far.
+func _exit_tree() -> void:
+	if BotMemory.active and BotMemory.dirty:
+		BotMemory.save()
+
+## Centre the camera on the player's hero (start of the match, respawn, F1 twice, portrait click).
+func center_on_hero() -> void:
+	var h := world.get_unit(player_hero_id)
+	if h != null and camera != null:
+		camera.focus(View.to3(h.pos, terrain.height_at(h.pos)))
+
 func _parse_args() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--"):
 			var kv := a.substr(2).split("=", true, 1)
 			args[kv[0]] = kv[1] if kv.size() > 1 else "1"
 
-## The player's hero (Dawn, chosen in Hero Select) and the bot's (Dusk). Looks and outfits use the customisable
-## hero body. Capture and benchmark runs use default looks; --hero= and --bot_hero= pick the heroes.
+## The heroes from Game Setup (GameSettings.match_slots): you on either team, bots on both, any heroes (bots may pick
+## the same one). Looks and outfits use the customisable hero body. Captures, benchmarks and probes play the classic
+## duel (you against Bot Gerald in mid; --hero= and --bot_hero= pick the heroes) unless --bots=5v5 asks for full teams.
+## Learning (BotMemory) follows Options "Bots learn from games", and is off for automated runs.
 func _spawn_heroes() -> void:
 	var automated := args.has("capture") or args.has("bench")
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var slots: Array = []
+	if automated or args.has("hero") or args.has("bot_hero") or args.has("bots"):
+		slots = _scripted_slots(automated, rng)
+	else:
+		slots = GameSettings.match_slots(rng)
+	BotMemory.active = bool(Options.get_value("bots_learn")) and not automated and not args.has("nolearn")
+	if BotMemory.active:
+		BotMemory.load_data()
+	var mine: SimUnit = null
+	var made: Array = []
+	for s in slots:
+		var team := int(s.team)
+		var id := String(s.hero)
+		var look: Dictionary
+		if s.kind == "you":
+			look = (GameSettings.default_look(id) if automated else GameSettings.look_for(id)).duplicate(true)
+		elif team == C.DAWN:
+			look = GameSettings.default_look(id).duplicate(true)
+			look.display_name = String(s.name)
+		else:
+			look = bot_look(id)
+			look.display_name = String(s.name)
+		var h := world.spawn_hero(id, team, look)
+		made.append([h, s])
+		if s.kind == "you" and mine == null:
+			mine = h
+	if mine == null:
+		mine = (made[0][0] as SimUnit)
+	mine.player = true
+	player_hero_id = mine.id
+	player_team = mine.team
+	for m in made:
+		var h: SimUnit = m[0]
+		var s: Dictionary = m[1]
+		if h == mine:
+			if args.has("autoplay"):
+				world.bots.append(SimBot.new(world, h.id, "mid", "Autoplay"))
+			continue
+		world.bots.append(SimBot.new(world, h.id, "mid", String(s.name), String(s.skill)))
+		if String(s.get("role", "")) != "":
+			world.brain(h.team).fixed_role[h.id] = int(s.role)
+	var br := world.brain(player_team)
+	br.player_pref[mine.id] = String(_slot_of(made, mine).get("lane", ""))
+
+static func _slot_of(made: Array, h: SimUnit) -> Dictionary:
+	for m in made:
+		if m[0] == h:
+			return m[1]
+	return {}
+
+func _scripted_slots(automated: bool, rng: RandomNumberGenerator) -> Array:
 	var my_id := String(args.get("hero", GameSettings.selected))
 	if not (my_id in GameSettings.HEROES):
 		my_id = "blood_ranger"
-	var mine: Dictionary = GameSettings.default_look(my_id) if automated else GameSettings.look_for(my_id)
-	var p := world.spawn_hero(my_id, C.DAWN, mine.duplicate(true))
-	p.player = true
-	player_hero_id = p.id
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
 	var bot_id := String(args.get("bot_hero", "blood_ranger" if automated else GameSettings.opponent_hero(rng)))
 	if not (bot_id in GameSettings.HEROES):
 		bot_id = "blood_ranger"
-	var b := world.spawn_hero(bot_id, C.DUSK, bot_look(bot_id))
-	world.bots.append(SimBot.new(world, b.id, "mid", "Bot Gerald"))
-	if args.has("autoplay"):
-		world.bots.append(SimBot.new(world, p.id, "mid", "Autoplay"))
+	var out := [{"team": C.DAWN, "kind": "you", "hero": my_id, "skill": "hard", "name": "", "lane": "mid"},
+		{"team": C.DUSK, "kind": "bot", "hero": bot_id, "skill": "hard", "name": "Bot Gerald", "lane": ""}]
+	if String(args.get("bots", "")) == "5v5":
+		var pool := ["sludge", "ezee", "blood_ranger", "ezee", "sludge", "blood_ranger", "sludge", "ezee"]
+		for i in 4:
+			out.append({"team": C.DAWN, "kind": "bot", "hero": pool[i], "skill": "hard", "name": GameSettings.BOT_NAMES[i + 1], "lane": ""})
+			out.append({"team": C.DUSK, "kind": "bot", "hero": pool[i + 4], "skill": "hard", "name": GameSettings.BOT_NAMES[i + 5], "lane": ""})
+	return out
 
-## The bot's appearance: the hero's default look in Dusk colours.
+## An enemy bot's appearance: the hero's default look in Black Sun colours.
 static func bot_look(id: String) -> Dictionary:
 	if id in GameSettings.OWN_BODY:
 		var o := GameSettings.default_look(id)
@@ -262,6 +338,75 @@ func _sync_views() -> void:
 			v.tick(u)
 		else:
 			v.update_state(u)
+	_sync_ground_items()
+
+## Items lying on the ground: the item's icon floating over a gold ring and a soft shadow, bobbing gently; hidden in
+## the fog for the other team.
+var _ground_views := {}                     # gid -> Node3D
+
+func _sync_ground_items() -> void:
+	var want := {}
+	for g in world.ground_items:
+		want[int(g.gid)] = g
+	for gid in _ground_views.keys():
+		if not want.has(gid):
+			(_ground_views[gid] as Node3D).queue_free()
+			_ground_views.erase(gid)
+	var t := Time.get_ticks_msec() / 1000.0
+	for gid in want:
+		var g: Dictionary = want[gid]
+		if not _ground_views.has(gid):
+			_ground_views[gid] = _make_ground_item(g)
+		var n: Node3D = _ground_views[gid]
+		var p := View.to3(g.pos, terrain.height_at(g.pos))
+		n.global_position = p
+		n.visible = fx._seen(g.pos)
+		var spr: Node3D = n.get_child(0)
+		spr.position.y = 0.55 + 0.08 * sin(t * 2.4 + float(gid))
+
+func _make_ground_item(g: Dictionary) -> Node3D:
+	var n := Node3D.new()
+	add_child(n)
+	var spr := Sprite3D.new()
+	spr.texture = UiKit.item_icon(String(g.item.id))
+	spr.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	spr.no_depth_test = false
+	spr.shaded = false
+	spr.pixel_size = 0.55 / maxf(1.0, float(spr.texture.get_width())) if spr.texture else 0.01
+	n.add_child(spr)
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.26
+	tm.outer_radius = 0.3
+	ring.mesh = tm
+	var rm := StandardMaterial3D.new()
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rm.albedo_color = Color(1.0, 0.82, 0.35)
+	ring.material_override = rm
+	ring.position.y = 0.04
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	n.add_child(ring)
+	var sh := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.7, 0.7)
+	q.orientation = PlaneMesh.FACE_Y
+	sh.mesh = q
+	var sm := StandardMaterial3D.new()
+	sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var gt := GradientTexture2D.new()
+	gt.fill = GradientTexture2D.FILL_RADIAL
+	gt.fill_from = Vector2(0.5, 0.5)
+	gt.fill_to = Vector2(1.0, 0.5)
+	var gr := Gradient.new()
+	gr.colors = PackedColorArray([Color(0, 0, 0, 0.5), Color(0, 0, 0, 0)])
+	gt.gradient = gr
+	sm.albedo_texture = gt
+	sh.material_override = sm
+	sh.position.y = 0.03
+	sh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	n.add_child(sh)
+	return n
 
 func _make_view(u: SimUnit) -> void:
 	if u.is_building():
@@ -295,6 +440,9 @@ func _drain_events() -> void:
 		match e.t:
 			"damage":
 				_on_damage(e)
+			"respawn":
+				if int(e.u) == player_hero_id and bool(Options.get_value("center_on_respawn")) and _capture_frames < 0:
+					center_on_hero()
 			"cast_start":
 				var cv = views.get(e.u)
 				var aid := String(e.ability)
@@ -477,6 +625,14 @@ func _drain_events() -> void:
 			"victory":
 				if hud and hud.has_method("announce"):
 					hud.announce("Victory!" if int(e.team) == player_team else "Defeat", "The Throne has been destroyed")
+				# the bots score this game into what they learned (Options: Bots learn from games)
+				SimTeamAI.match_over(world)
+			"chat":
+				if hud and hud.has_method("on_chat") and int(e.team) == player_team:
+					hud.on_chat(e)
+			"ping":
+				if int(e.team) == player_team and int(e.u) != player_hero_id:
+					fx.ping(e.pos)
 			"error":
 				if e.u == player_hero_id and hud and hud.has_method("error"):
 					hud.error(String(e.msg))

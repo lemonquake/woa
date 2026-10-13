@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3 at 20:00: A(blood_ranger) 2/1/0 lvl 13 LH 72 DN 53 nw 6919 | B(ezee) 0/2/0 lvl 5 LH 12 DN 3 nw 3157 | towers lost A 1 B 2
+    casts: { "B:item_salve": 1, "B:item_tango": 3, "A:item_tango": 2, "A:item_salve": 1, "A:gale_impact": 7, "A:burst_shot": 2, "B:tainted_touch": 8, "B:dark_stomp": 5, "B:leap_strike": 2, "A:blood_ranger_ult": 3, "A:item_magic_wand": 2, "B:item_magic_wand": 2 }
+    blood_ranger items: ["tango", "magic_wand", "power_treads", "wraith_band", "quelling_blade", "dragon_lance"]
+    ezee items: ["slip_boots", "quelling_blade", "tough_band", "magic_wand"]
+seed 7 at 20:00: A(blood_ranger) 5/0/0 lvl 14 LH 84 DN 54 nw 8134 | B(ezee) 0/5/0 lvl 7 LH 19 DN 10 nw 3250 | towers lost A 3 B 1
+    casts: { "B:item_salve": 1, "B:item_tango": 3, "A:item_salve": 1, "A:gale_impact": 10, "A:burst_shot": 3, "B:tainted_touch": 13, "B:dark_stomp": 10, "B:leap_strike": 4, "A:blood_ranger_ult": 8, "A:item_magic_wand": 4, "B:item_magic_wand": 4, "A:item_tango": 1, "B:item_slip_boots": 8 }
+    blood_ranger items: ["tango", "magic_wand", "power_treads", "wraith_band", "quelling_blade", "dragon_lance", "shock_hammer"]
+    ezee items: ["slip_boots", "quelling_blade", "tough_band", "magic_wand"]
+seed 11 at 20:00: A(blood_ranger) 3/0/0 lvl 14 LH 95 DN 64 nw 8198 | B(ezee) 0/3/0 lvl 5 LH 13 DN 1 nw 2975 | towers lost A 1 B 2
+    casts: { "B:item_salve": 1, "B:item_tango": 3, "A:item_tango": 3, "A:item_salve": 1, "A:gale_impact": 7, "A:burst_shot": 4, "B:dark_stomp": 6, "B:tainted_touch": 10, "A:item_magic_wand": 4, "B:leap_strike": 4, "A:blood_ranger_ult": 3, "B:item_magic_wand": 2 }
+    blood_ranger items: ["dragon_lance", "magic_wand", "power_treads", "wraith_band", "quelling_blade", "shock_hammer"]
+    ezee items: ["slip_boots", "quelling_blade", "tough_band", "magic_wand"]

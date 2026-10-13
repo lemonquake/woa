@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3 at 20:00: A(sludge) 3/1/0 lvl 12 LH 80 DN 52 nw 7598 | B(ezee) 1/4/0 lvl 8 LH 37 DN 14 nw 4384 | towers lost A 2 B 2
+    casts: { "A:shuriken_hook": 8, "A:hooked_creep": 4, "B:dark_stomp": 8, "A:item_salve": 1, "B:item_salve": 1, "A:item_tango": 3, "B:item_tango": 3, "B:tainted_touch": 8, "A:stench_on": 43, "A:hooked_hero": 3, "B:leap_strike": 4, "A:item_magic_stick": 1, "A:item_magic_wand": 4, "A:item_slip_boots": 9, "A:blubber": 4, "B:item_magic_wand": 2, "B:item_slip_boots": 5, "B:unholy_might": 2, "A:chomp": 1 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    ezee items: ["slip_boots", "quelling_blade", "tough_band", "magic_wand"]
+seed 7 at 20:00: A(sludge) 2/0/0 lvl 11 LH 68 DN 37 nw 6559 | B(ezee) 0/2/0 lvl 8 LH 29 DN 24 nw 3713 | towers lost A 2 B 2
+    casts: { "A:shuriken_hook": 9, "A:hooked_creep": 3, "B:dark_stomp": 10, "A:item_salve": 1, "B:item_salve": 1, "B:tainted_touch": 11, "A:hooked_hero": 6, "A:stench_on": 55, "A:item_tango": 3, "B:leap_strike": 6, "A:item_magic_stick": 1, "B:item_tango": 3, "A:blubber": 7, "A:item_magic_wand": 5, "B:item_magic_wand": 3, "A:item_slip_boots": 10, "B:unholy_might": 3, "A:chomp": 3, "B:item_slip_boots": 5 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    ezee items: ["slip_boots", "quelling_blade", "tough_band", "magic_wand"]
+seed 11 at 20:00: A(sludge) 4/0/0 lvl 12 LH 75 DN 31 nw 7698 | B(ezee) 0/4/0 lvl 9 LH 38 DN 32 nw 3965 | towers lost A 1 B 2
+    casts: { "A:shuriken_hook": 9, "A:hooked_creep": 4, "B:dark_stomp": 11, "A:item_salve": 1, "B:item_salve": 1, "A:item_tango": 3, "B:item_tango": 3, "A:stench_on": 42, "B:tainted_touch": 10, "B:leap_strike": 7, "A:item_magic_stick": 1, "A:hooked_hero": 5, "A:item_magic_wand": 6, "A:blubber": 9, "A:item_slip_boots": 15, "B:item_magic_wand": 4, "B:unholy_might": 5, "A:chomp": 4, "B:item_slip_boots": 8, "A:item_jump_knife": 2 }
+    sludge items: ["slip_boots", "magic_wand", "jump_knife", "tough_band"]
+    ezee items: ["magic_wand", "slip_boots", "quelling_blade", "tough_band"]

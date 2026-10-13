@@ -13,6 +13,8 @@ var _stun := {}                             # unit id -> Node3D (orbiting stars)
 var _curse := {}                            # unit id -> MeshInstance3D (ground sigil)
 var _taint := {}                            # unit id -> {light, next_arc}
 var _aura := {}                             # unit id -> {node, mat, t}
+var _blubber := {}                          # unit id -> {node, mat, k, on}
+var _blubber_shader: Shader
 var _star_mesh: Mesh
 var _star_mat: StandardMaterial3D
 var _sigil_mat: ShaderMaterial
@@ -33,6 +35,8 @@ func _ready() -> void:
 	_sigil_mat = ShaderMaterial.new()
 	_sigil_mat.shader = sh
 	_sigil_mat.render_priority = 3
+	_blubber_shader = Shader.new()
+	_blubber_shader.code = BLUBBER_CODE
 
 const SIGIL_CODE := """
 shader_type spatial;
@@ -52,6 +56,26 @@ void fragment() {
 }
 """
 
+## Blubber: a greasy, wobbling layer of fat wrapped round the body (fresnel sheen, slow jiggle), lasting as long as
+## the damage block does.
+const BLUBBER_CODE := """
+shader_type spatial;
+render_mode unshaded, blend_mix, depth_draw_never, cull_back, shadows_disabled;
+uniform float strength = 1.0;
+uniform vec4 fat : source_color = vec4(0.95, 0.82, 0.5, 1.0);
+uniform vec4 sheen : source_color = vec4(1.0, 0.97, 0.85, 1.0);
+void vertex() {
+	float j = sin(TIME * 7.0 + VERTEX.y * 5.0) * 0.035 + sin(TIME * 11.0 + VERTEX.x * 7.0) * 0.02;
+	VERTEX += NORMAL * j * strength;
+}
+void fragment() {
+	float f = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.2);
+	float band = 0.5 + 0.5 * sin(UV.y * 40.0 + TIME * 3.0);
+	ALBEDO = mix(fat.rgb, sheen.rgb, f * 0.8) * (0.9 + 0.2 * band);
+	ALPHA = clamp((0.015 + pow(f, 1.6) * 0.6) * strength, 0.0, 0.6);
+}
+"""
+
 var _scan_i := 0
 
 func frame(dt: float) -> void:
@@ -67,6 +91,7 @@ func _scan() -> void:
 	var seen_curse := {}
 	var seen_taint := {}
 	var seen_aura := {}
+	var seen_blubber := {}
 	for id in game.views:
 		var v = game.views[id]
 		if not (v is UnitView):
@@ -87,19 +112,24 @@ func _scan() -> void:
 					seen_aura[id] = "unholy"
 				"blood":
 					seen_aura[id] = "blood"
+				"blubber":
+					seen_blubber[id] = true
 		if not u.knock.is_empty() and float(u.knock.get("stun", 0.0)) > 0.0:
 			seen_stun[id] = true
 	_sync(_stun, seen_stun, _make_stun)
 	_sync(_curse, seen_curse, _make_curse)
 	_want_taint = seen_taint
 	_want_aura = seen_aura
+	_want_blubber = seen_blubber
 
 var _want_taint := {}
 var _want_aura := {}
+var _want_blubber := {}
 
 func _follow(dt: float) -> void:
 	_sync_taint(_want_taint)
 	_sync_aura(_want_aura, dt)
+	_sync_blubber(_want_blubber, dt)
 	var t := Time.get_ticks_msec() / 1000.0
 	for id in _stun:
 		var v: UnitView = game.views.get(id)
@@ -241,3 +271,37 @@ func _sync_aura(want: Dictionary, dt: float) -> void:
 			continue
 		n.global_position = v.global_position + Vector3(0, 1.25, 0)
 		(a.mat as ShaderMaterial).set_shader_parameter("strength", float(a.k) * float(a.max))
+
+func _sync_blubber(want: Dictionary, dt: float) -> void:
+	for id in want:
+		if not _blubber.has(id):
+			var mi := MeshInstance3D.new()
+			var cap := CapsuleMesh.new()
+			cap.radius = 0.62
+			cap.height = 2.2
+			cap.radial_segments = 28
+			cap.rings = 12
+			mi.mesh = cap
+			var m := ShaderMaterial.new()
+			m.shader = _blubber_shader
+			m.render_priority = 3
+			mi.material_override = m
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(mi)
+			_blubber[id] = {"node": mi, "mat": m, "k": 0.0, "on": true}
+	for id in _blubber.keys():
+		var b: Dictionary = _blubber[id]
+		b.on = want.has(id)
+		b.k = clampf(float(b.k) + (dt / 0.2 if b.on else -dt / 0.4), 0.0, 1.0)
+		var v: UnitView = game.views.get(id)
+		var n: MeshInstance3D = b.node
+		if v == null or (not b.on and b.k <= 0.0):
+			n.queue_free()
+			_blubber.erase(id)
+			continue
+		n.global_position = v.global_position + Vector3(0, 1.05, 0)
+		# swells in with a little overshoot, like a belly being slapped
+		var k := float(b.k)
+		var s := 0.9 + 0.12 * k + 0.05 * sin(k * PI)
+		n.scale = Vector3(s * 1.08, s, s * 1.08)
+		(b.mat as ShaderMaterial).set_shader_parameter("strength", k)

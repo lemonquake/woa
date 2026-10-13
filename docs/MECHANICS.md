@@ -87,11 +87,34 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 
 ## Neutrals
 
-* Camps spawn at 1:00 and every minute after, but only when nothing (unit, hero or ward) stands inside the camp's spawn box. Pulling a camp out of its box just before the minute stacks it.
-* Neutrals ignore you until attacked or damaged. Then the whole camp fights back.
-  * They give up when they get 1100 from home (APPROX).
-  * They also give up when the target has been out of acquisition range for 3 s (APPROX).
-* Measured stacking window in tests: pulling at :53.5 stacks a medium camp. That matches Dota's usual :53–:55.
+Sources: Liquipedia "Neutral Creeps" and "Creep Stacking" (cached and Wayback copies, March 2026), Valve's 7.38-7.41
+patch notes; details and links in `work/lemondev/2026-10-13-camps-ai-setup/research/camps.md`.
+
+* Camps: 14 a side as in 7.41: 3 small, 7 medium, 3 large, 1 ancient. Two are pull camps beside the safe lane's tier 1
+  (a small and a large one). The tier counts are derived from Liquipedia's 7.39 table plus Valve's 7.40 and 7.41 changes
+  (*APPROX*: no source states the 7.41 count directly). Positions are our own map's.
+* Each spawn picks one of the camp kind's groups at random, never the same group twice in a row: small = 3 Goblins, a
+  Goblin Digger and a Goblin Boss, or 2 Swamp Trolls and a Goblin Boss; medium = 2 Wolves and an Alpha Wolf, an Orc and
+  an Orc Shaman, or 2 Swamp Trolls and an Ogre; large = 2 Orcs and an Orc Shaman, or 2 Ogres and an Orc Shaman;
+  ancient = 2 Fire Imps and a Lava Golem. (Dota has more groups per tier; we use the creeps we have models for.)
+* Camps spawn at 1:00 and on every minute after, only when nothing stands inside the camp's spawn box at that moment:
+  heroes, lane creeps, wards and the camp's own neutrals all block it; couriers do not. Spawn boxes are rectangles,
+  each camp its own size (no source gives Dota's sizes: ours are 520 x 440 for small up to 720 x 600 for ancient).
+* Holding Shift shows the spawn boxes in yellow (Dota uses Alt, which pings here). A box turns red while something
+  other than its own creeps stands in it (our addition: Dota's box does not change colour).
+* Aggro: by day an enemy within 240 wakes a camp; at night neutrals sleep. Damage wakes the neutral and its campmates
+  within 500. A neutral chases until it has been outside its 400 guard radius for 5 s (the timer resets if it comes
+  back inside), then walks home; for 3 s after that damage cannot wake it again. Woken again on the way home it chases
+  for only 3 s. They do not attack wards, couriers or buildings, and they target the closest enemy.
+* Pulling: lane creeps fight only the neutrals of the two pull camps (and ignore every other camp); towers never attack
+  neutrals.
+* Growth: every 7:30 from the horn, up to 30 times, every neutral gains +30 health, +0.5 armor, +3 damage,
+  +5 attack speed, +1 gold and +5 experience (new spawns get the current count).
+* Stacks: the creeps spawned by a stack give 20% less gold and experience (7.39e). When an ally kills them, the hero who
+  first woke the stacked camp gets 30% of the gold and experience that ally got.
+* Measured stacking window in tests: pulling at :53.5 stacks a medium camp. That matches Dota's usual :53-:55.
+* *APPROX*: what wakes neutrals other than damage and walking close (single-target spells without damage wake them in
+  Dota; we have none), and fleeing from invisible attackers (not done).
 
 ## Channelling, forced movement, lifesteal
 
@@ -125,8 +148,32 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 
 * Stats, prices, recipes, actives and passives come from Dota 7.41d `items.txt`, checked against Liquipedia
   (`work/lemondev/2026-10-13-sludge-items/research/`). Names are ours.
-* Inside the base shop's radius, purchases go straight to the inventory. Elsewhere they go to the stash, which empties into your bags when you return.
-* Full refund within 10 s of buying, half after that.
+* Inside the base shop's radius, purchases go straight to the inventory (then the stash). Elsewhere they go to the
+  stash (6 slots), which empties into your bags when you arrive in the shop's range (or when you respawn). After that,
+  items stay where you put them: in the base you can drag items between the bags and the stash, click a stashed item
+  to take it, or use Grab All (also while dead). Stashed items can be sold from anywhere.
+* Full refund within 10 s of buying, half after that. Only the buyer can sell an item.
+* Backpack: 3 slots that give no bonuses; an item moved from the backpack to a main slot waits 6 s before it can be
+  used (*APPROX*: Dota's swap cooldown).
+* Items on the ground (Dota: drag an item out of the inventory): the hero walks within 150 and drops it; anyone can
+  pick it up (right click) and it keeps its owner. Giving: drag onto an allied hero or your own courier; the hero walks
+  within 150 and hands it over if they have a free slot. Never to enemies.
+* To Buy (Dota's quick buy): Shift + click an item in the shop adds it broken into the parts you still miss (parts
+  already listed count as owned). Up to 24 entries are kept and 8 shown. Left click buys an entry now, right click
+  sets it to buy itself as soon as gold allows. **Owner's rule (not Dota):** an auto-buy made away from the shop goes
+  to your courier if it waits at the fountain; otherwise to the stash. A purchase removes its entries.
+* Courier (one per player; Dota 7.23 rework, 7.27 and 7.35 changes; `npc_units.txt`, `npc_abilities.txt`):
+  * Its level is its owner's. Speed 290 + 10 per level (*APPROX*: wiki formula); walks with pathing until level 4,
+    then flies straight (flying vision). Vision 200. Passes through units.
+  * Dies to hits, not damage (7.35): one melee hero attack, two ranged hero attacks, six of anything else (*APPROX*:
+    a spell counts as one hit). Heals only in the fountain. Respawns after 60 + 6 x level (7.35). Every enemy hero
+    gets 25 + 5 x level gold (*APPROX*, 7.23 notes). It keeps what it carries while dead.
+  * Commands (`courier_*` abilities): Return to Base, Retrieve Items, Return Items to Stash, Transfer Items, Deliver
+    Items (retrieve then transfer), Auto Deliver (toggle: sets out whenever the stash, its bags or the Well hold
+    something), Speed Burst from level 10 (+50% for 6 s, 120 s), Shield from level 20 (invulnerable 2 s, 200 s).
+  * Retrieve and Deliver first pick up the owner's items lying in the fountain area (the Well, within 1000 of the
+    fountain), nearest first, then take the stash. What does not fit in the hero's bags stays on the courier.
+  * Items on the courier count as owned for the shop's plans and combine with each other there.
 * Recipes: an item with a recipe cost needs its scroll ("Recipe: X"), bought like any item. Parts combine on their own
   the moment the last one arrives: in the inventory, in the stash alone, or across both while in the base. The result
   takes the first part's slot. Buying a finished item buys only the parts (and scroll) you are missing, and is undone

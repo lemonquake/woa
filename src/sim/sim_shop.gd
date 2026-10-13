@@ -1,8 +1,13 @@
 class_name SimShop
 extends RefCounted
-## Buying, selling, recipes and the stash. Inside the base shop's radius purchases go straight to the inventory
-## (then the stash); elsewhere they go to the stash, which empties into the hero's bags the next time they are in
-## the shop's range. Unreliable gold is spent first. Full refund within 10 seconds of buying, half after.
+## Buying, selling, recipes, the stash and the To Buy list. Inside the base shop's radius purchases go straight to
+## the inventory (then the stash); elsewhere they go to the stash, which empties into the hero's bags when they come
+## into the shop's range (or by Grab All). In the base, items move freely between the bags and the stash. Stashed
+## items can be sold from anywhere. Unreliable gold is spent first. Full refund within 10 seconds of buying, half after.
+##
+## To Buy (Dota's quick buy): Shift + click in the shop adds an item broken into the parts still missing. An entry set
+## to auto-buy is bought the moment gold allows; if the hero is away from the shop and the courier waits at the
+## fountain, the courier takes it (otherwise the stash does). Entries leave the list when bought.
 ##
 ## Recipes work as in Dota: an item is built from its parts plus, when its recipe costs gold, a recipe scroll.
 ## Buying an item buys only the parts the hero does not already own (looking inside partly built parts too), as
@@ -95,7 +100,7 @@ func price(u: SimUnit, item_id: String) -> int:
 
 func _owned_ids(u: SimUnit) -> Array:
 	var out: Array = []
-	for arr in [u.inventory, u.stash]:
+	for arr in [u.inventory, u.stash, u.courier_items]:
 		for it in arr:
 			if it != null:
 				out.append(it.id)
@@ -120,7 +125,8 @@ func new_item(item_id: String) -> Dictionary:
 	var d := SimData.item(item_id)
 	return {"id": item_id, "charges": int(d.charges), "ready": C.LONG_AGO, "bought": w.time}
 
-func buy(u: SimUnit, item_id: String) -> String:
+## to_courier: an auto-buy; away from the shop, a courier waiting at the fountain takes the pieces before the stash.
+func buy(u: SimUnit, item_id: String, to_courier := false) -> String:
 	var err := buy_error(u, item_id)
 	if err != "":
 		return err
@@ -144,19 +150,114 @@ func buy(u: SimUnit, item_id: String) -> String:
 		u.refresh_stats()
 		return ""
 	var pieces := plan(u, item_id)
+	var courier: SimUnit = w.get_unit(u.courier_id) if to_courier and not here else null
+	if courier != null and not w.courier_at_base(courier):
+		courier = null
 	# place every piece, combining as soon as parts meet; undo it all if the bags and stash run out of room
 	var inv_before := _copy_items(u.inventory)
 	var stash_before := _copy_items(u.stash)
+	var cour_before := _copy_items(u.courier_items)
 	for p in pieces:
-		if not _place(u, new_item(p), here):
-			u.inventory = inv_before
-			u.stash = stash_before
+		var it := new_item(p)
+		it["owner"] = u.id
+		var placed := false
+		if courier != null:
+			placed = _place_in(u.courier_items, it)
+		if not placed:
+			placed = _place(u, it, here)
+		if not placed:
+			_restore(u.inventory, inv_before)
+			_restore(u.stash, stash_before)
+			_restore(u.courier_items, cour_before)
 			return "Inventory full"
-		_combine_all(u)
+		combine_all(u)
 	_spend(u, cost)
-	w.events.append({"t": "buy", "u": u.id, "item": item_id, "cost": cost})
+	w.events.append({"t": "buy", "u": u.id, "item": item_id, "cost": cost, "courier": courier != null})
+	_bought(u, item_id, pieces)
 	u.refresh_stats()
 	return ""
+
+## Write saved items back into the same array (the courier's bags are shared by reference with its hero).
+func _restore(arr: Array, saved: Array) -> void:
+	for i in arr.size():
+		arr[i] = saved[i]
+
+func _place_in(arr: Array, it: Dictionary) -> bool:
+	var d := SimData.item(it.id)
+	if bool(d.consumable):
+		for o in arr:
+			if o != null and o.id == it.id:
+				o.charges = int(o.charges) + int(it.charges)
+				return true
+	var i := arr.find(null)
+	if i < 0:
+		return false
+	arr[i] = it
+	return true
+
+# ---- To Buy -----------------------------------------------------------------------------------------------------------
+
+## Shift + click: add the item, broken into the pieces still missing (parts already listed count as owned).
+## Returns "" or why nothing was added.
+func add_to_buy(u: SimUnit, item_id: String) -> String:
+	var d := SimData.item(item_id)
+	if d.is_empty():
+		return "Unknown item"
+	var listed: Array = u.to_buy.map(func(e): return String(e.id))
+	var saved_courier := u.courier_items
+	# plan as if the listed pieces were already owned, so a second Shift-click adds only what is still missing
+	var pieces: Array
+	if (d.components as Array).is_empty() or bool(d.get("consume_on_buy", false)):
+		pieces = [item_id]
+	else:
+		var extra := listed.map(func(x): return {"id": x})
+		u.courier_items = saved_courier + extra
+		pieces = plan(u, item_id)
+		u.courier_items = saved_courier
+	if pieces.is_empty():
+		return "You already have the parts"
+	if u.to_buy.size() + pieces.size() > C.TO_BUY_MAX:
+		return "To Buy is full"
+	for p in pieces:
+		u.to_buy.append({"id": String(p), "auto": false})
+	w.events.append({"t": "to_buy", "u": u.id, "item": item_id})
+	return ""
+
+func remove_to_buy(u: SimUnit, idx: int) -> void:
+	if idx >= 0 and idx < u.to_buy.size():
+		u.to_buy.remove_at(idx)
+
+## Right click on an entry: buy it automatically as soon as there is gold for it (again to stop).
+func toggle_auto_buy(u: SimUnit, idx: int) -> void:
+	if idx >= 0 and idx < u.to_buy.size():
+		u.to_buy[idx].auto = not bool(u.to_buy[idx].auto)
+
+## Left click on an entry: buy it now.
+func buy_listed(u: SimUnit, idx: int) -> String:
+	if idx < 0 or idx >= u.to_buy.size():
+		return "No item"
+	return buy(u, String(u.to_buy[idx].id), true)
+
+## Every few ticks: buy the first auto entry that gold allows (one per call, in list order).
+func auto_buy(u: SimUnit) -> void:
+	for i in u.to_buy.size():
+		var e: Dictionary = u.to_buy[i]
+		if not bool(e.auto):
+			continue
+		var id := String(e.id)
+		if buy_error(u, id) != "" or u.gold() < price(u, id):
+			continue
+		if buy(u, id, true) == "":
+			w.events.append({"t": "auto_buy", "u": u.id, "item": id})
+			return
+
+## A purchase took these pieces off the To Buy list (one entry each), and the item itself if it was listed.
+func _bought(u: SimUnit, item_id: String, pieces: Array) -> void:
+	for p in pieces + [item_id]:
+		for i in u.to_buy.size():
+			if String(u.to_buy[i].id) == String(p):
+				u.to_buy.remove_at(i)
+				break
 
 func _copy_items(arr: Array) -> Array:
 	var out: Array = []
@@ -188,15 +289,16 @@ func _place(u: SimUnit, it: Dictionary, in_range: bool) -> bool:
 	return false
 
 ## The groups of slots whose items combine with each other: inventory and stash together while in the shop,
-## otherwise each on its own.
+## otherwise each on its own; the courier's bags on their own.
 func _pools(u: SimUnit) -> Array:
-	if in_shop(u):
-		return [[u.inventory, u.stash]]
-	return [[u.inventory], [u.stash]]
+	var out: Array = [[u.inventory, u.stash]] if in_shop(u) else [[u.inventory], [u.stash]]
+	if not u.courier_items.is_empty():
+		out.append([u.courier_items])
+	return out
 
 ## Combine every item whose parts (and recipe scroll) are all in one pool, until nothing more combines. Items are
 ## tried in data order; the result takes the slot of its first part.
-func _combine_all(u: SimUnit) -> void:
+func combine_all(u: SimUnit) -> void:
 	var changed := true
 	var guard := 0
 	while changed and guard < 32:
@@ -237,6 +339,7 @@ func _combine(u: SimUnit, id: String, parts: Array, pool: Array) -> bool:
 		if not hit:
 			return false
 	var res := new_item(id)
+	res["owner"] = u.id
 	var d := SimData.item(id)
 	# Switch Boots start on the attribute of the part they were built with
 	var attr_from: Dictionary = d.get("attr_from", {})
@@ -256,43 +359,122 @@ func sell(u: SimUnit, slot: int) -> String:
 	if not in_shop(u):
 		return "Must be near a shop to sell"
 	var it: Dictionary = u.inventory[slot]
+	if int(it.get("owner", u.id)) != u.id:
+		return "You do not own this item"
+	u.inventory[slot] = null
+	_refund(u, it)
+	u.refresh_stats()
+	return ""
+
+## Stashed items can be sold from anywhere, as in Dota.
+func sell_stash(u: SimUnit, i: int) -> String:
+	if i < 0 or i >= u.stash.size() or u.stash[i] == null:
+		return "No item"
+	var it: Dictionary = u.stash[i]
+	u.stash[i] = null
+	_refund(u, it)
+	return ""
+
+func sell_value(it: Dictionary) -> int:
 	var d := SimData.item(it.id)
 	var value := int(d.cost)
 	if bool(d.consumable):
 		value = int(float(d.cost) * float(it.charges) / maxf(1.0, float(d.charges)))
-	var refund := value if w.time - float(it.get("bought", -99.0)) <= 10.0 else value / 2
-	u.inventory[slot] = null
+	return value if w.time - float(it.get("bought", -99.0)) <= 10.0 else value / 2
+
+func _refund(u: SimUnit, it: Dictionary) -> void:
+	var refund := sell_value(it)
 	u.gold_unreliable += refund
 	w.events.append({"t": "sell", "u": u.id, "item": it.id, "gold": refund})
-	u.refresh_stats()
-	return ""
 
+## Swap two of the hero's nine slots (drag and drop, or right click to and from the backpack). An item that leaves the
+## backpack for a main slot waits 6 seconds before it can be used, as in Dota.
 func swap(u: SimUnit, a: int, b: int) -> void:
-	if a < 0 or b < 0 or a >= u.inventory.size() or b >= u.inventory.size():
+	if a < 0 or b < 0 or a >= u.inventory.size() or b >= u.inventory.size() or a == b:
 		return
 	var t = u.inventory[a]
 	u.inventory[a] = u.inventory[b]
 	u.inventory[b] = t
+	for pair in [[a, b], [b, a]]:
+		var it = u.inventory[pair[1]]
+		if it != null and pair[0] >= 6 and pair[1] < 6 and float(SimData.item(it.id).cooldown) > 0.0:
+			it.ready = maxf(float(it.get("ready", C.LONG_AGO)), w.time + C.BACKPACK_SWAP_COOLDOWN)
 	u.refresh_stats()
 
-## Called every tick for heroes: the stash empties into the bags while in the shop's range.
-func update(u: SimUnit) -> void:
+## In the base: move a bag item into the stash.
+func to_stash(u: SimUnit, slot: int) -> String:
+	if slot < 0 or slot >= u.inventory.size() or u.inventory[slot] == null:
+		return "No item"
 	if not in_shop(u):
-		return
+		return "Must be in the base"
+	var i := u.stash.find(null)
+	if i < 0:
+		return "Stash is full"
+	u.stash[i] = u.inventory[slot]
+	u.inventory[slot] = null
+	u.refresh_stats()
+	return ""
+
+## In the base: move one stashed item into the bags (to a given slot, swapping with what is there, or the first free).
+func from_stash(u: SimUnit, i: int, slot := -1) -> String:
+	if i < 0 or i >= u.stash.size() or u.stash[i] == null:
+		return "No item"
+	if not in_shop(u) and u.alive:
+		return "Must be in the base"
+	var it: Dictionary = u.stash[i]
+	if slot >= 0 and slot < u.inventory.size():
+		u.stash[i] = u.inventory[slot]
+		u.inventory[slot] = it
+	else:
+		u.stash[i] = null
+		if not place_in_bags(u, it):
+			u.stash[i] = it
+			return "Inventory full"
+	combine_all(u)
+	u.refresh_stats()
+	return ""
+
+## Grab All: every stashed item that fits goes into the bags (in the base, or while dead).
+func grab_all(u: SimUnit) -> String:
+	if not in_shop(u) and u.alive:
+		return "Must be in the base"
 	var moved := false
 	for i in u.stash.size():
-		if u.stash[i] != null:
-			var it = u.stash[i]
-			u.stash[i] = null
-			if _place_bags(u, it):
-				moved = true
-			else:
-				u.stash[i] = it
-	_combine_all(u)
-	if moved:
-		u.refresh_stats()
+		var it = u.stash[i]
+		if it == null:
+			continue
+		u.stash[i] = null
+		if place_in_bags(u, it):
+			moved = true
+		else:
+			u.stash[i] = it
+	combine_all(u)
+	u.refresh_stats()
+	return "" if moved else "Nothing to take"
 
-func _place_bags(u: SimUnit, it: Dictionary) -> bool:
+## Called every half second for heroes: the stash empties into the bags when the hero arrives in the shop's range
+## (afterwards items stay where the player puts them), and parts in reach combine.
+func update(u: SimUnit) -> void:
+	var here := in_shop(u)
+	var arrived := here and not u.was_in_shop
+	u.was_in_shop = here
+	if not here:
+		return
+	if arrived:
+		var moved := false
+		for i in u.stash.size():
+			if u.stash[i] != null:
+				var it = u.stash[i]
+				u.stash[i] = null
+				if place_in_bags(u, it):
+					moved = true
+				else:
+					u.stash[i] = it
+		if moved:
+			u.refresh_stats()
+	combine_all(u)
+
+func place_in_bags(u: SimUnit, it: Dictionary) -> bool:
 	var d := SimData.item(it.id)
 	if bool(d.consumable):
 		for o in u.inventory:

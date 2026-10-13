@@ -88,6 +88,29 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 			_interrupt(u)
 			u.order = type
 			u.order_target = tgt.id
+		O.DROP_ITEM, O.GIVE_ITEM:
+			# walk to the spot (or the receiving unit), then drop or hand over the item in that slot
+			var islot2 := int(o.get("item_slot", -1))
+			if islot2 < 0 or islot2 >= u.inventory.size() or u.inventory[islot2] == null:
+				return
+			if type == O.GIVE_ITEM:
+				var gerr := give_error(u, tgt)
+				if gerr != "":
+					w.events.append({"t": "error", "u": u.id, "msg": gerr})
+					return
+				u.order_target = tgt.id
+			_interrupt(u)
+			u.order = type
+			u.cast_item_slot = islot2
+			u.order_point = o.get("point", u.pos)
+		O.PICKUP_ITEM:
+			var g := w.ground_item(int(o.get("gid", -1)))
+			if g.is_empty():
+				return
+			_interrupt(u)
+			u.order = type
+			u.order_gid = int(g.gid)
+			u.order_point = g.pos
 		O.STOP:
 			clear(u)
 			return
@@ -260,6 +283,72 @@ func update(u: SimUnit) -> void:
 			_order_attack_move(u)
 		O.CAST_NO_TARGET, O.CAST_POINT, O.CAST_UNIT:
 			_order_cast(u)
+		O.DROP_ITEM, O.PICKUP_ITEM, O.GIVE_ITEM:
+			_order_item(u)
+
+## Who may receive an item: an allied hero or the giver's own courier, alive, with a free slot.
+func give_error(u: SimUnit, t: SimUnit) -> String:
+	if t == null or not t.alive or t == u:
+		return "Must target an allied hero or your courier"
+	if t.team != u.team or not (t.is_hero() or (t.kind == K.COURIER and t.owner_id == u.id)):
+		return "Must target an allied hero or your courier"
+	if t.inventory.find(null) < 0:
+		return "Their inventory is full"
+	return ""
+
+## Drop, pick up, give: walk into reach (150), then act. Dropping in the fountain area keeps the item's owner, so the
+## owner's courier can sweep it up.
+func _order_item(u: SimUnit) -> void:
+	var slot := u.cast_item_slot
+	match u.order:
+		O.DROP_ITEM:
+			if slot < 0 or u.inventory[slot] == null:
+				_finish_order(u)
+				return
+			if not _move_to(u, u.order_point, C.ITEM_REACH * 0.5):
+				return
+			var it: Dictionary = u.inventory[slot]
+			u.inventory[slot] = null
+			if not it.has("owner"):
+				it["owner"] = u.id
+			w.drop_item(it, u.order_point if u.pos.distance_to(u.order_point) <= C.ITEM_REACH else u.pos, u.id)
+			u.refresh_stats()
+			_finish_order(u)
+		O.PICKUP_ITEM:
+			var g := w.ground_item(u.order_gid)
+			if g.is_empty():
+				_finish_order(u)
+				return
+			if u.pos.distance_to(g.pos) > C.ITEM_REACH:
+				_move_to(u, g.pos, C.ITEM_REACH * 0.6)
+				return
+			var free := u.inventory.find(null)
+			if free < 0:
+				w.events.append({"t": "error", "u": u.id, "msg": "Inventory full"})
+				_finish_order(u)
+				return
+			var got := w.take_ground_item(u.order_gid, u)
+			u.inventory[free] = got.item
+			w.shop.combine_all(u)
+			u.refresh_stats()
+			_finish_order(u)
+		O.GIVE_ITEM:
+			var t := w.get_unit(u.order_target)
+			if slot < 0 or u.inventory[slot] == null or give_error(u, t) != "":
+				_finish_order(u)
+				return
+			if u.edge_distance(t) > C.ITEM_REACH:
+				_move_to(u, t.pos, 0.0, t)
+				return
+			var free2 := t.inventory.find(null)
+			t.inventory[free2] = u.inventory[slot]
+			u.inventory[slot] = null
+			u.refresh_stats()
+			if t.is_hero():
+				w.shop.combine_all(t)
+				t.refresh_stats()
+			w.events.append({"t": "item_give", "u": u.id, "target": t.id})
+			_finish_order(u)
 
 ## The current order is done: start the next queued one. Orders that fail (a spell still on cooldown, a dead
 ## target) or finish at once (instant items) are skipped over to the one after, as in Dota.
@@ -532,6 +621,10 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 		u.path_i += 1
 	return false
 
+## Walk towards a point for a unit with no order of its own (a ground courier).
+func move_toward(u: SimUnit, goal: Vector2, stop: float) -> bool:
+	return _move_to(u, goal, stop)
+
 ## Unit collision: try the step, then sidesteps of increasing angle; walls block, other units push sideways.
 func _resolve(u: SimUnit, np: Vector2, move: Vector2, chase: SimUnit) -> Vector2:
 	var near := w.query(u.pos, u.hull + 190.0)
@@ -551,6 +644,8 @@ func _resolve(u: SimUnit, np: Vector2, move: Vector2, chase: SimUnit) -> Vector2
 func _free(u: SimUnit, p: Vector2, chase: SimUnit, near: Array, loose := false) -> bool:
 	if not w.map.is_walkable(p):
 		return false
+	if u.kind == K.COURIER:
+		return true                                # couriers pass through units
 	for o: SimUnit in near:
 		if o == u or o == chase or o.is_ward() or o.kind == K.COURIER:
 			continue

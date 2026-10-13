@@ -68,7 +68,10 @@ func _process(dt: float) -> void:
 	var size := vp.get_visible_rect().size
 	var m := vp.get_mouse_position()
 	var focused := DisplayServer.window_is_focused()
-	if edge_pan_enabled and focused and not _drag and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
+	# edge pan only with the cursor inside the window: outside it the position runs past the edges (negative on the
+	# left and top) and would scroll the view on its own
+	var inside := Rect2(Vector2.ZERO, size).has_point(m)
+	if edge_pan_enabled and focused and inside and not _drag and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 		if m.x <= edge_px: move.x -= 1
 		if m.x >= size.x - edge_px: move.x += 1
 		if m.y <= edge_px: move.y -= 1

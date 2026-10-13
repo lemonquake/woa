@@ -9,6 +9,8 @@ const O = C.Order
 
 var w: SimWorld
 
+var hook_hits := {}                        # caster id -> [game time, caught unit id] of its last hook catch (bots learn aim)
+
 func _init(world: SimWorld) -> void:
 	w = world
 
@@ -113,9 +115,11 @@ func item_cooldown_left(u: SimUnit, slot: int) -> float:
 		return 0.0
 	return maxf(0.0, float(it.get("ready", C.LONG_AGO)) - w.time)
 
-func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vector2, at_cast := false) -> String:
+## check_target false: everything but the target (a hotkey press, before the player has picked one).
+func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vector2, at_cast := false,
+		check_target := true) -> String:
 	if slot >= 0:
-		return _item_error(u, slot, target, point)
+		return _item_error(u, slot, target, point, check_target)
 	if aid == "tp":
 		if u.tp_charges <= 0:
 			return "No Teleport Scroll"
@@ -140,7 +144,7 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		return "Ability on cooldown"
 	if u.mana < ability_mana(u, aid):
 		return "Not enough mana"
-	if a.behavior == "unit":
+	if a.behavior == "unit" and check_target:
 		var te := _target_error(u, a, target)
 		if te != "":
 			return te
@@ -149,7 +153,7 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 			return "Rooted"
 		if leap_target(u, lv) == null:
 			return "No enemy in sight"
-	if a.behavior == "autocast_attack":
+	if a.behavior == "autocast_attack" and check_target:
 		if target == null or target.team == u.team or target.is_building():
 			return "Must target an enemy unit"
 	return ""
@@ -172,7 +176,7 @@ func _target_error(u: SimUnit, a: Dictionary, t: SimUnit) -> String:
 		return "Target not visible"
 	return ""
 
-func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> String:
+func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2, check_target := true) -> String:
 	if slot < 0 or slot >= 6 or u.inventory[slot] == null:
 		return "No item"
 	var it: Dictionary = u.inventory[slot]
@@ -187,6 +191,14 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2) -> Stri
 		return "Muted"
 	if u.mana < float(d.get("mana", 0.0)):
 		return "Not enough mana"
+	if not check_target and item_target(it.id) != "none":
+		match String(d.use):
+			"gold":
+				if int(it.get("charges", 0)) <= 0:
+					return "No charges"
+			"jump":
+				return w.items.error(u, it, d, null, point)
+		return ""
 	match String(d.use):
 		"stick":
 			if u.stick_charges <= 0:
@@ -1010,6 +1022,7 @@ func _update_hook(e: Dictionary) -> bool:
 func _hook_latch(e: Dictionary, o: SimUnit) -> void:
 	e.state = "back"
 	e.target = o.id
+	hook_hits[int(e.src)] = [w.time, o.id]
 	var caster := w.get_unit(int(e.src))
 	if caster != null:
 		caster.remove_modifier("hook_lock")
