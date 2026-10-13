@@ -63,19 +63,8 @@ func _unhandled_input(e: InputEvent) -> void:
 		target = _drag_target + Vector3(-d.x * k, 0, -d.y * k)
 
 func _process(dt: float) -> void:
-	var move := Vector2.ZERO
-	var vp := get_viewport()
-	var size := vp.get_visible_rect().size
-	var m := vp.get_mouse_position()
+	var move := edge_dir() if edge_pan_enabled and not _drag else Vector2.ZERO
 	var focused := DisplayServer.window_is_focused()
-	# edge pan only with the cursor inside the window: outside it the position runs past the edges (negative on the
-	# left and top) and would scroll the view on its own
-	var inside := Rect2(Vector2.ZERO, size).has_point(m)
-	if edge_pan_enabled and focused and inside and not _drag and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
-		if m.x <= edge_px: move.x -= 1
-		if m.x >= size.x - edge_px: move.x += 1
-		if m.y <= edge_px: move.y -= 1
-		if m.y >= size.y - edge_px: move.y += 1
 	if focused:
 		if Keybinds.held("camera_left"): move.x -= 1
 		if Keybinds.held("camera_right"): move.x += 1
@@ -104,6 +93,30 @@ func _process(dt: float) -> void:
 	elif cam.h_offset != 0.0 or cam.v_offset != 0.0:
 		cam.h_offset = 0.0
 		cam.v_offset = 0.0
+
+## Which screen edges the cursor touches (-1, 0, 1 on each axis). Read from the OS cursor and the window rectangle
+## in real pixels every frame, so it does not depend on mouse-motion events (a cursor pinned against the edge sends
+## none) or on the stretched 1080p canvas. Outside the window (Windowed without the cursor lock) nothing pans.
+func edge_dir() -> Vector2:
+	if not DisplayServer.window_is_focused():
+		return Vector2.ZERO
+	if not Input.mouse_mode in [Input.MOUSE_MODE_VISIBLE, Input.MOUSE_MODE_CONFINED]:
+		return Vector2.ZERO
+	var wid := get_window().get_window_id() if get_window() else DisplayServer.MAIN_WINDOW_ID
+	var wpos := DisplayServer.window_get_position(wid)
+	var wsize := DisplayServer.window_get_size(wid)
+	if wsize.x <= 0 or wsize.y <= 0:
+		return Vector2.ZERO
+	var m := DisplayServer.mouse_get_position() - wpos
+	if m.x < 0 or m.y < 0 or m.x >= wsize.x or m.y >= wsize.y:
+		return Vector2.ZERO
+	var band := maxi(2, roundi(edge_px * wsize.y / 1080.0))
+	var d := Vector2.ZERO
+	if m.x < band: d.x -= 1
+	if m.x >= wsize.x - band: d.x += 1
+	if m.y < band: d.y -= 1
+	if m.y >= wsize.y - band: d.y += 1
+	return d
 
 func _apply() -> void:
 	if cam == null:

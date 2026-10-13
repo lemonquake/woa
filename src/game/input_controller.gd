@@ -3,7 +3,8 @@ extends Node
 ## Dota controls for the player's units.
 ##   Left click: select. Left drag: box select (your own units first; otherwise the one unit nearest the box centre).
 ##   Right click: move / attack / deny / follow.      A + left click: attack-move or attack (allies: deny when able).
-##   S stop (the hero still auto-attacks enemies in range); hold S: hard stop, no auto-attack until the next order.
+##   S stop (the hero still auto-attacks enemies in range). Holding S keeps the hero stopped and refuses every order
+##   until it is released; held over 0.35 s it stays a hard stop (no auto-attack until the next order).
 ##   H hold position.                                 Q W E R: abilities (point / unit targeting cursor).
 ##   Ctrl + Q W E R: learn ability.                    Right-click an ability button: toggle autocast.
 ##   Z X C V B N: items.                               Shift: queue orders.
@@ -65,16 +66,33 @@ func _process(_dt: float) -> void:
 	hover_id = pick(m)
 	_cursor()
 	_rmb_repeat()
-	# S held long enough: a hard stop
-	if _s_down >= 0.0 and not _s_hard:
-		if not Keybinds.held("stop"):
-			_s_down = -1.0
-		elif Time.get_ticks_msec() / 1000.0 - _s_down >= HARD_STOP_HOLD:
-			_s_hard = true
-			if hero_selected():
-				game.world.command(game.player_hero_id, {"type": O.STOP, "hard": true})
-				if game.hud and game.hud.has_method("error"):
-					game.hud.notice("Hard stop: no auto-attack until your next order")
+	_hold_stop()
+
+## Stop held down: the hero is stopped again every frame and new orders are refused until the key is released, like
+## a stop pressed over and over; it does not auto-attack meanwhile. Held past HARD_STOP_HOLD it stays a hard stop
+## after release (no auto-attack until the next order); a short tap ends as a normal stop.
+func _hold_stop() -> void:
+	if _s_down < 0.0:
+		return
+	var h := hero()
+	var now := Time.get_ticks_msec() / 1000.0
+	if not Keybinds.held("stop") or not DisplayServer.window_is_focused():
+		_s_down = -1.0
+		if not _s_hard and h != null and h.alive and hero_selected():
+			game.world.command(h.id, {"type": O.STOP})
+		return
+	if not _s_hard and now - _s_down >= HARD_STOP_HOLD:
+		_s_hard = true
+		if game.hud and game.hud.has_method("notice"):
+			game.hud.notice("Hard stop: no auto-attack until your next order")
+	if h == null or not h.alive or not hero_selected():
+		return
+	if not h.is_idle() or not h.order_queue.is_empty() or not h.channel.is_empty() or not h.no_acquire:
+		game.world.command(h.id, {"type": O.STOP, "hard": true})
+
+## True while the stop key is held: orders for the hero are refused.
+func stopping() -> bool:
+	return _s_down >= 0.0 and hero_selected()
 
 ## Auto right-click: while the right button stays down (and the press began in the world, not on the HUD), keep
 ## re-issuing the right-click order at the cursor so the hero tracks it, as holding right click does in Dota.
@@ -323,16 +341,16 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			_s_down = Time.get_ticks_msec() / 1000.0
 			_s_hard = false
 			if hero_selected():
-				w.command(h.id, {"type": O.STOP})
+				w.command(h.id, {"type": O.STOP, "hard": true})
 			var cs := _courier_selected()
 			if cs:
 				cs.courier_state = "idle"
 		"hold":
 			targeting = ""
-			if hero_selected():
+			if hero_selected() and not stopping():
 				w.command(h.id, {"type": O.HOLD, "queue": queue})
 		"attack":
-			if hero_selected():
+			if hero_selected() and not stopping():
 				targeting = "attack"
 		"select_hero":
 			select([h.id])
@@ -354,10 +372,12 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 		"glyph":
 			w.glyph(game.player_team)
 		"tp":
-			if hero_selected():
+			if hero_selected() and not stopping():
 				begin_tp()
 		"courier_deliver":
 			courier_cmd("deliver")
+		"buy_tp":
+			buy_tp()
 		"debug":
 			if game.hud and game.hud.has_method("toggle_debug"):
 				game.hud.toggle_debug()
@@ -392,7 +412,7 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 ## down: the queue checks again when it reaches it.
 func begin_ability(aid: String, queue := false) -> void:
 	var h := hero()
-	if h == null or not h.alive:
+	if h == null or not h.alive or stopping():
 		return
 	var a := SimData.ability(aid)
 	var err: String = game.world.abilities.cast_error(h, aid, -1, null, h.pos, false, false)
@@ -439,6 +459,23 @@ func begin_tp() -> void:
 		return
 	targeting = "tp"
 
+## Buy a Teleport Scroll (100 gold), also while dead: into the Teleport slot at the shop, otherwise into the stash
+## for the courier to bring, as in Dota.
+func buy_tp() -> void:
+	var h := hero()
+	if h == null:
+		return
+	var w: SimWorld = game.world
+	var here := w.shop.in_shop(h)
+	var err: String = w.shop.buy(h, "tp_scroll")
+	if err != "":
+		_error(err)
+		return
+	if game.audio:
+		game.audio.ui("ui_click", -4.0)
+	if game.hud and game.hud.has_method("notice"):
+		game.hud.notice("Teleport Scroll bought" if here else "Teleport Scroll bought: in your stash (F3 to deliver)")
+
 ## Issue the pending targeted order at a sim point (used by the minimap too).
 func target_point(p: Vector2, shift := false) -> void:
 	var h := hero()
@@ -482,7 +519,7 @@ func move_selected(p: Vector2, shift := false) -> void:
 
 func use_item(slot: int, queue := false) -> void:
 	var h := hero()
-	if h == null or not h.alive:
+	if h == null or not h.alive or stopping():
 		return
 	var it = h.inventory[slot]
 	if it == null:
@@ -541,6 +578,9 @@ func pick_ground_item(screen: Vector2) -> int:
 func _left_click(pos: Vector2, shift: bool) -> void:
 	var w: SimWorld = game.world
 	var h := hero()
+	if stopping():
+		targeting = ""
+		return
 	var target_id := pick(pos)
 	var ground: Vector2 = game.camera.ground_at(pos)
 	var tgt := w.get_unit(target_id)
@@ -592,10 +632,16 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 		w.courier_move(h, ground)
 		if not hero_selected() and not repeat:
 			game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
-	if h == null or not h.alive or not hero_selected():
+	if h == null or not h.alive or not hero_selected() or stopping():
 		return
 	var id := pick(pos)
 	var tgt := w.get_unit(id)
+	# an orb under the cursor comes first (Dota: runes have selection priority over units)
+	var oid: int = game.orb_view.pick(game.camera.cam, pos) if game.get("orb_view") != null and not repeat else -1
+	if oid >= 0:
+		w.command(h.id, {"type": O.PICKUP_ORB, "orb": oid, "queue": shift})
+		game.fx.marker(View.to3(w.orbs.get_orb(oid).pos, game.terrain.height_at(w.orbs.get_orb(oid).pos)), false)
+		return
 	var gid := pick_ground_item(pos) if not repeat else -1
 	if gid >= 0 and (tgt == null or tgt.team == h.team):
 		w.command(h.id, {"type": O.PICKUP_ITEM, "gid": gid, "queue": shift})

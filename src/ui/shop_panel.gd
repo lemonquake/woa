@@ -13,15 +13,19 @@ const GRID_W := 520.0
 const CELL := Vector2(54, 40)
 const STEP := Vector2(58, 62)
 
-const BASICS := [["consumables", "Consumables"], ["attributes", "Attributes"], ["armaments", "Armaments"],
-	["misc", "Magic"], ["basics", "Other"]]
+## Basics: [category, heading, column]. Several groups may share a column; they stack top to bottom.
+const BASICS := [["consumables", "Consumables", 0], ["big_parts", "Big Parts", 0], ["attributes", "Attributes", 1],
+	["armaments", "Armaments", 2], ["misc", "Magic", 3], ["basics", "Other", 3]]
 ## Upgrades in Dota-like groups: [column, heading, item ids]
 const UPGRADES := [
 	[0, "Accessories", ["wraith_band", "tough_band", "smart_band", "magic_wand", "power_treads", "slip_boots",
 		"steady_ring", "mask_of_madness"]],
+	[0, "Swords", ["heavy_sword", "spell_sword", "twin_swords", "yasha"]],
 	[1, "Support", ["mana_ring", "leaf_hat", "mana_boots", "medic_kit", "push_staff", "gold_glove"]],
-	[2, "Weapons", ["armor_breaker", "shock_hammer", "cleave_axe", "sneak_blade", "yasha", "dragon_lance"]],
-	[3, "Armor", ["block_shield", "spike_armor", "spell_shield"]],
+	[1, "Magic", ["battle_staff", "silence_staff", "root_staff", "hex_staff"]],
+	[2, "Weapons", ["crit_sword", "crit_bow", "stun_club", "stun_blade", "sure_hit_staff", "armor_breaker",
+		"shock_hammer", "cleave_axe", "sneak_blade", "break_blade", "dragon_lance"]],
+	[3, "Armor", ["block_shield", "spike_armor", "spell_shield", "halberd"]],
 	[3, "Abilities", ["upgrade_staff", "upgrade_gem"]],
 ]
 
@@ -65,18 +69,14 @@ func _columns() -> Array:
 	if tab == "upgrades":
 		return UPGRADES
 	var out: Array = []
-	var col := 0
 	for cat in BASICS:
 		var ids: Array = []
 		for id in SimData.items():
 			var d := SimData.item(id)
 			if String(d.category) == cat[0] and (int(d.cost) > 0 or id == "observer_ward"):
 				ids.append(id)
-		if ids.is_empty():
-			continue
-		# the last, small group shares a column with the one before it
-		out.append([mini(col, 3), cat[1], ids])
-		col += 1
+		if not ids.is_empty():
+			out.append([int(cat[2]), cat[1], ids])
 	return out
 
 func _draw() -> void:
@@ -163,17 +163,33 @@ func _draw_pane(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 	U.text(self, String(d.name), Vector2(x + 70, y + 20), 18, U.GOLD, "title")
 	U.text(self, "%d gold" % int(d.cost), Vector2(x + 70, y + 42), 14, U.GOLD_DIM, "bold")
 	y += 58
+	# what it is made from and builds into get their rows first; the text gets the room above them (the tooltip on
+	# the grid shows all of it)
+	var sets := SimShop.recipe_sets(selected)
+	var into: Array = []
+	for id in SimData.items():
+		for s in SimShop.recipe_sets(id):
+			if (s as Array).has(selected) and not into.has(id):
+				into.append(id)
+	var reserve := (72.0 if not sets.is_empty() else 0.0) + (72.0 if not into.is_empty() else 0.0)
+	if (d.get("recipes", []) as Array).size() > 1:
+		reserve += 46.0
+	var text_end := H - 304.0 - reserve
 	# bonuses and description, from the tooltip text
 	var lines: Array = hud.item_tip(selected, h, pw)
 	for i in range(2, lines.size()):
 		var l: Array = lines[i]
-		if String(l[0]).begins_with("Made from") or y > H - 340:
+		if String(l[0]).begins_with("Made from"):
 			continue
+		# keep one short line free for the "..." note
+		if y + float(l[1]) + 3.0 > text_end - 15.0 and i < lines.size() - 1:
+			U.text(self, "... (hover the item for the rest)", Vector2(x, y + 12), 12, U.TEXT_DIM, "body")
+			y += 15.0
+			break
 		U.text(self, String(l[0]), Vector2(x, y + 14), int(l[1]) - 1, l[2], l[3])
 		y += float(l[1]) + 3.0
 	y += 6
 	# made from
-	var sets := SimShop.recipe_sets(selected)
 	if not sets.is_empty():
 		U.text(self, "Made from", Vector2(x, y + 14), 13, U.TEXT_DIM, "title")
 		y += 22
@@ -199,11 +215,6 @@ func _draw_pane(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 				px += 44
 		y += 50
 	# builds into
-	var into: Array = []
-	for id in SimData.items():
-		for s in SimShop.recipe_sets(id):
-			if (s as Array).has(selected) and not into.has(id):
-				into.append(id)
 	if not into.is_empty():
 		U.text(self, "Builds into", Vector2(x, y + 14), 13, U.TEXT_DIM, "title")
 		y += 22

@@ -261,6 +261,42 @@ func event(e: Dictionary, w: SimWorld) -> void:
 					at("hit_heavy", pi, -3.0, 2, 0.06)
 		"stunned":
 			at("stagger", _pos(w, e.u), -8.0, 0, 0.15)
+		"crit":
+			at("crit_hit", _pos(w, e.target), -2.0, 0, 0.1)
+		"bash":
+			at("hammer_hit", _pos(w, e.target), -2.0, 3, 0.1)
+			at("stagger", _pos(w, e.target), -8.0, 0, 0.15, 0.03)
+		"overwhelm":
+			at("hammer_hit", _pos(w, e.target), 0.0, 3, 0.1)
+			at("boss_slam", _pos(w, e.target), -8.0, 0, 0.2)
+		"item_debuff":
+			var pk := _pos(w, e.target)
+			match String(e.kind):
+				"silence":
+					at("dark_curse", pk, -4.0, 0, 0.2)
+				"disarm":
+					at("parry", pk, -3.0, 0, 0.2)
+				"hex":
+					at("arcane_surge", pk, -4.0, 0, 0.2)
+				"root_staff":
+					at("cast_earth", pk, -4.0, 0, 0.2)
+		"dust":
+			at("wind_gust", _pos(w, e.u), -6.0, 0, 0.2)
+		"orb_taken":
+			at("gold_pickup" if String(e.kind) == "gold" else "skill_unlock", _pos(w, e.u), -3.0, 0, 0.2)
+		"soul_burst":
+			at("magic_hit", _pos(w, e.u), -2.0, 2, 0.15)
+		"neutral_spell":
+			var pn := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.5, 0)
+			match String(e.ability):
+				"stomp":
+					at("boss_slam", pn, -3.0, 0, 0.2, 0.04)
+					at("earth_quake", pn, -8.0, 0, 0.3, 0.04)
+				"smash":
+					at("boss_slam", pn, 0.0, 0, 0.2, 0.04)
+					at("rock_impact", pn, -4.0, 0, 0.2, 0.04)
+				"snarl":
+					at("ghoul_growl", pn, -4.0, 2, 0.3, 0.03)
 		"leap_land":
 			var pl := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.5, 0)
 			at("boss_slam", pl, -2.0, 0, 0.2, 0.05)

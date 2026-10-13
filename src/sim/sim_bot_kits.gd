@@ -45,12 +45,14 @@ const BUILDS := {
 	"blood_ranger": {
 		"core": [
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "branch", "branch",
-				"magic_wand", "boots", "gloves", "boots_elves", "dragon_lance", "shock_hammer", "spell_shield",
-				"mask_of_madness", "armor_breaker"],
+				"magic_wand", "boots", "gloves", "boots_elves", "dragon_lance", "crit_sword", "shock_hammer",
+				"spell_shield", "crit_bow", "armor_breaker"],
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots", "gloves",
-				"boots_elves", "magic_wand", "gold_glove", "yasha", "dragon_lance", "armor_breaker", "spell_shield"],
+				"boots_elves", "magic_wand", "gold_glove", "yasha", "dragon_lance", "heavy_sword", "twin_swords",
+				"armor_breaker", "spell_shield"],
 			["tango", "faerie_fire", "slippers", "circlet", "quelling_blade", "wraith_band", "boots", "magic_stick",
-				"gloves", "boots_elves", "mask_of_madness", "dragon_lance", "armor_breaker", "spell_shield", "yasha"],
+				"gloves", "boots_elves", "mask_of_madness", "dragon_lance", "crit_sword", "sure_hit_staff",
+				"spell_shield", "crit_bow"],
 		],
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "wraith_band",
@@ -60,13 +62,14 @@ const BUILDS := {
 	"ezee": {
 		"core": [
 			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "branch", "branch", "magic_stick",
-				"magic_wand", "slip_boots", "spike_armor", "spell_shield", "armor_breaker"],
+				"magic_wand", "slip_boots", "stun_club", "spike_armor", "spell_shield", "stun_blade", "armor_breaker"],
 			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
-				"magic_wand", "belt_str", "gloves", "block_shield", "cleave_axe", "spell_shield"],
+				"magic_wand", "belt_str", "gloves", "block_shield", "cleave_axe", "stun_club", "spell_shield",
+				"stun_blade"],
 		],
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
-				"medic_kit", "push_staff", "spell_shield"],
+				"medic_kit", "root_staff", "push_staff", "spell_shield"],
 		],
 	},
 	"sludge": {
@@ -74,11 +77,11 @@ const BUILDS := {
 			["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "circlet", "tough_band", "magic_wand",
 				"slip_boots", "jump_knife", "spike_armor", "spell_shield", "upgrade_staff"],
 			["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "boots", "magic_wand", "block_shield",
-				"jump_knife", "slip_boots", "spell_shield", "upgrade_staff"],
+				"jump_knife", "slip_boots", "spell_shield", "halberd", "upgrade_staff"],
 		],
 		"support": [
 			["tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots", "jump_knife",
-				"medic_kit", "spell_shield", "upgrade_staff"],
+				"root_staff", "medic_kit", "spell_shield", "upgrade_staff"],
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
 				"push_staff", "jump_knife", "upgrade_gem", "spell_shield"],
 		],
@@ -204,6 +207,7 @@ static func power(w: SimWorld, h: SimUnit, vs: SimUnit) -> float:
 ## Level or item moments when the hero gets much stronger (the bot says so and its team may call a fight).
 static func power_spike(h: SimUnit, item_id: String) -> bool:
 	if item_id in ["jump_knife", "spell_shield", "shock_hammer", "armor_breaker", "cleave_axe", "dragon_lance",
-			"spike_armor", "upgrade_staff", "mask_of_madness", "yasha"]:
+			"spike_armor", "upgrade_staff", "mask_of_madness", "yasha", "crit_bow", "stun_club", "stun_blade", "hex_staff",
+			"sure_hit_staff", "twin_swords", "halberd"]:
 		return true
 	return false

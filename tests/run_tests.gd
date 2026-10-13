@@ -800,7 +800,7 @@ func test_ezee_dark_stomp_tree_impact() -> void:
 	check(smashed >= 0 and not _map.trees[smashed].alive, "the tree was smashed")
 	if smashed >= 0:
 		_map.regrow_tree(smashed)
-	var st := c.get_modifier("stun")
+	var st := c.get_modifier("stunned")
 	check(stunned_at > 0.0, "impact stun applied once the creep came to rest")
 	if not st.is_empty():
 		near(float(st.expires) - stunned_at, 2.8, 0.05, "level 4 impact stun lasts 2.8 s")
@@ -2912,3 +2912,615 @@ func test_game_setup_roles_are_kept() -> void:
 		if b.hero().team == C.DAWN:
 			lanes[b.lane] = true
 	check(lanes.size() == 3, "the others still cover the other lanes (%s)" % str(lanes))
+
+# ---- Status effects, pseudo-random procs, critical strike, bash (2026-10-13 d) --------------------------------------
+
+func test_prd_constants_and_rates() -> void:
+	# Valve's table (Dota 2 wiki, Pseudo-random distribution)
+	near(SimStatus.prd_c(0.25), 0.084744, 0.0002, "C for 25%")
+	near(SimStatus.prd_c(0.30), 0.118949, 0.0002, "C for 30%")
+	near(SimStatus.prd_c(0.10), 0.014746, 0.0002, "C for 10%")
+	near(SimStatus.prd_c(0.80), 0.75, 0.0005, "C for 80%")
+	var w := empty_world()
+	var u := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var procs := 0
+	var longest := 0
+	var dry := 0
+	for i in 20000:
+		if w.status.roll(u, "test", 0.25):
+			procs += 1
+			dry = 0
+		else:
+			dry += 1
+			longest = maxi(longest, dry)
+	near(procs / 20000.0, 0.25, 0.01, "25% PRD procs a quarter of the time")
+	check(longest < ceili(1.0 / SimStatus.prd_c(0.25)), "never more than 1/C - 1 misses in a row (%d)" % longest)
+
+func test_crit_rolls_at_attack_start_and_multiplies() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	_give(w, h, "crit_bow", 0)
+	var t := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1850, -4000))
+	var crits := 0
+	var n := 3000
+	for i in n:
+		var m := w.combat.roll_crit(h, t)
+		if m > 1.0:
+			crits += 1
+			near(m, 2.25, 1e-6, "Crit Bow multiplies by 2.25")
+	near(crits / float(n), 0.30, 0.02, "30% of attacks crit")
+	# never against buildings, and no roll is counted there
+	var tower := w.spawn("tower1", C.DUSK, Vector2(-1500, -4300))
+	var before: int = int(h.prd.get("crit:crit_bow", 0))
+	for i in 50:
+		check(w.combat.roll_crit(h, tower) == 1.0, "no critical strike on buildings")
+	check(int(h.prd.get("crit:crit_bow", 0)) == before, "buildings do not move the PRD counter")
+	# the multiplier rides on the attack from its start: a crit snapshot deals 2.25x the base and bonus damage
+	h.atk_crit = 2.25
+	var s := w.combat._snapshot(h, "")
+	h.atk_crit = 1.0
+	s.dmg_min = 100.0
+	s.dmg_max = 100.0
+	s.bonus = 0.0
+	s.quell = 0.0
+	t.def["armor"] = 0.0
+	t.refresh_stats()
+	var hp0 := t.hp
+	w.combat.land_attack(s, t)
+	var mult := w.combat.attack_class_multiplier(s, t)
+	near(hp0 - t.hp, 225.0 * mult, 0.5, "the crit multiplies the attack damage")
+	var found := w.events.filter(func(e): return e.t == "crit")
+	check(not found.is_empty(), "a crit event for the red number")
+
+func test_two_crit_sources_never_stack() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	_give(w, h, "crit_bow", 0)
+	_give(w, h, "crit_sword", 1)
+	var t := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1850, -4000))
+	var big := 0
+	var small := 0
+	for i in 4000:
+		var m := w.combat.roll_crit(h, t)
+		if m == 2.25:
+			big += 1
+		elif m == 1.6:
+			small += 1
+	near(big / 4000.0, 0.30, 0.025, "the stronger crit rolls first (30%)")
+	near(small / 4000.0, 0.70 * 0.30, 0.03, "the weaker one rolls only when the stronger misses")
+
+func test_bash_stun_damage_cooldown_and_pierce() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var club := _give(w, h, "stun_club", 0)
+	var t := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	# debuff immunity does not stop a bash
+	t.add_modifier({"id": "spell_shield", "source": t.id, "expires": INF, "debuff_immune": true})
+	t.refresh_stats()
+	var bashes := 0
+	var tries := 0
+	var during_cd := 0
+	for i in 4000:
+		w.time += 0.1
+		w.step()
+		var cd := w.time < float(club.get("bash_ready", C.LONG_AGO))
+		var prd_before: int = int(h.prd.get("bash", 0))
+		var b := w.items.roll_bash(w.combat._snapshot(h, ""), t)
+		if cd:
+			check(b.is_empty(), "no bash while the bash cooldown runs")
+			check(int(h.prd.get("bash", 0)) == prd_before, "and no roll is counted")
+			during_cd += 1
+			continue
+		tries += 1
+		if not b.is_empty():
+			bashes += 1
+			near(float(b.damage), 100.0, 1e-6, "Stun Club bash adds 100 damage")
+			near(float(b.dur), 1.2, 1e-6, "1.2 s stun")
+	near(bashes / float(tries), 0.25, 0.03, "melee bash 25% of the rolls")
+	check(during_cd > 0, "the cooldown was exercised")
+	# a landed bash stuns through debuff immunity in the bash group
+	club.erase("bash_ready")
+	h.prd["bash"] = 100
+	w.combat.land_attack(w.combat._snapshot(h, ""), t)
+	var st := t.get_modifier("bashed")
+	check(not st.is_empty() and st.get("stun", false), "the bash stuns a debuff-immune hero")
+	near(float(st.get("dur", 0.0)), 1.2, 0.01, "for 1.2 s")
+	# ranged heroes: 10%
+	var r := w.spawn("blood_ranger", C.DAWN, Vector2(-2200, -4000))
+	_give(w, r, "stun_club", 0)
+	var rb := 0
+	var rt := 0
+	for i in 6000:
+		r.inventory[0].erase("bash_ready")
+		rt += 1
+		if not w.items.roll_bash(w.combat._snapshot(r, ""), t).is_empty():
+			rb += 1
+	near(rb / float(rt), 0.10, 0.015, "ranged bash 10%")
+	# never against buildings
+	var tower := w.spawn("tower1", C.DUSK, Vector2(-1500, -4300))
+	h.prd["bash"] = 100
+	club.erase("bash_ready")
+	check(w.items.roll_bash(w.combat._snapshot(h, ""), tower).is_empty(), "no bash on buildings")
+
+func test_only_one_bash_item_works() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var a := _give(w, h, "stun_club", 0)
+	var b := _give(w, h, "stun_blade", 1)
+	var t := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1850, -4000))
+	h.prd["bash"] = 100
+	var r := w.items.roll_bash(w.combat._snapshot(h, ""), t)
+	check(String(r.get("item", "")) == "stun_club", "the first bash item rolls")
+	check(a.has("bash_ready") and not b.has("bash_ready"), "only its cooldown starts")
+
+func test_stuns_refresh_to_the_longer() -> void:
+	var w := empty_world()
+	var t := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	w.status.apply(t, 999, C.DAWN, {"id": "stunned", "stun": true, "dur": 2.0})
+	w.status.apply(t, 998, C.DAWN, {"id": "stunned", "stun": true, "dur": 1.0})
+	var ms := t.modifiers.filter(func(m): return String(m.id) == "stunned")
+	check(ms.size() == 1, "one stun modifier for the group")
+	near(float(ms[0].expires) - w.time, 2.0, 0.01, "a shorter stun does not cut a longer one")
+	w.status.apply(t, 997, C.DAWN, {"id": "stunned", "stun": true, "dur": 3.0})
+	near(float(t.get_modifier("stunned").expires) - w.time, 3.0, 0.01, "a longer one replaces it")
+	check(t.is_stunned(), "stunned")
+
+func test_status_resistance_and_slow_resistance() -> void:
+	var w := empty_world()
+	var t := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	t.inventory.resize(9)
+	_give(w, t, "twin_swords", 0)
+	near(t.status_resist, 0.16, 1e-6, "Twin Swords: 16% status resistance")
+	w.status.apply(t, 999, C.DAWN, {"id": "bashed", "stun": true, "dur": 1.2})
+	near(float(t.get_modifier("bashed").dur), 1.2 * 0.84, 0.001, "debuffs from enemies last 16% shorter")
+	# slow resistance: the Heavy Sword family does not stack, the largest counts
+	_give(w, t, "heavy_sword", 1)
+	near(t.slow_resist, 0.30, 1e-6, "slow resistance: the largest copy (30%)")
+	var ms0 := t.move_speed
+	w.status.apply(t, 999, C.DAWN, {"id": "test_slow", "slow": 0.5, "dur": 5.0})
+	t.refresh_stats()
+	check(t.move_speed > ms0 * 0.5 + 1.0, "a 50% slow is shrunk by slow resistance")
+	# an ally's buff is not shortened
+	w.status.apply(t, t.id, C.DUSK, {"id": "ally_test", "dur": 2.0})
+	near(float(t.get_modifier("ally_test").dur), 2.0, 1e-6, "allied effects ignore status resistance")
+
+func test_hex_silence_mute_disarm_speed() -> void:
+	var w := empty_world()
+	var foe := _sludge(w, Vector2(-1850, -4000), {}, C.DUSK)
+	_give(w, foe, "slip_boots", 0)
+	var me := _sludge(w, Vector2(-2000, -4000))
+	var hx := _give(w, me, "hex_staff", 0)
+	me.mana = me.max_mana
+	run(w, 0.2)
+	var err: String = w.abilities.cast_error(me, "", 0, foe, foe.pos)
+	check(err == "", "Hex Staff can target the enemy hero (%s)" % err)
+	w.abilities.execute(me, "", 0, foe, foe.pos)
+	check(foe.is_hexed() and foe.is_silenced() and foe.is_muted() and foe.is_disarmed(), "hexed: silenced, muted, disarmed")
+	foe.refresh_stats()
+	near(foe.move_speed, C.HEX_MOVE_SPEED + 50.0, 0.5, "hex sets base speed 140; flat boot speed still counts")
+	check(w.abilities.cast_error(foe, "blubber", -1, null, foe.pos) == "Silenced", "cannot cast")
+	check(w.abilities.cast_error(foe, "", 0, null, foe.pos) == "Muted", "cannot use items")
+	near(float(foe.get_modifier("hex_staff").dur), 2.8, 0.01, "2.8 s")
+	check(hx.get("ready", 0.0) > w.time, "the item went on cooldown")
+	# a basic dispel does not remove it, a strong one does
+	w.status.dispel(foe, false, foe.team)
+	check(foe.is_hexed(), "basic dispel keeps the hex")
+	w.status.dispel(foe, true, foe.team)
+	check(not foe.is_hexed(), "strong dispel removes it")
+	# Spell Shield (debuff immunity) blocks a hex
+	foe.add_modifier({"id": "spell_shield", "source": foe.id, "expires": INF, "debuff_immune": true})
+	foe.refresh_stats()
+	hx.erase("ready")
+	me.mana = me.max_mana
+	var ierr: String = w.abilities.cast_error(me, "", 0, foe, foe.pos)
+	check(ierr == "Target is immune", "hex refused on immune targets (%s)" % ierr)
+
+func test_silence_staff_burst() -> void:
+	var w := empty_world()
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	var me := _sludge(w, Vector2(-2000, -4000))
+	_give(w, me, "silence_staff", 0)
+	w.abilities.execute(me, "", 0, foe, foe.pos)
+	check(foe.is_silenced(), "silenced")
+	var hp0 := foe.hp
+	w.combat.deal_damage(me.id, me.team, true, foe, 400.0, C.DamageType.PURE, false, "test")
+	var taken := hp0 - foe.hp
+	run(w, 5.2)
+	check(not foe.is_silenced(), "the silence ends after 5 s")
+	var burst := w.events.filter(func(e): return e.t == "soul_burst")
+	var row: Array = me.dmg_out.get("silence_staff", [0, 0, 0])
+	near(float(row[0]) + float(row[1]), taken * 0.30 * (1.0 - foe.magic_resist), 1.0,
+		"30% of the damage taken returns as magic damage")
+
+func test_root_staff_projectile_roots_and_stops_tp() -> void:
+	var w := empty_world()
+	var foe := _sludge(w, Vector2(-1500, -4000), {}, C.DUSK)
+	var me := _sludge(w, Vector2(-2000, -4000))
+	_give(w, me, "root_staff", 0)
+	w.abilities.execute(me, "", 0, foe, foe.pos)
+	check(not foe.has_flag("root"), "not rooted before the projectile arrives")
+	run(w, 0.5)
+	check(foe.has_flag("root") and foe.is_rooted(), "rooted once it arrives")
+	check(w.abilities.cast_error(foe, "tp", -1, null, Vector2.ZERO) == "Rooted", "rooted heroes cannot teleport")
+	near(float(foe.get_modifier("root_staff").dur), 2.0, 0.01, "2 s")
+	# a root during a teleport channel ends it
+	var b := _sludge(w, Vector2(-2600, -4400), {}, C.DUSK)
+	b.channel = {"ability": "tp", "until": w.time + 3.0, "dest": Vector2.ZERO}
+	w.status.apply(b, me.id, me.team, {"id": "root_staff", "root": true, "dur": 2.0})
+	w.step()
+	check(b.channel.is_empty(), "the root cancels the Teleport channel")
+
+func test_halberd_disarm_and_evasion_stacking() -> void:
+	var w := empty_world()
+	var me := _sludge(w, Vector2(-2000, -4000))
+	_give(w, me, "halberd", 0)
+	near(me.evasion, 0.25, 1e-6, "Halberd 25% evasion")
+	_give(w, me, "dodge_charm", 1)
+	near(me.evasion, 1.0 - 0.75 * 0.85, 1e-6, "evasion sources multiply (36.25%)")
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	w.abilities.execute(me, "", 0, foe, foe.pos)
+	check(foe.is_disarmed() and not foe.is_silenced(), "disarmed, can still cast")
+	near(float(foe.get_modifier("halberd").dur), 3.5, 0.01, "3.5 s")
+	w.status.dispel(foe, false, foe.team)
+	check(foe.is_disarmed(), "the Halberd's disarm needs a strong dispel")
+
+func test_break_blade_breaks_passives() -> void:
+	var w := empty_world()
+	var me := _sludge(w, Vector2(-2000, -4000))
+	_give(w, me, "break_blade", 0)
+	var r := _ranger(w, Vector2(-1850, -4000), {}, C.DUSK)
+	w.abilities.execute(me, "", 0, null, me.pos)
+	run(w, 0.5)
+	var s := w.combat._snapshot(me, "")
+	var sn := w.items.break_sneak(me)
+	s["sneak"] = float(sn.get("bonus", 0.0))
+	s["sneak_break"] = float(sn.get("break", 0.0))
+	near(float(s.sneak), 300.0, 1e-6, "the breaking attack carries 300 damage")
+	w.combat.land_attack(s, r)
+	check(r.is_broken(), "the target is broken")
+	near(float(r.get_modifier("break_blade").dur), 5.0, 0.01, "for 5 s")
+	r.ability_ready.erase("masterful_archery")
+	var procs := 0
+	for i in 200:
+		if w.abilities.masterful_bonus(r, me) > 0.0:
+			procs += 1
+			r.ability_ready.erase("masterful_archery")
+	check(procs == 0, "Masterful Archery does nothing while broken")
+
+func test_uphill_miss_only_for_ranged() -> void:
+	var w := empty_world()
+	var low := Vector2.ZERO
+	var high := Vector2.ZERO
+	# a river cell next to a ground cell
+	for x in range(-3000, 3000, 64):
+		var a := Vector2(x, 0)
+		if _map.level_at(a) == SimMap.RIVER and _map.is_walkable(a):
+			for d in [Vector2(0, 260), Vector2(0, -260), Vector2(260, 0), Vector2(-260, 0)]:
+				if _map.level_at(a + d) > SimMap.RIVER and _map.is_walkable(a + d):
+					low = a
+					high = a + d
+					break
+		if low != Vector2.ZERO:
+			break
+	check(low != Vector2.ZERO, "found a slope")
+	var melee := w.spawn("sludge", C.DAWN, low)
+	var ranged := w.spawn("blood_ranger", C.DAWN, low)
+	var t := _dummy(w, "dusk_melee", C.DUSK, high)
+	var mm := 0
+	var rm := 0
+	for i in 2000:
+		if not w.combat.land_attack(w.combat._snapshot(melee, ""), t):
+			mm += 1
+		if not w.combat.land_attack(w.combat._snapshot(ranged, ""), t):
+			rm += 1
+	check(mm == 0, "melee attacks never miss uphill (%d)" % mm)
+	near(rm / 2000.0, C.UPHILL_MISS, 0.03, "ranged attacks miss 25% uphill")
+
+func test_fountain_regen_bonus_and_linger() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, _map.fountains[C.DAWN] + Vector2(300, 300))
+	h.hp = 100.0
+	w.step()
+	var r := w.regen_rates(h)
+	near(r.z, h.hp_regen_base, 1e-6, "own regen is base plus strength")
+	near(r.x - r.z, h.max_hp * 0.05, 0.01, "the fountain adds 5% of max health per second as bonus")
+	near(r.y - r.w, h.max_mana * 0.06, 0.01, "and 6% of max mana")
+	h.pos = Vector2(-2000, -4000)
+	run(w, 2.5)
+	check(not h.get_modifier("fountain").is_empty(), "the fountain's buff lingers after leaving")
+	run(w, 1.0)
+	check(h.get_modifier("fountain").is_empty(), "for 3 s")
+
+func test_spell_amp_raises_spell_damage() -> void:
+	var w := empty_world()
+	var e := _ezee(w, Vector2(-2000, -4000))
+	var t := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1850, -4000))
+	t.def["magic_resist"] = 0.0
+	t.refresh_stats()
+	var hp0 := t.hp
+	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.MAGICAL, false, "dark_stomp")
+	near(hp0 - t.hp, 100.0, 0.01, "no amplification without items")
+	e.inventory.resize(9)
+	_give(w, e, "spell_sword", 0)
+	near(e.spell_amp, 0.10, 1e-6, "Spell Sword 10% spell amplification")
+	hp0 = t.hp
+	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.MAGICAL, false, "dark_stomp")
+	near(hp0 - t.hp, 110.0, 0.01, "spells deal 10% more")
+	hp0 = t.hp
+	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.PHYSICAL, true, "attack")
+	near(hp0 - t.hp, 100.0 * C.armor_multiplier(t.armor), 0.01, "attacks are not amplified")
+
+func test_neutral_abilities() -> void:
+	var w := empty_world()
+	# Orc Shaman: Stomp stuns a hero 1.6 s
+	var shaman := w.spawn("strider_warlord", C.NEUTRAL, Vector2(-2000, -4000))
+	shaman.home = shaman.pos
+	var h := _sludge(w, Vector2(-1820, -4000), {}, C.DAWN)
+	check(shaman.ability_level_of("stomp") == 1, "the Orc Shaman knows Stomp")
+	shaman.neutral_state = 1
+	shaman.atk_target = h.id
+	w.ai._neutral(shaman)
+	run(w, 0.6)
+	var st := h.get_modifier("stunned")
+	check(not st.is_empty(), "Stomp stuns the hero")
+	near(float(st.get("dur", 0.0)), 1.6, 0.01, "for 1.6 s")
+	# Alpha Wolf: 20% x2 crit and +20% damage to its pack
+	var alpha := w.spawn("ashfang_alpha", C.NEUTRAL, Vector2(2000, 4000))
+	var wolf := w.spawn("ashfang", C.NEUTRAL, Vector2(2100, 4000))
+	var src := w.combat.crit_sources(alpha)
+	check(src.size() == 1 and float(src[0].mult) == 2.0, "Alpha Wolf crit x2")
+	w.tick = 5
+	w.step()
+	wolf.refresh_stats()
+	near(wolf.bonus_damage, (wolf.dmg_min + wolf.dmg_max) * 0.5 * 0.2, 0.01, "Pack Aura +20% damage")
+	# Swamp Troll: its attacks break (3 s, 10 s apart)
+	var troll := w.spawn("hill_troll", C.NEUTRAL, Vector2(3000, 4000))
+	var r := _ranger(w, Vector2(3200, 4000))
+	w.ai.on_creep_hit(troll, r, 30.0)
+	check(r.is_broken(), "Break Strike breaks the hero")
+	r.remove_modifier("break_strike")
+	w.ai.on_creep_hit(troll, r, 30.0)
+	check(not r.is_broken(), "not again within 10 s")
+	# Ogre: Smash winds up for 2.8 s; stepping out avoids it
+	var ogre := w.spawn("ogre_brute", C.NEUTRAL, Vector2(-4000, 2000))
+	ogre.home = ogre.pos
+	var v := _sludge(w, Vector2(-3880, 2000), {}, C.DAWN)
+	ogre.neutral_state = 1
+	ogre.atk_target = v.id
+	w.ai._neutral_cast(ogre, v)
+	run(w, 1.0)
+	check(ogre.cast_phase != SimUnit.CastPhase.NONE and String(ogre.cast_ability) == "smash", "Smash is winding up")
+	v.pos = Vector2(-3400, 2000)
+	run(w, 2.2)
+	check(v.get_modifier("stunned").is_empty(), "walked out of the Smash")
+
+func test_tp_scroll_stash_rule_and_buy_key() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	h.gold_unreliable = 1000
+	var n0 := h.tp_charges
+	check(w.shop.buy(h, "tp_scroll") == "", "bought away from the shop")
+	check(h.tp_charges == n0, "away from the shop it does not appear in the slot")
+	check(_ids(h.stash).has("tp_scroll"), "it waits in the stash")
+	check(w.shop.tp_owned(h) == n0 + 1, "it counts as owned")
+	h.pos = _map.fountains[C.DAWN] + Vector2(300, 300)
+	w.shop.update(h)
+	check(h.tp_charges == n0 + 1 and not _ids(h.stash).has("tp_scroll"), "arriving at the shop puts it in the slot")
+	check(_ids(h.inventory).is_empty() or not _ids(h.inventory).has("tp_scroll"), "never in the bags")
+	check(w.shop.buy(h, "tp_scroll") == "" and h.tp_charges == n0 + 2, "at the shop it goes straight to the slot")
+	near(float(SimData.item("tp_scroll").cost), 100.0, 0.0, "100 gold")
+	check(Keybinds.defaults().get("buy_tp") == KEY_COMMA, "comma buys a Teleport Scroll by default")
+
+func test_new_item_recipes_match_dota() -> void:
+	var expect := {"crit_sword": 2000, "crit_bow": 5200, "stun_club": 2875, "stun_blade": 6250, "sure_hit_staff": 5000,
+		"silence_staff": 3275, "root_staff": 2250, "halberd": 3300, "hex_staff": 5200, "break_blade": 5700,
+		"heavy_sword": 2100, "spell_sword": 2100, "twin_swords": 4200, "battle_staff": 1625}
+	for id in expect:
+		var d := SimData.item(id)
+		var parts := 0
+		for c in d.components:
+			parts += int(SimData.item(c).cost)
+		check(int(d.cost) == int(expect[id]), "%s costs %d" % [id, int(expect[id])])
+		check(parts + int(d.recipe_cost) == int(d.cost), "%s: parts + recipe = cost (%d + %d)" % [id, parts, int(d.recipe_cost)])
+
+func test_true_sight_wards_dust_and_disjoint() -> void:
+	var w := empty_world()
+	# open ground in the river, so no tree blocks the sight between them
+	var sneaker := _sludge(w, Vector2(300, -300), {}, C.DUSK)
+	sneaker.add_modifier({"id": "sneak_blade", "source": sneaker.id, "expires": INF, "invisible": true})
+	var me := _sludge(w, Vector2(0, -300))
+	run(w, 0.4)
+	check(not w.vision.sees(me.team, sneaker), "an invisible hero is not seen")
+	# a Reveal Ward planted nearby gives True Sight where the team has vision
+	_give(w, me, "reveal_ward", 0)
+	w.abilities.execute(me, "", 0, null, Vector2(100, -200))
+	run(w, 0.4)
+	check(w.vision.sees(me.team, sneaker), "a Reveal Ward reveals it")
+	var ward: SimUnit = null
+	for u in w.units:
+		if u.def.id == "ward_sentry":
+			ward = u
+	check(ward != null and ward.has_flag("invisible"), "the Reveal Ward itself is invisible")
+	w.combat.kill(ward, null)
+	run(w, 0.4)
+	check(not w.vision.sees(me.team, sneaker), "hidden again once the ward is gone")
+	# Reveal Dust: 25 damage to the invisible, reveals, slows 20% while invisible
+	_give(w, me, "reveal_dust", 1)
+	var hp0 := sneaker.hp
+	w.abilities.execute(me, "", 1, null, me.pos)
+	check(sneaker.hp < hp0, "dust hurts units invisible when it is thrown")
+	run(w, 0.4)
+	check(w.vision.sees(me.team, sneaker), "dust reveals it")
+	check(float(sneaker.get_modifier("reveal_dust").get("slow", 0.0)) == 0.2, "and slows it 20% while invisible")
+	# towers have True Sight
+	var w2 := empty_world()
+	var inv := _sludge(w2, Vector2(-1000, -4000), {}, C.DUSK)
+	inv.add_modifier({"id": "sneak_blade", "source": inv.id, "expires": INF, "invisible": true})
+	w2.spawn("tower1", C.DAWN, Vector2(-1500, -4000))
+	run(w2, 0.4)
+	check(w2.vision.sees(C.DAWN, inv), "a tower sees invisible heroes within 700")
+	inv.pos = Vector2(-300, -4000)
+	run(w2, 0.4)
+	check(not w2.vision.sees(C.DAWN, inv), "but not beyond")
+	# disjoint: a blink makes attacks in flight miss
+	var w3 := empty_world()
+	var r := _ranger(w3, Vector2(-2000, -4000))
+	r.auto_attack = false
+	var t := _sludge(w3, Vector2(-1300, -4000), {}, C.DUSK)
+	run(w3, 0.3)
+	w3.combat.release_attack(r, t, "")
+	_give(w3, t, "jump_knife", 0)
+	var hp1 := t.hp
+	w3.abilities.execute(t, "", 0, null, t.pos + Vector2(0, 600))
+	run(w3, 1.0)
+	check(t.hp >= hp1, "a blink disjoints the arrow in flight")
+	# an invisible hero does not attack on its own
+	var w4 := empty_world()
+	var a := w4.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	var foe := _dummy(w4, "dusk_melee", C.DUSK, Vector2(-1880, -4000))
+	a.add_modifier({"id": "sneak_blade", "source": a.id, "expires": INF, "invisible": true})
+	run(w4, 2.0)
+	check(foe.hp == foe.max_hp, "invisible heroes never auto-attack")
+
+# ---- Orbs (Dota's runes) ---------------------------------------------------------------------------------------------
+
+func test_orb_schedule_and_power_cycle() -> void:
+	var w := world(-1.0)
+	w.next_neutral_at = INF
+	w.next_wave_at = INF
+	run(w, 1.2)
+	var kinds := w.orbs.orbs.map(func(o): return String(o.kind))
+	check(kinds.count("gold") == 4, "0:00: four Gold Orbs (two gold spots, two river spots) (%s)" % str(kinds))
+	w.time = 119.9
+	run(w, 0.2)
+	check(w.orbs.orbs.filter(func(o): return String(o.kind) == "water").size() == 2, "2:00: two Water Orbs in the river")
+	# power orbs from 6:00 every 2:00: a full cycle before any repeats, never twice in a row
+	var seen: Array = []
+	for k in 12:
+		w.time = 359.9 + k * 120.0
+		run(w, 0.2)
+		var river: Array = w.orbs.orbs.filter(func(o): return String(o.spot) == "power" and String(o.kind) != "gold")
+		check(river.size() == 1, "one river orb at %d:00 (%d)" % [6 + 2 * k, river.size()])
+		if not river.is_empty():
+			seen.append(String(river[0].kind))
+	var first: Array = seen.slice(0, 6)
+	first.sort()
+	var all_kinds: Array = SimOrbs.POWER.duplicate()
+	all_kinds.sort()
+	check(first == all_kinds, "the first cycle shows every power orb once (%s)" % str(seen.slice(0, 6)))
+	for i in seen.size() - 1:
+		check(seen[i] != seen[i + 1], "never the same twice in a row (%s)" % str(seen))
+	check(w.orbs.orbs.filter(func(o): return String(o.kind) == "wisdom").size() >= 2, "Wisdom Orbs from 7:00")
+
+func test_orb_rewards_and_effects() -> void:
+	var w := empty_world()
+	w.time = 480.0
+	var a := _sludge(w, Vector2(-1300, 1250))
+	var b := _sludge(w, Vector2(-2000, -4000))
+	var c := _sludge(w, Vector2(-2200, -4000))
+	b.xp = 100.0
+	c.xp = 50.0
+	a.xp = 2000.0
+	var g0 := b.gold()
+	w.orbs._spawn("gold", Vector2(-1300, 1300), "power")
+	var oid: int = w.orbs.orbs[-1].id
+	a.pos = Vector2(-1300, 1500)
+	check(not w.orbs.take(a, oid), "out of reach (200)")
+	a.pos = Vector2(-1300, 1420)
+	check(w.orbs.take(a, oid), "within 150 it is taken")
+	check(b.gold() - g0 == 40 + 6 * 2, "Gold Orb at 8:00: 52 reliable gold to every hero of the team")
+	w.orbs._spawn("wisdom", a.pos, "wisdom")
+	var x0 := c.xp
+	var xa := a.xp
+	w.orbs.take(a, w.orbs.orbs[-1].id)
+	near(a.xp - xa, 280.0, 0.01, "Wisdom Orb at 8:00: 280 experience")
+	near(c.xp - x0, 280.0, 0.01, "and the same to the team's lowest hero")
+	# Speed: 550 and slows ignored
+	w.orbs.activate(a, "speed")
+	a.add_modifier({"id": "test_slow", "source": 0, "expires": INF, "slow": 0.5})
+	a.refresh_stats()
+	near(a.move_speed, 550.0, 0.01, "Speed Orb: 550 speed even when slowed")
+	# Damage: +80% base damage
+	var bd0 := b.bonus_damage
+	w.orbs.activate(b, "damage")
+	b.refresh_stats()
+	near(b.bonus_damage - bd0, (b.dmg_min + b.dmg_max) * 0.5 * 0.8, 0.01, "Damage Orb: +80% base damage")
+	near(b.spell_amp, 0.15, 1e-6, "and 15% spell damage")
+	# Magic: cooldowns and mana
+	var cd0 := w.abilities.ability_cooldown(c, "shuriken_hook")
+	var mana0 := w.abilities.ability_mana(c, "shuriken_hook")
+	w.orbs.activate(c, "magic")
+	near(w.abilities.ability_cooldown(c, "shuriken_hook"), cd0 * 0.75, 0.001, "Magic Orb: 25% shorter cooldowns")
+	near(w.abilities.ability_mana(c, "shuriken_hook"), mana0 * 0.7, 0.001, "and 30% cheaper spells")
+	# Shield: absorbs half of max health
+	w.orbs.activate(c, "shield")
+	var hp0 := c.hp
+	w.combat.deal_damage(a.id, C.DUSK, true, c, c.max_hp * 0.3, C.DamageType.PURE, false, "test")
+	near(c.hp, hp0, 0.01, "Shield Orb absorbs the blow")
+	w.combat.deal_damage(a.id, C.DUSK, true, c, c.max_hp * 0.3, C.DamageType.PURE, false, "test")
+	near(hp0 - c.hp, c.max_hp * 0.1, 0.5, "until half of max health is used up")
+	# Healing: 6% per second, 1% for 3 s after hero damage, ends when full
+	c.hp = c.max_hp * 0.5
+	c.mana = c.max_mana * 0.5
+	w.orbs.activate(c, "healing")
+	var r := w.regen_rates(c)
+	check(r.x >= c.max_hp * 0.06, "Healing Orb: 6% of max health per second")
+	w.combat.deal_damage(a.id, C.DUSK, true, c, 10.0, C.DamageType.PURE, false, "test")
+	r = w.regen_rates(c)
+	check(r.x < c.max_hp * 0.03, "1% after damage from a hero")
+	# Stealth: invisible after 2 s, 25% less damage while invisible, broken by an attack
+	var s := _sludge(w, Vector2(0, -300))
+	w.orbs.activate(s, "stealth")
+	run(w, 0.5)
+	check(not s.has_flag("invisible"), "still fading")
+	run(w, 1.8)
+	check(s.has_flag("invisible"), "invisible after 2 s")
+	var hp1 := s.hp
+	w.combat.deal_damage(a.id, C.DUSK, true, s, 100.0, C.DamageType.PURE, false, "test")
+	near(hp1 - s.hp, 75.0, 0.5, "25% less damage while invisible")
+	w.items.break_sneak(s)
+	check(not s.has_flag("invisible"), "attacking breaks it")
+	# a right-click order walks to it and takes it
+	w.orbs._spawn("water", Vector2(300, -300), "power")
+	var wid: int = w.orbs.orbs[-1].id
+	s.mana = 0.0
+	w.command(s.id, {"type": O.PICKUP_ORB, "orb": wid})
+	run(w, 2.0)
+	check(w.orbs.get_orb(wid).is_empty() and s.mana >= 80.0 - 0.01, "the pick-up order walks over and takes the Water Orb")
+
+func test_bottle_drinks_refills_and_stores_orbs() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(300, -300))
+	var b := _give(w, h, "bottle", 0)
+	check(int(b.charges) == 3, "a Bottle starts with 3 charges")
+	h.hp = h.max_hp * 0.5
+	var hp0 := h.hp
+	w.abilities.execute(h, "", 0, null, h.pos)
+	check(int(b.charges) == 2, "drinking uses a charge")
+	run(w, 3.0)
+	check(h.hp - hp0 >= 110.0 - 1.0 + h.hp_regen_base * 2.0, "110 health over 2.7 s (%.1f)" % (h.hp - hp0))
+	# hero damage ends the drink
+	b["ready"] = 0.0
+	w.abilities.execute(h, "", 0, null, h.pos)
+	var foe := _sludge(w, Vector2(600, -300), {}, C.DUSK)
+	w.combat.deal_damage(foe.id, foe.team, true, h, 1.0, C.DamageType.PURE, false, "test")
+	check(h.get_modifier("bottle").is_empty(), "damage from an enemy hero ends it")
+	# an orb taken while carrying it is stored and refills it
+	b["charges"] = 0
+	w.orbs._spawn("damage", h.pos, "power")
+	w.orbs.take(h, w.orbs.orbs[-1].id)
+	check(String(b.get("orb", "")) == "damage" and h.get_modifier("orb_damage").is_empty(), "the orb goes into the Bottle")
+	check(int(b.charges) == 3, "a power orb refills it to 3")
+	b["ready"] = 0.0
+	w.abilities.execute(h, "", 0, null, h.pos)
+	check(not h.get_modifier("orb_damage").is_empty() and String(b.get("orb", "")) == "", "drinking lets the orb out")
+	# a stored orb lets itself out after 90 s
+	w.orbs._spawn("speed", h.pos, "power")
+	w.orbs.take(h, w.orbs.orbs[-1].id)
+	run(w, 91.0)
+	check(not h.get_modifier("orb_speed").is_empty() or String(b.get("orb", "")) == "", "after 90 s it activates by itself")
+	# refills at the fountain
+	b["charges"] = 0
+	h.pos = _map.fountains[C.DAWN] + Vector2(300, 300)
+	run(w, 1.0)
+	check(int(b.charges) == 3, "the fountain refills it")

@@ -2,7 +2,9 @@ class_name UnitBars
 extends Control
 ## Health bars above every visible unit, drawn in screen space like Dota: thin dark frames, green for your side,
 ## red for enemies, gold-brown for neutrals; heroes get a wider bar with 250-health ticks, a mana bar and a level
-## badge; buildings a long bar. Also draws floating combat text (gold, denies, misses).
+## badge; buildings a long bar. A unit under a timed disable (stun, bash, hex, silence, root, disarm, break, mute) gets
+## a timer bar under its health that empties as the disable runs out, with its name and the seconds left. Also draws
+## floating combat text (gold, denies, misses, critical strikes).
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
@@ -19,7 +21,15 @@ const STATUS_ICONS := {"stun": "status/stunned", "slow": "status/slowed", "frost
 	"curse": "status/cursed", "taint": "status/empowered", "unholy": "status/titan", "fatigue": "status/weakened",
 	"heal": "status/regen", "mana": "status/arcane_charge", "berserk": "status/frenzy", "slip": "status/haste",
 	"spell_shield": "status/rune_immune", "corruption": "status/armor_broken", "spikes": "status/aura_thorns",
-	"sneak": "status/stealth", "blubber": "status/fortified"}
+	"sneak": "status/stealth", "blubber": "status/fortified", "silence": "status/silenced", "root": "status/webbed",
+	"disarm": "status/sundered", "hex": "status/enfeebled", "break": "status/staggered", "weakened": "status/demoralized",
+	"fountain": "status/aura_mending", "dust": "status/dazzled", "haste": "status/haste", "orb_damage": "status/valor",
+	"orb_magic": "status/overcharged", "orb_shield": "status/shielded"}
+
+## Timer bar colours by disable (Dota's overhead bars: stuns white-gold, the rest in their debuff's colour).
+const DISABLE_COLORS := {"Stunned": Color(1.0, 0.86, 0.35), "Hexed": Color(0.45, 1.0, 0.45),
+	"Silenced": Color(0.72, 0.45, 1.0), "Rooted": Color(0.55, 0.85, 0.3), "Disarmed": Color(1.0, 0.58, 0.2),
+	"Broken": Color(1.0, 0.35, 0.3), "Muted": Color(0.75, 0.75, 0.8)}
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -157,6 +167,25 @@ func _draw_all() -> void:
 		draw_string_outline(pf, sp + Vector2(-tw * 0.5, 0), p.text, HORIZONTAL_ALIGNMENT_LEFT, -1, sz, 5, Color(0, 0, 0, a * 0.9))
 		draw_string(pf, sp + Vector2(-tw * 0.5, 0), p.text, HORIZONTAL_ALIGNMENT_LEFT, -1, sz, col)
 
+## The disable timer under a unit's bars: it empties as the stun (or hex, silence, root...) runs out, with the
+## disable's name and the seconds left beside it. Returns the height it used (0 when the unit is free).
+func _disable_bar(u: SimUnit, r: Rect2, big: bool) -> float:
+	var info: Dictionary = game.world.status.disable_info(u)
+	if info.is_empty():
+		return 0.0
+	var kind := String(info.kind)
+	var col: Color = DISABLE_COLORS.get(kind, Color(1, 1, 1))
+	var k := clampf(float(info.left) / maxf(0.05, float(info.total)), 0.0, 1.0)
+	draw_rect(r.grow(1.5), Color(0, 0, 0, 0.9))
+	draw_rect(r, col.darkened(0.7))
+	draw_rect(Rect2(r.position, Vector2(r.size.x * k, r.size.y)), col)
+	draw_rect(Rect2(r.position, Vector2(r.size.x * k, r.size.y * 0.4)), Color(1, 1, 1, 0.3))
+	var label := ("Bashed" if bool(info.get("bash", false)) else kind) + " %.1f" % float(info.left)
+	var f := UiKit.font("bold")
+	var size := 13 if big else 11
+	_texts.append([f, Vector2(r.end.x + 5, r.position.y + r.size.y * 0.5 + size * 0.36), label, size, 4, col.lightened(0.25)])
+	return r.size.y + 6.0
+
 ## Small icons under a hero's bars for what affects it, darkened as their time runs out.
 func _status_icons(u: SimUnit, at: Vector2) -> void:
 	var x := at.x
@@ -224,6 +253,8 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 	var fill := Rect2(r.position, Vector2(width * frac, height))
 	draw_rect(fill, col)
 	draw_rect(Rect2(fill.position, Vector2(fill.size.x, height * 0.35)), Color(1, 1, 1, 0.18))
+	if not u.is_hero() and not u.is_building():
+		_disable_bar(u, Rect2(r.position.x, r.end.y + 3, width, 4), false)
 	if u.is_hero():
 		# a tick every 250 health
 		var ticks := int(u.max_hp / 250.0)
@@ -240,7 +271,8 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		draw_rect(badge, Color(0.85, 0.7, 0.35), false, 1.0)
 		var tw := font.get_string_size(lv, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
 		_texts.append([font, Vector2(badge.position.x + 9 - tw * 0.5, badge.position.y + 13), lv, 12, 0, Color(1, 0.92, 0.7)])
-		_status_icons(u, Vector2(r.position.x, r.end.y + 9))
+		var dy := _disable_bar(u, Rect2(r.position.x, r.end.y + 9, width, 6), true)
+		_status_icons(u, Vector2(r.position.x, r.end.y + 9 + dy))
 		var nm := u.name if u.look.get("display_name", "") == "" else String(u.look.display_name)
 		var nf := UiKit.font("bold")
 		var nw := nf.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x

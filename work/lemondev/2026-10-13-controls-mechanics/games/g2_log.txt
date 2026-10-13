@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 7: no winner at 40:00 (1379.9 s real)
+  Ancient Light (towers lost 4):
+    Bot Ann  sludge        role 2 mid   1/ 6/ 2 lvl 12 LH 103 DN 11 nw  6763 | lane 21%, fight 2%, heal 24%, retreat 12%, task 6%, farm 35%
+             items: ["spell_shield", "magic_wand", "slip_boots", "tough_band"]
+    Bot Bob  ezee          role 3 top   2/15/ 5 lvl 12 LH  31 DN 15 nw  4372 | lane 14%, retreat 9%, fight 5%, task 14%, heal 8%, farm 51%
+             items: ["magic_stick", "branch", "quelling_blade", "tough_band", "branch"]
+    Bot Cat  blood_ranger  role 1 bot  10/ 3/ 3 lvl 16 LH 106 DN 14 nw 13109 | lane 23%, fight 5%, retreat 4%, task 8%, farm 52%, heal 7%
+             items: ["spell_shield", "magic_wand", "power_treads", "wraith_band", "quelling_blade", "dragon_lance", "salve", "crit_sword"]
+    Bot Dan  sludge        role 5 bot   3/ 2/ 6 lvl 13 LH  43 DN  4 nw  6771 | lane 15%, fight 2%, retreat 17%, pull 0%, heal 11%, ward 15%, stack 9%, task 10%, farm 20%
+             items: ["jump_knife", "slip_boots", "spike_armor", "observer_ward", "magic_wand"]
+    Bot Eve  ezee          role 4 top   3/ 9/ 6 lvl 12 LH  18 DN  4 nw  5438 | lane 10%, retreat 9%, fight 6%, heal 10%, task 16%, ward 13%, stack 11%, farm 25%
+             items: ["spike_armor", "magic_wand", "slip_boots", "salve"]
+  Black Sun (towers lost 3):
+    Bot Fay  blood_ranger  role 2 mid  16/ 3/ 6 lvl 18 LH 111 DN 34 nw 13987 | lane 20%, retreat 9%, heal 8%, fight 8%, task 17%, farm 37%
+             items: ["power_treads", "magic_wand", "spell_shield", "wraith_band", "quelling_blade", "dragon_lance", "crit_sword", "shock_hammer"]
+    Bot Gus  ezee          role 3 bot   2/ 5/10 lvl 15 LH  45 DN 33 nw  7674 | lane 22%, retreat 9%, fight 6%, task 9%, heal 8%, farm 46%
+             items: ["spell_shield", "slip_boots", "magic_wand", "quelling_blade", "tough_band"]
+    Bot Hal  sludge        role 5 top   7/ 5/ 8 lvl 12 LH  34 DN  7 nw  7350 | lane 21%, fight 7%, retreat 9%, ward 12%, task 19%, pull 0%, stack 10%, heal 8%, farm 15%
+             items: ["spike_armor", "slip_boots", "jump_knife", "magic_wand"]
+    Bot Ivy  ezee          role 4 bot   0/ 4/14 lvl 14 LH  14 DN 10 nw  5282 | lane 17%, retreat 9%, fight 4%, task 14%, ward 12%, stack 11%, heal 3%, farm 29%
+             items: ["spike_armor", "magic_wand", "slip_boots"]
+    Bot Jo   blood_ranger  role 1 top   5/ 6/11 lvl 14 LH  72 DN 17 nw  9814 | lane 25%, fight 8%, retreat 9%, heal 3%, task 20%, farm 35%
+             items: ["spell_shield", "power_treads", "magic_wand", "wraith_band", "quelling_blade", "dragon_lance"]
+  at 10:00 LH/net worth: Ann 13/1575, Bob 6/946, Cat 4/2649, Dan 1/1356, Eve 2/1806, Fay 20/3285, Gus 6/1437, Hal 1/2372, Ivy 1/872, Jo 10/2745 | team net worth 8332 vs 10711
+  at 20:00 LH/net worth: Ann 53/2812, Bob 11/2054, Cat 26/5352, Dan 6/2276, Eve 3/2766, Fay 50/5653, Gus 13/2602, Hal 7/3163, Ivy 2/1848, Jo 20/3805 | team net worth 15260 vs 17071
+  totals: kills 19 vs 30, net worth 36453 vs 44107
+  stuck: ["Bot Fay stuck at (171.0, -95.0) (heal) from 6:14", "Bot Eve stuck at (3382.0, -5638.0) (retreat) from 14:02", "Bot Hal stuck at (-5312.0, -499.0) (task) from 25:55", "Bot Jo stuck at (-5532.0, -164.0) (task) from 25:55"]
+  chat lines: 278
+    [-1:29] Ancient Light Bot Ann: I'll go mid.
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Cat in the bottom lane.
+    [-1:29] Ancient Light Bot Eve: I'll support Bot Bob in the top lane.
+    [-1:29] Black Sun Bot Fay: I'll go mid.
+    [-1:29] Black Sun Bot Gus: I'll go bottom.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Jo in the top lane.
+    [-1:29] Black Sun Bot Ivy: I'll support Bot Gus in the bottom lane.
+    [-1:29] Black Sun Bot Jo: I'll farm the top lane (safe lane).
+    [0:46] Ancient Light Bot Ann: Going for Blood Ranger.
+    [0:49] Ancient Light Bot Cat: Ezee is missing from bottom! Careful.
+wins: Ancient Light 0, Black Sun 0

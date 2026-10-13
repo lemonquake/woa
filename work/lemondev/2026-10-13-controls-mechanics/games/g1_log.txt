@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3: no winner at 40:00 (1390.9 s real)
+  Ancient Light (towers lost 3):
+    Bot Ann  sludge        role 2 mid   8/ 7/ 6 lvl 14 LH 113 DN  3 nw  8453 | lane 18%, fight 4%, retreat 16%, heal 16%, task 9%, farm 38%
+             items: ["tough_band", "magic_wand", "spell_shield", "slip_boots"]
+    Bot Bob  ezee          role 3 top   4/ 4/11 lvl 15 LH  53 DN 24 nw  8041 | lane 15%, retreat 9%, fight 6%, heal 8%, task 15%, farm 48%
+             items: ["magic_wand", "spell_shield", "slip_boots", "quelling_blade", "tough_band"]
+    Bot Cat  blood_ranger  role 1 bot  13/ 6/ 7 lvl 16 LH  55 DN 24 nw 11030 | lane 25%, fight 7%, retreat 10%, task 15%, farm 37%, heal 5%
+             items: ["power_treads", "spell_shield", "dragon_lance", "wraith_band", "quelling_blade", "crit_sword", "magic_wand"]
+    Bot Dan  sludge        role 5 bot   6/ 6/ 8 lvl 12 LH  29 DN  3 nw  7086 | lane 20%, fight 6%, retreat 16%, ward 19%, stack 11%, pull 0%, heal 8%, task 9%, farm 11%
+             items: ["spike_armor", "jump_knife", "magic_wand", "slip_boots"]
+    Bot Eve  ezee          role 4 top   3/ 8/ 7 lvl 12 LH  10 DN  6 nw  5149 | lane 13%, retreat 13%, fight 4%, heal 4%, stack 9%, task 16%, ward 10%, farm 31%
+             items: ["spike_armor", "slip_boots", "observer_ward", "magic_wand"]
+  Black Sun (towers lost 4):
+    Bot Fay  blood_ranger  role 2 mid   7/ 7/ 5 lvl 16 LH 107 DN 15 nw  9362 | lane 22%, fight 9%, retreat 7%, task 17%, heal 7%, farm 39%
+             items: ["power_treads", "magic_wand", "dragon_lance", "wraith_band", "quelling_blade", "spell_shield"]
+    Bot Gus  ezee          role 3 bot   3/ 7/ 3 lvl 12 LH  58 DN 29 nw  6750 | lane 13%, retreat 8%, fight 5%, heal 4%, task 16%, farm 54%
+             items: ["spell_shield", "magic_wand", "quelling_blade", "tough_band"]
+    Bot Hal  sludge        role 5 top   1/10/ 2 lvl  7 LH  15 DN  5 nw  4036 | lane 18%, fight 2%, retreat 13%, ward 18%, task 15%, heal 8%, stack 10%, pull 0%, farm 16%
+             items: ["spike_armor", "magic_wand", "boots"]
+    Bot Ivy  ezee          role 4 bot   2/ 8/ 7 lvl 11 LH   7 DN 10 nw  4406 | lane 12%, retreat 8%, fight 4%, task 17%, stack 12%, ward 6%, farm 39%, heal 1%
+             items: ["spike_armor", "boots", "magic_wand"]
+    Bot Jo   blood_ranger  role 1 top   7/ 6/ 4 lvl 14 LH  99 DN 18 nw  9923 | lane 26%, fight 5%, retreat 10%, heal 5%, task 11%, farm 44%
+             items: ["power_treads", "magic_wand", "spell_shield", "wraith_band", "quelling_blade", "dragon_lance"]
+  at 10:00 LH/net worth: Ann 15/2220, Bob 5/1534, Cat 3/2340, Dan 4/1845, Eve 2/1447, Fay 19/2949, Gus 6/1398, Hal 2/1561, Ivy 2/1104, Jo 6/2079 | team net worth 9386 vs 9091
+  at 20:00 LH/net worth: Ann 42/3553, Bob 17/3268, Cat 15/4958, Dan 7/2971, Eve 3/2129, Fay 36/4084, Gus 24/2716, Hal 7/2047, Ivy 3/1602, Jo 25/4027 | team net worth 16879 vs 14476
+  totals: kills 34 vs 20, net worth 39759 vs 34477
+  stuck: ["Bot Fay stuck at (3390.0, -1039.0) (farm) from 26:19", "Bot Ivy stuck at (961.0, 613.0) (farm) from 35:10"]
+  chat lines: 289
+    [-1:29] Ancient Light Bot Ann: I'll go mid.
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Cat in the bottom lane.
+    [-1:29] Ancient Light Bot Eve: I'll support Bot Bob in the top lane.
+    [-1:29] Black Sun Bot Fay: I'll go mid.
+    [-1:29] Black Sun Bot Gus: I'll go bottom.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Jo in the top lane.
+    [-1:29] Black Sun Bot Ivy: I'll support Bot Gus in the bottom lane.
+    [-1:29] Black Sun Bot Jo: I'll farm the top lane (safe lane).
+    [0:49] Ancient Light Bot Cat: Ezee is missing from bottom! Careful.
+    [0:50] Black Sun Bot Hal: Ezee is missing from top! Careful.
+ERROR: BUG: Unreferenced static string to 0: Variant
+   at: unref (core/string/string_name.cpp:118)
+WARNING: A Thread object is being destroyed without its completion having been realized.
+Please call wait_to_finish() on it to ensure correct cleanup.
+   at: ~Thread (core/os/thread.cpp:116)
+ERROR: 7 RID allocations of type '23NavMeshGeometryParser2D' were leaked at exit.
+ERROR: 6 RID allocations of type '23NavMeshGeometryParser3D' were leaked at exit.
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketLargeE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)

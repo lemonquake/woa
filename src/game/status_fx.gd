@@ -2,7 +2,9 @@ class_name StatusFx
 extends Node3D
 ## Visuals that last as long as a unit's modifier does: a ring of stars circling a stunned unit's head, a violet
 ## sigil under a cursed one, Ezee's enchanted sword (glow, light, crackling arcs), his Unholy Might aura and Blood
-## Ranger's crimson aura while her ultimate lasts.
+## Ranger's crimson aura while her ultimate lasts. Disables: roots at the feet of a rooted unit, a violet ring over a
+## silenced head, two crossed blades over a disarmed one, a red cracked ring under a broken one, and a hexed unit
+## turns into a sheep.
 ## Rebuilt from the simulation's modifiers every frame, so nothing outlives the state it shows.
 
 const AURA_SHADER := preload("res://src/game/dark_aura.gdshader")
@@ -18,6 +20,12 @@ var _blubber_shader: Shader
 var _star_mesh: Mesh
 var _star_mat: StandardMaterial3D
 var _sigil_mat: ShaderMaterial
+var _root := {}                             # unit id -> Node3D (roots and thorns at the feet)
+var _silence := {}                          # unit id -> Node3D (ring over the head)
+var _disarm := {}                           # unit id -> Node3D (crossed blades over the head)
+var _break := {}                            # unit id -> MeshInstance3D (cracked ring on the ground)
+var _hex := {}                              # unit id -> Node3D (the sheep); the unit's model is hidden meanwhile
+var _ring_mats := {}                        # colour key -> ShaderMaterial for ground rings
 
 func _ready() -> void:
 	name = "StatusFx"
@@ -92,6 +100,11 @@ func _scan() -> void:
 	var seen_taint := {}
 	var seen_aura := {}
 	var seen_blubber := {}
+	var seen_root := {}
+	var seen_silence := {}
+	var seen_disarm := {}
+	var seen_break := {}
+	var seen_hex := {}
 	for id in game.views:
 		var v = game.views[id]
 		if not (v is UnitView):
@@ -100,6 +113,16 @@ func _scan() -> void:
 		if u == null or not u.alive or not v.visible:
 			continue
 		for m in u.modifiers:
+			if m.get("root", false):
+				seen_root[id] = true
+			if m.get("hex", false):
+				seen_hex[id] = true
+			elif m.get("silence", false):
+				seen_silence[id] = true
+			if m.get("disarm", false) and not m.get("hex", false):
+				seen_disarm[id] = true
+			if m.get("break", false):
+				seen_break[id] = true
 			match String(m.get("fx", "")):
 				"stun":
 					seen_stun[id] = true
@@ -118,6 +141,11 @@ func _scan() -> void:
 			seen_stun[id] = true
 	_sync(_stun, seen_stun, _make_stun)
 	_sync(_curse, seen_curse, _make_curse)
+	_sync(_root, seen_root, _make_root)
+	_sync(_silence, seen_silence, _make_silence)
+	_sync(_disarm, seen_disarm, _make_disarm)
+	_sync(_break, seen_break, _make_break)
+	_sync_hex(seen_hex)
 	_want_taint = seen_taint
 	_want_aura = seen_aura
 	_want_blubber = seen_blubber
@@ -147,6 +175,20 @@ func _follow(dt: float) -> void:
 		if v2:
 			var gp := v2.global_position
 			c.global_position = Vector3(gp.x, fx.ground_y(View.to2(gp)) + 0.07, gp.z)
+	for store in [_root, _break]:
+		for id in store:
+			var vg: UnitView = game.views.get(id)
+			if vg and is_instance_valid(store[id]):
+				var gp2 := vg.global_position
+				(store[id] as Node3D).global_position = Vector3(gp2.x, fx.ground_y(View.to2(gp2)) + 0.06, gp2.z)
+	for store2 in [_silence, _disarm]:
+		for id in store2:
+			var vh: UnitView = game.views.get(id)
+			if vh and is_instance_valid(store2[id]):
+				var n2: Node3D = store2[id]
+				# at head height, under the health bar that is drawn over the unit
+				n2.global_position = vh.global_position + Vector3(0, vh.bar_height * (0.74 if store2 == _disarm else 0.8), 0)
+				n2.rotation.y = t * (1.6 if store2 == _silence else 0.0)
 
 func _sync(store: Dictionary, want: Dictionary, make: Callable) -> void:
 	for id in store.keys():
@@ -173,6 +215,165 @@ func _make_stun(id: int) -> Node3D:
 		n.add_child(s)
 		var tw := s.create_tween().set_loops()
 		tw.tween_property(s, "rotation:z", TAU, 0.6).from(0.0)
+	return n
+
+## A flat ring on the ground in a colour, with a pattern: "thorns" (roots) or "cracks" (break).
+func _ground_ring(col: Color, pattern: String, size: float) -> MeshInstance3D:
+	var key := col.to_html() + pattern
+	var m: ShaderMaterial = _ring_mats.get(key)
+	if m == null:
+		var sh := Shader.new()
+		sh.code = RING_CODE
+		m = ShaderMaterial.new()
+		m.shader = sh
+		m.set_shader_parameter("col", col)
+		m.set_shader_parameter("cracks", 1.0 if pattern == "cracks" else 0.0)
+		m.render_priority = 3
+		_ring_mats[key] = m
+	var mi := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(size, size)
+	q.orientation = PlaneMesh.FACE_Y
+	mi.mesh = q
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	return mi
+
+const RING_CODE := """
+shader_type spatial;
+render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, shadows_disabled;
+uniform vec4 col : source_color = vec4(0.4, 0.8, 0.25, 1.0);
+uniform float cracks = 0.0;
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float r = length(p);
+	float a = atan(p.y, p.x);
+	float ring = smoothstep(0.62, 0.7, r) * (1.0 - smoothstep(0.86, 0.95, r));
+	float thorns = (1.0 - smoothstep(0.0, 0.18, abs(sin(a * 9.0)) + (r - 0.35))) * smoothstep(0.25, 0.5, r) * (1.0 - smoothstep(0.85, 0.95, r));
+	float crack = (1.0 - smoothstep(0.0, 0.05, abs(sin(a * 5.0 + r * 9.0)) * r)) * smoothstep(0.3, 0.6, r) * (1.0 - smoothstep(0.9, 0.98, r));
+	float shape = cracks > 0.5 ? max(ring * 0.7, crack) : max(ring, thorns);
+	ALBEDO = col.rgb * 1.6;
+	ALPHA = clamp(shape * (0.75 + 0.25 * sin(TIME * 4.0)), 0.0, 0.9);
+}
+"""
+
+## Roots: a thorny green ring under the unit and a few dark stakes around its feet.
+func _make_root(id: int) -> Node3D:
+	var n := _ground_ring(Color(0.35, 0.75, 0.2), "thorns", 1.6)
+	var stake := CylinderMesh.new()
+	stake.top_radius = 0.0
+	stake.bottom_radius = 0.06
+	stake.height = 0.7
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.28, 0.2, 0.1)
+	mat.roughness = 0.9
+	for i in 6:
+		var s := MeshInstance3D.new()
+		s.mesh = stake
+		s.material_override = mat
+		var a := i * TAU / 6.0
+		s.position = Vector3(cos(a) * 0.45, 0.3, sin(a) * 0.45)
+		s.rotation = Vector3(sin(a) * 0.5, 0, -cos(a) * 0.5)
+		n.add_child(s)
+		s.scale = Vector3(1, 0.05, 1)
+		s.create_tween().tween_property(s, "scale", Vector3.ONE, 0.18)
+	return n
+
+## Silence: a violet ring turning over the head.
+func _make_silence(id: int) -> Node3D:
+	var mi := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.3
+	tm.outer_radius = 0.38
+	mi.mesh = tm
+	mi.material_override = fx._glow(Color(0.62, 0.3, 1.0, 0.85), 4.0)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.scale = Vector3(1, 0.35, 1)
+	add_child(mi)
+	return mi
+
+## Disarm: two crossed blades over the head, in orange.
+func _make_disarm(id: int) -> Node3D:
+	var n := Node3D.new()
+	add_child(n)
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.07, 0.6, 0.02)
+	var mat := fx._glow(Color(1.0, 0.55, 0.15, 0.9), 3.5)
+	for sgn in [-1.0, 1.0]:
+		var b := MeshInstance3D.new()
+		b.mesh = bm
+		b.material_override = mat
+		b.rotation.z = sgn * PI * 0.25
+		b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		n.add_child(b)
+	return n
+
+## Break: a red cracked ring on the ground.
+func _make_break(id: int) -> Node3D:
+	return _ground_ring(Color(1.0, 0.25, 0.2), "cracks", 1.5)
+
+## Hex: the unit's model is hidden and a small sheep stands in its place (it walks and turns with the unit).
+func _sync_hex(want: Dictionary) -> void:
+	for id in _hex.keys():
+		if not want.has(id):
+			var v0: UnitView = game.views.get(id)
+			if v0 and v0.model:
+				v0.model.visible = true
+			if is_instance_valid(_hex[id]):
+				(_hex[id] as Node).queue_free()
+			_hex.erase(id)
+			if v0:
+				fx.debris(v0.global_position + Vector3(0, 0.6, 0), 8, Color(0.9, 0.95, 0.9), 2.0, 0.5, "chip")
+	for id in want:
+		if _hex.has(id):
+			continue
+		var v: UnitView = game.views.get(id)
+		if v == null or v.pivot == null:
+			continue
+		if v.model:
+			v.model.visible = false
+		var sheep := _make_sheep()
+		v.pivot.add_child(sheep)
+		_hex[id] = sheep
+
+func _make_sheep() -> Node3D:
+	var n := Node3D.new()
+	var wool := StandardMaterial3D.new()
+	wool.albedo_color = Color(0.93, 0.92, 0.88)
+	wool.roughness = 1.0
+	var skin := StandardMaterial3D.new()
+	skin.albedo_color = Color(0.18, 0.16, 0.15)
+	skin.roughness = 0.8
+	var body := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.32
+	sm.height = 0.5
+	body.mesh = sm
+	body.material_override = wool
+	body.position = Vector3(0, 0.45, 0)
+	body.scale = Vector3(0.95, 1.0, 1.35)
+	n.add_child(body)
+	var head := MeshInstance3D.new()
+	var hm := SphereMesh.new()
+	hm.radius = 0.13
+	hm.height = 0.26
+	head.mesh = hm
+	head.material_override = skin
+	head.position = Vector3(0, 0.62, -0.42)          # the view faces -Z in its pivot
+	n.add_child(head)
+	var leg := CylinderMesh.new()
+	leg.top_radius = 0.035
+	leg.bottom_radius = 0.035
+	leg.height = 0.3
+	for p in [Vector3(0.14, 0.15, 0.22), Vector3(-0.14, 0.15, 0.22), Vector3(0.14, 0.15, -0.22), Vector3(-0.14, 0.15, -0.22)]:
+		var l := MeshInstance3D.new()
+		l.mesh = leg
+		l.material_override = skin
+		l.position = p
+		n.add_child(l)
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	return n
 
 func _make_curse(id: int) -> Node3D:

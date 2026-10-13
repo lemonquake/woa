@@ -40,7 +40,7 @@ enum DamageType { PHYSICAL, MAGICAL, PURE }
 
 # ---- Orders ---------------------------------------------------------------------------------------------------------
 enum Order { NONE, MOVE, ATTACK_UNIT, ATTACK_MOVE, HOLD, STOP, CAST_NO_TARGET, CAST_POINT, CAST_UNIT, MOVE_TO_UNIT,
-	DROP_ITEM, PICKUP_ITEM, GIVE_ITEM }
+	DROP_ITEM, PICKUP_ITEM, GIVE_ITEM, PICKUP_ORB }
 
 # ---- Movement & attack ---------------------------------------------------------------------------------------------
 ## A unit only starts walking, attacking or casting when its target is within this angle of its facing (11.5 deg).
@@ -179,8 +179,13 @@ const TO_BUY_SHOWN := 8
 
 # ---- Fountain -------------------------------------------------------------------------------------------------------
 const FOUNTAIN_AURA_RADIUS := 1200.0
-const FOUNTAIN_HP_REGEN_PCT := 0.04          # APPROX
-const FOUNTAIN_MANA_REGEN_PCT := 0.06        # APPROX
+const FOUNTAIN_HP_REGEN_PCT := 0.05          # Rejuvenation Aura (Dota 2 wiki, Fountain): 5% max health per second
+const FOUNTAIN_MANA_REGEN_PCT := 0.06        # and 6% max mana per second
+const FOUNTAIN_LINGER := 3.0                 # the aura's buff lingers 3 s
+const TOWER_TRUE_SIGHT := 700.0             # APPROX (Dota 2 wiki: towers, the Ancient and the fountain have True Sight)
+const ANCIENT_TRUE_SIGHT := 900.0            # APPROX
+const FOUNTAIN_TRUE_SIGHT := 1200.0          # APPROX
+const HEX_MOVE_SPEED := 140.0                # a hexed unit's base movement speed (Hex Staff: sheep_movement_speed)
 const SHOP_RADIUS := 1000.0
 
 # ---- Neutrals ---------------------------------------------------------------------------------------------------------

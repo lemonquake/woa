@@ -1,0 +1,6 @@
+BENCH frames 3588 avg 16.72 ms (60 fps) p50 16.67 p95 23.33 p99 29.90 max 89.87 over16.7 933 units 230
+  per-frame means: views 1.93, fx 0.17, status 0.15, target 0.01, fog 0.06, sim 3.36, sync 1.32, gpu 6.48, rcpu 1.66, proc 20.64, phys 18.36, draws 1900.93, prims 2249456.96, trails 0.13, bars 0.38
+BENCH frames 3303 avg 18.17 ms (55 fps) p50 16.67 p95 29.63 p99 38.16 max 83.41 over16.7 1353 units 230
+  per-frame means: views 2.02, fx 0.17, status 0.15, target 0.01, fog 0.06, sim 3.82, sync 1.51, gpu 6.58, rcpu 1.70, proc 21.85, phys 19.83, draws 1893.93, prims 2240966.59, trails 0.14, bars 0.41
+BENCH frames 3709 avg 16.18 ms (62 fps) p50 16.00 p95 20.00 p99 28.44 max 52.48 over16.7 708 units 230
+  per-frame means: views 1.89, fx 0.16, status 0.14, target 0.01, fog 0.05, sim 3.18, sync 1.22, gpu 6.39, rcpu 1.67, proc 19.19, phys 18.04, draws 1902.36, prims 2248242.62, trails 0.13, bars 0.37

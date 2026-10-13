@@ -152,7 +152,36 @@ func think() -> void:
 		_pregame(h)
 		return
 	_choose_mode(h)
+	if mode != "retreat" and mode != "fight" and _grab_orb(h):
+		return
 	_run_mode(h)
+
+## An orb the team can see close by is worth a detour (the mid hero also goes for the river orbs from farther), unless
+## an enemy hero stands nearer to it than half our distance.
+func _grab_orb(h: SimUnit) -> bool:
+	var best: Dictionary = {}
+	var bd := INF
+	for o in w.orbs.orbs:
+		var p: Vector2 = o.pos
+		if not w.vision.cell_visible(h.team, p):
+			continue
+		var reach := 2200.0 if (role == 2 and String(o.spot) == "power") else 1300.0
+		var d := h.pos.distance_to(p)
+		if d > reach or d >= bd:
+			continue
+		var contested := false
+		for f in _foes:
+			if f.pos.distance_to(p) < d * 0.5:
+				contested = true
+		if not contested:
+			bd = d
+			best = o
+	if best.is_empty():
+		return false
+	if h.order != O.PICKUP_ORB or h.order_gid != int(best.id):
+		_order(h, {"type": O.PICKUP_ORB, "orb": int(best.id)}, true)
+	state = "orb"
+	return true
 
 func _pregame(h: SimUnit) -> void:
 	mode = "lane"
@@ -1191,7 +1220,7 @@ func _shop(h: SimUnit) -> void:
 		var c := w.get_unit(h.courier_id)
 		if c and c.alive and c.courier_state == "idle":
 			w.courier_deliver(h)
-	if h.tp_charges == 0 and h.gold() >= 100 and w.time > -60.0:
+	if w.shop.tp_owned(h) == 0 and h.gold() >= 100 and w.time > -60.0:
 		w.shop.buy(h, "tp_scroll")
 	# supports carry an Eye Ward (free) from the start
 	if role >= 4 and bool(sk.advanced) and _ward_slot(h) < 0 and w.time - _last_ward_buy > 150.0 and w.shop.in_shop(h):
@@ -1285,9 +1314,26 @@ func _ally_hurt_near(h: SimUnit, r: float) -> bool:
 			return true
 	return false
 
-## Fight items, used when going after an enemy hero: Spell Shield, Frenzy Mask, Slip Boots to close in.
+## Fight items, used when going after an enemy hero: Spell Shield, Frenzy Mask, Slip Boots to close in, and the
+## disables (Hex Staff, Stun Blade, Silence Staff, Root Staff, Halberd) on a target that is not already disabled.
 func _fight_items(h: SimUnit, e: SimUnit) -> void:
 	var d := h.edge_distance(e)
+	var held: Dictionary = w.status.disable_info(e)
+	if held.is_empty() or float(held.left) < 0.3:
+		for dis in ["hex_staff", "stun_blade", "silence_staff", "root_staff", "halberd"]:
+			var ds := _ready_slot(h, dis, e)
+			if ds < 0:
+				continue
+			var reach := float(SimData.item(dis).values.range)
+			# the Halberd answers a right-clicker hitting us; Root Staff stops a target walking away
+			if dis == "halberd" and (e.atk_target != h.id or e.def.primary == "int"):
+				continue
+			if dis == "root_staff" and e.hp > e.max_hp * 0.6 and not e.moving:
+				continue
+			if d <= reach + 50.0:
+				_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": ds, "target": e.id}, true)
+				_cast_deadline = w.time + 0.6
+				return
 	var bkb := _ready_slot(h, "spell_shield")
 	if bkb >= 0 and d < 500.0 and (h.hp < h.max_hp * 0.75 or e.hp < e.max_hp * 0.5 or _foes.size() >= 2):
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": bkb})

@@ -102,3 +102,27 @@ Session cut off during integration; on resume the owner asked to cut the remaini
 | AI2 hero bots | n | working tree | gate: 10 x 5v5 bot games, 40 min | n/a | REJECT (gate) | no Ancient falls in any game; Bot Cat and Bot Jo idle in lane from 0:21 in all ten | fix the idle-in-lane bug first |
 | Integration (G) | 1 | working tree | bench 1v1 48-53 fps, 5v5 39-58 fps; names OK; export | n/a | INCOMPLETE (cut by owner) | bench below the 10% gate; tests and probes not rerun | rerun tests, probes, bench |
 | CAM, NC1, NC2, GS, AI1, AI3, CH | — | working tree | captures only | n/a | UNVERIFIED | gates not rerun at the end | rerun the probes |
+
+## Session 2026-10-13 d (controls, HUD, status effects, bash, crit, items, neutral abilities, true sight, orbs) — run `work/lemondev/2026-10-13-controls-mechanics/` (contract.md)
+
+No critic subagent was run (the owner did not ask for subagents, and no Dota frames of the new visuals are on disk);
+every visual gate below is a builder self-check and is reported UNVERIFIED for blind review.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| U1 cursor lock, edge pan | 1 | 93b2efc + working tree | gate: controls_probe (live window on the owner's 2nd monitor) | n/a | PASS (gate) | none: CONFINED in Borderless/Fullscreen/locked Windowed; OS clamps a warped cursor; edge pans and keeps panning when pushed | none |
+| U2 shop closes | 1 | working tree | gate: controls_probe | n/a | PASS (gate) | none | none |
+| U3 regen with bonus | 1 | working tree | gate: test + capture | n/a | REJECT (self-check) | green "+bonus" low contrast on the green bar | outline the text |
+| U3 regen with bonus | 2 | working tree | gate: recapture | n/a | PASS (gate) | none | none |
+| U4 Teleport Scroll | 1 | working tree | gate: test + probe | n/a | PASS (gate) | none (one probe flake: waited 20 frames for a 0.5 s shop check; probe fixed) | none |
+| U5 hold Stop | 1 | working tree | gate: controls_probe | n/a | PASS (gate) | none | none |
+| M1 status system | 1 | working tree | gate: tests (PRD table and rate, stun groups, status/slow resistance, hex, silence burst, root, disarm, break, dispels) | n/a | PASS (gate) | none | none |
+| M2 crit and bash | 1 | working tree | gate: tests + live crit in probe | n/a | PASS (gate) | none | none |
+| M3 items | 1 | working tree | gate: tests (prices, recipes, actives) + shop captures | n/a | REJECT (self-check) | shop pane text ran into "Made from" for long items | reserve rows for parts, shorten texts |
+| M3 items | 2 | working tree | gate: recaptures | n/a | PASS (gate) | none | none |
+| M4 neutral abilities | 1 | working tree | gate: tests + Smash capture | n/a | PASS (gate) | none | none |
+| M5 rules fixes, true sight, disjoint | 1 | working tree | gate: tests | n/a | PASS (gate) | test setup stood heroes behind trees (no sight); test fixed, not the code | none |
+| M6 orbs and Flask | 1 | working tree | gate: tests (schedule, cycle, rewards, effects, Flask) + probe (right click take) + captures | n/a | PASS (gate) | none | Illusion rune needs illusions |
+| V visuals | 1 | working tree | gate: captures (disable bars, sheep, roots, disarm, crit number, orbs, Smash ring) | n/a | REJECT (self-check) | disarm blades hidden behind the health bar | lower them to head height |
+| V visuals | 2 | working tree | gate: recaptures | n/a | PASS (gate); blind review UNVERIFIED | none | Dota frames for a blind review |
+| Integration (G) | 1 | working tree | tests 137/137, check.sh Names OK, controls_probe 31/31 (1080p) and 23/23 (true 4K), input probes 3 heroes, item flow 13/13, two 40-min 5v5 bot games without script errors, bench 60/55/62 fps vs same-session baseline 57/60, export + cold start 9.7 s | n/a | PASS (gate) | none new; old AI2 gate (an Ancient falls in 60 min) still fails, stuck bots late in games | blind review needs Dota frames |

@@ -25,6 +25,7 @@ const ACTIONS := [
 	["item_5", "Item slot 5", "Items", KEY_B],
 	["item_6", "Item slot 6", "Items", KEY_N],
 	["tp", "Teleport", "Items", KEY_T],
+	["buy_tp", "Buy Teleport Scroll", "Items", KEY_COMMA],
 	["attack", "Attack", "Orders", KEY_A],
 	["stop", "Stop (hold: hard stop)", "Orders", KEY_S],
 	["hold", "Hold position", "Orders", KEY_H],

@@ -101,10 +101,10 @@ func val(u: SimUnit, aid: String, key: String) -> float:
 	return v
 
 func ability_mana(u: SimUnit, aid: String) -> float:
-	return val(u, aid, "mana")
+	return val(u, aid, "mana") * SimOrbs.mana_mult(u)
 
 func ability_cooldown(u: SimUnit, aid: String) -> float:
-	return maxf(0.0, val(u, aid, "cooldown"))
+	return maxf(0.0, val(u, aid, "cooldown")) * SimOrbs.cooldown_mult(u)
 
 func cooldown_left(u: SimUnit, aid: String) -> float:
 	return maxf(0.0, float(u.ability_ready.get(aid, C.LONG_AGO)) - w.time)
@@ -129,6 +129,11 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 			return "Not enough mana"
 		if u.is_stunned():
 			return "Stunned"
+		# an item (muted units cannot use it) that roots disable, as in Dota
+		if u.is_muted():
+			return "Muted"
+		if u.has_flag("root"):
+			return "Rooted"
 		return ""
 	var a := SimData.ability(aid)
 	if a.is_empty() or not u.ability_level.has(aid):
@@ -187,9 +192,9 @@ func _item_error(u: SimUnit, slot: int, target: SimUnit, point: Vector2, check_t
 		return "Item on cooldown"
 	if u.is_stunned():
 		return "Stunned"
-	if u.has_flag("mute"):
+	if u.is_muted():
 		return "Muted"
-	if u.mana < float(d.get("mana", 0.0)):
+	if u.mana < float(d.get("mana", 0.0)) * SimOrbs.mana_mult(u):
 		return "Not enough mana"
 	if not check_target and item_target(it.id) != "none":
 		match String(d.use):
@@ -307,6 +312,8 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 			w.events.append({"t": "blood_ranger_start", "u": u.id, "dur": dur})
 		"dark_stomp":
 			_dark_stomp(u, a, lv)
+		"snarl", "stomp", "smash":
+			_neutral_spell(u, aid, a, p)
 		"leap_strike":
 			var lt := leap_target(u, lv)
 			if lt != null:
@@ -345,6 +352,8 @@ func can_debuff(t: SimUnit, src_team: int, pierces := false) -> bool:
 
 ## Every hero spell cast charges enemy Spark Rods / Wands within range.
 func _charge_sticks(caster: SimUnit) -> void:
+	if not caster.is_hero():
+		return
 	for h in w.heroes:
 		if not h.alive or h.team == caster.team or h.pos.distance_to(caster.pos) > 1200.0:
 			continue
@@ -418,7 +427,7 @@ func attack_modifier_hit(s: Dictionary, t: SimUnit) -> void:
 	var a := SimData.ability(s.mod)
 	var lv := maxi(1, src.ability_level_of(s.mod))
 	if (a.values as Dictionary).has("slow"):
-		t.add_modifier({"id": String(s.mod) + "_slow", "source": src.id, "expires": w.time + _v(a, "duration", lv),
+		w.status.apply(t, src.id, src.team, {"id": String(s.mod) + "_slow", "dur": _v(a, "duration", lv),
 			"slow": _v(a, "slow", lv), "fx": "slow"})
 
 # ---- Timed effects -----------------------------------------------------------------------------------------------------
@@ -521,6 +530,27 @@ func _dark_stomp(u: SimUnit, a: Dictionary, lv: int) -> void:
 		var speed := _v(a, "push_speed", lv) * lerpf(0.72, 1.0, near) / mass(o)
 		if can_debuff(o, u.team):
 			start_push(o, dir.normalized() * speed, u.id, u.team, "dark_stomp", lv, _cast_seq)
+
+## The neutral creeps' spells. Snarl: enemies nearby deal 60% less attack damage for 4 s. Stomp: magic damage and a
+## stun around the caster (1.6 s heroes, 3 s others). Smash: the same at the target point after its long wind-up.
+func _neutral_spell(u: SimUnit, aid: String, a: Dictionary, p: Vector2) -> void:
+	var r := _v(a, "radius", 1)
+	var center := u.pos if aid != "smash" else p
+	w.events.append({"t": "neutral_spell", "u": u.id, "ability": aid, "pos": center, "radius": r})
+	for o: SimUnit in w.query(center, r + 40.0, true):
+		if not o.alive or o.team == u.team or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if o.pos.distance_to(center) > r + o.hull:
+			continue
+		match aid:
+			"snarl":
+				w.status.apply(o, u.id, u.team, {"id": "snarl", "dur": _v(a, "duration", 1),
+					"stats": {"attack_out_pct": -_v(a, "damage_reduction", 1)}, "fx": "weakened"})
+			"stomp", "smash":
+				w.combat.deal_damage(u.id, u.team, false, o, _v(a, "damage", 1), C.DamageType.MAGICAL, false, aid)
+				if o.alive:
+					var dur := _v(a, "hero_stun", 1) if o.is_hero() else _v(a, "stun", 1)
+					w.status.apply(o, u.id, u.team, {"id": "stunned", "stun": true, "dur": dur, "fx": "stun"})
 
 var _cast_seq := 0
 var _impacted := {}                         # cast seq -> {unit id: true}: impact damage lands once per unit per cast
@@ -644,8 +674,10 @@ func update_motion(u: SimUnit) -> void:
 		u.knock = {}
 		u.path = PackedVector2Array()
 		if float(k.stun) > 0.0 and u.alive:
-			u.add_modifier({"id": "stun", "source": int(k.src), "expires": w.time + float(k.stun), "stun": true, "fx": "stun"})
-			w.events.append({"t": "stunned", "u": u.id, "dur": float(k.stun)})
+			var ks := w.get_unit(int(k.src))
+			if w.status.apply(u, int(k.src), ks.team if ks else C.NEUTRAL, {"id": "stunned", "stun": true,
+					"dur": float(k.stun), "fx": "stun"}):
+				w.events.append({"t": "stunned", "u": u.id, "dur": float(u.get_modifier("stunned").get("dur", k.stun))})
 
 func _obstacle(p: Vector2) -> String:
 	if w.map.tree_at(p, 110.0) >= 0:
@@ -742,7 +774,7 @@ func _update_leap(u: SimUnit) -> void:
 			var dmg := _v(a, "damage", lv) + _v(a, "str_mult", lv) * u.str_total
 			w.combat.deal_damage(u.id, u.team, true, t, dmg, C.DamageType.PURE, false, "leap_strike")
 			if t.alive and can_debuff(t, u.team):
-				t.add_modifier({"id": "leap_strike_slow", "source": u.id, "expires": w.time + _v(a, "slow_duration", lv),
+				w.status.apply(t, u.id, u.team, {"id": "leap_strike_slow", "dur": _v(a, "slow_duration", lv),
 					"slow": _v(a, "slow", lv), "fx": "slow"})
 				if u.order == O.NONE:
 					w.orders.issue(u, {"type": O.ATTACK_UNIT, "target": t.id}, false)
@@ -755,7 +787,7 @@ func tainted_hit(s: Dictionary, t: SimUnit) -> void:
 	var lv := int(s.taint)
 	w.combat.deal_damage(s.src, s.team, bool(s.hero), t, _v(a, "bonus_damage", lv), C.DamageType.MAGICAL, false, "tainted_touch")
 	if t.alive and can_debuff(t, int(s.team)):
-		t.add_modifier({"id": "tainted_curse", "source": s.src, "expires": w.time + _v(a, "curse_duration", lv),
+		w.status.apply(t, int(s.src), int(s.team), {"id": "tainted_curse", "dur": _v(a, "curse_duration", lv),
 			"reveal": int(s.team), "reveal_r": _v(a, "curse_vision", lv), "fx": "curse"})
 		w.events.append({"t": "curse", "u": t.id, "src": s.src})
 
@@ -837,12 +869,13 @@ func update_burst(u: SimUnit) -> void:
 ## Masterful Archery: rolled when an attack is released (so the arrow can show it); 0.8 s cooldown after a burst.
 func masterful_bonus(u: SimUnit, t: SimUnit) -> float:
 	var lv := u.ability_level_of("masterful_archery")
-	if lv <= 0 or t.is_building() or t.team == u.team:
+	if lv <= 0 or t.is_building() or t.team == u.team or u.is_broken():
 		return 0.0
 	if w.time < float(u.ability_ready.get("masterful_archery", C.LONG_AGO)):
 		return 0.0
+	# pseudo-random like every chance-on-attack passive in Dota; no roll while it cools down
 	var a := SimData.ability("masterful_archery")
-	if w.rng.randf() >= _v(a, "chance", lv):
+	if not w.status.roll(u, "masterful_archery", _v(a, "chance", lv)):
 		return 0.0
 	u.ability_ready["masterful_archery"] = w.time + _v(a, "proc_cooldown", lv)
 	return u.agi_total * _v(a, "agility_pct", lv)
@@ -856,7 +889,7 @@ func on_attacked(t: SimUnit, attacker: SimUnit) -> void:
 		return
 	if w.time < float(t.get_meta("hop_ready", C.LONG_AGO)):
 		return
-	if w.rng.randf() >= float(m.leap_chance):
+	if not w.status.roll(t, "blood_ranger_leap", float(m.leap_chance)):
 		return
 	var away := t.pos - attacker.pos
 	if away.length() < 1.0:
@@ -1147,8 +1180,8 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 	var it: Dictionary = u.inventory[slot]
 	var d := SimData.item(it.id)
 	var v: Dictionary = d.values
-	it["ready"] = w.time + float(d.cooldown)
-	u.mana -= float(d.get("mana", 0.0))
+	it["ready"] = w.time + float(d.cooldown) * SimOrbs.cooldown_mult(u)
+	u.mana -= float(d.get("mana", 0.0)) * SimOrbs.mana_mult(u)
 	if String(d.use) != "sneak":
 		w.items.break_sneak(u)
 	var consumed := false
@@ -1195,9 +1228,15 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 				w.events.append({"t": "tree", "i": ti3, "alive": true, "planted": true})
 				consumed = true
 		"ward":
-			var ward := w.spawn("ward_observer", u.team, p)
+			var ward := w.spawn(String(v.get("unit", "ward_observer")), u.team, p)
 			ward.ward_expires = w.time + float(v.lifetime)
 			ward.add_modifier({"id": "ward_invis", "source": u.id, "expires": INF, "invisible": true})
+			if ward.def.get("true_sight", 0.0) > 0.0:
+				# a Reveal Ward gives 150 ground sight around itself for its first 12 s
+				w.vision.add_source(u.team, p, 150.0, 12.0)
+			consumed = true
+		"dust":
+			w.status.dust(u, v)
 			consumed = true
 		"berserk":
 			u.mana -= float(v.mana)

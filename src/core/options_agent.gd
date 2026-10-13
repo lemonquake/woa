@@ -1,6 +1,7 @@
 extends CanvasLayer
 ## Lives under the root for the whole session (added by Options.apply_all): mutes the game while its window is in
-## the background (when that option is on) and draws the FPS counter.
+## the background (when that option is on), keeps the cursor locked to the window after Alt + Tab, and draws the FPS
+## counter.
 
 var unfocused := false
 var _fps: Label
@@ -36,6 +37,7 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		unfocused = false
 		Options.apply_audio()
+		Options.apply_cursor()
 
 func _process(_dt: float) -> void:
 	var on := bool(Options.get_value("show_fps"))

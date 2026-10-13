@@ -111,6 +111,14 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 			u.order = type
 			u.order_gid = int(g.gid)
 			u.order_point = g.pos
+		O.PICKUP_ORB:
+			var ob := w.orbs.get_orb(int(o.get("orb", -1)))
+			if ob.is_empty() or not u.is_hero():
+				return
+			_interrupt(u)
+			u.order = type
+			u.order_gid = int(ob.id)
+			u.order_point = ob.pos
 		O.STOP:
 			clear(u)
 			return
@@ -229,11 +237,13 @@ func update(u: SimUnit) -> void:
 			u.moving = false
 			return
 	if not u.channel.is_empty():
-		if u.is_stunned():
+		# Teleport: stuns, hexes and mutes end it, and so do roots (Dota's Town Portal is "root disables")
+		if u.is_stunned() or u.is_muted() or u.has_flag("root"):
 			cancel_channel(u)
 		elif w.time >= float(u.channel.until):
 			var dest: Vector2 = u.channel.dest
 			u.channel = {}
+			w.combat.disjoint(u)
 			u.pos = dest
 			u.path = PackedVector2Array()
 			u.order = O.NONE
@@ -285,6 +295,16 @@ func update(u: SimUnit) -> void:
 			_order_cast(u)
 		O.DROP_ITEM, O.PICKUP_ITEM, O.GIVE_ITEM:
 			_order_item(u)
+		O.PICKUP_ORB:
+			# walk within 150 of the orb and take it (gone meanwhile: the order ends)
+			var ob := w.orbs.get_orb(u.order_gid)
+			if ob.is_empty():
+				_finish_order(u)
+			elif u.pos.distance_to(ob.pos) > SimOrbs.PICKUP_RANGE:
+				_move_to(u, ob.pos, SimOrbs.PICKUP_RANGE * 0.6)
+			else:
+				w.orbs.take(u, int(ob.id))
+				_finish_order(u)
 
 ## Who may receive an item: an allied hero or the giver's own courier, alive, with a free slot.
 func give_error(u: SimUnit, t: SimUnit) -> String:
@@ -373,7 +393,8 @@ func _idle(u: SimUnit, hold: bool) -> void:
 	if t == null or not _attackable(u, t):
 		u.atk_target = -1
 		t = null
-		if u.is_hero() and (u.auto_attack or hold) and not u.no_acquire:
+		# invisible units never attack on their own (Dota 2 wiki, Invisibility)
+		if u.is_hero() and (u.auto_attack or hold) and not u.no_acquire and not u.has_flag("invisible"):
 			t = _acquire(u, u.attack_range if hold else u.acquire_range)
 			if t:
 				u.atk_target = t.id
@@ -476,8 +497,10 @@ func _attack(u: SimUnit, t: SimUnit, chase: bool) -> void:
 	u.prev_attack_at = u.next_attack_at
 	u.next_attack_at = w.time + u.attack_interval()
 	u.atk_modifier = w.abilities.attack_modifier_for(u, t)
+	# Dota decides a critical strike when the attack starts, not when it lands
+	u.atk_crit = w.combat.roll_crit(u, t)
 	w.events.append({"t": "attack_start", "u": u.id, "target": t.id, "point": u.atk_timer,
-		"interval": u.attack_interval(), "mod": u.atk_modifier})
+		"interval": u.attack_interval(), "mod": u.atk_modifier, "crit": u.atk_crit > 1.0})
 	w.ai.on_attack_start(u, t, u.atk_modifier != "" and u.atk_modifier == u.orb_manual)
 	if u.atk_timer <= 0.0:
 		_update_windup(u)
@@ -497,6 +520,7 @@ func _update_windup(u: SimUnit) -> void:
 	# the attack point is reached: the attack is released
 	w.combat.release_attack(u, t, u.atk_modifier)
 	u.atk_modifier = ""
+	u.atk_crit = 1.0
 	u.atk_phase = AP.BACKSWING
 	u.atk_timer = u.backswing_time()
 

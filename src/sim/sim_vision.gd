@@ -60,6 +60,36 @@ func update() -> void:
 					_cast(vis, u.pos, float(m.get("reveal_r", 300.0)), true)
 					break
 		visible[team] = vis
+	_true_sight_sources()
+
+## True Sight (Dota 2 wiki, Invisibility): towers, the Throne, the fountain and Reveal Wards see invisible enemies
+## within their radius, wherever their team has vision; Reveal Dust marks the units it touches. Rebuilt with vision.
+var true_sight := [[], []]                 # team -> [[pos, radius], ...]
+
+func _true_sight_sources() -> void:
+	true_sight = [[], []]
+	for u in w.units:
+		if not u.alive or u.team < 0 or u.team > 1:
+			continue
+		var r := float(u.def.get("true_sight", 0.0))
+		if r <= 0.0 and u.kind == C.Kind.TOWER:
+			r = C.TOWER_TRUE_SIGHT
+		elif r <= 0.0 and u.kind == C.Kind.ANCIENT:
+			r = C.ANCIENT_TRUE_SIGHT
+		if r > 0.0:
+			true_sight[u.team].append([u.pos, r])
+
+## Whether `team` has True Sight over unit `u` (a source in range or Reveal Dust on it).
+func true_sighted(team: int, u: SimUnit) -> bool:
+	if team < 0 or team > 1:
+		return false
+	for m in u.modifiers:
+		if int(m.get("truesight_by", -1)) == team:
+			return true
+	for s in true_sight[team]:
+		if (s[0] as Vector2).distance_to(u.pos) <= float(s[1]):
+			return true
+	return false
 
 ## Sight for `team` over `pos` (flying vision: sees over cliffs and trees) for `dur` seconds.
 func add_source(team: int, pos: Vector2, r: float, dur: float) -> void:
@@ -152,7 +182,8 @@ func sees(team: int, u: SimUnit) -> bool:
 	if revealed_to(u, team):
 		return true
 	if u.has_flag("invisible"):
-		return false
+		# invisible: seen only under True Sight, where the team has vision
+		return cell_visible(team, u.pos) and true_sighted(team, u)
 	if cell_visible(team, u.pos):
 		return true
 	# a building's footprint may poke into sight

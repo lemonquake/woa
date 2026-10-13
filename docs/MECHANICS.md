@@ -11,6 +11,11 @@ be checked against the game files. They are kept in one place so they are easy t
 | Dota 2 game data (`scripts/npc/npc_units.txt`, `npc_abilities.txt`, `items.txt`, `heroes/*.txt`) via the public d2vpkr mirror on GitHub | Exact unit stats (creeps, towers, barracks, Ancient, fountain, neutrals), creep attack classes (`creep_irresolute`, `creep_piercing`, `creep_siege`), backdoor protection, flagbearer aura, item stats and costs, hero base stats | `work/research/` (local research cache, not shipped) |
 | Liquipedia Dota 2 wiki pages, fetched through the MediaWiki API before Liquipedia rate-limited the requests | Wave timing and composition, lane creep target priority and aggro rules, tower targeting, attack animation and turn-rate formulas, XP table, deny XP, gold sources, time of day, stacking | `work/research/*.txt` |
 
+On 2026-10-13 (run d) Liquipedia's API answered 429; the status-effect rules came from the Dota 2 wiki on Fandom
+(MediaWiki API, one batched request per set of pages, cached in `work/lemondev/2026-10-13-controls-mechanics/research/`)
+checked against Valve's 7.41d game data. Fandom's pages are older than 7.41 in places; where they differ, the game data
+wins.
+
 Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (gzip, spaced requests, as its API terms require) answered again; it gave the Trees, Quelling Blade, Tango, Iron Branch, Channeling, Lifesteal and Forced movement pages and four game constants: tree respawn time 180, tree respawn radius 150, item lifesteal creep factor 0.4, tree collision size 128. Global constants that only exist there as `{{G|...}}` templates (aggro radius, kill-gold formula and similar) use best-known values and are marked APPROX.
 
 ## Time and space
@@ -37,7 +42,20 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 * Attack-move fights the nearest enemy within acquisition range. Hold position attacks only within attack range.
 * An idle hero auto-attacks the nearest visible enemy within acquisition range.
 * Denies: allied lane creeps below 50% HP, allied buildings below 10%.
-* Attacks on higher ground miss 25% of the time (APPROX). Evasion rolls first.
+* Misses (Dota 2 wiki, Evasion): true strike (pierce) first, then the target's evasion, then for **ranged** attacks
+  from lower ground (not flying attackers) the 25% uphill miss (APPROX value). Melee attacks never miss uphill. Each is
+  its own pseudo-random roll, so they stack diminishingly. Evasion from several sources multiplies:
+  1 - (1 - a)(1 - b). Buildings never evade.
+* Critical strike (Dota 2 wiki, Critical Strike): rolled when the attack **starts** (the wind-up), not when it lands.
+  Sources roll from the largest multiplier down and stop at the first proc, so two never stack; sources that did not
+  roll keep their pseudo-random counters. The multiplier scales the attack damage, the bonus damage and the creep
+  bonus (Mini-Axe), not bash damage, pierce damage or Masterful Archery. Never against buildings or wards (no roll is
+  counted there). Cleave and lifesteal use the multiplied damage. The red number shows the damage before the target's
+  armor.
+* Bash (Dota 2 wiki, Bash): only one bash item works (the first in the bags; Dota: the one held longest). Chance by the
+  holder's attack type (25% melee, 10% ranged), 1.2 s stun in the bash group, extra physical damage added to the attack
+  (counted by armor and lifesteal, not by crits). While its 2.3 s cooldown runs it does not roll at all. Pierces debuff
+  immunity; not against buildings or wards; works on allies being denied. Strong dispel removes it.
 
 ## Lane creeps (`sim_ai.gd`)
 
@@ -87,6 +105,20 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 
 ## Neutrals
 
+Their Dota abilities (npc_units / npc_abilities 7.41d; our names; passives and auras are off while the creep is
+broken):
+* Goblin Digger (Kobold Soldier): Weapon Grab, its attack disarms for 3 s, 9 s apart.
+* Goblin Boss (Kobold Foreman): Pace Aura, +12 movement speed to its camp (APPROX: flat).
+* Wolf (Giant Wolf): Snarl, cast when an enemy hero is within 300: enemies there deal 60% less attack damage for 4 s.
+* Alpha Wolf: Crit (20% for 200%) and Pack Aura (+20% base damage to its camp).
+* Orc (Centaur Courser): Magic Armor Aura (+20% magic resistance to creeps, +10% to heroes).
+* Orc Shaman (Centaur Conqueror): Stomp, 25 magic damage and a stun (1.6 s heroes, 3 s others) within 250, 12 s.
+* Swamp Troll (Hill Troll Berserker): Break Strike, its attack breaks for 3 s, 10 s apart.
+* Ogre (Ogre Bruiser): Smash, a 2.8 s wind-up (its area glows red on the ground), then 200 magic damage and a 2.4 s stun
+  within 200 of the point; walking out avoids it.
+* Lava Golem (Black Dragon): Splash (full attack damage to enemies within 250 of the target) and Thick Hide Aura
+  (+3 armor). (Fireball not yet.)
+
 Sources: Liquipedia "Neutral Creeps" and "Creep Stacking" (cached and Wayback copies, March 2026), Valve's 7.38-7.41
 patch notes; details and links in `work/lemondev/2026-10-13-camps-ai-setup/research/camps.md`.
 
@@ -116,8 +148,54 @@ patch notes; details and links in `work/lemondev/2026-10-13-camps-ai-setup/resea
 * *APPROX*: what wakes neutrals other than damage and walking close (single-target spells without damage wake them in
   Dota; we have none), and fleeing from invisible attackers (not done).
 
+## Status effects (`sim_status.gd`)
+
+Sources: Dota 2 wiki pages Pseudo-random distribution, Stun, Status Resistance, Dispel, Hex, Root, Silence, Disarm,
+Break, Invisibility, Disjoint; Valve's game data for the numbers.
+
+* **Pseudo-random distribution** for every chance effect: critical strike, bash, evasion, the uphill miss, pierce,
+  chain lightning, damage block, Masterful Archery, Blood Ranger's back leap and Unholy Might. The N-th roll since the
+  last proc succeeds with chance C x N; C is found by bisection so the average equals the listed chance (25% -> C
+  0.0847, 30% -> 0.1189, as Valve's table). Each unit has its own counter per effect; a roll that cannot happen
+  (on cooldown, against a building) does not count.
+* **Debuffs from enemies** go through `SimStatus.apply`: refused by debuff immunity unless the effect pierces it (bash,
+  the Stun Blade) and by invulnerability; their time is multiplied by (1 - status resistance). Effects from allies are
+  never shortened.
+* **Stun groups**: every regular stun shares one modifier ("stunned"), every bash another ("bashed"); a new one keeps the
+  longer of the two times (a short stun never cuts a long one). Stuns keep the unit's orders, which resume afterwards.
+* **Status resistance** and **slow resistance** multiply between sources; the Heavy Sword family (Heavy Sword, Twin
+  Swords, Stun Blade) does not stack with itself: the largest value counts. Slow resistance shrinks movement slows.
+* **Hex**: silence + mute + disarm, base movement speed 140 (flat and percentage bonuses still apply), ends channels.
+  Only a strong dispel removes it.
+* **Silence** ends channels and blocks spells, not items or passives. **Mute** blocks items. **Disarm** blocks attacks.
+  **Root** blocks movement, Jump Knife and Teleport (and ends a Teleport channel), not attacks or spells. **Break**
+  turns off the unit's own passive abilities (Masterful Archery, the neutrals' passives and auras), never item
+  passives.
+* **Dispels**: basic removes slows, silences, roots, disarms, mutes; strong also removes stuns and hexes. An enemy's
+  dispel removes buffs instead. Auras are never dispelled.
+* **Health restoration amplification** (Heavy Sword family, 12-16%) raises regeneration, heals and lifesteal; healing
+  reduction (Stench with the Upgrade Staff) now also lowers regeneration. **Spell amplification** (Spell Sword 10%) raises
+  every non-attack damage the unit deals, except returned damage and attack-derived procs (cleave, pierce, splash).
+  **Mana regeneration amplification** (Spell Sword 20%) raises mana regeneration.
+* The HUD draws a timer bar under a disabled unit's health (stun, hex, silence, root, disarm, break, mute; the strongest
+  one), with its name and the seconds left.
+
+## True sight and disjoint (`sim_vision.gd`, `sim_combat.gd`)
+
+* Invisible units are seen only under **True Sight** and only where the team has vision: towers (700, APPROX), the
+  Throne (900, APPROX), the fountain (1200, APPROX), Reveal Wards (1050, Dota's Sentry Ward: invisible, 7 minutes, no
+  sight of their own but 150 for their first 12 s) and Reveal Dust (Dota's Dust of Appearance: 1050 around the thrower
+  for 12 s, the debuff lingers 8 s, 20% slow while invisible, 25 damage to units invisible when it is thrown).
+* Invisible heroes never attack on their own; turning invisible disjoints projectiles once (unless the enemy has True
+  Sight over the unit).
+* **Disjoint**: a blink (Jump Knife), a teleport, and turning invisible make projectiles flying at the unit lose it and
+  fall where it stood.
+
 ## Channelling, forced movement, lifesteal
 
+* Teleport Scroll: an item, so mutes and hexes block it and end its channel; roots block it and end its channel
+  (Dota's "root disables" flag). Bought at the shop it goes into the Teleport slot; bought away from the shop it waits
+  in the stash (the courier brings it) and moves into the slot when it reaches the hero.
 * Channels (Town Portal, Burst Shot): mana and cooldown are spent when the channel starts. Any new order ends it
   (move, attack, stop, hold, another cast), except an item that acts at once without a target (Zap Stick). Stuns,
   silence, roots and pushes end it too. Shift-queued orders wait until it finishes. The HUD shows a channel bar.
@@ -143,6 +221,42 @@ patch notes; details and links in `work/lemondev/2026-10-13-camps-ai-setup/resea
 * Each team has a 128-unit vision grid. Sight is cast as rays that stop at trees and at higher ground. The grid updates at 10 Hz.
 * Heroes see 1800 by day and 800 by night. Tier 1 towers see 1900 by day and 800 by night; higher-tier towers see 1100 at night.
 * Units outside your team's vision cannot be targeted or seen. Buildings stay drawn in the fog.
+
+## Orbs (`sim_orbs.gd`; Dota's runes, renamed because "rune" is a banned word)
+
+Source: Dota 2 wiki pages Runes, Bounty Rune, Wisdom Rune, Water Rune, Haste, Amplify Damage, Invisibility,
+Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom4.json`).
+* Spots on our map: two in the river (-1300, 1300) and (1300, -1300) (Dota's power rune spots), one gold spot in each
+  jungle, one wisdom spot near each side edge. A hero takes an orb within 150 (a right click on it; orbs come before
+  units under the cursor). Orbs are seen only in vision; the minimap shows the ones your team sees.
+* Gold Orb (Bounty): 0:00 at the two gold spots and both river spots, then every 4:00 at the gold spots. Every hero of
+  the team gets 40 + 6 per 4 minutes of reliable gold.
+* Water Orb: 2:00 and 4:00 in both river spots: 40 health and 80 mana at once.
+* Wisdom Orb: 7:00 and every 7:00 at both wisdom spots: 280 experience per 7 minutes to the hero who takes it and to
+  the team's hero with the least experience (the next one if that is the taker), alive or dead.
+* Power orbs from 6:00 every 2:00 in one river spot chosen at random; each cycle shows every kind once and the same
+  kind never comes twice in a row. A river orb not taken vanishes when the next one comes; gold and wisdom orbs stay
+  (a new one lies beside an old one).
+  * Speed (Haste): 550 speed that slows cannot lower, 22 s (+3 s per cycle).
+  * Damage (Amplify Damage): +80% base attack damage and +15% spell damage, 45 s.
+  * Stealth (Invisibility): invisible after a 2 s fade for 45 s; 25% less damage taken while invisible (+5% per cycle);
+    broken by attacking or casting.
+  * Healing (Regeneration): 6% of max health and mana per second for 30 s, 1% for 3 s after damage from a hero; ends
+    when both are full.
+  * Magic (Arcane): 25% shorter cooldowns and 30% cheaper mana costs (spells and items), 50 s.
+  * Shield: a barrier absorbing damage of every type up to 50% of max health, 75 s.
+* Flask (Dota's Bottle; 675 gold, Consumables): 3 charges of 110 health and 60 mana over 2.7 s (lost to damage from an enemy hero),
+  refilled to 3 at the fountain. An orb taken while carrying it is stored (gold and water refill it to 2 charges, the
+  others to 3) and let out by drinking, or by itself after 90 s (lost if the hero is dead then).
+* Not yet: the Illusion rune (the game has no illusions), destroying orbs by attacking them.
+
+## Regeneration and the fountain (`sim_world.gd`)
+
+* Each tick a unit restores `regen_rates(u)`: its own regeneration (base + attributes) plus the bonus (items, talents,
+  auras, consumables, the fountain), times (1 + health restoration amplification) x (1 - healing reduction). The HUD
+  shows the two parts separately ("+2.5 +32.4").
+* Fountain (Rejuvenation Aura, Dota 2 wiki): 5% of max health and 6% of max mana per second within 1200; the buff
+  lingers 3 s after leaving.
 
 ## Items and shop (`sim_shop.gd`, `sim_items.gd`)
 
@@ -211,4 +325,14 @@ patch notes; details and links in `work/lemondev/2026-10-13-camps-ai-setup/resea
 | Sneak Charm | Shadow Amulet | Brass Knuckles | Blitz Knuckles |
 | Fur Hat | Fluffy Hat | Plate Vest | Splintmail |
 | Mini-Axe | Quelling Blade | Vegan Picker | Tango |
+| Crit Sword | Crystalys | Crit Bow | Daedalus |
+| Stun Club | Skull Basher | Stun Blade | Abyssal Blade |
+| Sure Hit Staff | Monkey King Bar | Huge Sword | Demon Edge |
+| Silence Staff | Orchid Malevolence | Root Staff | Rod of Atos |
+| Halberd | Heaven's Halberd | Hex Staff | Scythe of Vyse |
+| Break Blade | Silver Edge | Heavy Sword | Sange |
+| Spell Sword | Kaya | Twin Swords | Sange and Yasha |
+| Battle Staff | Oblivion Staff | Dodge Charm | Talisman of Evasion |
+| Long Staff | Mystic Staff | Mana Tiara | Tiara of Selemene |
+| Reveal Ward | Sentry Ward | Reveal Dust | Dust of Appearance |
 | Tree Twig | Iron Branch | Frenzy Mask | Mask of Madness |

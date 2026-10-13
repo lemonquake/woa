@@ -14,7 +14,7 @@ const DAWN := Color(0.4, 0.75, 1.0)
 const DUSK := Color(1.0, 0.36, 0.3)
 
 const ITEM_ICONS := {
-	"tango": "status/regen", "salve": "items/potion_health", "clarity": "items/potion_mana", "mango": "status/vigor",
+	"tp_scroll": "ui/teleport", "bottle": "items/elixir_rejuvenation", "reveal_ward": "status/spirit_ward", "reveal_dust": "items/mat_arcane_dust", "tango": "status/regen", "salve": "items/potion_health", "clarity": "items/potion_mana", "mango": "status/vigor",
 	"faerie_fire": "items/aether_shard", "observer_ward": "status/keen", "branch": "items/wand_2", "slippers": "items/boots_cloth",
 	"gauntlets": "items/gloves_plate", "mantle": "items/helm_hood", "circlet": "ui/crown", "boots_elves": "items/boots_cloth_2",
 	"belt_str": "items/charm", "robe": "items/armor_robe", "blade_alacrity": "items/aether_sword", "blades_attack": "items/dagger_2",
@@ -35,6 +35,12 @@ const ITEM_ICONS := {
 	"push_staff": "items/staff_2", "spell_shield": "items/shield_3", "armor_breaker": "items/sword_2",
 	"shock_hammer": "status/shocked", "cleave_axe": "items/axe_3", "sneak_blade": "items/dagger",
 	"upgrade_staff": "items/aether_staff", "upgrade_gem": "items/quest_lance_shard",
+	"huge_sword": "items/sword", "dodge_charm": "items/charm_2", "long_staff": "items/staff_3",
+	"mana_tiara": "items/quest_crown_fragment", "heavy_sword": "items/set_guardian_shield", "spell_sword": "items/wand_3",
+	"twin_swords": "items/set_guardian_armor", "battle_staff": "items/set_sage_staff", "crit_sword": "items/greatsword_3",
+	"crit_bow": "items/bow_3", "stun_club": "items/mat_bone_fragment", "stun_blade": "items/set_guardian_helm",
+	"sure_hit_staff": "items/spear_2", "silence_staff": "items/set_sage_robe", "root_staff": "items/spear_3",
+	"halberd": "items/shield_2", "hex_staff": "items/quest_tablet", "break_blade": "items/shadow_silk",
 }
 const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
 	"masterful_archery": "skills/deadeye", "blood_ranger_ult": "skills/bs_blood_eclipse", "dark_stomp": "skills/tempo_wd_quake",

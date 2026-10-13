@@ -40,6 +40,10 @@ var move_speed := 300.0
 var turn_rate := 0.5
 var hp_regen := 0.0
 var mana_regen := 0.0
+var hp_regen_base := 0.0                   # the unit's own regen (base + attributes); the rest of hp_regen is bonus
+var mana_regen_base := 0.0
+var heal_amp := 0.0                        # health restoration amplification (regen, heals, lifesteal), 0..1
+var mana_regen_amp := 0.0                  # mana regeneration amplification, 0..1
 var vision_day := 750.0
 var vision_night := 750.0
 var acquire_range := 500.0
@@ -48,6 +52,11 @@ var lifesteal_ability := 0.0               # from abilities (Blood Ranger)
 var evasion := 0.0
 var bat := 1.7
 var spell_lifesteal := 0.0                 # heals from spell damage dealt (100% vs heroes, 20% vs creeps)
+var status_resist := 0.0                   # shortens enemy debuffs (0..1, sources multiply)
+var slow_resist := 0.0                     # shrinks movement slows (0..1)
+var spell_amp := 0.0                       # raises spell damage dealt (0..1)
+var attack_out_pct := 0.0                  # change to attack damage dealt (Intimidate: -0.6)
+var prd := {}                              # pseudo-random counters: effect key -> rolls since the last proc
 var debuff_immune := false                 # cached from modifiers in refresh_stats
 var phased := false                        # cached: walks through units
 
@@ -114,6 +123,7 @@ var atk_phase := AtkPhase.NONE
 var atk_timer := 0.0
 var atk_target := -1
 var atk_modifier := ""                     # ability id riding on the current attack (orb)
+var atk_crit := 1.0                        # critical strike multiplier rolled when this attack started (1 = none)
 var orb_manual := ""                       # an attack modifier cast by hand: rides on the next attack, draws no aggro
 var next_attack_at := C.LONG_AGO
 var prev_attack_at := C.LONG_AGO
@@ -209,6 +219,12 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 		tp_charges = 1
 	if kind == K.COURIER:
 		inventory.resize(6)                    # flying is granted by the world from its owner's level 4
+	if kind != K.HERO:
+		# creeps know their abilities from the start (the neutrals' Snarl, Stomp, Smash)
+		abilities = (def.abilities as Array).duplicate()
+		for a in abilities:
+			ability_level[a] = 1
+			ability_ready[a] = C.LONG_AGO
 	refresh_stats()
 	hp = max_hp
 	mana = max_mana
@@ -300,14 +316,22 @@ func get_modifier(mid: String) -> Dictionary:
 	return {}
 
 func is_silenced() -> bool:
-	return has_flag("silence") or is_stunned()
+	return has_flag("silence") or has_flag("hex") or is_stunned()
+
+## Hexed: a harmless critter that cannot attack, cast or use items, at 140 speed.
+func is_hexed() -> bool:
+	return has_flag("hex")
+
+## Broken: its own passive abilities do nothing (item passives still work).
+func is_broken() -> bool:
+	return has_flag("break")
 
 func is_rooted() -> bool:
 	return has_flag("root") or is_stunned() or not hop.is_empty() or not knock.is_empty()
 
 ## Muted: no item use (Shuriken Hook's follow-through).
 func is_muted() -> bool:
-	return has_flag("mute") or is_stunned()
+	return has_flag("mute") or has_flag("hex") or is_stunned()
 
 ## The Upgrade Staff (Dota's Aghanim's Scepter) is in a main slot, or granted another way.
 func has_scepter() -> bool:
@@ -334,7 +358,7 @@ func heal_reduction() -> float:
 	return r
 
 func is_disarmed() -> bool:
-	return has_flag("disarm") or is_stunned()
+	return has_flag("disarm") or has_flag("hex") or is_stunned()
 
 func is_invulnerable() -> bool:
 	return invulnerable or has_flag("invulnerable")
@@ -348,7 +372,9 @@ func expire_modifiers(now: float) -> void:
 
 # ---- Stats ------------------------------------------------------------------------------------------------------------
 
-## Bonuses from the six main slots (the backpack gives none). Boot speed does not stack: the fastest pair counts.
+## Bonuses from the six main slots (the backpack gives none). Boot speed does not stack: the fastest pair counts; nor
+## do stats whose key ends in "_max" (the Heavy Sword family's slow resistance and health restoration): the largest
+## copy counts, as in Dota.
 ## Some items differ for melee and ranged heroes; Switch Boots add to their chosen attribute; Armor Breaker adds the
 ## damage it has collected from kills.
 func _item_stats() -> Dictionary:
@@ -368,25 +394,33 @@ func _item_stats() -> Dictionary:
 			out["damage"] = float(out.get("damage", 0.0)) + minf(float(it.souls), float(d.values.max_damage))
 	return out
 
+## Chances and resistances from several sources multiply: 1 - (1 - a)(1 - b), as Dota stacks evasion, magic
+## resistance, status resistance and slow resistance.
+const MULT_KEYS := ["evasion", "magic_resist", "status_resist", "slow_resist"]
+
+static func _stack(a: float, b: float, k: String) -> float:
+	return 1.0 - (1.0 - a) * (1.0 - b) if k in MULT_KEYS else a + b
+
 func _add_item_stats(out: Dictionary, st: Dictionary) -> void:
 	for k in st:
-		if k == "boot_ms":
+		if k == "boot_ms" or k.ends_with("_max"):
 			out[k] = maxf(float(out.get(k, 0.0)), float(st[k]))
 		else:
-			out[k] = float(out.get(k, 0.0)) + float(st[k])
+			out[k] = _stack(float(out.get(k, 0.0)), float(st[k]), k)
 
 func _mod_stat(k: String) -> float:
 	var s := 0.0
 	for m in modifiers:
 		var st: Dictionary = m.get("stats", {})
 		if st.has(k):
-			s += float(st[k])
+			s = _stack(s, float(st[k]), k)
 	return s
 
 ## Recompute derived stats from definition, level, attributes, items, abilities and modifiers.
 func refresh_stats() -> void:
 	var items := _item_stats() if kind == K.HERO else {}
-	var f := func(k: String) -> float: return float(items.get(k, 0.0)) + _mod_stat(k) + float(perm_stats.get(k, 0.0))
+	var f := func(k: String) -> float:
+		return _stack(_stack(float(items.get(k, 0.0)), _mod_stat(k), k), float(perm_stats.get(k, 0.0)), k)
 	var base_dmg_min := float(def.dmg_min) + creep_dmg_add
 	var base_dmg_max := float(def.dmg_max) + creep_dmg_add
 	var hp_old_frac := hp / max_hp if max_hp > 0.0 else 1.0
@@ -428,17 +462,35 @@ func refresh_stats() -> void:
 	magic_resist = mr
 	dmg_min = base_dmg_min
 	dmg_max = base_dmg_max
-	bonus_damage = f.call("damage")
+	# raw damage % (an aura such as the Alpha Wolf's) counts as bonus damage, as in Dota
+	var raw_pct: float = f.call("base_damage_pct")
+	bonus_damage = f.call("damage") + (base_dmg_min + base_dmg_max) * 0.5 * raw_pct
+	attack_out_pct = f.call("attack_out_pct")
 	attack_speed = clampf(float(def.attack_speed) + attr_as + f.call("attack_speed"), C.ATTACK_SPEED_MIN, C.ATTACK_SPEED_MAX)
-	attack_range = float(def.range) + range_bonus + (f.call("range") if is_ranged() else 0.0)
+	# item range counts for ranged heroes; a melee-only bonus (Sure Hit Staff) comes as "range_melee"
+	attack_range = float(def.range) + range_bonus + (f.call("range") if is_ranged() else f.call("range_melee"))
+	# the strongest slow counts, shrunk by slow resistance (the Heavy Sword family's does not stack: largest wins)
+	slow_resist = _stack(float(items.get("slow_resist_max", 0.0)), f.call("slow_resist"), "slow_resist")
+	status_resist = _stack(float(items.get("status_resist_max", 0.0)), f.call("status_resist"), "status_resist")
+	spell_amp = f.call("spell_amp")
 	var slow := 0.0
 	for m in modifiers:
 		slow = maxf(slow, float(m.get("slow", 0.0)))
-	var ms: float = (float(def.move_speed) + f.call("move_speed") + f.call("boot_ms")) * (1.0 + f.call("move_speed_pct")) * (1.0 - slow)
+	slow *= 1.0 - slow_resist
+	# a hex sets the base speed to 140; flat and percentage bonuses still apply (Dota: Hex, set movement speed)
+	var base_ms := C.HEX_MOVE_SPEED if is_hexed() else float(def.move_speed)
+	var ms: float = (base_ms + f.call("move_speed") + f.call("boot_ms")) * (1.0 + f.call("move_speed_pct")) * (1.0 - slow)
 	move_speed = clampf(ms, C.MOVE_SPEED_MIN, C.MOVE_SPEED_MAX) if float(def.move_speed) > 0.0 else 0.0
+	# haste (Speed Orb): the maximum speed, and slows cannot lower it
+	if has_flag("haste") and move_speed > 0.0:
+		move_speed = C.MOVE_SPEED_MAX
 	turn_rate = float(def.turn_rate)
-	hp_regen = float(def.hp_regen) + attr_hpr + f.call("hp_regen")
-	mana_regen = float(def.mana_regen) + attr_mpr + f.call("mana_regen")
+	hp_regen_base = float(def.hp_regen) + attr_hpr
+	mana_regen_base = float(def.mana_regen) + attr_mpr
+	hp_regen = hp_regen_base + f.call("hp_regen")
+	mana_regen = mana_regen_base + f.call("mana_regen")
+	heal_amp = maxf(float(items.get("heal_amp_max", 0.0)), 0.0) + _mod_stat("heal_amp")
+	mana_regen_amp = float(items.get("mana_regen_amp", 0.0)) + _mod_stat("mana_regen_amp")
 	vision_day = float(def.vision_day)
 	vision_night = float(def.vision_night)
 	acquire_range = float(def.acquire)

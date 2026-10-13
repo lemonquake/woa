@@ -4,32 +4,32 @@
 
 ## Status (keep this section current)
 
-**IMPLEMENTED, NOT FULLY VERIFIED** (2026-10-13 c: camera, neutral camps, Game Setup, team bots, chat, pings,
-learning; run `work/lemondev/2026-10-13-camps-ai-setup/`, contract in `contract.md` there). The owner asked to cut the
-remaining tests and finish; the final integration gate was **not** completed.
+**IMPLEMENTED, GATES PASSED, VISUALS NOT BLIND-REVIEWED** (2026-10-13 d: controls, HUD, status effects, bash, critical
+strike, new items, neutral abilities, true sight, orbs, Flask; run `work/lemondev/2026-10-13-controls-mechanics/`,
+contract in `contract.md` there; details in "Status effects, bash, critical strike, orbs, true sight" below).
 
-Built (details in the sections "Neutral camps" and "Game Setup, bots, chat, pings, learning" below):
-* Camera starts on your hero; Options > Game "Center camera on hero at respawn". Edge pan no longer runs under the
-  loading screen or with the cursor outside the window.
-* 14 neutral camps a side with modelled camp props (`tools/blender/camps.py`), spawn boxes on Shift and the minimap.
-* Game Setup screen (two teams of five: You / Bot / Empty, hero, bot skill, lane; duplicates allowed).
-* Team brain and hero bots (`sim_team_ai.gd`, `sim_bot.gd`, `sim_bot_kits.gd`), team chat and pings with replies,
-  typed chat, bot learning saved in `user://bot_memory.json` (on by default, can be turned off and cleared).
+Evidence (all on the final working tree, uncommitted):
+* Headless tests: 137 passed, 0 failed (115 earlier + 22 new). `sh tools/check.sh`: no parse errors, "Names OK".
+* `tests/tools/controls_probe.gd`: 31/31 at 1080p in a live window (cursor confined in Borderless, Fullscreen and
+  locked Windowed; the OS keeps a warped cursor inside; edge pan keeps going with the cursor pinned; hold Stop; shop
+  closes on outside clicks and Esc; comma buys a Teleport Scroll; regen bonus; disable timers; real crit; orb taken
+  by right click; Smash wind-up) and 23/23 in a real 3840 x 2160 window. Captures in `shots/` and `shots/4k/`.
+* Input probes for all three heroes (10/10, 7/7, 4/4) and the item flow probe (13/13) still pass.
+* Two 40-minute 5 v 5 bot games (seeds 3 and 7; the second on the final sim code): no script errors; bots bought Crit
+  Swords and Shock Hammers. Still no Throne falls in 40 minutes, and some bots are flagged stuck late in the game
+  (modes heal, task, retreat; none while going for an orb): the old AI2 gate stays failed. The earlier "Bot Cat and
+  Bot Jo idle in lane from 0:21" did not appear in either game.
+* Benchmark, 1080p, RTX 4060, `--bench=60 --t=240 --autoplay`, same session: this build 60 / 55 / 62 fps (p95 23.3 /
+  29.6 / 20.0 ms), the 93b2efc baseline 57 / 60 fps (p95 23.3 / 22.2 ms): no measurable change
+  (`bench_new_1v1.txt`, `bench_base_1v1.txt`).
+* Export + cold start of `build/WarriorsOfAether.exe -- --match`: match ready in 9.7 s, no script errors.
 
-Evidence on disk (from before the cut-off):
-* Captures in `shots/`: camera start and respawn, camps by size and at night, spawn boxes, Game Setup (1080p and 4K),
-  Options, team chat, pings, typed chat (4K in `shots/4k/`).
-* `python tools/check_names.py`: "Names OK" (rerun at the end).
-
-Not met (known failures, left for the next session):
-* 5 v 5 bot games (`games/r3_*`, `r4_*`, 10 games at 40 min): **no Ancient fell in any game**, so the AI2 gate
-  "an Ancient falls within 60 min" fails. Stuck heroes are reported in every game; two (`Bot Cat`, `Bot Jo`) stand
-  still in a lane from 0:21 in all ten games at the same spots, which looks like one bug, not bad play.
-* Benchmark with 10 heroes (`bench_5v5.txt`): 39-58 fps, p95 24-36 ms (with 2 heroes, `bench_1v1.txt`: 48-53 fps).
-  Earlier sessions measured 76-82 fps with 2 heroes, so this run is slower; the 10% gate fails. Profile shows the sim
-  (4-7 ms) and physics process as the large parts.
-* Not rerun at the end: the 100+ headless tests, input and HUD probes, camera and team probes, learning A/B games.
-* Blind visual review of camps and Game Setup: no Dota frames, UNVERIFIED.
+Not verified:
+* Blind visual review of the disable timer bar, hex sheep, root and disarm marks, crit numbers, orbs and the Smash
+  ring: no Dota frames on disk, so UNVERIFIED (builder self-checks only, see the ledger).
+* Values marked APPROX (true sight radii of towers, the Throne and the fountain; the uphill miss chance; the Goblin
+  Boss aura as flat speed). Liquipedia's API refused requests (429); rules came from the Dota 2 wiki on Fandom and
+  Valve's 7.41d game data.
 * Earlier results still stand: Shuriken Hook visuals STOPPED: PLATEAU, base environment and ramps STOPPED: PLATEAU,
   Burst Shot VFX and Hero Select STOPPED: PLATEAU, Dark Stomp VFX STOPPED: LIMIT, tower scale UNVERIFIED.
 
@@ -47,7 +47,7 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   Bot or Empty, with a hero (or Random; bots may play the same hero), a bot skill (Passive, Easy, Medium, Hard, Unfair)
   and name, and the lane you want. Presets: 5 vs 5, 1 vs 1 mid. **Start** goes to the Hotkeys screen and the match.
 * Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
-* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 59 tests.
+* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 137 tests.
 * Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured 2026-10-12 on the new map at 1080p on the RTX 4060 with the HUD (`--bench=50`): 77 fps average, p95 16.67 ms.
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
   * `--hero=sludge --bot_hero=blood_ranger` pick the heroes (blood_ranger, ezee, sludge); `--frames=30,34,38` saves several frames;
@@ -82,9 +82,9 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | Key | Action |
 |---|---|
 | Left click / left drag | Select. A drag draws a green box: your own units inside it are selected (hero first); with none of yours inside, the one unit nearest the box centre |
-| Right click | Move, attack an enemy, deny an ally below 50% HP, follow an ally. Orders go to the selected units you control (hero, courier), as in Dota |
+| Right click | Move, attack an enemy, deny an ally below 50% HP, follow an ally, take an orb (orbs come first under the cursor). Orders go to the selected units you control (hero, courier), as in Dota |
 | A, then left click | Attack-move (ground) or attack (unit). On an ally the order is accepted: your hero waits in range and only swings once the ally can be denied. Shows your attack range |
-| S | Stop (the hero still auto-attacks enemies in range). Hold S: hard stop, no auto-attack until your next order |
+| S | Stop (the hero still auto-attacks enemies in range). Hold S: the hero is stopped again every frame and every order is refused until you let go; held over 0.35 s it stays a hard stop (no auto-attack until your next order) |
 | H | Hold position |
 | Shift + any order or hotkey | Queue it, as in Dota: orders run one after another; a queued spell still cooling down is checked again when its turn comes. Holding Shift shows the queue as numbered waypoints (green move, red attack, blue spell or item, gold hold) |
 | Q W E R | Abilities. No-target spells and toggles (Stench) act at once. Point and unit spells show a pulsing crosshair: red for spells aimed at enemies, green for support (allies, yourself, a place); items too. A click that misses a valid target keeps the cursor and says why; right click or Esc cancels |
@@ -95,7 +95,8 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | Talents button (star left of the abilities) | Opens the talent tree from level 10: one of two talents per tier, costs an ability point |
 | Stash (above the items) | Shown when it holds something or you are in the base: click an item to take it, drag it to a slot, Grab All |
 | Shift + click in the shop | Adds the item to **To Buy** (right side of the screen), broken into the parts you still need. In To Buy: left click buys, right click buys it automatically once you have the gold (into the courier if it waits at the fountain), Ctrl + click or x removes |
-| F4, the Shop button, or B with an empty slot 5 | Shop |
+| F4, the Shop button, or B with an empty slot 5 | Shop. A click anywhere else (world, minimap, top bar) or Esc closes it; clicks on your items, stash and To Buy keep it open |
+| , (comma), or right click the Teleport slot | Buy a Teleport Scroll for 100 gold (also first in the shop's Consumables). At the shop it goes into the Teleport slot; elsewhere into the stash, and into the slot once it reaches you (F3 sends the courier) |
 | J, or the button above the minimap | Glyph |
 | T | Town Portal: target a point or the minimap; the hero teleports beside the nearest allied building after a 3 s channel |
 | F3, or the Deliver button | Courier picks up your items lying in the fountain area, takes the stash and flies it all to you |
@@ -110,7 +111,7 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | Tab (hold) | Scoreboard with damage tables |
 | Top-bar hero tiles | Click to look at a visible hero; dead heroes show their respawn timer |
 | Space (hold) | Follow your hero |
-| Screen edges, arrow keys, middle-drag | Pan the camera |
+| Screen edges, arrow keys, middle-drag | Pan the camera. In Borderless and Fullscreen the cursor is kept inside the game window, so pushing past an edge keeps panning (Windowed: Options > Game "Lock cursor to window (Windowed)") |
 | Mouse wheel | Zoom |
 | Hold right click | Repeats the move or attack order at the cursor |
 | F9, or the Debug button (top right) | Debug panel: force start, creep waves, camps, level up, gold, refresh, god mode, free spells, reveal map, skip time, game speed |
@@ -357,6 +358,51 @@ names in `docs/MECHANICS.md`, "Items and shop").
 * Options: Center camera on hero at respawn, Show bot chat, Bots learn from games, Forget what bots learned.
 * Camps: Small camp, Medium camp, Large camp, Ancient camp, (pull camp). Chat line: "Say to your team".
 
+## Status effects, bash, critical strike, orbs, true sight (2026-10-13 d)
+
+Run `work/lemondev/2026-10-13-controls-mechanics/` (contract in `contract.md`). Rules and sources: `docs/MECHANICS.md`
+("Status effects", "True sight and disjoint", "Orbs", the attack and neutral sections).
+* **Controls and HUD**: the cursor lock and edge pan above; the shop closes on a click elsewhere; health and mana show
+  your own regeneration and the bonus (items, auras, consumables, the fountain) as a second, brighter "+N"; the comma
+  buys a Teleport Scroll; holding S really stops.
+* **Pseudo-random chances** (Dota's PRD) for every chance effect; **critical strike** decided when the attack starts
+  (red "312!" number); **bash** (only one bash item works, 2.3 s apart, through debuff immunity).
+* **Disables**: stun groups refresh to the longer time; hex (the unit becomes a sheep), silence, root, disarm, break,
+  mute; status and slow resistance; basic and strong dispels; spell amplification; health restoration amplification.
+  A disabled unit shows a **timer bar** under its health with the disable's name and seconds left ("Bashed 0.6",
+  "Rooted 1.1"), and a mark on the model (stars, roots at the feet, a violet ring for silence, crossed blades for
+  disarm, a red cracked ring for break).
+* **New items** (Dota 7.41d numbers, our names; the Dota names are in `docs/MECHANICS.md`): Crit Sword, Crit Bow, Stun
+  Club, Stun Blade, Sure Hit Staff, Silence Staff, Root Staff, Halberd, Hex Staff, Break Blade, Heavy Sword, Spell
+  Sword, Twin Swords, Battle Staff; parts Huge Sword, Dodge Charm, Long Staff, Mana Tiara (shop: Basics > Big Parts);
+  Reveal Ward and Reveal Dust (Consumables). Bots buy some of them and use the disables in fights.
+* **Neutral creeps' abilities**: Alpha Wolf crit and aura, Goblin Boss speed aura, Goblin Digger disarm on hit,
+  Swamp Troll break on hit, Orc magic resistance aura, Orc Shaman Stomp, Ogre Smash (red ring on the ground during its
+  2.8 s wind-up), Wolf Snarl, Lava Golem splash and armor aura.
+* **True sight**: towers, the Throne, the fountain, Reveal Wards and Reveal Dust see invisible heroes; invisible heroes
+  never auto-attack; blinking, teleporting and turning invisible disjoint projectiles.
+* **Orbs** (Dota's runes; "rune" is a banned word here): Gold, Water and Wisdom Orbs and six power orbs (Speed,
+  Damage, Stealth, Healing, Magic, Shield) on Dota's timers at our map's spots (river at (-1300, 1300) and (1300,
+  -1300), a gold spot in each jungle, a wisdom spot near each side edge). Right click to take one; the kill feed tells
+  everyone; bots take the ones they see nearby. A Flask (Dota's Bottle) stores an orb and refills at the fountain.
+  Dota's Illusion rune is not in yet (no illusions).
+* Other rule fixes: uphill misses only for ranged attacks; evasion and magic resistance from several items multiply;
+  the fountain heals 5% / 6% per second and lingers 3 s; Teleport is blocked by roots, mutes and hexes and a root ends
+  its channel; healing reduction also lowers regeneration.
+* Probes: `godot --path . -s tests/tools/controls_probe.gd -- --out=work/shots` (cursor lock, edge pan, hold Stop, shop
+  close, comma, regen, disable bars, crit number, orbs, Smash warning).
+
+## Names added 2026-10-13 d (veto any you dislike)
+
+* Items: Crit Sword, Crit Bow, Stun Club, Stun Blade, Sure Hit Staff, Silence Staff, Root Staff, Halberd, Hex Staff,
+  Break Blade, Heavy Sword, Spell Sword, Twin Swords, Battle Staff, Huge Sword, Dodge Charm, Long Staff, Mana Tiara,
+  Reveal Ward, Reveal Dust, Flask.
+* Orbs: Gold Orb, Water Orb, Wisdom Orb, Speed Orb, Damage Orb, Stealth Orb, Healing Orb, Magic Orb, Shield Orb.
+* Neutral abilities: Crit, Pack Aura, Pace Aura, Weapon Grab, Break Strike, Magic Armor Aura, Thick Hide Aura, Splash,
+  Snarl, Stomp, Smash.
+* Shop groups: Big Parts, Swords, Magic (Upgrades). Hotkey: Buy Teleport Scroll. Option: Lock cursor to window
+  (Windowed). Disable labels: Stunned, Bashed, Hexed, Silenced, Rooted, Disarmed, Broken, Muted.
+
 ## Backlog: smallest next actions first
 
 1. Bots: find why two bots stand still in a lane from 0:21 in every 5 v 5 game, then make games end (an Ancient
@@ -374,5 +420,11 @@ names in `docs/MECHANICS.md`, "Items and shop").
    * Larger stone blocks on towers.
    * Replace the paving texture, which reads as a checkerboard.
 8. Done: Hero Creator, Hero Select, Town Portal, buyback, courier, pause and settings menus, end screen with damage
-   table. Still deferred: secret shop, runes, Roshan, scan, wards UI polish.
+   table, orbs (runes), Flask (Bottle), Reveal Ward and Dust. Still deferred: Roshan (pit, Aegis, cheese), illusions
+   (and with them the Illusion orb and a Manta-style item), neutral items, Tormentors, shrines and outposts, scan,
+   destroying orbs by attacking them, the Lava Golem's Fireball, the Fire Imp's spell aura, wards UI polish.
+10. Dota mechanics still marked APPROX in `sim_const.gd` (hero kill gold, respawn times, true sight radii of towers,
+   the Throne and the fountain, the Goblin Boss aura as flat speed): check them against Liquipedia when its API answers
+   again (it returned 429 on 2026-10-13).
+11. Bots: buy and use the Flask, Reveal Dust and Reveal Wards against invisible heroes; contest the river orbs as a team.
 9. More heroes (the bot plays Blood Ranger, Ezee and Sludge, mid only). Mana Boots in a bot build.

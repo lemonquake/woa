@@ -135,8 +135,9 @@ func buy(u: SimUnit, item_id: String, to_courier := false) -> String:
 	if u.gold() < cost:
 		return "Not enough gold"
 	var here := in_shop(u)
-	if item_id == "tp_scroll":
-		# Town Portal scrolls live in their own slot
+	if item_id == "tp_scroll" and here:
+		# Teleport Scrolls live in their own slot; bought away from the shop one waits in the stash like any item
+		# (the courier brings it), as in Dota
 		u.tp_charges += 1
 		_spend(u, cost)
 		w.events.append({"t": "buy", "u": u.id, "item": item_id, "cost": cost})
@@ -299,6 +300,7 @@ func _pools(u: SimUnit) -> Array:
 ## Combine every item whose parts (and recipe scroll) are all in one pool, until nothing more combines. Items are
 ## tried in data order; the result takes the slot of its first part.
 func combine_all(u: SimUnit) -> void:
+	_absorb_tp(u)
 	var changed := true
 	var guard := 0
 	while changed and guard < 32:
@@ -474,8 +476,30 @@ func update(u: SimUnit) -> void:
 			u.refresh_stats()
 	combine_all(u)
 
+## Teleport Scrolls that reach the hero's bags (from the stash or the courier) go into the Teleport slot.
+func _absorb_tp(u: SimUnit) -> void:
+	if not u.is_hero():
+		return
+	for i in u.inventory.size():
+		var it = u.inventory[i]
+		if it != null and it.id == "tp_scroll":
+			u.tp_charges += maxi(1, int(it.get("charges", 1)))
+			u.inventory[i] = null
+
+## Teleport Scrolls the hero has anywhere: its slot, bags, stash and courier.
+func tp_owned(u: SimUnit) -> int:
+	var n := u.tp_charges
+	for arr in [u.inventory, u.stash, u.courier_items]:
+		for it in arr:
+			if it != null and it.id == "tp_scroll":
+				n += maxi(1, int(it.get("charges", 1)))
+	return n
+
 func place_in_bags(u: SimUnit, it: Dictionary) -> bool:
 	var d := SimData.item(it.id)
+	if it.id == "tp_scroll" and u.is_hero():
+		u.tp_charges += maxi(1, int(it.get("charges", 1)))
+		return true
 	if bool(d.consumable):
 		for o in u.inventory:
 			if o != null and o.id == it.id:

@@ -38,6 +38,8 @@ var vision: SimVision
 var shop: SimShop
 var abilities: SimAbilities
 var items: SimItems
+var status: SimStatus
+var orbs: SimOrbs
 var bots: Array = []                       # SimBot instances
 var brains := [null, null]                 # SimTeamAI per team (made when the team's first bot joins)
 var chat_log: Array = []                   # [{team, u, name, text, t}] team chat, newest last (all teams)
@@ -57,6 +59,8 @@ func _init(p_seed := 1, p_map: SimMap = null) -> void:
 	shop = SimShop.new(self)
 	abilities = SimAbilities.new(self)
 	items = SimItems.new(self)
+	status = SimStatus.new(self)
+	orbs = SimOrbs.new(self)
 
 func dispose() -> void:
 	for b in bots:
@@ -66,7 +70,7 @@ func dispose() -> void:
 		if tb != null:
 			tb.w = null
 	brains = [null, null]
-	for h in [orders, combat, ai, vision, shop, abilities, items]:
+	for h in [orders, combat, ai, vision, shop, abilities, items, status, orbs]:
 		h.w = null
 	units.clear()
 	by_id.clear()
@@ -287,6 +291,8 @@ func step() -> void:
 	combat.update_projectiles()
 	abilities.update_effects()
 	items.update()
+	status.update()
+	orbs.update()
 	combat.process_deaths()
 	_respawns()
 	if tick % C.VISION_UPDATE_TICKS == 0:
@@ -369,14 +375,13 @@ func _pre_unit(u: SimUnit) -> void:
 	if u.stats_dirty:
 		u.refresh_stats()
 	# regeneration (fountain aura, consumables)
-	var regen := u.hp_regen
-	var mregen := u.mana_regen
-	for m in u.modifiers:
-		regen += float(m.get("regen", 0.0))
-		mregen += float(m.get("mana_regen", 0.0))
 	if u.is_hero() and u.pos.distance_to(map.fountains[u.team]) < C.FOUNTAIN_AURA_RADIUS:
-		regen += u.max_hp * C.FOUNTAIN_HP_REGEN_PCT
-		mregen += u.max_mana * C.FOUNTAIN_MANA_REGEN_PCT
+		# the fountain's aura lingers 3 s after leaving its radius
+		u.add_modifier({"id": "fountain", "source": -3, "expires": time + C.FOUNTAIN_LINGER, "fountain": true,
+			"fx": "fountain"})
+	var rates := regen_rates(u)
+	var regen: float = rates.x
+	var mregen: float = rates.y
 	if u.is_building():
 		_backdoor(u)
 		if u.backdoor_active and u.backdoor_pool > 0.0:
@@ -392,6 +397,28 @@ func _pre_unit(u: SimUnit) -> void:
 	# pushes and leaps
 	if not u.knock.is_empty() or not u.leap.is_empty() or not u.hop.is_empty():
 		abilities.update_motion(u)
+
+## Health and mana restored per second: (total hp, total mana, own hp, own mana). "Own" is the unit's base regen plus
+## its attributes; the rest (items, auras, consumables, the fountain) is bonus, which the HUD shows separately. Health
+## restoration amplification (the Heavy Sword family) scales all of it, mana regeneration amplification the mana.
+func regen_rates(u: SimUnit) -> Vector4:
+	var regen := u.hp_regen
+	var mregen := u.mana_regen
+	for m in u.modifiers:
+		regen += float(m.get("regen", 0.0))
+		mregen += float(m.get("mana_regen", 0.0))
+		if m.get("fountain", false):
+			regen += u.max_hp * C.FOUNTAIN_HP_REGEN_PCT
+			mregen += u.max_mana * C.FOUNTAIN_MANA_REGEN_PCT
+	if u.is_hero():
+		var orb := orbs.healing(u)
+		regen += orb.x
+		mregen += orb.y
+	if regen > 0.0:
+		regen *= (1.0 + u.heal_amp) * (1.0 - u.heal_reduction())
+	if mregen > 0.0:
+		mregen *= 1.0 + u.mana_regen_amp
+	return Vector4(regen, mregen, u.hp_regen_base, u.mana_regen_base)
 
 ## Backdoor protection: a building takes half damage and heals what enemies did unless enemy lane creeps are near.
 ## Tier 2 towers watch their own surroundings; every in-base building shares the Ancient's large area.

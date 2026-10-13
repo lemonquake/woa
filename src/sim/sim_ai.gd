@@ -1,8 +1,9 @@
 class_name SimAI
 extends RefCounted
 ## Built-in unit behaviour: lane creep waves and their targeting, creep aggro and de-aggro, tower and fountain
-## targeting, neutral camps (spawning, waking, leashing, stacking). Follows Liquipedia's descriptions of the Dota 2
-## rules (docs/MECHANICS.md).
+## targeting, neutral camps (spawning, waking, leashing, stacking) and the neutrals' own abilities (auras, on-hit
+## effects, splash, and the spells they cast while fighting). Follows Liquipedia's descriptions of the Dota 2 rules
+## (docs/MECHANICS.md).
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
@@ -16,9 +17,12 @@ func _init(world: SimWorld) -> void:
 	w = world
 
 func think() -> void:
+	var auras := w.tick % 6 == 0
 	for u in w.units:
 		if not u.alive:
 			continue
+		if auras and u.kind != K.HERO and not (u.def.get("auras", []) as Array).is_empty():
+			_unit_auras(u)
 		if _pending.has(u.id) and u.atk_phase != AP.WINDUP:
 			_set_target(u, _pending[u.id])
 			_pending.erase(u.id)
@@ -426,6 +430,74 @@ func _wake(n: SimUnit, src: SimUnit) -> void:
 		elif m.atk_target == src.id:
 			m.neutral_aggro_at = w.time
 
+## A creep's auras (Alpha Wolf, Goblin Boss, Orc, Lava Golem): allies within the radius (itself too) get the bonus,
+## refreshed every 6 ticks and lingering 0.5 s; two copies of one aura do not stack. Off while the creep is broken.
+func _unit_auras(u: SimUnit) -> void:
+	if u.is_broken():
+		return
+	for a in u.def.auras:
+		for o: SimUnit in w.query(u.pos, float(a.radius)):
+			if not o.alive or o.team != u.team or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+				continue
+			var st: Dictionary = a.get("hero_stats", a.stats) if o.is_hero() else a.stats
+			o.add_modifier({"id": String(a.id), "source": -40, "expires": w.time + 0.5 + 6.0 * C.DT, "stats": st,
+				"aura": true})
+
+## A creep's attack landed on `t` for `dmg` (before armor): its on-hit effect (Goblin Digger's disarm, Swamp Troll's
+## break; each with its own cooldown) and splash (Lava Golem: full damage to enemies around the target). Off while
+## the attacker is broken.
+func on_creep_hit(src: SimUnit, t: SimUnit, dmg: float) -> void:
+	if src.is_broken():
+		return
+	var oh: Dictionary = src.def.get("on_hit", {})
+	if not oh.is_empty() and t.alive and t.team != src.team and not t.is_building() and not t.is_ward() \
+			and w.time >= float(src.ability_ready.get("on_hit", C.LONG_AGO)):
+		var m := {"id": String(oh.id), "dur": float(oh.dur), "fx": "disarm" if oh.get("disarm", false) else "break"}
+		for k in ["disarm", "break"]:
+			if oh.get(k, false):
+				m[k] = true
+		if w.status.apply(t, src.id, src.team, m):
+			src.ability_ready["on_hit"] = w.time + float(oh.cooldown)
+	var sp: Dictionary = src.def.get("splash", {})
+	if not sp.is_empty():
+		for o: SimUnit in w.query(t.pos, float(sp.radius) + 40.0, true):
+			if o == t or not o.alive or o.team == src.team or o.is_building() or o.is_ward() or o.kind == K.COURIER:
+				continue
+			if o.pos.distance_to(t.pos) > float(sp.radius) + o.hull:
+				continue
+			w.combat.deal_damage(src.id, src.team, false, o, dmg * float(sp.pct), C.DamageType.PHYSICAL, false, "splash",
+				false, {"no_amp": true})
+
+## A fighting neutral uses its spell when it is worth it: Stomp with an enemy hero (or two enemies) in reach, Snarl
+## with an enemy hero close, Smash on its target (the long wind-up gives the target time to step away).
+func _neutral_cast(u: SimUnit, t: SimUnit) -> void:
+	if u.abilities.is_empty() or u.is_silenced() or u.cast_phase != SimUnit.CastPhase.NONE or u.order != O.NONE:
+		return
+	for aid in u.abilities:
+		if w.abilities.cast_error(u, aid, -1, null, u.pos, false, false) != "":
+			continue
+		var a := SimData.ability(aid)
+		var r := float(a.values.radius[0])
+		match String(aid):
+			"stomp", "snarl":
+				var heroes := 0
+				var others := 0
+				for o: SimUnit in w.query(u.pos, r + 40.0, true):
+					if not o.alive or o.team == u.team or o.is_building() or o.is_ward() or o.kind == K.COURIER \
+							or o.is_invulnerable() or o.pos.distance_to(u.pos) > r + o.hull:
+						continue
+					if o.is_hero():
+						heroes += 1
+					else:
+						others += 1
+				if heroes > 0 or (aid == "stomp" and others >= 2):
+					w.orders.issue(u, {"type": O.CAST_NO_TARGET, "ability": aid}, false)
+					return
+			"smash":
+				if t != null and t.alive and u.edge_distance(t) <= float(a.range) + 40.0:
+					w.orders.issue(u, {"type": O.CAST_POINT, "ability": aid, "point": t.pos}, false)
+					return
+
 func _neutral(u: SimUnit) -> void:
 	match u.neutral_state:
 		0:
@@ -462,6 +534,8 @@ func _neutral(u: SimUnit) -> void:
 				u.no_reaggro_until = w.time + C.NEUTRAL_REAGGRO_LOCK
 				u.order = O.MOVE
 				u.order_point = u.home
+			else:
+				_neutral_cast(u, t)
 		2:
 			# home, or as close as the stack around it allows
 			var close := u.pos.distance_to(u.home) < 20.0 or (u.pos.distance_to(u.home) < 160.0 and u.blocked_time > 0.0) \

@@ -520,6 +520,8 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		style = "fountain"
 	if String(e.get("kind", "")) == "spell" and String(e.get("key", "")) == "burst_shot":
 		style = "blood_arrow"
+	elif String(e.get("kind", "")) == "effect":
+		style = "root_orb"
 	elif bool(e.get("burst", false)):
 		style = "burst_arrow"
 	var node := Node3D.new()
@@ -573,6 +575,11 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		"fountain":
 			node.add_child(_sphere(0.3, _glow(Color(0.7, 0.95, 1.0), 8.0)))
 			h0 = 4.0
+		"root_orb":
+			# Root Staff: a knot of green-brown light trailing leaves
+			node.add_child(_sphere(0.15, _glow(Color(0.45, 0.9, 0.3), 6.0)))
+			node.add_child(_sphere(0.24, _glow(Color(0.35, 0.25, 0.1, 0.5), 1.5)))
+			trail = Trail3D.make(node, Color(0.4, 0.85, 0.25, 0.8), 0.12, 0.3)
 		"fire", "fire_big":
 			node.add_child(_sphere(0.16 if style == "fire" else 0.3, _glow(Color(1.0, 0.45, 0.1), 6.0)))
 			trail = Trail3D.make(node, Color(1.0, 0.4, 0.1, 0.85), 0.14 if style == "fire" else 0.24, 0.22)
@@ -650,6 +657,9 @@ func projectile_end(e: Dictionary) -> void:
 		"boulder_sun", "boulder_doom":
 			impact(at, Color(1.0, 0.7, 0.4), 0.5)
 			debris(at, 7, Color(0.32, 0.28, 0.25) if style == "boulder_sun" else Color(0.18, 0.12, 0.2), 3.5, 1.1)
+		"root_orb":
+			impact(at, Color(0.45, 0.9, 0.3), 0.35)
+			debris(at, 6, Color(0.3, 0.45, 0.15), 2.5, 0.5, "chip")
 		"sun_orb", "doom_orb", "fire", "fire_big":
 			var c2: Color = {"sun_orb": Color(1.0, 0.85, 0.45), "doom_orb": Color(0.55, 1.0, 0.45)}.get(style, Color(1.0, 0.5, 0.15))
 			impact(at, c2, 0.3 if hit else 0.18)
@@ -1201,6 +1211,87 @@ func level_up(at: Vector3) -> void:
 		tw.parallel().tween_property(ring, "global_position:y", at.y + 2.4, 0.6)
 		tw.tween_callback(ring.queue_free)
 	shockwave(at, 1.6, Color(1.0, 0.85, 0.4), 0.6, 0.12, 2.0)
+
+# ---- Disables: bash, item debuffs, neutral spells ---------------------------------------------------------------------
+
+## A bash: a heavy yellow flash on the head, sparks and a short thump of the camera when it is close.
+func bash_hit(target_id: int) -> void:
+	var u: SimUnit = game.world.get_unit(target_id)
+	if u == null or not _seen(u.pos):
+		return
+	var at := _chest(target_id, 0.85)
+	impact(at, Color(1.0, 0.9, 0.4), 0.45)
+	sparks(at, Vector3.UP, 10, Color(1.0, 0.85, 0.4), 4.5)
+	flash_light(at, Color(1.0, 0.85, 0.4), 3.5, 4.0, 0.2)
+	_shake(u.pos, 0.08, 0.15)
+
+## An item disable lands on a unit: a burst in the debuff's colour (silence violet, disarm orange, hex green, root
+## green-brown, stun yellow).
+func debuff_hit(target_id: int, kind: String) -> void:
+	var u: SimUnit = game.world.get_unit(target_id)
+	if u == null or not _seen(u.pos):
+		return
+	var col: Color = {"silence": Color(0.62, 0.3, 1.0), "disarm": Color(1.0, 0.55, 0.15), "hex": Color(0.4, 1.0, 0.45),
+		"root_staff": Color(0.45, 0.85, 0.25), "overwhelm": Color(1.0, 0.85, 0.35)}.get(kind, Color(1, 1, 1))
+	var at := _chest(target_id, 0.6)
+	impact(at, col, 0.5)
+	sparks(at, Vector3.UP, 8, col, 3.0)
+	shockwave(ground3(u.pos), 1.2, col, 0.4, 0.08, 2.0)
+	if kind == "hex":
+		# a puff of smoke as the unit turns into a sheep
+		debris(at, 10, Color(0.9, 0.95, 0.9), 2.5, 0.6, "chip")
+		flash_light(at, col, 4.0, 4.0, 0.3)
+
+## Silence Staff's end: the stored damage bursts out in violet.
+func soul_burst(uid: int) -> void:
+	var u: SimUnit = game.world.get_unit(uid)
+	if u == null or not _seen(u.pos):
+		return
+	var at := _chest(uid, 0.6)
+	impact(at, Color(0.62, 0.3, 1.0), 0.7)
+	shockwave(ground3(u.pos), 1.8, Color(0.62, 0.3, 1.0), 0.45, 0.1, 2.5)
+	flash_light(at, Color(0.62, 0.3, 1.0), 4.0, 5.0, 0.3)
+
+## The neutrals' spells: Stomp (a dusty shockwave and cracks), Smash (a heavy crater), Snarl (a grey roar ring).
+func neutral_spell(e: Dictionary) -> void:
+	var pos: Vector2 = e.pos
+	if not _seen(pos):
+		return
+	var at := ground3(pos)
+	var r := float(e.radius) * View.S
+	match String(e.ability):
+		"stomp":
+			shockwave(at, r * 1.15, Color(0.85, 0.7, 0.45), 0.45, 0.14, 1.6)
+			edge_ring(at, r, Color(1.0, 0.85, 0.5, 0.5), 0.6)
+			crack(at, r, Color(0.8, 0.55, 0.25), 3.0)
+			debris(at, 12, Color(0.35, 0.28, 0.2), 4.5, 1.0)
+			_shake(pos, 0.25, 0.25)
+		"smash":
+			shockwave(at, r * 1.2, Color(0.9, 0.75, 0.5), 0.5, 0.18, 2.0)
+			crack(at, r * 1.1, Color(0.85, 0.5, 0.2), 4.0)
+			debris(at, 18, Color(0.32, 0.26, 0.2), 5.5, 1.3)
+			flash_light(at + Vector3(0, 0.8, 0), Color(1.0, 0.75, 0.4), 4.0, 5.0, 0.3)
+			_shake(pos, 0.4, 0.3)
+		"snarl":
+			shockwave(at, r * 1.1, Color(0.75, 0.75, 0.8), 0.5, 0.1, 1.2)
+			edge_ring(at, r, Color(0.8, 0.8, 0.9, 0.35), 0.5)
+
+## Reveal Dust: a glittering cloud thrown out from the hero to the edge of its area.
+func dust(e: Dictionary) -> void:
+	var pos: Vector2 = e.pos
+	if not _seen(pos):
+		return
+	var at := ground3(pos, 0.4)
+	shockwave(ground3(pos), float(e.radius) * View.S, Color(1.0, 0.95, 0.7), 0.7, 0.08, 1.2)
+	sparks(at, Vector3.UP, 26, Color(1.0, 0.95, 0.75), 6.0)
+	debris(at, 10, Color(0.95, 0.9, 0.75), 3.0, 0.4, "chip")
+
+## Smash's wind-up: the area it will hit glows red on the ground until it lands, so heroes can step out.
+func smash_warning(pos: Vector2, radius: float, dur: float) -> void:
+	if not _seen(pos):
+		return
+	edge_ring(ground3(pos), radius * View.S, Color(1.0, 0.25, 0.15, 0.85), dur)
+	edge_ring(ground3(pos), radius * View.S * 0.55, Color(1.0, 0.35, 0.2, 0.5), dur)
 
 # ---- Ezee, the Dark Paladin -------------------------------------------------------------------------------------------
 

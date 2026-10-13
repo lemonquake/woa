@@ -35,6 +35,7 @@ static func _ensure() -> void:
 	_build_units()
 	_build_items()
 	_build_abilities()
+	_build_neutral_abilities()
 	_build_talents()
 
 static func unit(id: String) -> Dictionary:
@@ -123,6 +124,7 @@ static func _build_units() -> void:
 	_add("filler", _merged(building, {"name": "Statue", "kind": K.FILLER, "hull": 96.0, "hp": 1000.0, "armor": 10.0,
 		"vision_day": 900.0, "vision_night": 600.0, "bounty_key": "filler"}))
 	_add("fountain", {"name": "Fountain", "kind": K.FOUNTAIN, "hull": 144.0, "hp": 500.0, "can_move": false,
+		"true_sight": C.FOUNTAIN_TRUE_SIGHT,
 		"move_speed": 0.0, "dmg_min": 290.0, "dmg_max": 310.0, "bat": 0.15, "attack_point": 0.0, "backswing": 0.0,
 		"acquire": 1200.0, "range": 1200.0, "projectile_speed": 1400.0, "vision_day": 1800.0, "vision_night": 1800.0,
 		"turn_rate": 1.0, "attack_class": AC.REINFORCED})
@@ -131,6 +133,10 @@ static func _build_units() -> void:
 		"move_speed": 290.0, "turn_rate": 0.5, "vision_day": 200.0, "vision_night": 200.0, "model": "courier", "flying": true})
 	_add("ward_observer", {"name": "Eye Ward", "kind": K.WARD, "hull": 8.0, "hp": 200.0, "can_attack": false,
 		"can_move": false, "move_speed": 0.0, "vision_day": 1600.0, "vision_night": 1600.0, "xp": 0.0})
+	# Reveal Ward (Dota's Sentry Ward): no sight of its own, True Sight 1050 over its team's vision
+	_add("ward_sentry", {"name": "Reveal Ward", "kind": K.WARD, "hull": 8.0, "hp": 200.0, "can_attack": false,
+		"can_move": false, "move_speed": 0.0, "vision_day": 0.0, "vision_night": 0.0, "xp": 0.0,
+		"true_sight": 1050.0, "model": "ward_observer"})
 
 	# Neutral creeps (npc_dota_neutral_*), renamed.
 	var neu := {"kind": K.NEUTRAL_CREEP, "turn_rate": 0.9, "bat": 2.0, "vision_day": 800.0, "vision_night": 800.0}
@@ -139,29 +145,38 @@ static func _build_units() -> void:
 		"xp": 14.0, "gold_min": 3, "gold_max": 5, "level": 1}))
 	_add("mudling_digger", _merged(neu, {"name": "Goblin Digger", "hull": 16.0, "hp": 325.0, "hp_regen": 0.5,
 		"armor": 1.0, "dmg_min": 22.0, "dmg_max": 23.0, "attack_point": 0.38, "backswing": 0.5, "acquire": 500.0,
-		"range": 100.0, "move_speed": 270.0, "xp": 17.0, "gold_min": 12, "gold_max": 14, "level": 1}))
+		"range": 100.0, "move_speed": 270.0, "xp": 17.0, "gold_min": 12, "gold_max": 14, "level": 1,
+		"on_hit": {"id": "weapon_grab", "name": "Weapon Grab", "disarm": true, "dur": 3.0, "cooldown": 9.0}}))
 	_add("mudling_foreman", _merged(neu, {"name": "Goblin Boss", "hull": 16.0, "hp": 400.0, "hp_regen": 0.5,
 		"armor": 2.0, "dmg_min": 24.0, "dmg_max": 26.0, "attack_point": 0.38, "backswing": 0.5, "acquire": 500.0,
-		"range": 110.0, "move_speed": 330.0, "xp": 30.0, "gold_min": 19, "gold_max": 21, "level": 2}))
+		"range": 110.0, "move_speed": 330.0, "xp": 30.0, "gold_min": 19, "gold_max": 21, "level": 2,
+		"auras": [{"id": "pace_aura", "name": "Pace Aura", "stats": {"move_speed": 12.0}, "radius": 1200.0}]}))
 	_add("ashfang", _merged(neu, {"name": "Wolf", "hull": 16.0, "hp": 500.0, "hp_regen": 0.5, "mana": 200.0,
 		"armor": 1.0, "dmg_min": 15.0, "dmg_max": 17.0, "attack_point": 0.33, "backswing": 0.64, "acquire": 500.0,
-		"range": 90.0, "move_speed": 350.0, "xp": 40.0, "gold_min": 18, "gold_max": 22, "level": 3}))
+		"range": 90.0, "move_speed": 350.0, "xp": 40.0, "gold_min": 18, "gold_max": 22, "level": 3,
+		"abilities": ["snarl"]}))
 	_add("ashfang_alpha", _merged(neu, {"name": "Alpha Wolf", "hull": 24.0, "hp": 600.0, "hp_regen": 0.5,
 		"armor": 3.0, "dmg_min": 27.0, "dmg_max": 29.0, "attack_point": 0.33, "backswing": 0.64, "acquire": 500.0,
-		"range": 90.0, "move_speed": 350.0, "xp": 60.0, "gold_min": 32, "gold_max": 34, "level": 5}))
+		"range": 90.0, "move_speed": 350.0, "xp": 60.0, "gold_min": 32, "gold_max": 34, "level": 5,
+		"crit": {"name": "Crit", "chance": 0.20, "mult": 2.0},
+		"auras": [{"id": "pack_aura", "name": "Pack Aura", "stats": {"base_damage_pct": 0.20}, "radius": 1200.0}]}))
 	_add("strider", _merged(neu, {"name": "Orc", "hull": 16.0, "hp": 350.0, "hp_regen": 0.5, "armor": 1.0,
 		"dmg_min": 18.0, "dmg_max": 20.0, "attack_point": 0.3, "backswing": 0.3, "acquire": 500.0, "range": 100.0,
-		"move_speed": 320.0, "xp": 32.0, "gold_min": 16, "gold_max": 18, "level": 2}))
+		"move_speed": 320.0, "xp": 32.0, "gold_min": 16, "gold_max": 18, "level": 2,
+		"auras": [{"id": "magic_armor_aura", "name": "Magic Armor Aura", "stats": {"magic_resist": 0.20},
+			"hero_stats": {"magic_resist": 0.10}, "radius": 1200.0}]}))
 	_add("strider_warlord", _merged(neu, {"name": "Orc Shaman", "hull": 24.0, "hp": 1100.0, "hp_regen": 1.0,
 		"mana": 200.0, "armor": 4.0, "dmg_min": 49.0, "dmg_max": 55.0, "attack_point": 0.3, "backswing": 0.3,
-		"acquire": 500.0, "range": 100.0, "move_speed": 320.0, "xp": 90.0, "gold_min": 54, "gold_max": 60, "level": 5}))
+		"acquire": 500.0, "range": 100.0, "move_speed": 320.0, "xp": 90.0, "gold_min": 54, "gold_max": 60, "level": 5,
+		"abilities": ["stomp"]}))
 	_add("hill_troll", _merged(neu, {"name": "Swamp Troll", "hull": 16.0, "hp": 500.0, "hp_regen": 0.5,
 		"armor": 1.0, "dmg_min": 28.0, "dmg_max": 37.0, "attack_point": 0.3, "backswing": 0.3, "acquire": 300.0,
 		"range": 500.0, "projectile_speed": 1200.0, "move_speed": 270.0, "xp": 28.0, "gold_min": 18, "gold_max": 20,
-		"attack_class": AC.PIERCING, "level": 2}))
+		"attack_class": AC.PIERCING, "level": 2,
+		"on_hit": {"id": "break_strike", "name": "Break Strike", "break": true, "dur": 3.0, "cooldown": 10.0}}))
 	_add("ogre_brute", _merged(neu, {"name": "Ogre", "hull": 24.0, "hp": 800.0, "hp_regen": 0.5, "armor": 1.0,
 		"dmg_min": 22.0, "dmg_max": 24.0, "attack_point": 0.3, "backswing": 0.3, "acquire": 500.0, "range": 100.0,
-		"move_speed": 270.0, "xp": 32.0, "gold_min": 22, "gold_max": 26, "level": 2}))
+		"move_speed": 270.0, "xp": 32.0, "gold_min": 22, "gold_max": 26, "level": 2, "abilities": ["smash"]}))
 	_add("cinder_wyrmling", _merged(neu, {"name": "Fire Imp", "hull": 24.0, "hp": 950.0, "hp_regen": 0.5,
 		"armor": 2.0, "magic_resist": 0.25, "dmg_min": 20.0, "dmg_max": 22.0, "attack_point": 0.5, "backswing": 0.5,
 		"acquire": 300.0, "range": 300.0, "projectile_speed": 900.0, "move_speed": 350.0, "xp": 95.0, "gold_min": 37,
@@ -169,7 +184,9 @@ static func _build_units() -> void:
 	_add("elder_cinder_wyrm", _merged(neu, {"name": "Lava Golem", "hull": 40.0, "hp": 2000.0, "hp_regen": 2.0,
 		"mana": 500.0, "armor": 4.0, "magic_resist": 0.3, "dmg_min": 62.0, "dmg_max": 68.0, "attack_point": 0.5,
 		"backswing": 0.5, "acquire": 300.0, "range": 300.0, "projectile_speed": 1500.0, "move_speed": 300.0,
-		"xp": 124.0, "gold_min": 76, "gold_max": 80, "level": 6, "ancient": true}))
+		"xp": 124.0, "gold_min": 76, "gold_max": 80, "level": 6, "ancient": true,
+		"splash": {"name": "Splash", "radius": 250.0, "pct": 1.0},
+		"auras": [{"id": "thick_hide_aura", "name": "Thick Hide Aura", "stats": {"armor": 3.0}, "radius": 1200.0}]}))
 
 	# Heroes. Blood Ranger: a ranged agility archer (stats follow the classic ranged-agility carry template).
 	_add("blood_ranger", {"name": "Blood Ranger", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
@@ -301,6 +318,24 @@ static func _build_abilities() -> void:
 		"pull_speed": [75, 75, 75], "pull_min": [125, 125, 125], "damage_mult": [1.0, 1.0, 1.0]},
 		"desc": "Sludge grabs an enemy and eats it alive. Channelled for 2.75 seconds: the victim is stunned and pulled in, taking magic damage that grows with his strength, and Sludge heals for all of it."}
 
+# ---- Neutral creep abilities (Dota 7.41d npc_abilities.txt; our names) -------------------------------------------------
+## Cast by the neutral AI (SimAI) while the camp fights. Snarl: Giant Wolf's Intimidate; Stomp: Centaur Conqueror's War
+## Stomp; Smash: Ogre Bruiser's Ogre Smash (a long 2.8 s wind-up that can be walked out of).
+
+static func _build_neutral_abilities() -> void:
+	_abilities["snarl"] = {"id": "snarl", "name": "Snarl", "behavior": "no_target", "key": "", "max_level": 1,
+		"mana": [50], "cooldown": [16.0], "cast_point": 0.2, "range": 0, "anim": "cast",
+		"values": {"radius": [300.0], "damage_reduction": [0.6], "duration": [4.0]},
+		"desc": "The wolf snarls: nearby enemies deal 60% less attack damage for 4 seconds."}
+	_abilities["stomp"] = {"id": "stomp", "name": "Stomp", "behavior": "no_target", "key": "", "max_level": 1,
+		"mana": [50], "cooldown": [12.0], "cast_point": 0.4, "range": 0, "anim": "cast", "damage_type": "magical",
+		"values": {"radius": [250.0], "damage": [25.0], "hero_stun": [1.6], "stun": [3.0]},
+		"desc": "Stomps the ground: enemies nearby take magic damage and are stunned (1.6 s heroes, 3 s others)."}
+	_abilities["smash"] = {"id": "smash", "name": "Smash", "behavior": "point", "key": "", "max_level": 1,
+		"mana": [0], "cooldown": [12.0], "cast_point": 2.8, "range": 150, "anim": "cast", "damage_type": "magical",
+		"values": {"radius": [200.0], "damage": [200.0], "hero_stun": [2.4], "stun": [2.4]},
+		"desc": "Raises its club for 2.8 seconds, then smashes the ground: enemies in the area take magic damage and are stunned."}
+
 # ---- Talents ---------------------------------------------------------------------------------------------------------
 
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
@@ -329,6 +364,13 @@ static func _it(id: String, name: String, cost: int, d: Dictionary) -> void:
 	_items[id] = it
 
 static func _build_items() -> void:
+	# the Teleport Scroll first, as in Dota's shop
+	_it("tp_scroll", "Teleport Scroll", 100, {"use": "tp", "charges": 1, "consumable": true, "category": "consumables",
+		"values": {"channel": SimConst.TP_CHANNEL}})
+	# Flask (Dota's Bottle, 7.41d): 3 charges of 110 health and 60 mana over 2.7 s (lost to hero damage), refilled
+	# at the fountain; it stores an orb taken while it is carried
+	_it("bottle", "Flask", 675, {"use": "bottle", "charges": 3, "cooldown": 0.5, "category": "consumables",
+		"values": {"health": 110.0, "mana": 60.0, "time": 2.7, "max_charges": 3, "orb_expire": 90.0}})
 	_it("tango", "Vegan Picker", 90, {"use": "tango", "charges": 3, "consumable": true, "category": "consumables",
 		"values": {"health_regen": 7.0, "duration": 16.0, "planted_duration": 32.0, "range": 165.0}})
 	_it("salve", "Healing Paste", 100, {"use": "salve", "charges": 1, "consumable": true, "category": "consumables",
@@ -339,10 +381,13 @@ static func _build_items() -> void:
 		"stats": {"hp_regen": 0.4}, "values": {"mana": 100.0}})
 	_it("faerie_fire", "Firefly Jar", 65, {"use": "faerie_fire", "charges": 1, "consumable": true, "category": "consumables",
 		"cooldown": 5.0, "stats": {"damage": 2.0}, "values": {"heal": 85.0}})
-	_it("tp_scroll", "Teleport Scroll", 100, {"use": "tp", "charges": 1, "consumable": true, "category": "consumables",
-		"values": {"channel": SimConst.TP_CHANNEL}})
 	_it("observer_ward", "Eye Ward", 0, {"use": "ward", "charges": 1, "consumable": true, "category": "consumables",
-		"cooldown": 1.0, "values": {"lifetime": 360.0}})
+		"cooldown": 1.0, "values": {"lifetime": 360.0, "unit": "ward_observer"}})
+	# Dota's Sentry Ward and Dust of Appearance: the answers to invisibility
+	_it("reveal_ward", "Reveal Ward", 50, {"use": "ward", "charges": 1, "consumable": true, "category": "consumables",
+		"cooldown": 1.0, "values": {"lifetime": 420.0, "unit": "ward_sentry", "true_sight": 1050.0}})
+	_it("reveal_dust", "Reveal Dust", 80, {"use": "dust", "charges": 1, "consumable": true, "category": "consumables",
+		"cooldown": 30.0, "values": {"radius": 1050.0, "duration": 12.0, "linger": 8.0, "slow": 0.2, "damage": 25.0}})
 	_it("branch", "Tree Twig", 55, {"use": "plant", "stats": {"str": 1.0, "agi": 1.0, "int": 1.0}, "category": "attributes",
 		"values": {"tree_duration": SimConst.PLANTED_TREE_DURATION, "range": SimConst.PLANT_RANGE}})
 	_it("slippers", "Slippers", 140, {"stats": {"agi": 3.0}, "category": "attributes"})
@@ -468,6 +513,65 @@ static func _build_items() -> void:
 		"components": ["blade_alacrity", "boots_elves"], "recipe_cost": 650, "category": "upgrades"})
 	_it("dragon_lance", "Long Spear", 2000, {"stats": {"agi": 15.0, "str": 10.0, "range": 130.0},
 		"components": ["blade_alacrity", "belt_str"], "recipe_cost": 550, "category": "upgrades"})
+	# Big parts (Dota's secret shop parts; here in the main shop): Demon Edge, Talisman of Evasion, Mystic Staff,
+	# Tiara of Selemene
+	_it("huge_sword", "Huge Sword", 2200, {"stats": {"damage": 40.0}, "category": "big_parts"})
+	_it("dodge_charm", "Dodge Charm", 1300, {"stats": {"evasion": 0.15}, "category": "big_parts"})
+	_it("long_staff", "Long Staff", 2800, {"stats": {"int": 25.0}, "category": "big_parts"})
+	_it("mana_tiara", "Mana Tiara", 1700, {"stats": {"mana_regen": 6.0}, "category": "big_parts"})
+	# Status items (Dota 7.41d items.txt). Keys ending in "_max" do not stack between items (the largest counts).
+	# Heavy Sword (Sange): slow resistance and health restoration; Spell Sword (Kaya): spell and mana regen
+	# amplification; Twin Swords (Sange and Yasha): status resistance too.
+	_it("heavy_sword", "Heavy Sword", 2100, {"stats": {"str": 16.0, "slow_resist_max": 0.25, "heal_amp_max": 0.12},
+		"components": ["giant_axe", "belt_str"], "recipe_cost": 650, "category": "upgrades"})
+	_it("spell_sword", "Spell Sword", 2100, {"stats": {"int": 16.0, "spell_amp": 0.10, "mana_regen_amp": 0.20},
+		"components": ["wizard_staff", "robe"], "recipe_cost": 650, "category": "upgrades"})
+	_it("twin_swords", "Twin Swords", 4200, {"stats": {"str": 16.0, "agi": 16.0, "attack_speed": 20.0,
+		"move_speed_pct": 0.12, "status_resist_max": 0.16, "heal_amp_max": 0.16, "slow_resist_max": 0.30},
+		"components": ["heavy_sword", "yasha"], "recipe_cost": 0, "category": "upgrades"})
+	_it("battle_staff", "Battle Staff", 1625, {"stats": {"int": 10.0, "attack_speed": 35.0, "mana_regen": 1.25},
+		"components": ["brass_knuckles", "robe", "sobi_mask"], "recipe_cost": 0, "category": "upgrades"})
+	# Critical strike (Crystalys, Daedalus): a pseudo-random chance to multiply the attack's damage
+	_it("crit_sword", "Crit Sword", 2000, {"passive": "crit", "stats": {"damage": 32.0},
+		"components": ["greatsword", "blades_attack"], "recipe_cost": 200, "category": "upgrades",
+		"values": {"crit_chance": 0.30, "crit_mult": 1.6}})
+	_it("crit_bow", "Crit Bow", 5200, {"passive": "crit", "stats": {"damage": 88.0},
+		"components": ["crit_sword", "huge_sword"], "recipe_cost": 1000, "category": "upgrades",
+		"values": {"crit_chance": 0.30, "crit_mult": 2.25}})
+	# Bash (Skull Basher, Abyssal Blade): a chance to stun and add damage; only one bash item works, 2.3 s apart.
+	# The Stun Blade's active (Overwhelm) stuns 1.6 s through debuff immunity.
+	_it("stun_club", "Stun Club", 2875, {"passive": "bash", "stats": {"damage": 30.0, "str": 10.0},
+		"components": ["steel_hammer", "belt_str"], "recipe_cost": 825, "category": "upgrades",
+		"values": {"chance_melee": 0.25, "chance_ranged": 0.10, "duration": 1.2, "bash_cooldown": 2.3, "damage": 100.0}})
+	_it("stun_blade", "Stun Blade", 6250, {"passive": "bash", "use": "overwhelm", "target_team": "enemy",
+		"cooldown": 35.0, "mana": 75.0, "stats": {"damage": 35.0, "str": 30.0, "slow_resist_max": 0.30,
+		"heal_amp_max": 0.16}, "components": ["stun_club", "heavy_sword"], "recipe_cost": 1275, "category": "upgrades",
+		"values": {"chance_melee": 0.25, "chance_ranged": 0.10, "duration": 1.2, "bash_cooldown": 2.3, "damage": 120.0,
+		"stun": 1.6, "range": 150.0}})
+	# True strike (Monkey King Bar): Pierce, 80% for 70 magic damage and the attack cannot miss
+	_it("sure_hit_staff", "Sure Hit Staff", 5000, {"passive": "pierce", "stats": {"damage": 50.0, "attack_speed": 50.0},
+		"stats_melee": {"range_melee": 50.0}, "components": ["huge_sword", "brass_knuckles", "spear"], "recipe_cost": 900,
+		"category": "upgrades", "values": {"chance": 0.80, "damage": 70.0}})
+	# Disables: silence (Orchid), root (Rod of Atos), disarm (Heaven's Halberd), hex (Scythe of Vyse), break (Silver
+	# Edge's Shadow Walk)
+	_it("silence_staff", "Silence Staff", 3275, {"use": "silence", "target_team": "enemy", "cooldown": 18.0,
+		"mana": 125.0, "stats": {"attack_speed": 35.0, "damage": 20.0, "mana_regen": 2.5, "int": 12.0},
+		"components": ["battle_staff", "greatsword"], "recipe_cost": 300, "category": "upgrades",
+		"values": {"duration": 5.0, "damage_pct": 0.30, "range": 900.0}})
+	_it("root_staff", "Root Staff", 2250, {"use": "root", "target_team": "enemy", "cooldown": 18.0, "mana": 100.0,
+		"stats": {"int": 12.0, "hp": 275.0}, "components": ["wizard_staff", "health_crystal"], "recipe_cost": 250,
+		"category": "upgrades", "values": {"duration": 2.0, "range": 1100.0, "speed": 1900.0}})
+	_it("halberd", "Halberd", 3300, {"use": "disarm", "target_team": "enemy", "cooldown": 15.0, "mana": 25.0,
+		"stats": {"armor": 9.0, "hp_regen": 6.5, "evasion": 0.25},
+		"components": ["dodge_charm", "plate_vest", "big_healing_ring"], "recipe_cost": 350, "category": "upgrades",
+		"values": {"duration": 3.5, "range": 750.0}})
+	_it("hex_staff", "Hex Staff", 5200, {"use": "hex", "target_team": "enemy", "cooldown": 20.0, "mana": 250.0,
+		"stats": {"int": 30.0, "mana_regen": 8.5}, "components": ["long_staff", "mana_tiara"], "recipe_cost": 700,
+		"category": "upgrades", "values": {"duration": 2.8, "range": 800.0}})
+	_it("break_blade", "Break Blade", 5700, {"use": "sneak", "cooldown": 23.0, "mana": 75.0,
+		"stats": {"damage": 70.0, "attack_speed": 35.0}, "category": "upgrades",
+		"components": ["sneak_blade", "huge_sword"], "recipe_cost": 250,
+		"values": {"duration": 17.0, "fade": 0.3, "move_speed_pct": 0.2, "bonus_damage": 300.0, "break": 5.0}})
 	# Recipe scrolls: one per item whose recipe costs gold, bought on its own or as part of the item
 	for id in _items.keys():
 		var d: Dictionary = _items[id]

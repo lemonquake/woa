@@ -3,9 +3,11 @@ extends RefCounted
 ## The combination items' actives, passives and auras (Dota 7.41d rules and numbers, our names; see sim_data.gd).
 ##
 ## Actives: Jump Knife, Push Staff, Gold Glove, Spell Shield, Slip Boots, Mana Boots, Medic Kit, Spike Armor, Sneak
-## Blade, Switch Boots. Passives: Spear's pierce, Rust Stone / Armor Breaker corruption (the strongest one counts)
+## Blade and Break Blade, Switch Boots, and the disables: Stun Blade (stun), Silence Staff (silence, then a burst of
+## the damage taken), Root Staff (root, by projectile), Halberd (disarm), Hex Staff (hex). Passives: pierce (Spear,
+## Sure Hit Staff), bash (Stun Club, Stun Blade), Rust Stone / Armor Breaker corruption (the strongest one counts)
 ## and Armor Breaker's kill damage, Shock Hammer's chain lightning, Cleave Axe's cleave, Block Shield's block,
-## Spike Armor's damage return. Auras (Mana Ring, Mana Boots, Leaf Hat, Medic Kit) refresh every 6 ticks on allies
+## Spike Armor's damage return. Every chance passive is pseudo-random (SimStatus.roll). Auras (Mana Ring, Mana Boots, Leaf Hat, Medic Kit) refresh every 6 ticks on allies
 ## in range and linger 0.5 s; the same aura from two items never stacks, the stronger one counts.
 ## Random rolls happen only when the item is equipped, so matches without these items replay exactly as before.
 
@@ -49,7 +51,7 @@ static func target_kind(use: String) -> String:
 	match use:
 		"jump":
 			return "point"
-		"push", "gold":
+		"push", "gold", "overwhelm", "silence", "root", "disarm", "hex":
 			return "unit"
 	return "none"
 
@@ -59,7 +61,7 @@ func cast_range(u: SimUnit, use: String, d: Dictionary, t: SimUnit) -> float:
 			return INF                             # no walking: a click beyond the range blinks a shorter way
 		"push":
 			return float(d.values.range_enemy) if t != null and t.team != u.team else float(d.values.range_ally)
-		"gold":
+		"gold", "overwhelm", "silence", "root", "disarm", "hex":
 			return float(d.values.range)
 	return 0.0
 
@@ -79,6 +81,19 @@ func error(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, _p: Vector2) -
 				return "Target is immune"
 			if t.is_invulnerable():
 				return "Target is invulnerable"
+			if not w.vision.sees(u.team, t):
+				return "Target not visible"
+		"bottle":
+			if int(it.get("charges", 0)) <= 0 and String(it.get("orb", "")) == "":
+				return "No charges"
+		"overwhelm", "silence", "root", "disarm", "hex":
+			if t == null or not t.alive or t.team == u.team or t.is_building() or t.is_ward() or t.kind == K.COURIER:
+				return "Must target an enemy unit"
+			if t.is_invulnerable():
+				return "Target is invulnerable"
+			# only the Stun Blade's stun goes through debuff immunity
+			if t.debuff_immune and String(d.use) != "overwhelm":
+				return "Target is immune"
 			if not w.vision.sees(u.team, t):
 				return "Target not visible"
 		"gold":
@@ -128,7 +143,43 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 		"sneak":
 			u.add_modifier({"id": "sneak_blade", "source": u.id, "expires": w.time + float(v.duration),
 				"fade_until": w.time + float(v.fade), "invisible": false, "bonus": float(v.bonus_damage),
-				"stats": {"move_speed_pct": float(v.move_speed_pct)}, "fx": "sneak"})
+				"break": float(v.get("break", 0.0)), "stats": {"move_speed_pct": float(v.move_speed_pct)}, "fx": "sneak"})
+		"bottle":
+			# a stored orb is let out first; otherwise one charge of health and mana over 2.7 s
+			if String(it.get("orb", "")) != "":
+				var kind := String(it.orb)
+				it.erase("orb")
+				it.erase("orb_until")
+				w.orbs.activate(u, kind)
+			elif int(it.get("charges", 0)) > 0:
+				it["charges"] = int(it.charges) - 1
+				u.add_modifier({"id": "bottle", "source": u.id, "expires": w.time + float(v.time),
+					"regen": float(v.health) / float(v.time), "mana_regen": float(v.mana) / float(v.time),
+					"break_on_damage": true, "fx": "heal"})
+		"overwhelm":
+			# Stun Blade: a bash-group stun that pierces debuff immunity
+			w.status.apply(t, u.id, u.team, {"id": "bashed", "stun": true, "dur": float(v.stun), "fx": "stun"}, true)
+			w.events.append({"t": "overwhelm", "u": u.id, "target": t.id})
+		"silence":
+			# Silence Staff: silenced for 5 s; when it ends, 30% of the damage taken meanwhile strikes again as magic
+			if w.status.apply(t, u.id, u.team, {"id": "silence_staff", "silence": true, "dur": float(v.duration),
+					"fx": "silence"}):
+				var sm := t.get_modifier("silence_staff")
+				w.status.add_burn(t, u, float(sm.expires), float(v.damage_pct))
+			w.events.append({"t": "item_debuff", "u": u.id, "target": t.id, "kind": "silence"})
+		"root":
+			# Root Staff: a projectile that roots what it reaches (debuff immunity on arrival stops it)
+			w.combat.launch_effect(u, t, float(v.speed), "root_staff", {"id": "root_staff", "root": true,
+				"dur": float(v.duration), "fx": "root"})
+		"disarm":
+			w.status.apply(t, u.id, u.team, {"id": "halberd", "disarm": true, "dur": float(v.duration),
+				"dispel": "strong", "fx": "disarm"})
+			w.events.append({"t": "item_debuff", "u": u.id, "target": t.id, "kind": "disarm"})
+		"hex":
+			if w.status.apply(t, u.id, u.team, {"id": "hex_staff", "hex": true, "dur": float(v.duration), "fx": "hex"}):
+				t.atk_phase = SimUnit.AtkPhase.NONE
+				t.cast_phase = SimUnit.CastPhase.NONE
+			w.events.append({"t": "item_debuff", "u": u.id, "target": t.id, "kind": "hex"})
 		"jump":
 			_jump(u, d, p)
 		"push":
@@ -158,6 +209,7 @@ func _jump(u: SimUnit, d: Dictionary, p: Vector2) -> void:
 	u.moving = false
 	if (to - from).length() > 1.0:
 		u.facing = (to - from).angle()
+	w.combat.disjoint(u)
 	w.events.append({"t": "jump", "u": u.id, "from": from, "to": to})
 
 ## Push Staff: shoves the target 600 the way it faces over 0.5 s. It is not a disable; trees in the way are cut.
@@ -178,11 +230,13 @@ func _push(u: SimUnit, d: Dictionary, t: SimUnit) -> void:
 	t.path = PackedVector2Array()
 	w.events.append({"t": "knockback", "u": t.id, "phys": false, "to": to, "push_staff": true})
 
-## Basic dispel on the user: removes slows, roots, silences, disarms and mutes enemies put on it (not stuns).
+## Basic dispel on the user: removes the debuffs enemies put on it that a basic dispel takes (slows, roots,
+## silences, disarms, mutes; not stuns or hexes). Older debuffs without a dispel mark are judged by their flags.
 func _basic_dispel(u: SimUnit) -> void:
+	w.status.dispel(u, false, u.team)
 	for i in range(u.modifiers.size() - 1, -1, -1):
 		var m: Dictionary = u.modifiers[i]
-		if m.get("stun", false):
+		if m.has("dispel") or m.get("stun", false) or m.get("hex", false):
 			continue
 		var src := w.get_unit(int(m.get("source", -1)))
 		if src == null or src.team == u.team:
@@ -192,14 +246,19 @@ func _basic_dispel(u: SimUnit) -> void:
 			u.modifiers.remove_at(i)
 			u.stats_dirty = true
 
-## Sneak Blade ends when its owner attacks or casts. Returns the bonus damage the breaking attack carries.
-func break_sneak(u: SimUnit) -> float:
+## Sneak Blade and Break Blade end when their owner attacks or casts. Returns what the breaking attack carries:
+## {bonus damage, break (seconds of Break on the target, Break Blade)}.
+func break_sneak(u: SimUnit) -> Dictionary:
+	# the Stealth Orb breaks the same way, with nothing extra on the attack
+	if not u.get_modifier("orb_stealth").is_empty():
+		u.remove_modifier("orb_stealth")
+		w.events.append({"t": "sneak_end", "u": u.id})
 	var m := u.get_modifier("sneak_blade")
 	if m.is_empty():
-		return 0.0
+		return {}
 	u.remove_modifier("sneak_blade")
 	w.events.append({"t": "sneak_end", "u": u.id})
-	return float(m.get("bonus", 0.0))
+	return {"bonus": float(m.get("bonus", 0.0)), "break": float(m.get("break", 0.0))}
 
 # ---- Per tick ----------------------------------------------------------------------------------------------------------
 
@@ -213,6 +272,12 @@ func update() -> void:
 		var sm := h.get_modifier("sneak_blade")
 		if not sm.is_empty() and not bool(sm.invisible) and w.time >= float(sm.fade_until):
 			sm["invisible"] = true
+			# turning invisible disjoints projectiles once, unless an enemy has True Sight over the unit
+			if not w.vision.true_sighted(1 - h.team, h):
+				w.combat.disjoint(h)
+			# an invisible unit never attacks on its own: a swing it started by itself is dropped
+			if h.order != C.Order.ATTACK_UNIT and h.order != C.Order.ATTACK_MOVE:
+				h.atk_target = -1
 		# Gold Glove charges come back one every 90 s, up to 2
 		for i in mini(6, h.inventory.size()):
 			var it = h.inventory[i]
@@ -257,33 +322,64 @@ func _auras() -> void:
 
 # ---- Attacks ------------------------------------------------------------------------------------------------------
 
-## Before the hit roll: Spear's pierce (25%: the attack cannot miss and deals 60 bonus magic damage).
-func roll_pierce(s: Dictionary) -> bool:
-	if not bool(s.hero):
-		return false
+## Before the hit roll: pierce (Spear 25% / 60, Sure Hit Staff 80% / 70): the attack cannot miss and deals bonus
+## magic damage. Pseudo-random; the strongest pierce item rolls, the others do not stack. Never against buildings
+## (and no roll counts there). Returns {damage, item} on a proc, {} otherwise.
+func roll_pierce(s: Dictionary, t: SimUnit) -> Dictionary:
+	if not bool(s.hero) or t.is_building() or t.is_ward():
+		return {}
 	var src := w.get_unit(int(s.src))
 	if src == null:
-		return false
-	var it := equipped(src, "spear")
-	if it.is_empty():
-		return false
-	return w.rng.randf() < float(SimData.item("spear").values.chance)
+		return {}
+	var best: Dictionary = {}
+	for i in mini(6, src.inventory.size()):
+		var it = src.inventory[i]
+		if it == null or String(SimData.item(it.id).get("passive", "")) != "pierce":
+			continue
+		var v: Dictionary = SimData.item(it.id).values
+		if best.is_empty() or float(v.chance) > float(best.chance):
+			best = {"chance": float(v.chance), "damage": float(v.damage), "item": it.id}
+	if best.is_empty() or not w.status.roll(src, "pierce", float(best.chance)):
+		return {}
+	return best
 
-## An attack from a hero landed on `t` for `dmg` (before armor): corruption, chain lightning, cleave, pierce damage.
-func on_attack_landed(s: Dictionary, t: SimUnit, dmg: float, pierced: bool) -> void:
+## Bash (Stun Club, Stun Blade): only the first bash item in the bags works (Dota: the one held longest), with its
+## chance for melee or ranged heroes; while its 2.3 s cooldown runs it does not roll at all. Not against buildings or
+## wards; it does work on allies being denied. Returns {damage, dur, item} on a proc, {} otherwise.
+func roll_bash(s: Dictionary, t: SimUnit) -> Dictionary:
+	if not bool(s.hero) or t.is_building() or t.is_ward():
+		return {}
+	var src := w.get_unit(int(s.src))
+	if src == null:
+		return {}
+	var it := passive(src, "bash")
+	if it.is_empty() or w.time < float(it.get("bash_ready", C.LONG_AGO)):
+		return {}
+	var v: Dictionary = SimData.item(it.id).values
+	var chance := float(v.chance_ranged if bool(s.ranged) else v.chance_melee)
+	if not w.status.roll(src, "bash", chance):
+		return {}
+	it["bash_ready"] = w.time + float(v.bash_cooldown)
+	return {"damage": float(v.damage), "dur": float(v.duration), "item": it.id}
+
+## An attack from a hero landed on `t` for `dmg` (before armor): pierce damage, Break Blade's break, corruption,
+## chain lightning, cleave.
+func on_attack_landed(s: Dictionary, t: SimUnit, dmg: float, pierce: Dictionary) -> void:
 	var src := w.get_unit(int(s.src))
 	if src == null or not src.is_hero() or t.team == src.team:
 		return
-	if pierced and t.alive and not t.is_building():
-		w.combat.deal_damage(src.id, src.team, true, t, float(SimData.item("spear").values.damage),
-			C.DamageType.MAGICAL, false, "spear")
+	if not pierce.is_empty() and t.alive and not t.is_building():
+		w.combat.deal_damage(src.id, src.team, true, t, float(pierce.damage), C.DamageType.MAGICAL, false,
+			String(pierce.item), false, {"no_amp": true})
+	if float(s.get("sneak_break", 0.0)) > 0.0 and t.alive and not t.is_building():
+		w.status.apply(t, src.id, src.team, {"id": "break_blade", "break": true, "dur": float(s.sneak_break), "fx": "break"})
 	_corrupt(src, t)
 	if t.is_building() or t.is_ward():
 		return
 	var ch := passive(src, "chain")
 	if not ch.is_empty() and w.time >= float(ch.get("chain_ready", C.LONG_AGO)):
 		var v: Dictionary = SimData.item(ch.id).values
-		if w.rng.randf() < float(v.chance):
+		if w.status.roll(src, "chain", float(v.chance)):
 			ch["chain_ready"] = w.time + float(v.cooldown)
 			_start_chain(src, t, v)
 	var cl := passive(src, "cleave")
@@ -379,7 +475,7 @@ func block_attack(t: SimUnit, amount: float) -> float:
 	if it.is_empty():
 		return amount
 	var v: Dictionary = SimData.item(it.id).values
-	if w.rng.randf() >= float(v.chance):
+	if not w.status.roll(t, "block", float(v.chance)):
 		return amount
 	var b := float(v.block_ranged if t.is_ranged() else v.block_melee)
 	w.events.append({"t": "blocked", "u": t.id, "amount": minf(b, amount)})

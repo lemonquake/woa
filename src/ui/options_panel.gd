@@ -109,7 +109,7 @@ func _video_tab() -> void:
 			Options.apply_environment(game.atmosphere.env))
 	_slider(v, "Render scale", "render_scale", 0.5, 1.0, 0.05, func(x): return "%d%%" % roundi(x * 100.0), apply)
 	_check(v, "Show FPS", "show_fps", Callable())
-	_note(v, "Window size applies in Windowed mode. Quality sets shadows, anti-aliasing, ambient occlusion and glow.")
+	_note(v, "Window size applies in Windowed mode. Borderless and Fullscreen keep the cursor inside the game. Quality sets shadows, anti-aliasing, ambient occlusion and glow.")
 
 func _game_tab() -> void:
 	var v := _page("Game")
@@ -118,6 +118,7 @@ func _game_tab() -> void:
 			game.camera.edge_pan_enabled = bool(Options.get_value("edge_pan"))
 			game.camera.edge_speed = float(Options.get_value("camera_speed"))
 	_check(v, "Pan the camera at the screen edges", "edge_pan", cam)
+	_check(v, "Lock cursor to window (Windowed)", "lock_cursor", Options.apply_cursor)
 	_slider(v, "Camera speed", "camera_speed", 12.0, 60.0, 1.0, func(x): return str(roundi(x)), cam)
 	_check(v, "Center camera on hero at respawn", "center_on_respawn", Callable())
 	_check(v, "Screen shake", "screen_shake", Callable())

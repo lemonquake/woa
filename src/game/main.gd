@@ -19,6 +19,7 @@ var fx: Fx
 var sludge_fx: SludgeFx
 var item_fx: ItemFx
 var status_fx: StatusFx
+var orb_view: OrbView
 var targeting_fx: TargetingFx
 var bars: UnitBars
 var input: InputController
@@ -96,6 +97,10 @@ func _ready() -> void:
 	status_fx.game = self
 	status_fx.fx = fx
 	add_child(status_fx)
+	orb_view = OrbView.new()
+	orb_view.game = self
+	orb_view.fx = fx
+	add_child(orb_view)
 	targeting_fx = TargetingFx.new()
 	targeting_fx.game = self
 	add_child(targeting_fx)
@@ -422,7 +427,10 @@ func _make_view(u: SimUnit) -> void:
 		wv.terrain = terrain
 		wv.prev_pos = u.pos
 		wv.cur_pos = u.pos
-		var eye := fx._sphere(0.16, fx._glow(Color(1.0, 0.85, 0.3) if u.team == 0 else Color(1.0, 0.3, 0.3), 4.0))
+		var eye_col := Color(1.0, 0.85, 0.3) if u.team == 0 else Color(1.0, 0.3, 0.3)
+		if String(u.def.id) == "ward_sentry":
+			eye_col = Color(0.4, 0.75, 1.0)            # Reveal Ward: a blue eye
+		var eye := fx._sphere(0.16, fx._glow(eye_col, 4.0))
 		eye.position.y = 1.2
 		wv.add_child(eye)
 	else:
@@ -448,6 +456,33 @@ func _drain_events() -> void:
 				var aid := String(e.ability)
 				if cv is UnitView and int(e.get("slot", -1)) < 0 and aid != "tp":
 					cv.on_cast_start(aid, world.abilities.cast_point(aid, -1))
+				if aid == "smash":
+					# the Ogre's Smash: its area glows red on the ground through the 2.8 s wind-up
+					fx.smash_warning(e.point, float(SimData.ability("smash").values.radius[0]), world.abilities.cast_point(aid, -1))
+			"neutral_spell":
+				fx.neutral_spell(e)
+			"dust":
+				fx.dust(e)
+			"orb_taken":
+				_on_orb(e)
+			"crit":
+				# Dota: a red number with the critical damage (before the target's reductions) over the target
+				var ct := world.get_unit(int(e.target))
+				if ct and (ct.team == player_team or world.vision.sees(player_team, ct)):
+					_crit_hit[int(e.target)] = int(e.u)
+					var cvw = views.get(ct.id)
+					var chh: float = (cvw.bar_height + 0.6) if cvw is UnitView else 2.4
+					bars.popup("%d!" % int(round(float(e.amount))), _head(ct.pos, chh), Color(1.0, 0.18, 0.12), 30, 0.9, 1.1,
+						Vector2(randf_range(-20.0, 20.0), 0), true)
+			"bash":
+				fx.bash_hit(int(e.target))
+			"item_debuff":
+				fx.debuff_hit(int(e.target), String(e.kind))
+			"overwhelm":
+				fx.debuff_hit(int(e.target), "overwhelm")
+				fx.bash_hit(int(e.target))
+			"soul_burst":
+				fx.soul_burst(int(e.u))
 			"leap_start":
 				var lv = views.get(e.u)
 				if lv is UnitView:
@@ -639,6 +674,34 @@ func _drain_events() -> void:
 	world.events.clear()
 
 ## Damage: hit reactions, melee sparks and floating numbers (yours, on you, and enemy hero spells you can see).
+## An orb was taken: everyone hears of it in the kill feed (Dota's rune message); your team sees the gold or
+## experience it gave over the heroes.
+func _on_orb(e: Dictionary) -> void:
+	var h := world.get_unit(int(e.u))
+	if h == null:
+		return
+	if hud and hud.get("kill_feed") != null:
+		var col := UiKit.DAWN if h.team == 0 else UiKit.DUSK
+		var who := String(h.look.get("display_name", h.name))
+		if h.bot_name != "":
+			who = h.bot_name
+		hud.kill_feed.add_line([[who, col], [" took a ", UiKit.TEXT], [String(e.name), OrbView.COLORS.get(String(e.kind), UiKit.GOLD)]], "status/keen")
+	if h.team != player_team:
+		return
+	var hv = views.get(h.id)
+	var hh: float = (hv.bar_height + 0.9) if hv is UnitView else 2.6
+	if e.has("gold"):
+		for a in world.heroes:
+			if a.team == h.team and a.alive:
+				bars.popup("+%d" % int(e.gold), _head(a.pos, hh), Color(1.0, 0.82, 0.2), 22, 1.4, 1.6)
+	if e.has("xp"):
+		bars.popup("+%d XP" % int(e.xp), _head(h.pos, hh), Color(0.75, 0.55, 1.0), 22, 1.4, 1.6)
+		var other := world.get_unit(int(e.get("also", -1)))
+		if other and other.alive:
+			bars.popup("+%d XP" % int(e.xp), _head(other.pos, hh), Color(0.75, 0.55, 1.0), 22, 1.4, 1.6)
+
+var _crit_hit := {}                          # target id -> attacker id: the next attack damage is a shown crit
+
 func _on_damage(e: Dictionary) -> void:
 	var amt := float(e.amount)
 	_last_dmg[e.u] = amt
@@ -654,6 +717,10 @@ func _on_damage(e: Dictionary) -> void:
 		if atk and su and not su.is_ranged() and dv.visible:
 			fx.melee_hit(su, tu, amt)
 	if not (tu.team == player_team or world.vision.sees(player_team, tu)):
+		return
+	# the hit of a critical strike already showed its red number
+	if atk and int(_crit_hit.get(tu.id, -1)) == int(e.src):
+		_crit_hit.erase(tu.id)
 		return
 	var style := ""
 	if bool(e.get("reflected", false)):
@@ -700,6 +767,7 @@ func _process(dt: float) -> void:
 	sludge_fx.update(world, alpha, dt)
 	_t = _tm("fx", _t)
 	status_fx.frame(dt)
+	orb_view.frame(dt)
 	_t = _tm("status", _t)
 	targeting_fx.frame()
 	_t = _tm("target", _t)

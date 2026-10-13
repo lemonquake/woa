@@ -19,7 +19,9 @@ func _init(world: SimWorld) -> void:
 func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 	var snap := _snapshot(u, mod)
 	if u.is_hero():
-		snap["sneak"] = w.items.break_sneak(u)
+		var sn := w.items.break_sneak(u)
+		snap["sneak"] = float(sn.get("bonus", 0.0))
+		snap["sneak_break"] = float(sn.get("break", 0.0))
 	if mod != "":
 		w.abilities.pay_attack_modifier(u, mod)
 	if u.is_hero():
@@ -58,7 +60,7 @@ func _snapshot(u: SimUnit, mod: String) -> Dictionary:
 	return {"src": u.id, "team": u.team, "hero": u.is_hero(), "kind": u.kind, "dmg_min": u.dmg_min, "dmg_max": u.dmg_max,
 		"bonus": u.bonus_damage, "class": int(u.def.attack_class), "level_h": w.map.level_at(u.pos), "mod": mod,
 		"lifesteal": u.lifesteal, "lifesteal_ab": u.lifesteal_ability, "ranged": u.is_ranged(), "quell": _quelling(u),
-		"taint": _taint(u)}
+		"taint": _taint(u), "crit": u.atk_crit, "out_pct": u.attack_out_pct, "flying": bool(u.def.flying)}
 
 ## A spell arrow (Burst Shot): a projectile that homes on `t`, or flies to `spot` when t is null, and deals `dmg`
 ## physical spell damage (no lifesteal, cannot miss; Dota's rule for spells).
@@ -69,6 +71,15 @@ func launch_spell_arrow(u: SimUnit, t: SimUnit, spot: Vector2, dmg: float, speed
 	w.projectiles.append(p)
 	w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": p.target, "kind": "spell", "key": key,
 		"point": spot})
+
+## An item's effect carried by a homing projectile (Root Staff): on arrival it applies debuff `m` from `u` unless the
+## target became immune or invulnerable meanwhile.
+func launch_effect(u: SimUnit, t: SimUnit, speed: float, key: String, m: Dictionary) -> void:
+	var p := {"id": _next_proj, "src": u.id, "team": u.team, "target": t.id, "point": t.pos,
+		"pos": u.pos + Vector2.from_angle(u.facing) * u.hull, "speed": speed, "kind": "effect", "key": key, "mod": m}
+	_next_proj += 1
+	w.projectiles.append(p)
+	w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": t.id, "kind": "effect", "key": key})
 
 ## Tainted Touch: the level of the enchantment riding on this attack (0 = none), fixed when the blow is released.
 func _taint(u: SimUnit) -> int:
@@ -87,11 +98,34 @@ func _quelling(u: SimUnit) -> float:
 			best = maxf(best, float(v.creep_damage_ranged if u.is_ranged() else v.creep_damage_melee))
 	return best
 
+## Disjoint (Dota 2 wiki, Disjoint): projectiles flying at `u` lose track of it and fall where it stood. Caused by a
+## blink (Jump Knife), a teleport, and turning invisible.
+func disjoint(u: SimUnit) -> void:
+	for p in w.projectiles:
+		if int(p.get("target", -1)) == u.id and not p.has("lost"):
+			p["lost"] = true
+			p["point"] = u.pos
+	w.events.append({"t": "disjoint", "u": u.id})
+
 func update_projectiles() -> void:
 	for i in range(w.projectiles.size() - 1, -1, -1):
 		var p: Dictionary = w.projectiles[i]
+		if p.has("lost"):
+			# disjointed: it flies on to where its target was and misses
+			var lto: Vector2 = (p.point as Vector2) - p.pos
+			var lstep: float = p.speed * C.DT
+			if lto.length() > lstep:
+				p.pos += lto.normalized() * lstep
+				continue
+			w.projectiles.remove_at(i)
+			w.events.append({"t": "projectile_end", "id": p.id, "hit": false, "miss": true, "pos": p.point,
+				"ground": true})
+			continue
 		if p.kind == "spell":
 			_update_spell_arrow(i, p)
+			continue
+		if p.kind == "effect":
+			_update_effect(i, p)
 			continue
 		var t := w.get_unit(p.target)
 		if t == null or not t.alive:
@@ -109,6 +143,24 @@ func update_projectiles() -> void:
 		else:
 			p.pos += to.normalized() * step
 
+func _update_effect(i: int, p: Dictionary) -> void:
+	var t := w.get_unit(int(p.target))
+	if t == null or not t.alive:
+		w.projectiles.remove_at(i)
+		w.events.append({"t": "projectile_end", "id": p.id, "hit": false, "pos": p.pos})
+		return
+	var to: Vector2 = t.pos - p.pos
+	var step: float = p.speed * C.DT
+	if to.length() > step + t.hull * 0.5:
+		p.pos += to.normalized() * step
+		return
+	w.projectiles.remove_at(i)
+	var m: Dictionary = (p.mod as Dictionary).duplicate()
+	var hit := w.status.apply(t, int(p.src), int(p.team), m)
+	w.events.append({"t": "projectile_end", "id": p.id, "hit": hit, "pos": t.pos, "target": t.id})
+	if hit:
+		w.events.append({"t": "item_debuff", "u": int(p.src), "target": t.id, "kind": String(p.key)})
+
 func _update_spell_arrow(i: int, p: Dictionary) -> void:
 	var t := w.get_unit(int(p.target))
 	var goal: Vector2 = t.pos if t != null and t.alive else p.point
@@ -125,27 +177,34 @@ func _update_spell_arrow(i: int, p: Dictionary) -> void:
 		deal_damage(int(p.src), int(p.team), true, t, float(p.dmg), C.DamageType.PHYSICAL, false, String(p.key))
 	w.events.append({"t": "projectile_end", "id": p.id, "hit": hit, "pos": goal, "target": int(p.target), "ground": not hit})
 
-## An attack connects: miss chance (evasion, uphill), damage, lifesteal and attack modifiers. False on a miss.
+## An attack connects: miss chance (evasion, uphill), damage (critical strike, bash), lifesteal and attack modifiers.
+## False on a miss. Order (Dota 2 wiki: Evasion, Critical Strike, Bash): true strike, then evasion and the uphill miss;
+## the critical multiplier (rolled when the attack started) scales the attack damage and the creep bonus; bash damage
+## is added after it and is not multiplied; armor and the attack class apply to the sum.
 func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if not t.alive:
 		return false
 	var src := w.get_unit(s.src)
-	var miss := false
-	var pierced := w.items.roll_pierce(s)              # Spear: cannot miss
-	if not pierced and t.evasion > 0.0 and w.rng.randf() < t.evasion:
-		miss = true
-	elif not pierced and int(s.level_h) < w.map.level_at(t.pos) and w.rng.randf() < C.UPHILL_MISS:
-		miss = true
-	if miss:
+	var pierce := w.items.roll_pierce(s, t)            # Spear, Sure Hit Staff: cannot miss (not against buildings)
+	if pierce.is_empty() and _evaded(s, t):
 		w.events.append({"t": "miss", "u": s.src, "target": t.id, "ranged": bool(s.ranged)})
 		return false
-	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus) + float(s.get("burst", 0.0)) \
-		+ float(s.get("sneak", 0.0))
-	if s.mod != "":
-		dmg += w.abilities.attack_modifier_damage(s, t)
+	var crit := float(s.get("crit", 1.0))
+	var dmg: float = w.rng.randf_range(s.dmg_min, s.dmg_max) + float(s.bonus)
 	if t.is_creep() and t.team != s.team:
 		dmg += float(s.quell)
+	dmg *= crit
+	dmg += float(s.get("burst", 0.0)) + float(s.get("sneak", 0.0))
+	if s.mod != "":
+		dmg += w.abilities.attack_modifier_damage(s, t)
+	var bash := w.items.roll_bash(s, t)
+	if not bash.is_empty():
+		dmg += float(bash.damage)
+	dmg *= maxf(0.0, 1.0 + float(s.get("out_pct", 0.0)))
 	dmg *= attack_class_multiplier(s, t)
+	if crit > 1.0:
+		# Dota shows the critical number in red before the target's reductions
+		w.events.append({"t": "crit", "u": s.src, "target": t.id, "amount": dmg, "mult": crit})
 	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, C.DamageType.PHYSICAL, true, "attack")
 	# lifesteal heals from the blow after armor (not after other damage manipulation, and in full even when the blow
 	# kills); item lifesteal heals 40% against creeps; never from buildings or wards
@@ -155,6 +214,10 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		heal(src, dmg * C.armor_multiplier(t.armor) * ls)
 		if src.hp - before >= 1.0:
 			w.events.append({"t": "lifesteal", "u": src.id, "target": t.id, "amount": src.hp - before})
+	if not bash.is_empty() and t.alive:
+		# the bash stun pierces debuff immunity; bashes share one modifier and refresh to the longer time
+		if w.status.apply(t, s.src, s.team, {"id": "bashed", "stun": true, "dur": float(bash.dur), "fx": "stun"}, true):
+			w.events.append({"t": "bash", "u": s.src, "target": t.id, "dur": float(bash.dur), "item": String(bash.item)})
 	if float(s.get("burst", 0.0)) > 0.0:
 		w.events.append({"t": "masterful_hit", "u": s.src, "target": t.id, "amount": float(s.burst)})
 	if s.mod != "" and t.alive:
@@ -162,10 +225,60 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if int(s.get("taint", 0)) > 0 and not t.is_building() and t.team != s.team:
 		w.abilities.tainted_hit(s, t)
 	if bool(s.hero):
-		w.items.on_attack_landed(s, t, dmg, pierced)
+		w.items.on_attack_landed(s, t, dmg, pierce)
+	elif src != null and src.alive:
+		w.ai.on_creep_hit(src, t, dmg)
 	if t.alive and t.is_hero() and src != null:
 		w.abilities.on_attacked(t, src)
 	return true
+
+## Evasion and the uphill miss, each its own pseudo-random roll: the target's evasion (its sources multiplied), then
+## for ranged attacks from lower ground (not flying attackers) the 25% uphill miss.
+func _evaded(s: Dictionary, t: SimUnit) -> bool:
+	if t.is_building():
+		return false
+	if t.evasion > 0.0 and w.status.roll(t, "evasion", t.evasion):
+		return true
+	if bool(s.ranged) and not bool(s.get("flying", false)) and int(s.level_h) < w.map.level_at(t.pos):
+		var src := w.get_unit(s.src)
+		if src != null:
+			return w.status.roll(src, "uphill", C.UPHILL_MISS)
+		return w.rng.randf() < C.UPHILL_MISS
+	return false
+
+## The critical strike multiplier for an attack `u` starts on `t` (1 = none). Sources roll from the strongest
+## multiplier down and stop at the first proc, so two never stack and weaker ones keep their pseudo-random counters.
+## Never against buildings or wards (and no roll is counted there).
+func roll_crit(u: SimUnit, t: SimUnit) -> float:
+	if t == null or t.is_building() or t.is_ward():
+		return 1.0
+	var srcs := crit_sources(u)
+	if srcs.is_empty():
+		return 1.0
+	srcs.sort_custom(func(x, y): return float(x.mult) > float(y.mult))
+	for c in srcs:
+		if w.status.roll(u, "crit:" + String(c.key), float(c.chance)):
+			return float(c.mult)
+	return 1.0
+
+## Every critical strike source a unit has: items (one roll per kind of item) and its own passive (the Alpha Wolf's;
+## off while broken).
+func crit_sources(u: SimUnit) -> Array:
+	var out: Array = []
+	var seen := {}
+	if u.is_hero():
+		for i in mini(6, u.inventory.size()):
+			var it = u.inventory[i]
+			if it == null or seen.has(it.id):
+				continue
+			var d := SimData.item(it.id)
+			if String(d.get("passive", "")) == "crit":
+				seen[it.id] = true
+				out.append({"key": it.id, "chance": float(d.values.crit_chance), "mult": float(d.values.crit_mult)})
+	var own: Dictionary = u.def.get("crit", {})
+	if not own.is_empty() and not u.is_broken():
+		out.append({"key": "own", "chance": float(own.chance), "mult": float(own.mult)})
+	return out
 
 func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
 	var dc := t.defense_class()
@@ -195,6 +308,11 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		return 0.0
 	if key == "":
 		key = "attack" if is_attack else "spell"
+	# spell amplification raises every non-attack damage its source deals (not returned or attack-derived damage)
+	if not is_attack and not reflected and not opts.get("no_amp", false):
+		var amp_src := w.get_unit(src_id)
+		if amp_src != null and amp_src.spell_amp != 0.0:
+			amount *= 1.0 + amp_src.spell_amp
 	if t.kind == K.COURIER:
 		# couriers count hits, not damage (7.35): 1 melee hero attack, 2 ranged hero attacks, 6 of anything else
 		var src_u := w.get_unit(src_id)
@@ -226,7 +344,7 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	var reflect_amt := 0.0
 	if not reflected and src_team != t.team:
 		var um := t.get_modifier("unholy_might")
-		if not um.is_empty() and amount > 0.5 and w.rng.randf() < float(um.chance):
+		if not um.is_empty() and amount > 0.5 and w.status.roll(t, "unholy_might", float(um.chance)):
 			reflect_amt = amount * 0.5
 			amount -= reflect_amt
 			reflect_to = w.abilities.unholy_victim(t, float(um.radius))
@@ -234,10 +352,14 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	var blk := t.damage_block()
 	if blk > 0.0:
 		amount = maxf(0.0, amount - blk)
+	# Stealth Orb resistance and the Shield Orb's barrier
+	if t.is_hero():
+		amount = w.orbs.absorb(t, amount, src_hero)
 	if opts.get("non_lethal", false):
 		amount = clampf(amount, 0.0, maxf(0.0, t.hp - 1.0))
 	amount = minf(amount, t.hp)
 	t.hp -= amount
+	w.status.on_damage(t, amount)
 	var src := w.get_unit(src_id)
 	# spell lifesteal: heals from spell damage dealt to enemies (100% from heroes, 20% from creeps)
 	if src != null and src.alive and src != t and not is_attack and not reflected and src.spell_lifesteal > 0.0 \
@@ -283,11 +405,12 @@ func _ledger(src: SimUnit, t: SimUnit, key: String, dtype: int, amount: float, s
 		while not t.recent_in.is_empty() and (w.time - float(t.recent_in[0].t) > 20.0 or t.recent_in.size() > 80):
 			t.recent_in.pop_front()
 
-## Restore health (reduced by healing reduction on the unit). Returns the health actually restored.
+## Restore health, raised by the unit's health restoration amplification and lowered by healing reduction (both
+## also scale regeneration and lifesteal, as in Dota). Returns the health actually restored.
 func heal(t: SimUnit, amount: float) -> float:
 	if not t.alive or amount <= 0.0:
 		return 0.0
-	amount *= 1.0 - t.heal_reduction()
+	amount *= (1.0 + t.heal_amp) * (1.0 - t.heal_reduction())
 	var before := t.hp
 	t.hp = minf(t.max_hp, t.hp + amount)
 	t.healed += t.hp - before

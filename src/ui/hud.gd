@@ -324,6 +324,22 @@ func _name(u: SimUnit) -> String:
 func toggle_shop() -> void:
 	shop.visible = not shop.visible
 
+## The shop closes when you click anywhere else (the world, the minimap, the top bar) or press Esc, as in Dota. Clicks
+## on the bottom panel (items, stash, the Shop button) and the To Buy list keep it open, since they work with the shop.
+## The click itself still does its usual job (a right click on the ground still moves the hero).
+func _input(e: InputEvent) -> void:
+	if shop == null or not shop.visible:
+		return
+	if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+		var p := (e as InputEventMouseButton).position
+		var on_shop := shop.get_global_rect().has_point(p) or (to_buy.visible and to_buy.get_global_rect().has_point(p))
+		if on_shop or bottom.get_global_rect().has_point(p) or bottom.covers_extra(p - bottom.global_position):
+			return
+		shop.visible = false
+	elif e is InputEventKey and e.pressed and not e.echo and (e as InputEventKey).keycode == KEY_ESCAPE:
+		shop.visible = false
+		get_viewport().set_input_as_handled()
+
 func toggle_debug() -> void:
 	debug.toggle()
 
@@ -590,8 +606,13 @@ class BottomPanel extends Control:
 				["Attack speed %d (%.2f s per attack)" % [int(h.attack_speed), h.attack_interval()], 14, U.TEXT, "body"],
 				["Attack range %d" % int(h.attack_range), 14, U.TEXT, "body"],
 				["Magic resistance %d%%" % int(h.magic_resist * 100.0), 14, U.TEXT, "body"],
-				["Health regen %.1f  Mana regen %.1f" % [h.hp_regen, h.mana_regen], 14, U.TEXT, "body"],
+				_regen_line(h),
 				["Physical damage taken x%.2f" % C.armor_multiplier(h.armor), 14, U.TEXT_DIM, "body"]])
+
+	func _regen_line(h: SimUnit) -> Array:
+		var r: Vector4 = hud.game.world.regen_rates(h)
+		return ["Health regen %.1f + %.1f bonus   Mana regen %.1f + %.1f bonus" % [r.z, r.x - r.z, r.w, r.y - r.w], 14,
+			U.TEXT, "body"]
 
 	func _stat_row(ic_path: String, val: String, p: Vector2) -> void:
 		var ic: Texture2D = U.icon(ic_path)
@@ -743,14 +764,35 @@ class BottomPanel extends Control:
 
 	func _bars(h: SimUnit) -> void:
 		var bw := 4 * ABIL_STEP - 8
+		var rates: Vector4 = hud.game.world.regen_rates(h)
 		var hr := Rect2(ABIL_X, 132, bw, 24)
 		U.bar(self, hr, h.hp / maxf(1.0, h.max_hp), U.HP)
 		U.text_c(self, "%d / %d" % [int(h.hp), int(h.max_hp)], hr.get_center() + Vector2(0, 7), 16, U.TEXT, "bold")
-		U.text_r(self, "+%.1f" % h.hp_regen, Vector2(hr.end.x - 4, hr.position.y + 17), 12, Color(0.8, 1.0, 0.8), "body")
+		_regen_text(rates.z, rates.x - rates.z, Vector2(hr.end.x - 4, hr.position.y + 17), Color(0.85, 1.0, 0.85),
+			Color(0.45, 1.0, 0.35))
 		var mr := Rect2(ABIL_X, 162, bw, 20)
 		U.bar(self, mr, h.mana / maxf(1.0, h.max_mana), U.MANA)
 		U.text_c(self, "%d / %d" % [int(h.mana), int(h.max_mana)], mr.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
-		U.text_r(self, "+%.1f" % h.mana_regen, Vector2(mr.end.x - 4, mr.position.y + 15), 12, Color(0.8, 0.88, 1.0), "body")
+		_regen_text(rates.w, rates.y - rates.w, Vector2(mr.end.x - 4, mr.position.y + 15), Color(0.85, 0.9, 1.0),
+			Color(0.45, 0.95, 1.0))
+
+	## Regeneration at the right end of a bar: the hero's own regen, then the bonus (items, auras, consumables, the
+	## fountain) as a separate "+N" in a brighter colour; a negative bonus (healing reduction) shows in red.
+	func _regen_text(own: float, bonus: float, right: Vector2, own_col: Color, bonus_col: Color) -> void:
+		var x := right.x
+		if absf(bonus) >= 0.05:
+			var bs := ("+%.1f" if bonus > 0.0 else "%.1f") % bonus
+			x = _outlined_r(bs, Vector2(x, right.y), 13, bonus_col if bonus > 0.0 else Color(1.0, 0.45, 0.4), "bold") - 5.0
+		_outlined_r("+%.1f" % own, Vector2(x, right.y), 12, own_col, "body")
+
+	## Right-aligned text with a dark outline (readable on the coloured bars); returns its left edge.
+	func _outlined_r(s: String, at: Vector2, size: int, col: Color, kind: String) -> float:
+		var f := U.font(kind)
+		var wd := f.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+		var p := at - Vector2(wd, 0)
+		draw_string_outline(f, p, s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, 4, Color(0, 0, 0, 0.85))
+		draw_string(f, p, s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, col)
+		return p.x
 
 	# ---- Items, stash ----------------------------------------------------------------------------------------------
 
@@ -787,8 +829,13 @@ class BottomPanel extends Control:
 			var total := maxf(float(d.cooldown), C.BACKPACK_SWAP_COOLDOWN)
 			if cd > 0.0:
 				U.cooldown(self, r, clampf(cd / total, 0.0, 1.0), cd)
-		if int(it.get("charges", 0)) > 1 or d.consumable and int(it.get("charges", 0)) > 0:
+		if int(it.get("charges", 0)) > 1 or d.consumable and int(it.get("charges", 0)) > 0 or it.id == "bottle":
 			U.text_r(self, str(it.charges), r.end + Vector2(-3, -3), 14, Color(1, 1, 1), "bold")
+		if String(it.get("orb", "")) != "":
+			# a Bottle holding an orb: a glowing dot in the orb's colour
+			var oc: Color = OrbView.COLORS.get(String(it.orb), Color(1, 1, 1))
+			draw_circle(r.position + Vector2(r.size.x - 9, 9), 6.0, Color(0, 0, 0, 0.85))
+			draw_circle(r.position + Vector2(r.size.x - 9, 9), 4.5, oc)
 		if String(d.use) == "stick" and h != null:
 			U.text_r(self, str(h.stick_charges), r.end + Vector2(-3, -3), 14, Color(0.7, 0.9, 1.0), "bold")
 
@@ -842,7 +889,8 @@ class BottomPanel extends Control:
 		if _tp_rect.has_point(m):
 			hud.show_tip(get_global_mouse_position(), [["Teleport Scroll", 18, U.GOLD, "title"],
 				["Channel 3 s, then teleport beside the allied building nearest the target point. Moving or a stun cancels it.", 14, U.TEXT, "body"],
-				["Charges %d. Cooldown 80 s. Mana 75. Buy more in the shop (100 gold). Hotkey %s." % [h.tp_charges, Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"]])
+				["Charges %d. Cooldown 80 s. Mana 75. Hotkey %s." % [h.tp_charges, Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"],
+				["Buy one for 100 gold: press %s or right click here (Consumables in the shop). Away from the shop it goes to your stash." % Keybinds.key_name("buy_tp"), 13, U.GOLD, "body"]])
 		var c := w.get_unit(h.courier_id)
 		U.slot(self, _courier_rect, c != null and c.courier_state != "idle")
 		var state := "Dead" if c == null or not c.alive else _state_name(c.courier_state)
@@ -998,7 +1046,10 @@ class BottomPanel extends Control:
 			accept_event()
 			return
 		if _tp_rect.has_point(p):
-			hud.game.input.begin_tp()
+			if mb.button_index == MOUSE_BUTTON_RIGHT:
+				hud.game.input.buy_tp()
+			else:
+				hud.game.input.begin_tp()
 			accept_event()
 			return
 		if _courier_rect.has_point(p):
@@ -1222,7 +1273,9 @@ const STAT_NAMES := {"str": "Strength", "agi": "Agility", "int": "Intelligence",
 	"attack_speed": "Attack Speed", "armor": "Armor", "hp": "Health", "mana": "Mana", "hp_regen": "Health Regen",
 	"mana_regen": "Mana Regen", "move_speed": "Movement Speed", "boot_ms": "Movement Speed",
 	"move_speed_pct": "Movement Speed", "max_mana_pct": "Max Mana", "lifesteal": "Lifesteal", "range": "Attack Range",
-	"magic_resist": "Magic Resistance", "evasion": "Evasion"}
+	"magic_resist": "Magic Resistance", "evasion": "Evasion", "status_resist_max": "Status Resistance",
+	"slow_resist_max": "Slow Resistance", "heal_amp_max": "Health Restoration", "spell_amp": "Spell Damage",
+	"mana_regen_amp": "Mana Regen", "range_melee": "Attack Range (melee)"}
 
 const ITEM_TEXT := {"tango": "Eat a tree to regenerate 7 health per second for 16 seconds (32 seconds on a planted tree). The tree is destroyed and grows back after 3 minutes.",
 	"plant": "Plant a tree within 400 range. It stands for 20 seconds. Consumes the twig.",
@@ -1241,9 +1294,17 @@ const ITEM_TEXT := {"tango": "Eat a tree to regenerate 7 health per second for 1
 	"push": "Push a unit 600 forward the way it faces, cutting trees in its path. Range 550 on allies (or yourself), 850 on enemies. Costs 150 mana, 19 second cooldown.",
 	"shield": "Immune to debuffs (stuns, slows, pushes) and 60% magic resistance; removes slows and silences. Lasts 9 seconds, one second less each use down to 7. Costs 50 mana, 95 second cooldown.",
 	"jump": "Teleport to a point up to 1200 away (a farther point jumps 960 toward it). Disabled for 3 seconds after taking damage from an enemy hero. 15 second cooldown.",
-	"sneak": "Turn invisible after 0.3 seconds for 17 seconds and move 20% faster. Attacking breaks it and the attack deals 175 extra damage. Costs 75 mana, 25 second cooldown."}
+	"sneak": "Turn invisible after 0.3 seconds for 17 seconds and move 20% faster. Attacking breaks it and the attack deals 175 extra damage. Costs 75 mana, 25 second cooldown.",
+	"overwhelm": "Stun an enemy within 150 for 1.6 s, even through debuff immunity. 75 mana, 35 s cooldown.",
+	"silence": "Silence an enemy within 900 for 5 seconds. When it ends, 30% of the damage it took meanwhile hits it again as magic damage. Costs 125 mana, 18 second cooldown.",
+	"root": "Throw a root at an enemy within 1100: it cannot move for 2 seconds (it can still attack and cast; a root also stops teleports). Costs 100 mana, 18 second cooldown.",
+	"disarm": "Disarm an enemy within 750 for 3.5 seconds: it cannot attack. Only a strong dispel removes it. Costs 25 mana, 15 second cooldown.",
+	"bottle": "Drink a charge: 110 health and 60 mana over 2.7 seconds (lost if an enemy hero hurts you). Refills to 3 charges at the fountain. Taking an orb while carrying it stores the orb (for up to 90 seconds); drinking lets it out.",
+	"dust": "Reveal invisible enemies within 1050 of you for 12 seconds and slow them 20% while they are invisible (the effect stays 8 seconds after they leave). Invisible enemies there take 25 damage.",
+	"hex": "Turn an enemy within 800 into a sheep for 2.8 seconds: it cannot attack, cast or use items, and its base speed is 140. Costs 250 mana, 20 second cooldown."}
 
 const PASSIVE_TEXT := {"pierce": "Attacks have a 25% chance to never miss and deal 60 extra magic damage.",
+	"crit": "Critical Strike.", "bash": "Bash.",
 	"corruption": "Attacks lower the target's armor (the stronger of these items counts).",
 	"chain": "Attacks have a 25% chance to throw lightning: 110 magic damage, jumping to 4 enemies.",
 	"cleave": "Melee heroes: attacks also hit enemies in front for 60% of the damage (40% to creeps).",
@@ -1263,7 +1324,8 @@ func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 	for k in stats:
 		var v := float(stats[k])
 		var label := String(STAT_NAMES.get(k, String(k).replace("_", " ").capitalize()))
-		var pct: bool = k.ends_with("pct") or k == "lifesteal" or k == "magic_resist" or k == "evasion"
+		var pct: bool = k.ends_with("pct") or k == "lifesteal" or k == "magic_resist" or k == "evasion" \
+			or k.ends_with("_max") or k.ends_with("_amp")
 		var vs := ("+%d%%" % roundi(v * 100.0)) if pct else "+" + str(snappedf(v, 0.01)).trim_suffix(".0")
 		lines.append([vs + " " + label, 15, U.TEXT, "body"])
 	if d.has("stats_melee"):
@@ -1281,11 +1343,22 @@ func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 		lines.append(["Aura: %s to allies within %d" % [aura, int(v.aura_radius)], 14, Color(0.75, 0.85, 1.0), "body"])
 	var use := String(d.use)
 	if ITEM_TEXT.has(use):
-		for l in U.wrap(String(ITEM_TEXT[use]), wrap, 14):
+		var utxt := String(ITEM_TEXT[use])
+		if use == "ward" and float(v.get("true_sight", 0.0)) > 0.0:
+			utxt = "Plant an invisible ward that gives your team True Sight within %d for 7 minutes: invisible enemies there can be seen where you have vision. It has no sight of its own." % int(v.true_sight)
+		if use == "sneak" and float(v.get("break", 0.0)) > 0.0:
+			utxt = "Turn invisible after 0.3 seconds for 17 seconds and move 20% faster. Attacking breaks it: the attack deals %d extra damage and breaks the target for %d seconds (its own passive abilities stop working). Costs 75 mana, 23 second cooldown." % [int(v.bonus_damage), int(v["break"])]
+		for l in U.wrap(utxt, wrap, 14):
 			lines.append([l, 14, Color(0.75, 0.9, 0.75), "body"])
 	var pas := String(d.get("passive", ""))
 	if PASSIVE_TEXT.has(pas):
 		var txt := String(PASSIVE_TEXT[pas])
+		if pas == "pierce":
+			txt = "Attacks have a %d%% chance to never miss and deal %d extra magic damage (not against buildings)." % [roundi(float(v.chance) * 100.0), int(v.damage)]
+		elif pas == "crit":
+			txt = "Critical Strike: %d%% chance to deal %d%% damage (not on buildings). Crit items never stack." % [roundi(float(v.crit_chance) * 100.0), roundi(float(v.crit_mult) * 100.0)]
+		elif pas == "bash":
+			txt = "Bash: %d%% chance (%d%% ranged) to stun for %.1f s and deal %d damage; %.1f s cooldown. Only one bash item works." % [roundi(float(v.chance_melee) * 100.0), roundi(float(v.chance_ranged) * 100.0), float(v.duration), int(v.damage), float(v.bash_cooldown)]
 		if pas == "corruption":
 			txt = "Attacks lower the target's armor by %d for %d seconds (the stronger of these items counts)." % [int(v.armor_reduction), int(v.duration)]
 			if v.has("max_damage"):
@@ -1432,6 +1505,13 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		var show_boxes: bool = hud.game.camps != null and hud.game.camps.boxes_wanted()
 		for c in w.map.camps:
 			_camp_mark(c, show_boxes)
+		# orbs your team can see: a dot in the orb's colour with a dark rim
+		for o in w.orbs.orbs:
+			if not w.vision.cell_visible(team, o.pos):
+				continue
+			var op := _to_mm(o.pos)
+			draw_circle(op, 5.0, Color(0, 0, 0, 0.9))
+			draw_circle(op, 3.6, OrbView.COLORS.get(String(o.kind), Color(1, 1, 1)))
 		# pings from the whole team: pulsing rings for three seconds (gold: here, red: attack or danger, green: defend)
 		for pg in w.pings:
 			var age: float = w.time - float(pg.t)
