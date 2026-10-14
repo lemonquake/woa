@@ -16,8 +16,10 @@ how-to, state). Evidence on the final working tree (uncommitted):
 * Input probes through real hotkeys: Tock 13/13, Kragg 6/6. Item flow probe 13/13 (no regression).
 * Captures in `work/lemondev/2026-10-15b-ui-items-heroes/shots/`: debug panel, unit panels, 6- and 10-skill bars,
   icon sheets (old next to new), the 5-column shop, both heroes casting, tower ranges with and without Alt.
-* Bot duels, 12 min, 3 seeds: Tock vs Sludge no script errors (Tock uses Time Bolt, Rewind, Slow Field; kills 1-2
-  over the three games, `duels.txt`); the other pairs were still running when this was committed. A 25-minute 5 v 5
+* Bot duels, 12 min, 3 seeds each, no script errors (`duels.txt`, kills over the three games): Tock vs Sludge 1-2,
+  Kragg vs Ezee 1-0, Tock vs Kragg 0-2, Kragg vs Blood Ranger 1-2, Tock vs Azrin 1-7, Kragg vs Caziel 1-3. Kragg
+  out-farms Ezee and Tock; Tock (a support) loses the mid-style duel to Azrin badly. Tune if you want them stronger
+  one on one (all numbers chosen). A 25-minute 5 v 5
   bot game with two Tocks and two Kraggs: no script errors, bots fill roles 3 and 5 with them and call them by name in
   chat (`bot_game_5v5.txt`); the old late-game "stuck in task" bots showed up again (2 bots from 16:00).
 * Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-15 04:36; cold start straight into a Kragg match in 9.7 s and a

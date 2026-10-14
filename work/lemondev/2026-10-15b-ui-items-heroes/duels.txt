@@ -25,3 +25,55 @@ seed 11 at 12:00: A(kragg) 0/0/0 lvl 9 LH 36 DN 23 nw 2969 | B(ezee) 0/0/0 lvl 7
     kragg items: ["slip_boots", "magic_wand", "quelling_blade", "tough_band"]
     ezee items: ["magic_wand", "quelling_blade", "tough_band"]
 == tock vs kragg
+seed 3 at 12:00: A(tock) 0/0/0 lvl 7 LH 17 DN 3 nw 1307 | B(kragg) 0/0/0 lvl 8 LH 26 DN 14 nw 2343 | towers lost A 0 B 0
+    casts: { "A:time_bolt": 21, "B:iron_grip": 14, "A:item_salve": 8, "A:item_tango": 3, "B:item_salve": 5, "B:item_tango": 3, "B:repel": 3, "B:item_magic_stick": 1, "B:magnet_field": 2, "A:rewind": 4, "B:item_magic_wand": 2, "A:item_magic_stick": 2, "B:overload": 2 }
+    tock items: ["branch", "branch", "magic_stick", "smart_band", "salve"]
+    kragg items: ["boots", "magic_wand", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(tock) 0/0/0 lvl 8 LH 25 DN 3 nw 1725 | B(kragg) 0/0/0 lvl 8 LH 31 DN 15 nw 2663 | towers lost A 0 B 0
+    casts: { "B:iron_grip": 14, "A:time_bolt": 22, "A:item_salve": 7, "A:item_tango": 3, "B:item_salve": 6, "B:repel": 4, "B:item_tango": 3, "B:item_magic_stick": 2, "A:rewind": 4, "B:magnet_field": 2, "B:item_magic_wand": 3, "A:stop_time": 1, "A:item_magic_stick": 2, "B:overload": 3, "B:stomp": 1, "B:smash": 2, "B:snarl": 2 }
+    tock items: ["magic_wand", "smart_band", "boots", "salve"]
+    kragg items: ["magic_wand", "boots", "quelling_blade", "tough_band"]
+seed 11 at 12:00: A(tock) 0/2/0 lvl 7 LH 17 DN 4 nw 1453 | B(kragg) 2/0/0 lvl 8 LH 27 DN 12 nw 3068 | towers lost A 0 B 0
+    casts: { "B:iron_grip": 14, "A:time_bolt": 17, "A:item_salve": 8, "A:item_tango": 3, "B:item_tango": 3, "B:item_salve": 4, "A:rewind": 3, "B:item_magic_stick": 1, "B:repel": 2, "B:item_magic_wand": 2, "A:stop_time": 1, "B:magnet_field": 1, "B:overload": 1, "A:item_magic_stick": 1, "B:stomp": 2, "B:smash": 3 }
+    tock items: ["branch", "branch", "salve", "smart_band", "magic_stick"]
+    kragg items: ["salve", "magic_wand", "quelling_blade", "tough_band", "slip_boots"]
+== kragg vs blood_ranger
+seed 3 at 12:00: A(kragg) 0/0/0 lvl 8 LH 21 DN 14 nw 2365 | B(blood_ranger) 0/0/0 lvl 7 LH 18 DN 6 nw 2156 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 12, "B:item_salve": 4, "B:item_tango": 3, "B:gale_impact": 14, "A:item_tango": 3, "A:item_salve": 4, "B:burst_shot": 3, "A:item_magic_stick": 2, "B:item_magic_wand": 1, "A:magnet_field": 1, "B:snarl": 3, "A:repel": 1, "A:item_magic_wand": 1 }
+    kragg items: ["boots", "magic_wand", "quelling_blade", "tough_band"]
+    blood_ranger items: ["magic_wand", "boots", "gloves", "wraith_band", "quelling_blade"]
+seed 7 at 12:00: A(kragg) 1/1/0 lvl 8 LH 18 DN 8 nw 2526 | B(blood_ranger) 1/1/0 lvl 8 LH 25 DN 9 nw 2791 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 13, "B:item_salve": 3, "B:item_tango": 3, "B:gale_impact": 10, "A:item_tango": 3, "A:item_salve": 3, "B:burst_shot": 4, "A:repel": 2, "B:item_magic_wand": 2, "B:blood_ranger_ult": 1, "A:item_magic_stick": 1, "B:stomp": 2, "B:smash": 1 }
+    kragg items: ["magic_stick", "salve", "quelling_blade", "tough_band"]
+    blood_ranger items: ["magic_wand", "power_treads", "wraith_band", "quelling_blade", "salve"]
+seed 11 at 12:00: A(kragg) 0/1/0 lvl 8 LH 19 DN 18 nw 1735 | B(blood_ranger) 1/0/0 lvl 8 LH 20 DN 16 nw 2530 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 9, "B:item_salve": 3, "B:item_tango": 3, "B:gale_impact": 12, "A:item_salve": 8, "A:item_tango": 3, "B:stomp": 3, "A:repel": 3, "B:snarl": 2, "B:burst_shot": 4, "A:item_magic_stick": 2, "B:blood_ranger_ult": 1, "B:item_magic_wand": 1, "A:magnet_field": 1, "B:smash": 3 }
+    kragg items: ["magic_stick", "salve", "boots", "quelling_blade", "tough_band"]
+    blood_ranger items: ["magic_wand", "boots", "gloves", "wraith_band", "quelling_blade", "salve"]
+== tock vs azrin
+seed 3 at 12:00: A(tock) 1/4/0 lvl 8 LH 17 DN 8 nw 2593 | B(azrin) 4/1/0 lvl 10 LH 35 DN 19 nw 4690 | towers lost A 0 B 0
+    casts: { "B:touch_of_ember": 9, "A:time_bolt": 17, "A:item_salve": 4, "B:item_salve": 1, "A:item_tango": 3, "B:fiery_javelin": 11, "B:spirit_of_fire": 6, "A:item_magic_stick": 2, "B:item_magic_wand": 1, "B:divine_smite": 3, "A:item_magic_wand": 2, "B:item_mana_boots": 3, "A:slow_field": 1, "A:rewind": 1 }
+    tock items: ["magic_wand", "smart_band", "boots"]
+    azrin items: ["tango", "salve", "smart_band", "magic_wand", "mana_boots"]
+seed 7 at 12:00: A(tock) 0/2/0 lvl 7 LH 11 DN 4 nw 1282 | B(azrin) 2/0/0 lvl 9 LH 37 DN 21 nw 3814 | towers lost A 0 B 0
+    casts: { "B:touch_of_ember": 11, "A:time_bolt": 17, "A:item_salve": 4, "A:item_tango": 3, "B:fiery_javelin": 13, "B:item_salve": 3, "B:spirit_of_fire": 5, "B:item_tango": 2, "A:item_magic_stick": 2, "B:divine_smite": 2, "B:item_magic_wand": 1, "B:item_mana_boots": 2, "B:stomp": 2, "B:smash": 3 }
+    tock items: ["branch", "branch", "magic_stick", "smart_band", "salve"]
+    azrin items: ["tango", "smart_band", "magic_wand", "mana_boots"]
+seed 11 at 12:00: A(tock) 0/1/0 lvl 6 LH 13 DN 2 nw 1160 | B(azrin) 1/0/0 lvl 9 LH 49 DN 26 nw 4452 | towers lost A 0 B 0
+    casts: { "B:touch_of_ember": 11, "A:time_bolt": 13, "A:item_salve": 7, "A:item_tango": 3, "B:fiery_javelin": 11, "B:spirit_of_fire": 4, "A:item_magic_stick": 2, "B:divine_smite": 1, "B:item_magic_wand": 1 }
+    tock items: ["branch", "branch", "magic_stick", "smart_band"]
+    azrin items: ["tango", "salve", "smart_band", "magic_wand", "mana_boots"]
+== kragg vs caziel
+seed 3 at 12:00: A(kragg) 0/1/0 lvl 7 LH 14 DN 8 nw 1208 | B(caziel) 1/0/0 lvl 8 LH 28 DN 19 nw 2410 | towers lost A 0 B 0
+    casts: { "B:swift_dagger": 21, "A:iron_grip": 11, "B:item_salve": 7, "A:item_salve": 10, "A:item_tango": 3, "B:item_tango": 3, "B:master_of_shadows": 10, "A:repel": 6, "B:item_magic_stick": 2, "A:item_magic_stick": 3, "A:magnet_field": 1, "B:stomp": 2 }
+    kragg items: ["magic_stick", "quelling_blade", "tough_band"]
+    caziel items: ["boots", "magic_wand", "wraith_band", "quelling_blade"]
+seed 7 at 12:00: A(kragg) 1/1/0 lvl 7 LH 12 DN 8 nw 1628 | B(caziel) 1/1/0 lvl 8 LH 15 DN 10 nw 2023 | towers lost A 0 B 0
+    casts: { "B:swift_dagger": 19, "A:iron_grip": 12, "B:item_salve": 6, "B:item_tango": 3, "A:item_salve": 9, "A:item_tango": 3, "B:master_of_shadows": 9, "A:repel": 6, "B:item_magic_stick": 2, "A:item_magic_stick": 3, "A:magnet_field": 2 }
+    kragg items: ["magic_stick", "boots", "quelling_blade", "tough_band"]
+    caziel items: ["magic_stick", "boots", "wraith_band", "quelling_blade"]
+seed 11 at 12:00: A(kragg) 0/1/0 lvl 6 LH 14 DN 8 nw 1238 | B(caziel) 1/0/0 lvl 9 LH 22 DN 10 nw 2601 | towers lost A 0 B 0
+    casts: { "B:swift_dagger": 16, "A:iron_grip": 10, "B:item_salve": 5, "A:item_salve": 7, "B:item_tango": 3, "A:item_tango": 3, "B:master_of_shadows": 5, "A:repel": 5, "B:item_magic_stick": 1 }
+    kragg items: ["magic_stick", "salve", "quelling_blade", "tough_band"]
+    caziel items: ["magic_wand", "boots", "gloves", "wraith_band", "quelling_blade"]
+done
