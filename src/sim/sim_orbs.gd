@@ -39,7 +39,7 @@ var _next_water := 120.0
 var _next_power := 360.0
 var _next_wisdom := 420.0
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 func get_orb(id: int) -> Dictionary:
@@ -264,4 +264,6 @@ static func cooldown_mult(u: SimUnit) -> float:
 
 static func mana_mult(u: SimUnit) -> float:
 	var m := u.get_modifier("orb_magic")
-	return 1.0 - float(m.mana_cut) if not m.is_empty() else 1.0
+	var orb := 1.0 - float(m.mana_cut) if not m.is_empty() else 1.0
+	# Kugmo and Atuli (Dota's Kaya and Sange): 25% cheaper spells and items
+	return orb * (1.0 - u.mana_cost_cut)

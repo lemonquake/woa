@@ -18,23 +18,77 @@ const TEAM_NAMES := ["Ancient Light", "Black Sun", "Neutral"]
 # ---- Unit kinds -----------------------------------------------------------------------------------------------------
 enum Kind { HERO, CREEP_MELEE, CREEP_RANGED, CREEP_SIEGE, CREEP_FLAG, NEUTRAL_CREEP, TOWER, BARRACKS, ANCIENT, FILLER, FOUNTAIN, WARD, COURIER }
 
-## Attack classes (Liquipedia "Attack Damage": Default, Runty, Piercing, Reinforced).
-enum AttackClass { DEFAULT, RUNTY, PIERCING, REINFORCED }
-## Defence classes: heroes, everything else, buildings.
-enum DefenseClass { HERO, NON_HERO, STRUCTURE }
+## Damage types (owner's request 2026-10-14, Warcraft III style on top of Dota's attack classes): what a unit's attacks
+## are, and what a spell's damage counts as. Hero, Slash, Piercing and Siege are Dota's Default (hero), Runty (melee
+## creeps), Piercing (ranged creeps) and Reinforced (siege creeps, towers); Blunt is Dota's Default for non-heroes
+## (neutral brutes); Magic is magic damage (also the attacks of fire creatures); Aether is pure damage.
+enum Weapon { HERO, SLASH, PIERCING, SIEGE, BLUNT, MAGIC, AETHER }
+const WEAPON_NAMES := ["Hero", "Slash", "Piercing", "Siege", "Blunt", "Magic", "Aether"]
+## Armor types: heroes, living units (Dota's non-hero), buildings, siege creeps (Dota's creep_siege penalties) and
+## Titan (Roshan's; nothing uses it until Roshan is in).
+enum ArmorType { HERO, ORGANIC, STRUCTURE, ARMORED, TITAN }
+const ARMOR_NAMES := ["Hero", "Organic", "Structure", "Armored", "Titan"]
 
-## damage multiplier [attack class][defence class]. Default vs structure depends on whether the attacker is a hero.
-const ATTACK_MATRIX := [
-	[1.0, 1.0, 0.7],     # DEFAULT (non-hero attacker; heroes use HERO_VS_STRUCTURE)
-	[0.75, 1.0, 0.7],    # RUNTY      (melee lane creeps: creep_irresolute -25% vs heroes)
-	[0.5, 1.5, 0.35],    # PIERCING   (ranged lane creeps: creep_piercing)
-	[1.0, 1.0, 2.5],     # REINFORCED (siege creeps, towers: creep_siege +150% vs buildings)
+## Damage multiplier [weapon][armor type]. Every pairing that existed before keeps Dota's value exactly (Liquipedia
+## "Attack Damage", creep_siege): heroes deal 50% to buildings and siege creeps; melee creeps deal 75% to heroes;
+## piercing 50% / 150% / 35%; siege 250% to buildings; siege creeps take 70% from other attackers; magic never hurts
+## buildings. The Titan column is our own (Roshan, later).
+const DAMAGE_TABLE := [
+	# Hero  Organic Struct Armored Titan
+	[1.0, 1.0, 0.5, 0.5, 1.0],       # HERO
+	[0.75, 1.0, 0.7, 0.7, 0.75],     # SLASH     (melee lane creeps)
+	[0.5, 1.5, 0.35, 1.05, 0.5],     # PIERCING  (ranged lane creeps, Swamp Troll)
+	[1.0, 1.0, 2.5, 0.7, 0.5],       # SIEGE     (siege creeps, towers, the fountain)
+	[1.0, 1.0, 0.7, 0.7, 1.0],       # BLUNT     (neutral brutes)
+	[1.0, 1.0, 0.0, 1.0, 0.75],      # MAGIC     (magic damage; buildings are immune)
+	[1.0, 1.0, 1.0, 1.0, 1.0],       # AETHER    (pure damage)
 ]
-const HERO_VS_STRUCTURE := 0.5
 
-## Siege creeps take reduced damage (creep_siege incoming penalties).
-const SIEGE_TAKEN_FROM_HERO := 0.5
-const SIEGE_TAKEN_FROM_BASIC := 0.7
+## Elements (owner's request 2026-10-14). Every unit has one, and so does every damage source: an attack carries its
+## attacker's element, a spell its ability's (the hero's unless the ability names another), an item its own.
+enum Element { NONE, FIRE, WATER, ICE, EARTH, LIGHTNING, NATURE, DARK, LIGHT }
+const ELEMENT_NAMES := ["None", "Fire", "Water", "Ice", "Earth", "Lightning", "Nature", "Dark", "Light"]
+const ELEMENT_COLORS := [Color(0.72, 0.72, 0.74), Color(1.0, 0.45, 0.12), Color(0.25, 0.6, 1.0), Color(0.6, 0.9, 1.0),
+	Color(0.72, 0.52, 0.3), Color(0.85, 0.75, 1.0), Color(0.4, 0.85, 0.3), Color(0.6, 0.3, 0.9), Color(1.0, 0.9, 0.5)]
+const ELEMENT_STRONG := 1.25
+const ELEMENT_WEAK := 0.75
+## Who beats whom: [attacker, defender]. The attacker deals x1.25; the defender, striking back, deals x0.75. Light and
+## Dark beat each other. Every element but None also resists itself (x0.75).
+const ELEMENT_BEATS := [
+	[Element.WATER, Element.FIRE], [Element.FIRE, Element.ICE], [Element.FIRE, Element.NATURE],
+	[Element.EARTH, Element.FIRE], [Element.ICE, Element.NATURE], [Element.ICE, Element.EARTH],
+	[Element.WATER, Element.ICE], [Element.LIGHTNING, Element.WATER], [Element.EARTH, Element.LIGHTNING],
+	[Element.NATURE, Element.WATER], [Element.NATURE, Element.EARTH],
+]
+
+static var _elem_table: Array = []
+
+## Damage multiplier for an `atk` element hitting a `def` element.
+static func element_mult(atk: int, def: int) -> float:
+	if _elem_table.is_empty():
+		var n := ELEMENT_NAMES.size()
+		for a in n:
+			var row: Array = []
+			row.resize(n)
+			row.fill(1.0)
+			_elem_table.append(row)
+		for a in range(1, n):
+			_elem_table[a][a] = ELEMENT_WEAK
+		for p in ELEMENT_BEATS:
+			_elem_table[p[0]][p[1]] = ELEMENT_STRONG
+			_elem_table[p[1]][p[0]] = ELEMENT_WEAK
+		_elem_table[Element.LIGHT][Element.DARK] = ELEMENT_STRONG
+		_elem_table[Element.DARK][Element.LIGHT] = ELEMENT_STRONG
+	if atk < 0 or def < 0 or atk >= _elem_table.size() or def >= _elem_table.size():
+		return 1.0
+	return float(_elem_table[atk][def])
+
+static func element_of(name: String) -> int:
+	var i := ELEMENT_NAMES.find(name.capitalize())
+	return maxi(0, i)
+
+static func damage_mult(weapon: int, armor_type: int) -> float:
+	return float(DAMAGE_TABLE[clampi(weapon, 0, DAMAGE_TABLE.size() - 1)][clampi(armor_type, 0, 4)])
 
 enum DamageType { PHYSICAL, MAGICAL, PURE }
 
@@ -68,7 +122,13 @@ const AGI_ARMOR := 1.0 / 6.0
 const AGI_ATTACK_SPEED := 1.0
 const INT_MANA := 12.0
 const INT_MANA_REGEN := 0.05
-const INT_MAGIC_RESIST := 0.001
+## Owner's rules (2026-10-14, not Dota's 0.1% per point): every 25 intelligence gives 1% magic resistance and every
+## 20 gives 1% magic amp (continuous: 0.04% and 0.05% per point).
+const INT_MAGIC_RESIST := 0.01 / 25.0
+const INT_MAGIC_AMP := 0.01 / 20.0
+## Magic amp from items stacks with diminishing returns: sorted largest first, each source counts half as much as the
+## one before it (10% + 10% = 15%; 12% + 10% + 10% = 19.5%).
+const ITEM_MAGIC_AMP_FALLOFF := 0.5
 const HERO_BASE_HP := 120.0
 const HERO_BASE_MANA := 75.0
 const HERO_BASE_MAGIC_RESIST := 0.25
@@ -176,6 +236,7 @@ const WELL_RADIUS := 1000.0                 # the fountain area the courier swee
 const BACKPACK_SWAP_COOLDOWN := 6.0         # an item moved out of the backpack waits 6 s before it can be used
 const TO_BUY_MAX := 24                      # entries kept in the To Buy list (8 are shown)
 const TO_BUY_SHOWN := 8
+const CHAT_MAX_LEN := 120                  # characters in one chat line
 
 # ---- Fountain -------------------------------------------------------------------------------------------------------
 const FOUNTAIN_AURA_RADIUS := 1200.0
@@ -196,7 +257,9 @@ const NEUTRAL_GUARD_RADIUS := 400.0          # a neutral's guard distance from i
 const NEUTRAL_CHASE_TIME := 5.0              # aggro drops this long after leaving the guard radius (resets inside it)
 const NEUTRAL_REAGGRO_LOCK := 3.0            # after a leash, damage cannot wake it again for this long
 const NEUTRAL_REAGGRO_CHASE := 3.0           # woken again while walking home: it chases for only this long
-const NEUTRAL_PROXIMITY_AGGRO := 240.0       # by day, an enemy this close wakes a camp (at night they sleep)
+const NEUTRAL_PROXIMITY_AGGRO := 125.0       # by day, an enemy this close wakes a camp (at night they sleep); the
+                                             # owner's rule: a neutral never picks a fight from farther than 125
+const NEUTRAL_HOSTILE_TIME := 5.0            # lane creeps fight a neutral only while it fights, and this long after
 const NEUTRAL_CAMPMATE_RADIUS := 500.0       # campmates this close to a damaged neutral join the fight
 const NEUTRAL_UPGRADE_INTERVAL := 450.0      # every 7:30 from the horn, up to 30 times
 const NEUTRAL_MAX_UPGRADES := 30

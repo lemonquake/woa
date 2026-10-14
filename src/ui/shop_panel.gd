@@ -20,7 +20,7 @@ const BASICS := [["consumables", "Consumables", 0], ["big_parts", "Big Parts", 0
 const UPGRADES := [
 	[0, "Accessories", ["wraith_band", "tough_band", "smart_band", "magic_wand", "power_treads", "slip_boots",
 		"steady_ring", "mask_of_madness"]],
-	[0, "Swords", ["heavy_sword", "spell_sword", "twin_swords", "yasha"]],
+	[0, "Swords", ["heavy_sword", "yasha", "spell_sword", "twin_swords", "kugmo_atuli", "igit_atuli"]],
 	[1, "Support", ["mana_ring", "leaf_hat", "mana_boots", "medic_kit", "push_staff", "gold_glove"]],
 	[1, "Magic", ["battle_staff", "silence_staff", "root_staff", "hex_staff"]],
 	[2, "Weapons", ["crit_sword", "crit_bow", "stun_club", "stun_blade", "sure_hit_staff", "armor_breaker",
@@ -303,7 +303,7 @@ func _owned(h: SimUnit) -> Array:
 	return out
 
 func _buy(id: String) -> void:
-	var err: String = hud.game.world.shop.buy(_hero(), id)
+	var err: String = hud.game.act({"k": "buy", "item": id})
 	if err != "":
 		hud.error(err)
 
@@ -311,7 +311,7 @@ func _buy(id: String) -> void:
 func _to_buy(id: String) -> void:
 	var h := _hero()
 	var n: int = h.to_buy.size()
-	var err: String = hud.game.world.shop.add_to_buy(h, id)
+	var err: String = hud.game.act({"k": "to_buy_add", "item": id})
 	if err != "":
 		hud.error(err)
 	else:
@@ -356,7 +356,7 @@ func _gui_input(e: InputEvent) -> void:
 				else:
 					_buy(String(pr[2]))
 			"sell":
-				var err: String = w.shop.sell(h, int(pr[2]))
+				var err: String = hud.game.act({"k": "sell", "slot": int(pr[2]), "stash": false})
 				if err != "":
 					hud.error(err)
 				sell_slot = -1
@@ -376,9 +376,9 @@ func _gui_input(e: InputEvent) -> void:
 			"stash":
 				var serr := ""
 				if right:
-					serr = w.shop.sell_stash(h, int(pr[2]))
+					serr = hud.game.act({"k": "sell", "slot": int(pr[2]), "stash": true})
 				else:
-					serr = w.shop.from_stash(h, int(pr[2]))
+					serr = hud.game.act({"k": "from_stash", "slot": int(pr[2])})
 				if serr != "":
 					hud.error(serr)
 		queue_redraw()

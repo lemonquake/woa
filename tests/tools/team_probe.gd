@@ -1,6 +1,6 @@
 extends SceneTree
 ## Live probe of a 5 v 5 match with bots on both teams (window, HUD, input): the bots' team chat shows in the HUD,
-## a ping on an enemy hero gets answers, holding Shift shows the camps' spawn boxes, a typed chat line reaches the
+## a ping on an enemy hero gets answers, holding Alt shows the camps' spawn boxes, a typed chat line reaches the
 ## bots. Prints PASS / FAIL lines and quits.
 ##   godot --path . -s tests/tools/team_probe.gd -- [--out=work/shots]
 
@@ -94,14 +94,14 @@ func _run() -> void:
 	for l in chat.lines.slice(before):
 		print("    reply: %s: %s" % [l.name, l.text])
 	await _shot("team_ping.png")
-	# Shift shows the spawn boxes
+	# Alt shows the spawn boxes
 	var ev := InputEventKey.new()
-	ev.keycode = KEY_SHIFT
-	ev.physical_keycode = KEY_SHIFT
+	ev.keycode = KEY_ALT
+	ev.physical_keycode = KEY_ALT
 	ev.pressed = true
 	Input.parse_input_event(ev)
 	await frames(5)
-	check(game.camps.boxes_wanted() and game.camps.get_node("SpawnBoxes").visible, "holding Shift shows the spawn boxes")
+	check(game.camps.boxes_wanted() and game.camps.get_node("SpawnBoxes").visible, "holding Alt shows the spawn boxes")
 	game.camera.focus(View.to3(w.map.camps[1].pos, game.terrain.height_at(w.map.camps[1].pos)))
 	await _shot("team_boxes.png")
 	ev = ev.duplicate()

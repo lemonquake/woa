@@ -23,8 +23,10 @@ func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--capture="):
 			_capture_path = a.substr(10)
-	var bg := ColorRect.new()
-	bg.color = Color(0.03, 0.035, 0.05)
+	var bg := TextureRect.new()
+	bg.texture = U.skin_tex("backdrop")
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 	var glow := TextureRect.new()
@@ -111,9 +113,10 @@ func _ready() -> void:
 		var op := OptionsPanel.new()
 		add_child(op)
 		op.tree_exited.connect(_refresh), 140))
-	var start := _button("Start", _start, 200)
-	start.add_theme_font_size_override("font_size", 22)
-	start.custom_minimum_size = Vector2(200, 54)
+	var start := _button("Start", _start, 260)
+	start.theme_type_variation = "GoldButton"
+	start.add_theme_font_size_override("font_size", 26)
+	start.custom_minimum_size = Vector2(260, 60)
 	bottom.add_child(start)
 	_refresh()
 	LoadingScreen.close(get_tree())

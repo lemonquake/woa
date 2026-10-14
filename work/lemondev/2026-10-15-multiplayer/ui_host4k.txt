@@ -1,0 +1,50 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+HOST PASS the Multiplayer screen opens on the server list
+HOST PASS typing a name keeps it
+saved net_servers_4k
+HOST PASS Host Server opens the server's lobby list
+HOST PASS the title is the server's name
+saved net_hub_empty_4k
+HOST PASS Create Lobby opens its dialog
+saved net_create_dialog_4k
+HOST PASS Create puts you in your new lobby
+HOST PASS and you lead it
+HOST PASS in Ancient Light's first slot
+HOST PASS the guest joins the lobby
+HOST PASS a chat line reaches the lobby
+HOST PASS and the guest's line comes back
+HOST PASS clicking a hero card picks that hero
+HOST PASS the lane choice reaches the lobby
+HOST PASS the slot button opens the slot menu
+HOST PASS Add Bot puts a bot in the slot
+HOST PASS Fill with Bots fills every open slot
+HOST PASS Start waits while someone is not ready
+ready button at [P: (992.0, 891.0), S: (240.0, 58.0)] window (3840, 2160) visible [P: (0.0, 0.0), S: (1920.0, 1080.0)]
+HOST PASS Ready marks you ready
+HOST PASS everyone is ready
+saved net_room_ready_4k
+HOST PASS Start Match is enabled once everyone is ready
+match ready in 13466 ms
+HOST PASS Start Match loads the match
+HOST PASS the match runs once both have loaded
+saved net_match_4k
+HOST PASS the in-match menu offers Pause Game
+HOST PASS opening the menu does not stop the game in multiplayer
+saved net_match_menu_4k
+HOST PASS Pause Game pauses the match
+saved net_match_paused_4k
+HOST PASS the menu then offers Unpause Game
+HOST PASS Unpause Game resumes it
+HOST PASS Leave Game goes back to the server's lobby list
+saved net_hub_match_running_4k
+HOST PASS the match goes on without you (a bot plays your hero)
+HOST PASS Stop Hosting asks first
+saved net_stop_dialog_4k
+HOST PASS and closes the server, back to the server list
+HOST RESULT 31 passed, 0 failed (52 s)
+WARNING: 317 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 14 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

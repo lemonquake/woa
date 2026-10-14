@@ -1,0 +1,118 @@
+== froster vs blood_ranger
+seed 3 at 12:00: A(froster) 7/0/0 lvl 11 LH 32 DN 20 nw 4886 | B(blood_ranger) 0/7/0 lvl 7 LH 13 DN 4 nw 1920 | towers lost A 1 B 1
+    casts: { "A:breath_of_cold": 13, "B:item_salve": 5, "B:item_tango": 3, "B:stomp": 42, "B:gale_impact": 11, "A:ice_pulse": 10, "B:smash": 46, "A:item_salve": 2, "A:item_tango": 3, "B:item_magic_wand": 2, "A:item_mana_boots": 4, "B:blood_ranger_ult": 1, "A:item_magic_wand": 1 }
+    froster items: ["mana_boots", "spell_sword", "smart_band", "magic_wand"]
+    blood_ranger items: ["boots", "magic_wand", "wraith_band", "quelling_blade"]
+seed 7 at 12:00: A(froster) 2/0/0 lvl 10 LH 37 DN 14 nw 4200 | B(blood_ranger) 0/2/0 lvl 7 LH 14 DN 13 nw 1678 | towers lost A 1 B 1
+    casts: { "A:breath_of_cold": 13, "B:item_salve": 5, "B:item_tango": 3, "B:gale_impact": 13, "B:stomp": 44, "B:smash": 56, "A:ice_pulse": 7, "A:item_tango": 1, "A:item_salve": 1, "B:snarl": 6, "B:item_magic_stick": 1, "A:item_mana_boots": 3, "B:item_magic_wand": 1, "B:burst_shot": 1 }
+    froster items: ["tango", "magic_wand", "smart_band", "mana_boots"]
+    blood_ranger items: ["magic_wand", "salve", "wraith_band", "quelling_blade"]
+seed 11 at 12:00: A(froster) 5/0/0 lvl 11 LH 35 DN 9 nw 4899 | B(blood_ranger) 0/5/0 lvl 7 LH 17 DN 9 nw 1673 | towers lost A 0 B 1
+    casts: { "A:breath_of_cold": 13, "B:item_salve": 6, "B:item_tango": 3, "B:gale_impact": 11, "B:stomp": 47, "A:ice_pulse": 6, "B:smash": 53, "A:item_tango": 1, "B:item_magic_wand": 2, "B:burst_shot": 2, "A:item_salve": 1 }
+    froster items: ["tango", "spell_sword", "smart_band", "magic_wand", "mana_boots"]
+    blood_ranger items: ["magic_wand", "salve", "wraith_band", "quelling_blade"]
+== froster vs ezee
+seed 3 at 12:00: A(froster) 3/0/0 lvl 10 LH 35 DN 11 nw 4318 | B(ezee) 0/3/0 lvl 7 LH 20 DN 9 nw 1757 | towers lost A 1 B 1
+    casts: { "A:breath_of_cold": 13, "B:dark_stomp": 4, "A:ice_pulse": 9, "B:item_tango": 3, "B:stomp": 50, "B:tainted_touch": 4, "B:item_salve": 5, "B:smash": 55, "B:snarl": 4, "B:leap_strike": 2, "A:item_tango": 1, "B:item_magic_stick": 1, "A:item_salve": 1, "B:item_magic_wand": 3, "A:item_magic_wand": 1, "A:endless_winter": 1 }
+    froster items: ["tango", "smart_band", "magic_wand", "mana_boots"]
+    ezee items: ["salve", "magic_wand", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(froster) 4/0/0 lvl 10 LH 42 DN 17 nw 4388 | B(ezee) 0/4/0 lvl 6 LH 18 DN 3 nw 1651 | towers lost A 0 B 1
+    casts: { "A:breath_of_cold": 15, "B:dark_stomp": 5, "B:item_tango": 3, "A:ice_pulse": 11, "B:item_salve": 6, "B:stomp": 48, "B:tainted_touch": 10, "A:item_salve": 4, "B:smash": 51, "B:snarl": 2, "B:leap_strike": 3, "A:item_tango": 3, "A:item_magic_stick": 2, "B:item_magic_stick": 3, "A:item_mana_boots": 5, "A:endless_winter": 2 }
+    froster items: ["salve", "smart_band", "magic_wand", "mana_boots"]
+    ezee items: ["branch", "branch", "magic_stick", "quelling_blade", "tough_band", "salve"]
+seed 11 at 12:00: A(froster) 0/0/0 lvl 9 LH 42 DN 12 nw 3510 | B(ezee) 0/0/0 lvl 7 LH 18 DN 5 nw 1418 | towers lost A 1 B 1
+    casts: { "A:breath_of_cold": 16, "B:dark_stomp": 6, "B:item_tango": 3, "B:item_salve": 6, "A:ice_pulse": 9, "B:stomp": 44, "B:smash": 56, "B:leap_strike": 5, "B:tainted_touch": 7, "A:item_salve": 2, "A:item_magic_stick": 1, "A:item_tango": 3, "B:item_magic_stick": 1, "A:item_magic_wand": 1, "B:item_magic_wand": 3, "A:endless_winter": 2, "A:item_mana_boots": 2 }
+    froster items: ["salve", "mana_boots", "smart_band", "magic_wand"]
+    ezee items: ["magic_wand", "quelling_blade", "tough_band"]
+== froster vs sludge
+seed 3 at 12:00: A(froster) 4/0/0 lvl 10 LH 40 DN 14 nw 4289 | B(sludge) 0/4/0 lvl 5 LH 7 DN 2 nw 722 | towers lost A 0 B 3
+    casts: { "A:breath_of_cold": 15, "B:item_salve": 8, "B:item_tango": 3, "A:ice_pulse": 8, "B:stomp": 42, "B:smash": 43, "B:shuriken_hook": 6, "B:hooked_creep": 1, "B:stench_on": 17, "B:item_magic_stick": 4, "A:item_salve": 4, "B:hooked_hero": 5, "A:item_tango": 3, "B:blubber": 4, "A:endless_winter": 2, "A:item_mana_boots": 3, "B:snarl": 4, "A:item_magic_wand": 1 }
+    froster items: ["magic_wand", "smart_band", "mana_boots"]
+    sludge items: ["circlet", "magic_stick", "gauntlets", "branch", "branch"]
+seed 7 at 12:00: A(froster) 2/1/0 lvl 9 LH 29 DN 13 nw 3287 | B(sludge) 1/3/0 lvl 7 LH 28 DN 10 nw 1870 | towers lost A 1 B 1
+    casts: { "A:breath_of_cold": 17, "B:item_salve": 10, "B:item_tango": 3, "B:shuriken_hook": 6, "B:hooked_hero": 5, "B:stench_on": 24, "A:item_salve": 4, "A:item_tango": 3, "B:stomp": 43, "A:ice_pulse": 7, "B:item_magic_wand": 4, "B:smash": 47, "B:hooked_creep": 1, "B:blubber": 4, "A:endless_winter": 1, "A:item_mana_boots": 1 }
+    froster items: ["magic_wand", "mana_boots", "smart_band"]
+    sludge items: ["magic_wand", "tough_band"]
+seed 11 at 12:00: A(froster) 6/0/0 lvl 10 LH 40 DN 22 nw 5253 | B(sludge) 0/6/0 lvl 6 LH 19 DN 9 nw 1598 | towers lost A 0 B 2
+    casts: { "A:breath_of_cold": 12, "B:shuriken_hook": 6, "B:hooked_creep": 2, "B:item_salve": 6, "B:item_tango": 3, "A:ice_pulse": 10, "B:stench_on": 20, "B:stomp": 44, "B:item_magic_stick": 2, "B:smash": 45, "A:item_salve": 2, "B:snarl": 4, "B:hooked_hero": 4, "A:item_tango": 2, "B:item_magic_wand": 3, "B:blubber": 3, "A:item_mana_boots": 4, "A:endless_winter": 1 }
+    froster items: ["tango", "mana_boots", "spell_sword", "smart_band", "magic_wand"]
+    sludge items: ["magic_wand", "tough_band"]
+== froster vs azrin
+seed 3 at 12:00: A(froster) 0/1/0 lvl 6 LH 15 DN 8 nw 1297 | B(azrin) 1/0/0 lvl 9 LH 38 DN 18 nw 4060 | towers lost A 1 B 1
+    casts: { "B:touch_of_ember": 11, "A:breath_of_cold": 8, "A:item_salve": 7, "A:item_tango": 3, "B:fiery_javelin": 13, "A:ice_pulse": 4, "B:stomp": 47, "B:smash": 46, "B:spirit_of_fire": 4, "B:item_magic_stick": 1, "A:item_magic_stick": 3 }
+    froster items: ["branch", "branch", "magic_stick", "smart_band", "salve"]
+    azrin items: ["tango", "salve", "smart_band", "magic_wand", "mana_boots"]
+seed 7 at 12:00: A(froster) 0/4/0 lvl 6 LH 15 DN 8 nw 1563 | B(azrin) 4/0/0 lvl 10 LH 44 DN 19 nw 4974 | towers lost A 1 B 1
+    casts: { "B:touch_of_ember": 13, "A:breath_of_cold": 12, "A:item_salve": 5, "A:item_tango": 3, "B:fiery_javelin": 12, "A:ice_pulse": 2, "B:stomp": 55, "B:smash": 51, "B:spirit_of_fire": 5, "B:item_magic_wand": 2, "A:item_magic_stick": 2, "B:divine_smite": 1 }
+    froster items: ["branch", "branch", "boots", "smart_band", "magic_stick"]
+    azrin items: ["tango", "salve", "spell_sword", "smart_band", "magic_wand", "mana_boots"]
+seed 11 at 12:00: A(froster) 0/2/0 lvl 7 LH 16 DN 4 nw 1907 | B(azrin) 2/0/0 lvl 10 LH 39 DN 21 nw 4384 | towers lost A 1 B 2
+    casts: { "B:touch_of_ember": 10, "A:breath_of_cold": 9, "A:item_salve": 5, "A:item_tango": 3, "B:fiery_javelin": 10, "A:ice_pulse": 4, "B:stomp": 43, "B:smash": 45, "B:spirit_of_fire": 3, "B:divine_smite": 2, "B:item_magic_wand": 1, "A:item_magic_stick": 1 }
+    froster items: ["magic_wand", "smart_band", "salve", "boots"]
+    azrin items: ["tango", "salve", "smart_band", "magic_wand", "mana_boots"]
+== froster vs caziel
+seed 3 at 12:00: A(froster) 3/0/0 lvl 10 LH 32 DN 7 nw 3761 | B(caziel) 0/3/0 lvl 8 LH 23 DN 9 nw 2273 | towers lost A 1 B 1
+    casts: { "B:swift_dagger": 13, "A:breath_of_cold": 12, "B:item_salve": 4, "B:item_tango": 3, "A:item_tango": 3, "A:item_salve": 1, "B:stomp": 47, "B:smash": 51, "A:ice_pulse": 7, "B:master_of_shadows": 7, "A:item_magic_stick": 1, "B:item_magic_stick": 2, "A:item_magic_wand": 1, "A:endless_winter": 2, "A:item_mana_boots": 1 }
+    froster items: ["magic_wand", "smart_band", "mana_boots", "salve"]
+    caziel items: ["magic_wand", "boots", "salve", "wraith_band", "quelling_blade"]
+seed 7 at 12:00: A(froster) 2/0/0 lvl 8 LH 22 DN 3 nw 2495 | B(caziel) 0/2/0 lvl 8 LH 24 DN 13 nw 2239 | towers lost A 1 B 2
+    casts: { "B:swift_dagger": 16, "A:breath_of_cold": 15, "A:item_salve": 10, "A:item_tango": 3, "B:item_salve": 7, "A:ice_pulse": 9, "B:stomp": 49, "B:item_tango": 3, "B:smash": 53, "B:master_of_shadows": 10, "A:item_magic_stick": 3, "B:item_magic_stick": 3, "A:item_magic_wand": 1, "B:snarl": 2, "A:endless_winter": 1, "B:item_magic_wand": 1 }
+    froster items: ["boots", "smart_band", "magic_wand"]
+    caziel items: ["boots", "salve", "magic_wand", "wraith_band", "quelling_blade", "gloves"]
+seed 11 at 12:00: A(froster) 3/0/0 lvl 8 LH 17 DN 6 nw 2644 | B(caziel) 0/3/0 lvl 8 LH 27 DN 18 nw 2253 | towers lost A 0 B 1
+    casts: { "B:swift_dagger": 15, "A:breath_of_cold": 17, "A:item_salve": 9, "A:item_tango": 3, "B:stomp": 46, "B:item_salve": 5, "B:item_tango": 3, "A:ice_pulse": 9, "B:smash": 47, "B:master_of_shadows": 8, "A:item_magic_stick": 2, "B:item_magic_stick": 2, "A:item_magic_wand": 1, "A:endless_winter": 1, "B:item_magic_wand": 1 }
+    froster items: ["magic_wand", "smart_band", "boots"]
+    caziel items: ["boots", "magic_wand", "wraith_band", "quelling_blade", "gloves"]
+== caziel vs blood_ranger
+seed 3 at 12:00: A(caziel) 1/0/0 lvl 8 LH 29 DN 19 nw 2833 | B(blood_ranger) 0/1/0 lvl 7 LH 16 DN 7 nw 1353 | towers lost A 1 B 1
+    casts: { "A:swift_dagger": 14, "B:item_salve": 10, "B:item_tango": 3, "A:item_tango": 3, "A:item_salve": 5, "B:gale_impact": 10, "B:stomp": 47, "B:snarl": 2, "B:smash": 47, "A:master_of_shadows": 6, "B:burst_shot": 1, "A:item_magic_wand": 1 }
+    caziel items: ["magic_wand", "power_treads", "wraith_band", "quelling_blade"]
+    blood_ranger items: ["magic_wand", "wraith_band", "quelling_blade"]
+seed 7 at 12:00: A(caziel) 2/3/0 lvl 8 LH 18 DN 14 nw 2824 | B(blood_ranger) 3/2/0 lvl 8 LH 23 DN 13 nw 3029 | towers lost A 1 B 1
+    casts: { "A:swift_dagger": 17, "B:item_salve": 6, "B:item_tango": 3, "A:item_salve": 5, "A:item_tango": 3, "B:stomp": 51, "B:gale_impact": 13, "B:smash": 56, "B:burst_shot": 7, "A:master_of_shadows": 6, "A:item_magic_stick": 2, "B:item_magic_wand": 2, "A:item_magic_wand": 1, "B:snarl": 2 }
+    caziel items: ["power_treads", "wraith_band", "quelling_blade", "magic_wand", "salve"]
+    blood_ranger items: ["power_treads", "magic_wand", "salve", "wraith_band", "quelling_blade"]
+seed 11 at 12:00: A(caziel) 0/3/0 lvl 6 LH 11 DN 10 nw 1377 | B(blood_ranger) 3/0/0 lvl 9 LH 33 DN 11 nw 3359 | towers lost A 1 B 1
+    casts: { "A:swift_dagger": 14, "B:item_salve": 5, "B:item_tango": 3, "A:item_tango": 3, "A:item_salve": 5, "B:gale_impact": 12, "B:stomp": 45, "B:smash": 49, "B:burst_shot": 6, "A:master_of_shadows": 5, "B:item_magic_wand": 2, "A:item_magic_stick": 2, "B:blood_ranger_ult": 1 }
+    caziel items: ["magic_stick", "salve", "wraith_band", "quelling_blade"]
+    blood_ranger items: ["magic_wand", "power_treads", "salve", "wraith_band", "quelling_blade"]
+== caziel vs ezee
+seed 3 at 12:00: A(caziel) 1/0/0 lvl 10 LH 35 DN 33 nw 3734 | B(ezee) 0/1/0 lvl 6 LH 10 DN 4 nw 1398 | towers lost A 1 B 2
+    casts: { "A:swift_dagger": 16, "B:dark_stomp": 11, "B:item_salve": 6, "B:item_tango": 3, "A:item_salve": 2, "B:stomp": 50, "B:tainted_touch": 7, "B:smash": 49, "A:master_of_shadows": 5, "A:item_magic_stick": 1, "A:item_tango": 3, "B:leap_strike": 1, "A:item_magic_wand": 2 }
+    caziel items: ["salve", "magic_wand", "power_treads", "wraith_band", "quelling_blade"]
+    ezee items: ["magic_wand", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(caziel) 1/0/0 lvl 9 LH 27 DN 32 nw 3052 | B(ezee) 0/1/0 lvl 7 LH 15 DN 6 nw 1665 | towers lost A 1 B 2
+    casts: { "A:swift_dagger": 16, "B:dark_stomp": 11, "B:item_tango": 3, "B:tainted_touch": 7, "B:item_salve": 5, "A:item_salve": 5, "A:item_tango": 3, "B:stomp": 44, "B:snarl": 2, "B:smash": 44, "B:leap_strike": 3, "A:item_magic_stick": 1, "A:master_of_shadows": 6, "A:item_magic_wand": 1, "B:item_magic_wand": 2 }
+    caziel items: ["power_treads", "wraith_band", "quelling_blade", "magic_wand"]
+    ezee items: ["salve", "magic_wand", "quelling_blade", "tough_band"]
+seed 11 at 12:00: A(caziel) 0/0/0 lvl 9 LH 36 DN 36 nw 3540 | B(ezee) 0/0/0 lvl 7 LH 21 DN 2 nw 1700 | towers lost A 1 B 1
+    casts: { "A:swift_dagger": 16, "B:dark_stomp": 11, "B:item_salve": 6, "B:item_tango": 3, "B:tainted_touch": 9, "A:item_salve": 1, "B:stomp": 45, "B:smash": 57, "A:master_of_shadows": 6, "A:item_tango": 1, "A:item_magic_stick": 1, "A:item_magic_wand": 1, "B:item_magic_stick": 1 }
+    caziel items: ["tango", "salve", "magic_wand", "wraith_band", "quelling_blade", "power_treads"]
+    ezee items: ["magic_wand", "quelling_blade", "tough_band", "salve"]
+== caziel vs sludge
+seed 3 at 12:00: A(caziel) 1/0/0 lvl 8 LH 20 DN 16 nw 2372 | B(sludge) 0/1/0 lvl 5 LH 16 DN 6 nw 1128 | towers lost A 1 B 2
+    casts: { "A:swift_dagger": 15, "B:shuriken_hook": 8, "B:hooked_hero": 6, "A:item_salve": 6, "A:item_tango": 3, "B:item_salve": 9, "B:stench_on": 35, "B:item_tango": 3, "B:stomp": 44, "B:item_magic_stick": 4, "B:smash": 49, "B:snarl": 6, "A:master_of_shadows": 8, "B:hooked_creep": 1, "B:blubber": 5, "A:item_magic_stick": 2 }
+    caziel items: ["boots", "magic_wand", "gloves", "wraith_band", "quelling_blade"]
+    sludge items: ["tough_band", "magic_wand", "salve"]
+seed 7 at 12:00: A(caziel) 0/4/0 lvl 7 LH 16 DN 15 nw 1464 | B(sludge) 4/0/0 lvl 8 LH 17 DN 8 nw 2033 | towers lost A 1 B 1
+    casts: { "A:swift_dagger": 12, "B:shuriken_hook": 5, "B:hooked_hero": 4, "A:item_salve": 6, "A:item_tango": 3, "B:stench_on": 24, "B:item_salve": 12, "B:stomp": 45, "B:hooked_creep": 1, "B:item_tango": 3, "B:smash": 48, "B:snarl": 4, "B:item_magic_wand": 3, "B:blubber": 6, "A:master_of_shadows": 6, "B:chomp": 1 }
+    caziel items: ["salve", "magic_stick", "wraith_band", "quelling_blade"]
+    sludge items: ["magic_wand", "tough_band"]
+seed 11 at 12:00: A(caziel) 0/0/0 lvl 9 LH 31 DN 19 nw 2353 | B(sludge) 0/0/0 lvl 6 LH 18 DN 4 nw 1071 | towers lost A 0 B 1
+    casts: { "A:swift_dagger": 13, "B:shuriken_hook": 7, "B:hooked_hero": 5, "A:item_salve": 5, "A:item_tango": 3, "B:item_salve": 9, "B:stench_on": 20, "B:item_tango": 3, "B:hooked_creep": 2, "B:stomp": 46, "B:smash": 50, "B:item_magic_stick": 2, "A:master_of_shadows": 6, "B:blubber": 5, "A:item_magic_stick": 1, "B:item_magic_wand": 2, "B:snarl": 4 }
+    caziel items: ["magic_wand", "boots", "salve", "wraith_band", "quelling_blade"]
+    sludge items: ["tough_band", "magic_wand"]
+== caziel vs azrin
+seed 3 at 12:00: A(caziel) 1/3/0 lvl 8 LH 15 DN 14 nw 2401 | B(azrin) 3/1/0 lvl 8 LH 28 DN 8 nw 3118 | towers lost A 1 B 2
+    casts: { "B:touch_of_ember": 12, "A:swift_dagger": 14, "B:fiery_javelin": 12, "A:item_salve": 6, "A:item_tango": 3, "B:stomp": 43, "B:item_salve": 5, "B:item_tango": 3, "B:smash": 50, "B:spirit_of_fire": 6, "B:item_magic_stick": 1, "A:master_of_shadows": 7, "A:item_magic_stick": 3, "B:item_magic_wand": 2, "B:divine_smite": 1, "A:item_magic_wand": 1, "B:item_mana_boots": 1, "B:snarl": 3 }
+    caziel items: ["salve", "magic_wand", "boots", "wraith_band", "quelling_blade", "gloves"]
+    azrin items: ["salve", "smart_band", "magic_wand", "mana_boots"]
+seed 7 at 12:00: A(caziel) 4/1/0 lvl 8 LH 17 DN 18 nw 2805 | B(azrin) 1/4/0 lvl 7 LH 20 DN 6 nw 1978 | towers lost A 1 B 1
+    casts: { "B:touch_of_ember": 14, "A:swift_dagger": 18, "B:fiery_javelin": 13, "B:item_salve": 7, "B:stomp": 44, "B:item_tango": 3, "B:smash": 57, "A:item_tango": 3, "A:item_salve": 6, "A:master_of_shadows": 9, "B:item_magic_stick": 3, "A:item_magic_stick": 2, "B:spirit_of_fire": 5, "A:item_magic_wand": 3, "B:item_magic_wand": 2, "B:divine_smite": 1 }
+    caziel items: ["magic_wand", "power_treads", "wraith_band", "quelling_blade", "salve"]
+    azrin items: ["boots", "smart_band", "magic_wand"]
+seed 11 at 12:00: A(caziel) 0/2/0 lvl 8 LH 22 DN 10 nw 2081 | B(azrin) 2/0/0 lvl 7 LH 25 DN 13 nw 2491 | towers lost A 1 B 1
+    casts: { "B:touch_of_ember": 9, "A:swift_dagger": 13, "B:fiery_javelin": 11, "A:item_salve": 5, "B:stomp": 48, "B:item_salve": 8, "B:item_tango": 3, "B:snarl": 5, "A:item_tango": 3, "B:smash": 48, "B:spirit_of_fire": 5, "A:master_of_shadows": 6, "B:item_magic_stick": 3, "A:item_magic_stick": 3, "B:divine_smite": 1 }
+    caziel items: ["magic_wand", "salve", "boots", "wraith_band", "quelling_blade"]
+    azrin items: ["boots", "smart_band", "magic_wand"]
+DONE

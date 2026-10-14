@@ -37,7 +37,8 @@ var trees: Array = []                      # [{pos, alive, kind, scale, regrow (
                                            #   planted: true for Ironwood Twig trees, expires, under (cell's old index)}]
 var astar := AStarGrid2D.new()
 var vision_block := PackedByteArray()      # VN*VN 1 = a tree stands here (blocks sight beyond)
-var vision_level := PackedByteArray()      # VN*VN terrain level
+var vision_level := PackedByteArray()
+var vision_rev := 0                         # bumped whenever vision_block changes (SimVision's sight cache)      # VN*VN terrain level
 
 var lanes := {}                            # "top"/"mid"/"bot" -> PackedVector2Array from Dawn's base to Dusk's
 var ramps: Array = []                      # [{pos: Vector2, radius: float}]
@@ -127,14 +128,14 @@ func _layout() -> void:
 	var dawn_camps := [
 		["small", Vector2(3300, -5600), Vector2(260, 220), true],      # small pull camp by the safe tier 1
 		["medium", Vector2(-1350, -4150), Vector2(300, 260), false],   # main jungle, between the tier 2 towers
-		["large", Vector2(1900, -5800), Vector2(330, 270), true],      # large pull camp by the safe tier 1
+		["large", Vector2(1900, -5600), Vector2(330, 270), true],      # large pull camp by the safe tier 1, clear of the lane
 		["medium", Vector2(800, -2150), Vector2(300, 260), false],     # by the river, below the mid tier 1
 		["medium", Vector2(-5150, -1250), Vector2(300, 260), false],   # off-lane jungle below the bluff
 		["large", Vector2(-3670, 910), Vector2(330, 270), false],      # off-lane bluff (high ground)
 		["medium", Vector2(2350, -4750), Vector2(300, 260), false],    # main jungle high ground
 		["large", Vector2(-700, -2900), Vector2(330, 270), false],     # main jungle by the mid tier 1
 		["medium", Vector2(-2400, -5100), Vector2(300, 260), false],   # west ridge near the base (high ground)
-		["medium", Vector2(500, -5450), Vector2(300, 260), false],     # by the safe lane's tier 2
+		["medium", Vector2(500, -5200), Vector2(300, 260), false],     # by the safe lane's tier 2, clear of the lane
 		["medium", Vector2(-2700, -900), Vector2(300, 260), false],    # triangle, by the mid tier 1
 		["ancient", Vector2(-3900, 2000), Vector2(360, 300), false],   # triangle ancient camp
 		["small", Vector2(-5200, -2250), Vector2(260, 220), false],    # by the off lane's gate near the base
@@ -161,8 +162,8 @@ func _layout() -> void:
 		[Vector2(-3250, 1050), Vector2(-2600, 2600)],
 		[Vector2(-5600, -2600), Vector2(-3400, -2900)],
 		# walkways to the camps added for the 14-camp layout
-		[Vector2(800, -6300), Vector2(500, -5450), Vector2(1150, -4500)],
-		[Vector2(1900, -5800), Vector2(2300, -6300)],
+		[Vector2(800, -6300), Vector2(500, -5200), Vector2(1150, -4500)],
+		[Vector2(1900, -5600), Vector2(2300, -6300)],
 		[Vector2(3300, -5600), Vector2(3300, -6300)],
 		[Vector2(-700, -2900), Vector2(-1450, -2900)],
 		[Vector2(-700, -2900), Vector2(450, -2350)],
@@ -540,6 +541,7 @@ func destroy_tree(index: int, regrow_time: float) -> bool:
 			astar.set_point_solid(c, true)
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 0
+	vision_rev += 1
 	_refresh_vision_cell(v)
 	return true
 
@@ -552,6 +554,7 @@ func regrow_tree(index: int) -> void:
 	astar.set_point_solid(c, true)
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 1
+	vision_rev += 1
 
 ## Whether a fallen natural tree may grow back now: its cell must not hold a planted tree.
 func can_regrow(index: int) -> bool:
@@ -594,6 +597,7 @@ func _refresh_vision_cell(v: Vector2i) -> void:
 			var ti := tree_cell[(c0.y + oy) * N + c0.x + ox]
 			if ti >= 0 and trees[ti].alive:
 				vision_block[v.y * VN + v.x] = 1
+				vision_rev += 1
 				return
 
 func tree_at(p: Vector2, radius: float) -> int:

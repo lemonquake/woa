@@ -8,9 +8,9 @@ func _init() -> void:
 		if arg.begins_with("--") and arg.contains("="):
 			var kv := arg.substr(2).split("=")
 			opts[kv[0]] = kv[1]
-	var m := SimMap.new()
-	m.build(1)
 	for seed in [3, 7, 11]:
+		var m := SimMap.new()                     # a fresh map per duel (trees are cut and planted)
+		m.build(1)
 		var w := SimWorld.new(seed, m)
 		w.setup_match()
 		var a := w.spawn_hero(opts.a, C.DAWN)

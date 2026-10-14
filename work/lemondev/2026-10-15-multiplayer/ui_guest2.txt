@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+GUEST PASS the hosted server shows up under Local Network
+saved net_servers_found
+GUEST PASS clicking a server selects it
+GUEST PASS Join Server opens its lobby list
+GUEST PASS the host's lobby is listed
+saved net_hub_lobby
+GUEST PASS double-clicking a lobby joins it
+GUEST PASS a newcomer gets the smaller team (Black Sun)
+GUEST PASS the host's chat line arrives
+GUEST PASS a hero card click picks the hero
+GUEST PASS only the leader sees Start Match
+GUEST PASS Ready marks the guest ready
+saved net_room_guest
+match ready in 13356 ms
+GUEST PASS the match starts for the guest
+GUEST PASS and runs
+GUEST PASS the host's pause reaches the guest
+saved net_match_paused_guest
+GUEST PASS and so does the unpause
+GUEST PASS when the server closes the guest plays on
+GUEST PASS the match keeps running here, bots in the others' places
+saved net_match_server_gone
+GUEST RESULT 16 passed, 0 failed (50 s)
+WARNING: 378 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 14 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

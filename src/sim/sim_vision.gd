@@ -15,7 +15,7 @@ var _templates := {}                       # radius in cells -> Array of rays (P
 var revealed := {}                         # unit id -> game time until which it is visible to everyone (attacking from fog)
 var sources: Array = []                    # timed sight not tied to a unit: {team, pos, r, until} (Shuriken Hook's catch)
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 	for t in 2:
 		var a := PackedByteArray()
@@ -33,8 +33,15 @@ func update() -> void:
 	var night := w.is_night()
 	if static_dirty or night != _static_night or _static.is_empty():
 		_rebuild_static(night)
+	if w.map.vision_rev != _stamp_rev:
+		_stamps.clear()
+		_stamp_rev = w.map.vision_rev
+	if _team_img.is_empty():
+		for t in 2:
+			_team_img.append(Image.create(VN, VN, false, Image.FORMAT_LA8))
 	for team in 2:
-		var vis := _static[team].duplicate()
+		var img: Image = _team_img[team]
+		img.copy_from(_static_img[team])
 		var done := {}                     # vision cell -> largest radius already cast from it
 		for u in w.units:
 			if not u.alive or u.team != team or u.is_building():
@@ -47,20 +54,74 @@ func update() -> void:
 			if float(done.get(key, 0.0)) >= r:
 				continue
 			done[key] = r
-			_cast(vis, u.pos, r, u.has_flag("flying"))
+			_blit(img, c, r, u.has_flag("flying"))
 		for s in sources:
 			if int(s.team) == team and w.time < float(s.until):
-				_cast(vis, s.pos, float(s.r), true)
+				_blit(img, w.map.world_to_vcell(s.pos), float(s.r), true)
 		# cursed enemies (Tainted Touch) grant sight around themselves
 		for u in w.units:
 			if not u.alive or u.team == team:
 				continue
 			for m in u.modifiers:
 				if int(m.get("reveal", -1)) == team:
-					_cast(vis, u.pos, float(m.get("reveal_r", 300.0)), true)
+					_blit(img, w.map.world_to_vcell(u.pos), float(m.get("reveal_r", 300.0)), true)
 					break
-		visible[team] = vis
+		var l8 := img.duplicate() as Image
+		l8.convert(Image.FORMAT_L8)
+		visible[team] = l8.get_data()
 	_true_sight_sources()
+
+## Sight shapes cached per (vision cell, radius, flying) until a tree changes: each is a small luminance + alpha image
+## (alpha 255 where seen, value 1) blitted into the team's grid by the engine, so a unit that stays in its cell costs one
+## blit instead of a ray cast. The result is exactly the union of the ray casts.
+var _stamps := {}
+var _stamp_rev := -1
+var _team_img: Array[Image] = []
+var _static_img: Array[Image] = []
+
+func _blit(img: Image, c: Vector2i, radius: float, flying: bool) -> void:
+	var rc := int(ceil(radius / C.VISION_CELL))
+	var key := ((c.y * VN + c.x) * 128 + mini(rc, 127)) * 2 + (1 if flying else 0)
+	var st = _stamps.get(key)
+	if st == null:
+		st = _make_stamp(c, rc, flying)
+		if _stamps.size() > 6000:
+			_stamps.clear()
+		_stamps[key] = st
+	var size := 2 * rc + 1
+	img.blit_rect_mask(st, st, Rect2i(0, 0, size, size), Vector2i(c.x - rc, c.y - rc))
+
+func _make_stamp(c: Vector2i, rc: int, flying: bool) -> Image:
+	var size := 2 * rc + 1
+	var buf := PackedByteArray()
+	buf.resize(size * size * 2)
+	var m := w.map
+	var src_level := m.vision_level[c.y * VN + c.x]
+	var ci := (rc * size + rc) * 2
+	buf[ci] = 1
+	buf[ci + 1] = 255
+	var block := m.vision_block
+	var lvl := m.vision_level
+	for ray: PackedInt32Array in _rays(rc):
+		var n := ray.size()
+		var i := 0
+		while i < n:
+			var dx := ray[i]
+			var dy := ray[i + 1]
+			var x := c.x + dx
+			var y := c.y + dy
+			i += 2
+			if x < 0 or y < 0 or x >= VN or y >= VN:
+				break
+			var idx := y * VN + x
+			if not flying and lvl[idx] > src_level:
+				break
+			var li := ((dy + rc) * size + dx + rc) * 2
+			buf[li] = 1
+			buf[li + 1] = 255
+			if not flying and block[idx] == 1:
+				break
+	return Image.create_from_data(size, size, false, Image.FORMAT_LA8, buf)
 
 ## True Sight (Dota 2 wiki, Invisibility): towers, the Throne, the fountain and Reveal Wards see invisible enemies
 ## within their radius, wherever their team has vision; Reveal Dust marks the units it touches. Rebuilt with vision.
@@ -104,6 +165,7 @@ func _rebuild_static(night: bool) -> void:
 	static_dirty = false
 	_static_night = night
 	_static.clear()
+	_static_img.clear()
 	for team in 2:
 		var vis := PackedByteArray()
 		vis.resize(VN * VN)
@@ -111,6 +173,14 @@ func _rebuild_static(night: bool) -> void:
 			if u.alive and u.team == team and u.is_building():
 				_cast(vis, u.pos, u.vision_night if night else u.vision_day, false)
 		_static.append(vis)
+		# the same grid as a luminance + alpha image (alpha 255 where seen) to start each update from
+		var la := PackedByteArray()
+		la.resize(VN * VN * 2)
+		for i in VN * VN:
+			if vis[i] == 1:
+				la[i * 2] = 1
+				la[i * 2 + 1] = 255
+		_static_img.append(Image.create_from_data(VN, VN, false, Image.FORMAT_LA8, la))
 
 func _cast(vis: PackedByteArray, p: Vector2, radius: float, flying: bool) -> void:
 	var m := w.map

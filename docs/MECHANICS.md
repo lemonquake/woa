@@ -26,9 +26,43 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 
 ## Units and stats
 
-* Attributes follow 7.3x: 22 HP and 0.1 HP regen per strength, 1/6 armor and 1 attack speed per agility, 12 mana, 0.05 mana regen and 0.1% magic resistance per intelligence. The primary attribute adds 1 damage per point. Heroes have 120 base HP, 75 base mana and 25% base magic resistance.
+* Attributes follow 7.3x: 22 HP and 0.1 HP regen per strength, 1/6 armor and 1 attack speed per agility, 12 mana and 0.05 mana regen per intelligence. The primary attribute adds 1 damage per point. Heroes have 120 base HP, 75 base mana and 25% base magic resistance.
+* **Owner's rule (2026-10-14, not Dota):** every 25 intelligence gives 1% magic resistance (0.04% per point; Dota gives
+  0.1%) and every 20 intelligence gives 1% **magic amp** (0.05% per point). Both are continuous, not in steps.
 * Armor: `1 - 0.06a / (1 + 0.06|a|)`.
-* Attack classes (Liquipedia "Attack Damage"): Default, Runty (melee creeps), Piercing (ranged creeps), Reinforced (siege creeps and towers), applied against Hero, Non-hero and Structure defense. Siege creeps take 50% damage from heroes and 70% from basic attacks.
+* Damage and armor types (owner's request 2026-10-14; `SimConst.DAMAGE_TABLE`). Every unit has a damage type for its
+  attacks and an armor type. Every pairing that existed in Dota keeps Dota's number (Liquipedia "Attack Damage",
+  `creep_siege`): the old classes Default (heroes), Runty, Piercing, Reinforced and Default (non-heroes) are now Hero,
+  Slash, Piercing, Siege and Blunt; Dota's siege creep penalties are the Armored armor type. Magic is magic damage
+  (spells, and the attacks of the Fire Imp and Lava Golem, which meet magic resistance instead of armor); Aether is
+  pure damage. Titan is Roshan's (unused until Roshan is in).
+
+  | Damage \ Armor | Hero | Organic | Structure | Armored | Titan |
+  |---|---|---|---|---|---|
+  | Hero (heroes) | 100% | 100% | 50% | 50% | 100% |
+  | Slash (melee lane creeps) | 75% | 100% | 70% | 70% | 75% |
+  | Piercing (ranged creeps, Swamp Troll) | 50% | 150% | 35% | 105% | 50% |
+  | Siege (siege creeps, towers, fountain) | 100% | 100% | 250% | 70% | 50% |
+  | Blunt (neutrals) | 100% | 100% | 70% | 70% | 100% |
+  | Magic (magic damage) | 100% | 100% | 0% | 100% | 75% |
+  | Aether (pure damage) | 100% | 100% | 100% | 100% | 100% |
+
+  Armor types: heroes Hero; creeps, neutrals, wards and couriers Organic; buildings Structure; siege creeps Armored.
+  Physical spell damage (Burst Shot's arrows, cleave) meets armor but no row, as in Dota.
+* **Elements** (owner's request 2026-10-14; `SimConst.element_mult`): None, Fire, Water, Ice, Earth, Lightning,
+  Nature, Dark, Light. Every unit has one, and so does every damage instance: an attack carries its attacker's, a spell
+  its ability's (the hero's unless the ability names another), an item its own, returned damage the element that came
+  in. A winning element deals x1.25, a losing one x0.75; every element but None resists itself (x0.75); Light and Dark
+  beat each other; None is neutral both ways. Beats: Water > Fire, Fire > Ice, Fire > Nature, Earth > Fire,
+  Ice > Nature, Ice > Earth, Water > Ice, Lightning > Water, Earth > Lightning, Nature > Water, Nature > Earth.
+  * Heroes: Blood Ranger Nature, Ezee Dark (Tainted Touch is Lightning), Sludge Earth (Stench is Nature), Azrin Fire.
+  * Lane creeps take their team's element (Ancient Light: Light, Black Sun: Dark), so both sides' creeps deal x1.25
+    to each other and the lane stays even. Towers, barracks and statues are Earth; each Throne and fountain its team's.
+  * Neutrals: Goblins Earth, Wolves Ice, Orc Nature, Orc Shaman Lightning (its Stomp is Earth), Swamp Troll Water,
+    Ogre Earth, Fire Imp and Lava Golem Fire. Items: Shock Hammer Lightning, Silence Staff Dark, Reveal Dust Light;
+    the rest carry no element. Couriers and wards: None.
+  * The multiplier applies after amplification and before armor or magic resistance, to every damage type.
+  * Mechanics tests of other rules switch it off (`SimWorld.elements`); matches always play with it.
 * Attack speed is clamped to 20..700. Time between attack starts is `BAT / (AS/100)`. Attack point and backswing both scale with attack speed.
 
 ## Orders and attacks (`sim_orders.gd`)
@@ -132,14 +166,18 @@ patch notes; details and links in `work/lemondev/2026-10-13-camps-ai-setup/resea
 * Camps spawn at 1:00 and on every minute after, only when nothing stands inside the camp's spawn box at that moment:
   heroes, lane creeps, wards and the camp's own neutrals all block it; couriers do not. Spawn boxes are rectangles,
   each camp its own size (no source gives Dota's sizes: ours are 520 x 440 for small up to 720 x 600 for ancient).
-* Holding Shift shows the spawn boxes in yellow (Dota uses Alt, which pings here). A box turns red while something
+* Holding Alt shows the spawn boxes in yellow, as in Dota (Alt + click still pings). A box turns red while something
   other than its own creeps stands in it (our addition: Dota's box does not change colour).
-* Aggro: by day an enemy within 240 wakes a camp; at night neutrals sleep. Damage wakes the neutral and its campmates
+* Aggro: by day an enemy within 125 wakes a camp (the owner's rule, 2026-10-15: a neutral never picks a fight from
+  farther than 125; it was 240); at night neutrals sleep. Damage wakes the neutral and its campmates
   within 500. A neutral chases until it has been outside its 400 guard radius for 5 s (the timer resets if it comes
   back inside), then walks home; for 3 s after that damage cannot wake it again. Woken again on the way home it chases
   for only 3 s. They do not attack wards, couriers or buildings, and they target the closest enemy.
-* Pulling: lane creeps fight only the neutrals of the two pull camps (and ignore every other camp); towers never attack
-  neutrals.
+* Lane creeps and neutrals (the owner's rule, 2026-10-15): lane creeps leave a camp sitting in its box alone. They
+  attack a neutral only while it is aggressive: fighting anyone, and for 5 s after it stops. Pulling works by waking a
+  camp and leading it into the lane creeps. Towers never attack neutrals. The large pull camp and the medium camp by
+  the safe lane's tier 2 sit farther from the lane (their boxes no longer touch the lane), so passing waves do not
+  wake them.
 * Growth: every 7:30 from the horn, up to 30 times, every neutral gains +30 health, +0.5 armor, +3 damage,
   +5 attack speed, +1 gold and +5 experience (new spawns get the current count).
 * Stacks: the creeps spawned by a stack give 20% less gold and experience (7.39e). When an ally kills them, the hero who
@@ -173,10 +211,18 @@ Break, Invisibility, Disjoint; Valve's game data for the numbers.
   passives.
 * **Dispels**: basic removes slows, silences, roots, disarms, mutes; strong also removes stuns and hexes. An enemy's
   dispel removes buffs instead. Auras are never dispelled.
-* **Health restoration amplification** (Heavy Sword family, 12-16%) raises regeneration, heals and lifesteal; healing
-  reduction (Stench with the Upgrade Staff) now also lowers regeneration. **Spell amplification** (Spell Sword 10%) raises
+* **Health restoration amplification** (Kugmo family, 12-16%) raises regeneration, heals and lifesteal; healing
+  reduction (Stench with the Upgrade Staff) now also lowers regeneration. **Spell amplification** (the Damage Orb) raises
   every non-attack damage the unit deals, except returned damage and attack-derived procs (cleave, pierce, splash).
-  **Mana regeneration amplification** (Spell Sword 20%) raises mana regeneration.
+  **Mana regeneration amplification** (Atuli 20%, its pairs 30%; the largest counts) raises mana regeneration.
+* **Magic amp** (owner's rule 2026-10-14) raises the magic damage a unit's spells and items deal (not attacks, returned
+  damage or procs that Dota does not amplify), added to spell amplification: damage x (1 + spell amp + magic amp).
+  Sources: intelligence (1% per 20), items (Atuli 10%, Kugmo and Atuli 12%, Igit and Atuli 12%) and talents. Item
+  sources diminish: largest first, each one counting half as much as the one before (10% + 10% = 15%). The HUD's stats
+  sheet shows the intelligence and item parts.
+* **Burns** (`SimStatus.add_dot`): damage over time, magic, ticking every 0.5 s from 0.5 s after it starts, each cast
+  its own instance; refused by debuff immunity; the unit shows "Burning". Divine Smite stretches every Fire burn in its
+  area. Not removed by dispels.
 * The HUD draws a timer bar under a disabled unit's health (stun, hex, silence, root, disarm, break, mute; the strongest
   one), with its name and the seconds left.
 
@@ -258,7 +304,34 @@ Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom
 * Fountain (Rejuvenation Aura, Dota 2 wiki): 5% of max health and 6% of max mana per second within 1200; the buff
   lingers 3 s after leaving.
 
+## Azrin, the Flamemander (`sim_abilities.gd`; the owner's hero, 2026-10-14)
+
+Ranged intelligence, Fire, range 665 (owner's). Chosen: Str 18 +2.2, Agi 21 +1.8, Int 27 +3.4, damage 24-30, BAT 1.6,
+attack point 0.6, projectile 1000, speed 290. Owner's numbers below; mana, cast ranges, speeds and widths are chosen.
+* **Fiery Javelin (Q)**: flies 300-1000 toward the point (1400 speed, 150 wide). Every enemy near its path is caught
+  once: it burns for 35/70/105/140 magic damage per second for 5 s and, unless debuff-immune, is dragged along with the
+  javelin to where it lands. 12 s, mana 100-130.
+* **Touch of Ember (W)**: 300 area within 700: 100 magic damage, then spirit flames for 4 s. When the enemy casts a
+  spell, or when the 4 s end, the flames explode for 100/200/300/400 magic damage and a 1.7 s stun. 9 s, mana 110-140.
+* **Spirit of Fire (E)**: every other spell Azrin casts adds a spirit (up to 5; lost on death). Cast at a 250 area
+  within 800: all spirits fly there; each burns enemies for 100/150/200/250 over 5 s and slows them 20/25/30/35% for
+  the burn. 4 s, 50 mana (chosen). Needs a spirit.
+* **Divine Smite (R)**: a hammer homes on an enemy within 700 (1100 speed). On arrival every Fire burn on enemies within
+  400 lasts 2 / 3.5 / 5 s longer, then the target takes 250 + 2 x intelligence magic damage. 45 s, mana 150-250.
+* Talents (chosen): +30 Fiery Javelin burn / +25 damage; +6% magic amp / -2 s Touch of Ember; +2 spirits / +200 Divine
+  Smite damage; +0.8 s Touch of Ember stun / -15 s Divine Smite.
+
 ## Items and shop (`sim_shop.gd`, `sim_items.gd`)
+
+* **Item menu** (right click an item in the bags or the stash): Sell (shows the gold; in a shop, or from the stash
+  anywhere), Disassemble, Lock / Unlock, Move to Backpack / Inventory. **Locked items never combine**. **Disassemble**
+  follows Dota's rule (`ItemDisassembleRule`): every combined item can be taken apart, anywhere, except the ones Dota
+  marks never (Gold Glove = Hand of Midas, Upgrade Staff = Aghanim's Scepter); only the buyer can. The parts and the
+  recipe scroll take the item's slot and free slots (bags, then the stash; refused if they do not fit), keep its
+  purchase time for selling, and are **locked** so they do not combine straight back. Switch Boots come apart into the
+  recipe they were built with.
+* Kugmo and Atuli also makes spells and items cost 25% less mana; Igit and Atuli casts 25% faster (cast points / 1.25)
+  (Dota 7.41d `manacost_reduction`, `cast_speed_pct`).
 
 * Stats, prices, recipes, actives and passives come from Dota 7.41d `items.txt`, checked against Liquipedia
   (`work/lemondev/2026-10-13-sludge-items/research/`). Names are ours.
@@ -266,7 +339,11 @@ Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom
   stash (6 slots), which empties into your bags when you arrive in the shop's range (or when you respawn). After that,
   items stay where you put them: in the base you can drag items between the bags and the stash, click a stashed item
   to take it, or use Grab All (also while dead). Stashed items can be sold from anywhere.
-* Full refund within 10 s of buying, half after that. Only the buyer can sell an item.
+* Full refund within 10 s of buying, half after that (accidental buy protection). A combined item remembers the pieces
+  it was made of and when each was bought: each piece refunds in full during its own first 10 s (a recipe bought on old
+  parts refunds only the recipe in full), and disassembling gives those same pieces back, so an item taken apart by
+  mistake still sells for its full price inside the 10 s. Only the buyer can sell an item. The item menu shows the price
+  and the seconds of full refund left.
 * Backpack: 3 slots that give no bonuses; an item moved from the backpack to a main slot waits 6 s before it can be
   used (*APPROX*: Dota's swap cooldown).
 * Items on the ground (Dota: drag an item out of the inventory): the hero walks within 150 and drops it; anyone can
@@ -330,8 +407,10 @@ Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom
 | Sure Hit Staff | Monkey King Bar | Huge Sword | Demon Edge |
 | Silence Staff | Orchid Malevolence | Root Staff | Rod of Atos |
 | Halberd | Heaven's Halberd | Hex Staff | Scythe of Vyse |
-| Break Blade | Silver Edge | Heavy Sword | Sange |
-| Spell Sword | Kaya | Twin Swords | Sange and Yasha |
+| Break Blade | Silver Edge | Kugmo (owner's name) | Sange |
+| Atuli (owner's name) | Kaya | Kugmo and Igit | Sange and Yasha |
+| Igit (owner's name) | Yasha | Kugmo and Atuli | Kaya and Sange |
+| Igit and Atuli | Yasha and Kaya | | |
 | Battle Staff | Oblivion Staff | Dodge Charm | Talisman of Evasion |
 | Long Staff | Mystic Staff | Mana Tiara | Tiara of Selemene |
 | Reveal Ward | Sentry Ward | Reveal Dust | Dust of Appearance |

@@ -1,24 +1,37 @@
 extends Control
 ## In-match menus: the pause menu (Esc / F10: Resume, Options, Hero Select, Quit) and the end-of-match screen
-## (winner, then each hero's level, kills / deaths / assists, last hits / denies, net worth).
+## (winner, then each hero's level, kills / deaths / assists, last hits / denies, net worth). In a multiplayer match the
+## menu never stops the game here (the other players play on): Pause Game pauses it for everyone, Leave Game hands the
+## hero to a bot and goes back to the server's lobby list, and the end screen leads back to the lobby.
 
 const U = preload("res://src/ui/ui_kit.gd")
+const NET_MENU := "res://src/ui/net_menu.tscn"
 
 var game: Node
 var _pause: PanelContainer
 var _options: OptionsPanel
 var _end: PanelContainer
 var _end_shown := false
+var _pause_btn: Button
 
 func _ready() -> void:
 	theme = U.theme()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_pause = _panel("Paused")
+	var mp: bool = game != null and bool(game.get("multiplayer_match"))
+	_pause = _panel("Menu" if mp else "Paused")
 	var col: VBoxContainer = _pause.get_child(0)
-	for b in [["Resume", _resume], ["Options", _open_options], ["Hero Select", _to_creator], ["Quit to desktop", func(): get_tree().quit()]]:
-		col.add_child(_button(b[0], b[1]))
+	if mp:
+		col.add_child(_button("Resume", _resume))
+		_pause_btn = _button("Pause Game", _toggle_game_pause)
+		col.add_child(_pause_btn)
+		col.add_child(_button("Options", _open_options))
+		col.add_child(_button("Leave Game", _leave_game))
+		col.add_child(_button("Quit to desktop", func(): get_tree().quit()))
+	else:
+		for b in [["Resume", _resume], ["Options", _open_options], ["Hero Select", _to_creator], ["Quit to desktop", func(): get_tree().quit()]]:
+			col.add_child(_button(b[0], b[1]))
 	_end = _panel("")
 	for p in [_pause, _end]:
 		p.visible = false
@@ -65,7 +78,9 @@ func toggle() -> void:
 	else:
 		_pause.visible = true
 		mouse_filter = Control.MOUSE_FILTER_STOP
-		game.world.paused = true
+		if game.net == null and not game.multiplayer_match:
+			game.world.paused = true
+		_refresh_pause_btn()
 
 func _resume() -> void:
 	_pause.visible = false
@@ -73,7 +88,8 @@ func _resume() -> void:
 		_options.queue_free()
 	_options = null
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	game.world.paused = false
+	if game.net == null and not game.multiplayer_match:
+		game.world.paused = false
 
 func _open_options() -> void:
 	_pause.visible = false
@@ -83,6 +99,35 @@ func _open_options() -> void:
 		_options = null
 		_pause.visible = true)
 	add_child(_options)
+
+## Multiplayer: pause or unpause the game for every player (a command every machine runs at the same tick).
+func _toggle_game_pause() -> void:
+	if game.net != null:
+		game.act({"k": "resume" if game.world.paused else "pause"})
+	else:
+		game.world.paused = not game.world.paused
+	_resume()
+
+func _refresh_pause_btn() -> void:
+	if _pause_btn:
+		_pause_btn.text = "Unpause Game" if game.world.paused else "Pause Game"
+
+## Multiplayer: a bot takes the hero over (you can come back from the lobby list while the match runs) and you go back
+## to the server's lobby list.
+func _leave_game() -> void:
+	get_tree().paused = false
+	var n := NetSession.inst
+	if n != null and n.active():
+		n.leave_room()
+		n.back_from_match()
+	get_tree().change_scene_to_file(NET_MENU)
+
+func _back_to_lobby() -> void:
+	get_tree().paused = false
+	var n := NetSession.inst
+	if n != null:
+		n.back_from_match()
+	get_tree().change_scene_to_file(NET_MENU)
 
 func _to_creator() -> void:
 	get_tree().paused = false
@@ -96,8 +141,12 @@ func _unhandled_input(e: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func _process(_dt: float) -> void:
+	if _pause.visible:
+		_refresh_pause_btn()
 	if game and game.world and game.world.winner >= 0 and not _end_shown:
 		_end_shown = true
+		if game.net != null and NetSession.inst != null:
+			NetSession.inst.report_match_over()
 		get_tree().create_timer(3.0).timeout.connect(_show_end)
 
 func _show_end() -> void:
@@ -139,8 +188,12 @@ func _show_end() -> void:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 16)
-	row.add_child(_button("Play again", func(): get_tree().reload_current_scene()))
-	row.add_child(_button("Hero Select", _to_creator))
+	if game.multiplayer_match:
+		var online := NetSession.inst != null and NetSession.inst.active()
+		row.add_child(_button("Back to Lobby" if online else "Multiplayer", _back_to_lobby))
+	else:
+		row.add_child(_button("Play again", func(): get_tree().reload_current_scene()))
+		row.add_child(_button("Hero Select", _to_creator))
 	row.add_child(_button("Quit", func(): get_tree().quit()))
 	v.add_child(row)
 	_end.visible = true

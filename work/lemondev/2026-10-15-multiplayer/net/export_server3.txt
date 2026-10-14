@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[01:22:58] server "Export server" on port 27890 (queries on 27891)
+[01:23:03] A joined (1 online)
+[01:23:03] A made the lobby "Test lobby"
+[01:23:04] B joined (2 online)
+[01:23:04] lobby "Test lobby" started a match (2 players)
+[01:24:34] B left (1 online)
+[01:24:37] B joined (2 online)
+[01:25:13] A left (1 online)
+[01:25:13] lobby "Test lobby" closed
+[01:25:13] B left (0 online)

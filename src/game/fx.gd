@@ -15,6 +15,7 @@ const MAX_BITS := 260
 const VIOLET := Color(0.62, 0.24, 1.0)
 
 var game: Node
+var fire: FireFx                           # particle fire (fireballs)
 var _proj := {}                             # projectile id -> {node, start, h0, arc, t, target, style, trail, last}
 var _arrow_scene: PackedScene
 var _mats := {}
@@ -580,9 +581,19 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 			node.add_child(_sphere(0.15, _glow(Color(0.45, 0.9, 0.3), 6.0)))
 			node.add_child(_sphere(0.24, _glow(Color(0.35, 0.25, 0.1, 0.5), 1.5)))
 			trail = Trail3D.make(node, Color(0.4, 0.85, 0.25, 0.8), 0.12, 0.3)
-		"fire", "fire_big":
-			node.add_child(_sphere(0.16 if style == "fire" else 0.3, _glow(Color(1.0, 0.45, 0.1), 6.0)))
-			trail = Trail3D.make(node, Color(1.0, 0.4, 0.1, 0.85), 0.14 if style == "fire" else 0.24, 0.22)
+		"frost_bolt":
+			# Froster's attack: an icy core in glittering vapour; a Frost Heart attack is bigger and brighter
+			var big := bool(e.get("frost", false))
+			node.add_child(FrosterFx.bolt(1.7 if big else 1.0))
+			if big:
+				node.add_child(FireFx.light(FrosterFx.ICE, 2.0, 3.0))
+			h0 = 1.75
+		"fire", "fire_big", "fireball":
+			# real particle fire (FireFx): a hot core in licking flame, trailing fire and sparks
+			var fb := FireFx.fireball({"fire": 0.9, "fire_big": 1.5, "fireball": 1.15}[style])
+			node.add_child(fb)
+			if style == "fireball":
+				h0 = 1.95                              # Azrin hovers: her hands are higher than a walker's
 		"spear":
 			var sp := MeshInstance3D.new()
 			var cyl := CylinderMesh.new()
@@ -660,7 +671,24 @@ func projectile_end(e: Dictionary) -> void:
 		"root_orb":
 			impact(at, Color(0.45, 0.9, 0.3), 0.35)
 			debris(at, 6, Color(0.3, 0.45, 0.15), 2.5, 0.5, "chip")
-		"sun_orb", "doom_orb", "fire", "fire_big":
+		"frost_bolt":
+			for m in node.find_children("*", "MeshInstance3D", true, false):
+				m.visible = false
+			if hit and game.get("froster_fx") != null:
+				game.froster_fx.burst_shards(at, 6, 0.12, 3.0)
+			if fire:
+				fire.timed(node, 0.0)
+				return
+		"fire", "fire_big", "fireball":
+			# the flames already in the air burn out where it struck; a small burst of fire there
+			for m in node.find_children("*", "MeshInstance3D", true, false):
+				m.visible = false
+			if fire:
+				if hit:
+					fire.burst(at, 0.35 if style != "fire_big" else 0.6, "fire", 0.55)
+				fire.timed(node, 0.0)
+				return
+		"sun_orb", "doom_orb":
 			var c2: Color = {"sun_orb": Color(1.0, 0.85, 0.45), "doom_orb": Color(0.55, 1.0, 0.45)}.get(style, Color(1.0, 0.5, 0.15))
 			impact(at, c2, 0.3 if hit else 0.18)
 			if hit:

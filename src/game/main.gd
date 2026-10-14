@@ -18,6 +18,10 @@ var camera: CameraRig
 var fx: Fx
 var sludge_fx: SludgeFx
 var item_fx: ItemFx
+var fire_fx: FireFx
+var azrin_fx: AzrinFx
+var froster_fx: FrosterFx
+var caziel_fx: CazielFx
 var status_fx: StatusFx
 var orb_view: OrbView
 var targeting_fx: TargetingFx
@@ -53,9 +57,14 @@ func _ready() -> void:
 	await _stage(0.08, "Loading terrain")
 	map = SimMap.new()
 	map.build(1)
-	world = SimWorld.new(1, map)
+	var mp := NetSession.inst != null and NetSession.inst.state == NetSession.State.LOADING and not NetSession.inst.config.is_empty()
+	multiplayer_match = mp
+	world = SimWorld.new(_match_seed(mp), map)
 	world.setup_match()
-	_spawn_heroes()
+	if mp:
+		_spawn_net_heroes()
+	else:
+		_spawn_heroes()
 	if args.has("reveal"):
 		SimDebug.set_flag(world, "reveal", true)
 	await _stage(0.22, "Loading sky")
@@ -83,6 +92,24 @@ func _ready() -> void:
 	await _stage(0.84, "Loading heroes")
 	fx = Fx.new()
 	fx.game = self
+	fire_fx = FireFx.new()
+	add_child(fire_fx)
+	fx.fire = fire_fx
+	azrin_fx = AzrinFx.new()
+	azrin_fx.game = self
+	azrin_fx.fx = fx
+	azrin_fx.fire = fire_fx
+	add_child(azrin_fx)
+	froster_fx = FrosterFx.new()
+	froster_fx.game = self
+	froster_fx.fx = fx
+	froster_fx.fire = fire_fx
+	add_child(froster_fx)
+	caziel_fx = CazielFx.new()
+	caziel_fx.game = self
+	caziel_fx.fx = fx
+	caziel_fx.fire = fire_fx
+	add_child(caziel_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -92,6 +119,7 @@ func _ready() -> void:
 	item_fx = ItemFx.new()
 	item_fx.game = self
 	item_fx.fx = fx
+	item_fx.fire = fire_fx
 	add_child(item_fx)
 	status_fx = StatusFx.new()
 	status_fx.game = self
@@ -140,6 +168,8 @@ func _ready() -> void:
 	selected_id = player_hero_id
 	selected = [player_hero_id]
 	_sync_views()
+	if mp:
+		_start_net()
 	booted = true
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
 	await _stage(0.96, "Ready")
@@ -184,6 +214,23 @@ func _ready() -> void:
 		_start_capture()
 	elif args.has("bench"):
 		_start_bench()
+
+## Every player action goes through here as a SimCommands dictionary: applied at once in single player, or sent
+## through the network session to be applied on every machine at the same tick in multiplayer (its error, if any,
+## then comes back later as an "error" event). Returns the error now in single player, "" in multiplayer.
+var net = null                              # NetMatch while a multiplayer match runs, else null
+var multiplayer_match := false              # this match began as a multiplayer one (stays true if the server goes)
+var paused_by := ""                         # who paused the game (multiplayer)
+
+func act(c: Dictionary) -> String:
+	if net != null:
+		net.send_command(c)
+		return ""
+	return SimCommands.apply(world, player_hero_id, c)
+
+## An order for one of the player's units (the hero or its courier).
+func order(uid: int, o: Dictionary) -> void:
+	act({"k": "order", "u": uid, "o": o})
 
 ## Leaving the match (quit, restart, back to the menu): keep what the bots learned in fights so far.
 func _exit_tree() -> void:
@@ -254,6 +301,75 @@ func _spawn_heroes() -> void:
 	var br := world.brain(player_team)
 	br.player_pref[mine.id] = String(_slot_of(made, mine).get("lane", ""))
 
+## The world's seed: fixed for captures and benchmarks (comparable runs), the host's in multiplayer, else random.
+func _match_seed(mp: bool) -> int:
+	if mp:
+		return int(NetSession.inst.config.seed)
+	if args.has("capture") or args.has("bench") or args.has("seed"):
+		return int(args.get("seed", "1"))
+	return randi_range(1, 2000000000)
+
+# ---- Multiplayer ------------------------------------------------------------------------------------------------
+
+var _net_slot_heroes := {}                  # lobby slot -> hero unit id
+
+## The heroes of a multiplayer match, in slot order (the same ids on every machine). Every human hero counts as a
+## player's (the bots leave their lanes alone); this machine's player gets the camera and the controls. Bots never
+## learn in multiplayer, so every machine's bots decide alike.
+func _spawn_net_heroes() -> void:
+	var me := int(NetSession.inst.config.get("me", 1))
+	var look_of := func(sl: Dictionary) -> Dictionary:
+		var id := String(sl.hero)
+		var lk: Dictionary
+		if String(sl.kind) == "human" and not (sl.get("look", {}) as Dictionary).is_empty():
+			lk = (sl.look as Dictionary).duplicate(true)
+		elif String(sl.kind) == "human" or int(sl.team) == C.DAWN:
+			lk = GameSettings.default_look(id).duplicate(true)
+		else:
+			lk = bot_look(id)
+		lk.display_name = String(sl.name)
+		return lk
+	var r := NetMatch.spawn_heroes(world, NetSession.inst.config, me, look_of)
+	_net_slot_heroes = r.slot_heroes
+	player_hero_id = int(r.mine)
+	player_team = world.get_unit(player_hero_id).team
+
+func _start_net() -> void:
+	multiplayer_match = true
+	net = NetSession.inst.match_loaded(world, _net_slot_heroes)
+	net.step_world = _step
+	net.on_world_replaced = _on_world_replaced
+	net.on_system = _on_net_system
+	NetSession.inst.left.connect(_on_net_left)
+
+## A snapshot replaced the world (desync repair or rejoin): views follow the new units and trees.
+func _on_world_replaced(w2: SimWorld) -> void:
+	world = w2
+	foliage.resync_trees()
+	_sync_views()
+	if hud and hud.has_method("notice"):
+		hud.notice("Your game was brought back in step with the server")
+
+func _on_net_system(c: Dictionary) -> void:
+	if hud == null or not hud.has_method("notice"):
+		return
+	var nm := String(c.get("name", ""))
+	match String(c.get("k", "")):
+		"sys_bot":
+			hud.notice("%s disconnected: a bot plays their hero until they come back" % nm if nm != "" else "A player disconnected")
+		"sys_human":
+			hud.notice("A player is back")
+
+## The session ended during the match: without the server the game goes on here, the other players' heroes played by
+## bots.
+func _on_net_left(reason: String) -> void:
+	if net == null:
+		return
+	net = null
+	world.paused = false
+	if hud and hud.has_method("announce"):
+		hud.announce(reason, "The game goes on here: bots play the other players' heroes")
+
 static func _slot_of(made: Array, h: SimUnit) -> Dictionary:
 	for m in made:
 		if m[0] == h:
@@ -270,7 +386,7 @@ func _scripted_slots(automated: bool, rng: RandomNumberGenerator) -> Array:
 	var out := [{"team": C.DAWN, "kind": "you", "hero": my_id, "skill": "hard", "name": "", "lane": "mid"},
 		{"team": C.DUSK, "kind": "bot", "hero": bot_id, "skill": "hard", "name": "Bot Gerald", "lane": ""}]
 	if String(args.get("bots", "")) == "5v5":
-		var pool := ["sludge", "ezee", "blood_ranger", "ezee", "sludge", "blood_ranger", "sludge", "ezee"]
+		var pool := ["sludge", "ezee", "blood_ranger", "azrin", "azrin", "blood_ranger", "sludge", "ezee"]
 		for i in 4:
 			out.append({"team": C.DAWN, "kind": "bot", "hero": pool[i], "skill": "hard", "name": GameSettings.BOT_NAMES[i + 1], "lane": ""})
 			out.append({"team": C.DUSK, "kind": "bot", "hero": pool[i + 4], "skill": "hard", "name": GameSettings.BOT_NAMES[i + 5], "lane": ""})
@@ -278,6 +394,15 @@ func _scripted_slots(automated: bool, rng: RandomNumberGenerator) -> Array:
 
 ## An enemy bot's appearance: the hero's default look in Black Sun colours.
 static func bot_look(id: String) -> Dictionary:
+	if id == "azrin":
+		# Black Sun's Azrin: the same fire, darker robes and ash-dark hair with red ends
+		var az := GameSettings.default_look("azrin")
+		az.display_name = "Bot Gerald"
+		az.look["hair_color"] = "4a1008"
+		for slot in az.dyes:
+			if (az.dyes[slot] as Dictionary).has("cloth"):
+				az.dyes[slot]["cloth"] = "2a0a0a"
+		return az
 	if id in GameSettings.OWN_BODY:
 		var o := GameSettings.default_look(id)
 		o.display_name = "Bot Gerald"
@@ -309,7 +434,10 @@ func _physics_process(_dt: float) -> void:
 		return
 	if _capture_frames >= 0 and not args.has("live"):
 		return
-	_step()
+	if net != null:
+		net.physics_tick()
+	else:
+		_step()
 
 func _step() -> void:
 	var t := Time.get_ticks_usec()
@@ -340,6 +468,9 @@ func _sync_views() -> void:
 			views.erase(id)
 			continue
 		if v is UnitView:
+			v.fog_ok = u.team == player_team or world.vision.sees(player_team, u)
+			if u.team != player_team and not u.alive:
+				v.fog_ok = world.vision.cell_visible(player_team, u.pos)
 			v.tick(u)
 		else:
 			v.update_state(u)
@@ -433,21 +564,33 @@ func _make_view(u: SimUnit) -> void:
 		var eye := fx._sphere(0.16, fx._glow(eye_col, 4.0))
 		eye.position.y = 1.2
 		wv.add_child(eye)
+		wv.place()
 	else:
 		var v := UnitView.new()
 		add_child(v)
 		v.setup(u, terrain)
 		views[u.id] = v
+		v.place()                                  # where it stands from the start, before its first frame()
 
 func _drain_events() -> void:
 	for e in world.events:
 		if audio and _capture_frames < 0:
 			audio.event(e, world)
-		if e.t in ["jump", "chain", "spell_shield", "gold_glove", "mana_burst", "mend", "knockback", "sneak_end", "combine"]:
+		if e.t in ["jump", "chain", "spell_shield", "gold_glove", "mana_burst", "mend", "knockback", "sneak_end", "combine",
+				"spikes_return", "blocked", "cleave", "item_use"]:
 			item_fx.event(e)
+		if e.t in AzrinFx.EVENTS:
+			azrin_fx.event(e)
+		elif e.t in FrosterFx.EVENTS:
+			froster_fx.event(e)
+		elif e.t in CazielFx.EVENTS:
+			caziel_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
+			"paused":
+				var pu := world.get_unit(int(e.u))
+				paused_by = String(pu.look.get("display_name", pu.name)) if pu != null and bool(e.on) else ""
 			"respawn":
 				if int(e.u) == player_hero_id and bool(Options.get_value("center_on_respawn")) and _capture_frames < 0:
 					center_on_hero()
@@ -673,6 +816,29 @@ func _drain_events() -> void:
 					hud.error(String(e.msg))
 	world.events.clear()
 
+var _frame_no := 0
+
+## The part of the ground the camera shows, in simulation units, grown by a margin (units outside it are not animated).
+func _view_rect() -> Rect2:
+	var cam := camera.cam
+	var vs := get_viewport().get_visible_rect().size
+	var y := camera.target.y
+	var r := Rect2()
+	var first := true
+	for c in [Vector2.ZERO, Vector2(vs.x, 0), Vector2(0, vs.y), vs, Vector2(vs.x * 0.5, 0)]:
+		var o := cam.project_ray_origin(c)
+		var d := cam.project_ray_normal(c)
+		var p := o + d * 120.0
+		if d.y < -0.01:
+			p = o + d * minf((o.y - y) / -d.y, 200.0)
+		var q := View.to2(p)
+		if first:
+			r = Rect2(q, Vector2.ZERO)
+			first = false
+		else:
+			r = r.expand(q)
+	return r.grow(500.0)
+
 ## Damage: hit reactions, melee sparks and floating numbers (yours, on you, and enemy hero spells you can see).
 ## An orb was taken: everyone hears of it in the kill feed (Dota's rune message); your team sees the gold or
 ## experience it gave over the heroes.
@@ -734,6 +900,15 @@ func _on_damage(e: Dictionary) -> void:
 	if style != "":
 		var hgt: float = (dv.bar_height + 0.35) if dv is UnitView else 2.2
 		bars.damage_number(amt, int(e.get("type", 0)), _head(tu.pos, hgt), style, tu.id, String(e.get("key", "")))
+	# the element told in the numbers: a strong hit gets an up arrow in the element's colour, a resisted one a down arrow
+	var em := float(e.get("emult", 1.0))
+	if style != "" and absf(em - 1.0) > 0.01 and int(e.get("element", 0)) > 0:
+		var ev = views.get(e.u)
+		var ec: Color = SimConst.ELEMENT_COLORS[int(e.element)]
+		var mark := "+25%" if em > 1.0 else "-25%"
+		if not bool(e.get("dot", false)) or randf() < 0.25:
+			bars.popup(mark, _head(tu.pos, (ev.bar_height if ev is UnitView else 2.2) + 0.15), ec if em > 1.0 else ec.darkened(0.35),
+				13 if em > 1.0 else 11, 0.7, 0.7, Vector2(-34, 0))
 	if float(e.get("halved", 0.0)) > 0.0:
 		var hv = views.get(e.u)
 		bars.popup("½", _head(tu.pos, (hv.bar_height if hv is UnitView else 2.2) + 0.6), Color(0.8, 0.5, 1.0), 26, 0.8, 0.8, Vector2(30, 0), true)
@@ -754,17 +929,28 @@ func _process(dt: float) -> void:
 	var alpha := Engine.get_physics_interpolation_fraction()
 	if _capture_frames >= 0:
 		alpha = 1.0
+	# units hidden by the fog or far outside the camera's view are not animated or moved this frame (heroes always are:
+	# effects follow them); fog visibility is decided once per tick in _sync_views
+	var vr := _view_rect()
+	_frame_no += 1
 	for v in views.values():
 		if v is UnitView:
-			v.frame(alpha, dt, camera.cam)
-			var u := world.get_unit(v.uid)
-			if u:
-				v.visible = u.team == player_team or world.vision.sees(player_team, u) or not u.alive and false
-				if u.team != player_team and not u.alive:
-					v.visible = world.vision.cell_visible(player_team, u.pos)
+			v.visible = v.fog_ok
+			if not v.fog_ok or (not v.is_hero and not vr.has_point(v.cur_pos)):
+				v.offscreen = true
+				if v.anim and v.anim.active:
+					v.anim.active = false
+				v.place()
+				continue
+			v.offscreen = false
+			v.frame(alpha, dt, camera.cam, _frame_no)
 	_t = _tm("views", _t)
 	fx.frame(world, alpha, dt)
 	sludge_fx.update(world, alpha, dt)
+	azrin_fx.update(world, alpha, dt)
+	froster_fx.update(world, alpha, dt)
+	caziel_fx.update(world, alpha, dt)
+	item_fx.frame(dt)
 	_t = _tm("fx", _t)
 	status_fx.frame(dt)
 	orb_view.frame(dt)
@@ -1018,6 +1204,14 @@ func _demo_setup() -> void:
 			if b.hero_id == player_hero_id:
 				world.bots.erase(b)
 				break
+	if args.has("items"):
+		# --items=a,b,c: these items in the hero's slots (item effect captures)
+		var ids := String(args.items).split(",")
+		for i in mini(ids.size(), 6):
+			h.inventory[i] = world.shop.new_item(String(ids[i]))
+			h.inventory[i]["owner"] = h.id
+		h.refresh_stats()
+		h.mana = h.max_mana
 	if args.has("treedemo"):
 		_tree_demo_setup(h)
 	if args.has("foe"):
@@ -1153,24 +1347,42 @@ func _demo_casts() -> void:
 		if u.alive and u.team != h.team and not u.is_building() and u.pos.distance_to(h.pos) < nd:
 			nd = u.pos.distance_to(h.pos)
 			near = u
+	var first := true
 	for aid in spec[0].split(","):
+		var q := not first                       # later abilities in the list queue behind the first
+		first = false
 		if aid == "attack" and near:
-			world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id})
+			world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id, "queue": q})
+			continue
+		if aid.begins_with("item:"):
+			# item:N uses the item in slot N (on the nearest enemy when it needs a unit)
+			var slot := int(aid.substr(5))
+			var it = h.inventory[slot]
+			if it == null:
+				continue
+			match world.abilities.item_target(String(it.id)):
+				"unit":
+					if near:
+						world.command(h.id, {"type": C.Order.CAST_UNIT, "ability": "", "item_slot": slot, "target": near.id})
+				"point":
+					world.command(h.id, {"type": C.Order.CAST_POINT, "ability": "", "item_slot": slot, "point": near.pos if near else h.pos})
+				_:
+					world.command(h.id, {"type": C.Order.CAST_NO_TARGET, "ability": "", "item_slot": slot})
 			continue
 		var a := SimData.ability(aid)
 		if a.is_empty():
 			continue
 		match String(a.behavior):
 			"no_target", "toggle":
-				world.command(h.id, {"type": C.Order.CAST_NO_TARGET, "ability": aid})
+				world.command(h.id, {"type": C.Order.CAST_NO_TARGET, "ability": aid, "queue": q})
 			"unit":
 				if near:
-					world.command(h.id, {"type": C.Order.CAST_UNIT, "ability": aid, "target": near.id})
+					world.command(h.id, {"type": C.Order.CAST_UNIT, "ability": aid, "target": near.id, "queue": q})
 			"point":
 				var pt: Vector2 = near.pos if near else h.pos
 				if args.has("aim") and near:
 					pt = h.pos + (near.pos - h.pos).normalized() * float(args.aim)
-				world.command(h.id, {"type": C.Order.CAST_POINT, "ability": aid, "point": pt})
+				world.command(h.id, {"type": C.Order.CAST_POINT, "ability": aid, "point": pt, "queue": q})
 			_:
 				if near:
 					world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id, "queue": true})

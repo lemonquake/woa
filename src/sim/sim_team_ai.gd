@@ -36,7 +36,9 @@ var _lane_watch := {}                      # human hero id -> [lane, since]
 var _missing_called := {}                  # enemy hero id -> time of the last "missing" call
 var _fight_called := C.LONG_AGO
 
-func _init(world: SimWorld, p_team: int) -> void:
+func _init(world: SimWorld = null, p_team := 0) -> void:
+	if world == null:
+		return                                   # being restored from a snapshot
 	w = world
 	team = p_team
 	rng.seed = int(world.rng.seed) * 31 + 7 + p_team

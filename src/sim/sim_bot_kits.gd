@@ -13,6 +13,9 @@ const ROLES := {
 	"blood_ranger": [1, 2, 3, 5],
 	"ezee": [3, 2, 1, 4],
 	"sludge": [4, 2, 3, 5, 1],
+	"azrin": [2, 4, 5, 1],
+	"froster": [2, 5, 4, 3],
+	"caziel": [1, 2, 3],
 }
 ## Lane by role, from the team's side: "safe" (long lane with the tier 1 far out), "mid", "off".
 const ROLE_LANE := {1: "safe", 2: "mid", 3: "off", 4: "off", 5: "safe"}
@@ -27,6 +30,18 @@ const SKILLS := {
 	# Stench early for lane control, Shuriken Hook to level 4 next, Blubber last (a common Dota Pudge order)
 	"sludge": ["shuriken_hook", "stench", "stench", "blubber", "stench", "chomp", "stench", "shuriken_hook",
 		"shuriken_hook", "shuriken_hook", "chomp", "blubber", "blubber", "blubber", "chomp"],
+	# the stun first, the javelin to level 4 next, the spirits last
+	"azrin": ["touch_of_ember", "fiery_javelin", "spirit_of_fire", "touch_of_ember", "touch_of_ember", "divine_smite",
+		"touch_of_ember", "fiery_javelin", "fiery_javelin", "fiery_javelin", "divine_smite", "spirit_of_fire",
+		"spirit_of_fire", "spirit_of_fire", "divine_smite"],
+	# the cone first (lane harass and farm), the curse, the heart late
+	"froster": ["breath_of_cold", "ice_pulse", "breath_of_cold", "frost_heart", "breath_of_cold", "endless_winter",
+		"breath_of_cold", "ice_pulse", "ice_pulse", "ice_pulse", "endless_winter", "frost_heart", "frost_heart",
+		"frost_heart", "endless_winter"],
+	# poison and the dagger together early, the shadows for safety
+	"caziel": ["swift_dagger", "sweet_poison", "swift_dagger", "master_of_shadows", "swift_dagger", "death_order",
+		"swift_dagger", "sweet_poison", "sweet_poison", "sweet_poison", "death_order", "master_of_shadows",
+		"master_of_shadows", "master_of_shadows", "death_order"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -37,7 +52,7 @@ const SUPPORT_SKILLS := {
 		"unholy_might"],
 }
 ## Talent side per tier (0 left, 1 right), for heroes with a talent tree.
-const TALENTS := {"sludge": [0, 0, 0, 1]}
+const TALENTS := {"sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -70,6 +85,37 @@ const BUILDS := {
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
 				"medic_kit", "root_staff", "push_staff", "spell_shield"],
+		],
+	},
+	"azrin": {
+		"core": [
+			["tango", "salve", "mantle", "circlet", "smart_band", "branch", "branch", "magic_stick", "boots",
+				"magic_wand", "mana_boots", "spell_sword", "push_staff", "kugmo_atuli", "hex_staff", "spell_shield"],
+			["tango", "salve", "mantle", "circlet", "smart_band", "magic_stick", "boots", "magic_wand", "slip_boots",
+				"spell_sword", "igit_atuli", "silence_staff", "hex_staff", "spell_shield"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
+				"push_staff", "spell_sword", "root_staff", "hex_staff"],
+		],
+	},
+	"froster": {
+		"core": [
+			["tango", "salve", "mantle", "circlet", "smart_band", "branch", "branch", "magic_stick", "boots",
+				"magic_wand", "mana_boots", "spell_sword", "push_staff", "kugmo_atuli", "silence_staff", "spell_shield"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
+				"push_staff", "medic_kit", "spell_sword", "hex_staff", "spell_shield"],
+		],
+	},
+	"caziel": {
+		"core": [
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "mask_of_madness", "crit_sword", "yasha", "spell_shield",
+				"armor_breaker", "twin_swords"],
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "boots", "magic_stick",
+				"gloves", "boots_elves", "magic_wand", "sneak_blade", "crit_sword", "spell_shield", "armor_breaker"],
 		],
 	},
 	"sludge": {
@@ -126,11 +172,17 @@ static func disable_power(hero: String) -> float:
 			return 0.6
 		"blood_ranger":
 			return 0.25
+		"azrin":
+			return 0.55
+		"froster":
+			return 0.7
+		"caziel":
+			return 0.15
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
 static func backliner(hero: String) -> bool:
-	return hero == "blood_ranger"
+	return hero == "blood_ranger" or hero == "azrin" or hero == "froster"
 
 ## The hero's ultimate.
 static func ultimate(h: SimUnit) -> String:
@@ -144,7 +196,7 @@ static func ult_ready(w: SimWorld, h: SimUnit) -> bool:
 ## Average right-click damage per second against `t` (attack class, armor).
 static func dps(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 	var avg := (h.dmg_min + h.dmg_max) * 0.5 + h.bonus_damage
-	var snap := {"hero": true, "class": int(h.def.get("attack_class", 0))}
+	var snap := {"hero": true, "class": h.weapon, "element": h.element}
 	var mult := w.combat.attack_class_multiplier(snap, t) * C.armor_multiplier(t.armor) if t != null else 1.0
 	return avg * mult / maxf(0.2, h.attack_interval())
 
@@ -182,6 +234,33 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 				total += ab.val(h, "tainted_touch", "bonus_damage") * mr * 3.0
 			if h.ability_level_of("unholy_might") > 0 and ab.cooldown_left(h, "unholy_might") <= 0.0:
 				total += h.max_hp * 0.08
+		"azrin":
+			if ready.call("touch_of_ember"):
+				total += (ab.val(h, "touch_of_ember", "damage") + ab.val(h, "touch_of_ember", "explode_damage")) * mr
+			if ready.call("fiery_javelin"):
+				total += ab.val(h, "fiery_javelin", "burn_dps") * ab.val(h, "fiery_javelin", "burn_duration") * mr * 0.7
+			if h.ability_level_of("spirit_of_fire") > 0:
+				total += ab.spirits(h) * ab.val(h, "spirit_of_fire", "burn") * mr
+			if ready.call("divine_smite"):
+				total += (ab.val(h, "divine_smite", "damage") + ab.val(h, "divine_smite", "int_mult") * h.int_total) * mr
+			total *= 1.0 + h.magic_amp
+		"froster":
+			var amp := 1.0 + (ab.val(h, "ice_pulse", "defense_loss") if h.ability_level_of("ice_pulse") > 0 else 0.0)
+			if ready.call("breath_of_cold"):
+				total += ab.val(h, "breath_of_cold", "damage") * mr
+			if ready.call("ice_pulse"):
+				total += ab.val(h, "ice_pulse", "blast_damage") * mr
+			if ready.call("endless_winter"):
+				total += ab.val(h, "endless_winter", "dps") * 4.0 * mr
+			total += w.abilities.frost_hearts(h) * ab.val(h, "frost_heart", "burst") * mr
+			total *= (1.0 + h.magic_amp) * amp
+		"caziel":
+			if ready.call("swift_dagger"):
+				var avg2 := (h.dmg_min + h.dmg_max) * 0.5 + h.bonus_damage
+				total += (avg2 + ab.val(h, "swift_dagger", "bonus_damage")) * C.armor_multiplier(
+					(t.armor if t != null else 3.0) - ab.val(h, "swift_dagger", "armor_cut"))
+			if h.ability_level_of("sweet_poison") > 0:
+				total += ab.val(h, "sweet_poison", "chance") * 5.0 * ab.val(h, "sweet_poison", "dps") * 2.0 * mr * 0.5
 		"sludge":
 			if ready.call("shuriken_hook"):
 				total += ab.val(h, "shuriken_hook", "damage") * 0.6
@@ -208,6 +287,6 @@ static func power(w: SimWorld, h: SimUnit, vs: SimUnit) -> float:
 static func power_spike(h: SimUnit, item_id: String) -> bool:
 	if item_id in ["jump_knife", "spell_shield", "shock_hammer", "armor_breaker", "cleave_axe", "dragon_lance",
 			"spike_armor", "upgrade_staff", "mask_of_madness", "yasha", "crit_bow", "stun_club", "stun_blade", "hex_staff",
-			"sure_hit_staff", "twin_swords", "halberd"]:
+			"sure_hit_staff", "twin_swords", "halberd", "spell_sword", "kugmo_atuli", "igit_atuli"]:
 		return true
 	return false

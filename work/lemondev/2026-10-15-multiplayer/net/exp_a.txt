@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+A connecting: ok
+A start sent
+A match loaded: 10 heroes, me 45
+A HASH@5400 24749463947
+A DONE frame 5400 in 183.3 s, repairs 0, buffer 1, game time 1:29
+A command latency mean 66.4 ms p95 72.6 ms over 231 samples (speed x4)
+WARNING: 419 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 14 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

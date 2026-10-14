@@ -61,7 +61,9 @@ var _next_think := C.LONG_AGO
 var _last_order := {}
 var _was_alive := true
 
-func _init(world: SimWorld, hid: int, p_lane := "mid", p_name := "Bot", p_skill := "hard") -> void:
+func _init(world: SimWorld = null, hid := -1, p_lane := "mid", p_name := "Bot", p_skill := "hard") -> void:
+	if world == null:
+		return                                   # being restored from a snapshot (SimSnapshot sets every field)
 	w = world
 	hero_id = hid
 	lane = p_lane
@@ -287,6 +289,8 @@ var _fight_target := -1
 func _choose_mode(h: SimUnit) -> void:
 	var d := {}
 	var task := brain().task_for(h.id)
+	if not task.is_empty() and w.time < float(_given_up.get(int(task.get("id", -1)), C.LONG_AGO)):
+		task = {}                                  # this bot gave up on that play (nothing to do there)
 	d["retreat"] = _retreat_desire(h, task)
 	d["heal"] = _heal_desire(h)
 	var ft := _pick_fight(h)
@@ -483,6 +487,40 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 				_cast_deadline = w.time + 0.8
 				_spent()
 				return true
+		"azrin":
+			# the javelin through the nearest chaser drags it away; the spirits slow it
+			var c: SimUnit = null
+			for f in _foes:
+				if c == null or f.pos.distance_to(h.pos) < c.pos.distance_to(h.pos):
+					c = f
+			if c != null and fd < 600.0:
+				var away := h.pos + (c.pos - h.pos).normalized() * 1000.0
+				if ab.cast_error(h, "fiery_javelin", -1, null, away) == "":
+					_order(h, {"type": O.CAST_POINT, "ability": "fiery_javelin", "point": away}, true)
+					_cast_deadline = w.time + 0.6
+					_spent()
+					return true
+				if ab.spirits(h) > 0 and ab.cast_error(h, "spirit_of_fire", -1, null, c.pos) == "":
+					_order(h, {"type": O.CAST_POINT, "ability": "spirit_of_fire", "point": c.pos}, true)
+					_cast_deadline = w.time + 0.5
+					_spent()
+					return true
+		"froster":
+			# the cold cone slows the nearest chaser
+			var fc: SimUnit = null
+			for f in _foes:
+				if fc == null or f.pos.distance_to(h.pos) < fc.pos.distance_to(h.pos):
+					fc = f
+			if fc != null and fd < 700.0 and ab.cast_error(h, "breath_of_cold", -1, null, fc.pos) == "":
+				_order(h, {"type": O.CAST_POINT, "ability": "breath_of_cold", "point": fc.pos}, true)
+				_cast_deadline = w.time + 0.6
+				_spent()
+				return true
+		"caziel":
+			# into the shadows: faster and hard to hit
+			if fd < 900.0 and ab.cast_error(h, "master_of_shadows", -1, null, h.pos) == "":
+				_order(h, {"type": O.CAST_NO_TARGET, "ability": "master_of_shadows"}, true)
+				_spent()
 		"blood_ranger":
 			var e: SimUnit = null
 			for f in _foes:
@@ -681,6 +719,15 @@ func _track_shot(h: SimUnit) -> void:
 
 # ---- Team plays -------------------------------------------------------------------------------------------------------
 
+var _given_up := {}                        # team play id -> game time until which this bot ignores it
+
+## Leave a team play that has nothing left for this bot to do (it farms or lanes instead); the team's brain may call
+## a new one.
+func _give_up(task: Dictionary, secs := 30.0) -> void:
+	_given_up[int(task.get("id", -1))] = w.time + secs
+	if _given_up.size() > 24:
+		_given_up.erase(_given_up.keys()[0])
+
 func _run_task(h: SimUnit, task: Dictionary) -> void:
 	if task.is_empty():
 		_lane(h)
@@ -703,12 +750,17 @@ func _run_task(h: SimUnit, task: Dictionary) -> void:
 		"gank":
 			if t != null and t.alive and w.vision.sees(h.team, t) and h.pos.distance_to(t.pos) < 1300.0:
 				_run_fight(h, t)
+			elif t == null or not t.alive or h.pos.distance_to(where) < 350.0:
+				# reached where it was last seen and it is gone: no point standing there
+				_give_up(task)
+				_lane_or_farm(h)
 			else:
 				_go(h, where)
 		"defend":
 			_run_defend(h, t, where)
 		"push":
-			_run_push(h, t, String(task.lane))
+			if not _run_push(h, t, String(task.lane)):
+				_give_up(task)
 		"group":
 			if h.pos.distance_to(where) > 600.0:
 				_go(h, where)
@@ -746,18 +798,20 @@ func _run_defend(h: SimUnit, b: SimUnit, where: Vector2) -> void:
 		return
 	_go(h, where + (w.map.fountains[h.team] - where).normalized() * 200.0)
 
-func _run_push(h: SimUnit, t: SimUnit, p_lane: String) -> void:
+## Returns false when the push has nothing for this bot (no building, or no wave of ours anywhere near it and too few
+## heroes to take it alone): the bot then farms instead of waiting under the tower.
+func _run_push(h: SimUnit, t: SimUnit, p_lane: String) -> bool:
 	if t == null or not t.alive:
 		_lane_or_farm(h)
-		return
+		return false
 	# walk with the creeps: clear them, then hit the building while our creeps (or several heroes) are there
 	if h.pos.distance_to(t.pos) > 1800.0:
 		_go(h, t.pos + (w.map.fountains[h.team] - t.pos).normalized() * 1000.0)
-		return
+		return true
 	for e in _foes:
 		if BotMemory.fight_p(fight_features(h, e), h.team) > 0.5 and h.pos.distance_to(e.pos) < 1000.0:
 			_run_fight(h, e)
-			return
+			return true
 	var tanking := 0
 	for c in _acreeps:
 		if c.pos.distance_to(t.pos) < t.attack_range + 200.0:
@@ -768,16 +822,25 @@ func _run_push(h: SimUnit, t: SimUnit, p_lane: String) -> void:
 			heroes_here += 1
 	if not t.is_invulnerable() and (tanking >= 2 or heroes_here >= 3 or t.atk_target != h.id and heroes_here >= 2):
 		_order(h, {"type": O.ATTACK_UNIT, "target": t.id})
-		return
+		return true
 	var best: SimUnit = null
 	for c in _ecreeps:
 		if best == null or c.hp < best.hp:
 			best = c
 	if best != null:
 		_order(h, {"type": O.ATTACK_UNIT, "target": best.id})
-		return
-	# wait for the next wave just outside the tower's reach
+		return true
+	# wait for the next wave just outside the tower's reach, but only if one of ours is on its way
+	var coming := false
+	for c in w.query(t.pos, 3200.0):
+		if c.alive and c.team == h.team and c.is_lane_creep():
+			coming = true
+			break
+	if not coming:
+		_lane_or_farm(h)
+		return false
 	_go(h, t.pos + (h.pos - t.pos).normalized() * (t.attack_range + t.hull + 220.0))
+	return true
 
 # ---- Farming: lanes and the jungle -------------------------------------------------------------------------------------
 
@@ -936,6 +999,30 @@ func _farm_camp(h: SimUnit, camp_id: int) -> void:
 				if close >= 2 and h.mana > h.max_mana * 0.5 and ab.cast_error(h, "dark_stomp", -1, null, h.pos) == "":
 					_order(h, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"}, true)
 					_cast_deadline = w.time + 0.8
+					return
+			"azrin":
+				var mid2 := Vector2.ZERO
+				for n in ns:
+					mid2 += n.pos
+				mid2 /= ns.size()
+				if ns.size() >= 2 and h.mana > h.max_mana * 0.5 and ab.cast_error(h, "touch_of_ember", -1, null, mid2) == "" \
+						and h.pos.distance_to(mid2) < 760.0:
+					_order(h, {"type": O.CAST_POINT, "ability": "touch_of_ember", "point": mid2}, true)
+					_cast_deadline = w.time + 0.9
+					return
+				if ab.spirits(h) >= 3 and ab.cast_error(h, "spirit_of_fire", -1, null, mid2) == "" and h.pos.distance_to(mid2) < 800.0:
+					_order(h, {"type": O.CAST_POINT, "ability": "spirit_of_fire", "point": mid2}, true)
+					_cast_deadline = w.time + 0.7
+					return
+			"froster":
+				var mid3 := Vector2.ZERO
+				for n in ns:
+					mid3 += n.pos
+				mid3 /= ns.size()
+				if ns.size() >= 2 and h.mana > h.max_mana * 0.45 and ab.cast_error(h, "breath_of_cold", -1, null, mid3) == "" \
+						and h.pos.distance_to(mid3) < 700.0:
+					_order(h, {"type": O.CAST_POINT, "ability": "breath_of_cold", "point": mid3}, true)
+					_cast_deadline = w.time + 0.7
 					return
 			"blood_ranger":
 				if ns.size() >= 3 and h.mana > h.max_mana * 0.6 and ab.cast_error(h, "burst_shot", -1, null, c.pos) == "":
@@ -1606,7 +1693,7 @@ func _last_hit_target(h: SimUnit, foes: Array[SimUnit], allies: Array[SimUnit]) 
 				continue
 			if c.team != h.team and core_near:
 				continue
-			var snap := {"hero": true, "class": int(h.def.attack_class)}
+			var snap := {"hero": true, "class": h.weapon, "element": h.element}
 			var mult := w.combat.attack_class_multiplier(snap, c) * C.armor_multiplier(c.armor)
 			var my_min := (h.dmg_min + h.bonus_damage + (w.combat._quelling(h) if c.team != h.team else 0.0)) * mult
 			if c.hp <= my_min * 2.5:
@@ -1644,7 +1731,7 @@ func _hp_when(c: SimUnit, t: float) -> float:
 		if o.atk_phase != SimUnit.AtkPhase.WINDUP and o.edge_distance(c) > o.attack_range + 40.0:
 			continue
 		var avg := (o.dmg_min + o.dmg_max) * 0.5 + o.bonus_damage
-		var snap := {"hero": o.is_hero(), "class": int(o.def.attack_class)}
+		var snap := {"hero": o.is_hero(), "class": o.weapon, "element": o.element}
 		var hit := avg * w.combat.attack_class_multiplier(snap, c) * C.armor_multiplier(c.armor)
 		var fly := 0.0
 		if o.is_ranged() and float(o.def.get("projectile_speed", 0.0)) > 0.0:
@@ -1665,7 +1752,7 @@ func _hp_when(c: SimUnit, t: float) -> float:
 		var eta := (pr.pos as Vector2).distance_to(c.pos) / maxf(1.0, float(pr.speed))
 		var src := w.get_unit(int(pr.src))
 		if eta < t and src != null:
-			var snap2 := {"hero": src.is_hero(), "class": int(src.def.attack_class)}
+			var snap2 := {"hero": src.is_hero(), "class": src.weapon, "element": src.element}
 			hp -= ((src.dmg_min + src.dmg_max) * 0.5 + src.bonus_damage) * w.combat.attack_class_multiplier(snap2, c) 				* C.armor_multiplier(c.armor)
 	return hp
 
@@ -1677,8 +1764,90 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		_ezee_spells(h, e)
 	elif kit == "sludge":
 		_sludge_spells(h, e)
+	elif kit == "azrin":
+		_azrin_spells(h, e)
+	elif kit == "froster":
+		_froster_spells(h, e)
+	elif kit == "caziel":
+		_caziel_spells(h, e)
 	else:
 		_ranger_spells(h, e)
+
+## Froster: Ice Pulse first (everything after it hits harder), the cold cone through the target, and the blizzard when
+## two or more enemies are close or the target is slowed and near; then attacks to spend Frost Hearts.
+func _froster_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var d := h.pos.distance_to(e.pos)
+	var near := 0
+	for f in _foes:
+		if f.pos.distance_to(h.pos) < 520.0:
+			near += 1
+	var slowed := not e.get_modifier("breath_of_cold_slow").is_empty() or not e.get_modifier("frosted").is_empty() \
+		or e.is_stunned()
+	if ab.cast_error(h, "endless_winter", -1, null, h.pos) == "" and (near >= 2 or (slowed and d < 450.0)) \
+			and h.hp > h.max_hp * 0.35:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "endless_winter"}, true)
+		_cast_deadline = w.time + 7.5
+		_spent()
+		return
+	if ab.cast_error(h, "ice_pulse", -1, e, e.pos) == "" and d < 700.0:
+		_order(h, {"type": O.CAST_UNIT, "ability": "ice_pulse", "target": e.id}, true)
+		_cast_deadline = w.time + 0.7
+		_spent()
+		return
+	if ab.cast_error(h, "breath_of_cold", -1, null, e.pos) == "" and d < 760.0:
+		_order(h, {"type": O.CAST_POINT, "ability": "breath_of_cold", "point": e.pos}, true)
+		_cast_deadline = w.time + 0.7
+		_spent()
+
+## Caziel: Shadows when the fight starts, Swift Dagger onto the target (a gap closer and the opening stab), then his
+## attacks do the rest (poison, and Death Order once it is low).
+func _caziel_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var d := h.edge_distance(e)
+	if ab.cast_error(h, "master_of_shadows", -1, null, h.pos) == "" and d < 900.0 and h.mana > 120.0:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "master_of_shadows"}, true)
+		_spent()
+	if ab.cast_error(h, "swift_dagger", -1, e, e.pos) == "" and d > 160.0 and d < 980.0:
+		_order(h, {"type": O.CAST_UNIT, "ability": "swift_dagger", "target": e.id}, true)
+		_cast_deadline = w.time + 0.4
+		_spent()
+
+## Azrin: Touch of Ember on the enemy (its own next spell will set it off), Fiery Javelin through it (leading a runner),
+## the spirits once three or more circle her (or the enemy is low), and Divine Smite on a burning enemy to stretch the
+## burns, or to finish it.
+func _azrin_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var d := h.pos.distance_to(e.pos)
+	var lead := e.pos
+	if e.moving:
+		lead += Vector2.from_angle(e.facing) * e.move_speed * (0.35 + d / 2800.0) * float(sk.aim)
+	var burning := not w.status.dots_on(e).is_empty()
+	var smite_dmg := ab.val(h, "divine_smite", "damage") + ab.val(h, "divine_smite", "int_mult") * h.int_total
+	var low := e.hp < smite_dmg * (1.0 - e.magic_resist) * 1.1
+	if ab.cast_error(h, "divine_smite", -1, e, e.pos) == "" and d < 760.0 and (burning or low):
+		_order(h, {"type": O.CAST_UNIT, "ability": "divine_smite", "target": e.id}, true)
+		_cast_deadline = w.time + 1.0
+		_spent()
+		return
+	if ab.cast_error(h, "touch_of_ember", -1, null, lead) == "" and h.pos.distance_to(lead) < 760.0:
+		_order(h, {"type": O.CAST_POINT, "ability": "touch_of_ember", "point": lead}, true)
+		_cast_deadline = w.time + 0.9
+		_spent()
+		return
+	if ab.cast_error(h, "fiery_javelin", -1, null, lead) == "" and d < 950.0:
+		# thrown past the enemy so it is caught early and dragged the whole way
+		var aim := h.pos + (lead - h.pos).normalized() * 1000.0
+		_order(h, {"type": O.CAST_POINT, "ability": "fiery_javelin", "point": aim}, true)
+		_cast_deadline = w.time + 0.9
+		_spent()
+		return
+	var n := ab.spirits(h)
+	if n > 0 and ab.cast_error(h, "spirit_of_fire", -1, null, lead) == "" and h.pos.distance_to(lead) < 800.0 \
+			and (n >= 3 or e.hp < e.max_hp * 0.35):
+		_order(h, {"type": O.CAST_POINT, "ability": "spirit_of_fire", "point": lead}, true)
+		_cast_deadline = w.time + 0.7
+		_spent()
 
 ## Ezee: the ultimate when a real fight is on, Leap Strike onto the hero it would pick, Dark Stomp up close (it throws
 ## enemies into walls and trees for the stun), Tainted Touch before the blows land.

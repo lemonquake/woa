@@ -12,7 +12,7 @@ const O = C.Order
 
 var w: SimWorld
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 func clear(u: SimUnit) -> void:
@@ -210,6 +210,11 @@ func _cancel_windup(u: SimUnit) -> void:
 # ---- Update -----------------------------------------------------------------------------------------------------------
 
 func update(u: SimUnit) -> void:
+	# fast path: a non-hero with no order, no target and nothing in progress has nothing to do (only heroes acquire
+	# targets on their own here; creeps and towers get theirs from SimAI)
+	if u.order == O.NONE and u.atk_target < 0 and u.atk_phase == AP.NONE and u.cast_phase == CP.NONE 			and u.kind != K.HERO and u.channel.is_empty() and u.leap.is_empty():
+		u.moving = false
+		return
 	if u.is_leaping():
 		u.moving = false
 		return
@@ -549,7 +554,7 @@ func _order_cast(u: SimUnit) -> void:
 	u.cast_ability = aid
 	u.cast_target = t.id if t else -1
 	u.cast_point = target_pos
-	u.cast_timer = w.abilities.cast_point(aid, slot)
+	u.cast_timer = w.abilities.cast_point(aid, slot) / (1.0 + u.cast_speed)
 	w.events.append({"t": "cast_start", "u": u.id, "ability": aid, "slot": slot, "point": u.cast_point, "target": u.cast_target})
 	if u.cast_timer <= 0.0:
 		_update_cast(u)
@@ -605,7 +610,11 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 		return true
 	var need_path := u.path.is_empty() or u.path_goal.distance_to(goal) > 96.0 or w.time >= u.repath_at
 	if need_path:
+		var tp := Time.get_ticks_usec() if w.profiling else 0
 		u.path = w.map.find_path(u.pos, goal)
+		if w.profiling:
+			w._prof("  find_path", tp)
+			w.prof["  n_paths"] = float(w.prof.get("  n_paths", 0.0)) + 1.0
 		u.path_i = 0
 		u.path_goal = goal
 		u.repath_at = w.time + (0.35 if chase else 3.0)
@@ -615,7 +624,11 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 		u.path = PackedVector2Array()
 		return true
 	# corner cutting: skip ahead while the next-but-one point is in a straight walkable line
-	if u.path_i + 1 < u.path.size() and (w.tick + u.id) % 4 == 0 and w.map.line_walkable(u.pos, u.path[u.path_i + 1]):
+	var tl := Time.get_ticks_usec() if w.profiling else 0
+	var cut := u.path_i + 1 < u.path.size() and (w.tick + u.id) % 4 == 0 and w.map.line_walkable(u.pos, u.path[u.path_i + 1])
+	if w.profiling:
+		w._prof("  corner_cut", tl)
+	if cut:
 		u.path_i += 1
 	var nxt := u.path[u.path_i]
 	if u.path_i == u.path.size() - 1:
@@ -631,7 +644,10 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 	var step := u.move_speed * C.DT
 	var d := Vector2.from_angle(u.facing)
 	var move := d * minf(step, dist)
+	var tr := Time.get_ticks_usec() if w.profiling else 0
 	var np := _resolve(u, u.pos + move, move, chase)
+	if w.profiling:
+		w._prof("  resolve", tr)
 	if np.distance_squared_to(u.pos) < 0.01:
 		u.blocked_time += C.DT
 		if u.blocked_time > 0.6:
@@ -654,6 +670,21 @@ func _resolve(u: SimUnit, np: Vector2, move: Vector2, chase: SimUnit) -> Vector2
 	var near := w.query(u.pos, u.hull + 190.0)
 	if _free(u, np, chase, near):
 		return np
+	# slide around the obstacle in the way: step along its tangent, on the side nearer the way we were going (a creep
+	# meeting a tower head-on walks round it instead of pushing into it forever)
+	var blocker := _blocker(u, np, chase, near)
+	if blocker != null:
+		var away := u.pos - blocker.pos
+		if away.length_squared() > 0.01:
+			var tan := away.orthogonal().normalized()
+			if tan.dot(move) < 0.0 or (absf(tan.dot(move)) < 0.01 and (u.id % 2) == 0):
+				tan = -tan
+			var step := move.length()
+			for k in 2:
+				var tdir := tan if k == 0 else -tan
+				var tp := u.pos + (tdir * 0.9 + away.normalized() * 0.1).normalized() * step
+				if _free(u, tp, chase, near):
+					return tp
 	for a in [0.5, -0.5, 1.0, -1.0, 1.4, -1.4]:
 		var m := move.rotated(a) * (0.85 if absf(a) > 1.2 else 1.0)
 		var p := u.pos + m
@@ -665,9 +696,32 @@ func _resolve(u: SimUnit, np: Vector2, move: Vector2, chase: SimUnit) -> Vector2
 		return p2
 	return u.pos
 
+## The unit that stops a step to `p` (the nearest one in the way), or null when only the terrain does.
+func _blocker(u: SimUnit, p: Vector2, chase: SimUnit, near: Array) -> SimUnit:
+	if u.kind == K.COURIER:
+		return null
+	var best: SimUnit = null
+	var bd := INF
+	for o: SimUnit in near:
+		if o == u or o == chase or o.is_ward() or o.kind == K.COURIER:
+			continue
+		if (u.phased or o.phased) and not o.is_building():
+			continue
+		var min_d := u.hull + o.hull - 2.0
+		if o.is_building():
+			min_d = u.hull + o.hull * 0.85
+		var new_d2 := p.distance_squared_to(o.pos)
+		if new_d2 < min_d * min_d and new_d2 < u.pos.distance_squared_to(o.pos) and new_d2 < bd:
+			bd = new_d2
+			best = o
+	return best
+
 func _free(u: SimUnit, p: Vector2, chase: SimUnit, near: Array, loose := false) -> bool:
 	if not w.map.is_walkable(p):
-		return false
+		# a unit standing inside a blocked cell (pushed or spawned there) may move within it to get out
+		var cc := w.map.world_to_cell(u.pos)
+		if w.map.is_walkable_cell(cc) or w.map.world_to_cell(p) != cc:
+			return false
 	if u.kind == K.COURIER:
 		return true                                # couriers pass through units
 	for o: SimUnit in near:

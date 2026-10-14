@@ -21,6 +21,21 @@ const MODELS := {
 		"cast": "cast_quick", "idle": "idle_1h", "run": "hero_run", "run_female": "hero_run", "run_min": 0.72,
 		"death": "death", "R": "cleaver", "L": "shuriken_hook", "bar": 2.95, "skin_shader": "res://src/game/sludge_skin.gdshader",
 		"gear_materials": true, "swing_trail": true},
+	# Azrin: the hero body hovering over her fire (float, in metres); she glides instead of running and throws fire
+	# from her hands
+	"hero_azrin": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["cast_quick"],
+		"cast": "cast_quick", "idle": "idle_mage", "run": "idle_mage", "run_female": "idle_mage", "glide": true,
+		"float": 0.75, "bob": 0.08, "death": "death", "R": "", "L": "", "proj": "fireball", "bar": 2.85, "hero": true},
+	# Froster: the hero body with a frost staff; his bolts are ice
+	"hero_froster": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["staff_1", "staff_2"],
+		"cast": "cast_quick", "idle": "idle_staff", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
+		"death": "death", "R": "staff_aether", "L": "", "proj": "frost_bolt", "bar": 2.45, "hero": true,
+		"weapon_tint": Color(0.62, 0.82, 1.0)},
+	# Caziel: the hero body with two daggers
+	"hero_caziel": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["dual_1", "dual_2", "dual_3", "dual_4"],
+		"cast": "cast_quick", "idle": "idle_shadowblade", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
+		"death": "death", "R": "dagger", "L": "dagger", "bar": 2.3, "hero": true, "weapon_tint": Color(0.55, 0.45, 0.7),
+		"swing_trail": true, "trail_color": Color(0.7, 0.4, 1.0, 0.6)},
 	"dawn_melee": {"scene": UNITS + "knight.glb", "scale": 0.86, "attack": ["sword_1", "sword_2", "sword_3"], "idle": "idle_shield",
 		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88)},
 	"dawn_ranged": {"scene": UNITS + "mage.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",

@@ -36,6 +36,7 @@ var is_hero := false
 var bar_height := 2.0
 var hidden_by_fog := false
 var _flash := 0.0
+var _gliding := false                     # a floating hero moving (leans forward)
 var _lock_until := 0.0                    # an attack / cast / reaction clip plays to here before idle/run take over
 var _state := ""                          # "", "stun", "air", "slide", "knock", "leap", "channel", "hop"
 var _redraw_at := 0.0                     # Burst Shot: when the bow is drawn again after a wave's release
@@ -46,6 +47,10 @@ var _glow_on := false
 var swing_trail: Trail3D                  # melee heroes: a streak off the blade tip while swinging
 var _swing_until := 0.0
 var swing_lit := false                    # kept lit (Tainted Touch)
+var fog_ok := true                        # seen by the player's team (set by Main each tick)
+var offscreen := false                    # outside the camera's view this frame (Main skips its frame update)
+var _ring_col := Color.WHITE
+var _anim_acc := 0.0
 
 func _now() -> float:
 	return Time.get_ticks_msec() / 1000.0
@@ -78,6 +83,8 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	model.rotation.y = PI
 	var anims := model.find_children("*", "AnimationPlayer", true, false)
 	anim = anims[0] if not anims.is_empty() else null
+	if anim:
+		anim.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	if anim and OS.get_cmdline_user_args().has("--noanim"):
 		anim.active = false
 		anim = null
@@ -155,7 +162,7 @@ func _weapons() -> void:
 			var tip := Node3D.new()
 			w.add_child(tip)
 			tip.position = Vector3(0, 0.95, 0)
-			swing_trail = Trail3D.make(tip, Color(0.92, 0.92, 1.0, 0.45), 0.06, 0.14)
+			swing_trail = Trail3D.make(tip, cfg.get("trail_color", Color(0.92, 0.92, 1.0, 0.45)), 0.06, 0.14)
 			swing_trail.emitting = false
 			add_child(swing_trail)
 
@@ -203,6 +210,7 @@ func hand_point(side: String) -> Vector3:
 
 var _big := false
 var _faded := false
+var _fade_amt := 0.0
 
 ## Lasting item states: Spell Shield makes the hero 30% bigger (as in Dota); an invisible unit of the player's team is
 ## drawn faded (enemies never see it at all).
@@ -212,11 +220,14 @@ func _item_states(u: SimUnit) -> void:
 		_big = big
 		var tw := create_tween()
 		tw.tween_property(model, "scale", Vector3.ONE * _model_scale * (1.3 if big else 1.0), 0.25)
-	var faded := u.has_flag("invisible")
-	if faded != _faded:
+	# invisible (own team sees a ghost) or wrapped in shadows (Master of Shadows: half seen by everyone)
+	var fade := 0.6 if u.has_flag("invisible") else (0.42 if u.has_flag("minimap_hidden") else 0.0)
+	var faded := fade > 0.0
+	if faded != _faded or (faded and absf(fade - _fade_amt) > 0.01):
 		_faded = faded
+		_fade_amt = fade
 		for gi: GeometryInstance3D in model.find_children("*", "GeometryInstance3D", true, false):
-			gi.transparency = 0.6 if faded else 0.0
+			gi.transparency = fade
 
 ## Hide a hand's weapon while it is away (Sludge's shuriken is flying on its chain).
 func hide_weapon(side: String, hidden: bool) -> void:
@@ -297,8 +308,11 @@ func _make_ring(u: SimUnit) -> void:
 	add_child(_ring)
 
 func set_selected(on: bool, color: Color) -> void:
-	if _ring:
-		_ring.visible = on
+	if _ring == null or (_ring.visible == on and (not on or _ring_col == color)):
+		return
+	_ring.visible = on
+	if on:
+		_ring_col = color
 		(_ring.material_override as StandardMaterial3D).albedo_color = color
 
 # ---- Simulation sync ------------------------------------------------------------------------------------------------
@@ -333,6 +347,8 @@ func tick(u: SimUnit) -> void:
 		prev_pos = u.pos
 		model.position.y = 0.0
 		_state = ""
+	if offscreen and not is_hero:
+		return                                  # off screen: the clip is chosen again once it is in view
 	var now := _now()
 	# --- forced motion and disables come first
 	if not u.leap.is_empty():
@@ -400,8 +416,13 @@ func tick(u: SimUnit) -> void:
 		_lock_until = 0.0
 	if now < _lock_until and u.moving == false:
 		return
+	_gliding = u.moving and bool(cfg.get("glide", false))
 	if u.moving:
 		_lock_until = 0.0
+		if bool(cfg.get("glide", false)):
+			# a floating caster glides: her idle pose, leaning into the move (UnitView.frame)
+			_play(String(cfg.idle), true, 1.0, 0.25)
+			return
 		var run := String(cfg.get("run", "run"))
 		if cfg.has("run_female") and float(u.look.get("look", {}).get("female", 0.0)) >= 0.5:
 			run = String(cfg.run_female)
@@ -609,8 +630,20 @@ func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := fal
 	if restart:
 		anim.seek(0.0, true)
 
+var _placed_at := Vector2.INF
+
+## Off screen (Main skips frame()): still stand where the unit is, so a unit that spawned or moved out of view never
+## shows at the world origin (the river at the map's centre) when it is next drawn or an effect looks it up.
+func place() -> void:
+	if _placed_at == cur_pos:
+		return
+	_placed_at = cur_pos
+	position = View.to3(cur_pos, terrain.height_at(cur_pos)) + Vector3(0, cur_lift, 0)
+	rotation.y = View.yaw(cur_facing)
+
 ## Called every rendered frame with the interpolation fraction between the last two ticks.
-func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
+func frame(alpha: float, delta: float, cam: Camera3D = null, frame_no := 0) -> void:
+	_placed_at = Vector2.INF
 	var p := prev_pos.lerp(cur_pos, alpha)
 	if _flash > 0.0:
 		_flash -= delta
@@ -635,6 +668,15 @@ func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 			on = cam.is_position_in_frustum(position) or cam.is_position_in_frustum(position + Vector3(0, 2.4, 0))
 		if anim.active != on:
 			anim.active = on
+		# creeps and other non-heroes animate at half the frame rate (every other frame, alternating by id, with the
+		# time of both frames), heroes every frame
+		if on:
+			if _clip == "":
+				_play(String(cfg.idle), true)          # never a bind pose, even on the first frame in view
+			_anim_acc += delta
+			if is_hero or (frame_no + uid) % 2 == 0:
+				anim.advance(_anim_acc)
+				_anim_acc = 0.0
 	var h := terrain.height_at(p)
 	position = View.to3(p, h) + Vector3(0, lift, 0)
 	rotation.y = View.yaw(lerp_angle(prev_facing, cur_facing, alpha))
@@ -658,4 +700,13 @@ func frame(alpha: float, delta: float, cam: Camera3D = null) -> void:
 	if _ring and _ring.visible:
 		_ring.position.y = 0.04 - lift
 	if cfg.has("float") and model:
-		model.position.y = float(cfg.float) + sin(_now() / 0.4 + uid) * 0.15
+		var bob := float(cfg.get("bob", 0.15))
+		var hover := float(cfg.float) + sin(_now() / 0.4 + uid) * bob
+		if _dead_at >= 0.0:
+			# she falls out of the air when she dies
+			hover = float(cfg.float) * maxf(0.0, 1.0 - (_now() - _dead_at) / 0.35)
+		model.position.y = hover
+		if _ring and _ring.visible:
+			_ring.position.y = 0.04 - lift
+		var lean := -0.16 if _gliding else 0.0
+		model.rotation.x = lerpf(model.rotation.x, lean, clampf(delta * 6.0, 0.0, 1.0))

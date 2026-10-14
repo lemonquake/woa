@@ -41,12 +41,17 @@ const ITEM_ICONS := {
 	"crit_bow": "items/bow_3", "stun_club": "items/mat_bone_fragment", "stun_blade": "items/set_guardian_helm",
 	"sure_hit_staff": "items/spear_2", "silence_staff": "items/set_sage_robe", "root_staff": "items/spear_3",
 	"halberd": "items/shield_2", "hex_staff": "items/quest_tablet", "break_blade": "items/shadow_silk",
+	"kugmo_atuli": "items/aether_greatsword", "igit_atuli": "items/armor_robe_3",
 }
 const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
 	"masterful_archery": "skills/deadeye", "blood_ranger_ult": "skills/bs_blood_eclipse", "dark_stomp": "skills/tempo_wd_quake",
 	"leap_strike": "skills/leap_slam", "tainted_touch": "skills/shadow_curse", "unholy_might": "skills/dg_black_dominion",
 	"shuriken_hook": "skills/crippling_star", "stench": "skills/venomcraft", "blubber": "skills/iron_skin",
-	"chomp": "skills/eviscerate", "growing_gut": "skills/toughness"}
+	"chomp": "skills/eviscerate", "growing_gut": "skills/toughness", "fiery_javelin": "skills/storm_javelin",
+	"touch_of_ember": "skills/inner_fire", "spirit_of_fire": "skills/flame_sentinel", "divine_smite": "skills/blessed_hammer",
+	"breath_of_cold": "skills/frost_nova", "ice_pulse": "skills/frost_orb", "frost_heart": "skills/frost_mastery",
+	"endless_winter": "skills/blizzard", "swift_dagger": "skills/ns_umbral_lunge", "sweet_poison": "skills/venom_strike",
+	"master_of_shadows": "skills/ns_gloom_veil", "death_order": "skills/ns_marked_execution"}
 
 static var _fonts := {}
 static var _icons := {}
@@ -83,57 +88,140 @@ static func item_icon(id: String) -> Texture2D:
 		return icon("items/quest_letter")
 	return icon(String(ITEM_ICONS.get(id, "items/charm")))
 
+## A hero's face (assets/ui/portraits, rendered from the 3D model by tests/tools/bake_portraits.gd), or its
+## ultimate's icon before the portraits exist.
+static func hero_portrait(id: String) -> Texture2D:
+	var key := "portrait:" + id
+	if _icons.has(key):
+		return _icons[key]
+	var path := "res://assets/ui/portraits/%s.png" % id
+	var t: Texture2D = load(path) if ResourceLoader.exists(path) else null
+	if t == null:
+		var abil: Array = SimData.unit(id).get("abilities", [])
+		t = ability_icon(String(abil[3])) if abil.size() > 3 else null
+	_icons[key] = t
+	return t
+
 static func ability_icon(id: String) -> Texture2D:
 	return icon(String(ABILITY_ICONS.get(id, "skills/keen_eye")))
 
-## A panel: vertical gradient, inner shadow, thin gold rim.
-static var _boxes := {}
+# ---- The generated skin (tools/ui_skin.py: assets/ui/skin, described by skin.json) ---------------------------------
 
-static func panel(ci: CanvasItem, r: Rect2, rim := GOLD_DIM, radius := 6.0) -> void:
-	var key := rim.to_html() + str(radius)
-	var sb: StyleBoxFlat = _boxes.get(key)
-	if sb == null:
-		sb = StyleBoxFlat.new()
-		sb.bg_color = PANEL_BOT
-		sb.set_corner_radius_all(int(radius))
-		sb.border_color = rim
-		sb.set_border_width_all(2)
-		sb.shadow_color = Color(0, 0, 0, 0.55)
-		sb.shadow_size = 10
-		_boxes[key] = sb
-	sb.draw(ci.get_canvas_item(), r)
-	# top highlight band
-	var hi := r.grow(-3)
-	hi.size.y = minf(hi.size.y * 0.45, 46.0)
-	ci.draw_rect(hi, Color(1, 1, 1, 0.035))
+const SKIN_DIR := "res://assets/ui/skin/"
+static var _skin := {}
+static var _skin_tex := {}
+static var _skin_boxes := {}
+
+static func skin_info(name: String) -> Dictionary:
+	if _skin.is_empty():
+		var f := FileAccess.open(SKIN_DIR + "skin.json", FileAccess.READ)
+		if f:
+			var d = JSON.parse_string(f.get_as_text())
+			if d is Dictionary:
+				_skin = d.get("textures", {})
+	return _skin.get(name, {})
+
+static func skin_tex(name: String) -> Texture2D:
+	if _skin_tex.has(name):
+		return _skin_tex[name]
+	var path := SKIN_DIR + name + ".png"
+	var t: Texture2D = load(path) if ResourceLoader.exists(path) else null
+	_skin_tex[name] = t
+	return t
+
+static func _margins(name: String) -> Vector4:
+	var m: Array = skin_info(name).get("margins", [12, 12, 12, 12])
+	return Vector4(float(m[0]), float(m[1]), float(m[2]), float(m[3]))
+
+## A style box of a skin piece (cached), with content margins `pad` (or the piece's own margins when pad < 0).
+static func box(name: String, pad := -1.0, col := Color.WHITE) -> SkinBox:
+	var key := "%s|%s|%s" % [name, pad, col.to_html()]
+	if _skin_boxes.has(key):
+		return _skin_boxes[key]
+	var sb := SkinBox.new(skin_tex(name), _margins(name), 2.0)
+	sb.modulate = col
+	var m := _margins(name)
+	var cm: Array = skin_info(name).get("content", [])
+	if not cm.is_empty():
+		m = Vector4(float(cm[0]), float(cm[1]), float(cm[2]), float(cm[3]))
+	sb.content_margin_left = m.x if pad < 0.0 else pad
+	sb.content_margin_right = m.z if pad < 0.0 else pad
+	sb.content_margin_top = m.y if pad < 0.0 else pad * 0.6
+	sb.content_margin_bottom = m.w if pad < 0.0 else pad * 0.6
+	_skin_boxes[key] = sb
+	return sb
+
+## Draw a nine-slice skin piece into `r` (the HUD's own drawing).
+static func skin(ci: CanvasItem, name: String, r: Rect2, col := Color.WHITE, center := true) -> void:
+	var t := skin_tex(name)
+	if t == null:
+		return
+	SkinBox.draw_nine(ci.get_canvas_item(), r, t, _margins(name), 2.0, col, center)
+
+## Draw a whole skin image (bespoke art, ornaments) at its drawn size with its top-left at `at` (or into `r`).
+static func art(ci: CanvasItem, name: String, at: Vector2, col := Color.WHITE, flip_h := false, flip_v := false) -> void:
+	var t := skin_tex(name)
+	if t == null:
+		return
+	var sz := t.get_size() * 0.5
+	var r := Rect2(at, sz)
+	if flip_h or flip_v:
+		ci.draw_set_transform(at + Vector2(sz.x if flip_h else 0.0, sz.y if flip_v else 0.0), 0.0,
+			Vector2(-1.0 if flip_h else 1.0, -1.0 if flip_v else 1.0))
+		ci.draw_texture_rect(t, Rect2(Vector2.ZERO, sz), false, col)
+		ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		return
+	ci.draw_texture_rect(t, r, false, col)
+
+static func art_rect(ci: CanvasItem, name: String, r: Rect2, col := Color.WHITE) -> void:
+	var t := skin_tex(name)
+	if t:
+		ci.draw_texture_rect(t, r, false, col)
+
+static func art_size(name: String) -> Vector2:
+	var t := skin_tex(name)
+	return t.get_size() * 0.5 if t else Vector2.ZERO
+
+## A panel: the ornate gold frame (large panels) or the plain one (small), dark enamel inside.
+static func panel(ci: CanvasItem, r: Rect2, rim := GOLD_DIM, _radius := 6.0) -> void:
+	var name := "panel_tip"
+	if r.size.x >= 260.0 and r.size.y >= 150.0:
+		name = "panel_main"
+	elif r.size.x >= 120.0 and r.size.y >= 60.0:
+		name = "panel_card"
+	var col := Color.WHITE
+	if rim.r > rim.g * 1.6:
+		col = Color(1.0, 0.72, 0.68)         # an enemy's panel: a warmer, redder trim
+	skin(ci, name, r, col)
 
 static func slot(ci: CanvasItem, r: Rect2, lit := false) -> void:
-	ci.draw_rect(r, Color(0.02, 0.02, 0.03, 0.95))
-	ci.draw_rect(r, (GOLD if lit else Color(0.32, 0.3, 0.28)), false, 1.5)
-	ci.draw_line(r.position + Vector2(1, 1), Vector2(r.end.x - 1, r.position.y + 1), Color(1, 1, 1, 0.08), 1.0)
+	ci.draw_rect(r.grow(-3), Color(0.02, 0.022, 0.03, 0.96))
+	skin(ci, "slot_item" if r.size.x > 44.0 else "slot_small", r, Color(1.25, 1.18, 1.0) if lit else Color.WHITE)
 
-## Dark radial sweep over the elapsed part of a cooldown, plus remaining seconds.
+## Dark radial sweep over the elapsed part of a cooldown (one polygon, clipped to the slot), a bright edge where the
+## sweep stands, and the seconds left.
 static func cooldown(ci: CanvasItem, r: Rect2, frac: float, secs: float) -> void:
 	if frac <= 0.0:
 		return
 	var c := r.get_center()
 	var rad := r.size.length() * 0.5
-	var steps := 40
+	var steps := maxi(4, int(36.0 * frac))
 	var start := -PI * 0.5
-	var col := PackedColorArray([Color(0, 0, 0, 0.66), Color(0, 0, 0, 0.66), Color(0, 0, 0, 0.66)])
-	var prev := Vector2.INF
+	var pts := PackedVector2Array([c])
+	var edge := Vector2.ZERO
 	for i in steps + 1:
 		var a := start + TAU * frac * float(i) / steps
 		var p := c + Vector2(cos(a), sin(a)) * rad
 		p.x = clampf(p.x, r.position.x, r.end.x)
 		p.y = clampf(p.y, r.position.y, r.end.y)
-		if prev != Vector2.INF:
-			var area := absf((prev - c).cross(p - c))
-			if area > 0.01:
-				ci.draw_primitive(PackedVector2Array([c, prev, p]), col, PackedVector2Array())
-		prev = p
+		if pts.size() == 0 or p.distance_squared_to(pts[pts.size() - 1]) > 0.25:
+			pts.append(p)
+		edge = p
+	if pts.size() >= 3:
+		ci.draw_colored_polygon(pts, Color(0.0, 0.0, 0.02, 0.68))
+	ci.draw_line(c, edge, Color(1.0, 0.85, 0.5, 0.55), 1.5)
 	var s := str(ceili(secs)) if secs >= 1.0 else "%.1f" % secs
-	text_c(ci, s, c + Vector2(0, 7), 20, Color(1, 1, 1), "bold")
+	text_c(ci, s, c + Vector2(0, 8), 22, Color(1, 1, 1), "bold")
 
 static func text(ci: CanvasItem, s: String, at: Vector2, size: int, col := TEXT, kind := "body", outline := true) -> void:
 	var f := font(kind)
@@ -149,13 +237,26 @@ static func text_r(ci: CanvasItem, s: String, at: Vector2, size: int, col := TEX
 	var w := font(kind).get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 	text(ci, s, at - Vector2(w, 0), size, col, kind)
 
+## A framed bar: the gold frame, a dark well, the fill texture for the bar's colour (health, mana, experience, gold,
+## enemy red) cut to the fraction.
 static func bar(ci: CanvasItem, r: Rect2, frac: float, col: Color) -> void:
-	ci.draw_rect(r.grow(1), Color(0, 0, 0, 0.9))
-	ci.draw_rect(r, col.darkened(0.75))
+	skin(ci, "bar_frame", r.grow(3))
+	var fill := "bar_hp"
+	if col.b > col.g * 1.3 and col.b > col.r:
+		fill = "bar_mana"
+	elif col.r > col.g * 1.6:
+		fill = "bar_hp_enemy"
+	elif col.r > 0.8 and col.g > 0.6 and col.b < 0.45:
+		fill = "bar_gold"
+	elif col.r > 0.5 and col.b > 0.8:
+		fill = "bar_xp"
+	var t := skin_tex(fill)
 	var f := Rect2(r.position, Vector2(r.size.x * clampf(frac, 0.0, 1.0), r.size.y))
-	ci.draw_rect(f, col)
-	ci.draw_rect(Rect2(f.position, Vector2(f.size.x, r.size.y * 0.4)), Color(1, 1, 1, 0.16))
-	ci.draw_rect(Rect2(f.position.x, f.end.y - 2, f.size.x, 2), Color(0, 0, 0, 0.25))
+	if t and f.size.x > 0.5:
+		var ts := t.get_size()
+		ci.draw_texture_rect_region(t, f, Rect2(0, 0, ts.x * f.size.x / maxf(1.0, r.size.x), ts.y))
+	elif f.size.x > 0.5:
+		ci.draw_rect(f, col)
 
 static func wrap(s: String, width: float, size: int, kind := "body") -> PackedStringArray:
 	var f := font(kind)
@@ -200,8 +301,27 @@ static func _switch_icon(on: bool) -> ImageTexture:
 			img.set_pixel(x, y, c)
 	return ImageTexture.create_from_image(img)
 
-## The Control theme for menus: dark panels with a gold rim, Lato text, Cinzel headings, gold sliders and buttons.
+## The Control theme for every menu: the generated skin (gold-rimmed steel buttons, ornate panels, gold tabs, gem
+## sliders and checkboxes, dark inset fields), Lato text, Cinzel headings.
 static var _theme: Theme
+
+## A skin image at its drawn size (half its pixels): for theme icons, which draw at their texture's size.
+static func half_icon(name: String) -> Texture2D:
+	var key := name + "@1x"
+	if _skin_tex.has(key):
+		return _skin_tex[key]
+	var t := skin_tex(name)
+	var out: Texture2D = null
+	if t:
+		var img := t.get_image()
+		if img:
+			if img.is_compressed():
+				img.decompress()
+			img.clear_mipmaps()
+			img.resize(maxi(1, img.get_width() / 2), maxi(1, img.get_height() / 2), Image.INTERPOLATE_LANCZOS)
+			out = ImageTexture.create_from_image(img)
+	_skin_tex[key] = out
+	return out
 
 static func theme() -> Theme:
 	if _theme:
@@ -209,72 +329,126 @@ static func theme() -> Theme:
 	var t := Theme.new()
 	t.default_font = font("body")
 	t.default_font_size = 16
-	var sb := func(bg: Color, border: Color, bw := 1, r := 4, pad := 8) -> StyleBoxFlat:
-		var s := StyleBoxFlat.new()
-		s.bg_color = bg
-		s.border_color = border
-		s.set_border_width_all(bw)
-		s.set_corner_radius_all(r)
-		s.content_margin_left = pad
-		s.content_margin_right = pad
-		s.content_margin_top = pad * 0.6
-		s.content_margin_bottom = pad * 0.6
-		return s
-	t.set_stylebox("panel", "PanelContainer", sb.call(Color(0.06, 0.065, 0.085, 0.94), GOLD_DIM, 2, 8, 14))
-	t.set_stylebox("panel", "Panel", sb.call(Color(0.06, 0.065, 0.085, 0.94), GOLD_DIM, 2, 8, 14))
-	for cls in ["Button", "OptionButton"]:
-		t.set_stylebox("normal", cls, sb.call(Color(0.12, 0.12, 0.15), Color(0.35, 0.3, 0.22)))
-		t.set_stylebox("hover", cls, sb.call(Color(0.18, 0.16, 0.13), GOLD))
-		t.set_stylebox("pressed", cls, sb.call(Color(0.28, 0.22, 0.12), GOLD))
-		t.set_stylebox("focus", cls, sb.call(Color(0, 0, 0, 0), Color(0, 0, 0, 0), 0))
-		t.set_stylebox("disabled", cls, sb.call(Color(0.08, 0.08, 0.09), Color(0.2, 0.2, 0.2)))
+	var panel_box := box("panel_menu")
+	t.set_stylebox("panel", "PanelContainer", panel_box)
+	t.set_stylebox("panel", "Panel", panel_box)
+	for cls in ["Button", "OptionButton", "MenuButton"]:
+		t.set_stylebox("normal", cls, box("btn_normal", 16))
+		t.set_stylebox("hover", cls, box("btn_hover", 16))
+		t.set_stylebox("pressed", cls, box("btn_pressed", 16))
+		t.set_stylebox("hover_pressed", cls, box("btn_pressed", 16))
+		t.set_stylebox("disabled", cls, box("btn_disabled", 16))
+		t.set_stylebox("focus", cls, StyleBoxEmpty.new())
 		t.set_color("font_color", cls, TEXT)
-		t.set_color("font_hover_color", cls, GOLD)
+		t.set_color("font_hover_color", cls, Color(1.0, 0.9, 0.62))
 		t.set_color("font_pressed_color", cls, GOLD)
-	t.set_stylebox("hover_pressed", "Button", sb.call(Color(0.3, 0.24, 0.13), GOLD))
-	t.set_icon("checked", "CheckButton", _switch_icon(true))
-	t.set_icon("unchecked", "CheckButton", _switch_icon(false))
-	t.set_icon("checked_disabled", "CheckButton", _switch_icon(true))
-	t.set_icon("unchecked_disabled", "CheckButton", _switch_icon(false))
+		t.set_color("font_hover_pressed_color", cls, GOLD)
+		t.set_color("font_disabled_color", cls, Color(0.45, 0.45, 0.47))
+		t.set_color("font_outline_color", cls, Color(0, 0, 0, 0.8))
+		t.set_constant("outline_size", cls, 3)
+		t.set_font("font", cls, font("bold"))
+		t.set_font_size("font_size", cls, 17)
+	# primary (gold), danger (red) and quiet (dark) buttons: theme_type_variation GoldButton / RedButton / DarkButton
+	for v in [["GoldButton", "btn_gold", Color(0.13, 0.07, 0.02)], ["RedButton", "btn_red", TEXT], ["DarkButton", "btn_dark", TEXT]]:
+		var vn: String = v[0]
+		t.set_type_variation(vn, "Button")
+		t.set_stylebox("normal", vn, box(String(v[1]) + "_normal", 16))
+		t.set_stylebox("hover", vn, box(String(v[1]) + "_hover", 16))
+		t.set_stylebox("pressed", vn, box(String(v[1]) + "_pressed", 16))
+		t.set_stylebox("hover_pressed", vn, box(String(v[1]) + "_pressed", 16))
+		t.set_stylebox("disabled", vn, box(String(v[1]) + "_disabled", 16))
+		var fc: Color = v[2]
+		t.set_color("font_color", vn, fc)
+		t.set_color("font_hover_color", vn, fc if vn == "GoldButton" else Color(1.0, 0.92, 0.7))
+		t.set_color("font_pressed_color", vn, fc)
+		t.set_color("font_hover_pressed_color", vn, fc)
+		t.set_color("font_outline_color", vn, Color(1, 0.9, 0.6, 0.35) if vn == "GoldButton" else Color(0, 0, 0, 0.8))
+		t.set_constant("outline_size", vn, 1 if vn == "GoldButton" else 3)
+		t.set_font("font", vn, font("title") if vn != "DarkButton" else font("bold"))
+		t.set_font_size("font_size", vn, 22 if vn != "DarkButton" else 16)
+	t.set_icon("checked", "CheckButton", half_icon("check_on"))
+	t.set_icon("unchecked", "CheckButton", half_icon("check_off"))
+	t.set_icon("checked_disabled", "CheckButton", half_icon("check_on"))
+	t.set_icon("unchecked_disabled", "CheckButton", half_icon("check_off"))
+	t.set_icon("checked", "CheckBox", half_icon("check_on"))
+	t.set_icon("unchecked", "CheckBox", half_icon("check_off"))
 	for cls in ["CheckButton", "CheckBox"]:
 		t.set_color("font_color", cls, TEXT)
-		t.set_color("font_hover_color", cls, GOLD)
+		t.set_color("font_hover_color", cls, Color(1.0, 0.9, 0.62))
 		t.set_color("font_pressed_color", cls, TEXT)
-		t.set_color("font_hover_pressed_color", cls, GOLD)
-		var clear: StyleBoxFlat = sb.call(Color(0, 0, 0, 0), Color(0, 0, 0, 0), 0)
+		t.set_color("font_hover_pressed_color", cls, Color(1.0, 0.9, 0.62))
 		for st in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
-			t.set_stylebox(st, cls, clear)
+			t.set_stylebox(st, cls, StyleBoxEmpty.new())
 	t.set_color("font_color", "Label", TEXT)
+	t.set_color("font_outline_color", "Label", Color(0, 0, 0, 0.7))
+	t.set_constant("outline_size", "Label", 2)
 	t.set_font_size("font_size", "Label", 15)
-	var slider_bg: StyleBoxFlat = sb.call(Color(0.02, 0.02, 0.03), Color(0.25, 0.22, 0.18), 1, 3, 0)
-	slider_bg.content_margin_top = 4
-	slider_bg.content_margin_bottom = 4
-	t.set_stylebox("slider", "HSlider", slider_bg)
-	var fill: StyleBoxFlat = sb.call(Color(0.62, 0.48, 0.2), Color(0.8, 0.62, 0.28), 1, 3, 0)
-	fill.content_margin_top = 4
-	fill.content_margin_bottom = 4
+	t.set_type_variation("TitleLabel", "Label")
+	t.set_font("font", "TitleLabel", font("title"))
+	t.set_font_size("font_size", "TitleLabel", 26)
+	t.set_color("font_color", "TitleLabel", GOLD)
+	t.set_constant("outline_size", "TitleLabel", 4)
+	t.set_color("font_outline_color", "TitleLabel", Color(0, 0, 0, 0.85))
+	t.set_type_variation("HeadingLabel", "Label")
+	t.set_font("font", "HeadingLabel", font("title"))
+	t.set_font_size("font_size", "HeadingLabel", 19)
+	t.set_color("font_color", "HeadingLabel", Color(0.98, 0.86, 0.56))
+	t.set_type_variation("DimLabel", "Label")
+	t.set_color("font_color", "DimLabel", TEXT_DIM)
+	t.set_font_size("font_size", "DimLabel", 14)
+	var track := box("slider_track", 0.0)
+	track.content_margin_top = 5
+	track.content_margin_bottom = 5
+	t.set_stylebox("slider", "HSlider", track)
+	var fill := SkinBox.new(skin_tex("slider_fill"), Vector4(2, 2, 2, 2), 2.0)
+	fill.content_margin_top = 5
+	fill.content_margin_bottom = 5
 	t.set_stylebox("grabber_area", "HSlider", fill)
 	t.set_stylebox("grabber_area_highlight", "HSlider", fill)
-	var grab := Image.create(18, 18, false, Image.FORMAT_RGBA8)
-	for y in 18:
-		for x in 18:
-			var d := Vector2(x - 8.5, y - 8.5).length()
-			grab.set_pixel(x, y, Color(1.0, 0.86, 0.5, clampf(8.5 - d, 0.0, 1.0)) if d < 6.5 else Color(0.15, 0.1, 0.05, clampf(8.5 - d, 0.0, 1.0)))
-	var gt := ImageTexture.create_from_image(grab)
-	t.set_icon("grabber", "HSlider", gt)
-	t.set_icon("grabber_highlight", "HSlider", gt)
-	t.set_stylebox("tab_selected", "TabBar", sb.call(Color(0.2, 0.16, 0.1), GOLD, 1, 4, 12))
-	t.set_stylebox("tab_unselected", "TabBar", sb.call(Color(0.08, 0.08, 0.1), Color(0.3, 0.27, 0.22), 1, 4, 12))
-	t.set_stylebox("tab_hovered", "TabBar", sb.call(Color(0.14, 0.12, 0.1), GOLD_DIM, 1, 4, 12))
+	t.set_icon("grabber", "HSlider", half_icon("slider_grabber"))
+	t.set_icon("grabber_highlight", "HSlider", half_icon("slider_grabber_hover"))
+	t.set_stylebox("tab_selected", "TabBar", box("tab_on", 14))
+	t.set_stylebox("tab_unselected", "TabBar", box("tab_off", 14))
+	t.set_stylebox("tab_hovered", "TabBar", box("tab_off", 14, Color(1.3, 1.25, 1.15)))
+	t.set_stylebox("tab_focus", "TabBar", StyleBoxEmpty.new())
 	t.set_color("font_selected_color", "TabBar", GOLD)
 	t.set_color("font_unselected_color", "TabBar", TEXT_DIM)
 	t.set_color("font_hovered_color", "TabBar", TEXT)
-	t.set_stylebox("panel", "TabContainer", sb.call(Color(0.05, 0.055, 0.07, 0.92), GOLD_DIM, 1, 6, 12))
-	t.set_stylebox("normal", "LineEdit", sb.call(Color(0.03, 0.03, 0.04), Color(0.35, 0.3, 0.22)))
-	t.set_stylebox("focus", "LineEdit", sb.call(Color(0.03, 0.03, 0.04), GOLD))
-	t.set_stylebox("panel", "PopupMenu", sb.call(Color(0.07, 0.07, 0.09, 0.98), GOLD_DIM, 1, 4, 6))
+	t.set_font("font", "TabBar", font("bold"))
+	t.set_font_size("font_size", "TabBar", 16)
+	for k in ["tab_selected", "tab_unselected", "tab_hovered", "tab_focus"]:
+		t.set_stylebox(k, "TabContainer", t.get_stylebox(k, "TabBar"))
+	t.set_color("font_selected_color", "TabContainer", GOLD)
+	t.set_color("font_unselected_color", "TabContainer", TEXT_DIM)
+	t.set_color("font_hovered_color", "TabContainer", TEXT)
+	t.set_font("font", "TabContainer", font("bold"))
+	t.set_font_size("font_size", "TabContainer", 16)
+	t.set_stylebox("panel", "TabContainer", box("panel_card", 16))
+	t.set_stylebox("normal", "LineEdit", box("field", 10))
+	t.set_stylebox("focus", "LineEdit", box("field_focus", 10))
+	t.set_stylebox("read_only", "LineEdit", box("field", 10, Color(0.7, 0.7, 0.7)))
+	t.set_color("font_color", "LineEdit", TEXT)
+	t.set_color("font_placeholder_color", "LineEdit", Color(0.5, 0.5, 0.52))
+	t.set_color("caret_color", "LineEdit", GOLD)
+	t.set_color("selection_color", "LineEdit", Color(0.8, 0.6, 0.2, 0.35))
+	t.set_stylebox("panel", "PopupMenu", box("panel_tip", 8))
+	t.set_stylebox("hover", "PopupMenu", box("btn_dark_hover", 4))
 	t.set_color("font_color", "PopupMenu", TEXT)
 	t.set_color("font_hover_color", "PopupMenu", GOLD)
-	t.set_stylebox("hover", "PopupMenu", sb.call(Color(0.2, 0.16, 0.1), Color(0, 0, 0, 0), 0))
+	t.set_stylebox("panel", "TooltipPanel", box("panel_tip", 10))
+	t.set_color("font_color", "TooltipLabel", TEXT)
+	for cls in ["VScrollBar", "HScrollBar"]:
+		t.set_stylebox("scroll", cls, box("scroll_track", 0.0))
+		t.set_stylebox("grabber", cls, box("scroll_grabber", 0.0))
+		t.set_stylebox("grabber_highlight", cls, box("scroll_grabber", 0.0, Color(1.25, 1.2, 1.1)))
+		t.set_stylebox("grabber_pressed", cls, box("scroll_grabber", 0.0, Color(1.4, 1.3, 1.1)))
+	t.set_stylebox("panel", "ItemList", box("field", 8))
+	t.set_stylebox("selected", "ItemList", box("btn_dark_hover", 6))
+	t.set_stylebox("selected_focus", "ItemList", box("btn_dark_hover", 6))
+	t.set_stylebox("hovered", "ItemList", box("btn_dark_normal", 6))
+	t.set_color("font_color", "ItemList", TEXT)
+	t.set_color("font_selected_color", "ItemList", GOLD)
+	t.set_stylebox("normal", "RichTextLabel", StyleBoxEmpty.new())
+	t.set_color("default_color", "RichTextLabel", TEXT)
 	_theme = t
 	return t

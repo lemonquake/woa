@@ -21,8 +21,12 @@ const STUN_GROUPS := ["stunned", "bashed"]
 var w: SimWorld
 var burns: Array = []                      # Silence Staff: [{t, src, team, until, pct, taken}]
 var dusts: Array = []                      # Reveal Dust: [{team, src, pos, until, radius, linger, slow}]
+var dots: Array = []                       # burns (damage over time): [{t, src, team, key, element, dps, until, next_at}]
 
-func _init(world: SimWorld) -> void:
+## Burns tick every half second.
+const DOT_TICK := 0.5
+
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 # ---- Pseudo-random distribution ---------------------------------------------------------------------------------------
@@ -145,7 +149,7 @@ func dispel(t: SimUnit, strong: bool, by_team: int) -> int:
 ## The disable a modifier puts on its unit, for labels and the timer bar ("" = none).
 static func disable_kind(m: Dictionary) -> String:
 	if m.get("stun", false):
-		return "Stunned"
+		return "Frosted" if String(m.get("id", "")) == "frosted" else "Stunned"
 	if m.get("hex", false):
 		return "Hexed"
 	if m.get("silence", false):
@@ -160,7 +164,7 @@ static func disable_kind(m: Dictionary) -> String:
 		return "Muted"
 	return ""
 
-const _ORDER := ["Stunned", "Hexed", "Silenced", "Rooted", "Disarmed", "Muted", "Broken"]
+const _ORDER := ["Stunned", "Frosted", "Hexed", "Silenced", "Rooted", "Disarmed", "Muted", "Broken"]
 
 ## The strongest timed disable on `u` for the bar over its health: {kind, left, total} or {} when none. Stuns beat
 ## hexes beat silences and so on; among equals the one that lasts longest is shown.
@@ -233,7 +237,78 @@ func _dust_tick() -> void:
 				m["slow"] = float(z.slow)
 			o.add_modifier(m)
 
+# ---- Burns (damage over time) ---------------------------------------------------------------------------------------
+
+## Set `t` burning: `dps` magic damage per second of `element` for `dur` seconds, ticking every half second from half a
+## second after it starts. Every burn is its own instance (two casts stack). Refused by debuff immunity and
+## invulnerability. The unit shows a "Burning" mark (fx "burn") while any burn lasts.
+func add_dot(t: SimUnit, src: SimUnit, key: String, dps: float, dur: float, element: int, renew := false) -> bool:
+	if t == null or not t.alive or dps <= 0.0 or dur <= 0.0 or src == null:
+		return false
+	if src.team != t.team and (t.is_invulnerable() or t.debuff_immune):
+		return false
+	if renew:
+		# one at a time from this source (Sweet Poison): a new one renews the running one
+		for d in dots:
+			if int(d.t) == t.id and int(d.src) == src.id and String(d.key) == key and float(d.until) > w.time:
+				d.until = w.time + dur
+				d.dps = dps
+				_burn_mark(t)
+				w.events.append({"t": "burn", "u": t.id, "src": src.id, "key": key, "dur": dur, "element": element})
+				return true
+	dots.append({"t": t.id, "src": src.id, "team": src.team, "key": key, "element": element, "dps": dps,
+		"until": w.time + dur, "next_at": w.time + DOT_TICK})
+	_burn_mark(t)
+	w.events.append({"t": "burn", "u": t.id, "src": src.id, "key": key, "dur": dur, "element": element})
+	return true
+
+## Every burn of `element` on `t` from an enemy of `team` lasts `secs` longer (Divine Smite). Returns how many.
+func extend_dots(t: SimUnit, team: int, element: int, secs: float) -> int:
+	var n := 0
+	for d in dots:
+		if int(d.t) == t.id and int(d.team) == team and int(d.element) == element and float(d.until) > w.time:
+			d.until = float(d.until) + secs
+			n += 1
+	if n > 0:
+		_burn_mark(t)
+	return n
+
+## The burns on a unit (for the HUD and bots): [{key, element, dps, left}].
+func dots_on(t: SimUnit) -> Array:
+	var out: Array = []
+	for d in dots:
+		if int(d.t) == t.id and float(d.until) > w.time:
+			out.append({"key": d.key, "element": d.element, "dps": d.dps, "left": float(d.until) - w.time})
+	return out
+
+func _burn_mark(t: SimUnit) -> void:
+	var until := w.time
+	for d in dots:
+		if int(d.t) == t.id:
+			until = maxf(until, float(d.until))
+	if until > w.time:
+		t.add_modifier({"id": "burning", "source": -60, "expires": until, "dur": until - w.time, "debuff": true,
+			"dispel": "", "fx": "burn"})
+
+func _dot_tick() -> void:
+	for i in range(dots.size() - 1, -1, -1):
+		var d: Dictionary = dots[i]
+		var t := w.get_unit(int(d.t))
+		if t == null or not t.alive:
+			dots.remove_at(i)
+			continue
+		while w.time + 1e-6 >= float(d.next_at) and float(d.next_at) <= float(d.until) + 1e-6:
+			d.next_at = float(d.next_at) + DOT_TICK
+			w.combat.deal_damage(int(d.src), int(d.team), true, t, float(d.dps) * DOT_TICK, C.DamageType.MAGICAL, false,
+				String(d.key), false, {"element": int(d.element), "dot": true})
+			if not t.alive:
+				break
+		if not t.alive or float(d.next_at) > float(d.until) + 1e-6:
+			dots.remove_at(i)
+
 func update() -> void:
+	if not dots.is_empty():
+		_dot_tick()
 	if not dusts.is_empty() and w.tick % 6 == 0:
 		_dust_tick()
 	for i in range(burns.size() - 1, -1, -1):

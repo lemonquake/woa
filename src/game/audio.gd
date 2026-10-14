@@ -97,6 +97,10 @@ func _pos(w: SimWorld, uid: int) -> Vector3:
 		return Vector3(INF, INF, INF)
 	return View.to3(u.pos, game.terrain.height_at(u.pos)) + Vector3(0, 1.2, 0)
 
+## Lane and neutral creeps die 40% quieter (owner's request, 2026-10-14): 60% as loud by the ear, the same rule as the
+## volume sliders (Options.to_db): 10 * log2(0.6) = -7.4 dB.
+const CREEP_DEATH_DB := -7.37
+
 ## Map one simulation event to sound.
 func event(e: Dictionary, w: SimWorld) -> void:
 	match e.t:
@@ -158,7 +162,9 @@ func event(e: Dictionary, w: SimWorld) -> void:
 				if u.player:
 					ui("sting_defeat", -4.0)
 			elif u.team == 1 and u.is_lane_creep():
-				at("ghoul_death", p3, -10.0, 0, 0.15)
+				at("ghoul_death", p3, -10.0 + CREEP_DEATH_DB, 0, 0.15)
+			elif u.is_creep():
+				at("body_fall", p3, -12.0 + CREEP_DEATH_DB, 0, 0.12)
 			else:
 				at("body_fall", p3, -12.0, 0, 0.12)
 		"last_hit":

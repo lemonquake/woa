@@ -126,3 +126,49 @@ every visual gate below is a builder self-check and is reported UNVERIFIED for b
 | V visuals | 1 | working tree | gate: captures (disable bars, sheep, roots, disarm, crit number, orbs, Smash ring) | n/a | REJECT (self-check) | disarm blades hidden behind the health bar | lower them to head height |
 | V visuals | 2 | working tree | gate: recaptures | n/a | PASS (gate); blind review UNVERIFIED | none | Dota frames for a blind review |
 | Integration (G) | 1 | working tree | tests 137/137, check.sh Names OK, controls_probe 31/31 (1080p) and 23/23 (true 4K), input probes 3 heroes, item flow 13/13, two 40-min 5v5 bot games without script errors, bench 60/55/62 fps vs same-session baseline 57/60, export + cold start 9.7 s | n/a | PASS (gate) | none new; old AI2 gate (an Ancient falls in 60 min) still fails, stuck bots late in games | blind review needs Dota frames |
+
+## Session 2026-10-14 (elements, damage and armor types, magic amp, item menu, item effects, Azrin) — run `work/lemondev/2026-10-14-elements-azrin/` (contract.md)
+
+No critic subagent was run (the owner did not ask for subagents and no Dota frames of these effects are on disk):
+every visual gate is a builder self-check and is reported UNVERIFIED for blind review.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| E1 elements, types, magic amp, burns | 1 | a38afe7 + working tree | gate: headless tests | n/a | REJECT (gate) | old Dota-number tests broke on the element layer and the Int magic amp | tests isolate elements (`SimWorld.elements`), oracles include magic amp |
+| E1 | 2 | working tree | gate: 154 tests | n/a | PASS (gate) | none | none |
+| E2 Kugmo / Igit / Atuli | 1 | working tree | gate: tests (names, recipes, stats, diminishing amp, mana cost, cast speed) | n/a | PASS (gate) | none | none |
+| E3 item menu, lock, disassemble | 1 | working tree | gate: tests + menu_probe 14/14 (real clicks), 1080p and real 4K captures | n/a | PASS (gate) | none | none |
+| E3b full refund protection (owner's follow-up) | 1 | working tree | gate: test (accidental disassembly inside 10 s sells for 2400, half after, old parts + new recipe) | n/a | PASS (gate) | combined items had only their combine time: fixed with per-piece purchase records | none |
+| E4 Azrin kit and bot | 1 | working tree | gate: tests (each ability with the owner's numbers), input probe 12/12, 12-min duels 3 seeds x 3 heroes, no errors | n/a | PASS (gate) | balance note: wins 16-1 vs Blood Ranger, 13-0 vs Ezee, 4-3 vs Sludge (owner's numbers kept) | owner to tune |
+| V1 fire system and Azrin's look | 1-9 | working tree | self-check captures (fire_preview, in-match, Hero Select) | n/a | REJECT x8, then PASS (self-check) | in order: embers drawn huge (billboard scale); hard flame bases; white-out in daylight; pale cream tongues; sparse candles; blocky noise (sin hash); glare walls; robe hiding her | blind review UNVERIFIED |
+| V1b female_generic body (owner's follow-up) | 1-4 | working tree | self-check: Blender previews, look lineup, Hero Select | n/a | REJECT x3, then PASS (self-check) | fit pose ignored (rig copied in REST mode); hair over face (head offset); face cut away (UV2 V flip) | blind review UNVERIFIED |
+| V2 item effects | 1-2 | working tree | self-check captures (Spike Armor, Block Shield, corruption, rage, Spell Shield) | n/a | REJECT (rage and dome too strong), then PASS | — | blind review UNVERIFIED |
+| U1 HUD chips and sheet | 1-2 | working tree | menu_probe captures at 1080p and real 4K | n/a | REJECT (two "Hero" chips ambiguous; tooltips missing from captures) then PASS | — | blind review UNVERIFIED |
+| A1 creep death sounds | 1 | working tree | gate: test (-7.37 dB = Options.to_db(0.6)) | n/a | PASS (gate) | none | none |
+
+## Session 2026-10-14 b (QA, performance, UI remake, multiplayer, Froster and Caziel) — run `work/lemondev/2026-10-14b-ui-net-heroes/` (contract.md)
+
+Session interrupted; on resume the owner asked to wrap up and build. Only the end gates below were rerun.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Q1 lane creeps | 1 | working tree | finding Q1-a fixed (spawns inside tower footprint) | n/a | INCOMPLETE | 5 v 5 games not rerun | rerun 3 x 50-min games |
+| H1 Froster, H2 Caziel | 1 | working tree | gate: tests + 12-min duels vs every hero, 3 seeds, no errors | n/a | PASS (gate) | none | owner to tune |
+| N1 command funnel | 1 | working tree | gate: tests | n/a | PASS (gate) | none | none |
+| N2 network session, U4 screens | — | working tree | none | n/a | INCOMPLETE | no net_menu screen; net_test not run | build U4, run net_test |
+| U0 skin, U1 Main Menu | 1 | working tree | self-check: export_menu.png | n/a | UNVERIFIED | Multiplayer button pointed at a missing scene: hidden until it exists | blind review vs Dota frames |
+| P1, P2, U2, U3 | — | working tree | none | n/a | INCOMPLETE (cut by owner) | not run | rerun profile and bench |
+| Integration (G) | 1 | working tree | tests 170/170, check.sh Names OK (Froster and Caziel names added to the owner list), export + cold start Froster 10.1 s / Caziel 10.5 s / Main Menu, no script errors | n/a | PASS (gate, reduced) | probes and bench not rerun | none |
+
+## Session 2026-10-15 (multiplayer, HUD pips, owner's bug reports) — run `work/lemondev/2026-10-15-multiplayer/` (contract.md)
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| H1 HUD level pips | 1 | working tree | self-check capture (Caziel, 1080p-ish window) | n/a | PASS (self-check) | pips sat across the health well's gold rim and under the slot frame | 4K capture at integration |
+| B1 units at the map centre | 1 | working tree | gate: view_place_probe (6 game min, 268465 checks) | n/a | REJECT then PASS | views of units spawned off screen were never placed (origin = river), never animated (bind pose = giant T-pose); new views waited a frame | none |
+| B2 neutral aggro, camps, Alt boxes | 1 | working tree | gate: 171 tests, camp_layout 0 problems, team_probe 11/11 | n/a | PASS (gate) | Gale Impact test picked a new tree spot after the camp move (test made robust) | 5 v 5 bot game |
+| H1 HUD level pips | 2 | working tree | self-check: real 4K crop (net_match_4k) | n/a | REJECT then PASS (self-check) | a learnable pip at its brightest looked like a learned one | pulsing outline for learnable; blind review UNVERIFIED |
+| N2 server, rooms, relay lockstep | 1 | working tree | gate: net_test dedicated (2 players), hosted (1 player), exported build as server; 2 server unit tests | n/a | PASS (gate) | first run's forced desync fell before the first wave (no creep to move): test frame moved to 3600 | none |
+| N2 latency | 2 | working tree | gate: exported server, real time | n/a | REJECT (68.4 ms > 2 ticks + RTT) then PASS (35 / 38 ms) | gaps between frames counted as stalls raised the jitter buffer; packets waited for the next poll | none |
+| U4 Multiplayer screens | 1-4 | working tree | gate: net_ui_probe (real clicks, two windows) + self-check captures 1080p and real 4K | n/a | REJECT x3, then PASS (gate; self-check look) | in order: titles and buttons on the frames' corner ornaments; empty rows drawn as buttons; frames lost (style box duplicate drops its texture); Stop Hosting stayed on the lobby list; the same server listed twice (127.0.0.1 and its network address); team titles on ornaments, muddy Ready pill, gear icon read as a dot, empty hero panel | blind review UNVERIFIED (no subagents asked for, no Dota lobby frames); 2 probe misses in 6 runs recorded |
+| Integration (G) | 1 | working tree | tests 173/173, check.sh Names OK, net_ui_probe 35/35 + 17/17, view_place_probe PASS, team_probe 11/11, 20-min 5 v 5 bot game, export + dedicated server from the exported build | n/a | PASS (gate, reduced) | performance benchmarks not rerun | main server address from the owner |

@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+B connecting: ok
+B match loaded: 10 heroes, me 55
+B corrupted its world at frame 3000
+B world replaced by a snapshot at frame 3007
+B HASH@5400 24749463947
+B DONE frame 5400 in 182.2 s, repairs 1, buffer 1, game time 1:29
+B command latency mean 68.4 ms p95 90.6 ms over 229 samples (speed x4)
+WARNING: 2274 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 14 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

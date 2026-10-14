@@ -10,7 +10,7 @@ var w: SimWorld
 var _deaths: Array = []                    # [{u, killer}]
 var _next_proj := 1
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 # ---- Attacks ----------------------------------------------------------------------------------------------------------
@@ -26,13 +26,15 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 		w.abilities.pay_attack_modifier(u, mod)
 	if u.is_hero():
 		snap["burst"] = w.abilities.masterful_bonus(u, t)
+		if w.abilities.frost_heart_spend(u, t):
+			snap["frost"] = true
 	if u.is_ranged():
 		var p := {"id": _next_proj, "src": u.id, "target": t.id, "pos": u.pos + Vector2.from_angle(u.facing) * u.hull,
 			"speed": float(u.def.projectile_speed), "snap": snap, "kind": "attack", "model": u.def.model, "mod": mod}
 		_next_proj += 1
 		w.projectiles.append(p)
 		w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": t.id, "kind": "attack", "mod": mod,
-			"burst": float(snap.get("burst", 0.0)) > 0.0})
+			"burst": float(snap.get("burst", 0.0)) > 0.0, "frost": bool(snap.get("frost", false))})
 		# glyph: tier 2+ towers also fire at extra nearby enemies
 		if u.kind == K.TOWER and u.lane_tier >= 2 and w.time < u.glyph_until:
 			_glyph_multishot(u, t, snap)
@@ -55,10 +57,14 @@ func _glyph_multishot(u: SimUnit, main: SimUnit, snap: Dictionary) -> void:
 		w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": o.id, "kind": "attack", "mod": ""})
 		n += 1
 
+## An attack snapshot for an ability that strikes with the unit's attack (Swift Dagger's stab).
+func attack_snapshot(u: SimUnit, mod: String) -> Dictionary:
+	return _snapshot(u, mod)
+
 ## What an attack carries, fixed at launch (the attacker may die before it lands).
 func _snapshot(u: SimUnit, mod: String) -> Dictionary:
 	return {"src": u.id, "team": u.team, "hero": u.is_hero(), "kind": u.kind, "dmg_min": u.dmg_min, "dmg_max": u.dmg_max,
-		"bonus": u.bonus_damage, "class": int(u.def.attack_class), "level_h": w.map.level_at(u.pos), "mod": mod,
+		"bonus": u.bonus_damage, "class": u.weapon, "element": u.element, "level_h": w.map.level_at(u.pos), "mod": mod,
 		"lifesteal": u.lifesteal, "lifesteal_ab": u.lifesteal_ability, "ranged": u.is_ranged(), "quell": _quelling(u),
 		"taint": _taint(u), "crit": u.atk_crit, "out_pct": u.attack_out_pct, "flying": bool(u.def.flying)}
 
@@ -201,11 +207,19 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if not bash.is_empty():
 		dmg += float(bash.damage)
 	dmg *= maxf(0.0, 1.0 + float(s.get("out_pct", 0.0)))
+	var base_dmg := dmg                            # before the weapon / armor type and element (cleave uses this)
 	dmg *= attack_class_multiplier(s, t)
 	if crit > 1.0:
 		# Dota shows the critical number in red before the target's reductions
 		w.events.append({"t": "crit", "u": s.src, "target": t.id, "amount": dmg, "mult": crit})
-	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, C.DamageType.PHYSICAL, true, "attack")
+	# Death Order: Caziel's blow on an enemy about to die is pure damage
+	var dtype := _attack_dtype(s)
+	var executes := w.abilities.death_order(s, t)
+	if executes:
+		dtype = C.DamageType.PURE
+		w.events.append({"t": "death_order", "u": s.src, "target": t.id})
+	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, dtype, true, "attack", false,
+		{"element": int(s.get("element", 0)), "element_done": true})
 	# lifesteal heals from the blow after armor (not after other damage manipulation, and in full even when the blow
 	# kills); item lifesteal heals 40% against creeps; never from buildings or wards
 	var ls := float(s.lifesteal) * (C.ITEM_LIFESTEAL_CREEP_FACTOR if t.is_creep() else 1.0) + float(s.get("lifesteal_ab", 0.0))
@@ -224,10 +238,14 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.attack_modifier_hit(s, t)
 	if int(s.get("taint", 0)) > 0 and not t.is_building() and t.team != s.team:
 		w.abilities.tainted_hit(s, t)
+	if bool(s.get("frost", false)) and t.alive:
+		w.abilities.frost_heart_hit(s, t)
+	if bool(s.hero) and t.alive:
+		w.abilities.sweet_poison_hit(s, t)
 	if bool(s.hero):
-		w.items.on_attack_landed(s, t, dmg, pierce)
+		w.items.on_attack_landed(s, t, base_dmg, pierce)
 	elif src != null and src.alive:
-		w.ai.on_creep_hit(src, t, dmg)
+		w.ai.on_creep_hit(src, t, base_dmg)
 	if t.alive and t.is_hero() and src != null:
 		w.abilities.on_attacked(t, src)
 	return true
@@ -280,17 +298,45 @@ func crit_sources(u: SimUnit) -> Array:
 		out.append({"key": "own", "chance": float(own.chance), "mult": float(own.mult)})
 	return out
 
+## An attack's multiplier against `t`: its weapon against the target's armor type (SimConst.DAMAGE_TABLE), times its
+## element against the target's element. s: an attack snapshot, or {class: weapon, element} (bots' estimates).
 func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
-	var dc := t.defense_class()
-	var cls := int(s.class)
-	var m: float
-	if cls == C.AttackClass.DEFAULT and dc == C.DefenseClass.STRUCTURE:
-		m = C.HERO_VS_STRUCTURE if s.hero else 0.7
-	else:
-		m = C.ATTACK_MATRIX[cls][dc]
-	if t.kind == K.CREEP_SIEGE:
-		m *= C.SIEGE_TAKEN_FROM_HERO if s.hero else C.SIEGE_TAKEN_FROM_BASIC
-	return m
+	return C.damage_mult(int(s.get("class", 0)), t.armor_type) * element_mult(int(s.get("element", 0)), t.element)
+
+## SimConst.element_mult, or 1 when the world plays without elements (some mechanics tests).
+func element_mult(atk: int, def: int) -> float:
+	return C.element_mult(atk, def) if w.elements else 1.0
+
+## Attacks with the Magic weapon (Fire Imp, Lava Golem) deal magic damage; every other attack is physical.
+func _attack_dtype(s: Dictionary) -> int:
+	return C.DamageType.MAGICAL if int(s.get("class", 0)) == C.Weapon.MAGIC else C.DamageType.PHYSICAL
+
+## The element a damage instance carries: the caller's choice (opts.element), else an attack's or a spell's caster
+## (an ability may name its own element), an item's own element, or none.
+func damage_element(src: SimUnit, key: String, is_attack: bool, opts: Dictionary) -> int:
+	if opts.has("element"):
+		return int(opts.element)
+	if is_attack or key in ["attack", "splash", "cleave_axe"]:
+		return src.element if src != null else C.Element.NONE
+	var a := SimData.ability(key)
+	if not a.is_empty():
+		if a.has("element"):
+			return C.element_of(String(a.element))
+		return src.element if src != null else C.Element.NONE
+	var it := SimData.item(key)
+	if not it.is_empty():
+		return C.element_of(String(it.get("element", "none")))
+	return src.element if src != null else C.Element.NONE
+
+## The weapon row a damage instance uses: attacks their own (applied in land_attack), magic damage Magic, pure
+## damage Aether. Physical spell damage uses no row (armor still reduces it), as in Dota.
+static func damage_row(dtype: int) -> int:
+	match dtype:
+		C.DamageType.MAGICAL:
+			return C.Weapon.MAGIC
+		C.DamageType.PURE:
+			return C.Weapon.AETHER
+	return -1
 
 # ---- Damage ---------------------------------------------------------------------------------------------------------------
 
@@ -308,11 +354,23 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		return 0.0
 	if key == "":
 		key = "attack" if is_attack else "spell"
-	# spell amplification raises every non-attack damage its source deals (not returned or attack-derived damage)
-	if not is_attack and not reflected and not opts.get("no_amp", false):
-		var amp_src := w.get_unit(src_id)
-		if amp_src != null and amp_src.spell_amp != 0.0:
-			amount *= 1.0 + amp_src.spell_amp
+	var src0 := w.get_unit(src_id)
+	# spell amplification raises every non-attack damage its source deals (not returned or attack-derived damage);
+	# magic amp (intelligence and items) adds to it for magic damage
+	if not is_attack and not reflected and not opts.get("no_amp", false) and src0 != null:
+		var amp := src0.spell_amp + (src0.magic_amp if dtype == C.DamageType.MAGICAL else 0.0)
+		if amp != 0.0:
+			amount *= 1.0 + amp
+	# the element: x1.25 when it beats the target's, x0.75 when it is beaten (an attack applied it already)
+	var elem := damage_element(src0, key, is_attack, opts)
+	var emult := element_mult(elem, t.element)
+	if not opts.get("element_done", false):
+		amount *= emult
+	# armor type against the damage type (magic and pure rows; attacks applied their weapon row already)
+	if not is_attack:
+		var row := damage_row(dtype)
+		if row >= 0:
+			amount *= C.damage_mult(row, t.armor_type)
 	if t.kind == K.COURIER:
 		# couriers count hits, not damage (7.35): 1 melee hero attack, 2 ranged hero attacks, 6 of anything else
 		var src_u := w.get_unit(src_id)
@@ -336,6 +394,11 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 			if t.is_building():
 				return 0.0
 			amount *= 1.0 - t.magic_resist
+	# Ice Pulse: lowered defense, so physical and magic damage hit harder (armor and resistances count less)
+	if dtype != C.DamageType.PURE and not t.modifiers.is_empty():
+		var loss := t.defense_loss()
+		if loss > 0.0:
+			amount *= 1.0 + loss
 	if t.is_building() and t.backdoor_active and src_team != t.team:
 		amount *= 1.0 - C.BACKDOOR_DAMAGE_REDUCTION
 		t.backdoor_pool += amount
@@ -367,6 +430,8 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 			and not t.is_building() and not t.is_ward():
 		heal(src, amount * src.spell_lifesteal * (1.0 if t.is_hero() else 0.2))
 	_ledger(src, t, key, dtype, amount, src_id)
+	if src != null and src.is_hero() and src != t and src.ability_level_of("frost_heart") > 0:
+		w.abilities.frost_heart_charge(src, t, amount)
 	if src_hero and t.is_hero() and src_team != t.team:
 		t.hero_damage_log[src_id] = w.time
 	if t.is_hero() and src_hero and src_team != t.team:
@@ -378,16 +443,17 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	if t.kind == K.NEUTRAL_CREEP and src != null:
 		w.ai.neutral_provoked(t, src)
 	w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": amount, "type": dtype, "attack": is_attack,
-		"key": key, "reflected": reflected, "halved": reflect_amt})
+		"key": key, "reflected": reflected, "halved": reflect_amt, "element": elem, "emult": emult})
 	if not reflected and t.is_hero():
-		w.items.on_damaged(t, src, raw, dtype, is_attack)
+		w.items.on_damaged(t, src, raw, dtype, is_attack, elem)
 	if t.hp <= 0.001:
 		t.hp = 0.0
 		kill(t, src)
 	if reflect_amt > 0.0:
 		w.events.append({"t": "unholy_reflect", "u": t.id, "target": reflect_to.id if reflect_to else -1, "amount": reflect_amt})
 		if reflect_to != null and reflect_to.alive:
-			deal_damage(t.id, t.team, t.is_hero(), reflect_to, reflect_amt, C.DamageType.PURE, false, "unholy_might", true)
+			deal_damage(t.id, t.team, t.is_hero(), reflect_to, reflect_amt, C.DamageType.PURE, false, "unholy_might", true,
+				{"element": C.Element.DARK})
 	return amount
 
 ## Damage tables: what each unit dealt by source, what heroes took by source, and a short history for the death recap.

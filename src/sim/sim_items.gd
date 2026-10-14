@@ -19,7 +19,7 @@ const AURA_SRC := -1
 var w: SimWorld
 var chains: Array = []                     # chain lightning in progress: {src, team, dmg, left, hit, last, next_at}
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 # ---- Queries ---------------------------------------------------------------------------------------------------------
@@ -453,6 +453,7 @@ func _cleave(src: SimUnit, main: SimUnit, dmg: float, v: Dictionary) -> void:
 	var dir := (main.pos - src.pos)
 	dir = Vector2.from_angle(src.facing) if dir.length() < 1.0 else dir.normalized()
 	var dist := float(v.distance)
+	w.events.append({"t": "cleave", "u": src.id, "target": main.id, "dir": dir, "dist": dist})
 	for o: SimUnit in w.query(src.pos + dir * dist * 0.5, dist * 0.5 + float(v.end_width)):
 		if o == main or not o.alive or o.team == src.team or o.is_building() or o.is_ward() or o.kind == K.COURIER:
 			continue
@@ -483,7 +484,7 @@ func block_attack(t: SimUnit, amount: float) -> float:
 
 ## Spike Armor: attacks on its owner send back 10 + 15% of their damage before reductions; while active, 85% of every
 ## damage instance (any type) goes back too. Not to buildings, wards or allies; returned damage is never returned.
-func on_damaged(t: SimUnit, src: SimUnit, raw: float, dtype: int, is_attack: bool) -> void:
+func on_damaged(t: SimUnit, src: SimUnit, raw: float, dtype: int, is_attack: bool, elem := 0) -> void:
 	if src == null or not src.alive or src == t or src.team == t.team or src.is_building() or src.is_ward():
 		return
 	var it := passive(t, "spikes")
@@ -497,7 +498,10 @@ func on_damaged(t: SimUnit, src: SimUnit, raw: float, dtype: int, is_attack: boo
 		back += raw * float(v.active_pct)
 	if back <= 0.0:
 		return
-	w.combat.deal_damage(t.id, t.team, true, src, back, dtype, false, "spike_armor", true, {"no_spell_lifesteal": true})
+	# the spikes send back what came in, element and all
+	w.combat.deal_damage(t.id, t.team, true, src, back, dtype, false, "spike_armor", true,
+		{"no_spell_lifesteal": true, "element": elem})
+	w.events.append({"t": "spikes_return", "u": t.id, "target": src.id, "amount": back, "active": not t.get_modifier("spike_armor").is_empty()})
 
 ## Armor Breaker: a hero who dies while corrupted by it gives its owner 2 damage (killer) or 1 (assist), up to 30.
 func on_hero_death(t: SimUnit, killer: SimUnit) -> void:

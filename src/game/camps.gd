@@ -8,9 +8,9 @@ extends Node3D
 ## drying rack, a palisade of stakes, more fires and bones. Props face the walkway the camp is reached by and stay at the
 ## edge of the box, so the creeps stand among them. Built from tools/blender/camps.py props; visual only.
 ##
-## Holding Shift shows every camp's spawn box as a yellow outline on the ground (as Dota shows them with Alt): the
-## area that must be empty at the minute mark for the camp to spawn, which you pull the creeps out of to stack it.
-## A box turns red while something other than its own creeps stands in it (that blocks the spawn). A label names the
+## Holding Alt shows every camp's spawn box as a yellow outline on the ground (as in Dota): the area that must be
+## empty at the minute mark for the camp to spawn, which you pull the creeps out of to stack it. A box turns red while
+## something other than its own creeps stands in it (that blocks the spawn; couriers never do). A label names the
 ## camp's size and marks the safe lane's pull camps.
 
 const C = preload("res://src/sim/sim_const.gd")
@@ -307,7 +307,7 @@ func _approach(c: Dictionary) -> Vector2:
 		return (Vector2.ZERO - p).normalized()
 	return (best - p).normalized()
 
-# ---- Spawn boxes (hold Shift) -----------------------------------------------------------------------------------------
+# ---- Spawn boxes (hold Alt) -------------------------------------------------------------------------------------------
 
 func _build_boxes() -> void:
 	_box_mesh = ImmediateMesh.new()
@@ -343,11 +343,11 @@ func _build_boxes() -> void:
 		add_child(l)
 		_labels.append([l, c.id])
 
-## Whether the spawn boxes show: Shift held in a match (not while typing in chat).
+## Whether the spawn boxes show: Alt held in a match (not while typing in chat), as in Dota.
 func boxes_wanted() -> bool:
 	if game != null and game.get("args") != null and game.args.has("boxes"):
 		return true
-	if not Input.is_key_pressed(KEY_SHIFT):
+	if not Input.is_key_pressed(KEY_ALT):
 		return false
 	if game != null and game.get("hud") != null and game.hud.get("chat") != null and game.hud.chat.is_open():
 		return false

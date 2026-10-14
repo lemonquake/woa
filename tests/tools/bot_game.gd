@@ -12,6 +12,28 @@ const K = C.Kind
 
 var lines: Array[String] = []
 
+## What a stuck bot is doing: its desires, order, target, its team's plan, and what stands near it.
+func _why(w: SimWorld, b, h: SimUnit) -> String:
+	var ds := []
+	for k in b.desires:
+		ds.append("%s %.2f" % [k, float(b.desires[k])])
+	var plan := {}
+	for p in w.brain(h.team).plans:
+		if (p.members as Dictionary).has(h.id):
+			plan = p
+	var near := {"ally_creeps": 0, "enemy_creeps": 0, "enemy_towers": [], "enemy_heroes": 0}
+	for u in w.query(h.pos, 1600.0, true):
+		if not u.alive:
+			continue
+		if u.is_lane_creep():
+			near["ally_creeps" if u.team == h.team else "enemy_creeps"] += 1
+		elif u.kind == K.TOWER and u.team != h.team:
+			near.enemy_towers.append("%s hp %d%% inv %s bd %s" % [u.def.id, int(100 * u.hp / u.max_hp), u.is_invulnerable(), u.backdoor_active])
+		elif u.is_hero() and u.team != h.team:
+			near.enemy_heroes += 1
+	var plan_s := "%s %s target %s" % [plan.get("kind", "-"), plan.get("lane", ""), str(plan.get("target", ""))] if not plan.is_empty() else "-"
+	return "order %d point %s atk %d | %s | plan %s | near %s" % [h.order, str(h.order_point.round()), h.atk_target, ", ".join(ds), plan_s, str(near)]
+
 func out(s: String) -> void:
 	print(s)
 	lines.append(s)
@@ -30,11 +52,12 @@ func _init() -> void:
 		BotMemory.load_data()
 		var lt := String(opts.learn_teams).split(",")
 		BotMemory.teams = [lt[0] == "1", lt.size() < 2 or lt[1] == "1"]
-	var m := SimMap.new()
-	m.build(1)
 	var wins := [0, 0]
 	for seed_s in String(opts.seeds).split(","):
 		var seed := int(seed_s)
+		# a fresh map per game (a game cuts and plants trees)
+		var m := SimMap.new()
+		m.build(1)
 		var w := SimWorld.new(seed, m)
 		w.setup_match()
 		var names := ["Bot Ann", "Bot Bob", "Bot Cat", "Bot Dan", "Bot Eve", "Bot Fay", "Bot Gus", "Bot Hal", "Bot Ivy", "Bot Jo"]
@@ -85,6 +108,8 @@ func _init() -> void:
 						still[h.id] = float(still.get(h.id, 0.0)) + 0.5
 						if float(still[h.id]) >= 20.0 and not stuck.has(h.id):
 							stuck[h.id] = "%s stuck at %s (%s) from %s" % [b.name, str(h.pos.round()), b.mode, w.clock_text()]
+							if String(opts.get("why", "")) != "":
+								out("  WHY %s: %s" % [stuck[h.id], _why(w, b, h)])
 					else:
 						still[h.id] = 0.0
 					last_pos[h.id] = h.pos

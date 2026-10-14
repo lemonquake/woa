@@ -14,6 +14,10 @@ const MASK_TEX := "res://assets/characters/hero/hero_masks.png"
 const WEAR_DIR := "res://assets/characters/hero/wear/"
 const SIZED_BONES := {"head": ["head"], "hands": ["hand.L", "hand.R"], "feet": ["foot.L", "foot.R"]}
 const NO_HIDE := Vector2(9.0, 9.0)
+## Sculpted bodies a look can use instead of the standard one (HeroLook "body"): a skinned mesh on the same skeleton,
+## built by tools/blender/azrin_body.py.
+const ALT_BODIES := {"female_generic": "res://assets/characters/hero/azrin_body.glb"}
+const BODY_SHADER := preload("res://src/hero/body_texture.gdshader")
 const SLOTS := ["inner_garment", "armor", "leggings", "helm", "gloves", "boots", "accessory_1", "accessory_2",
 	"accessory_3", "accessory_4"]
 const SKIRT_HIP := 0.80
@@ -37,6 +41,9 @@ var _beard_mat: ShaderMaterial
 var _wear: Array[MeshInstance3D] = []
 var _wear_sig := "-"
 var _hide_hair := false
+var alt_body: MeshInstance3D                # a sculpted body shown instead of `body`, or null
+var alt_mat: ShaderMaterial
+var _alt_key := ""
 
 static var _catalog := {}
 static var _manifest := {}
@@ -117,11 +124,66 @@ func apply(src: Dictionary) -> void:
 		var i := body.find_blend_shape_by_name(StringName(k))
 		if i >= 0:
 			body.set_blend_shape_value(i, l[k])
+	_set_alt_body(String(l.get("body", "standard")))
 	_apply_body_keys()
 	_apply_sizes()
 	_set_hair(false, HeroLook.hair_model(l), HeroLook.rgb(l, "hair_color"), l["hair_length"])
 	_set_hair(true, HeroLook.beard_model(l), HeroLook.rgb(l, "beard_color"), l["beard_length"])
 	_refresh_hair_visibility()
+
+## Show a sculpted body (ALT_BODIES) in place of the standard one, or the standard one ("standard"). The sculpted mesh
+## is skinned to the same 24 bones, so it plays every hero animation; worn pieces cover it with the same cut-outs.
+func _set_alt_body(key: String) -> void:
+	if not ALT_BODIES.has(key):
+		key = ""
+	if key == _alt_key:
+		return
+	_alt_key = key
+	if alt_body and is_instance_valid(alt_body):
+		alt_body.get_parent().remove_child(alt_body)
+		alt_body.queue_free()
+	alt_body = null
+	alt_mat = null
+	body.visible = key == ""
+	if key == "" or skeleton == null:
+		return
+	var src := _alt_src(String(ALT_BODIES[key]))
+	if src.is_empty():
+		body.visible = true
+		return
+	var mi := MeshInstance3D.new()
+	mi.name = "SculptedBody"
+	mi.mesh = src.mesh
+	mi.skin = src.skin
+	skeleton.add_child(mi)
+	mi.skeleton = NodePath("..")
+	mi.extra_cull_margin = 1.2
+	alt_mat = ShaderMaterial.new()
+	alt_mat.shader = BODY_SHADER
+	alt_mat.set_shader_parameter(&"albedo_tex", src.tex)
+	mi.material_override = alt_mat
+	alt_body = mi
+	# a fresh body has no cut-outs yet: dress() sets them again
+	_wear_sig = "-"
+	dress(outfit, dyes)
+
+static var _alt_cache := {}
+
+static func _alt_src(path: String) -> Dictionary:
+	if _alt_cache.has(path):
+		return _alt_cache[path]
+	var out := {}
+	var ps := load(path) as PackedScene
+	if ps:
+		var scene: Node = ps.instantiate()
+		var found := scene.find_children("*", "MeshInstance3D", true, false)
+		if not found.is_empty():
+			var mi := found[0] as MeshInstance3D
+			var mat := mi.mesh.surface_get_material(0) as BaseMaterial3D
+			out = {"mesh": mi.mesh, "skin": mi.skin, "tex": mat.albedo_texture if mat else null}
+		scene.free()
+	_alt_cache[path] = out
+	return out
 
 func _apply_body_keys() -> void:
 	for m in _wear:
@@ -252,6 +314,8 @@ func dress(p_outfit: Dictionary, p_dyes := {}) -> void:
 	var hide: Dictionary = plan.hide
 	for k in ["sleeve", "glove_l", "glove_r", "z1", "z2", "boot_l", "boot_r"]:
 		skin.set_shader_parameter(StringName("hide_" + k), hide.get(k, NO_HIDE))
+		if alt_mat:
+			alt_mat.set_shader_parameter(StringName("hide_" + k), hide.get(k, NO_HIDE))
 	_hide_hair = bool(plan.hide_hair) and bool(look.get("show_helm", true))
 	_refresh_hair_visibility()
 

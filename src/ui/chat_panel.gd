@@ -53,7 +53,7 @@ func _send(text: String) -> void:
 	close()
 	if t == "" or hud.game == null or hud.game.world == null:
 		return
-	hud.game.world.chat(hud.game.player_team, hud.game.player_hero_id, t)
+	hud.game.act({"k": "chat", "text": t})
 
 ## A chat event from the world (only the player's team reaches here).
 func add(e: Dictionary) -> void:

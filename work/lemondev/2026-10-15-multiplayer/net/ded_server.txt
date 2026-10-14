@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[00:37:07] server "Test server" on port 27860 (queries on 27861)
+SERVER listening: ok
+[00:37:09] A joined (1 online)
+[00:37:09] A made the lobby "Test lobby"
+[00:37:10] B joined (2 online)
+[00:37:11] lobby "Test lobby" started a match (2 players)
+[00:37:43] desync in "Test lobby" at frame 3600: repairing B
+[00:37:56] B left (1 online)
+[00:38:00] B joined (2 online)
+[00:38:19] B left (1 online)
+[00:38:19] lobby "Test lobby" closed
+[00:38:19] A left (0 online)
+SERVER all players left: done

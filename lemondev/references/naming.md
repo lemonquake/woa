@@ -48,6 +48,14 @@ The owner's own names are never changed by an agent, even when they break this r
   **Dark Stomp**, **Leap Strike**, **Tainted Touch**, **Unholy Might**
 * Items: **Mini-Axe**, **Vegan Picker**
 * Bot: **Bot Gerald**
+* Hero (2026-10-14): **Azrin**, title **the Flamemander**; abilities **Fiery Javelin**, **Touch of Ember**, **Spirit
+  of Fire**, **Divine Smite**
+* Items (2026-10-14, Dota's Sange, Yasha, Kaya): **Kugmo**, **Igit**, **Atuli**
+* Heroes (2026-10-14 b): **Froster**, title **the Winter Master**; abilities **Breath of Cold**, **Ice Pulse**,
+  **Frost Heart**, **Endless Winter**. **Caziel**, title **the Void Assassin**; abilities **Swift Dagger**, **Sweet
+  Poison**, **Master of Shadows**, **Death Order**
+* Damage type (2026-10-14): **Aether** (pure damage). Only the exact label is allowed (see `OWNER_EXACT` in
+  `tools/check_names.py`), so new "Aether ..." compounds are still caught.
 
 When the owner gives a new name, add it here in the same change.
 

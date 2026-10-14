@@ -55,6 +55,14 @@ var spell_lifesteal := 0.0                 # heals from spell damage dealt (100%
 var status_resist := 0.0                   # shortens enemy debuffs (0..1, sources multiply)
 var slow_resist := 0.0                     # shrinks movement slows (0..1)
 var spell_amp := 0.0                       # raises spell damage dealt (0..1)
+var magic_amp := 0.0                       # raises magic damage dealt by spells and items: intelligence + items
+var magic_amp_int := 0.0                   # the part from intelligence (1% per 20)
+var magic_amp_items := 0.0
+var mana_cost_cut := 0.0                   # spells and items cost this much less mana (largest item counts)
+var cast_speed := 0.0                      # cast points are this much faster: time / (1 + cast_speed)                 # the part from items, diminishing (see SimConst.ITEM_MAGIC_AMP_FALLOFF)
+var element := 0                           # SimConst.Element: what its attacks carry and what it resists
+var weapon := 0                            # SimConst.Weapon: its attacks' damage type
+var armor_type := 0                        # SimConst.ArmorType
 var attack_out_pct := 0.0                  # change to attack damage dealt (Intimidate: -0.6)
 var prd := {}                              # pseudo-random counters: effect key -> rolls since the last proc
 var debuff_immune := false                 # cached from modifiers in refresh_stats
@@ -152,6 +160,7 @@ var neutral_state := 0                     # 0 idle, 1 aggro, 2 returning
 var neutral_aggro_at := C.LONG_AGO
 var leash_since := -1.0                    # neutrals: when they left their 400 guard radius on this chase (-1 inside)
 var no_reaggro_until := C.LONG_AGO         # neutrals: damage cannot wake them again until then (after a leash)
+var hostile_until := C.LONG_AGO            # neutrals: lane creeps may attack it until then (it is fighting, or just was)
 var stacked := false                       # neutrals: spawned by a stack (20% less bounty)
 var stacker_id := -1                       # neutrals: the hero who stacked them (gets 30% of an ally's bounty)
 var lane_tier := 0
@@ -199,6 +208,23 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 	pos = p_pos
 	hull = def.hull
 	spawn_time = now
+	element = int(def.get("element", 0))
+	if element == SimData.TEAM_ELEMENT:
+		element = C.Element.LIGHT if team == C.DAWN else C.Element.DARK
+	element = maxi(0, element)
+	weapon = int(def.get("weapon", -1))
+	if weapon < 0:
+		weapon = C.Weapon.HERO if kind == K.HERO else C.Weapon.BLUNT
+	armor_type = int(def.get("armor_type", -1))
+	if armor_type < 0:
+		if kind == K.HERO:
+			armor_type = C.ArmorType.HERO
+		elif kind in [K.TOWER, K.BARRACKS, K.ANCIENT, K.FILLER, K.FOUNTAIN]:
+			armor_type = C.ArmorType.STRUCTURE
+		elif kind == K.CREEP_SIEGE:
+			armor_type = C.ArmorType.ARMORED
+		else:
+			armor_type = C.ArmorType.ORGANIC
 	level = def.level
 	bat = def.bat
 	if kind == K.HERO:
@@ -249,13 +275,6 @@ func is_ranged() -> bool:
 
 func can_attack_at_all() -> bool:
 	return bool(def.can_attack)
-
-func defense_class() -> int:
-	if kind == K.HERO:
-		return C.DefenseClass.HERO
-	if is_building():
-		return C.DefenseClass.STRUCTURE
-	return C.DefenseClass.NON_HERO
 
 ## Target priority for lane creeps and towers: 1 heroes and non-heroes, 2 siege creeps, 3 buildings, 4 wards.
 func type_priority() -> int:
@@ -350,6 +369,13 @@ func damage_block() -> float:
 		b = maxf(b, float(m.get("block_all", 0.0)))
 	return b
 
+## Lowered defense (Ice Pulse), 0..1: physical and magic damage it takes after armor and resistances is raised by it.
+func defense_loss() -> float:
+	var r := 0.0
+	for m in modifiers:
+		r = maxf(r, float(m.get("defense_loss", 0.0)))
+	return r
+
 ## The strongest healing reduction on this unit (Stench with the Upgrade Staff), 0..1.
 func heal_reduction() -> float:
 	var r := 0.0
@@ -407,6 +433,31 @@ func _add_item_stats(out: Dictionary, st: Dictionary) -> void:
 			out[k] = maxf(float(out.get(k, 0.0)), float(st[k]))
 		else:
 			out[k] = _stack(float(out.get(k, 0.0)), float(st[k]), k)
+
+## Magic amp from each main-slot item, largest first (they stack with diminishing returns).
+func item_magic_amps() -> Array:
+	var out: Array = []
+	if kind != K.HERO:
+		return out
+	for i in mini(6, inventory.size()):
+		var it = inventory[i]
+		if it == null:
+			continue
+		var a := float(SimData.item(it.id).stats.get("magic_amp", 0.0))
+		if a > 0.0:
+			out.append(a)
+	out.sort()
+	out.reverse()
+	return out
+
+## Item magic amp after diminishing returns: the largest counts in full, each next one half as much as the one before.
+static func diminished_amp(amps: Array) -> float:
+	var total := 0.0
+	var f := 1.0
+	for a in amps:
+		total += float(a) * f
+		f *= C.ITEM_MAGIC_AMP_FALLOFF
+	return total
 
 func _mod_stat(k: String) -> float:
 	var s := 0.0
@@ -473,6 +524,10 @@ func refresh_stats() -> void:
 	slow_resist = _stack(float(items.get("slow_resist_max", 0.0)), f.call("slow_resist"), "slow_resist")
 	status_resist = _stack(float(items.get("status_resist_max", 0.0)), f.call("status_resist"), "status_resist")
 	spell_amp = f.call("spell_amp")
+	magic_amp_int = int_total * C.INT_MAGIC_AMP if kind == K.HERO else 0.0
+	magic_amp_items = diminished_amp(item_magic_amps())
+	# talents and buffs add on top (not diminished)
+	magic_amp = magic_amp_int + magic_amp_items + _mod_stat("magic_amp") + float(perm_stats.get("magic_amp", 0.0))
 	var slow := 0.0
 	for m in modifiers:
 		slow = maxf(slow, float(m.get("slow", 0.0)))
@@ -490,7 +545,9 @@ func refresh_stats() -> void:
 	hp_regen = hp_regen_base + f.call("hp_regen")
 	mana_regen = mana_regen_base + f.call("mana_regen")
 	heal_amp = maxf(float(items.get("heal_amp_max", 0.0)), 0.0) + _mod_stat("heal_amp")
-	mana_regen_amp = float(items.get("mana_regen_amp", 0.0)) + _mod_stat("mana_regen_amp")
+	mana_regen_amp = float(items.get("mana_regen_amp_max", 0.0)) + _mod_stat("mana_regen_amp")
+	mana_cost_cut = float(items.get("mana_cost_cut_max", 0.0))
+	cast_speed = float(items.get("cast_speed_max", 0.0))
 	vision_day = float(def.vision_day)
 	vision_night = float(def.vision_night)
 	acquire_range = float(def.acquire)

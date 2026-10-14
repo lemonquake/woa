@@ -1,0 +1,9 @@
+new: BENCH frames 2087 avg 28.76 ms (35 fps) p50 27.78 p95 36.52 p99 50.00 max 125.11 over16.7 2067 units 232
+base: BENCH frames 2604 avg 23.05 ms (43 fps) p50 21.20 p95 34.95 p99 50.00 max 83.52 over16.7 2111 units 230
+new: BENCH frames 3057 avg 19.63 ms (51 fps) p50 19.05 p95 26.32 p99 31.93 max 141.44 over16.7 2473 units 232
+base: BENCH frames 3205 avg 18.72 ms (53 fps) p50 18.18 p95 26.67 p99 35.46 max 83.98 over16.7 1774 units 230
+new: BENCH frames 2815 avg 21.32 ms (47 fps) p50 20.61 p95 28.57 p99 34.36 max 65.05 over16.7 2432 units 232
+base: BENCH frames 3041 avg 19.73 ms (51 fps) p50 19.05 p95 26.67 p99 34.37 max 105.68 over16.7 2284 units 230
+azrin: BENCH frames 2693 avg 22.28 ms (45 fps) p50 20.83 p95 33.33 p99 50.00 max 121.90 over16.7 2233 units 233
+azrin (3 octaves): BENCH frames 3867 avg 15.52 ms (64 fps) p50 15.15 p95 20.83 p99 28.48 max 68.75 over16.7 524 units 233
+base (3 octaves): BENCH frames 3118 avg 19.24 ms (52 fps) p50 18.18 p95 27.78 p99 34.93 max 72.99 over16.7 1907 units 230

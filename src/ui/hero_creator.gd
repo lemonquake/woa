@@ -52,7 +52,7 @@ func _ready() -> void:
 	theme = U.theme()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	hero = GameSettings.load_hero().duplicate(true)
-	_anim = "idle_2h" if GameSettings.selected == "ezee" else "idle_bow"
+	_anim = "idle_2h" if GameSettings.selected == "ezee" else ("idle_mage" if GameSettings.selected == "azrin" else "idle_bow")
 	_rng.randomize()
 	_build_stage()
 	_build_ui()
@@ -474,6 +474,8 @@ func _colour(v: VBoxContainer, key: String, label: String, swatches: Array) -> v
 
 func _body_tab() -> Control:
 	var v := _vbox()
+	_header(v, "Body")
+	_choice(v, "body", "Body")
 	_header(v, "Figure")
 	for k in BODY:
 		_slider(v, k)

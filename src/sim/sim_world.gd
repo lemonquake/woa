@@ -26,6 +26,9 @@ var rax_dead := {}                         # "team:lane:melee" -> true
 var first_blood := false
 var winner := -1
 var paused := false
+## The element table (SimConst.element_mult) is on. Mechanics tests of other rules turn it off to check Dota's numbers
+## on their own; matches always play with it.
+var elements := true
 var debug_flags := {}                      # Debug panel switches (SimDebug): god, free_spells, reveal, passive_bot
 var _gold_acc := {}
 var _grid := {}
@@ -266,39 +269,93 @@ func step() -> void:
 		return
 	tick += 1
 	time += C.DT
+	var t := Time.get_ticks_usec() if profiling else 0
 	_clock()
 	_rebuild_grid()
 	if tick % 6 == 0:
 		_update_base_creeps()
-	for u in units:
-		if u.alive:
-			_pre_unit(u)
+	if profiling:
+		for u in units:
+			if u.alive:
+				var tu := Time.get_ticks_usec()
+				_pre_unit(u)
+				_prof("  pre:%d" % u.kind, tu)
+	else:
+		for u in units:
+			if u.alive:
+				_pre_unit(u)
+	if profiling: t = _prof("pre", t)
 	ai.think()
+	if profiling: t = _prof("ai", t)
 	for tb in brains:
 		if tb != null:
 			tb.think()
+	if profiling: t = _prof("brains", t)
 	for b in bots:
 		b.think()
+	if profiling: t = _prof("bots", t)
 	_couriers()
 	if tick % 6 == 0:
 		for h in heroes:
 			shop.auto_buy(h)
 	if not debug_flags.is_empty():
 		SimDebug.tick(self)
-	for u in units:
-		if u.alive and u.kind != K.COURIER:
-			orders.update(u)
+	if profiling: t = _prof("couriers", t)
+	if profiling:
+		for u in units:
+			if u.alive and u.kind != K.COURIER:
+				var tu := Time.get_ticks_usec()
+				orders.update(u)
+				_prof("  ord:%d" % u.kind, tu)
+	else:
+		for u in units:
+			if u.alive and u.kind != K.COURIER:
+				orders.update(u)
+	if profiling: t = _prof("orders", t)
 	combat.update_projectiles()
+	if profiling: t = _prof("projectiles", t)
 	abilities.update_effects()
 	items.update()
 	status.update()
 	orbs.update()
+	if profiling: t = _prof("effects", t)
 	combat.process_deaths()
 	_respawns()
+	if profiling: t = _prof("deaths", t)
 	if tick % C.VISION_UPDATE_TICKS == 0:
 		vision.prune_sources()
 		vision.update()
+	if profiling: t = _prof("vision", t)
 	_cleanup()
+	if profiling: t = _prof("cleanup", t)
+
+## A fingerprint of the match state (multiplayer peers compare it to catch a desync): the clock, the RNG, every unit's
+## place, health, mana, orders, gold, level and items, and the counts of projectiles, effects and living trees.
+func state_hash() -> int:
+	var n := PackedInt64Array([tick, next_id, rng.state, units.size(), projectiles.size(), effects.size(), wave,
+		winner, ground_items.size()])
+	var f := PackedFloat64Array([time])
+	for u in units:
+		n.append_array([u.id, int(u.alive), u.order, u.atk_target, u.gold_reliable, u.gold_unreliable, u.level,
+			u.atk_phase, u.cast_phase, u.modifiers.size(), u.ability_points])
+		f.append_array([u.pos.x, u.pos.y, u.hp, u.mana, u.facing, u.xp])
+		for it in u.inventory:
+			n.append(hash(String(it.id)) if it != null else 0)
+	var trees := 0
+	for t in map.trees:
+		if t.alive:
+			trees += 1
+	n.append(trees)
+	return hash(n.to_byte_array()) ^ (hash(f.to_byte_array()) * 31)
+
+## Profiling (tools only): milliseconds spent in each part of the step, summed over ticks.
+var profiling := false
+var prof := {}
+
+func _prof(key: String, t0: int) -> int:
+	var t1 := Time.get_ticks_usec()
+	prof[key] = float(prof.get(key, 0.0)) + (t1 - t0) / 1000.0
+	return t1
 
 func _clock() -> void:
 	# lane creep waves every 30 s from 0:00
@@ -371,9 +428,14 @@ func _units_near(p: Vector2, r: float) -> bool:
 	return false
 
 func _pre_unit(u: SimUnit) -> void:
-	u.expire_modifiers(time)
+	if not u.modifiers.is_empty():
+		u.expire_modifiers(time)
 	if u.stats_dirty:
 		u.refresh_stats()
+	# fast path: a creep or neutral at full health and mana with nothing on it (most sleeping camps, fresh waves) has
+	# nothing to regenerate, nothing to expire and no motion
+	if u.modifiers.is_empty() and u.hp >= u.max_hp and u.mana >= u.max_mana and u.kind != K.HERO and not u.is_building() 			and u.kind != K.WARD and u.hp_regen >= 0.0 and u.mana_regen >= 0.0 and u.knock.is_empty() and u.leap.is_empty() 			and u.hop.is_empty():
+		return
 	# regeneration (fountain aura, consumables)
 	if u.is_hero() and u.pos.distance_to(map.fountains[u.team]) < C.FOUNTAIN_AURA_RADIUS:
 		# the fountain's aura lingers 3 s after leaving its radius

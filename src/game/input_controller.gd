@@ -31,6 +31,7 @@ var _pressing := false
 var _dragging := false
 var _s_down := -1.0
 var _s_hard := false
+var _stop_tick := -1
 var _target_queue := false                 # Shift was held when the targeted spell or item was started
 var _groups := {}                           # control group key (1..9) -> unit ids
 var _group_tap := {}                        # key -> time of the last recall (double tap centres the camera)
@@ -79,7 +80,7 @@ func _hold_stop() -> void:
 	if not Keybinds.held("stop") or not DisplayServer.window_is_focused():
 		_s_down = -1.0
 		if not _s_hard and h != null and h.alive and hero_selected():
-			game.world.command(h.id, {"type": O.STOP})
+			game.order(h.id, {"type": O.STOP})
 		return
 	if not _s_hard and now - _s_down >= HARD_STOP_HOLD:
 		_s_hard = true
@@ -87,8 +88,10 @@ func _hold_stop() -> void:
 			game.hud.notice("Hard stop: no auto-attack until your next order")
 	if h == null or not h.alive or not hero_selected():
 		return
-	if not h.is_idle() or not h.order_queue.is_empty() or not h.channel.is_empty() or not h.no_acquire:
-		game.world.command(h.id, {"type": O.STOP, "hard": true})
+	# at most one stop per simulation tick (in multiplayer the hero only stops once the command arrives)
+	if (not h.is_idle() or not h.order_queue.is_empty() or not h.channel.is_empty() or not h.no_acquire) 			and game.world.tick != _stop_tick:
+		_stop_tick = game.world.tick
+		game.order(h.id, {"type": O.STOP, "hard": true})
 
 ## True while the stop key is held: orders for the hero are refused.
 func stopping() -> bool:
@@ -341,14 +344,14 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			_s_down = Time.get_ticks_msec() / 1000.0
 			_s_hard = false
 			if hero_selected():
-				w.command(h.id, {"type": O.STOP, "hard": true})
+				game.order(h.id, {"type": O.STOP, "hard": true})
 			var cs := _courier_selected()
 			if cs:
-				cs.courier_state = "idle"
+				game.act({"k": "courier_idle"})
 		"hold":
 			targeting = ""
 			if hero_selected() and not stopping():
-				w.command(h.id, {"type": O.HOLD, "queue": queue})
+				game.order(h.id, {"type": O.HOLD, "queue": queue})
 		"attack":
 			if hero_selected() and not stopping():
 				targeting = "attack"
@@ -370,7 +373,9 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			if game.hud and game.hud.has_method("toggle_shop"):
 				game.hud.toggle_shop()
 		"glyph":
-			w.glyph(game.player_team)
+			var gerr: String = game.act({"k": "glyph"})
+			if gerr != "":
+				_error(gerr)
 		"tp":
 			if hero_selected() and not stopping():
 				begin_tp()
@@ -393,7 +398,7 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			return
 		var aid: String = h.abilities[ai]
 		if learn:
-			w.abilities.learn(h, aid)
+			game.act({"k": "learn", "ability": aid})
 		else:
 			begin_ability(aid, queue)
 		return
@@ -424,7 +429,7 @@ func begin_ability(aid: String, queue := false) -> void:
 	match String(a.behavior):
 		"no_target", "toggle":
 			targeting = ""
-			game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": aid, "queue": queue})
+			game.order(h.id, {"type": O.CAST_NO_TARGET, "ability": aid, "queue": queue})
 		"point", "unit", "autocast_attack":
 			targeting = aid
 			_target_queue = queue
@@ -467,7 +472,7 @@ func buy_tp() -> void:
 		return
 	var w: SimWorld = game.world
 	var here := w.shop.in_shop(h)
-	var err: String = w.shop.buy(h, "tp_scroll")
+	var err: String = game.act({"k": "buy", "item": "tp_scroll"})
 	if err != "":
 		_error(err)
 		return
@@ -481,13 +486,13 @@ func target_point(p: Vector2, shift := false) -> void:
 	var h := hero()
 	shift = shift or _target_queue
 	if targeting == "tp":
-		game.world.command(h.id, {"type": O.CAST_POINT, "ability": "tp", "point": p, "queue": shift})
+		game.order(h.id, {"type": O.CAST_POINT, "ability": "tp", "point": p, "queue": shift})
 	elif targeting == "attack":
-		game.world.command(h.id, {"type": O.ATTACK_MOVE, "point": p, "queue": shift})
+		game.order(h.id, {"type": O.ATTACK_MOVE, "point": p, "queue": shift})
 	elif targeting.begins_with("item:"):
-		game.world.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": int(targeting.substr(5)), "point": p, "queue": shift})
+		game.order(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": int(targeting.substr(5)), "point": p, "queue": shift})
 	elif targeting != "":
-		game.world.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": p, "queue": shift})
+		game.order(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": p, "queue": shift})
 	targeting = ""
 
 ## Alt+click (ground or minimap): a ping your team sees, with a sound and a ring on the ground and minimap. On an
@@ -503,19 +508,20 @@ func ping(p: Vector2, target_id := -1, danger := false) -> void:
 	var t: SimUnit = game.world.get_unit(target_id)
 	if t != null and (t.team == C.NEUTRAL or t.kind == C.Kind.COURIER or t.is_ward()):
 		target_id = -1
-	var pg: Dictionary = game.world.ping(game.player_team, p if t == null else t.pos, game.player_hero_id, target_id,
-		"danger" if danger else "")
-	pings.append({"pos": pg.pos, "t": now, "kind": pg.kind})
-	game.fx.ping(pg.pos)
+		t = null
+	var at: Vector2 = p if t == null else t.pos
+	game.act({"k": "ping", "p": at, "target": target_id, "kind": "danger" if danger else ""})
+	pings.append({"pos": at, "t": now})
+	game.fx.ping(at)
 	if game.audio:
 		game.audio.ui("ui_click", -2.0)
 
 ## A right click on the minimap: move the selected units you control there.
 func move_selected(p: Vector2, shift := false) -> void:
 	if hero_selected():
-		game.world.command(game.player_hero_id, {"type": O.MOVE, "point": p, "queue": shift})
+		game.order(game.player_hero_id, {"type": O.MOVE, "point": p, "queue": shift})
 	if _courier_selected():
-		game.world.courier_move(hero(), p)
+		game.act({"k": "courier_move", "p": p})
 
 func use_item(slot: int, queue := false) -> void:
 	var h := hero()
@@ -533,14 +539,14 @@ func use_item(slot: int, queue := false) -> void:
 	var kind: String = game.world.abilities.item_target(it.id)
 	if kind == "none":
 		targeting = ""
-		game.world.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slot, "queue": queue})
+		game.order(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slot, "queue": queue})
 	else:
 		targeting = "item:%d" % slot
 		_target_queue = queue
 
 ## A courier command for your courier (see SimWorld.courier_command).
 func courier_cmd(cmd: String) -> void:
-	var err: String = game.world.courier_command(hero(), cmd)
+	var err: String = game.act({"k": "courier", "cmd": cmd})
 	if err != "":
 		_error(err)
 	elif game.audio:
@@ -554,10 +560,10 @@ func drop_or_give(slot: int, screen: Vector2) -> void:
 		return
 	var t: SimUnit = game.world.get_unit(pick(screen))
 	if t != null and t != h and t.team == h.team and (t.is_hero() or t.id == h.courier_id):
-		game.world.command(h.id, {"type": O.GIVE_ITEM, "item_slot": slot, "target": t.id})
+		game.order(h.id, {"type": O.GIVE_ITEM, "item_slot": slot, "target": t.id})
 		return
 	var ground: Vector2 = game.camera.ground_at(screen)
-	game.world.command(h.id, {"type": O.DROP_ITEM, "item_slot": slot, "point": ground})
+	game.order(h.id, {"type": O.DROP_ITEM, "item_slot": slot, "point": ground})
 	game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
 
 ## The item lying on the ground under a screen point (-1 if none).
@@ -590,10 +596,10 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 		return
 	if targeting == "attack":
 		if tgt and tgt.id != h.id:
-			w.command(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift})
+			game.order(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift})
 			game.fx.marker(View.to3(tgt.pos, game.terrain.height_at(tgt.pos)), true)
 		else:
-			w.command(h.id, {"type": O.ATTACK_MOVE, "point": ground, "queue": shift})
+			game.order(h.id, {"type": O.ATTACK_MOVE, "point": ground, "queue": shift})
 			game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), true)
 	elif targeting.begins_with("item:"):
 		var slot := int(targeting.substr(5))
@@ -604,9 +610,9 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 			if ierr != "" and not ierr.ends_with("on cooldown"):
 				_error(ierr)
 				return
-			w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": tgt.id, "queue": shift})
+			game.order(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": tgt.id, "queue": shift})
 		else:
-			w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": ground, "queue": shift})
+			game.order(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": ground, "queue": shift})
 	else:
 		var a := SimData.ability(targeting)
 		if String(a.behavior) == "autocast_attack" or String(a.behavior) == "unit":
@@ -615,9 +621,9 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 			if uerr != "" and not uerr.ends_with("on cooldown") and uerr != "Not enough mana":
 				_error(uerr)
 				return
-			w.command(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
+			game.order(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
 		else:
-			w.command(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": ground, "queue": shift})
+			game.order(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": ground, "queue": shift})
 	# as in Dota, targeting ends after the click even with Shift held (press the hotkey again to queue another)
 	targeting = ""
 
@@ -629,7 +635,7 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 	var ground: Vector2 = game.camera.ground_at(pos)
 	var cs := _courier_selected()
 	if cs:
-		w.courier_move(h, ground)
+		game.act({"k": "courier_move", "p": ground})
 		if not hero_selected() and not repeat:
 			game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
 	if h == null or not h.alive or not hero_selected() or stopping():
@@ -639,27 +645,27 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 	# an orb under the cursor comes first (Dota: runes have selection priority over units)
 	var oid: int = game.orb_view.pick(game.camera.cam, pos) if game.get("orb_view") != null and not repeat else -1
 	if oid >= 0:
-		w.command(h.id, {"type": O.PICKUP_ORB, "orb": oid, "queue": shift})
+		game.order(h.id, {"type": O.PICKUP_ORB, "orb": oid, "queue": shift})
 		game.fx.marker(View.to3(w.orbs.get_orb(oid).pos, game.terrain.height_at(w.orbs.get_orb(oid).pos)), false)
 		return
 	var gid := pick_ground_item(pos) if not repeat else -1
 	if gid >= 0 and (tgt == null or tgt.team == h.team):
-		w.command(h.id, {"type": O.PICKUP_ITEM, "gid": gid, "queue": shift})
+		game.order(h.id, {"type": O.PICKUP_ITEM, "gid": gid, "queue": shift})
 		return
 	if tgt and tgt != h:
 		if tgt.team != h.team or w.orders.can_deny(h, tgt):
 			if repeat and h.order == O.ATTACK_UNIT and h.order_target == tgt.id:
 				return
-			w.command(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift and not repeat})
+			game.order(h.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift and not repeat})
 			if not repeat:
 				game.fx.marker(View.to3(tgt.pos, game.terrain.height_at(tgt.pos)), true)
 			return
 		if repeat and h.order == O.MOVE_TO_UNIT and h.order_target == tgt.id:
 			return
-		w.command(h.id, {"type": O.MOVE_TO_UNIT, "target": tgt.id, "queue": shift and not repeat})
+		game.order(h.id, {"type": O.MOVE_TO_UNIT, "target": tgt.id, "queue": shift and not repeat})
 		return
 	if repeat and h.order == O.MOVE and h.order_point.distance_to(ground) < 24.0:
 		return
-	w.command(h.id, {"type": O.MOVE, "point": ground, "queue": shift and not repeat})
+	game.order(h.id, {"type": O.MOVE, "point": ground, "queue": shift and not repeat})
 	if not repeat:
 		game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)

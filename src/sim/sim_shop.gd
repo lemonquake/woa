@@ -18,7 +18,7 @@ const C = preload("res://src/sim/sim_const.gd")
 
 var w: SimWorld
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 func in_shop(u: SimUnit) -> bool:
@@ -324,7 +324,7 @@ func _combine(u: SimUnit, id: String, parts: Array, pool: Array) -> bool:
 		for arr in pool:
 			for i in (arr as Array).size():
 				var it = arr[i]
-				if it == null or it.id != part:
+				if it == null or it.id != part or bool(it.get("locked", false)):
 					continue
 				var taken := false
 				for f in found:
@@ -342,6 +342,15 @@ func _combine(u: SimUnit, id: String, parts: Array, pool: Array) -> bool:
 			return false
 	var res := new_item(id)
 	res["owner"] = u.id
+	# it remembers its parts as they were (when each was bought): selling refunds every piece in full during its own
+	# first 10 seconds, and disassembling gives the same pieces back
+	var made_of: Array = []
+	for f in found:
+		var part: Dictionary = (f[0][f[1]] as Dictionary).duplicate(true)
+		part.erase("locked")
+		made_of.append(part)
+	res["made_of"] = made_of
+	res["bought"] = w.time
 	var d := SimData.item(id)
 	# Switch Boots start on the attribute of the part they were built with
 	var attr_from: Dictionary = d.get("attr_from", {})
@@ -354,6 +363,95 @@ func _combine(u: SimUnit, id: String, parts: Array, pool: Array) -> bool:
 	first[0][first[1]] = res
 	w.events.append({"t": "combine", "u": u.id, "item": id})
 	return true
+
+# ---- Lock and disassemble (the item menu: right click an item) -------------------------------------------------------
+
+## The bags (inventory and backpack) or the stash, for the item menu.
+func _list(u: SimUnit, stash: bool) -> Array:
+	return u.stash if stash else u.inventory
+
+## Lock or unlock an item: a locked item never combines. Unlocking lets it combine at once if its partners are there.
+func toggle_lock(u: SimUnit, idx: int, stash := false) -> String:
+	var arr := _list(u, stash)
+	if idx < 0 or idx >= arr.size() or arr[idx] == null:
+		return "No item"
+	var it: Dictionary = arr[idx]
+	it["locked"] = not bool(it.get("locked", false))
+	w.events.append({"t": "item_lock", "u": u.id, "item": it.id, "locked": it.locked})
+	if not it.locked:
+		combine_all(u)
+		u.refresh_stats()
+	return ""
+
+## Why this item cannot be taken apart ("" = it can). Dota's rule: combined items can, except those marked never
+## (Gold Glove, Upgrade Staff); only the buyer may.
+func disassemble_error(u: SimUnit, it) -> String:
+	if it == null:
+		return "No item"
+	var d := SimData.item(it.id)
+	if (d.components as Array).is_empty():
+		return "Cannot be disassembled"
+	if bool(d.get("no_disassemble", false)):
+		return "Cannot be disassembled"
+	if int(it.get("owner", u.id)) != u.id:
+		return "You do not own this item"
+	return ""
+
+## The parts an item breaks into: the recipe it was built with (Switch Boots remember theirs) plus its scroll.
+func parts_of(it: Dictionary) -> Array:
+	var d := SimData.item(it.id)
+	var parts: Array = (d.components as Array).duplicate()
+	if d.has("attr_from") and it.has("attr"):
+		var af: Dictionary = d.attr_from
+		for s in d.get("recipes", []):
+			for p in s:
+				if af.has(p) and String(af[p]) == String(it.attr):
+					parts = (s as Array).duplicate()
+	if int(d.recipe_cost) > 0:
+		parts.append("recipe_" + String(it.id))
+	return parts
+
+## Take an item apart: its parts (and recipe scroll) take its slot and the free slots of the same place (bags, then the
+## stash), and are locked so they do not combine straight back. They keep the item's purchase time for selling.
+func disassemble(u: SimUnit, idx: int, stash := false) -> String:
+	var arr := _list(u, stash)
+	if idx < 0 or idx >= arr.size():
+		return "No item"
+	var it = arr[idx]
+	var err := disassemble_error(u, it)
+	if err != "":
+		return err
+	# the pieces it was made of, as they were bought (full refund still runs on fresh ones); an item that never
+	# combined here (given by a test or the Debug panel) breaks into new parts bought when it was
+	var pieces: Array = []
+	if it.has("made_of"):
+		for p in it.made_of:
+			pieces.append((p as Dictionary).duplicate(true))
+	else:
+		for pid in parts_of(it):
+			var np := new_item(String(pid))
+			np["bought"] = float(it.get("bought", w.time))
+			pieces.append(np)
+	var parts := pieces
+	var free: Array = [[arr, idx]]
+	for i in arr.size():
+		if arr[i] == null:
+			free.append([arr, i])
+	if not stash:
+		for i in u.stash.size():
+			if u.stash[i] == null:
+				free.append([u.stash, i])
+	if free.size() < parts.size():
+		return "Not enough room"
+	arr[idx] = null
+	for k in parts.size():
+		var p: Dictionary = parts[k]
+		p["owner"] = int(it.get("owner", u.id))
+		p["locked"] = true
+		free[k][0][free[k][1]] = p
+	w.events.append({"t": "disassemble", "u": u.id, "item": it.id})
+	u.refresh_stats()
+	return ""
 
 func sell(u: SimUnit, slot: int) -> String:
 	if slot < 0 or slot >= u.inventory.size() or u.inventory[slot] == null:
@@ -377,12 +475,31 @@ func sell_stash(u: SimUnit, i: int) -> String:
 	_refund(u, it)
 	return ""
 
+## Accidental buy protection (Dota: 10 seconds): a piece bought less than 10 s ago sells for its full cost, after
+## that for half. A combined item counts each piece it was made of by that piece's own purchase time (so a recipe
+## bought just now on old parts refunds only the recipe in full, and a whole item bought just now refunds in full).
+const FULL_REFUND_TIME := 10.0
+
 func sell_value(it: Dictionary) -> int:
+	if it.has("made_of"):
+		var total := 0
+		for p in it.made_of:
+			total += sell_value(p)
+		return total
 	var d := SimData.item(it.id)
 	var value := int(d.cost)
 	if bool(d.consumable):
 		value = int(float(d.cost) * float(it.charges) / maxf(1.0, float(d.charges)))
-	return value if w.time - float(it.get("bought", -99.0)) <= 10.0 else value / 2
+	return value if w.time - float(it.get("bought", -99.0)) <= FULL_REFUND_TIME else value / 2
+
+## Seconds of full refund left on any piece of this item (0 when none).
+func full_refund_left(it: Dictionary) -> float:
+	if it.has("made_of"):
+		var best := 0.0
+		for p in it.made_of:
+			best = maxf(best, full_refund_left(p))
+		return best
+	return maxf(0.0, FULL_REFUND_TIME - (w.time - float(it.get("bought", -99.0))))
 
 func _refund(u: SimUnit, it: Dictionary) -> void:
 	var refund := sell_value(it)

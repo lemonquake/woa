@@ -1,0 +1,53 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[01:16:09] server "Export server" on port 27890 (queries on 27891)
+[01:16:14] A joined (1 online)
+[01:16:14] A made the lobby "Test lobby"
+[01:16:15] B joined (2 online)
+[01:16:15] lobby "Test lobby" started a match (2 players)
+[01:17:57] desync in "Test lobby" at frame 3000: repairing B
+ERROR: Unable to send packet on channel 0, max channels: 0
+   at: send (modules/enet/enet_packet_peer.cpp:64)
+ERROR: Unable to send packet on channel 0, max channels: 0
+   at: send (modules/enet/enet_packet_peer.cpp:64)
+ERROR: Unable to send packet on channel 0, max channels: 0
+   at: send (modules/enet/enet_packet_peer.cpp:64)
+ERROR: Unable to send packet on channel 0, max channels: 0
+   at: send (modules/enet/enet_packet_peer.cpp:64)
+[01:19:23] A left (1 online)
+[01:19:23] lobby "Test lobby" closed
+[01:19:23] B left (0 online)
+ERROR: BUG: Unreferenced static string to 0: .
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _net_id
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _unhandled_key_input
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _unhandled_input
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _shortcut_input
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _input
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _initialize
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _get_maximum_size
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: Variant
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _set_path_cache
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _exists
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: _recognize_path
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: @warning_ignore_restore
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: @warning_ignore_start
+   at: unref (core/string/string_name.cpp:118)
+ERROR: BUG: Unreferenced static string to 0: @icon
+   at: unref (core/string/string_name.cpp:118)
+ERROR: 7 RID allocations of type '23NavMeshGeometryParser2D' were leaked at exit.
+ERROR: 6 RID allocations of type '23NavMeshGeometryParser3D' were leaked at exit.
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketLargeE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)

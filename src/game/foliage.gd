@@ -300,6 +300,14 @@ func set_tree_alive(index: int, alive: bool) -> void:
 	if s.size() > 3:
 		(s[3] as MultiMesh).set_instance_transform(s[1], xf)
 
+## The world was replaced (a multiplayer snapshot): every tree takes the state the new world says, planted ones too.
+func resync_trees() -> void:
+	for i in map.trees.size():
+		var t: Dictionary = map.trees[i]
+		if not _tree_slot.has(i) and t.get("planted", false):
+			_make_planted(i)
+		set_tree_alive(i, bool(t.alive))
+
 ## A tree grows back (after 180 s) or is planted: it rises out of the ground and springs up to full size.
 ## Planted trees (Ironwood Twig) get their own small tree and a ring of glowing leaves at the base while they stand.
 func grow_tree(index: int) -> void:

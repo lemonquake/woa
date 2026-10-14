@@ -42,8 +42,10 @@ func check(cond: bool, msg: String) -> void:
 func near(a: float, b: float, tol: float, msg: String) -> void:
 	check(absf(a - b) <= tol, "%s: got %.4f, expected %.4f (+-%.4f)" % [msg, a, b, tol])
 
+## Mechanics tests check one rule at a time, so worlds start without the element table (test_element_* turn it on).
 func world(start_time := 0.0) -> SimWorld:
 	var w := SimWorld.new(1, _map)
+	w.elements = false
 	w.time = start_time
 	w.next_wave_at = INF if start_time > 0.0 else 0.0
 	return w
@@ -319,8 +321,9 @@ func test_wave_spawn() -> void:
 	var creeps := w.units.filter(func(u): return u.is_lane_creep())
 	check(creeps.size() == 24, "first wave: 3 melee + 1 ranged in 3 lanes for 2 teams (got %d)" % creeps.size())
 	run(w, 30.0)
-	creeps = w.units.filter(func(u): return u.is_lane_creep())
-	check(creeps.size() == 48, "second wave at 0:30 (got %d)" % creeps.size())
+	# counted as spawned: the top and bottom lanes now meet early enough for a creep to fall before 0:31
+	var spawned := w.next_id - 1
+	check(spawned == 48, "second wave at 0:30 (got %d spawned)" % spawned)
 	check(w.wave == 2, "two waves by 0:31")
 
 func test_wave_composition() -> void:
@@ -734,8 +737,8 @@ func _ezee(w: SimWorld, p: Vector2, levels := {}) -> SimUnit:
 	return e
 
 ## A tree with open walkable ground on one side, for impact tests: [tree index, free point, push direction].
-func _tree_spot() -> Array:
-	for i in _map.trees.size():
+func _tree_spot(from := 0) -> Array:
+	for i in range(from, _map.trees.size()):
 		var t: Dictionary = _map.trees[i]
 		if not t.alive or t.pos.length() > 5000.0:
 			continue
@@ -805,7 +808,7 @@ func test_ezee_dark_stomp_tree_impact() -> void:
 	if not st.is_empty():
 		near(float(st.expires) - stunned_at, 2.8, 0.05, "level 4 impact stun lasts 2.8 s")
 	var row: Array = e.dmg_out.get("dark_stomp", [0, 0, 0])
-	near(float(row[1]), (150.0 + 125.0) * (1.0 - c.magic_resist), 1.0, "stomp plus impact damage (magic)")
+	near(float(row[1]), (150.0 + 125.0) * (1.0 + e.magic_amp) * (1.0 - c.magic_resist), 1.0, "stomp plus impact damage (magic)")
 
 func test_ezee_dark_stomp_unit_collision() -> void:
 	var w := empty_world()
@@ -882,7 +885,7 @@ func test_ezee_tainted_touch_and_curse() -> void:
 	w.command(e.id, {"type": O.ATTACK_UNIT, "target": foe.id})
 	run(w, 1.2)
 	var row: Array = e.dmg_out.get("tainted_touch", [0, 0, 0])
-	near(float(row[0]), 150.0 * (1.0 - foe.magic_resist), 1.0, "a hit adds 150 magic damage at level 4")
+	near(float(row[0]), 150.0 * (1.0 + e.magic_amp) * (1.0 - foe.magic_resist), 1.0, "a hit adds 150 magic damage at level 4")
 	check(w.vision.revealed_to(foe, C.DAWN), "the target is cursed and revealed")
 	foe.add_modifier({"id": "invis_test", "source": foe.id, "expires": -1.0, "invisible": true})
 	check(w.vision.sees(C.DAWN, foe), "the curse reveals it even when invisible")
@@ -1320,7 +1323,7 @@ func test_gale_impact() -> void:
 	check(is_inf(w.abilities.cast_range(r, "gale_impact", -1)), "aimed by direction: no cast range to walk into")
 	w.command(r.id, {"type": O.CAST_POINT, "ability": "gale_impact", "point": Vector2(-800, -4000)})
 	run(w, 1.6)
-	near(on_left.max_hp - on_left.hp, 120.0 * (1.0 - on_left.magic_resist), 1.0, "120 magic damage at level 1")
+	near(on_left.max_hp - on_left.hp, 120.0 * (1.0 + r.magic_amp) * (1.0 - on_left.magic_resist), 1.0, "120 magic damage at level 1")
 	check(on_left.pos.y > -3970.0 + 120.0, "an enemy left of the arrow is thrown further left (y %.0f)" % on_left.pos.y)
 	check(on_right.pos.y < -4030.0 - 120.0, "one right of it is thrown right (y %.0f)" % on_right.pos.y)
 	check(w.abilities.cooldown_left(r, "gale_impact") > 10.0, "12 s cooldown")
@@ -1350,7 +1353,15 @@ func test_gale_impact() -> void:
 
 func test_gale_impact_trees_and_crash() -> void:
 	var w := empty_world()
+	# a tree with open ground beside it, and room for the archer's whole shot past the enemy
 	var spot := _tree_spot()
+	while not spot.is_empty():
+		var a0: Vector2 = -(spot[2] as Vector2)
+		var f0: Vector2 = _map.trees[int(spot[0])].pos + a0 * 170.0
+		var s0 := a0.orthogonal()
+		if _map.line_walkable(f0 + a0 * 120.0 - s0 * 700.0, f0 + a0 * 120.0 + s0 * 700.0):
+			break
+		spot = _tree_spot(int(spot[0]) + 1)
 	var ti: int = spot[0]
 	var tp: Vector2 = _map.trees[ti].pos
 	var away: Vector2 = -(spot[2] as Vector2)              # from the tree out over open ground
@@ -1372,7 +1383,7 @@ func test_gale_impact_trees_and_crash() -> void:
 		w.events.clear()
 	var row: Array = r.dmg_out.get("gale_impact", [0, 0, 0])
 	if crashed:
-		near(float(row[1]), 360.0 * 1.2 * (1.0 - foe.magic_resist), 2.0, "the crash adds 20% of the damage once")
+		near(float(row[1]), 360.0 * 1.2 * (1.0 + r.magic_amp) * (1.0 - foe.magic_resist), 2.0, "the crash adds 20% of the damage once")
 		check(felled, "the tree it crashed into is destroyed")
 	else:
 		check(false, "the enemy was thrown into the tree")
@@ -1745,9 +1756,9 @@ func test_stench_damage_slow_self_damage_and_toggle() -> void:
 		self_dmg += _dmg_events(w.events, s.id, "stench")
 		w.events.clear()
 	check(ticks == 5 or ticks == 6, "a tick every 0.2 s (%d in 1 s)" % ticks)
-	near(st_dmg, ticks * 120.0 * 0.2 * (1.0 - e.magic_resist), 0.01, "120 magic damage per second at level 4")
+	near(st_dmg, ticks * 120.0 * 0.2 * (1.0 + s.magic_amp) * (1.0 - e.magic_resist), 0.01, "120 magic damage per second at level 4")
 	near(far.hp, far0, 0.001, "nothing beyond 250")
-	near(self_dmg, ticks * 120.0 * 0.2 * (1.0 - s.magic_resist), 0.01, "Sludge takes the same damage")
+	near(self_dmg, ticks * 120.0 * 0.2 * (1.0 + s.magic_amp) * (1.0 - s.magic_resist), 0.01, "Sludge takes the same damage")
 	check(s.hp < s0, "from his own health")
 	var slow := e.get_modifier("stench")
 	near(float(slow.get("slow", 0.0)), 0.32, 0.001, "32% slow at level 4")
@@ -1832,7 +1843,7 @@ func test_chomp_bites_heal_pull_and_end() -> void:
 			stunned = true
 	var per_bite := (120.0 + 0.9 * str0) * 2.75 / 6.0
 	check(bites == 6, "6 bites over the 2.75 s channel (%d)" % bites)
-	near(bite_dmg, per_bite * 6.0 * (1.0 - e.magic_resist), 0.05, "(120 + 0.9 x strength) magic damage per second")
+	near(bite_dmg, per_bite * 6.0 * (1.0 + s.magic_amp) * (1.0 - e.magic_resist), 0.05, "(120 + 0.9 x strength) magic damage per second")
 	check(e0 - e.hp > bite_dmg - 15.0, "taken from its health")
 	near(healed, per_bite * 6.0, 1.0, "Sludge heals the full bite each time")
 	check(stunned, "the victim is stunned")
@@ -2155,7 +2166,7 @@ func test_spike_armor_returns_damage() -> void:
 	h.mana = h.max_mana
 	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
 	w.combat.deal_damage(src.id, src.team, true, h, 200.0, C.DamageType.MAGICAL, false, "spell")
-	near(hp0 - src.hp, 170.0 * (1.0 - src.magic_resist), 0.01, "active: 85% of any damage, same type")
+	near(hp0 - src.hp, 170.0 * (1.0 + src.magic_amp) * (1.0 - src.magic_resist), 0.01, "active: 85% of any damage, same type")
 	hp0 = src.hp
 	var h_hp := h.hp
 	w.combat.deal_damage(src.id, src.team, true, h, 100.0, C.DamageType.PHYSICAL, true, "attack")
@@ -2651,17 +2662,17 @@ func test_neutrals_proximity_day_and_sleep_at_night() -> void:
 	run(w, 1.2)
 	var camp: Dictionary = _map.camps[1]
 	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
-	var h := w.spawn("blood_ranger", C.DAWN, n[0].pos + Vector2(200, 0))
+	var h := w.spawn("blood_ranger", C.DAWN, n[0].pos + Vector2(100, 0))
 	h.order = O.HOLD
 	h.no_acquire = true
 	run(w, 0.6)
-	check(n[0].neutral_state == 1 and n[0].atk_target == h.id, "by day a hero walking within 240 wakes the camp")
+	check(n[0].neutral_state == 1 and n[0].atk_target == h.id, "by day a hero walking within 125 wakes the camp")
 	var w2 := world(359.0)
 	w2.next_wave_at = INF
 	w2.next_neutral_at = 360.0
 	run(w2, 1.2)
 	var n2 := w2.units.filter(func(u): return u.camp_id == camp.id and u.alive)
-	var h2 := w2.spawn("blood_ranger", C.DAWN, n2[0].pos + Vector2(200, 0))
+	var h2 := w2.spawn("blood_ranger", C.DAWN, n2[0].pos + Vector2(100, 0))
 	h2.order = O.HOLD
 	h2.no_acquire = true                     # it does not attack them either
 	run(w2, 1.0)
@@ -2727,33 +2738,43 @@ func test_stack_bounty_and_stacker_share() -> void:
 	check(got_b >= int(round(3 * 0.8)) and got_b <= int(round(5 * 0.8)), "a stacked goblin gives 20%% less (%d)" % got_b)
 	check(got_a == int(round(got_b * C.STACKER_SHARE)), "the stacker gets 30%% of what the ally got (%d of %d)" % [got_a, got_b])
 
-func test_lane_creeps_fight_only_pull_camps() -> void:
+func test_lane_creeps_fight_only_aggressive_neutrals() -> void:
+	# owner's rule: lane creeps leave a camp sitting in its box alone; once a neutral fights (anyone) they may attack
+	# it, and for 5 s after it stops
 	var w := empty_world()
-	var pull := -1
-	var other := -1
-	for c in _map.camps:
-		if c.side == C.DAWN and bool(c.pull) and pull < 0:
-			pull = c.id
-		elif c.side == C.DAWN and not bool(c.pull) and other < 0:
-			other = c.id
-	for cid in [pull, other]:
-		var camp: Dictionary = _map.camps[cid]
-		var n := w.spawn("mudling", C.NEUTRAL, camp.pos)
-		n.camp_id = cid
-		n.home = camp.pos
-		var lc := w.spawn("dawn_melee", C.DAWN, camp.pos + Vector2(250, 0))
-		lc.lane = "bot"
-		lc.lane_i = 1
-		w._rebuild_grid()
-		w.vision.update()
-		var t := w.ai._pick(lc, lc.acquire_range)
-		if cid == pull:
-			check(t == n, "a lane creep attacks a pull camp's neutral")
-		else:
-			check(t != n, "but ignores other camps' neutrals")
-		n.alive = false
-		lc.alive = false
-		w._rebuild_grid()
+	var camp: Dictionary = _map.camps[0]
+	var n := w.spawn("mudling", C.NEUTRAL, camp.pos)
+	n.camp_id = camp.id
+	n.home = camp.pos
+	var lc := w.spawn("dawn_melee", C.DAWN, camp.pos + Vector2(250, 0))
+	lc.lane = "bot"
+	lc.lane_i = 1
+	w._rebuild_grid()
+	w.vision.update()
+	check(w.ai._pick(lc, lc.acquire_range) == null, "a lane creep ignores a calm neutral in its camp")
+	w.ai.neutral_provoked(n, lc)
+	check(n.neutral_state == 1 and w.ai._pick(lc, lc.acquire_range) == n, "a neutral that fights is fair game")
+	n.neutral_state = 0
+	n.atk_target = -1
+	w.time += C.NEUTRAL_HOSTILE_TIME - 0.5
+	check(w.ai._pick(lc, lc.acquire_range) == n, "still within 5 s of fighting")
+	w.time += 1.0
+	check(w.ai._pick(lc, lc.acquire_range) == null, "calm again after 5 s")
+
+func test_neutrals_wake_within_125_only() -> void:
+	var w := world(59.0)
+	w.next_wave_at = INF
+	run(w, 1.2)
+	var camp: Dictionary = _map.camps[1]
+	var n := w.units.filter(func(u): return u.camp_id == camp.id and u.alive)
+	var h := w.spawn("blood_ranger", C.DAWN, n[0].pos + Vector2(200, 0))
+	h.order = O.HOLD
+	h.no_acquire = true
+	run(w, 1.0)
+	check(n.all(func(u): return u.neutral_state == 0), "a hero standing 200 away does not wake the camp")
+	h.pos = n[0].pos + Vector2(n[0].hull + h.hull + 100.0, 0)
+	run(w, 0.6)
+	check(n[0].neutral_state == 1, "within 125 it does")
 
 # ---- Team brain, bots, learning ---------------------------------------------------------------------------------
 
@@ -3239,16 +3260,466 @@ func test_spell_amp_raises_spell_damage() -> void:
 	t.refresh_stats()
 	var hp0 := t.hp
 	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.MAGICAL, false, "dark_stomp")
-	near(hp0 - t.hp, 100.0, 0.01, "no amplification without items")
+	near(hp0 - t.hp, 100.0 * (1.0 + e.int_total / 2000.0), 0.01, "without items only intelligence amplifies (1% per 20)")
 	e.inventory.resize(9)
 	_give(w, e, "spell_sword", 0)
-	near(e.spell_amp, 0.10, 1e-6, "Spell Sword 10% spell amplification")
+	near(e.magic_amp_items, 0.10, 1e-6, "Atuli: 10% magic amp")
 	hp0 = t.hp
 	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.MAGICAL, false, "dark_stomp")
-	near(hp0 - t.hp, 110.0, 0.01, "spells deal 10% more")
+	near(hp0 - t.hp, 100.0 * (1.10 + e.int_total / 2000.0), 0.01, "magic spells deal 10% more")
+	# a Damage Orb's spell amp adds to it
+	e.add_modifier({"id": "test_amp", "source": e.id, "expires": INF, "stats": {"spell_amp": 0.15}})
+	e.refresh_stats()
+	hp0 = t.hp
+	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.MAGICAL, false, "dark_stomp")
+	near(hp0 - t.hp, 100.0 * (1.25 + e.int_total / 2000.0), 0.01, "spell amp and magic amp add up")
+	e.remove_modifier("test_amp")
+	e.refresh_stats()
 	hp0 = t.hp
 	w.combat.deal_damage(e.id, e.team, true, t, 100.0, C.DamageType.PHYSICAL, true, "attack")
 	near(hp0 - t.hp, 100.0 * C.armor_multiplier(t.armor), 0.01, "attacks are not amplified")
+
+# ---- Elements, armor and damage types, magic amp (owner's rules, 2026-10-14) ------------------------------------------
+
+func _el_world() -> SimWorld:
+	var w := empty_world()
+	w.elements = true
+	return w
+
+func test_element_table() -> void:
+	var E := C.Element
+	near(C.element_mult(E.WATER, E.FIRE), 1.25, 1e-6, "Water beats Fire")
+	near(C.element_mult(E.FIRE, E.WATER), 0.75, 1e-6, "Fire is weak against Water")
+	near(C.element_mult(E.FIRE, E.NATURE), 1.25, 1e-6, "Fire beats Nature")
+	near(C.element_mult(E.FIRE, E.ICE), 1.25, 1e-6, "Fire beats Ice")
+	near(C.element_mult(E.EARTH, E.FIRE), 1.25, 1e-6, "Earth beats Fire")
+	near(C.element_mult(E.LIGHTNING, E.WATER), 1.25, 1e-6, "Lightning beats Water")
+	near(C.element_mult(E.LIGHTNING, E.EARTH), 0.75, 1e-6, "Lightning is weak against Earth")
+	near(C.element_mult(E.LIGHT, E.DARK), 1.25, 1e-6, "Light beats Dark")
+	near(C.element_mult(E.DARK, E.LIGHT), 1.25, 1e-6, "and Dark beats Light")
+	near(C.element_mult(E.FIRE, E.FIRE), 0.75, 1e-6, "an element resists itself")
+	near(C.element_mult(E.NONE, E.NONE), 1.0, 1e-6, "None is neutral to itself")
+	for a in C.ELEMENT_NAMES.size():
+		near(C.element_mult(E.NONE, a), 1.0, 1e-6, "None deals normal damage to " + C.ELEMENT_NAMES[a])
+		near(C.element_mult(a, E.NONE), 1.0, 1e-6, C.ELEMENT_NAMES[a] + " deals normal damage to None")
+		for b in C.ELEMENT_NAMES.size():
+			var m := C.element_mult(a, b)
+			check(m == 1.0 or m == 0.75 or m == 1.25, "only x0.75, x1 or x1.25 (%s vs %s)" % [C.ELEMENT_NAMES[a], C.ELEMENT_NAMES[b]])
+
+func test_unit_elements_and_types() -> void:
+	var w := _el_world()
+	var az := w.spawn("azrin", C.DAWN, Vector2(-2000, -4000))
+	check(az.element == C.Element.FIRE and az.weapon == C.Weapon.HERO and az.armor_type == C.ArmorType.HERO, "Azrin: Fire, Hero weapon, Hero armor")
+	check(w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -3800)).element == C.Element.NATURE, "Blood Ranger is Nature")
+	check(w.spawn("ezee", C.DAWN, Vector2(-2000, -3600)).element == C.Element.DARK, "Ezee is Dark")
+	check(w.spawn("sludge", C.DAWN, Vector2(-2000, -3400)).element == C.Element.EARTH, "Sludge is Earth")
+	var dm := w.spawn("dawn_melee", C.DAWN, Vector2(-1500, -4000))
+	var km := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -3800))
+	check(dm.element == C.Element.LIGHT and km.element == C.Element.DARK, "lane creeps take their team's element")
+	check(dm.weapon == C.Weapon.SLASH and dm.armor_type == C.ArmorType.ORGANIC, "melee creeps: Slash, Organic")
+	var rc := w.spawn("dawn_ranged", C.DAWN, Vector2(-1500, -3600))
+	check(rc.weapon == C.Weapon.PIERCING, "ranged creeps: Piercing")
+	var sg := w.spawn("dusk_siege", C.DUSK, Vector2(-1500, -3400))
+	check(sg.weapon == C.Weapon.SIEGE and sg.armor_type == C.ArmorType.ARMORED, "siege creeps: Siege, Armored")
+	var tw := w.spawn("tower1", C.DUSK, Vector2(-800, -4000))
+	check(tw.armor_type == C.ArmorType.STRUCTURE and tw.element == C.Element.EARTH and tw.weapon == C.Weapon.SIEGE, "towers: Structure, Earth, Siege")
+	var th0 := w.spawn("ancient", C.DAWN, Vector2(-6000, -6000))
+	var th1 := w.spawn("ancient", C.DUSK, Vector2(6000, 6000))
+	check(th0.element == C.Element.LIGHT and th1.element == C.Element.DARK, "each Throne takes its team's element")
+	var imp := w.spawn("cinder_wyrmling", C.NEUTRAL, Vector2(2000, 2000))
+	check(imp.element == C.Element.FIRE and imp.weapon == C.Weapon.MAGIC, "Fire Imp: Fire, Magic attacks")
+	check(w.spawn("ogre_brute", C.NEUTRAL, Vector2(2200, 2000)).weapon == C.Weapon.BLUNT, "Ogre: Blunt")
+
+func test_damage_table_keeps_dota_pairings() -> void:
+	var W := C.Weapon
+	var A := C.ArmorType
+	near(C.damage_mult(W.HERO, A.STRUCTURE), 0.5, 1e-6, "heroes deal 50% to buildings")
+	near(C.damage_mult(W.HERO, A.ARMORED), 0.5, 1e-6, "heroes deal 50% to siege creeps")
+	near(C.damage_mult(W.SLASH, A.HERO), 0.75, 1e-6, "melee creeps deal 75% to heroes")
+	near(C.damage_mult(W.SLASH, A.ARMORED), 0.7, 1e-6, "melee creeps deal 70% to siege creeps")
+	near(C.damage_mult(W.PIERCING, A.ORGANIC), 1.5, 1e-6, "piercing 150% to creeps")
+	near(C.damage_mult(W.PIERCING, A.ARMORED), 1.05, 1e-6, "piercing 150% x 70% to siege creeps")
+	near(C.damage_mult(W.SIEGE, A.STRUCTURE), 2.5, 1e-6, "siege 250% to buildings")
+	near(C.damage_mult(W.BLUNT, A.STRUCTURE), 0.7, 1e-6, "neutrals' default class 70% to buildings")
+	near(C.damage_mult(W.MAGIC, A.STRUCTURE), 0.0, 1e-6, "magic never hurts buildings")
+	for a in 5:
+		near(C.damage_mult(W.AETHER, a), 1.0, 1e-6, "Aether (pure) is full against " + C.ARMOR_NAMES[a])
+
+func test_element_in_attacks_and_spells() -> void:
+	var w := _el_world()
+	var az := w.spawn("azrin", C.DAWN, Vector2(-2000, -4000))
+	var br := _dummy(w, "blood_ranger", C.DUSK, Vector2(-1500, -4000))   # Nature: Fire beats it
+	var sl := _dummy(w, "sludge", C.DUSK, Vector2(-1500, -3700))         # Earth: beats Fire
+	for u in [br, sl]:
+		u.def["magic_resist"] = 0.0
+		u.refresh_stats()
+	var hp0 := br.hp
+	w.combat.deal_damage(az.id, az.team, true, br, 100.0, C.DamageType.PURE, false, "fiery_javelin")
+	near(hp0 - br.hp, 125.0, 0.01, "Fire spell on a Nature hero: x1.25")
+	hp0 = sl.hp
+	w.combat.deal_damage(az.id, az.team, true, sl, 100.0, C.DamageType.PURE, false, "fiery_javelin")
+	near(hp0 - sl.hp, 75.0, 0.01, "Fire spell on an Earth hero: x0.75")
+	# an attack carries the attacker's element, on top of the weapon / armor table
+	var s := w.combat._snapshot(az, "")
+	near(w.combat.attack_class_multiplier(s, br), 1.25, 1e-6, "Azrin's attack on Blood Ranger: Hero vs Hero x Fire vs Nature")
+	var tw := w.spawn("tower1", C.DUSK, Vector2(-1200, -4000))
+	near(w.combat.attack_class_multiplier(s, tw), 0.5 * 0.75, 1e-6, "on an Earth tower: 50% x 0.75")
+	# an item names its own element: Shock Hammer is Lightning (Lightning is weak against Earth)
+	hp0 = sl.hp
+	w.combat.deal_damage(az.id, az.team, true, sl, 100.0, C.DamageType.PURE, false, "shock_hammer")
+	near(hp0 - sl.hp, 75.0, 0.01, "Shock Hammer (Lightning) on Earth: x0.75")
+	# the event carries it for the HUD
+	var ev: Array = w.events.filter(func(e): return e.t == "damage" and int(e.u) == sl.id)
+	check(not ev.is_empty() and int(ev[-1].element) == C.Element.LIGHTNING and float(ev[-1].emult) == 0.75, "damage events name the element and its multiplier")
+	# switched off (other mechanics tests), no element multiplier
+	w.elements = false
+	hp0 = br.hp
+	w.combat.deal_damage(az.id, az.team, true, br, 100.0, C.DamageType.PURE, false, "fiery_javelin")
+	near(hp0 - br.hp, 100.0, 0.01, "no multiplier with elements off")
+
+func test_lane_creeps_with_elements() -> void:
+	# Light and Dark beat each other, so both sides' creeps deal x1.25 to each other: the lane stays even
+	var w := _el_world()
+	var a := w.spawn("dawn_melee", C.DAWN, Vector2(-1500, -4000))
+	var b := w.spawn("dusk_melee", C.DUSK, Vector2(-1400, -4000))
+	var sa := w.combat._snapshot(a, "")
+	var sb := w.combat._snapshot(b, "")
+	near(w.combat.attack_class_multiplier(sa, b), 1.25, 1e-6, "Light melee on Dark melee")
+	near(w.combat.attack_class_multiplier(sb, a), 1.25, 1e-6, "Dark melee on Light melee")
+
+func test_magic_attacks_use_magic_resistance() -> void:
+	var w := empty_world()
+	var imp := w.spawn("cinder_wyrmling", C.NEUTRAL, Vector2(-2000, -4000))
+	var h := _dummy(w, "sludge", C.DAWN, Vector2(-1750, -4000))
+	h.def["armor"] = 50.0
+	h.refresh_stats()
+	var hp0 := h.hp
+	var s := w.combat._snapshot(imp, "")
+	s.dmg_min = 100.0
+	s.dmg_max = 100.0
+	s.bonus = 0.0
+	w.combat.land_attack(s, h)
+	near(hp0 - h.hp, 100.0 * (1.0 - h.magic_resist), 0.5, "a Magic attack ignores armor and meets magic resistance")
+
+func test_int_magic_amp_and_resist() -> void:
+	var w := empty_world()
+	var az := w.spawn("azrin", C.DAWN, Vector2(-2000, -4000))
+	near(az.int_total, 27.0, 1e-6, "27 intelligence at level 1")
+	near(az.magic_amp_int, 27.0 / 20.0 / 100.0, 1e-6, "1% magic amp per 20 intelligence")
+	near(az.magic_resist, 1.0 - 0.75 * (1.0 - 27.0 / 25.0 / 100.0), 1e-6, "25% base and 1% per 25 intelligence")
+	az.level = 25
+	az.refresh_stats()
+	near(az.magic_amp_int, (27.0 + 3.4 * 24.0) / 2000.0, 1e-6, "grows with intelligence")
+
+func test_item_magic_amp_diminishes() -> void:
+	var w := empty_world()
+	var az := w.spawn("azrin", C.DAWN, Vector2(-2000, -4000))
+	_give(w, az, "spell_sword", 0)
+	near(az.magic_amp_items, 0.10, 1e-6, "one Atuli: 10%")
+	_give(w, az, "spell_sword", 1)
+	near(az.magic_amp_items, 0.15, 1e-6, "two: 10% + 5%")
+	_give(w, az, "kugmo_atuli", 2)
+	near(az.magic_amp_items, 0.12 + 0.05 + 0.025, 1e-6, "12% + 10% / 2 + 10% / 4, largest first")
+	near(az.magic_amp, az.magic_amp_int + az.magic_amp_items, 1e-6, "intelligence adds in full")
+	az.inventory[7] = az.inventory[0]
+	az.inventory[0] = null
+	az.refresh_stats()
+	near(az.magic_amp_items, 0.12 + 0.05, 1e-6, "the backpack gives none")
+
+func test_kugmo_igit_atuli_family() -> void:
+	var w := world()
+	var h := w.spawn("azrin", C.DAWN, w.map.shops[C.DAWN])
+	h.gold_unreliable = 99999
+	check(SimData.item("heavy_sword").name == "Kugmo" and SimData.item("yasha").name == "Igit" and SimData.item("spell_sword").name == "Atuli", "the owner's names")
+	check(w.shop.buy(h, "heavy_sword") == "" and w.shop.buy(h, "spell_sword") == "", "buy Kugmo and Atuli")
+	check(w.shop.owns(h, "kugmo_atuli"), "they combine into Kugmo and Atuli")
+	near(h.slow_resist, 0.25, 1e-6, "25% slow resistance")
+	near(h.magic_amp_items, 0.12, 1e-6, "12% magic amp")
+	near(h.mana_cost_cut, 0.25, 1e-6, "25% cheaper spells")
+	h.ability_level["fiery_javelin"] = 1
+	near(w.abilities.ability_mana(h, "fiery_javelin"), 75.0, 1e-6, "Fiery Javelin costs 75 instead of 100")
+	var h2 := w.spawn("azrin", C.DAWN, w.map.shops[C.DAWN] + Vector2(100, 0))
+	h2.gold_unreliable = 99999
+	check(w.shop.buy(h2, "yasha") == "" and w.shop.buy(h2, "spell_sword") == "", "buy Igit and Atuli")
+	check(w.shop.owns(h2, "igit_atuli"), "they combine into Igit and Atuli")
+	near(h2.cast_speed, 0.25, 1e-6, "25% faster casting")
+	check(w.shop.buy(h2, "heavy_sword") == "", "and a Kugmo")
+	check(not w.shop.owns(h2, "twin_swords"), "Igit inside Igit and Atuli does not combine again")
+	check(SimData.item("twin_swords").name == "Kugmo and Igit", "Kugmo and Igit")
+
+func test_item_lock_and_disassemble() -> void:
+	var w := world()
+	var h := w.spawn("ezee", C.DAWN, w.map.shops[C.DAWN])
+	h.gold_unreliable = 99999
+	check(w.shop.buy(h, "spike_armor") == "", "buy Spike Armor")
+	var slot := -1
+	for i in 9:
+		if h.inventory[i] != null and h.inventory[i].id == "spike_armor":
+			slot = i
+	check(slot >= 0, "it is in the bags")
+	check(w.shop.disassemble(h, slot) == "", "take it apart")
+	var ids := _ids(h.inventory)
+	check(ids.has("broadsword") and ids.has("plate_vest") and ids.has("recipe_spike_armor"), "parts and the recipe scroll come back (%s)" % [ids])
+	check(not w.shop.owns(h, "spike_armor"), "the item is gone")
+	for it in h.inventory:
+		if it != null:
+			check(bool(it.get("locked", false)), "%s is locked" % it.id)
+	w.shop.combine_all(h)
+	check(not w.shop.owns(h, "spike_armor"), "locked parts do not combine")
+	var bi := -1
+	for i in 9:
+		if h.inventory[i] != null and h.inventory[i].id == "broadsword":
+			bi = i
+	w.shop.toggle_lock(h, bi)
+	check(not w.shop.owns(h, "spike_armor"), "one unlocked part alone does not combine")
+	for i in 9:
+		var it = h.inventory[i]
+		if it != null and bool(it.get("locked", false)):
+			w.shop.toggle_lock(h, i)
+	check(w.shop.owns(h, "spike_armor"), "unlocking every part combines it again")
+	# Gold Glove and Upgrade Staff cannot be taken apart (Dota's never list); basic items neither
+	check(w.shop.buy(h, "gold_glove") == "", "buy Gold Glove")
+	for i in 9:
+		if h.inventory[i] != null and h.inventory[i].id == "gold_glove":
+			check(w.shop.disassemble(h, i) == "Cannot be disassembled", "Gold Glove refuses")
+	var gi := h.inventory.find(null)
+	_give(w, h, "branch", gi)
+	check(w.shop.disassemble(h, gi) == "Cannot be disassembled", "a basic item refuses")
+	# a locked item stays locked and does not combine when its partner arrives
+	var w2 := world()
+	var h2 := w2.spawn("ezee", C.DAWN, w2.map.shops[C.DAWN])
+	h2.gold_unreliable = 99999
+	w2.shop.buy(h2, "circlet")
+	w2.shop.toggle_lock(h2, 0)
+	w2.shop.buy(h2, "gauntlets")
+	w2.shop.buy(h2, "recipe_tough_band")
+	check(not w2.shop.owns(h2, "tough_band"), "a locked Headband is not used for a Tough Band")
+	# room: parts that do not fit refuse the whole thing
+	var w3 := world()
+	var h3 := w3.spawn("ezee", C.DAWN, Vector2(0, 0))
+	for i in 9:
+		_give(w3, h3, "branch", i)
+	h3.inventory[0] = w3.shop.new_item("spike_armor")
+	for i in 6:
+		h3.stash[i] = w3.shop.new_item("branch")
+	check(w3.shop.disassemble(h3, 0) == "Not enough room", "no room: refused")
+	check(h3.inventory[0].id == "spike_armor", "and nothing changed")
+	# Switch Boots come apart into the recipe they were built with
+	var w4 := world()
+	var h4 := w4.spawn("ezee", C.DAWN, w4.map.shops[C.DAWN])
+	h4.gold_unreliable = 99999
+	w4.shop.buy(h4, "boots")
+	w4.shop.buy(h4, "gloves")
+	w4.shop.buy(h4, "robe")
+	check(w4.shop.owns(h4, "power_treads"), "Switch Boots built with a Wizard Robe")
+	w4.shop.disassemble(h4, 0)
+	check(_ids(h4.inventory).has("robe"), "they give the Wizard Robe back")
+
+func test_full_refund_protection() -> void:
+	# owner's rule: 10 s of full refund, kept when a combined item is taken apart; a combined item counts each piece
+	# by its own purchase time
+	var w := world()
+	var h := w.spawn("ezee", C.DAWN, w.map.shops[C.DAWN])
+	h.gold_unreliable = 99999
+	w.shop.buy(h, "spike_armor")
+	check(w.shop.sell_value(h.inventory[0]) == 2400, "Spike Armor just bought: 2400 back")
+	run(w, 3.0)
+	check(w.shop.disassemble(h, 0) == "", "taken apart by accident")
+	var total := 0
+	for it in h.inventory:
+		if it != null:
+			total += w.shop.sell_value(it)
+	check(total == 2400, "its parts still sell for the full 2400 inside the 10 s (%d)" % total)
+	var g0 := h.gold()
+	for i in 9:
+		if h.inventory[i] != null:
+			w.shop.sell(h, i)
+	check(h.gold() - g0 == 2400, "and selling them gives back 2400 (%d)" % (h.gold() - g0))
+	# after 10 s: half
+	w.shop.buy(h, "spike_armor")
+	run(w, 11.0)
+	check(w.shop.sell_value(h.inventory[0]) == 1200, "after 10 s: half (%d)" % w.shop.sell_value(h.inventory[0]))
+	w.shop.disassemble(h, 0)
+	total = 0
+	for it in h.inventory:
+		if it != null:
+			total += w.shop.sell_value(it)
+	check(total == 1200, "and its parts: half too (%d)" % total)
+	# old parts and a new recipe: only the recipe is refunded in full
+	var w2 := world()
+	var h2 := w2.spawn("ezee", C.DAWN, w2.map.shops[C.DAWN])
+	h2.gold_unreliable = 99999
+	w2.shop.buy(h2, "broadsword")
+	w2.shop.buy(h2, "plate_vest")
+	run(w2, 20.0)
+	w2.shop.buy(h2, "recipe_spike_armor")
+	check(w2.shop.owns(h2, "spike_armor"), "combined from old parts and a new recipe")
+	var sa = h2.inventory[0] if h2.inventory[0] != null and h2.inventory[0].id == "spike_armor" else h2.inventory[1]
+	check(w2.shop.sell_value(sa) == 1000 / 2 + 950 / 2 + 450, "old parts at half, the new recipe in full (%d)" % w2.shop.sell_value(sa))
+
+func _azrin(w: SimWorld, p: Vector2, team := C.DAWN) -> SimUnit:
+	var a := w.spawn("azrin", team, p)
+	a.level = 18
+	a.refresh_stats()
+	a.hp = a.max_hp
+	a.mana = a.max_mana
+	for aid in a.abilities:
+		a.ability_level[aid] = 4 if aid != "divine_smite" else 3
+	a.refresh_stats()
+	a.auto_attack = false                      # it casts; its attacks would blur the damage sums
+	return a
+
+## A target dummy with no health regeneration and no magic resistance, for exact damage sums.
+func _bare(w: SimWorld, id: String, team: int, p: Vector2) -> SimUnit:
+	var d := _dummy(w, id, team, p)
+	d.def["magic_resist"] = 0.0
+	d.def["hp_regen"] = 0.0
+	d.refresh_stats()
+	return d
+
+func test_burns_tick_and_extend() -> void:
+	var w := empty_world()
+	var a := _azrin(w, Vector2(-2000, -4000))
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	var hp0 := t.hp
+	w.status.add_dot(t, a, "fiery_javelin", 100.0, 5.0, C.Element.FIRE)
+	check(not t.get_modifier("burning").is_empty(), "the unit shows Burning")
+	run(w, 2.6)
+	near(hp0 - t.hp, 250.0 * (1.0 + a.magic_amp), 0.5, "5 ticks of 50 in the first 2.5 s")
+	w.status.extend_dots(t, a.team, C.Element.FIRE, 2.0)
+	run(w, 6.0)
+	near(hp0 - t.hp, 700.0 * (1.0 + a.magic_amp), 0.5, "7 s of burning in all after a 2 s extension")
+	check(w.status.dots.is_empty() and t.get_modifier("burning").is_empty(), "the burn ends")
+	# debuff immunity refuses a burn
+	t.add_modifier({"id": "spell_shield", "source": t.id, "expires": INF, "debuff_immune": true})
+	t.refresh_stats()
+	check(not w.status.add_dot(t, a, "fiery_javelin", 100.0, 5.0, C.Element.FIRE), "Spell Shield refuses a burn")
+
+func test_fiery_javelin() -> void:
+	var w := empty_world()
+	var a := _azrin(w, Vector2(-2000, -4000))
+	var e1 := _bare(w, "dusk_melee", C.DUSK, Vector2(-1700, -4000))
+	var e2 := _bare(w, "dusk_melee", C.DUSK, Vector2(-1400, -3880))
+	var off := _bare(w, "dusk_melee", C.DUSK, Vector2(-1400, -3600))
+	var ally := _dummy(w, "dawn_melee", C.DAWN, Vector2(-1600, -4000))
+	for u in [e1, e2, off]:
+		u.def["magic_resist"] = 0.0
+		u.refresh_stats()
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "fiery_javelin", "point": Vector2(-500, -4000)})
+	var dragged := false
+	for i in 30:
+		w.step()
+		if not e1.knock.is_empty():
+			dragged = true
+	check(dragged, "enemies on the path are dragged")
+	run(w, 1.0)
+	var end := Vector2(-2000, -4000) + Vector2(1000 + 24, 0)
+	check(e1.pos.distance_to(end) < 120.0, "carried to where the javelin lands (%.0f away)" % e1.pos.distance_to(end))
+	check(e2.pos.distance_to(end) < 160.0, "the second one too")
+	check(off.pos.distance_to(Vector2(-1400, -3600)) < 1.0, "an enemy beyond the width is left alone")
+	check(ally.pos.distance_to(Vector2(-1600, -4000)) < 1.0, "allies are ignored")
+	check(e1.knock.is_empty(), "released at the end")
+	var hp0 := e1.hp
+	run(w, 5.0)
+	check(e1.hp < hp0, "burning")
+	var total := e1.max_hp - e1.hp
+	near(total, 140.0 * 5.0 * (1.0 + a.magic_amp), 1.0, "140 magic damage per second for 5 s at level 4")
+	check(w.abilities.cooldown_left(a, "fiery_javelin") > 0.0, "on cooldown")
+	near(w.abilities.val(a, "fiery_javelin", "cooldown"), 12.0, 1e-6, "12 s cooldown")
+	var a1 := w.spawn("azrin", C.DAWN, Vector2(0, 0))
+	a1.ability_level["fiery_javelin"] = 1
+	near(w.abilities.val(a1, "fiery_javelin", "burn_dps"), 35.0, 1e-6, "35 per second at level 1")
+
+func test_touch_of_ember() -> void:
+	var w := empty_world()
+	var a := _azrin(w, Vector2(-2000, -4000))
+	var e := _bare(w, "dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	var foe := _azrin(w, Vector2(-1450, -3880), C.DUSK)
+	foe.def = foe.def.duplicate()
+	foe.def["hp"] = 5000.0
+	foe.refresh_stats()
+	foe.def["hp_regen"] = -foe.str_total * C.STR_HP_REGEN      # no regeneration, for an exact sum
+	foe.refresh_stats()
+	foe.hp = foe.max_hp
+	var far := _bare(w, "dusk_melee", C.DUSK, Vector2(-1500, -3500))
+	for u in [e, far]:
+		u.def["magic_resist"] = 0.0
+		u.refresh_stats()
+	var fhp0 := foe.hp
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "touch_of_ember", "point": Vector2(-1500, -4000)})
+	run(w, 0.5)
+	near(e.max_hp - e.hp, 100.0 * (1.0 + a.magic_amp), 0.5, "100 magic damage at once")
+	check(far.hp == far.max_hp, "nothing beyond 300")
+	check(not e.get_modifier("touch_of_ember").is_empty(), "the flames stay on it")
+	# the enemy hero casts a spell: its flames explode at once
+	foe.mana = foe.max_mana
+	w.command(foe.id, {"type": O.CAST_POINT, "ability": "touch_of_ember", "point": Vector2(-2000, -4000)})
+	run(w, 0.5)
+	check(foe.get_modifier("touch_of_ember").is_empty(), "casting sets them off")
+	check(not foe.get_modifier("stunned").is_empty(), "and stuns it")
+	near(float(foe.get_modifier("stunned").get("dur", 0.0)), 1.7, 0.01, "for 1.7 s")
+	var expect := (100.0 + 400.0) * (1.0 + a.magic_amp) * (1.0 - foe.magic_resist)
+	near(fhp0 - foe.hp, expect, 2.0, "100, then 400 at level 4")
+	# the creep's go off after 4 s
+	var hp1 := e.hp
+	run(w, 3.4)
+	near(hp1 - e.hp, 400.0 * (1.0 + a.magic_amp), 1.0, "after 4 s: 400 more")
+	check(not e.get_modifier("stunned").is_empty(), "and a stun")
+
+func test_spirit_of_fire() -> void:
+	var w := empty_world()
+	var a := _azrin(w, Vector2(-2000, -4000))
+	check(w.abilities.cast_error(a, "spirit_of_fire", -1, null, Vector2(-1500, -4000)) == "No spirits of fire", "no spirits: no cast")
+	for i in 7:
+		w.abilities._add_spirit(a)
+	check(w.abilities.spirits(a) == 5, "at most 5 spirits")
+	var e := _bare(w, "dusk_melee", C.DUSK, Vector2(-1400, -4000))
+	e.def["magic_resist"] = 0.0
+	e.refresh_stats()
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "spirit_of_fire", "point": Vector2(-1400, -4000)})
+	run(w, 1.2)
+	check(w.abilities.spirits(a) == 0, "all of them are shot")
+	check(not e.get_modifier("spirit_of_fire_slow").is_empty(), "the enemy is slowed")
+	near(float(e.get_modifier("spirit_of_fire_slow").slow), 0.35, 1e-6, "35% at level 4")
+	run(w, 5.5)
+	near(e.max_hp - e.hp, 5.0 * 250.0 * (1.0 + a.magic_amp), 1.0, "250 burn per spirit at level 4, 5 spirits")
+	# spells add spirits; Spirit of Fire itself does not
+	a.ability_ready["touch_of_ember"] = -INF
+	a.mana = a.max_mana
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "touch_of_ember", "point": Vector2(-1700, -3700)})
+	run(w, 0.6)
+	check(w.abilities.spirits(a) == 1, "a spell cast adds a spirit")
+
+func test_divine_smite() -> void:
+	var w := empty_world()
+	var a := _azrin(w, Vector2(-2000, -4000))
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	var n := _bare(w, "dusk_melee", C.DUSK, Vector2(-1500, -3750))
+	for u in [t, n]:
+		u.def["magic_resist"] = 0.0
+		u.refresh_stats()
+	w.status.add_dot(n, a, "fiery_javelin", 10.0, 3.0, C.Element.FIRE)
+	var until0 := float(w.status.dots[0].until)
+	var hp0 := t.hp
+	w.vision.update()
+	w.command(a.id, {"type": O.CAST_UNIT, "ability": "divine_smite", "target": t.id})
+	run(w, 1.2)
+	near(hp0 - t.hp, (250.0 + 2.0 * a.int_total) * (1.0 + a.magic_amp), 1.0, "250 + 2 x intelligence")
+	near(float(w.status.dots[0].until) - until0, 5.0, 1e-6, "burns nearby last 5 s longer at level 3")
+	near(w.abilities.val(a, "divine_smite", "cooldown"), 45.0, 1e-6, "45 s cooldown")
+
+func test_azrin_base() -> void:
+	var w := empty_world()
+	var a := w.spawn("azrin", C.DAWN, Vector2(-2000, -4000))
+	near(a.attack_range, 665.0, 1e-6, "665 attack range")
+	check(a.is_ranged(), "ranged")
+	check(String(a.def.primary) == "int", "intelligence hero")
+	check((a.def.talents as Array).size() == 4, "four talent tiers")
+
+func test_creep_death_sounds_quieter() -> void:
+	# owner's request: lane and neutral creep deaths 40% quieter, by the same loudness rule as the volume sliders
+	var gd := (load("res://src/game/audio.gd") as GDScript).get_script_constant_map()
+	near(float(gd["CREEP_DEATH_DB"]), Options.to_db(0.6), 0.01, "60% as loud (-7.4 dB)")
 
 func test_neutral_abilities() -> void:
 	var w := empty_world()
@@ -3524,3 +3995,576 @@ func test_bottle_drinks_refills_and_stores_orbs() -> void:
 	h.pos = _map.fountains[C.DAWN] + Vector2(300, 300)
 	run(w, 1.0)
 	check(int(b.charges) == 3, "the fountain refills it")
+
+# ---- Performance rewrites keep the rules (2026-10-14 b) --------------------------------------------------------------
+
+## The cached sight stamps give exactly the union of the ray casts (the old per-update method), after units move, trees
+## fall and night comes.
+func test_vision_cache_matches_ray_casts() -> void:
+	var w := world(0.0)
+	w.setup_match()
+	for team in [C.DAWN, C.DUSK]:
+		for id in ["sludge", "azrin"]:
+			var h := w.spawn_hero(id, team)
+			w.bots.append(SimBot.new(w, h.id, "mid", "Bot %s" % id, "hard"))
+	for phase in 4:
+		run(w, 40.0 if phase < 3 else 330.0)
+		if phase == 1:
+			for i in 40:
+				if w.map.trees[i * 7].alive:
+					w.cut_tree(i * 7, Vector2.INF)
+		w.vision.update()
+		var night := w.is_night()
+		for team in 2:
+			var vis := PackedByteArray()
+			vis.resize(SimVision.VN * SimVision.VN)
+			for u in w.units:
+				if u.alive and u.team == team:
+					var r := u.vision_night if night else u.vision_day
+					if r > 0.0:
+						w.vision._cast(vis, u.pos, r, u.has_flag("flying"))
+			for s in w.vision.sources:
+				if int(s.team) == team and w.time < float(s.until):
+					w.vision._cast(vis, s.pos, float(s.r), true)
+			var got: PackedByteArray = w.vision.visible[team]
+			var diff := 0
+			for i in vis.size():
+				if vis[i] != got[i]:
+					diff += 1
+			check(diff == 0, "phase %d team %d: %d cells differ from the ray casts" % [phase, team, diff])
+
+## Lane creeps of every lane leave their base (the top tier 3 tower stands on the top lane's line: creeps used to spawn
+## inside its footprint and never move) and no lane creep is stuck for long.
+func test_every_lane_walks_out() -> void:
+	var w := world(-1.0)
+	w.elements = true
+	w.next_wave_at = 0.0
+	w.setup_match()
+	run(w, 70.0)
+	for team in [C.DAWN, C.DUSK]:
+		for lane in ["top", "mid", "bot"]:
+			var path := w.map.lane_path(lane, team)
+			var far := 0.0
+			for u in w.units:
+				if u.alive and u.is_lane_creep() and u.team == team and u.lane == lane:
+					far = maxf(far, u.pos.distance_to(path[0]))
+			check(far > 1500.0, "team %d %s lane: creeps got %d from their spawn by 1:10" % [team, lane, int(far)])
+	var stuck := 0
+	for u in w.units:
+		if u.alive and u.is_lane_creep() and u.blocked_time > 0.5:
+			stuck += 1
+	check(stuck <= 2, "%d lane creeps blocked for over half a second" % stuck)
+
+## Every player action as a command (SimCommands, the multiplayer path) has exactly the effect of the direct call the
+## interface used to make: two identical worlds, one driven by direct calls and one by commands, end with equal state
+## fingerprints, tick after tick.
+func test_commands_match_direct_calls() -> void:
+	var ws: Array = []
+	for k in 2:
+		var w := world(-5.0)
+		w.next_wave_at = 0.0
+		w.setup_match()
+		var h := w.spawn_hero("sludge", C.DAWN)
+		w.spawn_hero("azrin", C.DUSK)
+		h.gold_unreliable = 5000
+		ws.append(w)
+	var a: SimWorld = ws[0]
+	var b: SimWorld = ws[1]
+	var ha := a.heroes[0]
+	var hb := b.heroes[0]
+	check(a.state_hash() == b.state_hash(), "identical worlds start with equal fingerprints")
+	var steps := [
+		[func(): a.shop.buy(ha, "boots"), {"k": "buy", "item": "boots"}],
+		[func(): a.shop.buy(ha, "circlet"), {"k": "buy", "item": "circlet"}],
+		[func(): a.shop.add_to_buy(ha, "magic_wand"), {"k": "to_buy_add", "item": "magic_wand"}],
+		[func(): a.shop.buy_listed(ha, 0), {"k": "buy_listed", "i": 0}],
+		[func(): a.shop.swap(ha, 0, 7), {"k": "swap", "a": 0, "b": 7}],
+		[func(): a.shop.toggle_lock(ha, 1, false), {"k": "lock", "slot": 1, "stash": false}],
+		[func(): a.shop.sell(ha, 1), {"k": "sell", "slot": 1, "stash": false}],
+		[func(): a.abilities.learn(ha, "shuriken_hook"), {"k": "learn", "ability": "shuriken_hook"}],
+		[func(): a.command(ha.id, {"type": O.MOVE, "point": Vector2(-5000, -5000)}), {"k": "order", "u": hb.id, "o": {"type": O.MOVE, "point": Vector2(-5000, -5000)}}],
+		[func(): a.command(ha.id, {"type": O.HOLD, "queue": true}), {"k": "order", "u": hb.id, "o": {"type": O.HOLD, "queue": true}}],
+		[func(): a.courier_command(ha, "deliver"), {"k": "courier", "cmd": "deliver"}],
+		[func(): a.ping(ha.team, Vector2(100, 100), ha.id, -1, ""), {"k": "ping", "p": Vector2(100, 100), "target": -1, "kind": ""}],
+		[func(): a.chat(ha.team, ha.id, "push top"), {"k": "chat", "text": "push top"}],
+		[func(): a.glyph(ha.team), {"k": "glyph"}],
+	]
+	for st in steps:
+		(st[0] as Callable).call()
+		var err := SimCommands.apply(b, hb.id, st[1])
+		for i in 15:
+			a.step()
+			b.step()
+		check(a.state_hash() == b.state_hash(), "after %s: fingerprints differ (error '%s')" % [str(st[1].k), err])
+	# a command never acts for another player's units
+	var foe := b.heroes[1]
+	var before := foe.order
+	SimCommands.apply(b, hb.id, {"k": "order", "u": foe.id, "o": {"type": O.MOVE, "point": Vector2.ZERO}})
+	check(foe.order == before, "an order naming an enemy unit is ignored")
+
+## A match saved with SimSnapshot and loaded again plays on exactly like the original: a 5 v 5 bot game is saved at
+## 6:00 (mid fight, projectiles in the air, items bought, trees cut), loaded into a fresh world on the same map, and both
+## are stepped another 3 minutes with the same player commands; the state fingerprints match at every tick.
+func test_snapshot_restores_an_identical_match() -> void:
+	var m := SimMap.new()
+	m.build(1)
+	var a := SimWorld.new(5, m)
+	a.setup_match()
+	var hs: Array = []
+	for team in [C.DAWN, C.DUSK]:
+		for id in ["sludge", "azrin", "ezee", "blood_ranger", "sludge"]:
+			var h := a.spawn_hero(id, team)
+			hs.append(h)
+			if hs.size() != 1:
+				a.bots.append(SimBot.new(a, h.id, "mid", "Bot %d" % hs.size(), "hard"))
+	while a.time < 360.0:
+		a.step()
+		a.events.clear()
+	var t0 := Time.get_ticks_msec()
+	var bytes := SimSnapshot.capture(a)
+	var t1 := Time.get_ticks_msec()
+	var m2 := SimMap.new()
+	m2.build(1)
+	var b := SimSnapshot.restore(bytes, m2)
+	var t2 := Time.get_ticks_msec()
+	print("    snapshot %d KB, capture %d ms, restore %d ms" % [bytes.size() / 1024, t1 - t0, t2 - t1])
+	check(b != null, "the snapshot loads")
+	if b == null:
+		return
+	check(a.state_hash() == b.state_hash(), "loaded world has the same fingerprint")
+	var me: SimUnit = hs[0]
+	var bad := -1
+	for i in 30 * 180:
+		if i % 90 == 0:
+			var cmd := {"k": "order", "u": me.id, "o": {"type": O.ATTACK_MOVE, "point": Vector2(-200 + (i % 7) * 300, -400)}}
+			SimCommands.apply(a, me.id, cmd)
+			SimCommands.apply(b, me.id, cmd)
+		a.step()
+		b.step()
+		a.events.clear()
+		b.events.clear()
+		if bad < 0 and a.state_hash() != b.state_hash():
+			bad = i
+	check(bad < 0, "fingerprints diverged %d ticks after loading" % bad)
+
+# ---- Froster, the Winter Master (owner's hero, 2026-10-14 b) ----------------------------------------------------------
+
+func _froster(w: SimWorld, p: Vector2, team := C.DAWN, levels := {}) -> SimUnit:
+	var f := w.spawn("froster", team, p)
+	f.level = 18
+	f.refresh_stats()
+	f.hp = f.max_hp
+	f.mana = f.max_mana
+	for aid in f.abilities:
+		f.ability_level[aid] = int(levels.get(aid, 4 if aid != "endless_winter" else 3))
+	f.refresh_stats()
+	f.auto_attack = false
+	return f
+
+## Damage events on unit `uid` keyed `key`, summed.
+func _dmg_key(w: SimWorld, uid: int, key: String) -> float:
+	var s := 0.0
+	for e in w.events:
+		if e.t == "damage" and int(e.u) == uid and String(e.get("key", "")) == key:
+			s += float(e.amount)
+	return s
+
+func test_froster_base() -> void:
+	var w := empty_world()
+	var f := w.spawn("froster", C.DAWN, Vector2(-2000, -4000))
+	check(f.is_ranged() and String(f.def.primary) == "int", "ranged intelligence hero")
+	check(f.element == C.Element.ICE, "Ice element")
+	check(f.abilities == ["breath_of_cold", "ice_pulse", "frost_heart", "endless_winter"], "the owner's four abilities")
+	check((f.def.talents as Array).size() == 4, "four talent tiers")
+	check(String(f.def.name) == "Froster" and String(f.def.title) == "the Winter Master", "the owner's name and title")
+
+func test_breath_of_cold() -> void:
+	var w := empty_world()
+	var f := _froster(w, Vector2(-2000, -4000))
+	var near1 := _bare(w, "dusk_melee", C.DUSK, Vector2(-1700, -4000))     # 300 ahead
+	var far1 := _bare(w, "dusk_melee", C.DUSK, Vector2(-1300, -3800))      # 700 ahead, 200 aside (cone half-width there ~206)
+	var wide := _bare(w, "dusk_melee", C.DUSK, Vector2(-1300, -3700))      # 700 ahead, 300 aside: outside
+	var past := _bare(w, "dusk_melee", C.DUSK, Vector2(-1080, -4000))      # 920 ahead: beyond 800
+	var behind := _bare(w, "dusk_melee", C.DUSK, Vector2(-2300, -4000))
+	# clicking close still breathes the full 800
+	w.command(f.id, {"type": O.CAST_POINT, "ability": "breath_of_cold", "point": Vector2(-1900, -4000)})
+	run(w, 1.5)
+	var dmg := 310.0 * (1.0 + f.magic_amp)
+	near(_dmg_key(w, near1.id, "breath_of_cold"), dmg, 0.5, "310 magic damage at level 4 (300 ahead)")
+	near(_dmg_key(w, far1.id, "breath_of_cold"), dmg, 0.5, "the cone widens: hit 700 ahead and 200 aside")
+	check(_dmg_key(w, wide.id, "breath_of_cold") == 0.0, "300 aside at 700 is outside the cone")
+	check(_dmg_key(w, past.id, "breath_of_cold") == 0.0, "nothing beyond 800")
+	check(_dmg_key(w, behind.id, "breath_of_cold") == 0.0, "nothing behind Froster")
+	var sl := near1.get_modifier("breath_of_cold_slow")
+	near(float(sl.get("slow", 0.0)), 0.54, 1e-6, "54% slow at level 4 (30% + 8% per level)")
+	near(float(sl.get("dur", 0.0)), 3.0, 1e-6, "for 3 s")
+	near(w.abilities.val(f, "breath_of_cold", "cooldown"), 10.0, 1e-6, "10 s cooldown")
+	var f1 := _froster(w, Vector2(3000, 3000), C.DAWN, {"breath_of_cold": 1})
+	near(w.abilities.val(f1, "breath_of_cold", "damage"), 100.0, 1e-6, "100 damage at level 1")
+	near(w.abilities.val(f1, "breath_of_cold", "slow"), 0.30, 1e-6, "30% slow at level 1")
+
+func test_ice_pulse() -> void:
+	var w := empty_world()
+	var f := _froster(w, Vector2(-2000, -4000), C.DAWN, {"ice_pulse": 1})
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1600, -4000))
+	var side := _bare(w, "dusk_melee", C.DUSK, Vector2(-1600, -3780))     # 220 from the target
+	var out := _bare(w, "dusk_melee", C.DUSK, Vector2(-1600, -3600))      # 400 from the target
+	w.vision.update()
+	w.command(f.id, {"type": O.CAST_UNIT, "ability": "ice_pulse", "target": t.id})
+	run(w, 0.5)
+	check(not t.get_modifier("ice_pulse").is_empty(), "the target is cursed")
+	near(t.defense_loss(), 0.20, 1e-6, "20% lower defense at level 1")
+	# physical and magic damage hit 20% harder after armor and resistance
+	var hp0 := t.hp
+	w.combat.deal_damage(f.id, f.team, true, t, 100.0, C.DamageType.PHYSICAL, false, "test")
+	near(hp0 - t.hp, 100.0 * C.armor_multiplier(t.armor) * 1.2, 0.01, "physical damage +20% after armor")
+	hp0 = t.hp
+	w.combat.deal_damage(f.id, f.team, true, t, 100.0, C.DamageType.PURE, false, "test", false, {"no_amp": true})
+	near(hp0 - t.hp, 100.0, 0.01, "pure damage is not raised")
+	w.events.clear()
+	run(w, 3.5)
+	var blast := 100.0 * (1.0 + f.magic_amp)
+	near(_dmg_key(w, t.id, "ice_pulse"), blast, 0.5, "the curse bursts for 100 magic damage on the target")
+	near(_dmg_key(w, side.id, "ice_pulse"), blast, 0.5, "and on enemies within 300")
+	check(_dmg_key(w, out.id, "ice_pulse") == 0.0, "not beyond 300")
+	check(t.get_modifier("ice_pulse").is_empty(), "the curse lasts 3.5 s")
+	var f4 := _froster(w, Vector2(3000, 3000))
+	near(w.abilities.val(f4, "ice_pulse", "defense_loss"), 0.35, 1e-6, "35% at level 4 (+5% per level)")
+	check(w.abilities.val(f4, "ice_pulse", "cooldown") == 13.0 and w.abilities.val(f, "ice_pulse", "cooldown") == 16.0,
+		"16/15/14/13 s cooldown")
+
+func test_frost_heart() -> void:
+	var w := empty_world()
+	var f := _froster(w, Vector2(-2000, -4000), C.DAWN, {"frost_heart": 1})
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1600, -4000))
+	t.def.hp = 1e7
+	t.refresh_stats()
+	t.hp = t.max_hp
+	# 1000 damage dealt at level 1 (one heart per 500) gives two hearts
+	w.combat.deal_damage(f.id, f.team, true, t, 1000.0 / (1.0 + f.magic_amp), C.DamageType.MAGICAL, false, "test")
+	check(w.abilities.frost_hearts(f) == 2, "two hearts from 1000 damage (got %d)" % w.abilities.frost_hearts(f))
+	w.combat.deal_damage(f.id, f.team, true, t, 5000.0, C.DamageType.MAGICAL, false, "test")
+	check(w.abilities.frost_hearts(f) == 3, "at most three")
+	# the next attack spends one: +200 magic damage and a 40% slow for 1.5 s
+	w.events.clear()
+	f.auto_attack = true
+	w.command(f.id, {"type": O.ATTACK_UNIT, "target": t.id})
+	var spent := false
+	for i in 120:
+		w.step()
+		if w.events.any(func(e): return e.t == "frost_heart_hit"):
+			spent = true
+			break
+	check(spent and w.abilities.frost_hearts(f) == 2, "an attack spends a heart")
+	near(_dmg_key(w, t.id, "frost_heart"), 200.0 * (1.0 + f.magic_amp), 0.5, "the burst: 200 magic damage")
+	var sl := t.get_modifier("frost_heart_slow")
+	check(not sl.is_empty() and absf(float(sl.slow) - 0.4) < 1e-6, "a 40% slow")
+	var f4 := _froster(w, Vector2(3000, 3000))
+	near(w.abilities.val(f4, "frost_heart", "per_heart"), 350.0, 1e-6, "one heart per 350 at level 4")
+
+func test_endless_winter() -> void:
+	var w := empty_world()
+	var f := _froster(w, Vector2(-2000, -4000), C.DAWN, {"endless_winter": 1})
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1600, -4000))
+	t.def.hp = 1e7
+	t.refresh_stats()
+	t.hp = t.max_hp
+	var out := _bare(w, "dusk_melee", C.DUSK, Vector2(-1300, -4000))      # 700 away
+	w.command(f.id, {"type": O.CAST_NO_TARGET, "ability": "endless_winter"})
+	var frosts: Array = []
+	var start := -1.0
+	for i in int(9.0 * C.TICK_RATE):
+		w.step()
+		if start < 0.0 and not f.channel.is_empty():
+			start = w.time
+		for e in w.events:
+			if e.t == "frosted" and int(e.u) == t.id:
+				frosts.append(w.time - start)
+		w.events = w.events.filter(func(e): return e.t == "damage")
+	check(start >= 0.0, "Froster channels")
+	var dealt := 0.0
+	for e in w.events:
+		if e.t == "damage" and int(e.u) == t.id and String(e.key) == "endless_winter":
+			dealt += float(e.amount)
+	near(dealt, 7.0 * 100.0 * (1.0 + f.magic_amp), 1.0, "7 pulses of 100 magic damage at level 1")
+	check(frosts.size() == 2, "Frosted twice in 7 s while standing inside (got %s)" % str(frosts))
+	if frosts.size() == 2:
+		near(float(frosts[0]), 2.0, 0.07, "first Frost after 2 s inside")
+		near(float(frosts[1]) - float(frosts[0]), 3.5, 0.07, "again after the 2 s freeze and 1.5 s more")
+	var outdmg := 0.0
+	for e in w.events:
+		if e.t == "damage" and int(e.u) == out.id:
+			outdmg += float(e.amount)
+	check(outdmg == 0.0, "nothing outside 600")
+	near(w.abilities.val(f, "endless_winter", "cooldown"), 60.0, 1e-6, "60 s cooldown")
+	var f3 := _froster(w, Vector2(3000, 3000))
+	near(w.abilities.val(f3, "endless_winter", "dps"), 300.0, 1e-6, "300 per second at level 3")
+
+func test_endless_winter_breaks_on_stun() -> void:
+	var w := empty_world()
+	var f := _froster(w, Vector2(-2000, -4000))
+	w.command(f.id, {"type": O.CAST_NO_TARGET, "ability": "endless_winter"})
+	run(w, 1.0)
+	check(not f.channel.is_empty(), "channelling")
+	w.status.apply(f, -1, C.DUSK, {"id": "stunned", "stun": true, "dur": 0.5})
+	run(w, 0.1)
+	check(f.channel.is_empty(), "a stun ends the blizzard")
+
+# ---- Caziel, the Void Assassin (owner's hero, 2026-10-14 b) -----------------------------------------------------------
+
+func _caziel(w: SimWorld, p: Vector2, team := C.DAWN, levels := {}) -> SimUnit:
+	var c := w.spawn("caziel", team, p)
+	c.level = 18
+	c.refresh_stats()
+	c.hp = c.max_hp
+	c.mana = c.max_mana
+	for aid in c.abilities:
+		c.ability_level[aid] = int(levels.get(aid, 4 if aid != "death_order" else 3))
+	c.refresh_stats()
+	c.auto_attack = false
+	return c
+
+func test_caziel_base() -> void:
+	var w := empty_world()
+	var c := w.spawn("caziel", C.DAWN, Vector2(-2000, -4000))
+	check(not c.is_ranged() and String(c.def.primary) == "agi", "melee agility hero")
+	check(c.element == C.Element.DARK, "Dark element")
+	check(c.abilities == ["swift_dagger", "sweet_poison", "master_of_shadows", "death_order"], "the owner's four abilities")
+	check(String(c.def.name) == "Caziel" and String(c.def.title) == "the Void Assassin", "the owner's name and title")
+
+func test_swift_dagger() -> void:
+	var w := empty_world()
+	var c := _caziel(w, Vector2(-2000, -4000), C.DAWN, {"sweet_poison": 0, "death_order": 0})
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1200, -4000))
+	t.def.hp = 1e6
+	t.def.armor = 10.0
+	t.refresh_stats()
+	t.hp = t.max_hp
+	c.def = c.def.duplicate()
+	var avg := (c.dmg_min + c.dmg_max) * 0.5
+	w.vision.update()
+	w.command(c.id, {"type": O.CAST_UNIT, "ability": "swift_dagger", "target": t.id})
+	var hit := -1.0
+	for i in 15:
+		w.step()
+		for e in w.events:
+			if e.t == "damage" and int(e.u) == t.id and bool(e.get("attack", false)) and hit < 0.0:
+				hit = float(e.amount)
+		w.events.clear()
+	check(c.pos.distance_to(t.pos) <= c.hull + t.hull + 10.0, "Caziel is beside the target (%.0f)" % c.pos.distance_to(t.pos))
+	near(t.armor, 10.0 - 7.0, 1e-6, "armor cut by 7 at level 4")
+	var lo := (c.dmg_min + c.bonus_damage + 260.0) * C.armor_multiplier(3.0)
+	var hi := (c.dmg_max + c.bonus_damage + 260.0) * C.armor_multiplier(3.0)
+	check(hit >= lo - 0.5 and hit <= hi + 0.5, "the stab: attack + 260 bonus after the cut armor (%.1f in %.1f..%.1f)" % [hit, lo, hi])
+	check(c.atk_target == t.id, "and he fights on")
+	run(w, 3.1)
+	near(t.armor, 10.0, 1e-6, "the armor comes back after 3 s")
+	check(w.abilities.val(c, "swift_dagger", "cooldown") == 6.0, "6 s cooldown at level 4")
+	var c1 := _caziel(w, Vector2(3000, 3000), C.DAWN, {"swift_dagger": 1})
+	check(w.abilities.val(c1, "swift_dagger", "cooldown") == 15.0 and w.abilities.val(c1, "swift_dagger", "bonus_damage") == 80.0,
+		"15 s and +80 at level 1")
+	var _a := avg
+
+func test_sweet_poison() -> void:
+	var w := empty_world()
+	var c := _caziel(w, Vector2(-2000, -4000), C.DAWN, {"death_order": 0})
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1900, -4000))
+	t.def.hp = 1e7
+	t.refresh_stats()
+	t.hp = t.max_hp
+	var snap := w.combat.attack_snapshot(c, "")
+	var procs := 0
+	var n := 3000
+	for i in n:
+		var before := w.status.dots.size()
+		w.abilities.sweet_poison_hit(snap, t)
+		for e in w.events:
+			if e.t == "poison_blow":
+				procs += 1
+		w.events.clear()
+		var _b := before
+	near(float(procs) / n, 0.32, 0.03, "32% of attacks poison at level 4 (pseudo-random)")
+	var mine := w.status.dots.filter(func(d): return int(d.t) == t.id and String(d.key) == "sweet_poison")
+	check(mine.size() == 1, "poisons renew instead of stacking (%d running)" % mine.size())
+	near(float(mine[0].dps), 80.0, 1e-6, "80 damage per second at level 4")
+	near(float(mine[0].until) - w.time, 2.0, 1e-6, "for 2 s")
+
+func test_master_of_shadows() -> void:
+	var w := empty_world()
+	var c := _caziel(w, Vector2(-2000, -4000))
+	var ms0 := c.move_speed
+	w.command(c.id, {"type": O.CAST_NO_TARGET, "ability": "master_of_shadows"})
+	check(not c.get_modifier("master_of_shadows").is_empty(), "takes effect at once")
+	c.refresh_stats()
+	near(c.evasion, 0.45, 1e-6, "45% evasion at level 4")
+	near(c.move_speed, ms0 * 1.15, 0.01, "15% faster")
+	check(c.has_flag("minimap_hidden"), "hidden from the enemy minimap")
+	run(w, 12.1)
+	check(c.get_modifier("master_of_shadows").is_empty(), "lasts 12 s")
+	near(w.abilities.val(c, "master_of_shadows", "cooldown"), 20.0, 1e-6, "20 s cooldown")
+
+func test_death_order() -> void:
+	var w := empty_world()
+	var c := _caziel(w, Vector2(-2000, -4000), C.DAWN, {"sweet_poison": 0})
+	var t := _bare(w, "dusk_melee", C.DUSK, Vector2(-1900, -4000))
+	t.def.hp = 10000.0
+	t.def.armor = 20.0
+	t.refresh_stats()
+	var snap := w.combat.attack_snapshot(c, "")
+	snap.dmg_min = 100.0
+	snap.dmg_max = 100.0
+	snap.bonus = 0.0
+	t.hp = 2000.0                                   # 20%: above 14%
+	w.combat.land_attack(snap, t)
+	var mult := C.damage_mult(c.weapon, t.armor_type)
+	near(2000.0 - t.hp, 100.0 * mult * C.armor_multiplier(20.0), 0.5, "above the threshold: physical, armor counts")
+	t.hp = 1300.0                                   # 13%: below 14% at level 3
+	w.events.clear()
+	w.combat.land_attack(snap, t)
+	near(1300.0 - t.hp, 100.0 * mult, 0.5, "below 14%: pure, armor ignored")
+	check(w.events.any(func(e): return e.t == "death_order"), "the execution is announced (effects)")
+	var c1 := _caziel(w, Vector2(3000, 3000), C.DAWN, {"death_order": 1})
+	near(w.abilities.val(c1, "death_order", "threshold"), 0.10, 1e-6, "10% at level 1")
+
+# ---- Multiplayer server (no sockets: a stand-in for Net records what the server sends) ------------------------------
+
+class FakeNet extends RefCounted:
+	var sent: Array = []                     # [what, peer, args...]
+	func _rec(a: Array) -> void:
+		sent.append(a)
+	func s_welcome(p, d): _rec(["welcome", p, d])
+	func s_hub(p, b): _rec(["hub", p])
+	func s_hub_log(p, l): _rec(["hub_log", p])
+	func s_chat(p, ch, nm, t, sys): _rec(["chat", p, ch, nm, t, sys])
+	func s_notice(p, t): _rec(["notice", p, t])
+	func s_room(p, b): _rec(["room", p, bytes_to_var(b)])
+	func s_room_left(p, r): _rec(["room_left", p, r])
+	func s_begin(p, b): _rec(["begin", p, bytes_to_var(b)])
+	func s_go(p): _rec(["go", p])
+	func s_frame(p, f, b): _rec(["frame", p, f, bytes_to_var(b)])
+	func s_snap_request(p): _rec(["snap_request", p])
+	func s_snapshot(p, f, b): _rec(["snapshot", p, f])
+	func peer_ping(_p): return 0
+	func flush(): pass
+	func last(what: String, peer := -1) -> Array:
+		for i in range(sent.size() - 1, -1, -1):
+			if sent[i][0] == what and (peer < 0 or int(sent[i][1]) == peer):
+				return sent[i]
+		return []
+	func count(what: String, peer := -1) -> int:
+		return sent.filter(func(e): return e[0] == what and (peer < 0 or int(e[1]) == peer)).size()
+
+func _server() -> Array:
+	var fake := FakeNet.new()
+	var sv := NetServer.new()
+	sv.net = fake
+	var fp := NetSession.rules_fingerprint()
+	for p in [[2, "Ann"], [3, "Bob"], [4, "Cy"]]:
+		check(sv.hello(int(p[0]), String(p[1]), fp, NetSession.PROTOCOL, "") == "", "%s is welcome" % p[1])
+	return [sv, fake]
+
+func test_server_rooms_and_leaders() -> void:
+	var a := _server()
+	var sv: NetServer = a[0]
+	var fake: FakeNet = a[1]
+	check(sv.hello(9, "Ann", NetSession.rules_fingerprint(), NetSession.PROTOCOL, "") == "" and sv.players[9].name == "Ann 2", "a name already online gets a number")
+	check(sv.hello(10, "Old", 123, NetSession.PROTOCOL, "") != "", "a different game version is refused")
+	sv.password = "pw"
+	check(sv.hello(11, "Pat", NetSession.rules_fingerprint(), NetSession.PROTOCOL, "") != "", "a passworded server refuses a player without it")
+	sv.password = ""
+	sv.create_room(2, "Friday", "", "5v5")
+	var rid: int = sv.players[2].room
+	var r: Dictionary = sv.rooms[rid]
+	check(int(r.leader) == 2 and String(r.slots[0].name) == "Ann", "the maker leads the lobby from the first slot")
+	sv.join_room(3, rid, "")
+	check(int(sv.players[3].room) == rid and String(r.slots[5].name) == "Bob", "a newcomer goes to the smaller team")
+	sv.create_room(4, "Locked", "secret", "1v1")
+	var r2: Dictionary = sv.rooms[int(sv.players[4].room)]
+	check(r2.slots.filter(func(s): return String(s.kind) == "closed").size() == 8, "1 vs 1 mid closes eight slots")
+	sv.leave_room(4)
+	check(not sv.rooms.has(int(r2.id)), "an empty lobby closes")
+	sv.join_room(4, rid, "")
+	sv.leader_slot(3, 3, "kind", "bot")
+	check(String(r.slots[3].kind) == "open", "only the leader changes slots")
+	sv.leader_slot(2, 3, "kind", "bot")
+	check(String(r.slots[3].kind) == "bot", "the leader adds a bot")
+	sv.leader_slot(2, 3, "hero", "froster")
+	check(String(r.slots[3].hero) == "froster", "and sets its hero")
+	sv.leader_slot(2, 6, "kind", "open")
+	var cy := -1
+	for i in r.slots.size():
+		if String(r.slots[i].name) == "Cy":
+			cy = i
+	sv.leader_slot(2, cy, "kind", "open")
+	check(int(sv.players[4].room) == -1 and fake.last("room_left", 4).size() > 0, "the leader can remove a player")
+	sv.move_to(3, 7)
+	check(String(r.slots[7].name) == "Bob" and String(r.slots[5].kind) == "open", "a player moves to an open slot")
+	sv.set_mine(3, "hero", "caziel")
+	sv.set_mine(3, "hero", "no_such_hero")
+	check(String(r.slots[7].hero) == "caziel", "a player picks a hero (unknown ones are ignored)")
+	sv.leave_room(2)
+	check(int(r.leader) == 3, "when the leader leaves, the lobby passes to the next player")
+	sv.chat(3, "hello")
+	check(fake.last("chat", 3)[2] == "room" and fake.last("chat", 3)[4] == "hello", "chat in a lobby stays in the lobby")
+
+func test_server_start_relay_repair_rejoin() -> void:
+	var a := _server()
+	var sv: NetServer = a[0]
+	var fake: FakeNet = a[1]
+	sv.create_room(2, "Game", "", "5v5")
+	var rid: int = sv.players[2].room
+	var r: Dictionary = sv.rooms[rid]
+	sv.join_room(3, rid, "")
+	sv.join_room(4, rid, "")
+	sv.fill_bots(2)
+	sv.start(2)
+	check(String(r.state) == "lobby" and fake.last("notice", 2).size() > 0, "Start waits until everyone is ready")
+	for p in [2, 3, 4]:
+		sv.set_mine(p, "ready", true)
+	sv.start(3)
+	check(String(r.state) == "lobby", "only the leader starts")
+	sv.start(2)
+	check(String(r.state) == "loading" and fake.count("begin") == 3, "Start sends every player the match")
+	var cfg: Dictionary = fake.last("begin", 2)[2]
+	check(cfg.slots.size() == 10 and cfg.slots.all(func(s): return String(s.hero) in GameSettings.HEROES), "random heroes are chosen by the server")
+	for p in [2, 3, 4]:
+		sv.loaded(p)
+	check(String(r.state) == "playing" and fake.count("go") == 3, "once all have loaded, go")
+	sv.command(3, {"k": "order"})
+	sv.tick()
+	var fr: Array = fake.last("frame", 2)
+	check(fr[2] == 0 and fr[3].size() == 1 and int(fr[3][0][0]) == int(sv.rooms[rid].m.slot_peer.keys()[sv.rooms[rid].m.slot_peer.values().find(3)]), "a command goes into the next frame under its sender's slot")
+	check(fake.count("frame") == 3, "every player gets every frame")
+	# fingerprints: Cy's world drifted; the majority's player sends a snapshot that goes to Cy with the frames after it
+	for i in 40:
+		sv.tick()
+	sv.hash_report(2, 30, 111)
+	sv.hash_report(3, 30, 111)
+	sv.hash_report(4, 30, 999)
+	for i in 10:
+		sv.tick()
+	var req: Array = fake.last("snap_request")
+	check(req.size() > 0 and int(req[1]) in [2, 3], "a desync asks a player from the majority for a snapshot")
+	var f_before := fake.count("frame", 4)
+	sv.snapshot_reply(int(req[1]), 35, PackedByteArray([1, 2, 3]))
+	check(fake.last("snapshot", 4).size() > 0 and int(fake.last("snapshot", 4)[2]) == 35, "the drifted player gets it")
+	check(fake.count("frame", 4) - f_before == int(r.m.frame) - 36, "followed by every frame after the snapshot")
+	# a drop and a return
+	var bob_slot := -1
+	for s in r.m.slot_peer:
+		if int(r.m.slot_peer[s]) == 3:
+			bob_slot = int(s)
+	sv.gone(3)
+	sv.tick()
+	var sysf: Array = fake.last("frame", 2)[3]
+	check(sysf.any(func(e): return int(e[0]) == -1 and String(e[1].k) == "sys_bot" and int(e[1].slot) == bob_slot), "a dropped player's hero goes to a bot in the next frame")
+	check(sv.hello(7, "Bob", NetSession.rules_fingerprint(), NetSession.PROTOCOL, "") == "", "the player connects again")
+	check(int(sv.players[7].room) == rid and fake.last("begin", 7).size() > 0, "and is sent straight back into the match")
+	sv.loaded(7)
+	check(fake.last("snap_request").size() > 0 and fake.last("go", 7).size() > 0, "once loaded: a snapshot is asked for them and they go")
+	sv.tick()
+	check(fake.last("frame", 2)[3].any(func(e): return int(e[0]) == -1 and String(e[1].k) == "sys_human"), "and their hero is theirs again")
+	sv.match_over(2)
+	r.m.end_at = 1
+	sv.tick()
+	check(String(r.state) == "lobby" and r.slots.all(func(s): return String(s.kind) != "human" or not bool(s.ready)), "after the match the lobby is open again, nobody ready")

@@ -5,7 +5,7 @@ extends RefCounted
 ## {slot: {cloth, trim, leather, metal, gold}}. Saved to user://hero.json and read by the match.
 
 const PATH := "user://hero.json"
-const HEROES := ["blood_ranger", "ezee", "sludge"]
+const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
 const OWN_BODY := ["sludge"]
 
@@ -35,6 +35,56 @@ static func default_look(id: String) -> Dictionary:
 				"boots": {"metal": "433c55", "leather": "1a1016"}, "gloves": {"metal": "433c55", "leather": "1a1016"},
 				"helm": {"metal": "3a3448", "cloth": "3c1458", "trim": "a060f0"},
 				"inner_garment": {"metal": "3a3444", "cloth": "2a1040"}},
+		}
+	if id == "azrin":
+		# Azrin, the Flamemander: the owner's female_generic body (Athletic), flame-orange hair, dragonhide armour of
+		# red scales and molten gold, crimson silks, a circlet
+		var az := HeroLook.preset("huntress")
+		az.merge({"body": "female_generic", "hair": "long", "hair_color": "c0491f", "hair_length": 1.15, "skin": "f0caa8", "eye": "glowing",
+			"eye_color": "e0a020", "eye_glow": 1.0, "lip_color": "a8443e", "brow": "arched", "marking": "none",
+			"build": -0.45, "height": 1.0, "cheeks": -0.4}, true)
+		return {
+			"display_name": "Azrin",
+			"look": HeroLook.sanitize(az),
+			"outfit": {"armor": "ember_dragonhide", "leggings": "magister_silks", "boots": "sage_boots",
+				"helm": "seers_circlet", "accessory_1": "sunforged_medallion"},
+			"dyes": {"armor": {"cloth": "5c1a10", "trim": "d89a40", "leather": "2a120a", "metal": "a87030", "gold": "e0a840"},
+				"leggings": {"cloth": "1e0806", "trim": "c08a30", "leather": "1a0c08"},
+				"boots": {"leather": "24100a", "cloth": "1e0806", "metal": "c89038", "gold": "e0a840"},
+				"helm": {"cloth": "b8401a", "trim": "e0a040", "metal": "e0b048", "gold": "f0c050"},
+				"inner_garment": {"cloth": "a04a18"}},
+		}
+	if id == "froster":
+		# Froster, the Winter Master: a tall white-bearded frost mage in pale blue plate and deep blue robes, eyes of ice
+		var fr := HeroLook.preset("veteran")
+		fr.merge({"hair": "long", "hair_color": "c4d2de", "hair_length": 1.1, "beard": "full", "beard_length": 1.15,
+			"stubble": 0.4, "skin": "e2d6d4", "eye": "glowing", "eye_color": "8fe4ff", "eye_glow": 0.7, "brow": "bushy",
+			"marking": "none", "muscle": 0.5, "build": 0.3, "height": 1.08, "jaw_wide": 0.5, "brow_heavy": 0.7}, true)
+		return {
+			"display_name": "Froster",
+			"look": HeroLook.sanitize(fr),
+			"outfit": {"inner_garment": "padded_gambeson", "armor": "tc_sanctified_plate", "leggings": "u_rimewalkers",
+				"boots": "guardian_greaves", "gloves": "guardian_gauntlets", "accessory_1": "tidecaller_moonstone"},
+			"dyes": {"armor": {"metal": "6a86a4", "cloth": "16325a", "trim": "9cc8e8", "leather": "1e2836", "gold": "b8d8f0"},
+				"leggings": {"metal": "6a86a4", "cloth": "122a4c", "leather": "1e2836", "trim": "9cc8e8"},
+				"boots": {"metal": "708ca8", "leather": "1e2836"}, "gloves": {"metal": "708ca8", "leather": "1e2836"},
+				"inner_garment": {"cloth": "0f2240"}},
+		}
+	if id == "caziel":
+		# Caziel, the Void Assassin: a lean hooded killer in black and violet leathers, a dark band across the eyes
+		var cz := HeroLook.preset("shade")
+		cz.merge({"hair": "slick", "hair_color": "120a18", "skin": "c99a7c", "eye": "fierce", "eye_color": "c070ff",
+			"eye_glow": 0.9, "brow": "straight", "marking": "band", "marking_color": "0e0812", "build": -0.25, "muscle": 0.35,
+			"height": 1.02, "cheeks": -0.5, "stubble": 0.25}, true)
+		return {
+			"display_name": "Caziel",
+			"look": HeroLook.sanitize(cz),
+			"outfit": {"inner_garment": "silk_undershirt", "armor": "tc_nightstalker_leathers", "leggings": "nightweave_leggings",
+				"boots": "depth_gloomthread_treads", "gloves": "silk_glove", "helm": "linen_hood", "accessory_1": "viper_coil_ring"},
+			"dyes": {"armor": {"cloth": "1c0e2a", "leather": "120a14", "trim": "8a46e0", "metal": "3e3650"},
+				"leggings": {"cloth": "140a1e", "leather": "120a14"}, "boots": {"leather": "120a14", "cloth": "140a1e"},
+				"gloves": {"cloth": "1c0e2a", "leather": "120a14"}, "helm": {"cloth": "160b22", "trim": "8a46e0"},
+				"inner_garment": {"cloth": "2a1240"}},
 		}
 	# Blood Ranger: a pale huntress in blood-red leathers with crimson hair and faintly glowing red eyes
 	var g := HeroLook.preset("huntress")

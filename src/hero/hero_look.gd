@@ -52,6 +52,9 @@ const CHOICES := {
 		["spiky", "Spiky"], ["mohawk", "Mohawk"], ["long", "Long"], ["ponytail", "Ponytail"], ["topknot", "Topknot"],
 		["braids", "Braids"], ["pigtails", "Pigtails"], ["curly", "Curls"], ["bowl", "Bowl Cut"], ["tonsure", "Tonsure"],
 		["wild", "Wild Hair"]],
+	# the body itself: the standard hero body (every slider and colour works on it) or a sculpted model of the
+	# owner's (Athletic: female_generic, Azrin's); hair, outfits, dyes and height work on both
+	"body": [["standard", "Standard"], ["female_generic", "Athletic"]],
 	"beard": [["none", "None"], ["moustache", "Moustache"], ["handlebar", "Handlebar"], ["goatee", "Goatee"], ["full", "Full Beard"],
 		["long", "Long Beard"], ["chops", "Chops"], ["braided", "Braided Beard"]],
 }

@@ -4,34 +4,109 @@
 
 ## Status (keep this section current)
 
-**IMPLEMENTED, GATES PASSED, VISUALS NOT BLIND-REVIEWED** (2026-10-13 d: controls, HUD, status effects, bash, critical
-strike, new items, neutral abilities, true sight, orbs, Flask; run `work/lemondev/2026-10-13-controls-mechanics/`,
-contract in `contract.md` there; details in "Status effects, bash, critical strike, orbs, true sight" below).
+**2026-10-15: multiplayer (servers, lobbies, a main server entry), HUD level pips, your bug reports.** Run
+`work/lemondev/2026-10-15-multiplayer/` (contract.md there). Evidence on the final working tree (uncommitted):
+* Headless tests: 173 passed, 0 failed (171 + 2 new server tests). `sh tools/check.sh`: no parse errors, "Names OK".
+* Multiplayer, two windows on this PC driven by real clicks and typing (`tests/tools/net_ui_probe.gd`): host 35/35,
+  guest 17/17 at 1080p; host 31/31 and guest 16/16 with the host's window at a real 3840 x 2160 (before the rejoin
+  steps were added). Covered: host a server, the server list finds it on the local network, join it, create a lobby,
+  join it with a double click, chat both ways, pick heroes and lanes, the leader's slot menu, Fill with Bots, Ready,
+  Start Match, both load and play, Pause Game / Unpause Game reach both, Leave Game hands the hero to a bot, joining
+  the running match again from the lobby list gives the hero back, Stop Hosting, the guest plays on with bots when
+  the server goes. Two one-off misses in 6 runs (once the Ready click and once the guest's chat line did not register
+  in the probe); both passed on every rerun, so they are recorded, not hidden.
+* Lockstep (`tests/tools/net_test.gd`, headless, real UDP): a dedicated server with two players, a hosted server with
+  one player, and the **exported build** as a dedicated server with two players: every player ends on the same world
+  fingerprint; forced desyncs repaired from a player in the majority (in 9 to 31 frames); a player who drops and
+  connects again gets a snapshot and their hero back. Command to execution at real time against the exported server:
+  35 and 38 ms average (p95 56 and 80 ms) on this PC; a hosting player's own commands about 5 ms.
+* Your bug "giant T-posed model in the river": unit views of units that spawned or moved off screen were never placed
+  (they stood at the world origin, the river in the map's centre) and never animated (a bind pose, at the model's raw
+  size). Fixed in `unit_view.gd` / `main.gd`; `tests/tools/view_place_probe.gd` (5 v 5, camera over the river, 6 game
+  minutes, 268,465 checks) finds 0 misplaced views; it found them at the map centre before the fix.
+* Your neutral rules: neutrals wake for an enemy within 125 (was 240); lane creeps leave a calm camp alone and fight a
+  neutral only while it is aggressive and for 5 s after; the large pull camp and the medium camp by the safe lane's
+  tier 2 moved away from the lane (both sides). Holding **Alt** shows the camps' spawn boxes (was Shift). Tests,
+  `camp_layout.gd` (0 problems), `team_probe.gd` 11/11 and a 20-minute 5 v 5 bot game (no script errors) pass.
+* HUD: the ability level pips sit in their own carved tray under each slot (the console art got a tray, the slots
+  moved up 4 px and the health and mana well down); learned levels are gold bars, the next learnable one a pulsing
+  gold outline. Item and Teleport hotkeys are on dark tags inside the slots (they were cut by the frames). Checked at
+  1080p and a real 4K frame.
+* Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-15 01:25 and run as a dedicated server (above).
+
+Needs you:
+* **The main server's address.** The Multiplayer screen lists a "Main server" first, but this build has no address
+  for it (it shows "Not set up in this build yet"). Run the server on a machine with a public address
+  (`WarriorsOfAether.exe --headless -- --server --name="Warriors of Aether" --motd="..."`, UDP ports 27850 and 27851
+  open) and put its address in `src/net/main_server.json`, then rebuild.
+* Veto any new names below ("Names added 2026-10-15").
+
+Not verified: no independent (blind) critic review of the new screens was run (no subagents were asked for and there
+are no Dota lobby frames on disk), so their look is a builder self-check: UNVERIFIED for blind review. Performance
+benchmarks were not rerun this session.
+
+**Previous status (2026-10-14 b):**
+**2026-10-14 b (wrapped up early on your request, "just wrap up and build"): Froster and Caziel, Main Menu, UI
+skin, mechanics fixes, multiplayer groundwork.** Run `work/lemondev/2026-10-14b-ui-net-heroes/` (contract.md there).
+The run was interrupted and then cut short, so only these gates were rerun at the end:
+* Headless tests: 170 passed, 0 failed. `sh tools/check.sh`: no parse errors, "Names OK".
+* Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-14 23:10. Cold start straight into a match: Froster ready in
+  10.1 s, Caziel 10.5 s, no script errors (`export_froster.png`, `export_caziel.png`); the Main Menu opens with no
+  script errors (`export_menu.png`).
+* Bot duels, 12 min, 3 seeds, Froster and Caziel against every hero: no script errors (`duels_heroes.txt`).
+
+What is in this build:
+* **Froster, the Winter Master** (Ice, ranged Int): Breath of Cold, Ice Pulse, Frost Heart, Endless Winter.
+  **Caziel, the Void Assassin** (Dark, melee Agi): Swift Dagger, Sweet Poison, Master of Shadows, Death Order. Your
+  names and numbers; Caziel's base stats are *chosen* (classic melee-agility template). Talents are plain texts
+  ("+80 Breath of Cold damage", "+25 Attack Speed"...), listed in `src/sim/sim_data.gd` near line 506.
+* A new **Main Menu** (Play, Hero Creator, Options, Quit) with your hero on a lit stage and a "Choose hero" button,
+  plus generated UI textures in `assets/ui/skin/` (`tools/ui_skin.py`).
+* Mechanics fix: Ancient Light's top and Black Sun's bottom lane creeps spawned inside a tower's footprint and never
+  left (no creeps on those lanes from the second wave). Spawns now snap to walkable cells and blocked units slide out.
+* Every player action now goes through serialisable commands (`src/sim/sim_commands.gd`), and `src/net/` plus
+  `sim_snapshot.gd` hold the lockstep session code.
+
+Not done or not verified (the cut parts of the run):
+* **Multiplayer has no screens yet** (browse, host, join, lobby). The Main Menu hides its Multiplayer button until
+  `src/ui/net_menu.tscn` exists. The two-process desync test (`tests/tools/net_test.gd`) was not run.
+* Performance gates (sim profile, 5 v 5 bench at 10:00 and 25:00) were not rerun after the changes.
+* The HUD, shop, Hero Select and Game Setup remake (U2, U3) and the blind UI review against Dota frames: not done.
+* Live probes (menu, item flow, input, controls) were not rerun; the 5 v 5 "an Ancient falls" gate (Q1) not rerun.
+
+**Previous status (2026-10-14, first run):**
+
+**IMPLEMENTED, GATES PASSED, VISUALS NOT BLIND-REVIEWED** (2026-10-14: elements, damage and armor types, magic amp,
+Kugmo / Igit / Atuli, item menu with lock and disassemble, 10 s full-refund protection, item effects, HUD readouts,
+quieter creep deaths, Azrin with your female_generic body and particle fire; run
+`work/lemondev/2026-10-14-elements-azrin/`, contract in `contract.md` there; details in "Elements, armor and damage
+types, magic amp, item menu, Azrin" below).
 
 Evidence (all on the final working tree, uncommitted):
-* Headless tests: 137 passed, 0 failed (115 earlier + 22 new). `sh tools/check.sh`: no parse errors, "Names OK".
-* `tests/tools/controls_probe.gd`: 31/31 at 1080p in a live window (cursor confined in Borderless, Fullscreen and
-  locked Windowed; the OS keeps a warped cursor inside; edge pan keeps going with the cursor pinned; hold Stop; shop
-  closes on outside clicks and Esc; comma buys a Teleport Scroll; regen bonus; disable timers; real crit; orb taken
-  by right click; Smash wind-up) and 23/23 in a real 3840 x 2160 window. Captures in `shots/` and `shots/4k/`.
-* Input probes for all three heroes (10/10, 7/7, 4/4) and the item flow probe (13/13) still pass.
-* Two 40-minute 5 v 5 bot games (seeds 3 and 7; the second on the final sim code): no script errors; bots bought Crit
-  Swords and Shock Hammers. Still no Throne falls in 40 minutes, and some bots are flagged stuck late in the game
-  (modes heal, task, retreat; none while going for an orb): the old AI2 gate stays failed. The earlier "Bot Cat and
-  Bot Jo idle in lane from 0:21" did not appear in either game.
-* Benchmark, 1080p, RTX 4060, `--bench=60 --t=240 --autoplay`, same session: this build 60 / 55 / 62 fps (p95 23.3 /
-  29.6 / 20.0 ms), the 93b2efc baseline 57 / 60 fps (p95 23.3 / 22.2 ms): no measurable change
-  (`bench_new_1v1.txt`, `bench_base_1v1.txt`).
-* Export + cold start of `build/WarriorsOfAether.exe -- --match`: match ready in 9.7 s, no script errors.
+* Headless tests: 155 passed, 0 failed (137 earlier + 18 new). `sh tools/check.sh`: no parse errors, "Names OK".
+* Live probes: `menu_probe` 14/14 at 1080p and in a real 3840 x 2160 frame (captures in `work/shots/menu/`, `4k/`);
+  input probes Azrin 12/12, Sludge 10/10, Ezee 4/4, Blood Ranger 7/7; item flow probe 13/13.
+* Bot duels, 12 min, 3 seeds each, no script errors: Azrin beats Blood Ranger 16-1 and Ezee 13-0 and is even with
+  Sludge 4-3 (your numbers kept; she is strong, partly from Fire beating Nature): `duels_pass1.txt`.
+* Two 30-minute 5 v 5 bot games with two Azrins a side (seeds 3 and 7): no script errors; the Azrin mids led their
+  teams (16/4/6 and 10/8/3 in game 1) and bots bought Atuli, Mana Boots, Push Staff and Spell Shield for her. Game 2
+  flagged four bots stuck in "task" mode after 23:00, the known late-game AI problem (old AI2 gate), not new
+  (`bot_game_5v5.txt`).
+* Benchmark, 1080p, RTX 4060, `--bench=60 --t=240 --autoplay`, alternating with an a38afe7 checkout in the same
+  session (`bench.txt`): after the first warm-up pair, this build 51 / 47 fps (p95 26.3 / 28.6 ms) vs the baseline
+  53 / 51 (p95 26.7 / 26.7): about 6% slower, inside the 10% gate. With Azrin playing: 45 fps (p95 33 ms) before the
+  flame shader went from 4 to 3 noise octaves, 64 fps (p95 20.8 ms) after, baseline 52 in the next run. This machine's
+  run-to-run spread is wide (35-64 fps), so read it as no measurable slowdown, not a gain.
+* Export + cold start of `build/WarriorsOfAether.exe -- --match --hero=azrin`: match ready in 11.3 s on the final build (12.0 s earlier with the bot
+  games running on the same CPU), no script errors (`export_run.txt`, `export_start.png`).
 
 Not verified:
-* Blind visual review of the disable timer bar, hex sheep, root and disarm marks, crit numbers, orbs and the Smash
-  ring: no Dota frames on disk, so UNVERIFIED (builder self-checks only, see the ledger).
-* Values marked APPROX (true sight radii of towers, the Throne and the fountain; the uphill miss chance; the Goblin
-  Boss aura as flat speed). Liquipedia's API refused requests (429); rules came from the Dota 2 wiki on Fandom and
-  Valve's 7.41d game data.
-* Earlier results still stand: Shuriken Hook visuals STOPPED: PLATEAU, base environment and ramps STOPPED: PLATEAU,
-  Burst Shot VFX and Hero Select STOPPED: PLATEAU, Dark Stomp VFX STOPPED: LIMIT, tower scale UNVERIFIED.
+* Blind visual review of the fire, Azrin's look, the item effects and the HUD chips: no Dota frames on disk, so
+  UNVERIFIED (builder self-checks with captures only, see the ledger).
+* Balance: Azrin with your numbers is far ahead in 1 v 1 lanes; the element table also shifts matchups (Fire vs
+  Nature, Earth vs Fire). Numbers are easy to change in `src/sim/sim_data.gd` and `SimConst.ELEMENT_*`.
+* Earlier results still stand (Shuriken Hook visuals, base environment, ramps, Burst Shot VFX, Hero Select STOPPED;
+  Dark Stomp VFX STOPPED: LIMIT; tower scale UNVERIFIED; old AI2 gate failed).
 
 ## Run it
 
@@ -47,7 +122,7 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   Bot or Empty, with a hero (or Random; bots may play the same hero), a bot skill (Passive, Easy, Medium, Hard, Unfair)
   and name, and the lane you want. Presets: 5 vs 5, 1 vs 1 mid. **Start** goes to the Hotkeys screen and the match.
 * Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
-* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 137 tests.
+* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 155 tests.
 * Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured 2026-10-12 on the new map at 1080p on the RTX 4060 with the HUD (`--bench=50`): 77 fps average, p95 16.67 ms.
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
   * `--hero=sludge --bot_hero=blood_ranger` pick the heroes (blood_ranger, ezee, sludge); `--frames=30,34,38` saves several frames;
@@ -66,12 +141,24 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 * Live probes (open a window, play a real match, print PASS / FAIL):
   `godot --path . -s tests/tools/camera_probe.gd` (camera at the start and at respawn),
   `godot --path . -s tests/tools/team_probe.gd -- --bots=5v5 --nolearn --out=work/shots` (bot chat in the HUD, ping
-  replies, Shift spawn boxes, typed chat),
+  replies, Alt spawn boxes, typed chat),
   `godot --path . -s tests/tools/input_probe.gd -- --hero=sludge --nobot` (every ability through the input
   controller), `godot --path . -s tests/tools/item_flow_probe.gd -- --hero=sludge` (shop, To Buy, drag and drop,
   talents, courier), `godot --path . -s tests/tools/ui_probe.gd -- --hero=sludge --out=work/shots` (HUD captures).
 * `--showqueue` (capture flag) queues a few orders for your hero and draws the Shift waypoints.
 * Parse-check every script: `sh tools/check.sh`.
+* Multiplayer: Main Menu > Multiplayer. A dedicated server (no window):
+  `build/WarriorsOfAether.exe --headless -- --server [--port=27850] [--name="My server"] [--motd="Welcome"]
+  [--password=x] [--max=64]`; it answers the server list on the port above its game port and prints joins, lobbies
+  and matches. Lockstep tests (one shell each): `godot --headless --path . -s tests/tools/net_test.gd -- --role=server`
+  then `-- --role=client --lead --name=A` and `-- --role=client --name=B [--corrupt=3600] [--drop=5200] [--lag=60]`
+  (or `--role=host` plus one client); every player prints `HASH@<frame>` and they must match. The screens through
+  real clicks (two windows): `godot --path . -s tests/tools/net_ui_probe.gd -- --role=host [--4k]` and
+  `-- --role=guest`.
+* Units drawn where they are: `godot --path . -s tests/tools/view_place_probe.gd -- --hero=froster --bots=5v5
+  --autoplay --nolearn --min=6`.
+* Rebuild Azrin's body from your female_generic model (about a minute; `-- --preview=dir` renders checks):
+  `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/azrin_body.py`
 * Rebuild the building models: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/buildings.py`.
 * Re-bake the terrain texture arrays (needs the GPU, not headless): `godot --path . -s tests/tools/bake_terrain_arrays.gd`.
 
@@ -107,7 +194,7 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | Ctrl + 1..9, then 1..9 | Control groups (double tap centres the camera) |
 | Alt + click | Ping (ground or minimap). On an enemy hero or building: "attack"; on one of ours: "defend"; Ctrl + Alt + click: danger. Your bots answer in chat, and agree or say why not |
 | Enter | Type to your team (Enter sends, Esc closes). Bots understand "push top", "defend mid", "gank" or "kill <hero>", "back", "group" |
-| Shift (hold) | Also shows every neutral camp's spawn box: yellow, red while something blocks it, with its size and the pull camps named |
+| Alt (hold) | Shows every neutral camp's spawn box: yellow, red while something blocks it (couriers never do), with its size and the pull camps named |
 | Tab (hold) | Scoreboard with damage tables |
 | Top-bar hero tiles | Click to look at a visible hero; dead heroes show their respawn timer |
 | Space (hold) | Follow your hero |
@@ -144,7 +231,7 @@ src/game/     presentation (reads the sim, never writes it except through comman
   foliage + foliage.gdshader           Quaternius trees (one instance per sim tree), grass and plants
   building_view + building/crystal shaders   Blender-built faction buildings
   unit_view + model_catalog            animated units, attack swings timed to the sim's attack point
-  camps (neutral camp props, fires, spawn boxes on Shift), fx, sludge_fx (shuriken hook and chain, Stench cloud,
+  camps (neutral camp props, fires, spawn boxes on Alt), fx, sludge_fx (shuriken hook and chain, Stench cloud,
   Chomp), item_fx (item actives and procs), camera_rig,
   atmosphere (day/night), fog_of_war.gdshader, input_controller, audio (Effects, Interface, Ambience buses)
 src/core/     options (user://options.json), game_settings (heroes and looks)
@@ -158,6 +245,13 @@ src/ui/       hero_select (main menu), hero_creator, hud (bottom panel shows the
               screen_fx (death desaturation, low-health pulse), match_menus (pause, end screen), ui_kit,
               shop_panel (the Dota-style shop), options_panel (Options screen), game_setup (Game Setup),
               chat_panel (team chat above the minimap)
+src/net/      multiplayer: net (autoload Net: ENet messages, the player's session, server queries, UPnP),
+              net_server (a server's lobby list, rooms, the relayed lockstep, desync repair, rejoin), net_match (a
+              player's lockstep: frames, jitter buffer, fingerprints, snapshots), net_browser (the server list, saved
+              servers and the player's multiplayer settings in user://multiplayer.json), main_server.json (the main
+              server's address); src/sim/sim_commands (every player action as data), sim_snapshot (the world as bytes)
+src/ui/net_*  the Multiplayer screens: net_menu (shell, dialogs, notices), net_servers_page, net_hub_page,
+              net_room_page, net_list (tables), net_chat
 tests/        run_tests.gd (mechanics), tools/ (bakes, probes)
 tools/        blender/buildings.py, build_wear_catalog.py, itch_dl.sh, kv.py (research), check.sh
 ```
@@ -326,7 +420,7 @@ names in `docs/MECHANICS.md`, "Items and shop").
 * Each camp is a trampled clearing with a fire that burns day and night (with light), tents or round huts, a drying
   rack, stakes, bones, and a horned-skull totem whose cloth shows the size: small yellow, medium orange, large red,
   ancient violet. Props: `tools/blender/camps.py` (Blender) -> `assets/props/camp_*.glb`; placed by `src/game/camps.gd`.
-* Hold Shift: spawn boxes on the ground (yellow; red while something other than the camp's creeps blocks them) with a
+* Hold Alt: spawn boxes on the ground (yellow; red while something other than the camp's creeps blocks them) with a
   label, and on the minimap. The minimap always shows Dota's camp marks (a triangle, bars for medium and large).
 
 ## Game Setup, bots, chat, pings, learning (2026-10-13 c)
@@ -403,7 +497,88 @@ Run `work/lemondev/2026-10-13-controls-mechanics/` (contract in `contract.md`). 
 * Shop groups: Big Parts, Swords, Magic (Upgrades). Hotkey: Buy Teleport Scroll. Option: Lock cursor to window
   (Windowed). Disable labels: Stunned, Bashed, Hexed, Silenced, Rooted, Disarmed, Broken, Muted.
 
+## Elements, armor and damage types, magic amp, item menu, Azrin (2026-10-14)
+
+Run `work/lemondev/2026-10-14-elements-azrin/` (contract in `contract.md`). Rules and tables: `docs/MECHANICS.md`
+("Units and stats", "Status effects", "Azrin", "Items and shop").
+* **Elements**: None, Fire, Water, Ice, Earth, Lightning, Nature, Dark, Light, on every unit and every damage source.
+  Strong x1.25, weak x0.75, each element resists itself, Light and Dark beat each other. Damage numbers show "+25%" or
+  "-25%" in the element's colour when it matters.
+* **Damage and armor types**: Hero, Slash, Piercing, Siege, Blunt, Magic, Aether (pure) against Hero, Organic,
+  Structure, Armored, Titan. Every old Dota pairing keeps its number; Fire Imp and Lava Golem attacks are Magic.
+* **Magic amp**: 1% per 20 intelligence; items (Atuli family) stack with diminishing returns (each one half the one
+  before). Intelligence magic resistance is now 1% per 25 (was Dota's 0.1% per point).
+* **Kugmo, Igit, Atuli** (Sange, Yasha, Kaya) with the pairs Kugmo and Igit (was Twin Swords), Kugmo and Atuli, Igit
+  and Atuli (shop: Upgrades > Swords).
+* **Item menu**: right click an item (bags or stash): Sell (with the price), Disassemble (parts and scroll come back
+  locked), Lock / Unlock, Move to Backpack / Inventory. Locked items show a padlock and never combine.
+* **Accidental buy protection**: anything sells for its full price for 10 s after it is bought, and the menu counts the
+  seconds down. A combined item keeps the pieces it was made of with their purchase times, so an item disassembled by
+  mistake still sells for full price inside the 10 s, and a recipe bought on old parts refunds only the recipe in full.
+* **Item effects**: Spike Armor (a turning crown of spikes while active; thorns fly back at attackers), Block Shield
+  (a shield flash per block), Spell Shield (golden dome), Rust Stone / Armor Breaker (rust ring under the target),
+  Frenzy Mask (red rage), Slip Boots (wind at the feet), Cleave Axe (a sweep across the cone).
+* **HUD**: chips above the stats (element, damage type, armor type), each with a hover that explains it from the tables;
+  the stats hover is a full sheet (attack; armor and magic resistance with the intelligence part; which elements hurt or
+  are resisted; magic amp split into intelligence and items; spell, healing and mana regen amp; cast speed, mana cost,
+  lifesteal, evasion, status and slow resistance; burns). The selected unit's card has the same chips and sheet.
+* **Creep death sounds** (lane and neutral) 40% quieter: -7.4 dB, the volume sliders' loudness rule.
+* **Azrin, the Flamemander**: see MECHANICS.md for every number. Your female_generic model is her body
+  (`tools/blender/azrin_body.py`: 2 million faces decimated to 30,000, colours baked from the full mesh into a 2048
+  texture with the head given 2.5x the texture space, her joints found from the mesh and fitted onto the hero
+  skeleton, so she plays all 132 hero animations). In the Hero Creator it is the body choice "Athletic" (Body tab);
+  hair, outfits, dyes and height work on it as on Blood Ranger, and worn pieces hide the skin under them. Face, skin,
+  eye and shape sliders only change the standard body. Her default look: dragonhide armour, dark crimson silks, a
+  circlet, flame-orange long hair. She hovers 0.75 m up (gliding, leaning into moves) over a pyre on scorched ground,
+  with fire in her hands and hair, sparks and a warm light, in matches and on Hero Select.
+* **Fire**: `src/game/fire_fx.gd` is a particle fire system used by all Fire: noise-shaded flame tongues (premultiplied,
+  so they stay orange in daylight), embers on turbulence, smoke, flickering light, ember beds under burning ground.
+  Azrin's spells (`src/game/azrin_fx.gd`): the javelin of fire dragging enemies, spirit-flame marks with a closing
+  timer ring and their explosion, orbiting spirits that arc to their target, the tumbling burning hammer and the field
+  of fire where it lands; any burning unit is wreathed in flame. Fire Imp and Lava Golem attacks use it too.
+* New tools: `tests/tools/menu_probe.gd` (item menu and HUD readouts through real clicks, captures; `--4k`),
+  `tests/tools/look_lineup.gd` (a hero's look in several outfits side by side), `tests/tools/fire_preview.gd` (the fire
+  on its own). Capture flags: `--items=a,b,c` gives the hero items, `--cast=item:N` uses slot N.
+
+## Names added 2026-10-14 (veto any you dislike)
+
+* Yours (kept as given, now on the owner list): Azrin, the Flamemander, Fiery Javelin, Touch of Ember, Spirit of Fire,
+  Divine Smite, Kugmo, Igit, Atuli, the Aether damage type.
+* Items: Kugmo and Igit (was Twin Swords), Kugmo and Atuli, Igit and Atuli.
+* Elements: None, Fire, Water, Ice, Earth, Lightning, Nature, Dark, Light. Damage types: Hero, Slash, Piercing,
+  Siege, Blunt, Magic. Armor types: Hero, Organic, Structure, Armored, Titan.
+* HUD: Sell for N gold, Disassemble, Lock, Unlock, Move to Backpack, Move to Inventory, Locked; chips "<type> attack",
+  "<type> armor"; sheet headings Attack, Defense, Amplification; Magic Amp, Spell Amp, Healing Amp, Mana Regen Amp,
+  Cast Speed, Mana Cost Reduction, Burning; status Burning.
+* Hero Creator: Body (Standard, Athletic).
+* Azrin's talents: +30 Fiery Javelin burn, +25 Attack Damage, +6% Magic Amp, -2s Touch of Ember cooldown, +2 Spirits of
+  Fire, +200 Divine Smite damage, +0.8s Touch of Ember stun, -15s Divine Smite cooldown. Errors: "No spirits of fire",
+  "Not enough room", "Cannot be disassembled".
+* Elements chosen for existing units (veto freely): Blood Ranger Nature, Ezee Dark, Sludge Earth; creeps by team (Light,
+  Dark); towers Earth; neutrals as listed in MECHANICS.md.
+
+## Names added 2026-10-15 (veto any you dislike)
+
+* Multiplayer screens: Multiplayer, Servers, Main Server, Main server, Your Servers, Local Network, Join by Address,
+  Address, Server password, Save to List, Connect, Host a Server, Server name, Password, Port, Players, Host Server,
+  Open the port on my router (UPnP), Add Server, Remove, Refresh, Join Server, Your name, Server Password, Different
+  Version, Could Not Connect, Could Not Host, Connecting to ..., Disconnected.
+* Server lobby list: Lobbies, Lobby, Leader, Status, Waiting for players, Starting, In a match, Your hero waits, Join to
+  play on, Players Online, Name, Where, Lobby list, Server Chat, Create Lobby, Quick Join, Join Lobby, Leave Server,
+  Stop Hosting, Hosting, n online, Ping n ms, Lobby name, Teams, 5 vs 5, 1 vs 1 mid, Create, Lobby Password.
+* Lobby: Your Hero, Random Hero, Your lane, Ready, Not Ready, Not ready, You are ready, Lobby Chat, Leave Lobby, Fill
+  with Bots, Start Match, Lobby Settings, You lead this lobby, Slot, Add Bot, Remove Bot, Remove Player, Open Slot,
+  Close Slot, Open, Closed, Click to move here, Waiting for a player, Nobody plays here, (you), Save.
+* In a match: Menu, Pause Game, Unpause Game, Leave Game, Back to Lobby, Game Paused, Paused by ..., Waiting for the
+  server, Catching up, Waiting for every player to load, Lost the connection to the server.
+* Server messages: "... joined", "... left", "... joined the lobby", "... left the lobby", "... leads the lobby now",
+  "... is back", "a bot plays their hero until they come back", "That lobby is full", "Wrong lobby password",
+  "This server needs a password", "The server is full", "The lobby leader removed you".
+
 ## Backlog: smallest next actions first
+
+0. Multiplayer: set the main server's address (see Status); a blind review of the new screens; a test over the
+   internet between two real machines (only this PC was used).
 
 1. Bots: find why two bots stand still in a lane from 0:21 in every 5 v 5 game, then make games end (an Ancient
    falls within 60 min); then the frame time with 10 heroes.

@@ -13,7 +13,7 @@ const AP = preload("res://src/sim/sim_unit.gd").AtkPhase
 var w: SimWorld
 var _pending := {}                         # unit id -> target id to switch to after the current swing
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 func think() -> void:
@@ -80,7 +80,12 @@ func spawn_wave(n: int) -> void:
 			for i in ranged_n:
 				list.append([p + ("ranged_super" if super_ranged else "ranged"), start - fwd * 90.0 + side * (i - (ranged_n - 1) * 0.5) * 70.0])
 			for e in list:
-				var u := w.spawn(e[0], team, e[1])
+				# never inside a building's footprint (the top tier 3 tower stands on the lane line)
+				var sp: Vector2 = e[1]
+				if not w.map.is_walkable(sp):
+					var nc := w.map.nearest_walkable(w.map.world_to_cell(sp))
+					sp = w.map.cell_center(nc.x, nc.y)
+				var u := w.spawn(e[0], team, sp)
 				u.facing = fwd.angle()
 				u.lane = lane
 				u.lane_i = 1
@@ -177,8 +182,9 @@ func _valid_target(u: SimUnit, t: SimUnit) -> bool:
 	if not t.alive or t.team == u.team or t.kind == K.FOUNTAIN:
 		return false
 	if t.team == C.NEUTRAL and t.kind == K.NEUTRAL_CREEP:
-		# towers never attack neutrals; lane creeps fight only the pull camps' neutrals
-		if u.is_building() or t.camp_id < 0 or not bool(w.map.camps[t.camp_id].get("pull", false)):
+		# towers never attack neutrals; lane creeps leave a calm camp alone and fight a neutral only while it is
+		# aggressive (fighting anyone, or in the 5 s after)
+		if u.is_building() or w.time >= t.hostile_until:
 			return false
 	if t.is_building() and t.is_invulnerable():
 		return false
@@ -425,6 +431,7 @@ func _wake(n: SimUnit, src: SimUnit) -> void:
 				m.leash_since = -1.0
 			m.neutral_state = 1
 			m.neutral_aggro_at = w.time
+			m.hostile_until = w.time + C.NEUTRAL_HOSTILE_TIME
 			_retarget(m, src.id)
 			m.order = O.NONE
 		elif m.atk_target == src.id:
@@ -465,7 +472,8 @@ func on_creep_hit(src: SimUnit, t: SimUnit, dmg: float) -> void:
 				continue
 			if o.pos.distance_to(t.pos) > float(sp.radius) + o.hull:
 				continue
-			w.combat.deal_damage(src.id, src.team, false, o, dmg * float(sp.pct), C.DamageType.PHYSICAL, false, "splash",
+			var sdt := C.DamageType.MAGICAL if src.weapon == C.Weapon.MAGIC else C.DamageType.PHYSICAL
+			w.combat.deal_damage(src.id, src.team, false, o, dmg * float(sp.pct), sdt, false, "splash",
 				false, {"no_amp": true})
 
 ## A fighting neutral uses its spell when it is worth it: Stomp with an enemy hero (or two enemies) in reach, Snarl
@@ -508,6 +516,7 @@ func _neutral(u: SimUnit) -> void:
 				if near != null:
 					_wake(u, near)
 		1:
+			u.hostile_until = w.time + C.NEUTRAL_HOSTILE_TIME
 			var t := w.get_unit(u.atk_target)
 			var give_up := t == null or not t.alive or t.team == C.NEUTRAL or t.is_invulnerable() \
 				or t.has_flag("invisible") and not w.vision.sees(C.NEUTRAL, t)
@@ -522,7 +531,7 @@ func _neutral(u: SimUnit) -> void:
 				# the target is gone while we are home: the next enemy fighting the camp, or the closest one in reach
 				var alt := _neutral_alt(u)
 				if alt == null:
-					alt = _neutral_nearest(u, u.acquire_range)
+					alt = _neutral_nearest(u, minf(u.acquire_range, C.NEUTRAL_PROXIMITY_AGGRO))
 				if alt != null:
 					_retarget(u, alt.id)
 					u.neutral_aggro_at = w.time

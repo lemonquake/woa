@@ -11,7 +11,7 @@ var w: SimWorld
 
 var hook_hits := {}                        # caster id -> [game time, caught unit id] of its last hook catch (bots learn aim)
 
-func _init(world: SimWorld) -> void:
+func _init(world: SimWorld = null) -> void:
 	w = world
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
@@ -158,6 +158,8 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 			return "Rooted"
 		if leap_target(u, lv) == null:
 			return "No enemy in sight"
+	if aid == "spirit_of_fire" and spirits(u) <= 0:
+		return "No spirits of fire"
 	if a.behavior == "autocast_attack" and check_target:
 		if target == null or target.team == u.team or target.is_building():
 			return "Must target an enemy unit"
@@ -288,7 +290,41 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
 	_charge_sticks(u)
+	# Touch of Ember: an enemy carrying its flames sets them off by casting a spell
+	if not u.get_modifier("touch_of_ember").is_empty():
+		_ember_explode_on(u)
+	# Spirit of Fire: every other spell Azrin casts adds a spirit
+	if aid != "spirit_of_fire" and u.ability_level_of("spirit_of_fire") > 0:
+		_add_spirit(u)
 	match aid:
+		"fiery_javelin":
+			_javelin(u, aid, lv, p)
+		"touch_of_ember":
+			_touch_of_ember(u, aid, lv, p)
+		"spirit_of_fire":
+			_shoot_spirits(u, aid, lv, p)
+		"divine_smite":
+			_cast_seq += 1
+			var dmg := val(u, aid, "damage") + val(u, aid, "int_mult") * u.int_total
+			w.effects.append({"kind": "hammer", "ability": aid, "src": u.id, "team": u.team, "target": t.id,
+				"pos": u.pos, "speed": val(u, aid, "speed"), "damage": dmg, "radius": val(u, aid, "radius"),
+				"extend": val(u, aid, "extend"), "seq": _cast_seq})
+			w.events.append({"t": "smite_launch", "u": u.id, "target": t.id, "seq": _cast_seq,
+				"speed": val(u, aid, "speed")})
+		"breath_of_cold":
+			_breath(u, aid, p)
+		"ice_pulse":
+			_ice_pulse(u, aid, t)
+		"endless_winter":
+			_start_winter(u, aid, lv)
+		"swift_dagger":
+			_swift_dagger(u, aid, t)
+		"master_of_shadows":
+			var md := val(u, aid, "duration")
+			u.add_modifier({"id": "master_of_shadows", "source": u.id, "expires": w.time + md, "minimap_hidden": true,
+				"stats": {"evasion": val(u, aid, "evasion"), "move_speed_pct": val(u, aid, "move_pct")}, "fx": "shadows"})
+			u.refresh_stats()
+			w.events.append({"t": "shadows_start", "u": u.id, "dur": md})
 		"burst_shot":
 			_start_burst(u, a, lv, p)
 		"gale_impact":
@@ -445,6 +481,18 @@ func update_effects() -> void:
 				done = _update_hook(e)
 			"pulse":
 				done = _update_pulse(e)
+			"javelin":
+				done = _update_javelin(e)
+			"ember":
+				done = _update_ember(e)
+			"spirits":
+				done = _update_spirits(e)
+			"hammer":
+				done = _update_hammer(e)
+			"cone":
+				done = _update_cone(e)
+			"ice_pulse":
+				done = _update_ice_pulse(e)
 		if done:
 			w.effects.remove_at(i)
 
@@ -940,6 +988,8 @@ func channel_tick(u: SimUnit) -> void:
 			update_burst(u)
 		"chomp":
 			_update_chomp(u)
+		"endless_winter":
+			_update_winter(u)
 
 ## A channel ended (finished, or cancelled by an order, stun, silence, push or death): undo what it holds.
 func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
@@ -957,8 +1007,189 @@ func _remove_mod(t: SimUnit, mid: String, source: int) -> void:
 
 # ---- Sludge, the Butcher (Dota 2's Pudge) -----------------------------------------------------------------------
 
+# ---- Azrin, the Flamemander ---------------------------------------------------------------------------------------
+
+## Enemies Azrin's spells touch: living heroes and creeps (not buildings, wards or couriers), not invulnerable.
+func _azrin_can_hit(team: int, o: SimUnit) -> bool:
+	return o.alive and o.team != team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER \
+		and not o.is_invulnerable()
+
+func spirits(u: SimUnit) -> int:
+	return int(u.stacks.get("spirits", 0))
+
+func _add_spirit(u: SimUnit) -> void:
+	var mx := int(val(u, "spirit_of_fire", "max_spirits"))
+	var n := spirits(u)
+	if n < mx:
+		u.stacks["spirits"] = n + 1
+		w.events.append({"t": "spirit_gain", "u": u.id, "n": n + 1})
+
+## Fiery Javelin: flies from Azrin toward the point (300 to 1000 away). Every enemy within its width is caught once:
+## it starts burning, and unless it is debuff-immune it is dragged along with the javelin to where it lands.
+func _javelin(u: SimUnit, aid: String, _lv: int, p: Vector2) -> void:
+	var dir := p - u.pos
+	var dist := clampf(dir.length(), val(u, aid, "min_distance"), val(u, aid, "distance"))
+	dir = Vector2.from_angle(u.facing) if dir.length() < 1.0 else dir.normalized()
+	u.facing = dir.angle()
+	_cast_seq += 1
+	var from := u.pos + dir * u.hull
+	w.effects.append({"kind": "javelin", "ability": aid, "src": u.id, "team": u.team, "pos": from, "dir": dir,
+		"left": dist, "speed": val(u, aid, "speed"), "width": val(u, aid, "width"), "dps": val(u, aid, "burn_dps"),
+		"dur": val(u, aid, "burn_duration"), "seq": _cast_seq, "hit": {}, "caught": {}})
+	w.events.append({"t": "javelin_launch", "u": u.id, "from": from, "dir": dir, "dist": dist,
+		"speed": val(u, aid, "speed"), "seq": _cast_seq})
+
+func _update_javelin(e: Dictionary) -> bool:
+	var src := w.get_unit(int(e.src))
+	var dir: Vector2 = e.dir
+	var step := minf(float(e.speed) * C.DT, float(e.left))
+	var from: Vector2 = e.pos
+	var to := from + dir * step
+	e.pos = to
+	e.left = float(e.left) - step
+	for o: SimUnit in w.query(to, float(e.width) + step + 80.0, true):
+		if e.hit.has(o.id) or not _azrin_can_hit(int(e.team), o):
+			continue
+		var cp := Geometry2D.get_closest_point_to_segment(o.pos, from, to)
+		if cp.distance_to(o.pos) > float(e.width) + o.hull:
+			continue
+		e.hit[o.id] = true
+		if src != null:
+			w.status.add_dot(o, src, String(e.ability), float(e.dps), float(e.dur), C.Element.FIRE)
+		if o.kind == K.NEUTRAL_CREEP and src != null:
+			w.ai.neutral_provoked(o, src)
+		if can_debuff(o, int(e.team)) and o.alive:
+			w.orders.cancel_channel(o)
+			o.leap = {}
+			o.hop = {}
+			o.path = PackedVector2Array()
+			o.knock = {"drag": true, "seq": int(e.seq), "disable": true, "src": int(e.src)}
+			# it rides beside the tip, keeping a little of its sideways offset
+			var side := clampf((o.pos - cp).dot(dir.orthogonal()), -60.0, 60.0)
+			e.caught[o.id] = side
+			w.events.append({"t": "javelin_catch", "u": o.id, "src": e.src, "seq": e.seq})
+	var done := float(e.left) <= 0.001
+	for id in e.caught.keys():
+		var o := w.get_unit(int(id))
+		if o == null or not o.alive or int(o.knock.get("seq", -1)) != int(e.seq):
+			e.caught.erase(id)
+			continue
+		var np: Vector2 = to + dir.orthogonal() * float(e.caught[id]) - dir * o.hull
+		o.pos = np
+		if done:
+			_hook_release(o, np)
+	w.events.append({"t": "javelin_move", "src": e.src, "seq": e.seq, "pos": to, "done": done})
+	return done
+
+## Touch of Ember: 100 magic damage over the area, then each enemy hit carries spirit flames for 4 s; they explode when
+## it casts a spell or when the time runs out (more magic damage and a stun).
+func _touch_of_ember(u: SimUnit, aid: String, _lv: int, p: Vector2) -> void:
+	var r := val(u, aid, "radius")
+	w.events.append({"t": "ember_cast", "u": u.id, "pos": p, "radius": r})
+	for o: SimUnit in w.query(p, r + 80.0, true):
+		if not _azrin_can_hit(u.team, o) or o.pos.distance_to(p) > r + o.hull:
+			continue
+		w.combat.deal_damage(u.id, u.team, true, o, val(u, aid, "damage"), C.DamageType.MAGICAL, false, aid)
+		if o.kind == K.NEUTRAL_CREEP:
+			w.ai.neutral_provoked(o, u)
+		if not o.alive:
+			continue
+		var delay := val(u, aid, "delay")
+		if w.status.apply(o, u.id, u.team, {"id": "touch_of_ember", "dur": delay, "dispel": "", "fx": "ember_mark",
+				"no_resist": true}):
+			w.effects.append({"kind": "ember", "ability": aid, "src": u.id, "team": u.team, "target": o.id,
+				"at": w.time + delay, "damage": val(u, aid, "explode_damage"), "stun": val(u, aid, "stun")})
+
+func _update_ember(e: Dictionary) -> bool:
+	var t := w.get_unit(int(e.target))
+	if t == null or not t.alive:
+		return true
+	if bool(e.get("now", false)) or w.time >= float(e.at):
+		_ember_explode(e, t)
+		return true
+	return false
+
+## The target cast a spell: its flames go off at once (this tick).
+func _ember_explode_on(t: SimUnit) -> void:
+	for e in w.effects:
+		if String(e.kind) == "ember" and int(e.target) == t.id:
+			e["now"] = true
+			_ember_explode(e, t)
+			e["at"] = -INF
+			e["spent"] = true
+
+func _ember_explode(e: Dictionary, t: SimUnit) -> void:
+	if bool(e.get("spent", false)):
+		return
+	e["spent"] = true
+	t.remove_modifier("touch_of_ember")
+	w.events.append({"t": "ember_explode", "u": t.id, "src": e.src})
+	var src := w.get_unit(int(e.src))
+	if src == null:
+		return
+	w.combat.deal_damage(src.id, int(e.team), true, t, float(e.damage), C.DamageType.MAGICAL, false, String(e.ability))
+	if t.alive:
+		w.status.apply(t, src.id, int(e.team), {"id": "stunned", "stun": true, "dur": float(e.stun), "fx": "stun"})
+
+## Spirit of Fire: every spirit flies to the area; each burns the enemies there (its damage spread over the duration)
+## and slows them while they burn.
+func _shoot_spirits(u: SimUnit, aid: String, _lv: int, p: Vector2) -> void:
+	var n := spirits(u)
+	u.stacks["spirits"] = 0
+	var speed := val(u, aid, "speed")
+	w.effects.append({"kind": "spirits", "ability": aid, "src": u.id, "team": u.team, "n": n, "point": p,
+		"at": w.time + u.pos.distance_to(p) / speed, "radius": val(u, aid, "radius"), "burn": val(u, aid, "burn"),
+		"dur": val(u, aid, "duration"), "slow": val(u, aid, "slow")})
+	w.events.append({"t": "spirits_launch", "u": u.id, "n": n, "point": p, "speed": speed})
+
+func _update_spirits(e: Dictionary) -> bool:
+	if w.time < float(e.at):
+		return false
+	var src := w.get_unit(int(e.src))
+	var p: Vector2 = e.point
+	var r := float(e.radius)
+	w.events.append({"t": "spirits_hit", "u": e.src, "pos": p, "radius": r, "n": e.n})
+	if src == null:
+		return true
+	var dps := float(e.burn) * int(e.n) / float(e.dur)
+	for o: SimUnit in w.query(p, r + 80.0, true):
+		if not _azrin_can_hit(int(e.team), o) or o.pos.distance_to(p) > r + o.hull:
+			continue
+		w.status.add_dot(o, src, String(e.ability), dps, float(e.dur), C.Element.FIRE)
+		w.status.apply(o, src.id, int(e.team), {"id": "spirit_of_fire_slow", "dur": float(e.dur), "slow": float(e.slow),
+			"fx": "slow"})
+		if o.kind == K.NEUTRAL_CREEP:
+			w.ai.neutral_provoked(o, src)
+	return true
+
+## Divine Smite: the hammer homes on its target. On arrival: every Fire burn on enemies within the radius lasts longer,
+## then its burst of magic damage.
+func _update_hammer(e: Dictionary) -> bool:
+	var t := w.get_unit(int(e.target))
+	if t == null or not t.alive:
+		w.events.append({"t": "smite_hit", "u": e.src, "target": -1, "pos": e.pos, "radius": e.radius, "seq": e.seq})
+		return true
+	var to: Vector2 = t.pos - (e.pos as Vector2)
+	var step := float(e.speed) * C.DT
+	if to.length() > step + t.hull * 0.5:
+		e.pos = (e.pos as Vector2) + to.normalized() * step
+		w.events.append({"t": "smite_move", "src": e.src, "seq": e.seq, "pos": e.pos})
+		return false
+	var src := w.get_unit(int(e.src))
+	var n := 0
+	for o: SimUnit in w.query(t.pos, float(e.radius) + 80.0, true):
+		if o.alive and o.team != int(e.team) and o.pos.distance_to(t.pos) <= float(e.radius) + o.hull:
+			n += w.status.extend_dots(o, int(e.team), C.Element.FIRE, float(e.extend))
+	w.events.append({"t": "smite_hit", "u": e.src, "target": t.id, "pos": t.pos, "radius": e.radius, "seq": e.seq,
+		"extended": n})
+	if src != null and not t.is_invulnerable():
+		w.combat.deal_damage(src.id, int(e.team), true, t, float(e.damage), C.DamageType.MAGICAL, false,
+			String(e.ability))
+	return true
+
 ## Growing Gut: an enemy hero died. Every Sludge on the other team within 450 (alive) or credited with the kill grows.
 func on_hero_death(t: SimUnit, killer: SimUnit, credit: SimUnit) -> void:
+	t.stacks.erase("spirits")                         # the spirits of fire die with Azrin
 	for h in w.heroes:
 		if h.team == t.team or not h.ability_level.has("growing_gut"):
 			continue
@@ -1173,6 +1404,227 @@ func _update_chomp(u: SimUnit) -> void:
 		w.combat.deal_damage(u.id, u.team, true, t, bite, C.DamageType.MAGICAL, false, aid)
 		var healed := w.combat.heal(u, bite)
 		w.events.append({"t": "chomp_bite", "u": u.id, "target": t.id, "amount": bite, "healed": healed})
+
+# ---- Froster, the Winter Master -----------------------------------------------------------------------------------
+
+## Breath of Cold: a widening cone of cold rolls out from Froster to its full 800 (wherever the player clicked); each
+## enemy it reaches is struck once for magic damage and slowed.
+func _breath(u: SimUnit, aid: String, p: Vector2) -> void:
+	var dir := p - u.pos
+	dir = Vector2.from_angle(u.facing) if dir.length() < 1.0 else dir.normalized()
+	u.facing = dir.angle()
+	_cast_seq += 1
+	var reach := val(u, aid, "distance")
+	w.effects.append({"kind": "cone", "ability": aid, "src": u.id, "team": u.team, "origin": u.pos, "dir": dir,
+		"done": 0.0, "reach": reach, "speed": val(u, aid, "speed"), "w0": val(u, aid, "start_width"),
+		"w1": val(u, aid, "end_width"), "damage": val(u, aid, "damage"), "slow": val(u, aid, "slow"),
+		"slow_t": val(u, aid, "slow_duration"), "seq": _cast_seq, "hit": {}})
+	w.events.append({"t": "breath_cast", "u": u.id, "from": u.pos, "dir": dir, "dist": reach, "speed": val(u, aid, "speed"),
+		"w0": val(u, aid, "start_width"), "w1": val(u, aid, "end_width"), "seq": _cast_seq})
+
+func _update_cone(e: Dictionary) -> bool:
+	var from := float(e.done)
+	var to := minf(float(e.reach), from + float(e.speed) * C.DT)
+	e.done = to
+	var origin: Vector2 = e.origin
+	var dir: Vector2 = e.dir
+	var mid := origin + dir * ((from + to) * 0.5)
+	var src := w.get_unit(int(e.src))
+	for o: SimUnit in w.query(mid, (to - from) * 0.5 + float(e.w1) * 0.5 + 100.0, true):
+		if e.hit.has(o.id) or not _azrin_can_hit(int(e.team), o):
+			continue
+		var rel := o.pos - origin
+		var along := rel.dot(dir)
+		if along < -o.hull or along > to + o.hull:
+			continue
+		var half := lerpf(float(e.w0), float(e.w1), clampf(along / float(e.reach), 0.0, 1.0)) * 0.5
+		if absf(rel.dot(dir.orthogonal())) > half + o.hull:
+			continue
+		e.hit[o.id] = true
+		if src != null:
+			w.combat.deal_damage(src.id, int(e.team), true, o, float(e.damage), C.DamageType.MAGICAL, false, String(e.ability))
+			if o.kind == K.NEUTRAL_CREEP:
+				w.ai.neutral_provoked(o, src)
+		if o.alive and can_debuff(o, int(e.team)):
+			w.status.apply(o, int(e.src), int(e.team), {"id": "breath_of_cold_slow", "dur": float(e.slow_t),
+				"slow": float(e.slow), "fx": "chill"})
+		w.events.append({"t": "breath_hit", "u": o.id, "src": e.src})
+	w.events.append({"t": "breath_move", "src": e.src, "seq": e.seq, "dist": to, "done": to >= float(e.reach) - 0.01})
+	return to >= float(e.reach) - 0.01
+
+## Ice Pulse: the target's defense drops for 3.5 s (SimUnit.defense_loss raises the physical and magic damage it takes
+## after armor and resistances); then the curse bursts: magic damage to it and every enemy within 300.
+func _ice_pulse(u: SimUnit, aid: String, t: SimUnit) -> void:
+	if t == null or not t.alive:
+		return
+	var dur := val(u, aid, "duration")
+	if not w.status.apply(t, u.id, u.team, {"id": "ice_pulse", "dur": dur, "defense_loss": val(u, aid, "defense_loss"),
+			"dispel": "basic", "fx": "ice_curse"}):
+		return                                       # refused (Spell Shield): no curse, no blast
+	w.effects.append({"kind": "ice_pulse", "ability": aid, "src": u.id, "team": u.team, "target": t.id, "pos": t.pos,
+		"at": w.time + dur, "damage": val(u, aid, "blast_damage"), "radius": val(u, aid, "blast_radius")})
+	w.events.append({"t": "ice_pulse_cast", "u": u.id, "target": t.id, "dur": dur})
+
+func _update_ice_pulse(e: Dictionary) -> bool:
+	var t := w.get_unit(int(e.target))
+	if t != null and t.alive:
+		e.pos = t.pos
+	if w.time < float(e.at):
+		return false
+	var p: Vector2 = e.pos
+	var r := float(e.radius)
+	var src := w.get_unit(int(e.src))
+	w.events.append({"t": "ice_pulse_blast", "u": e.src, "target": e.target, "pos": p, "radius": r})
+	if src == null:
+		return true
+	for o: SimUnit in w.query(p, r + 80.0, true):
+		if not _azrin_can_hit(int(e.team), o) or o.pos.distance_to(p) > r + o.hull:
+			continue
+		w.combat.deal_damage(src.id, int(e.team), true, o, float(e.damage), C.DamageType.MAGICAL, false, String(e.ability))
+		if o.kind == K.NEUTRAL_CREEP:
+			w.ai.neutral_provoked(o, src)
+	return true
+
+## Frost Heart: damage Froster deals to enemies (not buildings) builds hearts; called by SimCombat.deal_damage.
+func frost_heart_charge(src: SimUnit, t: SimUnit, amount: float) -> void:
+	if amount <= 0.0 or t.is_building() or t.is_ward() or t.team == src.team or src.is_broken():
+		return
+	var per := val(src, "frost_heart", "per_heart")
+	var mx := int(val(src, "frost_heart", "max_hearts"))
+	var hearts := int(src.stacks.get("frost_hearts", 0))
+	if hearts >= mx:
+		return
+	var acc := float(src.stacks.get("frost_dmg", 0.0)) + amount
+	while acc >= per and hearts < mx:
+		acc -= per
+		hearts += 1
+		w.events.append({"t": "frost_heart_gain", "u": src.id, "n": hearts})
+	src.stacks["frost_dmg"] = acc if hearts < mx else 0.0
+	src.stacks["frost_hearts"] = hearts
+
+func frost_hearts(u: SimUnit) -> int:
+	return int(u.stacks.get("frost_hearts", 0))
+
+## An attack about to be released spends a heart on an enemy unit (true: the attack carries the burst).
+func frost_heart_spend(u: SimUnit, t: SimUnit) -> bool:
+	if u.ability_level_of("frost_heart") <= 0 or u.is_broken() or t.is_building() or t.is_ward() or t.team == u.team:
+		return false
+	var n := frost_hearts(u)
+	if n <= 0:
+		return false
+	u.stacks["frost_hearts"] = n - 1
+	return true
+
+## The attack with a heart landed: the burst of magic damage and the slow.
+func frost_heart_hit(s: Dictionary, t: SimUnit) -> void:
+	var src := w.get_unit(int(s.src))
+	if src == null:
+		return
+	w.events.append({"t": "frost_heart_hit", "u": src.id, "target": t.id})
+	w.combat.deal_damage(src.id, src.team, true, t, val(src, "frost_heart", "burst"), C.DamageType.MAGICAL, false,
+		"frost_heart")
+	if t.alive and can_debuff(t, src.team):
+		w.status.apply(t, src.id, src.team, {"id": "frost_heart_slow", "dur": val(src, "frost_heart", "slow_duration"),
+			"slow": val(src, "frost_heart", "slow"), "fx": "chill"})
+
+## Endless Winter: a 7 s channel; mana and cooldown are spent when it begins. Every second (from the start) enemies
+## within 600 take magic damage; one that has stood inside for 2 s without a break is Frosted (a 2 s stun), and may be
+## Frosted again only 1.5 s after that ends.
+func _start_winter(u: SimUnit, aid: String, lv: int) -> void:
+	var dur := val(u, aid, "duration")
+	u.channel = {"ability": aid, "until": w.time + dur, "start": w.time, "dur": dur, "lv": lv, "next_pulse": w.time,
+		"inside": {}, "ready": {}, "radius": val(u, aid, "radius")}
+	w.events.append({"t": "channel_start", "u": u.id, "ability": aid, "until": u.channel.until, "radius": u.channel.radius})
+
+func _update_winter(u: SimUnit) -> void:
+	var ch := u.channel
+	var aid := String(ch.ability)
+	var r := float(ch.radius)
+	var pulse := w.time + 1e-6 >= float(ch.next_pulse) and float(ch.next_pulse) < float(ch.until) - 1e-4
+	if pulse:
+		ch.next_pulse = float(ch.next_pulse) + val(u, aid, "pulse")
+		w.events.append({"t": "winter_pulse", "u": u.id, "pos": u.pos, "radius": r})
+	var inside: Dictionary = ch.inside
+	var ready: Dictionary = ch.ready
+	var seen := {}
+	for o: SimUnit in w.query(u.pos, r + 80.0, true):
+		if not _azrin_can_hit(u.team, o) or o.pos.distance_to(u.pos) > r + o.hull:
+			continue
+		seen[o.id] = true
+		if pulse:
+			w.combat.deal_damage(u.id, u.team, true, o, val(u, aid, "dps") * val(u, aid, "pulse"), C.DamageType.MAGICAL,
+				false, aid)
+			if o.kind == K.NEUTRAL_CREEP:
+				w.ai.neutral_provoked(o, u)
+			if not o.alive:
+				continue
+		# the count runs while it stays inside (frozen or not); a Frost needs 2 s inside and the 1.5 s pause after the last
+		inside[o.id] = float(inside.get(o.id, 0.0)) + C.DT
+		if float(inside[o.id]) >= val(u, aid, "frost_after") - 1e-6 and w.time >= float(ready.get(o.id, -INF)):
+			inside[o.id] = 0.0
+			var st := val(u, aid, "frost_stun")
+			ready[o.id] = w.time + st + val(u, aid, "frost_cooldown")
+			if w.status.apply(o, u.id, u.team, {"id": "frosted", "stun": true, "dur": st, "fx": "frozen"}):
+				w.events.append({"t": "frosted", "u": o.id, "src": u.id, "dur": st})
+	# leaving the blizzard starts the count again
+	for id in inside.keys():
+		if not seen.has(id):
+			inside.erase(id)
+
+# ---- Caziel, the Void Assassin --------------------------------------------------------------------------------------
+
+## Swift Dagger: Caziel flashes beside the target (on his side of it), its armor drops, and he stabs at once: an attack
+## with the bonus damage that can crit and poison like any other. Then he fights on against it.
+func _swift_dagger(u: SimUnit, aid: String, t: SimUnit) -> void:
+	if t == null or not t.alive:
+		return
+	var from := u.pos
+	var dir := t.pos - u.pos
+	dir = Vector2.from_angle(u.facing) if dir.length() < 1.0 else dir.normalized()
+	var dest := t.pos - dir * (t.hull + u.hull + 4.0)
+	if not w.map.is_walkable(dest):
+		var c := w.map.nearest_walkable(w.map.world_to_cell(dest))
+		dest = w.map.cell_center(c.x, c.y)
+	u.pos = dest
+	u.facing = (t.pos - dest).angle() if t.pos.distance_to(dest) > 1.0 else dir.angle()
+	u.path = PackedVector2Array()
+	w.events.append({"t": "swift_dagger", "u": u.id, "from": from, "to": dest, "target": t.id})
+	if can_debuff(t, u.team):
+		w.status.apply(t, u.id, u.team, {"id": "swift_dagger_armor", "dur": val(u, aid, "armor_duration"),
+			"stats": {"armor": -val(u, aid, "armor_cut")}, "fx": "armor_cut"})
+		t.refresh_stats()
+	var snap := w.combat.attack_snapshot(u, "")
+	snap.bonus = float(snap.bonus) + val(u, aid, "bonus_damage")
+	snap.crit = w.combat.roll_crit(u, t)
+	snap["stab"] = true
+	w.combat.land_attack(snap, t)
+	if t.alive:
+		u.atk_target = t.id
+
+## Sweet Poison: an attack that landed on an enemy unit may poison it (pseudo-random); a new poison from Caziel renews
+## the one already running instead of adding to it.
+func sweet_poison_hit(s: Dictionary, t: SimUnit) -> void:
+	var src := w.get_unit(int(s.src))
+	if src == null or src.ability_level_of("sweet_poison") <= 0 or src.is_broken() or t.is_building() or t.is_ward():
+		return
+	if t.team == src.team or not t.alive:
+		return
+	if not w.status.roll(src, "sweet_poison", val(src, "sweet_poison", "chance")):
+		return
+	if w.status.add_dot(t, src, "sweet_poison", val(src, "sweet_poison", "dps"), val(src, "sweet_poison", "duration"),
+			C.Element.NATURE, true):
+		w.events.append({"t": "poison_blow", "u": src.id, "target": t.id})
+
+## Death Order: Caziel's attack on an enemy (not a building) below the threshold of its health deals pure damage.
+func death_order(s: Dictionary, t: SimUnit) -> bool:
+	if not bool(s.get("hero", false)):
+		return false
+	var src := w.get_unit(int(s.src))
+	if src == null or src.ability_level_of("death_order") <= 0 or src.is_broken():
+		return false
+	if t.is_building() or t.is_ward() or t.team == src.team:
+		return false
+	return t.hp < t.max_hp * val(src, "death_order", "threshold")
 
 # ---- Items --------------------------------------------------------------------------------------------------------
 

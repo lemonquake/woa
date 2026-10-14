@@ -68,7 +68,16 @@ OWNER_NAMES = [
     "Warriors of Aether", "Ancient Light", "Black Sun", "Blood Ranger", "Ezee the Dark Paladin", "Ezee", "Sludge",
     "Burst Shot", "Gale Impact", "Masterful Archery", "Dark Stomp", "Leap Strike", "Tainted Touch", "Unholy Might",
     "Mini-Axe", "Vegan Picker", "Bot Gerald",
+    # 2026-10-14: Azrin and her abilities; Sange, Yasha and Kaya renamed by the owner
+    "Azrin", "the Flamemander", "Flamemander", "Fiery Javelin", "Touch of Ember", "Spirit of Fire", "Divine Smite",
+    "Kugmo", "Igit", "Atuli",
+    # 2026-10-14 b: Froster and Caziel with their titles and abilities
+    "Froster", "the Winter Master", "Caziel", "the Void Assassin", "Breath of Cold", "Ice Pulse", "Frost Heart",
+    "Endless Winter", "Swift Dagger", "Sweet Poison", "Master of Shadows", "Death Order",
 ]
+# The owner named the pure damage type "Aether" (2026-10-14). Only these exact texts may use it, so a new
+# "Aether ..." compound is still caught.
+OWNER_EXACT = {"Aether", "Spells: magic damage uses Magic, pure damage uses Aether; physical spell damage only meets armor."}
 
 WORD = re.compile(r"[A-Za-z]+")
 GD_STRING = re.compile(r'"((?:[^"\\\n]|\\.)*)"')
@@ -86,6 +95,8 @@ def looks_like_display(s):
 
 
 def hits_in(text):
+    if text in OWNER_EXACT:
+        return []
     low = text
     for name in OWNER_NAMES:
         low = re.sub(re.escape(name), " ", low, flags=re.IGNORECASE)

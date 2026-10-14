@@ -1,0 +1,829 @@
+{
+ "scale": 2,
+ "textures": {
+  "panel_main": {
+   "file": "panel_main.png",
+   "size": [
+    140,
+    140
+   ],
+   "kind": "nine",
+   "margins": [
+    71,
+    71,
+    71,
+    71
+   ],
+   "content": [
+    34,
+    34,
+    34,
+    34
+   ]
+  },
+  "panel_menu": {
+   "file": "panel_menu.png",
+   "size": [
+    180,
+    180
+   ],
+   "kind": "nine",
+   "margins": [
+    87,
+    87,
+    87,
+    87
+   ],
+   "content": [
+    40,
+    40,
+    40,
+    40
+   ]
+  },
+  "panel_dusk": {
+   "file": "panel_dusk.png",
+   "size": [
+    140,
+    140
+   ],
+   "kind": "nine",
+   "margins": [
+    71,
+    71,
+    71,
+    71
+   ],
+   "content": [
+    34,
+    34,
+    34,
+    34
+   ]
+  },
+  "panel_dawn": {
+   "file": "panel_dawn.png",
+   "size": [
+    140,
+    140
+   ],
+   "kind": "nine",
+   "margins": [
+    71,
+    71,
+    71,
+    71
+   ],
+   "content": [
+    34,
+    34,
+    34,
+    34
+   ]
+  },
+  "panel_steel": {
+   "file": "panel_steel.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "nine",
+   "margins": [
+    22,
+    22,
+    22,
+    22
+   ],
+   "content": [
+    22,
+    22,
+    22,
+    22
+   ]
+  },
+  "panel_tip": {
+   "file": "panel_tip.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    12,
+    12,
+    12
+   ]
+  },
+  "panel_card": {
+   "file": "panel_card.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "panel_dark": {
+   "file": "panel_dark.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    12,
+    12,
+    12
+   ]
+  },
+  "crest": {
+   "file": "crest.png",
+   "size": [
+    140,
+    56
+   ],
+   "kind": "image"
+  },
+  "crest_small": {
+   "file": "crest_small.png",
+   "size": [
+    100,
+    40
+   ],
+   "kind": "image"
+  },
+  "corner_blue": {
+   "file": "corner_blue.png",
+   "size": [
+    62,
+    62
+   ],
+   "kind": "image"
+  },
+  "corner_gold": {
+   "file": "corner_gold.png",
+   "size": [
+    62,
+    62
+   ],
+   "kind": "image"
+  },
+  "corner_red": {
+   "file": "corner_red.png",
+   "size": [
+    62,
+    62
+   ],
+   "kind": "image"
+  },
+  "logo": {
+   "file": "logo.png",
+   "size": [
+    610,
+    213
+   ],
+   "kind": "image"
+  },
+  "btn_normal": {
+   "file": "btn_normal.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_hover": {
+   "file": "btn_hover.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_pressed": {
+   "file": "btn_pressed.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_disabled": {
+   "file": "btn_disabled.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_gold_normal": {
+   "file": "btn_gold_normal.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_gold_hover": {
+   "file": "btn_gold_hover.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_gold_pressed": {
+   "file": "btn_gold_pressed.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_gold_disabled": {
+   "file": "btn_gold_disabled.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_red_normal": {
+   "file": "btn_red_normal.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_red_hover": {
+   "file": "btn_red_hover.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_red_pressed": {
+   "file": "btn_red_pressed.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_red_disabled": {
+   "file": "btn_red_disabled.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_dark_normal": {
+   "file": "btn_dark_normal.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_dark_hover": {
+   "file": "btn_dark_hover.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_dark_pressed": {
+   "file": "btn_dark_pressed.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "btn_dark_disabled": {
+   "file": "btn_dark_disabled.png",
+   "size": [
+    72,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "tab_on": {
+   "file": "tab_on.png",
+   "size": [
+    72,
+    40
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    12,
+    14,
+    4
+   ]
+  },
+  "tab_off": {
+   "file": "tab_off.png",
+   "size": [
+    72,
+    40
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    12,
+    14,
+    4
+   ]
+  },
+  "slider_track": {
+   "file": "slider_track.png",
+   "size": [
+    64,
+    14
+   ],
+   "kind": "nine",
+   "margins": [
+    8,
+    6,
+    8,
+    6
+   ]
+  },
+  "slider_fill": {
+   "file": "slider_fill.png",
+   "size": [
+    64,
+    14
+   ],
+   "kind": "tile"
+  },
+  "slider_grabber": {
+   "file": "slider_grabber.png",
+   "size": [
+    26,
+    26
+   ],
+   "kind": "image"
+  },
+  "slider_grabber_hover": {
+   "file": "slider_grabber_hover.png",
+   "size": [
+    26,
+    26
+   ],
+   "kind": "image"
+  },
+  "check_off": {
+   "file": "check_off.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "check_on": {
+   "file": "check_on.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "field": {
+   "file": "field.png",
+   "size": [
+    64,
+    36
+   ],
+   "kind": "nine",
+   "margins": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "field_focus": {
+   "file": "field_focus.png",
+   "size": [
+    64,
+    36
+   ],
+   "kind": "nine",
+   "margins": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "scroll_grabber": {
+   "file": "scroll_grabber.png",
+   "size": [
+    12,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    6,
+    8,
+    6,
+    8
+   ]
+  },
+  "scroll_track": {
+   "file": "scroll_track.png",
+   "size": [
+    12,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    6,
+    8,
+    6,
+    8
+   ]
+  },
+  "slot_ability": {
+   "file": "slot_ability.png",
+   "size": [
+    72,
+    72
+   ],
+   "kind": "nine",
+   "margins": [
+    10,
+    10,
+    10,
+    10
+   ]
+  },
+  "slot_item": {
+   "file": "slot_item.png",
+   "size": [
+    64,
+    48
+   ],
+   "kind": "nine",
+   "margins": [
+    10,
+    10,
+    10,
+    10
+   ]
+  },
+  "slot_small": {
+   "file": "slot_small.png",
+   "size": [
+    40,
+    40
+   ],
+   "kind": "nine",
+   "margins": [
+    10,
+    10,
+    10,
+    10
+   ]
+  },
+  "bar_frame": {
+   "file": "bar_frame.png",
+   "size": [
+    64,
+    22
+   ],
+   "kind": "nine",
+   "margins": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "bar_hp": {
+   "file": "bar_hp.png",
+   "size": [
+    64,
+    22
+   ],
+   "kind": "tile"
+  },
+  "bar_hp_enemy": {
+   "file": "bar_hp_enemy.png",
+   "size": [
+    64,
+    22
+   ],
+   "kind": "tile"
+  },
+  "bar_mana": {
+   "file": "bar_mana.png",
+   "size": [
+    64,
+    22
+   ],
+   "kind": "tile"
+  },
+  "bar_xp": {
+   "file": "bar_xp.png",
+   "size": [
+    64,
+    22
+   ],
+   "kind": "tile"
+  },
+  "bar_gold": {
+   "file": "bar_gold.png",
+   "size": [
+    64,
+    22
+   ],
+   "kind": "tile"
+  },
+  "divider": {
+   "file": "divider.png",
+   "size": [
+    320,
+    24
+   ],
+   "kind": "image"
+  },
+  "ring_level": {
+   "file": "ring_level.png",
+   "size": [
+    56,
+    56
+   ],
+   "kind": "image"
+  },
+  "ring_portrait": {
+   "file": "ring_portrait.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "image"
+  },
+  "ring_small": {
+   "file": "ring_small.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "gem_dawn": {
+   "file": "gem_dawn.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "gem_dusk": {
+   "file": "gem_dusk.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "gem_gold": {
+   "file": "gem_gold.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "gem_green": {
+   "file": "gem_green.png",
+   "size": [
+    28,
+    28
+   ],
+   "kind": "image"
+  },
+  "ribbon_dusk": {
+   "file": "ribbon_dusk.png",
+   "size": [
+    160,
+    44
+   ],
+   "kind": "nine",
+   "margins": [
+    28,
+    0,
+    28,
+    0
+   ]
+  },
+  "ribbon_dawn": {
+   "file": "ribbon_dawn.png",
+   "size": [
+    160,
+    44
+   ],
+   "kind": "nine",
+   "margins": [
+    28,
+    0,
+    28,
+    0
+   ]
+  },
+  "ribbon_gold": {
+   "file": "ribbon_gold.png",
+   "size": [
+    160,
+    44
+   ],
+   "kind": "nine",
+   "margins": [
+    28,
+    0,
+    28,
+    0
+   ]
+  },
+  "glow_gold": {
+   "file": "glow_gold.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "glow_blue": {
+   "file": "glow_blue.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "glow_red": {
+   "file": "glow_red.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "backdrop": {
+   "file": "backdrop.png",
+   "size": [
+    512,
+    512
+   ],
+   "kind": "image"
+  },
+  "hero_card": {
+   "file": "hero_card.png",
+   "size": [
+    150,
+    196
+   ],
+   "kind": "image"
+  },
+  "hud_console": {
+   "file": "hud_console.png",
+   "size": [
+    1140,
+    206
+   ],
+   "kind": "image"
+  },
+  "hud_minimap": {
+   "file": "hud_minimap.png",
+   "size": [
+    300,
+    300
+   ],
+   "kind": "image",
+   "inner": [
+    14,
+    14,
+    272,
+    272
+   ]
+  },
+  "hud_topbar": {
+   "file": "hud_topbar.png",
+   "size": [
+    1200,
+    80
+   ],
+   "kind": "image"
+  }
+ }
+}
