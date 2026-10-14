@@ -4,6 +4,49 @@
 
 ## Status (keep this section current)
 
+**2026-10-15 b: Debug panel fix, auto-select, unit panel, 10-skill bar, cooldown system, 20 items, new icons, Tock
+and Kragg, tower ranges on Alt.** Run `work/lemondev/2026-10-15b-ui-items-heroes/` (handoff.md there: plan, file map,
+how-to, state). Evidence on the final working tree (uncommitted):
+* Headless tests: 188 passed, 0 failed (173 + 15 new: items, cooldowns, AoE / cast range, both heroes).
+  `sh tools/check.sh`: no parse errors, "Names OK".
+* `tests/tools/hud15_probe.gd` (new) 17/17 at 1080p and in a real 3840 x 2160 frame: Debug panel inside the screen
+  (it ran 64 px off the right edge: the framed box's margins were not counted), every control reachable; a right
+  click, Stop or Hold with a creep or nothing selected selects your hero and runs the command; a lane creep, neutral,
+  tower and the Throne show in the bottom panel; 6 and 10 skills fit (keys Q W E D F R, Q W E D F G Y U I R).
+* Input probes through real hotkeys: Tock 13/13, Kragg 6/6. Item flow probe 13/13 (no regression).
+* Captures in `work/lemondev/2026-10-15b-ui-items-heroes/shots/`: debug panel, unit panels, 6- and 10-skill bars,
+  icon sheets (old next to new), the 5-column shop, both heroes casting, tower ranges with and without Alt.
+* Bot duels, 12 min, 3 seeds: Tock vs Sludge no script errors (Tock uses Time Bolt, Rewind, Slow Field; kills 1-2
+  over the three games, `duels.txt`); the other pairs were still running when this was committed. A 25-minute 5 v 5
+  bot game with two Tocks and two Kraggs: no script errors, bots fill roles 3 and 5 with them and call them by name in
+  chat (`bot_game_5v5.txt`); the old late-game "stuck in task" bots showed up again (2 bots from 16:00).
+* Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-15 04:36; cold start straight into a Kragg match in 9.7 s and a
+  Tock match in 12.4 s, no script errors.
+
+What changed:
+* **Debug panel** (F9): sized from its real frame, two columns, capped above the bottom panel, scrolls if needed.
+* **Auto-select**: with nothing of yours selected, any command selects your hero first and goes to it.
+* **Bottom panel for any unit**: creeps, neutrals, towers, barracks, the Throne, wards show like a hero: portrait,
+  level, health and mana with regen, damage, armor, speed, range, attack rate, magic resistance, the type chips and
+  stat sheet, their spells / auras / attack effects / true sight as skill slots with tooltips and cooldowns, bounty,
+  experience and sight, status effects. The innate skill (Growing Gut) has its own small slot.
+* **Skill bar up to 10**: the console art comes in 7 widths (`tools/ui_skin.py --consoles`), slots shrink from 7
+  skills; six new hotkeys (Extra ability 1-6: D F G Y U I) on the Hotkeys screen; with more than 4 skills the
+  ultimate stays on R (Dota's Q W E D F R). "The ultimate" is now the skill with level requirements, not slot 4.
+* **Cooldown system**: cooldown reduction (Time Crystal), cooldown rate (faster, slower or frozen), spell area bonus
+  and cast range bonus. Rules in `docs/MECHANICS.md` "Cooldowns, spell area, cast range".
+* **20 items + 11 parts** from Valve's items.txt (`work/research/d2_items.txt`), with recipes, shop groups (the shop
+  is 5 columns now: Casting, Big Weapons, Boots added), tooltips, item effects, bot builds and bot use. Table of Dota
+  names in `docs/MECHANICS.md`.
+* **Icons**: `tools/item_icons.py` draws 78 item icons (every combination item, the new items and parts) and 11 skill
+  icons in one style: a backdrop coloured by role, the object lit and outlined, a badge saying what it does.
+* **Tower ranges**: the attack range circles of towers and fountains show only while you hold **Alt** (enemy yellow,
+  red while it targets you; yours pale blue). They used to appear near enemy towers on their own.
+
+Needs you: veto any name in "Names added 2026-10-15 b"; tune Tock's and Kragg's numbers if you like (all chosen).
+Not verified: no blind critic review (no Dota frames on disk, no subagents asked for): visuals are builder
+self-checks, UNVERIFIED for blind review. Performance benchmarks were not rerun.
+
 **2026-10-15: multiplayer (servers, lobbies, a main server entry), HUD level pips, your bug reports.** Run
 `work/lemondev/2026-10-15-multiplayer/` (contract.md there). Evidence on the final working tree (uncommitted):
 * Headless tests: 173 passed, 0 failed (171 + 2 new server tests). `sh tools/check.sh`: no parse errors, "Names OK".
@@ -174,7 +217,7 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | S | Stop (the hero still auto-attacks enemies in range). Hold S: the hero is stopped again every frame and every order is refused until you let go; held over 0.35 s it stays a hard stop (no auto-attack until your next order) |
 | H | Hold position |
 | Shift + any order or hotkey | Queue it, as in Dota: orders run one after another; a queued spell still cooling down is checked again when its turn comes. Holding Shift shows the queue as numbered waypoints (green move, red attack, blue spell or item, gold hold) |
-| Q W E R | Abilities. No-target spells and toggles (Stench) act at once. Point and unit spells show a pulsing crosshair: red for spells aimed at enemies, green for support (allies, yourself, a place); items too. A click that misses a valid target keeps the cursor and says why; right click or Esc cancels |
+| Q W E R (D F G Y U I) | Abilities. Heroes with more than 4 skills use Dota's layout: the last (ultimate) stays on R, the extra ones take D, F, G, Y, U, I (Tock: Q W E D F R; Kragg: Q W E D R). With nothing of yours selected, an ability, item, Stop, Hold, Attack, Teleport key or a right click selects your hero first. No-target spells and toggles (Stench) act at once. Point and unit spells show a pulsing crosshair: red for spells aimed at enemies, green for support (allies, yourself, a place); items too. A click that misses a valid target keeps the cursor and says why; right click or Esc cancels |
 | Ctrl + an ability's hotkey, or the "+" above an ability | Learn the ability (unless that Ctrl combination is bound to something else) |
 | Right click an ability button | Toggle autocast (Frost Quiver) |
 | Z X C V B N | Items. Right click an item slot to move it between the inventory and the backpack. Drag an item to another slot, to the stash (in the base), onto the ground (the hero walks over and drops it) or onto an allied hero or your courier (gives it) |
@@ -194,7 +237,7 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | Ctrl + 1..9, then 1..9 | Control groups (double tap centres the camera) |
 | Alt + click | Ping (ground or minimap). On an enemy hero or building: "attack"; on one of ours: "defend"; Ctrl + Alt + click: danger. Your bots answer in chat, and agree or say why not |
 | Enter | Type to your team (Enter sends, Esc closes). Bots understand "push top", "defend mid", "gank" or "kill <hero>", "back", "group" |
-| Alt (hold) | Shows every neutral camp's spawn box: yellow, red while something blocks it (couriers never do), with its size and the pull camps named |
+| Alt (hold) | Shows every neutral camp's spawn box: yellow, red while something blocks it (couriers never do), with its size and the pull camps named; and the attack range of every tower and fountain (enemy yellow, red while it targets your hero; yours pale blue). Without Alt no range circles show |
 | Tab (hold) | Scoreboard with damage tables |
 | Top-bar hero tiles | Click to look at a visible hero; dead heroes show their respawn timer |
 | Space (hold) | Follow your hero |
@@ -556,6 +599,26 @@ Run `work/lemondev/2026-10-14-elements-azrin/` (contract in `contract.md`). Rule
   "Not enough room", "Cannot be disassembled".
 * Elements chosen for existing units (veto freely): Blood Ranger Nature, Ezee Dark, Sludge Earth; creeps by team (Light,
   Dark); towers Earth; neutrals as listed in MECHANICS.md.
+
+## Names added 2026-10-15 b (veto any you dislike)
+
+* Heroes: **Tock**, title the Clockmaker; skills Time Bolt, Fast Forward, Rewind, Slow Field, Quick Hands, Stop Time.
+  **Kragg**, title the Magnet Knight; skills Iron Grip, Repel, Magnetize, Overload, Magnet Field; Charges. Talents:
+  "+70 Time Bolt damage", "+2 Mana Regen", "+15% Slow Field slow", "+30% Fast Forward speed", "-6s Rewind cooldown",
+  "+1s Quick Hands", "+1s Stop Time", "+30% Time Bolt delay", "+80 Iron Grip damage", "+6 Armor", "-3s Repel
+  cooldown", "+2 max Charges", "+25 Overload damage per Charge", "+40 Magnet Field pull", "+1s Magnet Field stun",
+  "+2 Iron Grip Charges".
+* Items: Travel Boots, Blast Rod (2-5), Net Staff, Storm Hammer, Soul Gem, Time Crystal, Battle Armor, Small Shield,
+  Leech Totem, Frost Plate, Burning Cape, Giant Heart, Leech Blade, Moth Blade, Refresh Stone, Guard Boots, Team
+  Shield, War Drum, Long Lens, Crash Knife. Parts: Mana Gem, Swift Stone, Plate Armor, Gold Band, Wide Stone, Relic,
+  War Axe, Troll Ring, Feather, Iron Helm, Speed Ribbon. Item powers: Static Charge, Blood Rage, Mend, Guard,
+  Endurance; auras Armor Aura, Leech Aura, Battle Aura, Armor Loss Aura, Freezing Aura, Guard Aura, March Aura.
+* Shop groups: Casting, Big Weapons, Boots. Stats: Cooldown Reduction, Spell Area, Cast Range, Cooldown Speed.
+* Hotkeys: Extra ability 1-6. Debug: God mode, Free spells (shortened), Shop: open.
+* Unit panel: Range, Attacks/s, Magic res., Level, Bounty, Experience, Sight day / night, Health regen, Mana regen,
+  Invulnerable, Backdoor protection, Grown, Ally, Enemy, Neutral, Lane creep, Siege creep, Neutral creep, Ancient
+  creep, Tower, Barracks, Throne, Building, Ward, Courier, No mana, Innate (always on); skill slots True Sight, Sight,
+  Backdoor Protection, Fortify, Ancient, Flying; kinds Spell, Aura, Passive, Team.
 
 ## Names added 2026-10-15 (veto any you dislike)
 

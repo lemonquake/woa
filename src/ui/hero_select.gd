@@ -21,6 +21,10 @@ const INFO := {
 		"story": "Sludge works the fields after every battle, hauling the fallen away on his chain. Nothing he catches gets away, and everything he eats makes him bigger."},
 	"froster": {"title": "the Winter Master", "role": "Ranged  ·  Intelligence  ·  Disabler, Nuker, Initiator",
 		"story": "Froster walked out of the northern ice the year the sun did not rise. Cold follows him like a hound: it slows his enemies, cracks their armor, and in the end it stops their hearts."},
+	"tock": {"title": "the Clockmaker", "role": "Ranged  ·  Intelligence  ·  Support, Disabler, Escape",
+		"story": "Tock built clocks for kings until he built one that ran backwards. Now he carries a few spare seconds in his pocket: he hands them to his friends, takes them from his enemies, and keeps one to step back in time when a fight goes wrong."},
+	"kragg": {"title": "the Magnet Knight", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
+		"story": "Lightning struck Kragg's shield on the day he swore to hold the bridge, and it never let go. Iron leaps to him, foes stumble toward him, and the more they fight him the harder they are pulled in."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }

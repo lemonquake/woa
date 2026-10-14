@@ -4,7 +4,9 @@ extends Control
 ## button calls a SimDebug helper; switches stay on until turned off. Built from standard controls with the game theme.
 
 const U = preload("res://src/ui/ui_kit.gd")
-const W := 330.0
+const W := 420.0                           # content width (the frame adds its own margins round it)
+const TOP := 46.0                          # below the Debug button
+const GAP := 10.0
 
 var game: Node
 var panel: PanelContainer
@@ -12,6 +14,8 @@ var toggle_btn: Button
 var _status: Label
 var _speed_btns: Array[Button] = []
 var _fps: Label
+var _scroll: ScrollContainer
+var _box: VBoxContainer
 
 func _ready() -> void:
 	theme = U.theme()
@@ -33,21 +37,26 @@ func _ready() -> void:
 	_fps.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_fps)
 	panel = PanelContainer.new()
-	panel.custom_minimum_size = Vector2(W, 0)
+	# the lighter framed box: the menu frame's wide corner ornaments cost too much room for a tool panel
+	panel.add_theme_stylebox_override("panel", U.box("panel_main"))
 	panel.visible = false
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(panel)
-	var scroll := ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.custom_minimum_size = Vector2(W - 16, 0)
-	panel.add_child(scroll)
+	_scroll = ScrollContainer.new()
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_scroll.custom_minimum_size = Vector2(W, 0)
+	panel.add_child(_scroll)
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 6)
+	v.add_theme_constant_override("separation", 4)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(v)
+	v.custom_minimum_size = Vector2(W - 14, 0)      # room for the scroll bar when it shows
+	_scroll.add_child(v)
+	_box = v
 	var title := Label.new()
 	title.text = "Debug"
 	title.add_theme_font_override("font", U.font("title"))
-	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_font_size_override("font_size", 22)
 	title.add_theme_color_override("font_color", U.GOLD)
 	v.add_child(title)
 	_status = Label.new()
@@ -77,15 +86,23 @@ func _ready() -> void:
 		["Teleport to camera", func(): SimDebug.teleport(_w(), _h(), View.to2(game.camera.target))],
 	])
 	_section(v, "Switches")
-	_switch(v, "God mode (health stays full)", "god")
-	_switch(v, "Free spells (no mana or cooldowns)", "free_spells")
-	_switch(v, "Reveal the map", "reveal")
-	_switch(v, "Bot stands still", "passive_bot")
+	var sw := GridContainer.new()
+	sw.columns = 2
+	sw.add_theme_constant_override("h_separation", 6)
+	sw.add_theme_constant_override("v_separation", 0)
+	v.add_child(sw)
+	_switch(sw, "God mode", "god", "Your hero's health stays full")
+	_switch(sw, "Free spells", "free_spells", "No mana costs or cooldowns")
+	_switch(sw, "Reveal the map", "reveal", "Lifts the fog of war")
+	_switch(sw, "Bot stands still", "passive_bot", "Enemy bots give no orders")
 	var fps_box := CheckBox.new()
 	fps_box.text = "Show frame rate"
+	fps_box.tooltip_text = "Frames per second at the top right"
 	fps_box.focus_mode = Control.FOCUS_NONE
+	fps_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fps_box.add_theme_font_size_override("font_size", 14)
 	fps_box.toggled.connect(func(on): _fps.visible = on)
-	v.add_child(fps_box)
+	sw.add_child(fps_box)
 	_section(v, "Enemies")
 	_grid(v, [
 		["Kill enemy hero", func(): _kill_enemy_hero()],
@@ -99,6 +116,7 @@ func _ready() -> void:
 	for sp in [0.5, 1.0, 2.0, 4.0]:
 		var b := Button.new()
 		b.text = ("x%s" % str(sp)).replace(".0", "")
+		b.custom_minimum_size = Vector2(0, 32)
 		b.toggle_mode = true
 		b.button_pressed = sp == 1.0
 		b.focus_mode = Control.FOCUS_NONE
@@ -113,6 +131,10 @@ func _section(v: VBoxContainer, text: String) -> void:
 	l.text = text
 	l.add_theme_font_size_override("font_size", 16)
 	l.add_theme_color_override("font_color", U.GOLD)
+	if v.get_child_count() > 2:
+		var sp := Control.new()
+		sp.custom_minimum_size = Vector2(0, 2)
+		v.add_child(sp)
 	v.add_child(l)
 
 func _grid(v: VBoxContainer, items: Array) -> void:
@@ -124,17 +146,21 @@ func _grid(v: VBoxContainer, items: Array) -> void:
 		var b := Button.new()
 		b.text = it[0]
 		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(150, 34)
+		b.custom_minimum_size = Vector2(0, 32)
+		b.clip_text = true
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_size_override("font_size", 14)
 		b.pressed.connect(it[1])
 		g.add_child(b)
 	v.add_child(g)
 
-func _switch(v: VBoxContainer, text: String, flag: String) -> void:
+func _switch(v: Container, text: String, flag: String, tip := "") -> void:
 	var c := CheckBox.new()
 	c.text = text
+	c.tooltip_text = tip
 	c.focus_mode = Control.FOCUS_NONE
+	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	c.add_theme_font_size_override("font_size", 14)
 	c.button_pressed = _w() != null and _w().debug_flags.has(flag)
 	c.toggled.connect(func(on): SimDebug.set_flag(_w(), flag, on))
 	v.add_child(c)
@@ -187,12 +213,29 @@ func toggle() -> void:
 func covers(p: Vector2) -> bool:
 	return toggle_btn.get_global_rect().has_point(p) or (panel.visible and panel.get_global_rect().has_point(p))
 
+## Lay the panel out from its real size: the frame's margins come on top of the content width, and the height is
+## capped to the room between the Debug button and the bottom panel (the rest scrolls).
+func _place(vs: Vector2) -> void:
+	var sb := panel.get_theme_stylebox("panel")
+	var mx := sb.get_margin(SIDE_LEFT) + sb.get_margin(SIDE_RIGHT) if sb else 0.0
+	var my := sb.get_margin(SIDE_TOP) + sb.get_margin(SIDE_BOTTOM) if sb else 0.0
+	var bottom_h := 206.0
+	if game and game.get("hud") != null and game.hud.get("bottom") != null:
+		bottom_h = game.hud.bottom.size.y
+	var room := vs.y - TOP - bottom_h - GAP - my
+	var want := _box.get_combined_minimum_size().y
+	var h := clampf(want, 120.0, maxf(120.0, room))
+	_scroll.custom_minimum_size = Vector2(W, h)
+	panel.size = Vector2.ZERO                # shrink to the minimum again (content may have shrunk)
+	panel.reset_size()
+	var pw := W + mx
+	panel.position = Vector2(maxf(GAP, vs.x - pw - GAP), TOP)
+
 func _process(_dt: float) -> void:
 	var vs := get_viewport_rect().size
 	toggle_btn.position = Vector2(vs.x - toggle_btn.size.x - 10, 8)
-	panel.position = Vector2(vs.x - W - 10, 46)
-	var max_h := vs.y - 46.0 - 230.0
-	(panel.get_child(0) as ScrollContainer).custom_minimum_size.y = minf(max_h, 760.0)
+	if panel.visible:
+		_place(vs)
 	if _fps.visible:
 		_fps.text = "%d fps" % Engine.get_frames_per_second()
 		_fps.position = Vector2(vs.x - 260, 12)

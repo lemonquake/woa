@@ -7,6 +7,9 @@ extends Node
 ## Lasting states, rebuilt from the units' modifiers (frame): Spike Armor's crown of turning spikes while active,
 ## Spell Shield's golden dome, the rust ring of Rust Stone / Armor Breaker corruption, Frenzy Mask's red rage, Slip
 ## Boots' wind at the feet. (Spell Shield's size and an invisible hero's fade are in UnitView.)
+## Run 2026-10-15 b: Blast Rod's bolt, Net Staff's nets, Storm Hammer's charge (crackling shell), Frost Plate's ring,
+## Refresh Stone's flash, Team Shield's guard (a red-gold shell), War Drum's beat, Crash Knife's landing, Burning
+## Cape's ring of embers round its owner.
 
 var game: Node
 var fx: Fx
@@ -117,6 +120,52 @@ func event(e: Dictionary) -> void:
 			_block_flash(int(e.u))
 		"cleave":
 			_cleave(e)
+		"blast_rod":
+			var bu: SimUnit = game.world.get_unit(int(e.u))
+			var bt: SimUnit = game.world.get_unit(int(e.target))
+			if bu and bt and (fx._seen(bu.pos) or fx._seen(bt.pos)):
+				var to3 := fx._chest(bt.id, 0.55)
+				var lv := int(e.get("level", 1))
+				fx.lightning(fx._chest(bu.id, 0.7), to3, Color(1.0, 0.45, 0.25), 0.35 + 0.05 * lv, 0.1 + 0.03 * lv, 16)
+				fx.lightning(fx._chest(bu.id, 0.7), to3, Color(1.0, 0.85, 0.5), 0.25, 0.05, 10)
+				fx.impact(to3, Color(1.0, 0.55, 0.3), 0.4 + 0.08 * lv)
+				fx.flash_light(to3, Color(1.0, 0.6, 0.3), 3.0 + lv, 5.0, 0.3)
+		"net_staff":
+			var np: Vector2 = e.point
+			if fx._seen(np):
+				fx.edge_ring(fx.ground3(np, 0.05), float(e.radius) * View.S, Color(0.6, 0.85, 0.45), 0.9)
+				fx.shockwave(fx.ground3(np, 0.05), float(e.radius) * View.S, Color(0.55, 0.8, 0.4), 0.45, 0.12, 1.5)
+		"static_charge":
+			var stt: SimUnit = game.world.get_unit(int(e.target))
+			if stt and fx._seen(stt.pos):
+				fx.lightning(fx._chest(stt.id, 0.5) + Vector3(0, 3.0, 0), fx._chest(stt.id, 0.5), Color(0.6, 0.8, 1.0), 0.3, 0.08, 10)
+		"frost_blast":
+			var fu: SimUnit = game.world.get_unit(int(e.u))
+			if fu and fx._seen(fu.pos):
+				var dur := float(e.radius) / maxf(1.0, float(e.speed))
+				fx.shockwave(fx.ground3(fu.pos, 0.08), float(e.radius) * View.S, Color(0.55, 0.85, 1.0), dur, 0.35, 2.2)
+				fx.edge_ring(fx.ground3(fu.pos, 0.05), float(e.radius) * View.S, Color(0.7, 0.9, 1.0), dur + 0.4)
+				fx.debris(fx._chest(fu.id, 0.4), 14, Color(0.75, 0.92, 1.0), 4.0, 0.7, "shard")
+		"refresh":
+			var ru: SimUnit = game.world.get_unit(int(e.u))
+			if ru and fx._seen(ru.pos):
+				var rc := fx._chest(ru.id, 0.6)
+				fx.flash_light(rc, Color(0.5, 0.8, 1.0), 4.0, 6.0, 0.4)
+				fx.sparks(rc, Vector3.UP, 18, Color(0.6, 0.85, 1.0), 4.5)
+				fx.shockwave(fx.ground3(ru.pos, 0.05), 1.6, Color(0.45, 0.75, 1.0), 0.5, 0.2, 2.5)
+		"team_guard", "war_drum":
+			var gu: SimUnit = game.world.get_unit(int(e.u))
+			if gu and fx._seen(gu.pos):
+				var gc := Color(1.0, 0.45, 0.3) if String(e.t) == "team_guard" else Color(1.0, 0.75, 0.35)
+				fx.shockwave(fx.ground3(gu.pos, 0.05), float(e.radius) * View.S, gc, 0.6, 0.22, 2.0)
+				fx.flash_light(fx._chest(gu.id, 0.5), gc, 2.5, 5.0, 0.3)
+		"crash_knife":
+			var cu: SimUnit = game.world.get_unit(int(e.u))
+			if cu and fx._seen(cu.pos):
+				fx.shockwave(fx.ground3(cu.pos, 0.05), float(e.radius) * View.S, Color(1.0, 0.55, 0.3), 0.5, 0.3, 2.5)
+				fx.crack(fx.ground3(cu.pos, 0.03), 2.2, Color(0.9, 0.4, 0.15), 2.5)
+				fx.debris(fx.ground3(cu.pos, 0.3), 16, Color(0.45, 0.38, 0.3), 5.0, 1.0)
+				fx._shake(cu.pos, 0.25, 0.3)
 		"item_use":
 			if String(e.get("item", "")) == "spike_armor":
 				var su: SimUnit = game.world.get_unit(int(e.u))
@@ -261,8 +310,13 @@ func _scan() -> void:
 			continue
 		for m in u.modifiers:
 			var f := String(m.get("fx", ""))
-			if f in ["spikes", "spell_shield", "corruption", "berserk", "slip"]:
+			if f in ["spikes", "spell_shield", "corruption", "berserk", "slip", "static", "guard"]:
 				want["%s:%d" % [f, id]] = true
+		if u.is_hero():
+			for i in mini(6, u.inventory.size()):
+				var it = u.inventory[i]
+				if it != null and SimData.item(it.id).has("burn"):
+					want["burncape:%d" % id] = true
 	for k in _lasting.keys():
 		if not want.has(k):
 			var e: Dictionary = _lasting[k]
@@ -335,6 +389,26 @@ func _make_lasting(kind: String, id: int) -> Dictionary:
 			mi3.name = "Rage"
 			n.add_child(mi3)
 			n.add_child(FireFx.embers(0.35, 10.0, 0.9, 1.2, 0.04, Color(1.0, 0.15, 0.1)))
+		"static", "guard":
+			var mi4 := MeshInstance3D.new()
+			var s4 := SphereMesh.new()
+			s4.radius = 0.75
+			s4.height = 2.0
+			mi4.mesh = s4
+			var shell := fresnel_mat(Color(0.45, 0.7, 1.0) if kind == "static" else Color(1.0, 0.45, 0.25), 0.5)
+			shell.set_shader_parameter("strength", 0.35)
+			mi4.material_override = shell
+			mi4.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi4.name = "Rage"
+			n.add_child(mi4)
+			if kind == "static":
+				n.add_child(FireFx.embers(0.5, 14.0, 0.5, 0.6, 0.035, Color(0.6, 0.85, 1.0)))
+		"burncape":
+			# a slow ring of embers and heat round the owner, as wide as the burn
+			var ring2 := FireFx.embers(650.0 * View.S * 0.85, 40.0, 0.9, 0.6, 0.05, Color(1.0, 0.5, 0.15))
+			ring2.name = "Wind"
+			n.add_child(ring2)
+			n.add_child(FireFx.light(Color(1.0, 0.5, 0.2), 0.6, 4.0))
 		"slip":
 			var e := FireFx.embers(0.25, 26.0, 0.45, 0.25, 0.05, Color(0.85, 0.92, 1.0))
 			(e.process_material as ParticleProcessMaterial).gravity = Vector3.ZERO
@@ -366,6 +440,11 @@ func _follow(_dt: float) -> void:
 				n.global_position = base + Vector3(0, v.bar_height * 0.45, 0)
 			"slip":
 				n.global_position = base + Vector3(0, 0.15, 0)
+			"static", "guard":
+				n.global_position = base + Vector3(0, v.bar_height * 0.45, 0)
+				n.scale = Vector3.ONE * (1.0 + 0.05 * sin(now * 11.0))
+			"burncape":
+				n.global_position = base + Vector3(0, 0.2, 0)
 
 func _jump(e: Dictionary) -> void:
 	var from: Vector2 = e.from

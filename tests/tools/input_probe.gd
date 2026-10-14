@@ -85,12 +85,13 @@ func _run() -> void:
 		await frames(3)
 		var mana0 := h.mana
 		var events_before := w.events.size()
-		inp._action("ability_%d" % (i + 1), h)
+		inp._action(Keybinds.slot_action(i, h.abilities.size()), h)
 		var beh := String(a.behavior)
 		if beh in ["unit", "point", "autocast_attack"]:
 			check(inp.targeting == aid, "%s: key starts targeting (targeting=%s)" % [aid, inp.targeting])
 			await process_frame
-			var sp: Vector2 = game.camera.cam.unproject_position(View.to3(foe.pos, game.terrain.height_at(foe.pos)) + Vector3(0, 0.9, 0))
+			var aim: SimUnit = h if String(a.get("target_team", "enemy")) == "ally" else foe
+			var sp: Vector2 = game.camera.cam.unproject_position(View.to3(aim.pos, game.terrain.height_at(aim.pos)) + Vector3(0, 0.9, 0))
 			print("  foe on screen at ", sp, " pick=", inp.pick(sp), " foe id ", foe.id)
 			inp._left_click(sp, false)
 			check(inp.targeting == "", "%s: click on the enemy ends targeting" % aid)
@@ -103,7 +104,7 @@ func _run() -> void:
 				var hp0 := foe.hp
 				await frames(30)
 				check(foe.hp < hp0, "stench: damages the enemy beside him (%.0f -> %.0f)" % [hp0, foe.hp])
-				inp._action("ability_%d" % (i + 1), h)
+				inp._action(Keybinds.slot_action(i, h.abilities.size()), h)
 				await frames(3)
 				check(not bool(h.toggles.get("stench", false)), "stench: W again turns it off")
 				continue

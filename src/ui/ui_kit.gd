@@ -51,7 +51,11 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"touch_of_ember": "skills/inner_fire", "spirit_of_fire": "skills/flame_sentinel", "divine_smite": "skills/blessed_hammer",
 	"breath_of_cold": "skills/frost_nova", "ice_pulse": "skills/frost_orb", "frost_heart": "skills/frost_mastery",
 	"endless_winter": "skills/blizzard", "swift_dagger": "skills/ns_umbral_lunge", "sweet_poison": "skills/venom_strike",
-	"master_of_shadows": "skills/ns_gloom_veil", "death_order": "skills/ns_marked_execution"}
+	"master_of_shadows": "skills/ns_gloom_veil", "death_order": "skills/ns_marked_execution",
+	"time_bolt": "skills/gen/time_bolt", "fast_forward": "skills/gen/fast_forward", "rewind": "skills/gen/rewind",
+	"slow_field": "skills/gen/slow_field", "quick_hands": "skills/gen/quick_hands", "stop_time": "skills/gen/stop_time",
+	"iron_grip": "skills/gen/iron_grip", "repel": "skills/gen/repel", "magnetize": "skills/gen/magnetize",
+	"overload": "skills/gen/overload", "magnet_field": "skills/gen/magnet_field"}
 
 static var _fonts := {}
 static var _icons := {}
@@ -83,10 +87,20 @@ static func icon(path: String) -> Texture2D:
 	_icons[path] = t
 	return t
 
+## An item's icon: the generated one (tools/item_icons.py, assets/ui/items/gen) when it exists, otherwise ITEM_ICONS.
 static func item_icon(id: String) -> Texture2D:
 	if id.begins_with("recipe_"):
 		return icon("items/quest_letter")
-	return icon(String(ITEM_ICONS.get(id, "items/charm")))
+	return icon(item_icon_path(id))
+
+static var _gen_icons := {}
+
+static func item_icon_path(id: String) -> String:
+	if not _gen_icons.has(id):
+		_gen_icons[id] = ResourceLoader.exists("res://assets/ui/items/gen/%s.svg" % id)
+	if _gen_icons[id]:
+		return "items/gen/" + id
+	return String(ITEM_ICONS.get(id, "items/charm"))
 
 ## A hero's face (assets/ui/portraits, rendered from the 3D model by tests/tools/bake_portraits.gd), or its
 ## ultimate's icon before the portraits exist.
@@ -98,7 +112,7 @@ static func hero_portrait(id: String) -> Texture2D:
 	var t: Texture2D = load(path) if ResourceLoader.exists(path) else null
 	if t == null:
 		var abil: Array = SimData.unit(id).get("abilities", [])
-		t = ability_icon(String(abil[3])) if abil.size() > 3 else null
+		t = ability_icon(SimData.ultimate_of(abil)) if not abil.is_empty() else null
 	_icons[key] = t
 	return t
 

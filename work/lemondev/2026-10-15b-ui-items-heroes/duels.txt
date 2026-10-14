@@ -1,0 +1,27 @@
+== tock vs sludge
+seed 3 at 12:00: A(tock) 0/2/0 lvl 8 LH 17 DN 8 nw 1914 | B(sludge) 2/0/0 lvl 8 LH 27 DN 13 nw 2719 | towers lost A 0 B 0
+    casts: { "B:shuriken_hook": 9, "B:hooked_hero": 7, "A:time_bolt": 19, "A:item_salve": 5, "A:item_tango": 3, "B:stench_on": 26, "B:item_salve": 6, "B:item_tango": 3, "B:item_magic_stick": 2, "B:hooked_creep": 2, "B:blubber": 6, "A:rewind": 4, "B:chomp": 3, "A:item_magic_stick": 2, "B:item_magic_wand": 3, "B:stomp": 2, "B:smash": 2, "B:snarl": 2, "B:item_slip_boots": 1 }
+    tock items: ["salve", "smart_band", "magic_wand", "boots"]
+    sludge items: ["slip_boots", "magic_wand", "tough_band"]
+seed 7 at 12:00: A(tock) 1/0/0 lvl 9 LH 24 DN 9 nw 2755 | B(sludge) 0/1/0 lvl 7 LH 23 DN 11 nw 1593 | towers lost A 0 B 0
+    casts: { "B:shuriken_hook": 9, "B:hooked_hero": 8, "A:time_bolt": 20, "A:item_salve": 5, "A:item_tango": 3, "B:stench_on": 27, "B:item_tango": 3, "B:blubber": 7, "B:item_salve": 9, "B:item_magic_stick": 1, "B:item_magic_wand": 4, "A:item_magic_stick": 1, "A:rewind": 3, "B:chomp": 4, "A:item_magic_wand": 1, "A:slow_field": 2, "B:stomp": 5, "B:smash": 3 }
+    tock items: ["salve", "magic_wand", "smart_band", "mana_boots"]
+    sludge items: ["magic_wand", "tough_band"]
+seed 11 at 12:00: A(tock) 0/0/0 lvl 8 LH 30 DN 11 nw 2520 | B(sludge) 0/1/0 lvl 7 LH 24 DN 8 nw 1439 | towers lost A 0 B 0
+    casts: { "B:shuriken_hook": 9, "B:hooked_hero": 8, "A:time_bolt": 20, "A:item_salve": 5, "B:hooked_creep": 1, "A:item_tango": 3, "B:stench_on": 31, "B:item_salve": 8, "B:item_tango": 3, "B:blubber": 7, "B:item_magic_stick": 2, "A:rewind": 6, "A:item_magic_stick": 2, "B:item_magic_wand": 3, "B:chomp": 2, "A:item_magic_wand": 1, "B:stomp": 3, "B:smash": 2, "B:snarl": 2 }
+    tock items: ["magic_wand", "salve", "smart_band", "boots"]
+    sludge items: ["salve", "tough_band", "magic_wand"]
+== kragg vs ezee
+seed 3 at 12:00: A(kragg) 1/0/0 lvl 9 LH 30 DN 10 nw 2949 | B(ezee) 0/1/0 lvl 7 LH 20 DN 4 nw 1976 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 13, "B:dark_stomp": 9, "B:item_salve": 6, "A:item_salve": 4, "B:item_tango": 3, "A:item_tango": 3, "B:tainted_touch": 8, "B:item_magic_stick": 1, "A:item_magic_wand": 3, "B:leap_strike": 3, "A:magnet_field": 1, "B:item_magic_wand": 1, "A:overload": 1, "B:unholy_might": 1, "A:item_slip_boots": 1, "B:stomp": 4, "B:smash": 4 }
+    kragg items: ["magic_wand", "slip_boots", "quelling_blade", "tough_band"]
+    ezee items: ["salve", "magic_wand", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(kragg) 0/0/0 lvl 8 LH 17 DN 11 nw 1680 | B(ezee) 0/0/0 lvl 7 LH 12 DN 5 nw 1662 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 14, "B:dark_stomp": 10, "B:item_salve": 5, "A:item_salve": 7, "B:item_tango": 3, "A:item_tango": 3, "B:tainted_touch": 9, "B:leap_strike": 2, "A:repel": 3, "A:item_magic_stick": 2, "B:unholy_might": 2, "A:magnet_field": 1, "B:item_magic_wand": 1, "B:smash": 1 }
+    kragg items: ["magic_wand", "boots", "quelling_blade", "tough_band"]
+    ezee items: ["magic_wand", "quelling_blade", "tough_band"]
+seed 11 at 12:00: A(kragg) 0/0/0 lvl 9 LH 36 DN 23 nw 2969 | B(ezee) 0/0/0 lvl 7 LH 19 DN 8 nw 1856 | towers lost A 0 B 0
+    casts: { "B:dark_stomp": 12, "A:iron_grip": 12, "A:item_salve": 4, "B:item_salve": 6, "B:item_tango": 3, "A:item_tango": 3, "B:tainted_touch": 7, "A:item_magic_stick": 2, "B:leap_strike": 1, "A:repel": 2, "A:item_magic_wand": 1, "B:item_magic_wand": 1, "A:item_slip_boots": 1, "A:magnet_field": 1, "B:snarl": 2, "B:stomp": 2, "B:smash": 4 }
+    kragg items: ["slip_boots", "magic_wand", "quelling_blade", "tough_band"]
+    ezee items: ["magic_wand", "quelling_blade", "tough_band"]
+== tock vs kragg

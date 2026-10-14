@@ -4568,3 +4568,379 @@ func test_server_start_relay_repair_rejoin() -> void:
 	r.m.end_at = 1
 	sv.tick()
 	check(String(r.state) == "lobby" and r.slots.all(func(s): return String(s.kind) != "human" or not bool(s.ready)), "after the match the lobby is open again, nobody ready")
+
+# ---- Run 2026-10-15 b: twenty more items, cooldowns, AoE and cast range --------------------------------------------
+
+func test_items_15b_recipes_match_dota() -> void:
+	# costs from work/research/d2_items.txt (Valve's items.txt)
+	var expect := {"travel_boots": 2500, "dagon": 3000, "dagon_2": 4100, "dagon_5": 7400, "net_staff": 4650,
+		"storm_hammer": 5500, "soul_gem": 3000, "time_crystal": 5100, "small_shield": 425, "leech_totem": 2200,
+		"battle_armor": 5125, "frost_plate": 4500, "burning_cape": 4700, "giant_heart": 5300, "leech_blade": 5050,
+		"moth_blade": 5450, "refresh_stone": 5000, "guard_boots": 4450, "team_shield": 3725, "war_drum": 1625,
+		"long_lens": 2275, "crash_knife": 6800, "mana_gem": 800, "swift_stone": 2000, "plate_armor": 1400,
+		"gold_band": 450, "wide_stone": 900, "relic": 3400, "war_axe": 2800, "troll_ring": 1700, "feather": 2800,
+		"iron_helm": 975, "speed_ribbon": 225}
+	for id in expect:
+		var d := SimData.item(id)
+		check(not d.is_empty(), "%s exists" % id)
+		if d.is_empty():
+			continue
+		var parts := 0
+		for c in d.components:
+			parts += int(SimData.item(c).cost)
+		check(int(d.cost) == int(expect[id]), "%s costs %d (got %d)" % [id, int(expect[id]), int(d.cost)])
+		if not (d.components as Array).is_empty():
+			check(parts + int(d.recipe_cost) == int(d.cost), "%s: parts + recipe = cost (%d + %d)" % [id, parts, int(d.recipe_cost)])
+		check(UiKit.item_icon_path(id).begins_with("items/gen/"), "%s has a generated icon" % id)
+
+func test_items_15b_buy_and_combine() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, w.map.fountains[C.DAWN] + Vector2(200, 200))
+	h.gold_unreliable = 20000
+	check(w.shop.buy(h, "battle_armor") == "", "Battle Armor bought in the base")
+	check(_ids(h.inventory).has("battle_armor"), "its parts combine into Battle Armor")
+	check(w.shop.buy(h, "dagon") == "" and w.shop.buy(h, "recipe_dagon_2") == "", "Blast Rod and its next recipe")
+	check(_ids(h.inventory).has("dagon_2") and not _ids(h.inventory).has("dagon"), "Blast Rod becomes Blast Rod 2")
+
+func test_cooldown_reduction_and_rate() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	h.ability_level["blubber"] = 4
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "blubber"})
+	near(w.abilities.cooldown_left(h, "blubber"), 17.0, 0.05, "Blubber 17 s without items")
+	h.ability_ready["blubber"] = C.LONG_AGO
+	_give(w, h, "time_crystal", 0)
+	_give(w, h, "time_crystal", 1)
+	near(h.cooldown_reduction, 0.25, 1e-6, "two Time Crystals do not stack: 25%")
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "blubber"})
+	near(w.abilities.cooldown_left(h, "blubber"), 17.0 * 0.75, 0.05, "Time Crystal: 25% shorter")
+	# a cooldown that runs 40% slower, then frozen, then twice as fast
+	var left0 := w.abilities.cooldown_left(h, "blubber")
+	h.add_modifier({"id": "slowed_time", "source": -9, "expires": w.time + 100.0, "stats": {"cooldown_rate": -0.4}})
+	run(w, 1.0)
+	near(left0 - w.abilities.cooldown_left(h, "blubber"), 0.6, 0.05, "40% slower: 0.6 s gone in 1 s")
+	h.remove_modifier("slowed_time")
+	h.add_modifier({"id": "stopped_time", "source": -9, "expires": w.time + 100.0, "stats": {"cooldown_rate": -1.0}})
+	run(w, 0.1)
+	left0 = w.abilities.cooldown_left(h, "blubber")
+	run(w, 1.0)
+	near(w.abilities.cooldown_left(h, "blubber"), left0, 0.05, "frozen: it does not move")
+	h.remove_modifier("stopped_time")
+	h.add_modifier({"id": "fast", "source": -9, "expires": w.time + 100.0, "stats": {"cooldown_rate": 1.0}})
+	run(w, 0.1)
+	left0 = w.abilities.cooldown_left(h, "blubber")
+	run(w, 1.0)
+	near(left0 - w.abilities.cooldown_left(h, "blubber"), 2.0, 0.05, "twice as fast: 2 s gone in 1 s")
+	h.remove_modifier("fast")
+	# items too
+	_give(w, h, "refresh_stone", 2)
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 2})
+	near(w.abilities.item_cooldown_left(h, 2), 180.0 * 0.75, 0.2, "Refresh Stone's own cooldown is cut too")
+	check(w.abilities.cooldown_left(h, "blubber") == 0.0, "Refresh Stone finishes the spell cooldowns")
+
+func test_aoe_and_cast_range_bonus() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	near(w.abilities.val(h, "stench", "radius"), 250.0, 0.01, "Stench 250")
+	_give(w, h, "wide_stone", 0)
+	near(w.abilities.val(h, "stench", "radius"), 290.0, 0.01, "Wide Stone: +40 area")
+	_give(w, h, "frost_plate", 1)
+	near(w.abilities.val(h, "stench", "radius"), 325.0, 0.01, "Frost Plate's +75 and the stone's +40 do not stack")
+	near(w.abilities.val(h, "shuriken_hook", "vision_radius"), 500.0, 0.01, "sight radii do not grow")
+	h.ability_level["chomp"] = 1
+	near(w.abilities.cast_range(h, "chomp", -1), 200.0, 0.01, "Chomp 200")
+	_give(w, h, "long_lens", 2)
+	near(w.abilities.cast_range(h, "chomp", -1), 425.0, 0.01, "Long Lens: +225 cast range")
+
+func test_battle_armor_and_frost_plate_auras() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	var ally := _dummy(w, "ezee", C.DAWN, Vector2(-1600, -4000))
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1400, -4000))
+	var creep := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -3800))
+	creep.order = O.HOLD
+	var ally_armor := ally.armor
+	var foe_armor := foe.armor
+	var foe_as := foe.attack_speed
+	var ally_as := ally.attack_speed
+	_give(w, h, "battle_armor", 0)
+	_give(w, h, "frost_plate", 1)
+	run(w, 0.4)
+	near(ally.armor - ally_armor, 5.0, 0.01, "Battle Armor: +5 armor to allies")
+	near(ally.attack_speed - ally_as, 30.0, 0.01, "and +30 attack speed")
+	near(foe_armor - foe.armor, 5.0, 0.01, "-5 armor to enemies")
+	near(foe_as - foe.attack_speed, 40.0, 0.01, "Frost Plate: -40 attack speed to enemies")
+	check(not creep.get_modifier("battle_armor_curse").is_empty(), "enemy creeps get the armor loss too")
+	h.inventory[0] = null
+	h.inventory[1] = null
+	h.refresh_stats()
+	run(w, 1.0)
+	near(ally.armor, ally_armor, 0.01, "auras fade once the items are gone")
+	near(foe.attack_speed, foe_as, 0.01, "on enemies too")
+
+func test_leech_totem_small_shield_drum_greaves() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	var ally := _dummy(w, "ezee", C.DAWN, Vector2(-1600, -4000))
+	var a0 := ally.armor
+	var ls0 := ally.lifesteal
+	var ms0 := ally.move_speed
+	var dmg0 := ally.bonus_damage
+	_give(w, h, "leech_totem", 0)
+	_give(w, h, "small_shield", 1)
+	run(w, 0.4)
+	near(ally.lifesteal - ls0, 0.20, 0.001, "Leech Totem: 20% lifesteal to hero allies")
+	near(ally.bonus_damage - dmg0, (ally.dmg_min + ally.dmg_max) * 0.5 * 0.18, 0.01, "+18% base damage")
+	near(ally.armor - a0, 4.0, 0.01, "+2 armor each from the two different auras")
+	check(h.lifesteal < 0.01, "its owner gets no lifesteal from it")
+	_give(w, h, "war_drum", 2)
+	run(w, 0.4)
+	near(ally.move_speed - ms0, 15.0, 0.5, "War Drum: +15 speed aura")
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 2})
+	check(not ally.get_modifier("war_drum").is_empty(), "Endurance reaches allies")
+	_give(w, h, "guard_boots", 3)
+	ally.hp = ally.max_hp * 0.2
+	ally.mana = 0.0
+	run(w, 0.4)
+	check(float(ally.get_modifier("guard_boots_aura").stats.hp_regen) == 17.0, "Guard Boots: 17 regen below 25% health")
+	var hp1 := ally.hp
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 3})
+	check(ally.hp - hp1 >= 324.0 and ally.mana >= 199.0, "Mend: 325 health and 200 mana")
+
+func test_blast_rod_net_staff_storm_hammer() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	_give(w, h, "dagon_5", 0)
+	h.mana = h.max_mana
+	run(w, 0.3)
+	var hp0 := foe.hp
+	w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": 0, "target": foe.id})
+	run(w, 0.2)
+	near(hp0 - foe.hp, 800.0 * (1.0 + h.magic_amp) * (1.0 - foe.magic_resist), 1.0, "Blast Rod 5: 800 magic damage")
+	near(w.abilities.item_cooldown_left(h, 0), 15.0 - 0.2, 0.1, "15 s cooldown at level 5")
+	near(w.abilities.cast_range(h, "", 0, foe), 640.0 + 180.0, 0.01, "its own +180 cast range")
+	# Net Staff: roots every enemy in the area
+	var foe2 := _dummy(w, "sludge", C.DUSK, Vector2(-1450, -3900))
+	_give(w, h, "net_staff", 1)
+	h.mana = h.max_mana
+	run(w, 0.3)
+	w.command(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 1, "point": Vector2(-1480, -3950)})
+	run(w, 0.6)
+	check(foe.is_rooted() and foe2.is_rooted(), "Net Staff roots both enemies in the area")
+	# Storm Hammer's Static Charge on itself: attackers get struck
+	_give(w, h, "storm_hammer", 2)
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": 2, "target": h.id})
+	run(w, 0.1)
+	check(not h.get_modifier("static_charge").is_empty(), "Static Charge on the owner")
+	h.get_modifier("static_charge")["expires"] = INF            # longer than its 12 s, to count many attacks
+	var struck := 0
+	for i in 40:
+		var f0 := foe2.hp
+		w.combat.deal_damage(foe2.id, foe2.team, true, h, 10.0, C.DamageType.PHYSICAL, true, "attack")
+		if foe2.hp < f0:
+			struck += 1
+		run(w, 1.05)
+		h.hp = h.max_hp
+	check(struck >= 3 and struck <= 16, "about one attack in five sets off a strike (%d of 40)" % struck)
+
+func test_burning_cape_giant_heart_leech_blade() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	var foe := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	_give(w, h, "burning_cape", 0)
+	var hp0 := foe.hp
+	run(w, 2.0)
+	near(hp0 - foe.hp, 120.0 * (1.0 + h.magic_amp) * (1.0 - foe.magic_resist), 15.0, "Burning Cape: about 60 magic damage a second")
+	h.inventory[0] = null
+	_give(w, h, "giant_heart", 0)
+	h.hp = h.max_hp * 0.5
+	var r: Vector4 = w.regen_rates(h)
+	near(r.x, h.hp_regen + h.max_hp * 0.01 + h.max_hp * 0.5 * 0.015, 0.5, "Giant Heart: 1% max + 1.5% missing health a second")
+	_give(w, h, "leech_blade", 1)
+	var ls := h.lifesteal
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 1})
+	h.refresh_stats()
+	near(h.lifesteal - ls, 1.45, 0.001, "Blood Rage: +145% lifesteal")
+
+func test_team_shield_and_travel_boots() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	var ally := _dummy(w, "ezee", C.DAWN, Vector2(-1700, -4000))
+	_give(w, h, "team_shield", 0)
+	h.mana = h.max_mana
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+	var blk := 70.0 + 0.02 * h.max_hp
+	near(float(ally.get_modifier("team_guard").block), blk, 0.01, "Guard: 70 + 2% of its owner's health")
+	near(w.items.block_attack(ally, 200.0), 200.0 - blk, 0.01, "an ally blocks every attack")
+	# Travel Boots: teleport without a scroll, to an allied creep
+	var w2 := world(60.0)
+	var t := _sludge(w2, Vector2(-2000, -4000))
+	t.tp_charges = 0
+	check(w2.abilities.cast_error(t, "tp", -1, null, t.pos) == "No Teleport Scroll", "no scroll, no teleport")
+	var ms0 := t.move_speed
+	_give(w2, t, "travel_boots", 0)
+	near(t.move_speed - ms0, 90.0, 0.5, "Travel Boots: +90 speed")
+	t.mana = t.max_mana
+	check(w2.abilities.cast_error(t, "tp", -1, null, t.pos) == "", "with Travel Boots it needs no scroll")
+	var c := w2.spawn("dawn_melee", C.DAWN, Vector2(2000, 2000))
+	c.order = O.HOLD
+	w2.command(t.id, {"type": O.CAST_POINT, "ability": "tp", "point": Vector2(2050, 2050)})
+	run(w2, 0.2)
+	check(not t.channel.is_empty() and Vector2(t.channel.get("dest", Vector2.INF)).distance_to(c.pos) < 400.0, "teleports beside the allied creep")
+	check(t.tp_charges == 0, "no scroll used")
+	near(w2.abilities.cooldown_left(t, "tp"), 40.0 - 0.2, 0.1, "40 s cooldown")
+
+# ---- Tock and Kragg (run 2026-10-15 b) ------------------------------------------------------------------------------
+
+func _hero15(w: SimWorld, id: String, p: Vector2, team := C.DAWN) -> SimUnit:
+	var h := w.spawn(id, team, p)
+	h.level = 18
+	h.refresh_stats()
+	for aid in h.abilities:
+		h.ability_level[aid] = int(SimData.ability(aid).max_level)
+	h.refresh_stats()
+	h.hp = h.max_hp
+	h.mana = h.max_mana
+	return h
+
+func test_tock_and_kragg_data() -> void:
+	for id in ["tock", "kragg"]:
+		var d := SimData.unit(id)
+		check(not d.is_empty() and d.kind == K.HERO, "%s is a hero" % id)
+		check((d.talents as Array).size() == 4, "%s has 4 talent tiers" % id)
+		for tier in d.talents:
+			for tid in tier:
+				check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+		for aid in d.abilities:
+			check(not SimData.ability(String(aid)).is_empty(), "%s exists" % aid)
+		check(id in GameSettings.HEROES, "%s can be picked" % id)
+	check(SimData.unit("tock").abilities.size() == 6, "Tock has six skills")
+	check(SimData.unit("kragg").abilities.size() == 5, "Kragg has five skills")
+	check(SimData.ultimate_of(SimData.unit("tock").abilities) == "stop_time", "Stop Time is Tock's ultimate")
+	check(Keybinds.ability_slot("ability_4", 6) == 5 and Keybinds.ability_slot("ability_5", 6) == 3, "six skills: Q W E D F R")
+
+func test_tock_time_bolt_slows_cooldowns() -> void:
+	var w := empty_world()
+	var t := _hero15(w, "tock", Vector2(-2000, -4000))
+	var e := _sludge(w, Vector2(-1500, -4000), {}, C.DUSK)
+	e.order = O.HOLD
+	e.ability_ready["blubber"] = w.time + 10.0
+	var hp0 := e.hp
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "time_bolt", "point": e.pos})
+	run(w, 1.0)
+	check(e.hp < hp0, "Time Bolt hits")
+	check(not e.get_modifier("time_bolt").is_empty(), "the enemy is delayed")
+	var left0 := w.abilities.cooldown_left(e, "blubber")
+	run(w, 1.0)
+	near(left0 - w.abilities.cooldown_left(e, "blubber"), 0.4, 0.05, "its cooldowns run 60% slower")
+
+func test_tock_fast_forward_quick_hands_rewind() -> void:
+	var w := empty_world()
+	var t := _hero15(w, "tock", Vector2(-2000, -4000))
+	var ally := _sludge(w, Vector2(-1800, -4000))
+	ally.ability_ready["blubber"] = w.time + 10.0
+	w.command(t.id, {"type": O.CAST_UNIT, "ability": "fast_forward", "target": ally.id})
+	run(w, 0.3)
+	var left0 := w.abilities.cooldown_left(ally, "blubber")
+	run(w, 1.0)
+	near(left0 - w.abilities.cooldown_left(ally, "blubber"), 2.0, 0.05, "Fast Forward: cooldowns twice as fast")
+	# Quick Hands: Fast Forward's cast took 2.5 s off Time Bolt's cooldown
+	t.ability_ready["time_bolt"] = w.time + 5.0
+	t.ability_ready["fast_forward"] = C.LONG_AGO
+	t.mana = t.max_mana
+	w.command(t.id, {"type": O.CAST_UNIT, "ability": "fast_forward", "target": t.id})
+	run(w, 0.3)
+	check(w.abilities.cooldown_left(t, "time_bolt") < 5.0 - 2.5 + 0.01, "Quick Hands cuts other cooldowns by 2.5 s")
+	# Rewind: back where he stood 3 s ago, health back up
+	var start := t.pos
+	run(w, 0.3)
+	t.order = O.NONE
+	w.command(t.id, {"type": O.MOVE, "point": start + Vector2(700, 0)})
+	run(w, 2.0)
+	t.hp = t.max_hp * 0.4
+	var before := t.pos
+	w.command(t.id, {"type": O.CAST_NO_TARGET, "ability": "rewind"})
+	run(w, 0.1)
+	check(t.pos.distance_to(before) > 200.0, "Rewind moves Tock back (%d)" % int(t.pos.distance_to(before)))
+	check(t.hp > t.max_hp * 0.9, "with the health he had then")
+
+func test_tock_slow_field_and_stop_time() -> void:
+	var w := empty_world()
+	var t := _hero15(w, "tock", Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	var ms0 := e.move_speed
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "slow_field", "point": e.pos})
+	run(w, 0.8)
+	check(e.move_speed < ms0 * 0.6, "Slow Field slows 45%")
+	e.ability_ready["dark_stomp"] = w.time + 10.0
+	t.mana = t.max_mana
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "stop_time", "point": e.pos})
+	run(w, 0.5)
+	check(e.is_stunned(), "Stop Time freezes the enemy")
+	var left0 := w.abilities.cooldown_left(e, "dark_stomp")
+	run(w, 1.0)
+	near(w.abilities.cooldown_left(e, "dark_stomp"), left0, 0.05, "and its cooldowns stand still")
+	var ally := _sludge(w, e.pos + Vector2(50, 0))
+	t.ability_ready["stop_time"] = C.LONG_AGO
+	t.mana = t.max_mana
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "stop_time", "point": e.pos})
+	run(w, 0.5)
+	check(not ally.is_stunned(), "allies keep moving")
+
+func test_kragg_grip_charges_overload() -> void:
+	var w := empty_world()
+	var k := _hero15(w, "kragg", Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	var d0 := k.pos.distance_to(e.pos)
+	run(w, 0.3)
+	check(w.abilities.cast_error(k, "iron_grip", -1, e, e.pos) == "", "Iron Grip can be cast: " + w.abilities.cast_error(k, "iron_grip", -1, e, e.pos))
+	w.command(k.id, {"type": O.CAST_UNIT, "ability": "iron_grip", "target": e.id})
+	run(w, 0.8)
+	check(k.pos.distance_to(e.pos) < 120.0 and k.pos.distance_to(Vector2(-2000, -4000)) > d0 * 0.3,
+		"Iron Grip: they meet halfway")
+	check(e.is_stunned(), "the enemy is stunned")
+	check(w.abilities.kits2.charges(e) == 2, "and has 2 Charges")
+	# attacks add Charges (Magnetize)
+	var snap := w.combat.attack_snapshot(k, "")
+	w.combat.land_attack(snap, e)
+	check(w.abilities.kits2.charges(e) == 3, "an attack adds a Charge")
+	near(w.abilities.kits2.spell_mult(k, e), 1.18, 0.001, "3 Charges: +18% spell damage")
+	var hp0 := e.hp
+	var khp := k.hp
+	k.hp = k.max_hp * 0.5
+	khp = k.hp
+	w.command(k.id, {"type": O.CAST_NO_TARGET, "ability": "overload"})
+	run(w, 0.4)
+	check(w.abilities.kits2.charges(e) == 0, "Overload uses the Charges")
+	check(hp0 - e.hp >= 3.0 * 105.0 * (1.0 - e.magic_resist) * 0.95, "for 105 per Charge")
+	check(k.hp > khp, "and heals Kragg")
+
+func test_kragg_repel_and_magnet_field() -> void:
+	var w := empty_world()
+	var k := _hero15(w, "kragg", Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1800, -4000))
+	var e2 := _dummy(w, "sludge", C.DUSK, Vector2(-1800, -3900))
+	w.abilities.kits2.add_charges(e, k, 4)
+	w.command(k.id, {"type": O.CAST_NO_TARGET, "ability": "repel"})
+	run(w, 1.6)
+	check(e.pos.distance_to(k.pos) > e2.pos.distance_to(k.pos), "Repel throws the charged enemy further")
+	check(w.abilities.kits2.charges(e2) >= 1, "and adds a Charge")
+	# Magnet Field drags enemies in and stuns them at the end
+	var far := _dummy(w, "ezee", C.DUSK, k.pos + Vector2(600, 0))
+	far.def["move_speed"] = 0.0
+	far.refresh_stats()
+	var d0 := far.pos.distance_to(k.pos)
+	k.mana = k.max_mana
+	w.command(k.id, {"type": O.CAST_NO_TARGET, "ability": "magnet_field"})
+	run(w, 3.0)
+	check(far.pos.distance_to(k.pos) < d0 - 200.0, "Magnet Field drags enemies in (%d -> %d)" % [int(d0), int(far.pos.distance_to(k.pos))])
+	check(w.abilities.kits2.charges(far) >= 2, "giving a Charge every second")
+	run(w, 3.5)
+	check(far.is_stunned() or far.get_modifier("magnet_field_stun").size() > 0 or far.pos.distance_to(k.pos) > 300.0,
+		"enemies close at the end are stunned")

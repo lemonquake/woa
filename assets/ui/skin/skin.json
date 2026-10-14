@@ -824,6 +824,54 @@
     80
    ],
    "kind": "image"
+  },
+  "hud_console_5": {
+   "file": "hud_console_5.png",
+   "size": [
+    1220,
+    206
+   ],
+   "kind": "image"
+  },
+  "hud_console_6": {
+   "file": "hud_console_6.png",
+   "size": [
+    1300,
+    206
+   ],
+   "kind": "image"
+  },
+  "hud_console_7": {
+   "file": "hud_console_7.png",
+   "size": [
+    1324,
+    206
+   ],
+   "kind": "image"
+  },
+  "hud_console_8": {
+   "file": "hud_console_8.png",
+   "size": [
+    1348,
+    206
+   ],
+   "kind": "image"
+  },
+  "hud_console_9": {
+   "file": "hud_console_9.png",
+   "size": [
+    1378,
+    206
+   ],
+   "kind": "image"
+  },
+  "hud_console_10": {
+   "file": "hud_console_10.png",
+   "size": [
+    1400,
+    206
+   ],
+   "kind": "image"
   }
  }
 }

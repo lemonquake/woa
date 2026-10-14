@@ -94,14 +94,16 @@ func _portrait() -> void:
 func hero() -> SimUnit:
 	return game.world.get_unit(game.player_hero_id) if game and game.world else null
 
-## The hero the bottom panel shows: the selected hero (any team), otherwise your own.
+## The unit the bottom panel shows: the selected unit of any kind and team (a hero, creep, neutral, building, ward),
+## otherwise your own hero. Your own courier shows through your hero's panel (its commands, see courier_shown).
 func shown() -> SimUnit:
 	if game == null or game.world == null:
 		return null
 	var s: SimUnit = game.world.get_unit(game.selected_id)
-	if s != null and s.is_hero():
+	var h := hero()
+	if s != null and (s.alive or s.is_hero()) and s.kind != K.FOUNTAIN and not (h != null and s.id == h.courier_id):
 		return s
-	return hero()
+	return h
 
 ## Portrait: a click selects your hero and centres the camera on it; holding it keeps the camera on the hero.
 func portrait_press() -> void:
@@ -134,7 +136,7 @@ func _process(dt: float) -> void:
 	_msg_t = maxf(0.0, _msg_t - dt)
 	_announce_t = maxf(0.0, _announce_t - dt)
 	var vs := get_viewport_rect().size
-	bottom.position = Vector2(roundf((vs.x - BottomPanel.W) * 0.5), vs.y - BottomPanel.H)
+	bottom.position = Vector2(roundf((vs.x - bottom.size.x) * 0.5), vs.y - BottomPanel.H)
 	minimap.position = Vector2(20, vs.y - Minimap.S - 20)
 	chat.position = Vector2(14, minimap.position.y - chat.size.y - 76)
 	topbar.position = Vector2(roundf((vs.x - TopBar.W) * 0.5), 0)
@@ -159,11 +161,12 @@ func _update_portrait() -> void:
 	if h == null:
 		return
 	var v = game.views.get(h.id)
-	if v == null or not (v is UnitView) or v.skeleton == null:
+	if v == null or not (v is Node3D):
 		return
-	var sk: Skeleton3D = v.skeleton
-	var bi := sk.find_bone("head")
+	var sk: Skeleton3D = v.get("skeleton") if v is UnitView else null
+	var bi := sk.find_bone("head") if sk != null else -1
 	if bi < 0:
+		_frame_portrait(v)
 		return
 	var head: Vector3 = (sk.global_transform * sk.get_bone_global_pose(bi)).origin + Vector3(0, 0.06, 0)
 	var fwd: Vector3 = -v.global_transform.basis.z
@@ -178,7 +181,6 @@ func _draw() -> void:
 	if _msg_t > 0.0:
 		var a := clampf(_msg_t / 0.5, 0.0, 1.0)
 		U.text_c(self, _msg, Vector2(vs.x * 0.5, vs.y - BottomPanel.H - 40), 22, Color(_msg_col, a), "bold")
-	_unit_card()
 	var h := hero()
 	if h and not h.alive:
 		var t := maxf(0.0, h.respawn_at - game.world.time)
@@ -275,56 +277,6 @@ func _channel_bar(h: SimUnit, vs: Vector2) -> void:
 	U.bar(self, r, 1.0 - left / maxf(0.01, total), Color(0.95, 0.78, 0.3))
 	U.text_c(self, "%s   %.1f" % [name, left], r.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
 
-## Info card for a selected unit that is not your hero (creeps, towers, neutrals, enemy heroes).
-func _unit_card() -> void:
-	card_rect = Rect2()
-	var w: SimWorld = game.world
-	var sel: SimUnit = w.get_unit(game.selected_id)
-	if sel == null or sel.id == game.player_hero_id or not sel.alive or sel.is_hero():
-		return
-	var mh := hero()
-	if mh and sel.id == mh.courier_id:
-		return
-	var vs := get_viewport_rect().size
-	var r := Rect2(vs.x * 0.5 - 230, vs.y - BottomPanel.H - 120, 460, 108)
-	card_rect = r
-	U.panel(self, r, U.GOLD_DIM, 6)
-	draw_type_chips(self, sel, r.position + Vector2(14, 78))
-	var mloc := get_local_mouse_position()
-	if Rect2(r.position + Vector2(220, 30), Vector2(230, 40)).has_point(mloc):
-		show_tip(get_global_mouse_position(), unit_sheet(sel))
-	var col := U.DAWN if sel.team == 0 else (U.DUSK if sel.team == 1 else Color(0.95, 0.8, 0.4))
-	U.text(self, String(sel.look.get("display_name", sel.name)), r.position + Vector2(14, 26), 18, col, "title")
-	var lvl := " level %d" % sel.level if sel.is_hero() else ""
-	U.text_r(self, SimConst.TEAM_NAMES[sel.team] + lvl, Vector2(r.end.x - 14, r.position.y + 24), 13, U.TEXT_DIM, "body")
-	U.bar(self, Rect2(r.position + Vector2(14, 36), Vector2(200, 14)), sel.hp / maxf(1.0, sel.max_hp), U.HP)
-	U.text_c(self, "%d / %d" % [int(sel.hp), int(sel.max_hp)], r.position + Vector2(114, 48), 11, U.TEXT, "bold")
-	if sel.max_mana > 0.0:
-		U.bar(self, Rect2(r.position + Vector2(14, 54), Vector2(200, 10)), sel.mana / maxf(1.0, sel.max_mana), U.MANA)
-	var dmg := "%d-%d" % [int(sel.dmg_min + sel.bonus_damage), int(sel.dmg_max + sel.bonus_damage)] if sel.can_attack_at_all() else "-"
-	U.text(self, "Damage %s   Armor %.0f   Range %d   Speed %d" % [dmg, sel.armor, int(sel.attack_range), int(sel.move_speed)],
-		r.position + Vector2(228, 50), 13, U.TEXT, "body")
-	var sx := r.position.x + 228.0
-	var shown := {}
-	for m in sel.modifiers:
-		var key := String(m.get("fx", ""))
-		if key == "" and float(m.get("slow", 0.0)) > 0.0:
-			key = "slow"
-		if key == "" or shown.has(key) or not UnitBars.STATUS_ICONS.has(key):
-			continue
-		shown[key] = true
-		var ic: Texture2D = U.icon(UnitBars.STATUS_ICONS[key])
-		if ic:
-			draw_texture_rect(ic, Rect2(sx, r.position.y + 58, 18, 18), false)
-			var left := float(m.get("expires", INF)) - w.time
-			if left > 0.0 and is_finite(left):
-				U.text(self, "%.0f" % ceilf(left), Vector2(sx + 20, r.position.y + 72), 11, U.TEXT_DIM, "bold")
-			sx += 44.0
-	if sel.is_building() and sel.is_invulnerable():
-		U.text(self, "Invulnerable", r.position + Vector2(228, 70), 12, Color(1.0, 0.75, 0.4), "bold")
-	elif sel.is_building() and sel.backdoor_active:
-		U.text(self, "Backdoor protection", r.position + Vector2(228, 70), 12, Color(0.6, 0.85, 1.0), "bold")
-
 func error(msg: String) -> void:
 	_msg = msg
 	_msg_col = Color(1.0, 0.35, 0.3)
@@ -399,6 +351,126 @@ func over_hud(p: Vector2) -> bool:
 	if to_buy.visible and to_buy.get_global_rect().has_point(p):
 		return true
 	return debug.covers(p)
+
+## A unit without a head bone (buildings, wards, some creeps): the camera frames its height from the front of the
+## game camera's view, a little above.
+func _frame_portrait(v: Node3D) -> void:
+	var hgt := maxf(0.6, float(v.get("bar_height")) if v.get("bar_height") != null else 2.0)
+	var base := v.global_position
+	var target := base + Vector3(0, hgt * 0.55, 0)
+	var fwd: Vector3 = -game.camera.cam.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3(0, 0, -1)
+	var dist := hgt * 1.9 + 0.6
+	portrait_cam.global_position = target - fwd * dist + Vector3(0, hgt * 0.35, 0)
+	portrait_cam.look_at(target, Vector3.UP)
+
+## What a creep, neutral, building or ward can do, as skill slots for the bottom panel: its spells (with cooldowns),
+## auras, attack effects (crit, splash, on-hit disables), true sight, a building's protection. Each entry:
+## {name, icon, desc, kind ("Aura", "Passive", ...), cd_key, cooldown}.
+func unit_skills(u: SimUnit) -> Array:
+	var out: Array = []
+	var d: Dictionary = u.def
+	for aid in d.get("abilities", []):
+		var a := SimData.ability(String(aid))
+		if a.is_empty():
+			continue
+		out.append({"name": String(a.name), "icon": String(U.ABILITY_ICONS.get(aid, NEUTRAL_SKILL_ICONS.get(aid, "skills/keen_eye"))),
+			"desc": String(a.desc), "kind": "Spell", "cd_key": String(aid), "cooldown": float(a.cooldown[0])})
+	for au in d.get("auras", []):
+		var parts: Array = []
+		for k in au.stats:
+			parts.append(_stat_text(String(k), float(au.stats[k])))
+		var desc := "Allies within %d get %s." % [int(au.radius), ", ".join(parts)]
+		if au.has("hero_stats"):
+			var hp: Array = []
+			for k in au.hero_stats:
+				hp.append(_stat_text(String(k), float(au.hero_stats[k])))
+			desc += " Heroes get %s." % ", ".join(hp)
+		out.append({"name": String(au.name), "icon": "status/aura_might", "desc": desc, "kind": "Aura"})
+	if d.has("crit"):
+		var cr: Dictionary = d.crit
+		out.append({"name": String(cr.name), "icon": "skills/lethality", "kind": "Passive",
+			"desc": "%d%% chance for an attack to deal %d%% damage." % [roundi(float(cr.chance) * 100.0), roundi(float(cr.mult) * 100.0)]})
+	if d.has("splash"):
+		var sp: Dictionary = d.splash
+		out.append({"name": String(sp.name), "icon": "skills/cleave", "kind": "Passive",
+			"desc": "Attacks hit every enemy within %d of the target for %d%% damage." % [int(sp.radius), roundi(float(sp.pct) * 100.0)]})
+	if d.has("on_hit"):
+		var oh: Dictionary = d.on_hit
+		var what := "disarms the target (no attacks)" if oh.get("disarm", false) else "breaks the target (no passives)"
+		out.append({"name": String(oh.name), "icon": "status/sundered" if oh.get("break", false) else "status/weakened",
+			"kind": "Passive", "cd_key": "on_hit", "cooldown": float(oh.cooldown),
+			"desc": "An attack %s for %s seconds, once every %s seconds." % [what, str(oh.dur), str(oh.cooldown)]})
+	if d.has("true_sight") and float(d.true_sight) > 0.0:
+		out.append({"name": "True Sight", "icon": "status/keen", "kind": "Passive",
+			"desc": "Sees invisible units within %d." % int(d.true_sight)})
+	if u.kind == K.WARD and float(d.vision_day) > 0.0:
+		out.append({"name": "Sight", "icon": "status/spirit_ward", "kind": "Passive",
+			"desc": "Gives its team sight within %d. Invisible." % int(d.vision_day)})
+	if u.is_building():
+		out.append({"name": "Backdoor Protection", "icon": "status/fortified", "kind": "Passive",
+			"desc": "Takes much less damage and heals while no enemy creeps are near it."})
+		if u.kind == K.TOWER or u.kind == K.ANCIENT or u.kind == K.BARRACKS:
+			out.append({"name": "Fortify", "icon": "status/shielded", "kind": "Team",
+				"desc": "When its team uses Fortify, it cannot be hurt for a while."})
+	if bool(d.get("ancient", false)):
+		out.append({"name": "Ancient", "icon": "status/titan", "kind": "Passive",
+			"desc": "An ancient creep: some spells and items cannot target it, and Gold Glove cannot take it."})
+	if bool(d.get("flying", false)):
+		out.append({"name": "Flying", "icon": "status/windstep", "kind": "Passive",
+			"desc": "Flies over trees and cliffs."})
+	return out.slice(0, Keybinds.MAX_ABILITIES)
+
+const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}
+
+func _stat_text(k: String, v: float) -> String:
+	var names := {"move_speed": "move speed", "base_damage_pct": "base damage", "magic_resist": "magic resistance",
+		"armor": "armor", "attack_speed": "attack speed", "hp_regen": "health regen", "mana_regen": "mana regen",
+		"lifesteal": "lifesteal"}
+	var nm := String(names.get(k, k.replace("_", " ")))
+	if k.ends_with("_pct") or k == "magic_resist" or k == "lifesteal":
+		return "%+d%% %s" % [roundi(v * 100.0), nm]
+	return "%+d %s" % [roundi(v), nm] if absf(v - roundf(v)) < 0.01 else "%+.1f %s" % [v, nm]
+
+## A plain name for what kind of unit it is (the bottom panel's side column).
+func kind_name(u: SimUnit) -> String:
+	match u.kind:
+		K.HERO: return "Hero"
+		K.CREEP_MELEE, K.CREEP_RANGED, K.CREEP_FLAG: return "Lane creep"
+		K.CREEP_SIEGE: return "Siege creep"
+		K.NEUTRAL_CREEP: return "Ancient creep" if bool(u.def.get("ancient", false)) else "Neutral creep"
+		K.TOWER: return "Tower"
+		K.BARRACKS: return "Barracks"
+		K.ANCIENT: return "Throne"
+		K.FILLER: return "Building"
+		K.WARD: return "Ward"
+		K.COURIER: return "Courier"
+	return "Unit"
+
+## Facts about a unit for the bottom panel's item well: what it is worth and how it sees.
+func unit_facts(u: SimUnit) -> Array:
+	var out: Array = []
+	var d: Dictionary = u.def
+	out.append(["Level", str(u.level)])
+	if int(d.gold_max) > 0:
+		out.append(["Bounty", "%d-%d gold" % [int(d.gold_min), int(d.gold_max)], U.GOLD])
+	elif String(d.get("bounty_key", "")) != "":
+		out.append(["Bounty", "team gold", U.GOLD])
+	if float(d.xp) > 0.0:
+		out.append(["Experience", str(int(d.xp)), Color(0.75, 0.6, 1.0)])
+	out.append(["Sight day / night", "%d / %d" % [int(u.vision_day), int(u.vision_night)]])
+	var rates: Vector4 = game.world.regen_rates(u)
+	out.append(["Health regen", "%.1f" % rates.x])
+	if u.max_mana > 0.0:
+		out.append(["Mana regen", "%.1f" % rates.y])
+	if u.is_building() and u.is_invulnerable():
+		out.append(["Invulnerable", "yes", Color(1.0, 0.75, 0.4)])
+	elif u.is_building() and u.backdoor_active:
+		out.append(["Backdoor protection", "on", Color(0.6, 0.85, 1.0)])
+	if u.kind == K.NEUTRAL_CREEP and u.upgrade > 0:
+		out.append(["Grown", "x%d" % u.upgrade])
+	return out
 
 ## Tooltip content for this frame (drawn by Tip).
 # ---- Element, weapon and armor: chips and the unit sheet -------------------------------------------------------------
@@ -583,7 +655,7 @@ class BottomPanel extends Control:
 	## With your courier selected the panel shows the courier: its commands and what it carries.
 	## Items: click uses, drag moves (to another slot, the stash, the ground, an ally hero or your courier), right
 	## click moves to or from the backpack.
-	const W := 1140.0
+	const W := 1140.0                          # with four skill slots; wider with more (see _layout)
 	const H := 206.0
 	const PORTRAIT := Rect2(14, 24, 166, 170)
 	const ABIL_X := 404.0
@@ -599,6 +671,15 @@ class BottomPanel extends Control:
 	const CHIPS_X := 192.0                     # element / damage type / armor type, above the stats column
 	const CHIPS_Y := -14.0
 	var _chips_end := CHIPS_X
+	# the layout for the shown unit's skill count (Keybinds.MAX_ABILITIES at most): console width, slot step and
+	# size, and where the items and the gold column start
+	var n_slots := 4
+	var pw := W
+	var abil_step := ABIL_STEP
+	var abil_size := ABIL_SIZE
+	var item_x := ITEM_X
+	var side_x := SIDE_X
+	const INNATE := Rect2(366, 126, 28, 28)    # the innate skill, between the stats and the health well
 	const COURIER_CMDS := [["return", "Return to Base", "ui/back", "ability_1", "Home"], ["retrieve", "Retrieve Items", "ui/load", "ability_2", "Retrieve"],
 		["stash", "Return Items to Stash", "ui/save", "ability_3", "To Stash"], ["deliver", "Deliver Items", "ui/teleport", "ability_4", "Deliver"],
 		["transfer", "Transfer Items", "ui/split", "item_1", "Transfer"], ["burst", "Speed Burst", "status/haste", "item_2", "Burst"],
@@ -636,29 +717,46 @@ class BottomPanel extends Control:
 		overlay.panel = self
 		add_child(overlay)
 
-	func _layout() -> void:
+	## Slot step and size for n skills, and how much wider than the four-slot console the panel is (the console art
+	## hud_console_<n> from tools/ui_skin.py console_layout() has the same numbers).
+	static func slot_layout(n: int) -> Vector3:
+		n = clampi(n, 4, Keybinds.MAX_ABILITIES)
+		var step: float = {7: 72.0, 8: 66.0, 9: 62.0, 10: 58.0}.get(n, 80.0)
+		return Vector3(step, step - 8.0, n * step - 4.0 * ABIL_STEP)
+
+	func _layout(n := 4) -> void:
+		n_slots = clampi(n, 4, Keybinds.MAX_ABILITIES)
+		var sl := slot_layout(n_slots)
+		abil_step = sl.x
+		abil_size = sl.y
+		pw = W + sl.z
+		item_x = ITEM_X + sl.z
+		side_x = SIDE_X + sl.z
+		size = Vector2(pw, H)
+		if overlay:
+			overlay.size = size
 		_abil_rects.clear()
 		_learn_rects.clear()
-		for i in 4:
-			var r := Rect2(ABIL_X + i * ABIL_STEP, ABIL_Y, ABIL_SIZE, ABIL_SIZE)
+		for i in n_slots:
+			var r := Rect2(ABIL_X + i * abil_step, PIPS_Y - 5.0 - abil_size, abil_size, abil_size)
 			_abil_rects.append(r)
-			_learn_rects.append(Rect2(r.position.x + 20, 3, 32, 22))
+			_learn_rects.append(Rect2(r.get_center().x - minf(16.0, abil_size * 0.5 - 2.0), 3, minf(32.0, abil_size - 4.0), 22))
 		_item_rects.clear()
 		for i in 6:
-			_item_rects.append(Rect2(ITEM_X + (i % 3) * 80, 30 + (i / 3) * 62, 74, 56))
+			_item_rects.append(Rect2(item_x + (i % 3) * 80, 30 + (i / 3) * 62, 74, 56))
 		for i in 3:
-			_item_rects.append(Rect2(ITEM_X + i * 80, 158, 74, 36))
+			_item_rects.append(Rect2(item_x + i * 80, 158, 74, 36))
 		_stash_rects.clear()
 		for i in 6:
-			_stash_rects.append(Rect2(ITEM_X + i * 40, STASH_Y + 14, 36, 30))
-		_grab_rect = Rect2(ITEM_X + 244, STASH_Y + 14, 64, 30)
+			_stash_rects.append(Rect2(item_x + i * 40, STASH_Y + 14, 36, 30))
+		_grab_rect = Rect2(item_x + 244, STASH_Y + 14, 64, 30)
 		_cmd_rects.clear()
 		for i in 8:
 			_cmd_rects.append(Rect2(ABIL_X + (i % 4) * ABIL_STEP, 30 + (i / 4) * 62, ABIL_SIZE, 56))
-		_shop_rect = Rect2(SIDE_X, 132, 140, 62)
-		_tp_rect = Rect2(SIDE_X, 96, 70, 32)
-		_courier_rect = Rect2(SIDE_X + 74, 96, 66, 32)
-		_buyback_rect = Rect2(ABIL_X, BARS_Y, 312, 50)
+		_shop_rect = Rect2(side_x, 132, 140, 62)
+		_tp_rect = Rect2(side_x, 96, 70, 32)
+		_courier_rect = Rect2(side_x + 74, 96, 66, 32)
+		_buyback_rect = Rect2(ABIL_X, BARS_Y, n_slots * abil_step - 8.0, 50)
 		_talent_rect = Rect2(TALENT_C - Vector2(22, 22), Vector2(44, 44))
 
 	## The courier when it is what the player has selected (the panel then shows it).
@@ -685,8 +783,14 @@ class BottomPanel extends Control:
 		var w: SimWorld = hud.game.world
 		var cour := courier_shown()
 		var mine: bool = h.id == hud.game.player_hero_id
-		# the sculpted console (an enemy hero's panel is tinted red)
-		U.art(self, "hud_console", Vector2.ZERO, Color.WHITE if mine or h.team == hud.game.player_team else Color(1.0, 0.78, 0.74))
+		var n := 4 if cour != null else slot_count(h)
+		if clampi(n, 4, Keybinds.MAX_ABILITIES) != n_slots:
+			_layout(n)
+		# the sculpted console (an enemy's panel is tinted red, a neutral's amber)
+		var tint := Color.WHITE
+		if not mine and h.team != hud.game.player_team:
+			tint = Color(1.0, 0.86, 0.66) if h.team == C.NEUTRAL else Color(1.0, 0.78, 0.74)
+		U.art(self, "hud_console" if n_slots <= 4 else "hud_console_%d" % n_slots, Vector2.ZERO, tint)
 		if portrait_box:
 			portrait_box.position = PORTRAIT.position
 			portrait_box.visible = cour == null
@@ -698,8 +802,14 @@ class BottomPanel extends Control:
 			if overlay:
 				overlay.queue_redraw()
 			return
+		if not h.is_hero():
+			_unit_view(h, w)
+			if overlay:
+				overlay.queue_redraw()
+			return
 		_stats(h)
 		_talent_button(h, w)
+		_innate(h)
 		_abilities(h, w)
 		_bars(h)
 		_items(h, w)
@@ -710,9 +820,9 @@ class BottomPanel extends Control:
 			if not h.alive:
 				_buyback(h, w)
 		else:
-			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(SIDE_X, 70), 15, U.TEXT_DIM, "bold")
-			U.text(self, Keybinds.key_name("select_hero") + " or the portrait:", Vector2(SIDE_X, 94), 12, U.TEXT_DIM, "body")
-			U.text(self, "back to your hero", Vector2(SIDE_X, 110), 12, U.TEXT_DIM, "body")
+			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(side_x, 70), 15, U.TEXT_DIM, "bold")
+			U.text(self, Keybinds.key_name("select_hero") + " or the portrait:", Vector2(side_x, 94), 12, U.TEXT_DIM, "body")
+			U.text(self, "back to your hero", Vector2(side_x, 110), 12, U.TEXT_DIM, "body")
 		if talents_open:
 			_talent_tree(h, w)
 		if mine:
@@ -725,6 +835,130 @@ class BottomPanel extends Control:
 					draw_texture_rect(ic, Rect2(get_local_mouse_position() - Vector2(22, 22), Vector2(44, 44)), false, Color(1, 1, 1, 0.85))
 		if overlay:
 			overlay.queue_redraw()
+
+	## How many skill slots the shown unit needs: a hero's skills (its innate one sits apart), or what a creep or
+	## building can do (spells, auras, attack effects, true sight).
+	func slot_count(u: SimUnit) -> int:
+		if u.is_hero():
+			return u.abilities.size()
+		return hud.unit_skills(u).size()
+
+	## The innate skill (Growing Gut): a small slot between the stats and the health bar, with its tooltip.
+	func _innate(h: SimUnit) -> void:
+		var aid := String(h.def.get("innate", ""))
+		if aid == "":
+			return
+		var ic: Texture2D = U.ability_icon(aid)
+		draw_rect(INNATE.grow(-1), Color(0.04, 0.05, 0.08))
+		if ic:
+			draw_texture_rect(ic, INNATE.grow(-3), false)
+		U.skin(self, "slot_small", INNATE.grow(2), Color.WHITE, false)
+		if INNATE.has_point(get_local_mouse_position()):
+			var lines := _ability_tip(h, aid)
+			lines[1] = ["Innate (always on)", 13, U.TEXT_DIM, "body"]
+			lines.pop_back()
+			hud.show_tip(get_global_mouse_position(), lines)
+
+	# ---- A unit that is not a hero (creep, neutral, building, ward, someone else's courier) ----------------------
+
+	## Laid out like a hero: stats with the type chips and the full sheet, its skills in the ability slots, health and
+	## mana with regeneration, and in place of the items what it is worth and what it can do.
+	func _unit_view(u: SimUnit, w: SimWorld) -> void:
+		var m := get_local_mouse_position()
+		# stats column
+		var x := 196.0
+		var y := 44.0
+		var dmg := "%d-%d" % [int(u.dmg_min), int(u.dmg_max)] if u.can_attack_at_all() else "-"
+		if u.can_attack_at_all() and u.bonus_damage > 0.0:
+			dmg += " +%d" % int(u.bonus_damage)
+		_stat_row("ui/level", dmg, Vector2(x, y))
+		_stat_row("status/fortified", "%.1f" % u.armor, Vector2(x, y + 24))
+		_stat_row("status/haste", str(int(u.move_speed)) if u.move_speed > 0.0 else "-", Vector2(x, y + 48))
+		U.art_rect(self, "divider", Rect2(x - 2, y + 58, 160, 12), Color(1, 1, 1, 0.8))
+		_chips_end = hud.draw_type_chips(self, u, Vector2(CHIPS_X, CHIPS_Y))
+		var rows := []
+		if u.can_attack_at_all():
+			rows.append(["Range", str(int(u.attack_range))])
+			rows.append(["Attacks/s", "%.2f" % (1.0 / maxf(0.01, u.attack_interval()))])
+		rows.append(["Magic res.", "%d%%" % roundi(u.magic_resist * 100.0)])
+		for i in rows.size():
+			U.text(self, String(rows[i][0]), Vector2(x, y + 84 + i * 18), 12, U.TEXT_DIM, "body")
+			U.text_r(self, String(rows[i][1]), Vector2(x + 160, y + 84 + i * 18), 13, U.TEXT, "bold")
+		if Rect2(x - 4, y - 18, 170, 160).has_point(m):
+			hud.show_tip(get_global_mouse_position(), hud.unit_sheet(u))
+		# skills
+		var skills: Array = hud.unit_skills(u)
+		for i in mini(n_slots, skills.size()):
+			_unit_skill(u, w, skills[i], _abil_rects[i], m)
+		for i in range(skills.size(), n_slots):
+			draw_rect((_abil_rects[i] as Rect2).grow(-2), Color(0.03, 0.035, 0.05, 0.6))
+		_bars(u)
+		# worth and status in the item well
+		var ir := Rect2(item_x - 2, 28, 246, 168)
+		U.skin(self, "panel_dark", ir)
+		var info: Array = hud.unit_facts(u)
+		var iy := ir.position.y + 22
+		for line in info:
+			U.text(self, String(line[0]), Vector2(ir.position.x + 12, iy), 13, U.TEXT_DIM, "body")
+			U.text_r(self, String(line[1]), Vector2(ir.end.x - 12, iy), 13, line[2] if line.size() > 2 else U.TEXT, "bold")
+			iy += 19
+			if iy > ir.end.y - 6:
+				break
+		# side column: whose it is, its status effects, how to get back to your hero
+		var team_col := U.DAWN if u.team == C.DAWN else (U.DUSK if u.team == C.DUSK else Color(0.95, 0.8, 0.4))
+		var who := "Neutral" if u.team == C.NEUTRAL else String(C.TEAM_NAMES[u.team])
+		U.text(self, who, Vector2(side_x, 52), 17, team_col, "title")
+		var rel := "Enemy"
+		if u.team == C.NEUTRAL:
+			rel = "Neutral"
+		elif u.team == hud.game.player_team:
+			rel = "Ally"
+		U.text(self, (rel + "  ·  " if rel != who else "") + hud.kind_name(u), Vector2(side_x, 72), 12, U.TEXT_DIM, "bold")
+		var sx := side_x
+		var shown_fx := {}
+		for md in u.modifiers:
+			var key := String(md.get("fx", ""))
+			if key == "" and float(md.get("slow", 0.0)) > 0.0:
+				key = "slow"
+			if key == "" or shown_fx.has(key) or not UnitBars.STATUS_ICONS.has(key) or sx > side_x + 120:
+				continue
+			shown_fx[key] = true
+			var sic: Texture2D = U.icon(UnitBars.STATUS_ICONS[key])
+			if sic:
+				draw_texture_rect(sic, Rect2(sx, 84, 20, 20), false)
+				var left := float(md.get("expires", INF)) - w.time
+				if left > 0.0 and is_finite(left):
+					U.text(self, "%d" % ceili(left), Vector2(sx + 6, 116), 11, U.TEXT_DIM, "bold")
+				sx += 30.0
+		U.text(self, Keybinds.key_name("select_hero") + " or the portrait:", Vector2(side_x, 150), 12, U.TEXT_DIM, "body")
+		U.text(self, "back to your hero", Vector2(side_x, 166), 12, U.TEXT_DIM, "body")
+
+	## One of a unit's skills: icon, cooldown sweep, a gold frame, the tooltip.
+	func _unit_skill(u: SimUnit, w: SimWorld, sk: Dictionary, r: Rect2, m: Vector2) -> void:
+		draw_rect(r.grow(-2), Color(0.04, 0.05, 0.08))
+		var ic: Texture2D = U.icon(String(sk.icon))
+		if ic:
+			draw_texture_rect(ic, r.grow(-5), false, Color(1, 1, 1) if u.alive else Color(0.4, 0.4, 0.4))
+		var cd_key := String(sk.get("cd_key", ""))
+		var total := float(sk.get("cooldown", 0.0))
+		if cd_key != "" and total > 0.0:
+			var left := maxf(0.0, float(u.ability_ready.get(cd_key, C.LONG_AGO)) - w.time)
+			if left > 0.0:
+				U.cooldown(self, r, clampf(left / total, 0.0, 1.0), left)
+		U.skin(self, "slot_ability", r.grow(4), Color(1.25, 1.2, 1.05) if r.has_point(m) else Color.WHITE, false)
+		if String(sk.get("kind", "")) != "":
+			var kr := Rect2(r.position + Vector2(2, r.size.y - 16), Vector2(r.size.x - 4, 14))
+			draw_rect(kr, Color(0, 0, 0, 0.55))
+			U.text_c(self, String(sk.kind), kr.get_center() + Vector2(0, 4), 10, U.TEXT_DIM, "bold")
+		if r.has_point(m):
+			var lines: Array = [[String(sk.name), 20, U.GOLD, "title"]]
+			if String(sk.get("kind", "")) != "":
+				lines.append([String(sk.kind), 13, U.TEXT_DIM, "body"])
+			for l in U.wrap(String(sk.desc), 330, 15):
+				lines.append([l, 15, U.TEXT, "body"])
+			if total > 0.0:
+				lines.append(["Cooldown: %s" % str(total), 13, Color(0.6, 0.75, 1.0), "body"])
+			hud.show_tip(get_global_mouse_position(), lines)
 
 	# ---- Portrait overlay: name plate, level circle with the experience ring, experience bar -------------------
 
@@ -745,6 +979,15 @@ class BottomPanel extends Control:
 		U.text_c(ci, nm, plate.get_center() + Vector2(0, 7), 17, U.GOLD, "title")
 		if cour != null:
 			_courier_portrait(ci, h, cour)
+			return
+		if not h.is_hero():
+			# a creep or building: its level in the badge, no experience
+			var uc := Vector2(PORTRAIT.position.x + 24, PORTRAIT.end.y - 22)
+			ci.draw_circle(uc, 23, Color(0.025, 0.028, 0.04, 0.97))
+			U.art_rect(ci, "ring_level", Rect2(uc - Vector2(28, 28), Vector2(56, 56)))
+			U.text_c(ci, str(h.level), uc + Vector2(0, 8), 22, U.GOLD, "title")
+			if not h.alive:
+				U.text_c(ci, "Dead", PORTRAIT.get_center() + Vector2(0, 8), 22, Color(1, 0.6, 0.55), "title")
 			return
 		# experience bar along the portrait's foot, always readable
 		var need := 0.0
@@ -864,10 +1107,10 @@ class BottomPanel extends Control:
 		_talent_rows.clear()
 		if tree.is_empty():
 			return
-		var pw := 520.0
+		var tw := 520.0
 		var rh := 40.0
 		var top := -(tree.size() * (rh + 6) + 44)
-		var r := Rect2(TALENT_C.x - pw * 0.5 + 60, top, pw, tree.size() * (rh + 6) + 36)
+		var r := Rect2(TALENT_C.x - tw * 0.5 + 60, top, tw, tree.size() * (rh + 6) + 36)
 		U.skin(self, "panel_card", r.grow(6))
 		U.text(self, "Talents", r.position + Vector2(14, 22), 16, U.GOLD, "title")
 		var m := get_local_mouse_position()
@@ -882,7 +1125,7 @@ class BottomPanel extends Control:
 			var can: bool = w.abilities.can_learn_talent(h, tier) and h.id == hud.game.player_hero_id
 			for side in 2:
 				var tid := String(tree[tier][side])
-				var tr := Rect2(r.position.x + 10 + side * (pw * 0.5 + 12), y, pw * 0.5 - 32, rh)
+				var tr := Rect2(r.position.x + 10 + side * (tw * 0.5 + 12), y, tw * 0.5 - 32, rh)
 				if side == 1:
 					tr.position.x = lc.x + 22
 				var picked := String(h.talents.get(tier, "")) == tid
@@ -903,7 +1146,8 @@ class BottomPanel extends Control:
 	func _abilities(h: SimUnit, w: SimWorld) -> void:
 		var m := get_local_mouse_position()
 		hud.game.input.hover_ability = ""
-		for i in mini(4, h.abilities.size()):
+		var count := h.abilities.size()
+		for i in mini(n_slots, count):
 			var aid: String = h.abilities[i]
 			var a := SimData.ability(aid)
 			var r: Rect2 = _abil_rects[i]
@@ -942,7 +1186,7 @@ class BottomPanel extends Control:
 			U.skin(self, "slot_ability", r.grow(4), Color(1.25, 1.2, 1.05) if lit or r.has_point(m) else Color.WHITE, false)
 			var kr := Rect2(r.position + Vector2(2, 2), Vector2(20, 18))
 			draw_rect(kr, Color(0, 0, 0, 0.6))
-			U.text_c(self, Keybinds.key_name("ability_%d" % (i + 1)), kr.get_center() + Vector2(0, 6), 13, Color(1, 1, 1), "bold")
+			U.text_c(self, Keybinds.key_name(Keybinds.slot_action(i, count)), kr.get_center() + Vector2(0, 6), 13, Color(1, 1, 1), "bold")
 			if mana_cost > 0:
 				U.text_r(self, str(int(mana_cost)), r.end + Vector2(-3, -4), 12, Color(0.55, 0.75, 1.0), "bold")
 			var learnable: bool = w.abilities.can_learn(h, aid) and h.id == hud.game.player_hero_id
@@ -954,7 +1198,7 @@ class BottomPanel extends Control:
 				U.skin(self, "btn_gold_hover" if lr.has_point(m) else "btn_gold_normal", lr)
 				U.text_c(self, "+", lr.get_center() + Vector2(0, 8), 22, Color(0.12, 0.07, 0.0), "bold", false)
 			if r.has_point(m):
-				hud.show_tip(get_global_mouse_position(), _ability_tip(h, aid))
+				hud.show_tip(get_global_mouse_position(), _ability_tip(h, aid, i))
 				hud.game.input.hover_ability = aid
 
 	## The level pips in the carved tray under an ability slot: one bar per level, gold when learned, the next one
@@ -964,10 +1208,10 @@ class BottomPanel extends Control:
 			return
 		var tray := Rect2(r.position.x + 6, PIPS_Y + 4, r.size.x - 12, 6)
 		var gap := 4.0
-		var pw := (tray.size.x - gap * (mx - 1)) / mx
+		var pip_w := (tray.size.x - gap * (mx - 1)) / mx
 		var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 200.0)
 		for k in mx:
-			var p := Rect2(tray.position.x + k * (pw + gap), tray.position.y, pw, tray.size.y)
+			var p := Rect2(tray.position.x + k * (pip_w + gap), tray.position.y, pip_w, tray.size.y)
 			if k < lv:
 				U.art_rect(self, "glow_gold", p.grow(5), Color(1, 1, 1, 0.35))
 				draw_rect(p, Color(0.86, 0.62, 0.2))
@@ -983,7 +1227,7 @@ class BottomPanel extends Control:
 				draw_rect(p, Color(0.09, 0.1, 0.13))
 				draw_rect(p, Color(0.42, 0.34, 0.2, 0.9), false, 1.0)
 
-	func _ability_tip(h: SimUnit, aid: String) -> Array:
+	func _ability_tip(h: SimUnit, aid: String, slot := -1) -> Array:
 		var a := SimData.ability(aid)
 		var lv := h.ability_level_of(aid)
 		var lines: Array = [[String(a.name), 20, U.GOLD, "title"]]
@@ -1009,11 +1253,12 @@ class BottomPanel extends Control:
 			lines.append(["Right-click to toggle autocast. Cast by hand on a hero to attack without drawing creep aggro.", 12, U.TEXT_DIM, "body"])
 		if a.behavior == "toggle":
 			lines.append(["Press again to turn it off.", 12, U.TEXT_DIM, "body"])
-		lines.append(["Ctrl + %s to learn" % Keybinds.ability_key_name(String(a.key)), 12, U.TEXT_DIM, "body"])
+		var act := Keybinds.slot_action(slot if slot >= 0 else maxi(0, h.abilities.find(aid)), h.abilities.size())
+		lines.append(["Ctrl + %s to learn" % Keybinds.key_name(act), 12, U.TEXT_DIM, "body"])
 		return lines
 
 	func _bars(h: SimUnit) -> void:
-		var bw := 4 * ABIL_STEP - 8
+		var bw := n_slots * abil_step - 8
 		var rates: Vector4 = hud.game.world.regen_rates(h)
 		var hr := Rect2(ABIL_X, BARS_Y, bw, 24)
 		U.bar(self, hr, h.hp / maxf(1.0, h.max_hp), U.HP)
@@ -1021,6 +1266,10 @@ class BottomPanel extends Control:
 		_regen_text(rates.z, rates.x - rates.z, Vector2(hr.end.x - 4, hr.position.y + 17), Color(0.85, 1.0, 0.85),
 			Color(0.45, 1.0, 0.35))
 		var mr := Rect2(ABIL_X, BARS_Y + 30, bw, 20)
+		if h.max_mana <= 0.0:
+			draw_rect(mr, Color(0.03, 0.035, 0.05, 0.9))
+			U.text_c(self, "No mana", mr.get_center() + Vector2(0, 5), 12, U.TEXT_DIM, "bold")
+			return
 		U.bar(self, mr, h.mana / maxf(1.0, h.max_mana), U.MANA)
 		U.text_c(self, "%d / %d" % [int(h.mana), int(h.max_mana)], mr.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
 		_regen_text(rates.w, rates.y - rates.w, Vector2(mr.end.x - 4, mr.position.y + 15), Color(0.85, 0.9, 1.0),
@@ -1067,7 +1316,7 @@ class BottomPanel extends Control:
 				tip.append(["Drag to move, drop on the ground or give it to an ally. Right click: Sell, Disassemble, Lock, %s." % ("Move to Inventory" if i >= 6 else "Move to Backpack"), 12, U.TEXT_DIM, "body"])
 				hud.show_tip(get_global_mouse_position(), tip)
 		if h.id == hud.game.player_hero_id:
-			U.text(self, "Backpack", Vector2(ITEM_X, 156), 10, U.TEXT_DIM, "body")
+			U.text(self, "Backpack", Vector2(item_x, 156), 10, U.TEXT_DIM, "body")
 
 	func _item_icon(it: Dictionary, r: Rect2, dim: bool, h: SimUnit, w: SimWorld, slot: int) -> void:
 		var ic: Texture2D = U.item_icon(it.id)
@@ -1104,9 +1353,9 @@ class BottomPanel extends Control:
 			return
 		var m := get_local_mouse_position()
 		var here := w.shop.in_shop(h)
-		var r := Rect2(ITEM_X - 10, STASH_Y - 12, 334, 62)
+		var r := Rect2(item_x - 10, STASH_Y - 12, 334, 62)
 		U.skin(self, "panel_card", r)
-		U.text(self, "Stash" + ("" if here or not h.alive else "  (courier: %s)" % Keybinds.key_name("courier_deliver")), Vector2(ITEM_X, STASH_Y + 6), 11, U.TEXT_DIM, "bold")
+		U.text(self, "Stash" + ("" if here or not h.alive else "  (courier: %s)" % Keybinds.key_name("courier_deliver")), Vector2(item_x, STASH_Y + 6), 11, U.TEXT_DIM, "bold")
 		for i in 6:
 			var sr: Rect2 = _stash_rects[i]
 			U.slot(self, sr, sr.has_point(m) and (h.stash[i] != null or _dragging))
@@ -1123,11 +1372,11 @@ class BottomPanel extends Control:
 
 	func _gold(h: SimUnit) -> void:
 		var gi: Texture2D = U.icon("ui/gold")
-		U.art_rect(self, "glow_gold", Rect2(SIDE_X - 10, 30, 46, 46), Color(1, 1, 1, 0.5))
+		U.art_rect(self, "glow_gold", Rect2(side_x - 10, 30, 46, 46), Color(1, 1, 1, 0.5))
 		if gi:
-			draw_texture_rect(gi, Rect2(SIDE_X, 40, 26, 26), false, U.GOLD)
-		U.text(self, str(h.gold()), Vector2(SIDE_X + 32, 63), 26, U.GOLD, "title")
-		U.text(self, "reliable %d" % h.gold_reliable, Vector2(SIDE_X + 2, 86), 12, U.TEXT_DIM, "body")
+			draw_texture_rect(gi, Rect2(side_x, 40, 26, 26), false, U.GOLD)
+		U.text(self, str(h.gold()), Vector2(side_x + 32, 63), 26, U.GOLD, "title")
+		U.text(self, "reliable %d" % h.gold_reliable, Vector2(side_x + 2, 86), 12, U.TEXT_DIM, "body")
 		var hover := _shop_rect.has_point(get_local_mouse_position())
 		U.skin(self, "btn_gold_hover" if hover else "btn_gold_normal", _shop_rect)
 		var si: Texture2D = U.icon("ui/shop")
@@ -1228,7 +1477,7 @@ class BottomPanel extends Control:
 				_item_icon(it, r, not c.alive, null, w, -1)
 				if r.has_point(m):
 					hud.show_tip(get_global_mouse_position(), hud.item_tip(it.id, h))
-		U.text(self, "Carrying", Vector2(ITEM_X, 24), 11, U.TEXT_DIM, "bold")
+		U.text(self, "Carrying", Vector2(item_x, 24), 11, U.TEXT_DIM, "bold")
 
 	# ---- Input -----------------------------------------------------------------------------------------------------
 
@@ -1256,7 +1505,7 @@ class BottomPanel extends Control:
 		if Rect2(CHIPS_X, CHIPS_Y, _chips_end - CHIPS_X, 22).has_point(p):
 			return true
 		var h: SimUnit = hud.hero()
-		if stash_visible(h) and Rect2(ITEM_X - 8, STASH_Y - 8, 330, 56).has_point(p):
+		if stash_visible(h) and Rect2(item_x - 8, STASH_Y - 8, 330, 56).has_point(p):
 			return true
 		if talents_open and not _talent_rows.is_empty():
 			for tr in _talent_rows:
@@ -1352,9 +1601,7 @@ class BottomPanel extends Control:
 		if cour != null:
 			accept_event()
 			return
-		for i in 4:
-			if i >= h.abilities.size():
-				break
+		for i in mini(n_slots, h.abilities.size()):
 			var aid: String = h.abilities[i]
 			if (_learn_rects[i] as Rect2).has_point(p) and w.abilities.can_learn(h, aid):
 				hud.game.act({"k": "learn", "ability": aid})
@@ -1432,7 +1679,7 @@ class BottomPanel extends Control:
 		var rw := 236.0
 		var rh := 30.0
 		var top := minf(at.y, 0.0) - rows.size() * rh - 34.0
-		var r := Rect2(clampf(at.x - rw * 0.5, 4.0, W - rw - 4.0), top, rw, rows.size() * rh + 34.0)
+		var r := Rect2(clampf(at.x - rw * 0.5, 4.0, pw - rw - 4.0), top, rw, rows.size() * rh + 34.0)
 		var out: Array = []
 		for i in rows.size():
 			out.append([Rect2(r.position.x + 6, r.position.y + 28 + i * rh, rw - 12, rh - 3)] + rows[i])
@@ -1546,7 +1793,7 @@ class PortraitOverlay extends Control:
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		position = Vector2.ZERO
-		size = Vector2(BottomPanel.W, BottomPanel.H)
+		size = panel.size if panel else Vector2(BottomPanel.W, BottomPanel.H)
 
 	func _draw() -> void:
 		panel.draw_overlay(self)
@@ -1675,7 +1922,10 @@ const STAT_NAMES := {"str": "Strength", "agi": "Agility", "int": "Intelligence",
 	"magic_resist": "Magic Resistance", "evasion": "Evasion", "status_resist_max": "Status Resistance",
 	"slow_resist_max": "Slow Resistance", "heal_amp_max": "Health Restoration", "spell_amp": "Spell Amp",
 	"mana_regen_amp": "Mana Regen", "range_melee": "Attack Range (melee)", "magic_amp": "Magic Amp",
-	"mana_regen_amp_max": "Mana Regen Amp", "mana_cost_cut_max": "Mana Cost Reduction", "cast_speed_max": "Cast Speed"}
+	"mana_regen_amp_max": "Mana Regen Amp", "mana_cost_cut_max": "Mana Cost Reduction", "cast_speed_max": "Cast Speed",
+	"cooldown_reduction_max": "Cooldown Reduction", "aoe_bonus_max": "Spell Area", "cast_range_max": "Cast Range",
+	"hp_regen_pct_max": "Max Health Regen per second", "hp_regen_pct_missing": "Missing Health Regen per second",
+	"base_damage_pct": "Base Damage", "cooldown_rate": "Cooldown Speed"}
 
 const ITEM_TEXT := {"tango": "Eat a tree to regenerate 7 health per second for 16 seconds (32 seconds on a planted tree). The tree is destroyed and grows back after 3 minutes.",
 	"plant": "Plant a tree within 400 range. It stands for 20 seconds. Consumes the twig.",
@@ -1725,7 +1975,8 @@ func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 		var v := float(stats[k])
 		var label := String(STAT_NAMES.get(k, String(k).replace("_", " ").capitalize()))
 		var pct: bool = k.ends_with("pct") or k == "lifesteal" or k == "magic_resist" or k == "evasion" \
-			or k.ends_with("_max") or k.ends_with("_amp")
+			or (k.ends_with("_max") and not k in ["aoe_bonus_max", "cast_range_max"]) or k.ends_with("_amp") \
+			or k.begins_with("hp_regen_pct")
 		var vs := ("+%d%%" % roundi(v * 100.0)) if pct else "+" + str(snappedf(v, 0.01)).trim_suffix(".0")
 		lines.append([vs + " " + label, 15, U.TEXT, "body"])
 	if d.has("stats_melee"):
@@ -1746,7 +1997,19 @@ func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 	if d.has("aura"):
 		var aura := "+%s mana regen" % str(v.aura_mana_regen) if d.aura == "mana" else "+%s health regen" % str(v.aura_hp_regen)
 		lines.append(["Aura: %s to allies within %d" % [aura, int(v.aura_radius)], 14, Color(0.75, 0.85, 1.0), "body"])
+	for au in d.get("auras", []):
+		var parts: Array = []
+		for k in au.stats:
+			parts.append(_stat_text(String(k), float(au.stats[k])))
+		var who := "enemies" if bool(au.get("enemy", false)) else "allies"
+		if bool(au.get("buildings", false)):
+			who += " (buildings too)"
+		for l in U.wrap("%s: %s to %s within %d." % [String(au.name), ", ".join(parts), who, int(au.radius)], wrap, 14):
+			lines.append([l, 14, Color(0.75, 0.85, 1.0) if not bool(au.get("enemy", false)) else Color(1.0, 0.7, 0.6), "body"])
 	var use := String(d.use)
+	if d.has("text") and not ITEM_TEXT.has(use):
+		for l in U.wrap(String(d.text), wrap, 14):
+			lines.append([l, 14, Color(0.75, 0.9, 0.75), "body"])
 	if ITEM_TEXT.has(use):
 		var utxt := String(ITEM_TEXT[use])
 		if use == "ward" and float(v.get("true_sight", 0.0)) > 0.0:
@@ -2078,7 +2341,7 @@ class TopBar extends Control:
 			var lr := Rect2(r.position + Vector2(0, r.size.y - 15), Vector2(17, 15))
 			draw_rect(lr, Color(0, 0, 0, 0.75))
 			U.text_c(self, str(h.level), lr.get_center() + Vector2(0, 5), 12, Color(1, 0.92, 0.7), "bold")
-			var ult: String = h.abilities[3] if h.abilities.size() > 3 else ""
+			var ult: String = SimData.ultimate_of(h.abilities)
 			if ult != "" and h.ability_level_of(ult) > 0 and w.abilities.cooldown_left(h, ult) <= 0.0 and h.alive:
 				U.art_rect(self, "gem_gold", Rect2(r.end.x - 13, r.position.y + 1, 12, 12))
 			if not h.alive:

@@ -449,7 +449,7 @@ func _run_retreat(h: SimUnit) -> void:
 			if slip >= 0:
 				w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slip})
 		if fd < 700.0:
-			var jk := _ready_slot(h, "jump_knife", null, h.pos + (safe - h.pos).normalized() * 950.0)
+			var jk := _jump_slot(h, h.pos + (safe - h.pos).normalized() * 950.0)
 			if jk >= 0:
 				_order(h, {"type": O.CAST_POINT, "ability": "", "item_slot": jk, "point": h.pos + (safe - h.pos).normalized() * 950.0}, true)
 				_cast_deadline = w.time + 0.5
@@ -477,6 +477,27 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 		return false
 	var ab := w.abilities
 	match kit:
+		"tock":
+			# a chaser close: Slow Field on it; badly hurt: Rewind (back to safety and the health he had)
+			if h.hp < h.max_hp * 0.35 and fd < 700.0 and ab.cast_error(h, "rewind", -1, null, h.pos) == "":
+				_order(h, {"type": O.CAST_NO_TARGET, "ability": "rewind"}, true)
+				_spent()
+				return true
+			var tc: SimUnit = null
+			for f in _foes:
+				if tc == null or f.pos.distance_to(h.pos) < tc.pos.distance_to(h.pos):
+					tc = f
+			if tc != null and fd < 600.0 and ab.cast_error(h, "slow_field", -1, null, tc.pos) == "":
+				_order(h, {"type": O.CAST_POINT, "ability": "slow_field", "point": tc.pos}, true)
+				_cast_deadline = w.time + 0.6
+				_spent()
+				return true
+		"kragg":
+			if fd < 330.0 and ab.cast_error(h, "repel", -1, null, h.pos) == "":
+				_order(h, {"type": O.CAST_NO_TARGET, "ability": "repel"}, true)
+				_cast_deadline = w.time + 0.6
+				_spent()
+				return true
 		"sludge":
 			if fd < 500.0 and ab.cast_error(h, "blubber", -1, null, h.pos) == "":
 				_order(h, {"type": O.CAST_NO_TARGET, "ability": "blubber"}, true)
@@ -1382,6 +1403,9 @@ func _items(h: SimUnit) -> void:
 	var mk := _ready_slot(h, "medic_kit")
 	if mk >= 0 and (h.hp < h.max_hp * 0.6 or _ally_hurt_near(h, 750.0)):
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": mk})
+	var gb := _ready_slot(h, "guard_boots")
+	if gb >= 0 and (h.hp < h.max_hp * 0.45 or _ally_hurt_near(h, 900.0) or h.max_mana - h.mana >= 250.0):
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": gb})
 	for i in 6:
 		var it = h.inventory[i]
 		if it == null or it.id != "gold_glove" or int(it.get("charges", 0)) <= 0:
@@ -1433,6 +1457,50 @@ func _fight_items(h: SimUnit, e: SimUnit) -> void:
 	var sa := _ready_slot(h, "spike_armor")
 	if sa >= 0 and d < 400.0 and h.hp < h.max_hp * 0.7:
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": sa})
+	# run 2026-10-15 b items: Blast Rod to finish or open, Net Staff on a group or a runner, Frost Plate and War Drum
+	# when the fight is on, Team Shield when hit, Leech Blade low, Storm Hammer's charge on itself, Refresh Stone once
+	# the ultimate has been used
+	for lv in range(5, 0, -1):
+		var did := "dagon" if lv == 1 else "dagon_%d" % lv
+		var bs := _ready_slot(h, did, e)
+		if bs >= 0:
+			var dmg := float(SimData.item(did).values.damage) * (1.0 - e.magic_resist)
+			if d <= w.abilities.cast_range(h, "", bs, e) + 40.0 and (e.hp < dmg * 1.15 or e.hp < e.max_hp * 0.6):
+				_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": bs, "target": e.id}, true)
+				_cast_deadline = w.time + 0.4
+				return
+			break
+	var ns := _ready_slot(h, "net_staff", null, e.pos)
+	if ns >= 0 and d < 1050.0 and (held.is_empty() or float(held.left) < 0.3) and (e.moving or _foes.size() >= 2):
+		_order(h, {"type": O.CAST_POINT, "ability": "", "item_slot": ns, "point": e.pos}, true)
+		_cast_deadline = w.time + 0.4
+		return
+	var fp := _ready_slot(h, "frost_plate")
+	if fp >= 0 and d < 600.0:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": fp})
+	var dr := _ready_slot(h, "war_drum")
+	if dr >= 0 and d < 900.0:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": dr})
+	var tsh := _ready_slot(h, "team_shield")
+	if tsh >= 0 and d < 700.0 and (h.hp < h.max_hp * 0.8 or _foes.size() >= 2):
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": tsh})
+	var lb := _ready_slot(h, "leech_blade")
+	if lb >= 0 and d < h.attack_range + 100.0 and h.hp < h.max_hp * 0.5:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": lb})
+	var sh := _ready_slot(h, "storm_hammer", h)
+	if sh >= 0 and d < 700.0:
+		_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": sh, "target": h.id}, true)
+		_cast_deadline = w.time + 0.3
+	var rs := _ready_slot(h, "refresh_stone")
+	var ult := SimBotKits.ultimate(h)
+	if rs >= 0 and ult != "" and h.ability_level_of(ult) > 0 and w.abilities.cooldown_left(h, ult) > 10.0 \
+			and h.mana >= float(SimData.item("refresh_stone").mana) + w.abilities.ability_mana(h, ult) and d < 900.0:
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": rs})
+
+## A Jump Knife or Crash Knife ready to jump toward `p`, or -1.
+func _jump_slot(h: SimUnit, p: Vector2) -> int:
+	var s := _ready_slot(h, "crash_knife", null, p)
+	return s if s >= 0 else _ready_slot(h, "jump_knife", null, p)
 
 func _use_item(h: SimUnit, item_id: String) -> bool:
 	for i in 6:
@@ -1770,6 +1838,10 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		_froster_spells(h, e)
 	elif kit == "caziel":
 		_caziel_spells(h, e)
+	elif kit == "tock":
+		_tock_spells(h, e)
+	elif kit == "kragg":
+		_kragg_spells(h, e)
 	else:
 		_ranger_spells(h, e)
 
@@ -1798,6 +1870,89 @@ func _froster_spells(h: SimUnit, e: SimUnit) -> void:
 	if ab.cast_error(h, "breath_of_cold", -1, null, e.pos) == "" and d < 760.0:
 		_order(h, {"type": O.CAST_POINT, "ability": "breath_of_cold", "point": e.pos}, true)
 		_cast_deadline = w.time + 0.7
+		_spent()
+
+## Tock: Stop Time on two or more enemies (or a lone target his team can reach), Time Bolt through the target, Slow
+## Field under it, Fast Forward on the ally with the longest cooldowns (or himself), Rewind when badly hurt.
+func _tock_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var d := h.pos.distance_to(e.pos)
+	if h.hp < h.max_hp * 0.3 and ab.cast_error(h, "rewind", -1, null, h.pos) == "":
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "rewind"}, true)
+		_spent()
+		return
+	var near := 0
+	for f in _foes:
+		if f.pos.distance_to(e.pos) < 400.0:
+			near += 1
+	var helpers := 0
+	for a in _allies:
+		if a != h and a.pos.distance_to(e.pos) < 700.0:
+			helpers += 1
+	if ab.cast_error(h, "stop_time", -1, null, e.pos) == "" and d < 850.0 and (near >= 2 or helpers >= 1 or e.hp < e.max_hp * 0.55) \
+			and not e.is_stunned():
+		_order(h, {"type": O.CAST_POINT, "ability": "stop_time", "point": e.pos}, true)
+		_cast_deadline = w.time + 0.7
+		_spent()
+		return
+	if ab.cast_error(h, "time_bolt", -1, null, e.pos) == "" and d < 950.0:
+		_order(h, {"type": O.CAST_POINT, "ability": "time_bolt", "point": e.pos}, true)
+		_cast_deadline = w.time + 0.6
+		_spent()
+		return
+	if ab.cast_error(h, "slow_field", -1, null, e.pos) == "" and d < 900.0 and not e.is_stunned():
+		_order(h, {"type": O.CAST_POINT, "ability": "slow_field", "point": e.pos}, true)
+		_cast_deadline = w.time + 0.6
+		_spent()
+		return
+	if ab.cast_error(h, "fast_forward", -1, h, h.pos) == "":
+		var best: SimUnit = h
+		var most := -1.0
+		for a in _allies:
+			if not a.alive or a.pos.distance_to(h.pos) > 700.0:
+				continue
+			var waiting := 0.0
+			for aid in a.abilities:
+				waiting += ab.cooldown_left(a, aid)
+			if waiting > most:
+				most = waiting
+				best = a
+		if most > 8.0:
+			_order(h, {"type": O.CAST_UNIT, "ability": "fast_forward", "target": best.id}, true)
+			_cast_deadline = w.time + 0.5
+			_spent()
+
+## Kragg: Iron Grip onto the target, Magnet Field when two or more enemies are near (or the grip landed), Overload once
+## the target carries 3 or more Charges (or would die), Repel when hurt or crowded.
+func _kragg_spells(h: SimUnit, e: SimUnit) -> void:
+	var ab := w.abilities
+	var k2 := ab.kits2
+	var d := h.edge_distance(e)
+	var near := 0
+	for f in _foes:
+		if f.pos.distance_to(h.pos) < 650.0:
+			near += 1
+	if ab.cast_error(h, "magnet_field", -1, null, h.pos) == "" and (near >= 2 or (d < 250.0 and e.is_stunned())) \
+			and h.hp > h.max_hp * 0.35:
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "magnet_field"}, true)
+		_cast_deadline = w.time + 0.5
+		_spent()
+		return
+	if ab.cast_error(h, "iron_grip", -1, e, e.pos) == "" and d > 200.0 and d < ab.cast_range(h, "iron_grip", -1, e) + 20.0:
+		_order(h, {"type": O.CAST_UNIT, "ability": "iron_grip", "target": e.id}, true)
+		_cast_deadline = w.time + 0.6
+		_spent()
+		return
+	var ch := k2.charges(e)
+	var od := ab.val(h, "overload", "per_charge") * ch * (1.0 - e.magic_resist)
+	if ab.cast_error(h, "overload", -1, null, h.pos) == "" and d < 760.0 and (ch >= 3 or (ch > 0 and e.hp < od)):
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "overload"}, true)
+		_cast_deadline = w.time + 0.4
+		_spent()
+		return
+	if ab.cast_error(h, "repel", -1, null, h.pos) == "" and d < 300.0 and (near >= 2 or h.hp < h.max_hp * 0.5):
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "repel"}, true)
+		_cast_deadline = w.time + 0.5
 		_spent()
 
 ## Caziel: Shadows when the fight starts, Swift Dagger onto the target (a gap closer and the opening stab), then his
@@ -1880,7 +2035,7 @@ func _ezee_spells(h: SimUnit, e: SimUnit) -> void:
 func _sludge_spells(h: SimUnit, e: SimUnit) -> void:
 	var ab := w.abilities
 	var d := h.edge_distance(e)
-	var jk := _ready_slot(h, "jump_knife", null, e.pos)
+	var jk := _jump_slot(h, e.pos)
 	if jk >= 0 and d > 250.0 and d < 1100.0 and ab.cooldown_left(h, "chomp") <= 0.0 and h.ability_level_of("chomp") > 0 \
 			and h.mana >= ab.ability_mana(h, "chomp") and h.hp > h.max_hp * 0.5:
 		var land := e.pos + (h.pos - e.pos).normalized() * (h.hull + e.hull + 40.0)

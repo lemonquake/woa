@@ -10,11 +10,12 @@ extends Node3D
 
 const ACCENTS := {
 	"blood_ranger": Color(0.95, 0.22, 0.25), "ezee": Color(0.66, 0.3, 1.0), "azrin": Color(1.0, 0.5, 0.15),
-	"sludge": Color(0.55, 0.78, 0.3), "froster": Color(0.45, 0.82, 1.0), "caziel": Color(0.66, 0.36, 1.0)}
+	"sludge": Color(0.55, 0.78, 0.3), "froster": Color(0.45, 0.82, 1.0), "caziel": Color(0.66, 0.36, 1.0),
+	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
-	"froster": "cast_area", "caziel": "dual_heavy"}
+	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_mage", "sludge": "idle_1h",
-	"froster": "idle_staff", "caziel": "idle_shadowblade"}
+	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_knight"}
 
 var hero_id := ""
 var model: Node3D
@@ -455,6 +456,31 @@ func _stage_aura(id: String, cfg: Dictionary) -> void:
 			var l2 := FireFx.light(Color(0.55, 0.8, 1.0), 0.45, 4.0)
 			l2.position = Vector3(0, 1.0, 0.8)
 			_aura.add_child(l2)
+		"tock":
+			var gm := FireFx.embers(0.9, 8.0, 2.4, 0.5, 0.03, Color(1.0, 0.82, 0.4))
+			gm.position.y = 0.6
+			_aura.add_child(gm)
+			var dial := MeshInstance3D.new()
+			var dq := QuadMesh.new()
+			dq.size = Vector2(2.2, 2.2)
+			dq.orientation = PlaneMesh.FACE_Y
+			dial.mesh = dq
+			var dm := Hero15Fx.dial_material(Color(1.0, 0.8, 0.4), 12.0)
+			dm.set_shader_parameter("fade", 0.55)
+			dial.material_override = dm
+			dial.position.y = 0.04
+			_aura.add_child(dial)
+			var lt := FireFx.light(Color(1.0, 0.8, 0.45), 0.5, 4.0)
+			lt.position = Vector3(0, 1.0, 0.8)
+			_aura.add_child(lt)
+		"kragg":
+			var bm := CazielFx.motes(0.7, 16.0, Color(0.45, 0.7, 1.0), 0.8, 1.2, 0.03)
+			bm.position.y = 0.6
+			_aura.add_child(bm)
+			var lk := FireFx.light(Color(0.4, 0.65, 1.0), 0.8, 4.0)
+			lk.position = Vector3(0.4, 1.1, 0.6)
+			_aura.add_child(lk)
+			_fire_fx.flicker(lk)
 		"caziel":
 			var sm := CazielFx.shadow_smoke(0.7, 14.0, 0.9, 1.8, 0.35, 0.45)
 			sm.position.y = 0.05

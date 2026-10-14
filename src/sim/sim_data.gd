@@ -41,6 +41,7 @@ static func _ensure() -> void:
 	_build_items()
 	_build_abilities()
 	_build_neutral_abilities()
+	_build_abilities_15b()
 	_build_talents()
 
 static func unit(id: String) -> Dictionary:
@@ -62,6 +63,14 @@ static func items() -> Dictionary:
 static func ability(id: String) -> Dictionary:
 	_ensure()
 	return _abilities.get(id, {})
+
+## A hero's ultimate: the skill with hero level requirements (Dota's 6/12/18), otherwise the last one.
+static func ultimate_of(abilities: Array) -> String:
+	_ensure()
+	for aid in abilities:
+		if (_abilities.get(String(aid), {}) as Dictionary).has("required_level"):
+			return String(aid)
+	return String(abilities[-1]) if not abilities.is_empty() else ""
 
 ## A talent: {id, name, mods: [{ability, add: {key: n}, mult: {key: n}}], stats: {key: n}}.
 static func talent(id: String) -> Dictionary:
@@ -269,6 +278,35 @@ static func _build_units() -> void:
 		"talents": [["caziel_attack_speed", "caziel_dagger_damage"], ["caziel_poison_chance", "caziel_shadows_cooldown"],
 			["caziel_poison_damage", "caziel_dagger_armor"], ["caziel_order_threshold", "caziel_shadows_evasion"]],
 		"model": "hero_caziel"})
+	_add_heroes_15b()
+
+static func _add_heroes_15b() -> void:
+	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
+	# intelligence supports): an old tinkerer who bends time. Six skills.
+	_add("tock", {"name": "Tock", "title": "the Clockmaker", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 0.25, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 0.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 21.0, "dmg_max": 27.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.4, "backswing": 0.5, "acquire": 800.0, "range": 575.0,
+		"projectile_speed": 900.0, "move_speed": 295.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "int", "str": 19.0, "str_gain": 2.0, "agi": 17.0, "agi_gain": 1.7, "int": 25.0,
+		"int_gain": 3.2, "element": EL.LIGHT,
+		"abilities": ["time_bolt", "fast_forward", "rewind", "slow_field", "quick_hands", "stop_time"],
+		"talents": [["tock_bolt_damage", "tock_mana_regen"], ["tock_field_slow", "tock_forward_rate"],
+			["tock_rewind_cooldown", "tock_hands"], ["tock_stop_duration", "tock_bolt_delay"]],
+		"model": "hero_tock"})
+	# Kragg, the Magnet Knight (run 2026-10-15 b; ours, numbers chosen beside Dota's melee strength initiators): a
+	# knight in iron plate who is a living magnet. Five skills.
+	_add("kragg", {"name": "Kragg", "title": "the Magnet Knight", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 1.0, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 2.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 31.0, "dmg_max": 37.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.45, "backswing": 0.55, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 300.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "str", "str": 25.0, "str_gain": 3.1, "agi": 14.0, "agi_gain": 1.6, "int": 17.0,
+		"int_gain": 1.8, "element": EL.LIGHTNING,
+		"abilities": ["iron_grip", "repel", "magnetize", "overload", "magnet_field"],
+		"talents": [["kragg_grip_damage", "kragg_armor"], ["kragg_repel_cooldown", "kragg_charge_max"],
+			["kragg_overload_damage", "kragg_field_pull"], ["kragg_field_stun", "kragg_grip_charges"]],
+		"model": "hero_kragg"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -459,6 +497,70 @@ static func _build_abilities() -> void:
 		"values": {"threshold": [0.10, 0.12, 0.14]},
 		"desc": "Caziel strikes hardest when an enemy is about to die: his attacks deal pure damage to enemies below 10 / 12 / 14% health."}
 
+# ---- Tock and Kragg (run 2026-10-15 b; our heroes, chosen numbers, see docs/HANDOFF.md) ------------------------------
+
+static func _build_abilities_15b() -> void:
+	# Tock, the Clockmaker. Cooldown rate: -0.4 = an enemy's cooldowns run 40% slower; +1 = an ally's run twice as fast.
+	_abilities["time_bolt"] = {"id": "time_bolt", "name": "Time Bolt", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [10, 9, 8, 7], "cast_point": 0.3, "range": 1000,
+		"anim": "cast_quick", "damage_type": "magical", "element": "light", "line": true, "direction": true,
+		"values": {"damage": [90, 150, 210, 270], "delay": [0.3, 0.4, 0.5, 0.6], "delay_duration": [4, 4, 4, 4],
+		"distance": [1000, 1000, 1000, 1000], "width": [120, 120, 120, 120], "speed": [1400, 1400, 1400, 1400]},
+		"desc": "Tock fires a bolt of slowed time up to 1000 ahead. Every enemy it passes takes magic damage, and for 4 seconds its spell and item cooldowns run 30 / 40 / 50 / 60% slower."}
+	_abilities["fast_forward"] = {"id": "fast_forward", "name": "Fast Forward", "behavior": "unit", "key": "W",
+		"target_team": "ally", "max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [18, 16, 14, 12], "cast_point": 0.2,
+		"range": 700, "anim": "cast_quick", "element": "light",
+		"values": {"rate": [0.4, 0.6, 0.8, 1.0], "move_pct": [0.10, 0.14, 0.18, 0.22], "duration": [5, 5, 5, 5]},
+		"desc": "Winds an ally (or Tock) forward for 5 seconds: its cooldowns run 40 / 60 / 80 / 100% faster and it moves faster."}
+	_abilities["rewind"] = {"id": "rewind", "name": "Rewind", "behavior": "no_target", "key": "E", "immediate": true,
+		"max_level": 4, "mana": [75, 75, 75, 75], "cooldown": [28, 24, 20, 16], "cast_point": 0.0, "range": 0,
+		"element": "light", "values": {"back": [3, 3, 3, 3]},
+		"desc": "Tock steps back to where he stood 3 seconds ago, with the health and mana he had then if he had more. Removes slows and silences (a basic dispel) and dodges projectiles on the way."}
+	_abilities["slow_field"] = {"id": "slow_field", "name": "Slow Field", "behavior": "point", "key": "D",
+		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [18, 16, 14, 12], "cast_point": 0.3, "range": 900,
+		"anim": "cast_area", "element": "light",
+		"values": {"radius": [350, 350, 350, 350], "duration": [5, 5, 5, 5], "slow": [0.30, 0.35, 0.40, 0.45],
+		"attack_slow": [40, 60, 80, 100]},
+		"desc": "A field of slowed time for 5 seconds: enemies inside move 30 / 35 / 40 / 45% slower and attack slower."}
+	_abilities["quick_hands"] = {"id": "quick_hands", "name": "Quick Hands", "behavior": "passive", "key": "F",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"cut": [1.0, 1.5, 2.0, 2.5]},
+		"desc": "Every spell Tock casts takes 1 / 1.5 / 2 / 2.5 seconds off the cooldowns of his other spells."}
+	_abilities["stop_time"] = {"id": "stop_time", "name": "Stop Time", "behavior": "point", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [110, 95, 80],
+		"cast_point": 0.3, "range": 800, "anim": "cast_ultimate", "element": "light",
+		"values": {"radius": [400, 400, 400], "duration": [2.5, 3.0, 3.5]},
+		"desc": "Time stops in a 400 area: every enemy there is frozen (stunned) and its cooldowns stand still for 2.5 / 3 / 3.5 seconds. Tock's allies keep moving."}
+	# Kragg, the Magnet Knight. Charges sit on enemies (up to 5, 10 s); his spells pull, throw and burst by them.
+	_abilities["iron_grip"] = {"id": "iron_grip", "name": "Iron Grip", "behavior": "unit", "key": "Q",
+		"target_team": "enemy", "max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [14, 13, 12, 11],
+		"cast_point": 0.25, "range": 650, "anim": "shield_bash", "damage_type": "magical", "element": "lightning",
+		"values": {"damage": [80, 120, 160, 200], "stun": [0.8, 1.0, 1.2, 1.4], "charges": [2, 2, 2, 2],
+		"pull_time": [0.3, 0.3, 0.3, 0.3]},
+		"desc": "Kragg magnetizes an enemy: the two snap together and meet halfway. The enemy takes magic damage, is stunned and gets 2 Charges."}
+	_abilities["repel"] = {"id": "repel", "name": "Repel", "behavior": "no_target", "key": "W",
+		"max_level": 4, "mana": [100, 100, 100, 100], "cooldown": [13, 12, 11, 10], "cast_point": 0.3, "range": 0,
+		"anim": "war_cry", "damage_type": "magical", "element": "lightning",
+		"values": {"radius": [375, 375, 375, 375], "damage": [60, 100, 140, 180], "push_speed": [900, 900, 900, 900],
+		"per_charge": [0.25, 0.25, 0.25, 0.25], "slow": [0.3, 0.3, 0.3, 0.3], "slow_duration": [2, 2, 2, 2],
+		"impact_damage": [40, 70, 100, 130], "impact_stun": [0.8, 0.8, 0.8, 0.8]},
+		"desc": "A magnetic blast throws enemies near Kragg away, 25% further for each Charge they carry, and slows them. One that crashes into a tree, wall or unit takes more damage and is stunned. Adds a Charge."}
+	_abilities["magnetize"] = {"id": "magnetize", "name": "Magnetize", "behavior": "passive", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"spell_amp": [0.03, 0.04, 0.05, 0.06], "max_charges": [5, 5, 5, 5], "duration": [10, 10, 10, 10]},
+		"desc": "Kragg's attacks give enemies a Charge (up to 5, for 10 seconds). Each Charge makes the enemy take 3 / 4 / 5 / 6% more damage from his spells."}
+	_abilities["overload"] = {"id": "overload", "name": "Overload", "behavior": "no_target", "key": "D",
+		"max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [16, 14, 12, 10], "cast_point": 0.2, "range": 0,
+		"anim": "cast_weapon", "damage_type": "magical", "element": "lightning",
+		"values": {"radius": [800, 800, 800, 800], "per_charge": [45, 65, 85, 105], "heal_pct": [0.35, 0.35, 0.35, 0.35]},
+		"desc": "Every charged enemy within 800 is struck by lightning for magic damage per Charge it carries; the Charges are used up. Kragg heals for 35% of the damage."}
+	_abilities["magnet_field"] = {"id": "magnet_field", "name": "Magnet Field", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [100, 90, 80],
+		"cast_point": 0.3, "range": 0, "anim": "boss_roar", "damage_type": "magical", "element": "lightning",
+		"values": {"duration": [6, 6, 6], "radius": [700, 700, 700], "pull": [60, 80, 100], "pull_per_charge": [15, 15, 15],
+		"end_radius": [300, 300, 300], "end_stun": [1.0, 1.5, 2.0], "end_damage": [100, 175, 250]},
+		"desc": "For 6 seconds Kragg is a giant magnet: enemies within 700 are dragged toward him (harder with each Charge) and gain a Charge every second. When it ends, enemies within 300 take magic damage and are stunned."}
+
 # ---- Neutral creep abilities (Dota 7.41d npc_abilities.txt; our names) -------------------------------------------------
 ## Cast by the neutral AI (SimAI) while the camp fights. Snarl: Giant Wolf's Intimidate; Stomp: Centaur Conqueror's War
 ## Stomp; Smash: Ogre Bruiser's Ogre Smash (a long 2.8 s wind-up that can be walked out of).
@@ -520,6 +622,24 @@ static func _build_talents() -> void:
 	_talent("caziel_dagger_armor", "+3 Swift Dagger armor cut", [{"ability": "swift_dagger", "add": {"armor_cut": 3.0}}])
 	_talent("caziel_order_threshold", "+4% Death Order threshold", [{"ability": "death_order", "add": {"threshold": 0.04}}])
 	_talent("caziel_shadows_evasion", "+15% Master of Shadows evasion", [{"ability": "master_of_shadows", "add": {"evasion": 0.15}}])
+	# Tock (chosen)
+	_talent("tock_bolt_damage", "+70 Time Bolt damage", [{"ability": "time_bolt", "add": {"damage": 70.0}}])
+	_talent("tock_mana_regen", "+2 Mana Regen", [], {"mana_regen": 2.0})
+	_talent("tock_field_slow", "+15% Slow Field slow", [{"ability": "slow_field", "add": {"slow": 0.15}}])
+	_talent("tock_forward_rate", "+30% Fast Forward speed", [{"ability": "fast_forward", "add": {"rate": 0.3}}])
+	_talent("tock_rewind_cooldown", "-6s Rewind cooldown", [{"ability": "rewind", "add": {"cooldown": -6.0}}])
+	_talent("tock_hands", "+1s Quick Hands", [{"ability": "quick_hands", "add": {"cut": 1.0}}])
+	_talent("tock_stop_duration", "+1s Stop Time", [{"ability": "stop_time", "add": {"duration": 1.0}}])
+	_talent("tock_bolt_delay", "+30% Time Bolt delay", [{"ability": "time_bolt", "add": {"delay": 0.3}}])
+	# Kragg (chosen)
+	_talent("kragg_grip_damage", "+80 Iron Grip damage", [{"ability": "iron_grip", "add": {"damage": 80.0}}])
+	_talent("kragg_armor", "+6 Armor", [], {"armor": 6.0})
+	_talent("kragg_repel_cooldown", "-3s Repel cooldown", [{"ability": "repel", "add": {"cooldown": -3.0}}])
+	_talent("kragg_charge_max", "+2 max Charges", [{"ability": "magnetize", "add": {"max_charges": 2.0}}])
+	_talent("kragg_overload_damage", "+25 Overload damage per Charge", [{"ability": "overload", "add": {"per_charge": 25.0}}])
+	_talent("kragg_field_pull", "+40 Magnet Field pull", [{"ability": "magnet_field", "add": {"pull": 40.0}}])
+	_talent("kragg_field_stun", "+1s Magnet Field stun", [{"ability": "magnet_field", "add": {"end_stun": 1.0}}])
+	_talent("kragg_grip_charges", "+2 Iron Grip Charges", [{"ability": "iron_grip", "add": {"charges": 2.0}}])
 
 # ---- Items ----------------------------------------------------------------------------------------------------------
 ## Item data from items.txt. "stats": passive bonuses; "use": active effect; "recipe": components (recipe scroll cost
@@ -748,6 +868,136 @@ static func _build_items() -> void:
 		"stats": {"damage": 70.0, "attack_speed": 35.0}, "category": "upgrades",
 		"components": ["sneak_blade", "huge_sword"], "recipe_cost": 250,
 		"values": {"duration": 17.0, "fade": 0.3, "move_speed_pct": 0.2, "bonus_damage": 300.0, "break": 5.0}})
+	# ---- Run 2026-10-15 b: twenty more Dota items (work/research/d2_items.txt), our names --------------------------
+	# Parts: Energy Booster, Hyperstone, Platemail, Crown, Chasm Stone, Sacred Relic, Reaver, Ring of Tarrasque,
+	# Eaglesong, Helm of Iron Will, Wind Lace
+	_it("mana_gem", "Mana Gem", 800, {"stats": {"mana": 250.0}, "category": "misc"})
+	_it("swift_stone", "Swift Stone", 2000, {"stats": {"attack_speed": 60.0}, "category": "big_parts"})
+	_it("plate_armor", "Plate Armor", 1400, {"stats": {"armor": 10.0}, "category": "armaments"})
+	_it("gold_band", "Gold Band", 450, {"stats": {"str": 4.0, "agi": 4.0, "int": 4.0}, "category": "attributes"})
+	# Chasm Stone: +40 area of effect for spells (several AoE bonuses do not stack: the largest counts)
+	_it("wide_stone", "Wide Stone", 900, {"stats": {"aoe_bonus_max": 40.0}, "category": "misc"})
+	_it("relic", "Relic", 3400, {"stats": {"damage": 55.0}, "category": "big_parts"})
+	_it("war_axe", "War Axe", 2800, {"stats": {"str": 25.0}, "category": "big_parts"})
+	_it("troll_ring", "Troll Ring", 1700, {"stats": {"hp_regen": 12.0}, "category": "big_parts"})
+	_it("feather", "Feather", 2800, {"stats": {"agi": 25.0}, "category": "big_parts"})
+	_it("iron_helm", "Iron Helm", 975, {"stats": {"armor": 4.0, "hp_regen": 4.0}, "category": "armaments"})
+	_it("speed_ribbon", "Speed Ribbon", 225, {"stats": {"move_speed": 15.0}, "category": "misc"})
+	# Boots of Travel: +90 speed; teleports (no scroll needed) to an allied building or creep, 40 s cooldown
+	_it("travel_boots", "Travel Boots", 2500, {"stats": {"boot_ms": 90.0}, "travel": true, "category": "upgrades",
+		"components": ["boots"], "recipe_cost": 2000, "values": {"tp_cooldown": 40.0},
+		"text": "Teleport without a scroll (Teleport key or the Teleport slot) to any allied building or creep. 40 second cooldown."})
+	# Dagon 1-5 (Blast Rod): Energy Burst, magic damage to one enemy; each level is the one before plus its recipe
+	var dagon_levels := [[3000, 400, 120, 27, 6, 200, 350, 60], [4100, 500, 140, 24, 7, 210, 375, 90],
+		[5200, 600, 160, 21, 8, 220, 400, 120], [6300, 700, 180, 18, 9, 230, 425, 150],
+		[7400, 800, 200, 15, 10, 240, 450, 180]]
+	for i in 5:
+		var dl: Array = dagon_levels[i]
+		var did := "dagon" if i == 0 else "dagon_%d" % (i + 1)
+		_it(did, "Blast Rod" if i == 0 else "Blast Rod %d" % (i + 1), int(dl[0]), {"use": "blast", "target_team": "enemy",
+			"cooldown": float(dl[3]), "mana": float(dl[2]), "element": "lightning", "category": "upgrades", "level": i + 1,
+			"stats": {"str": float(dl[4]), "agi": float(dl[4]), "int": float(dl[4]), "hp": float(dl[5]), "mana": float(dl[6]),
+				"cast_range_max": float(dl[7])},
+			"components": ["big_gem", "gold_band", "pointy_hat"] if i == 0 else ["dagon" if i == 1 else "dagon_%d" % i],
+			"recipe_cost": 1100, "values": {"damage": float(dl[1]), "range": 640.0},
+			"text": "Blast an enemy within 640 with %d magic damage at once. Buy the recipe again to raise its level (up to 5)." % int(dl[1])})
+	# Gleipnir (Net Staff): Eternal Chains, roots every enemy in a 325 area (projectiles at 1900)
+	_it("net_staff", "Net Staff", 4650, {"use": "net", "cooldown": 18.0, "mana": 150.0, "category": "upgrades",
+		"stats": {"hp": 450.0, "mana": 200.0, "int": 12.0, "aoe_bonus_max": 75.0},
+		"components": ["root_staff", "big_gem", "wide_stone"], "recipe_cost": 300,
+		"values": {"radius": 325.0, "duration": 2.0, "range": 1100.0, "speed": 1900.0},
+		"text": "Throw nets at every enemy in a 325 area within 1100: each one hit cannot move for 2 seconds. Costs 150 mana, 18 second cooldown."})
+	# Mjollnir (Storm Hammer): Chain Lightning 25% / 180 / 12 strikes; Static Charge on an ally for 12 s
+	_it("storm_hammer", "Storm Hammer", 5500, {"use": "static", "target_team": "ally", "cooldown": 35.0, "mana": 50.0,
+		"passive": "chain", "element": "lightning", "stats": {"damage": 25.0, "attack_speed": 90.0}, "category": "upgrades",
+		"components": ["shock_hammer", "swift_stone"], "recipe_cost": 550,
+		"values": {"chance": 0.25, "damage": 180.0, "strikes": 12, "radius": 650.0, "delay": 0.25, "cooldown": 0.2,
+			"static_duration": 12.0, "static_chance": 0.20, "static_strikes": 4, "static_damage": 225.0,
+			"static_primary_radius": 600.0, "static_radius": 900.0, "static_cooldown": 1.0, "range": 800.0},
+		"text": "Static Charge: for 12 seconds an ally (or yourself) has a 20% chance when attacked to strike up to 4 enemies within 900 with lightning for 225 magic damage (the attacker first). Costs 50 mana, 35 second cooldown."})
+	_it("soul_gem", "Soul Gem", 3000, {"stats": {"hp": 425.0, "mana": 425.0}, "category": "upgrades",
+		"components": ["big_gem", "health_crystal", "mana_gem"], "recipe_cost": 0})
+	# Octarine Core (Time Crystal): 25% cooldown reduction for spells and items (does not stack)
+	_it("time_crystal", "Time Crystal", 5100, {"stats": {"hp": 450.0, "mana": 450.0, "mana_regen": 6.0,
+		"cooldown_reduction_max": 0.25}, "category": "upgrades", "components": ["soul_gem", "mana_tiara"], "recipe_cost": 400,
+		"text": "Your spells and items cool down 25% faster (several of these do not stack)."})
+	# Buckler (Small Shield): +2 armor aura
+	_it("small_shield", "Small Shield", 425, {"stats": {"armor": 1.0}, "category": "upgrades", "components": ["ring_protection"],
+		"recipe_cost": 250, "auras": [{"id": "small_shield_aura", "name": "Armor Aura", "stats": {"armor": 2.0}, "radius": 1200.0}]})
+	# Vladmir's Offering (Leech Totem): allies near (not its owner's damage and lifesteal) get armor, mana regen,
+	# lifesteal and base damage
+	_it("leech_totem", "Leech Totem", 2200, {"stats": {"armor": 1.0, "mana_regen": 0.75}, "category": "upgrades",
+		"components": ["small_shield", "mana_ring", "lifesteal", "blades_attack"], "recipe_cost": 0,
+		"auras": [{"id": "leech_totem_aura", "name": "Leech Aura", "radius": 1200.0,
+			"stats": {"armor": 2.0, "mana_regen": 1.0, "lifesteal": 0.20, "base_damage_pct": 0.18},
+			"creep_stats": {"armor": 2.0, "mana_regen": 1.0, "lifesteal": 0.12, "base_damage_pct": 0.18},
+			"self_stats": {"armor": 2.0, "mana_regen": 1.0}}]})
+	# Assault Cuirass (Battle Armor): allies +30 attack speed and +5 armor, enemies -5 armor (buildings too)
+	_it("battle_armor", "Battle Armor", 5125, {"stats": {"attack_speed": 30.0, "armor": 10.0}, "category": "upgrades",
+		"components": ["small_shield", "swift_stone", "plate_armor"], "recipe_cost": 1300,
+		"auras": [{"id": "battle_armor_aura", "name": "Battle Aura", "radius": 1200.0, "buildings": true,
+			"stats": {"attack_speed": 30.0, "armor": 5.0}},
+			{"id": "battle_armor_curse", "name": "Armor Loss Aura", "radius": 1200.0, "enemy": true, "buildings": true,
+			"stats": {"armor": -5.0}}]})
+	# Shiva's Guard (Frost Plate): enemies -40 attack speed; Arctic Blast 225 damage, -40% speed for 4 s, to 825
+	_it("frost_plate", "Frost Plate", 4500, {"use": "frost_blast", "cooldown": 27.0, "mana": 75.0, "element": "ice",
+		"stats": {"armor": 17.0, "aoe_bonus_max": 75.0}, "category": "upgrades",
+		"components": ["plate_armor", "plate_vest", "wide_stone"], "recipe_cost": 1250,
+		"auras": [{"id": "frost_plate_aura", "name": "Freezing Aura", "radius": 1200.0, "enemy": true,
+			"stats": {"attack_speed": -40.0}}],
+		"values": {"damage": 225.0, "slow": 0.40, "duration": 4.0, "radius": 825.0, "speed": 400.0},
+		"text": "A ring of frost spreads out to 825: enemies it reaches take 225 magic damage and move 40% slower for 4 seconds. Costs 75 mana, 27 second cooldown."})
+	# Radiance (Burning Cape): 60 magic damage per second to enemies within 650; 25% evasion
+	_it("burning_cape", "Burning Cape", 4700, {"element": "fire", "stats": {"damage": 55.0, "evasion": 0.25}, "category": "upgrades",
+		"components": ["relic", "dodge_charm"], "recipe_cost": 0, "burn": {"dps": 60.0, "radius": 650.0},
+		"text": "Burns enemies within 650 for 60 magic damage per second (Fire)."})
+	# Heart of Tarrasque (Giant Heart): +40 strength, regenerates 1% of max health and 1.5% of missing health a second
+	_it("giant_heart", "Giant Heart", 5300, {"stats": {"str": 40.0, "hp_regen_pct_max": 0.01, "hp_regen_pct_missing": 0.015},
+		"category": "upgrades", "components": ["war_axe", "troll_ring"], "recipe_cost": 800,
+		"text": "Regenerates 1% of your maximum health and 1.5% of your missing health every second."})
+	# Satanic (Leech Blade): Unholy Rage, +145% lifesteal for 6 s
+	_it("leech_blade", "Leech Blade", 5050, {"use": "rage", "cooldown": 40.0, "stats": {"str": 25.0, "damage": 25.0,
+		"lifesteal": 0.25}, "category": "upgrades", "components": ["war_axe", "greatsword", "lifesteal"], "recipe_cost": 0,
+		"values": {"lifesteal": 1.45, "duration": 6.0},
+		"text": "Blood Rage: +145% lifesteal for 6 seconds. 40 second cooldown."})
+	# Butterfly (Moth Blade)
+	_it("moth_blade", "Moth Blade", 5450, {"stats": {"agi": 30.0, "evasion": 0.35, "attack_speed": 20.0, "damage": 30.0},
+		"category": "upgrades", "components": ["feather", "greatsword", "dodge_charm"], "recipe_cost": 0})
+	# Refresher Orb (Refresh Stone): resets every ability cooldown (not items)
+	_it("refresh_stone", "Refresh Stone", 5000, {"use": "refresh", "cooldown": 180.0, "mana": 325.0,
+		"stats": {"hp_regen": 14.0, "mana_regen": 7.0}, "category": "upgrades", "components": ["troll_ring", "mana_tiara"],
+		"recipe_cost": 1600,
+		"text": "Finish the cooldowns of all your spells at once (not items). Costs 325 mana, 180 second cooldown."})
+	# Guardian Greaves (Guard Boots): regen aura (much more below 25% health), Mend: heal 325 and 200 mana, dispel
+	_it("guard_boots", "Guard Boots", 4450, {"use": "greaves", "cooldown": 45.0, "stats": {"boot_ms": 50.0, "armor": 5.0,
+		"mana": 150.0, "mana_regen": 1.0}, "category": "upgrades", "components": ["mana_boots", "medic_kit"], "recipe_cost": 1175,
+		"auras": [{"id": "guard_boots_aura", "name": "Guard Aura", "radius": 1200.0,
+			"stats": {"hp_regen": 2.5, "mana_regen": 1.5}, "low_hp": 0.25, "low_hp_stats": {"hp_regen": 17.0, "mana_regen": 1.5}}],
+		"values": {"heal": 325.0, "mana": 200.0, "radius": 1200.0},
+		"text": "Mend: heal yourself and allies within 1200 for 325 health and 200 mana, and remove your own debuffs (a basic dispel). 45 second cooldown. Aura: +2.5 health regen (+17 below 25% health) and +1.5 mana regen."})
+	# Crimson Guard (Team Shield): block like the Block Shield (75 / 50); Guard: allies block 70 + 2% of your health
+	_it("team_shield", "Team Shield", 3725, {"use": "guard", "cooldown": 40.0, "mana": 75.0, "passive": "block",
+		"stats": {"hp": 250.0, "hp_regen": 12.0, "armor": 6.0}, "category": "upgrades",
+		"components": ["block_shield", "iron_helm"], "recipe_cost": 1050,
+		"values": {"chance": 0.6, "block_melee": 75.0, "block_ranged": 50.0, "duration": 7.0, "radius": 1200.0,
+			"guard_block": 70.0, "guard_hp_pct": 0.02},
+		"text": "Guard: for 7 seconds you and allies within 1200 block 70 damage (+2% of your max health) from every attack. Costs 75 mana, 40 second cooldown."})
+	# Drum of Endurance (War Drum): +15 speed aura; Endurance: allies +35 attack speed and +13% speed for 6 s
+	_it("war_drum", "War Drum", 1625, {"use": "drum", "cooldown": 45.0, "stats": {"str": 8.0}, "category": "upgrades",
+		"components": ["leaf_hat", "belt_str", "speed_ribbon"], "recipe_cost": 525,
+		"auras": [{"id": "war_drum_aura", "name": "March Aura", "radius": 1200.0, "stats": {"move_speed": 15.0, "hp_regen": 2.5}}],
+		"values": {"attack_speed": 35.0, "move_speed_pct": 0.13, "duration": 6.0, "radius": 1200.0},
+		"text": "Endurance: you and allies within 1200 get +35 attack speed and 13% more speed for 6 seconds. 45 second cooldown. Aura: +15 movement speed and +2.5 health regen."})
+	# Aether Lens (Long Lens): +225 cast range
+	_it("long_lens", "Long Lens", 2275, {"stats": {"mana": 300.0, "mana_regen": 2.5, "cast_range_max": 225.0},
+		"category": "upgrades", "components": ["mana_gem", "mana_stone"], "recipe_cost": 775,
+		"text": "+225 cast range for spells and items (several of these do not stack)."})
+	# Overwhelming Blink (Crash Knife): a Jump Knife whose landing hurts and slows enemies within 800
+	_it("crash_knife", "Crash Knife", 6800, {"use": "jump", "cooldown": 15.0, "stats": {"str": 25.0}, "category": "upgrades",
+		"components": ["jump_knife", "war_axe"], "recipe_cost": 1750,
+		"values": {"range": 1200.0, "clamp": 960.0, "hero_damage_lockout": 3.0, "crash_radius": 800.0, "slow": 0.5,
+			"attack_slow": 50.0, "duration": 6.0, "damage_base": 100.0, "damage_pct": 0.5, "dot_pct": 1.0},
+		"text": "Jump up to 1200 (as the Jump Knife). Where you land, enemies within 800 take 100 + 50% of your strength as magic damage, then another 100% of your strength over 6 seconds, and move 50% and attack 50 slower for 6 seconds."})
 	# Recipe scrolls: one per item whose recipe costs gold, bought on its own or as part of the item
 	for id in _items.keys():
 		var d: Dictionary = _items[id]

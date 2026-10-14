@@ -1557,14 +1557,15 @@ func tp_end(uid: int, flash := false) -> void:
 		n.queue_free()
 	_tp.erase(uid)
 
-## Attack-range rings for enemy towers near your hero: yellow, or red while the tower is targeting you.
+## Attack-range rings of the buildings that attack (towers and fountains), shown only while `show` (Alt held): an
+## enemy's yellow, red while it is targeting your hero; your team's pale blue.
 var _ranges := {}
 
-func tower_ranges(w: SimWorld, h: SimUnit, team: int) -> void:
+func tower_ranges(w: SimWorld, h: SimUnit, team: int, show := false) -> void:
 	for u in w.units:
-		if u.kind != SimConst.Kind.TOWER or u.team == team:
+		if u.kind != SimConst.Kind.TOWER and u.kind != SimConst.Kind.FOUNTAIN:
 			continue
-		var near := h != null and h.alive and u.alive and h.pos.distance_to(u.pos) < u.attack_range + u.hull + 700.0
+		var near := show and u.alive
 		var ring: MeshInstance3D = _ranges.get(u.id)
 		if not near:
 			if ring:
@@ -1589,10 +1590,12 @@ func tower_ranges(w: SimWorld, h: SimUnit, team: int) -> void:
 			ring.global_position = View.to3(u.pos, game.terrain.height_at(u.pos)) + Vector3(0, 0.1, 0)
 			_ranges[u.id] = ring
 		ring.visible = true
-		var aggro := u.atk_target == h.id
-		var d := h.pos.distance_to(u.pos) - (u.attack_range + u.hull)
-		var a := clampf(1.0 - d / 700.0, 0.25, 0.9)
-		(ring.material_override as StandardMaterial3D).albedo_color = Color(1.0, 0.2, 0.15, 0.95) if aggro else Color(1.0, 0.85, 0.3, a)
+		var mat := ring.material_override as StandardMaterial3D
+		if u.team == team:
+			mat.albedo_color = Color(0.45, 0.75, 1.0, 0.6)
+			continue
+		var aggro := h != null and u.atk_target == h.id
+		mat.albedo_color = Color(1.0, 0.2, 0.15, 0.95) if aggro else Color(1.0, 0.85, 0.3, 0.8)
 
 ## A ping: three yellow rings pulsing outwards on the ground.
 func ping(p: Vector2) -> void:

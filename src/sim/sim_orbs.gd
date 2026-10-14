@@ -258,9 +258,12 @@ func healing(u: SimUnit) -> Vector2:
 	return Vector2(u.max_hp * pct, u.max_mana * pct)
 
 ## Magic Orb: cooldowns x0.75, mana costs x0.7.
+## How long a cooldown that starts now lasts, as a fraction: the Magic Orb's cut and cooldown reduction (Time
+## Crystal) multiply, as Dota's cooldown reductions do.
 static func cooldown_mult(u: SimUnit) -> float:
 	var m := u.get_modifier("orb_magic")
-	return 1.0 - float(m.cdr) if not m.is_empty() else 1.0
+	var orb := 1.0 - float(m.cdr) if not m.is_empty() else 1.0
+	return orb * (1.0 - u.cooldown_reduction)
 
 static func mana_mult(u: SimUnit) -> float:
 	var m := u.get_modifier("orb_magic")

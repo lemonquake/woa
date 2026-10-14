@@ -11,8 +11,11 @@ var w: SimWorld
 
 var hook_hits := {}                        # caster id -> [game time, caught unit id] of its last hook catch (bots learn aim)
 
+var kits2: SimKits2                         # Tock's and Kragg's kits (run 2026-10-15 b)
+
 func _init(world: SimWorld = null) -> void:
 	w = world
+	kits2 = SimKits2.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -98,6 +101,9 @@ func val(u: SimUnit, aid: String, key: String) -> float:
 			if String(m.ability) == aid:
 				v += float((m.get("add", {}) as Dictionary).get(key, 0.0))
 				v *= float((m.get("mult", {}) as Dictionary).get(key, 1.0))
+	# Wide Stone family: spell areas grow (not sight radii)
+	if u.aoe_bonus > 0.0 and v > 0.0 and (key == "radius" or key.ends_with("_radius")) and not key.begins_with("vision") 			and not key.begins_with("curse"):
+		v += u.aoe_bonus
 	return v
 
 func ability_mana(u: SimUnit, aid: String) -> float:
@@ -121,7 +127,7 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 	if slot >= 0:
 		return _item_error(u, slot, target, point, check_target)
 	if aid == "tp":
-		if u.tp_charges <= 0:
+		if u.tp_charges <= 0 and travel_boots(u).is_empty():
 			return "No Teleport Scroll"
 		if cooldown_left(u, "tp") > 0.0:
 			return "Teleport on cooldown"
@@ -256,7 +262,8 @@ func cast_range(u: SimUnit, aid: String, slot: int, t: SimUnit = null) -> float:
 				return 500.0
 			"plant":
 				return C.PLANT_RANGE
-		return w.items.cast_range(u, String(d.use), d, t)
+		var ir: float = w.items.cast_range(u, String(d.use), d, t)
+		return ir + u.cast_range_bonus if ir > 0.0 and is_finite(ir) else ir
 	if aid == "tp":
 		return INF
 	var a := SimData.ability(aid)
@@ -264,7 +271,8 @@ func cast_range(u: SimUnit, aid: String, slot: int, t: SimUnit = null) -> float:
 		return u.attack_range
 	if a.get("direction", false):
 		return INF                               # aimed by direction only: cast from where the hero stands
-	return float(a.range)
+	var r := float(a.range)
+	return r + u.cast_range_bonus if r > 0.0 else r
 
 func cast_point(aid: String, slot: int) -> float:
 	if slot >= 0 or aid == "tp":
@@ -289,6 +297,7 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	u.mana -= ability_mana(u, aid)
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
+	kits2.on_cast(u, aid)
 	_charge_sticks(u)
 	# Touch of Ember: an enemy carrying its flames sets them off by casting a spell
 	if not u.get_modifier("touch_of_ember").is_empty():
@@ -296,6 +305,9 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	# Spirit of Fire: every other spell Azrin casts adds a spirit
 	if aid != "spirit_of_fire" and u.ability_level_of("spirit_of_fire") > 0:
 		_add_spirit(u)
+	if kits2.handles(aid):
+		kits2.cast(u, aid, lv, t, p)
+		return
 	match aid:
 		"fiery_javelin":
 			_javelin(u, aid, lv, p)
@@ -403,11 +415,22 @@ func _charge_sticks(caster: SimUnit) -> void:
 
 ## Teleport to the allied building nearest the chosen point after a 3 s channel. The scroll, mana and cooldown are
 ## spent when the channel starts; moving, stopping or being stunned cancels it.
+## Travel Boots in the main slots ({} if none): they teleport without a scroll, to creeps as well as buildings.
+func travel_boots(u: SimUnit) -> Dictionary:
+	for i in mini(6, u.inventory.size()):
+		var it = u.inventory[i]
+		if it != null and bool(SimData.item(it.id).get("travel", false)):
+			return it
+	return {}
+
 func _start_tp(u: SimUnit, p: Vector2) -> void:
+	var boots := travel_boots(u)
 	var best: SimUnit = null
 	var bd := INF
 	for b in w.units:
-		if not b.alive or b.team != u.team or not b.is_building():
+		if not b.alive or b.team != u.team:
+			continue
+		if not b.is_building() and not (not boots.is_empty() and b.is_creep() and b.kind != K.COURIER):
 			continue
 		var d := b.pos.distance_to(p)
 		if d < bd:
@@ -422,9 +445,14 @@ func _start_tp(u: SimUnit, p: Vector2) -> void:
 	if not w.map.is_walkable(dest):
 		var c := w.map.nearest_walkable(w.map.world_to_cell(dest))
 		dest = w.map.cell_center(c.x, c.y)
-	u.tp_charges -= 1
 	u.mana -= C.TP_MANA
-	u.ability_ready["tp"] = w.time + C.TP_COOLDOWN
+	if not boots.is_empty():
+		var cd := float(SimData.item(boots.id).values.tp_cooldown) * SimOrbs.cooldown_mult(u)
+		u.ability_ready["tp"] = w.time + cd
+		boots["ready"] = u.ability_ready["tp"]
+	else:
+		u.tp_charges -= 1
+		u.ability_ready["tp"] = w.time + C.TP_COOLDOWN * SimOrbs.cooldown_mult(u)
 	u.channel = {"ability": "tp", "until": w.time + C.TP_CHANNEL, "dest": dest, "building": best.id}
 	w.events.append({"t": "tp_start", "u": u.id, "dest": dest, "until": u.channel.until})
 
@@ -493,6 +521,8 @@ func update_effects() -> void:
 				done = _update_cone(e)
 			"ice_pulse":
 				done = _update_ice_pulse(e)
+			_:
+				done = kits2.update_effect(e) if kits2.owns_effect(String(e.kind)) else false
 		if done:
 			w.effects.remove_at(i)
 
@@ -747,7 +777,7 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 		if ti >= 0:
 			w.cut_tree(ti, u.pos, true)
 	var aid := String(k.ability)
-	if u.team == int(k.team) or not (aid in ["dark_stomp", "gale_impact"]):
+	if u.team == int(k.team) or not (aid in ["dark_stomp", "gale_impact", "repel"]):
 		return
 	var seq := int(k.seq)
 	if not _impacted.has(seq):
@@ -764,7 +794,7 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 		w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "damage", lv) * _v(a, "impact_pct", lv),
 			C.DamageType.MAGICAL, false, "gale_impact")
 		return
-	w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "impact_damage", lv), C.DamageType.MAGICAL, false, "dark_stomp")
+	w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "impact_damage", lv), C.DamageType.MAGICAL, false, aid)
 	k.stun = _v(a, "impact_stun", lv)
 
 ## Leap Strike's target: the visible enemy in range with the lowest health fraction, the nearest if none is hurt.

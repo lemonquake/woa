@@ -22,6 +22,7 @@ var fire_fx: FireFx
 var azrin_fx: AzrinFx
 var froster_fx: FrosterFx
 var caziel_fx: CazielFx
+var hero15_fx: Hero15Fx
 var status_fx: StatusFx
 var orb_view: OrbView
 var targeting_fx: TargetingFx
@@ -110,6 +111,11 @@ func _ready() -> void:
 	caziel_fx.fx = fx
 	caziel_fx.fire = fire_fx
 	add_child(caziel_fx)
+	hero15_fx = Hero15Fx.new()
+	hero15_fx.game = self
+	hero15_fx.fx = fx
+	hero15_fx.fire = fire_fx
+	add_child(hero15_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -577,7 +583,8 @@ func _drain_events() -> void:
 		if audio and _capture_frames < 0:
 			audio.event(e, world)
 		if e.t in ["jump", "chain", "spell_shield", "gold_glove", "mana_burst", "mend", "knockback", "sneak_end", "combine",
-				"spikes_return", "blocked", "cleave", "item_use"]:
+				"spikes_return", "blocked", "cleave", "item_use", "blast_rod", "net_staff", "static_charge", "frost_blast",
+				"refresh", "team_guard", "war_drum", "crash_knife"]:
 			item_fx.event(e)
 		if e.t in AzrinFx.EVENTS:
 			azrin_fx.event(e)
@@ -585,6 +592,8 @@ func _drain_events() -> void:
 			froster_fx.event(e)
 		elif e.t in CazielFx.EVENTS:
 			caziel_fx.event(e)
+		elif e.t in Hero15Fx.EVENTS:
+			hero15_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -950,6 +959,7 @@ func _process(dt: float) -> void:
 	azrin_fx.update(world, alpha, dt)
 	froster_fx.update(world, alpha, dt)
 	caziel_fx.update(world, alpha, dt)
+	hero15_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx", _t)
 	status_fx.frame(dt)
@@ -975,7 +985,8 @@ func _process(dt: float) -> void:
 				v.set_selected(true, Color(1.0, 1.0, 1.0, 0.55) if friendly else Color(1.0, 0.55, 0.3, 0.7))
 			else:
 				v.set_selected(false, Color.WHITE)
-	fx.tower_ranges(world, world.get_unit(player_hero_id), player_team)
+	# the attack range of every tower and fountain shows only while Alt is held (as the camps' spawn boxes do)
+	fx.tower_ranges(world, world.get_unit(player_hero_id), player_team, camps != null and camps.boxes_wanted() 		or args.has("ranges"))
 	if _capture_frames >= 0:
 		_capture_frames += 1
 		_demo_casts()

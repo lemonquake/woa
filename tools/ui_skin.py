@@ -764,16 +764,26 @@ def _socket(rgb, alpha, rect, chamfer=6):
     return rgb, alpha
 
 
-def console(name="hud_console"):
-    """The bottom HUD: a sculpted gold-framed console. Sections (drawn units): portrait 0-188, stats 188-372, abilities
-    372-726 (raised), items 726-978, gold / shop 978-1140; height 206."""
-    w, h = 1140, 206
+def console_layout(n):
+    """The ability row for n skill slots (matches BottomPanel in src/ui/hud.gd): step between slots, slot size and
+    how much wider than the four-slot console it is."""
+    n = max(4, min(10, n))
+    step = {7: 72, 8: 66, 9: 62, 10: 58}.get(n, 80)
+    return step, step - 8, n * step - 320
+
+
+def console(name="hud_console", n=4):
+    """The bottom HUD: a sculpted gold-framed console. Sections (drawn units, four skills): portrait 0-188, stats
+    188-372, abilities 372-726 (raised), items 726-978, gold / shop 978-1140; height 206. With more skills the ability
+    section widens by dx and everything right of it moves along (hud_console_<n>)."""
+    step, size, dx = console_layout(n)
+    w, h = 1140 + dx, 206
     W, H = w * S, h * S
     m = O.mask_from_rects(W, H, [(0, 22 * S, W, H + 20 * S)], 16 * S)
-    m = np.maximum(m, O.mask_from_poly(W, H, [[(370 * S, 22 * S), (394 * S, 2 * S), (732 * S, 2 * S), (756 * S, 22 * S),
-                                               (756 * S, 60 * S), (370 * S, 60 * S)]]))
+    m = np.maximum(m, O.mask_from_poly(W, H, [[(370 * S, 22 * S), (394 * S, 2 * S), ((732 + dx) * S, 2 * S),
+                                               ((756 + dx) * S, 22 * S), ((756 + dx) * S, 60 * S), (370 * S, 60 * S)]]))
     m = np.maximum(m, O.mask_from_rects(W, H, [(2 * S, 6 * S, 190 * S, H + 20 * S)], 12 * S))
-    m = np.maximum(m, O.mask_from_rects(W, H, [(974 * S, 12 * S, W - 2 * S, H + 20 * S)], 12 * S))
+    m = np.maximum(m, O.mask_from_rects(W, H, [((974 + dx) * S, 12 * S, W - 2 * S, H + 20 * S)], 12 * S))
     d = O.inside_distance(m)
     bp = bands_px([(0.0, 1.4, "flat"), (1.4, 6.0, "ridge"), (6.0, 7.6, "groove"), (7.6, 10.0, "ridge")])
     hgt, mask = frame_profile(d, bp)
@@ -786,33 +796,33 @@ def console(name="hud_console"):
     rgb, alpha = shade_layers(base, [(hgt, mask, GOLD, 5 * S, 0.0)])
     alpha = np.maximum(alpha, inner * 0.97)
     # wells for each section
-    rgb, alpha = _carve(rgb, alpha, (192, 34, 364, 198))          # stats
-    rgb, alpha = _carve(rgb, alpha, (396, 124, 730, 194))         # health and mana
-    rgb, alpha = _carve(rgb, alpha, (728, 26, 972, 198))          # items
-    rgb, alpha = _carve(rgb, alpha, (980, 30, 1132, 198))         # gold, Teleport, courier, shop
+    rgb, alpha = _carve(rgb, alpha, (192, 34, 364, 198))                  # stats
+    rgb, alpha = _carve(rgb, alpha, (396, 124, 730 + dx, 194))            # health and mana
+    rgb, alpha = _carve(rgb, alpha, (728 + dx, 26, 972 + dx, 198))        # items
+    rgb, alpha = _carve(rgb, alpha, (980 + dx, 30, 1132 + dx, 198))       # gold, Teleport, courier, shop
     # sockets for the ability slots, each with a carved tray under it for the level pips
-    for i in range(4):
-        x = 404 + i * 80
-        rgb, alpha = _socket(rgb, alpha, (x, 30, x + 72, 102))
-        rgb, alpha = _carve(rgb, alpha, (x + 2, 107, x + 70, 121), depth=0.8, base=(4, 5, 8))
+    for i in range(max(4, n)):
+        x = 404 + i * step
+        rgb, alpha = _socket(rgb, alpha, (x, 102 - size, x + size, 102))
+        rgb, alpha = _carve(rgb, alpha, (x + 2, 107, x + size - 2, 121), depth=0.8, base=(4, 5, 8))
     # sockets for the item slots
     for i in range(6):
-        x = 734 + (i % 3) * 80
+        x = 734 + dx + (i % 3) * 80
         y = 30 + (i // 3) * 62
         rgb, alpha = _socket(rgb, alpha, (x, y, x + 74, y + 56), 3)
     for i in range(3):
-        x = 734 + i * 80
+        x = 734 + dx + i * 80
         rgb, alpha = _socket(rgb, alpha, (x, 158, x + 74, 194), 3)
     # ornaments: filigree on the raised centre's shoulders, a crest above the abilities, gems at the joints
     layers = []
-    for fx, ox in ((1, 404 * S), (-1, 722 * S)):
+    for fx, ox in ((1, 404 * S), (-1, (722 + dx) * S)):
         mh, mm, gc = O.filigree_corner(W, H, (ox, 12 * S), 18 * S, fx, 1)
         layers.append((mh * 0.9, mm * (1 - smoothstep(94 * S, 102 * S, np.mgrid[0:H, 0:W][0])), GOLD, 7 * S, 0.5))
-    ch, cm, cc = O.crest(W, H, 563 * S, 5 * S, 20 * S, True)
+    ch, cm, cc = O.crest(W, H, (563 + dx / 2) * S, 5 * S, 20 * S, True)
     layers.append((ch, cm, GOLD, 7 * S, 0.5))
     gh, gm = O.faceted_gem(W, H, cc[0], cc[1], 6 * S, 6, 0)
     layers.append((gh, gm, gem_colors((255, 190, 80)), 3 * S, 0.0))
-    for gx, gy in ((188, 30), (974, 26), (370, 30), (756, 30)):
+    for gx, gy in ((188, 30), (974 + dx, 26), (370, 30), (756 + dx, 30)):
         bh, bm = O.beads(W, H, [(gx * S, gy * S)], 5 * S)
         layers.append((bh, bm, GOLD, 4 * S, 0.4))
         g2, g2m = O.faceted_gem(W, H, gx * S, gy * S, 3.6 * S, 8, math.pi / 8)
@@ -971,6 +981,8 @@ def build():
     hero_card("hero_card")
     # bespoke HUD
     console()
+    for n in range(5, 11):
+        console("hud_console_%d" % n, n)
     minimap_frame()
     topbar_art()
     with open(os.path.join(OUT, "skin.json"), "w") as f:
@@ -1009,6 +1021,16 @@ def preview(path):
 
 
 if __name__ == "__main__":
+    if "--consoles" in sys.argv:
+        _ = [console("hud_console_%d" % n, n) for n in range(5, 11)]
+        prev = json.load(open(os.path.join(OUT, "skin.json")))
+        prev["textures"].update(MANIFEST)
+        MANIFEST.clear()
+        MANIFEST.update(prev["textures"])
+        with open(os.path.join(OUT, "skin.json"), "w") as f:
+            json.dump({"scale": S, "textures": MANIFEST}, f, indent=1)
+        print("consoles built")
+        sys.exit(0)
     build()
     if "--preview" in sys.argv:
         preview(sys.argv[sys.argv.index("--preview") + 1])

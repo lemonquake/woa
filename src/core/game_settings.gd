@@ -5,7 +5,7 @@ extends RefCounted
 ## {slot: {cloth, trim, leather, metal, gold}}. Saved to user://hero.json and read by the match.
 
 const PATH := "user://hero.json"
-const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel"]
+const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
 const OWN_BODY := ["sludge"]
 
@@ -85,6 +85,42 @@ static func default_look(id: String) -> Dictionary:
 				"leggings": {"cloth": "140a1e", "leather": "120a14"}, "boots": {"leather": "120a14", "cloth": "140a1e"},
 				"gloves": {"cloth": "1c0e2a", "leather": "120a14"}, "helm": {"cloth": "160b22", "trim": "8a46e0"},
 				"inner_garment": {"cloth": "2a1240"}},
+		}
+	if id == "tock":
+		# Tock, the Clockmaker: a small, wiry old tinkerer, white hair and beard, gold eyes, brass and teal robes, an
+		# hourglass at his belt
+		var tk := HeroLook.preset("scholar")
+		tk.merge({"hair": "sidepart", "hair_color": "9a968e", "hair_length": 0.8, "beard": "full", "beard_length": 0.9,
+			"stubble": 0.3, "skin": "e2c0a6", "eye": "glowing", "eye_color": "ffc640", "eye_glow": 0.8, "brow": "bushy",
+			"marking": "none", "height": 0.92, "build": -0.4, "nose_long": 0.6}, true)
+		return {
+			"display_name": "Tock",
+			"look": HeroLook.sanitize(tk),
+			"outfit": {"inner_garment": "padded_gambeson", "armor": "tc_arcanist_vestments", "leggings": "scholars_breeches",
+				"boots": "sage_boots", "gloves": "runed_glove", "helm": "seers_circlet", "accessory_1": "sands_of_tempo"},
+			"dyes": {"armor": {"cloth": "12323a", "trim": "c89634", "leather": "3a2412", "metal": "a87a2a", "gold": "d8a840"},
+				"leggings": {"cloth": "0e262c", "leather": "3a2412", "trim": "c89a3a"},
+				"boots": {"leather": "3a2412", "cloth": "15363c", "metal": "c08a30"},
+				"gloves": {"cloth": "1d4a52", "leather": "3a2412", "metal": "c08a30"},
+				"helm": {"metal": "d8a840", "gold": "f0c860"}, "inner_garment": {"cloth": "6a4a1e"}},
+		}
+	if id == "kragg":
+		# Kragg, the Magnet Knight: a huge knight in dark iron plate with cobalt trim, close-cropped hair, a braided
+		# beard, eyes that glow blue
+		var kg := HeroLook.preset("veteran")
+		kg.merge({"hair": "crop", "hair_color": "2a2a30", "beard": "braided", "beard_length": 0.8, "stubble": 0.5,
+			"skin": "b88a6e", "eye": "glowing", "eye_color": "4aa0ff", "eye_glow": 0.9, "muscle": 1.3, "build": 0.9,
+			"height": 1.1, "jaw_wide": 1.0, "brow_heavy": 1.0, "marking": "none"}, true)
+		return {
+			"display_name": "Kragg",
+			"look": HeroLook.sanitize(kg),
+			"outfit": {"inner_garment": "chain_shirt", "armor": "guardian_plate", "leggings": "iron_cuisses",
+				"boots": "iron_sabaton", "gloves": "iron_gauntlet", "accessory_1": "stoneheart_idol"},
+			"dyes": {"armor": {"metal": "3c424e", "cloth": "16285a", "trim": "3a8aff", "leather": "1a1a20", "gold": "5aa0ff"},
+				"leggings": {"metal": "3c424e", "cloth": "16285a", "leather": "1a1a20", "trim": "3a8aff"},
+				"boots": {"metal": "3c424e", "leather": "1a1a20"}, "gloves": {"metal": "3c424e", "leather": "1a1a20"},
+				"helm": {"metal": "343a46", "cloth": "16285a", "trim": "3a8aff"},
+				"inner_garment": {"metal": "30343c", "cloth": "16285a"}},
 		}
 	# Blood Ranger: a pale huntress in blood-red leathers with crimson hair and faintly glowing red eyes
 	var g := HeroLook.preset("huntress")

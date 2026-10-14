@@ -11,8 +11,9 @@ extends Node
 ##   F1 / double-tap: centre on hero; Space: follow.   F4 or B: shop.  J: glyph.  F9: debug panel.
 ##   Hold right click: the move / attack order repeats towards the cursor (auto right-click).
 ## Every key above is the default: the player rebinds them on the Hotkeys screen (Keybinds).
-## Orders go to the selected units you control (your hero and courier), as in Dota: with only an enemy or a creep
-## selected, right clicks do nothing until you select your hero again (F1, the portrait, or a click on it).
+## Orders go to the selected units you control (your hero and courier). With nothing of yours selected (an enemy, a
+## creep, a building, or nothing at all), any command (right click, Stop, Hold, Attack, Teleport, an ability or item
+## key) first selects your hero again and then goes to it.
 
 const C = preload("res://src/sim/sim_const.gd")
 const O = C.Order
@@ -36,7 +37,10 @@ var _target_queue := false                 # Shift was held when the targeted sp
 var _groups := {}                           # control group key (1..9) -> unit ids
 var _group_tap := {}                        # key -> time of the last recall (double tap centres the camera)
 const ITEM_ACTIONS := ["item_1", "item_2", "item_3", "item_4", "item_5", "item_6"]
-const ABILITY_ACTIONS := ["ability_1", "ability_2", "ability_3", "ability_4"]
+const ABILITY_ACTIONS := ["ability_1", "ability_2", "ability_3", "ability_4", "ability_5", "ability_6", "ability_7",
+	"ability_8", "ability_9", "ability_10"]
+## Commands that select the hero first when nothing of the player's is selected (see take_command).
+const HERO_COMMANDS := ["stop", "hold", "attack", "tp", "item_1", "item_2", "item_3", "item_4", "item_5", "item_6"]
 ## With the courier selected, the ability and item keys give its commands (the bottom panel shows them).
 const COURIER_KEYS := {"ability_1": "return", "ability_2": "retrieve", "ability_3": "stash", "ability_4": "deliver",
 	"item_1": "transfer", "item_2": "burst", "item_3": "shield", "item_4": "auto"}
@@ -53,6 +57,18 @@ func hero() -> SimUnit:
 ## Your hero is selected (abilities, items and its orders apply).
 func hero_selected() -> bool:
 	return game.player_hero_id in game.selected
+
+## Nothing the player controls is selected: select the hero so the command that is being given reaches it.
+## Returns true when the hero was selected just now.
+func take_command() -> bool:
+	var h := hero()
+	if h == null:
+		return false
+	for id in game.selected:
+		if _owned(game.world.get_unit(id)):
+			return false
+	select([h.id])
+	return true
 
 func _courier_selected() -> SimUnit:
 	var h := hero()
@@ -338,6 +354,8 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 	var w: SimWorld = game.world
 	if h == null:
 		return
+	if act in HERO_COMMANDS or (act in ABILITY_ACTIONS and not learn):
+		take_command()
 	match act:
 		"stop":
 			targeting = ""
@@ -392,9 +410,9 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 		if cmd != "":
 			courier_cmd(cmd)
 			return
-	var ai := ABILITY_ACTIONS.find(act)
-	if ai >= 0 and ai < h.abilities.size():
-		if not hero_selected():
+	var ai := Keybinds.ability_slot(act, h.abilities.size())
+	if ai >= 0:
+		if not hero_selected() and not learn:
 			return
 		var aid: String = h.abilities[ai]
 		if learn:
@@ -518,6 +536,7 @@ func ping(p: Vector2, target_id := -1, danger := false) -> void:
 
 ## A right click on the minimap: move the selected units you control there.
 func move_selected(p: Vector2, shift := false) -> void:
+	take_command()
 	if hero_selected():
 		game.order(game.player_hero_id, {"type": O.MOVE, "point": p, "queue": shift})
 	if _courier_selected():
@@ -633,6 +652,8 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 	var w: SimWorld = game.world
 	var h := hero()
 	var ground: Vector2 = game.camera.ground_at(pos)
+	if not repeat:
+		take_command()
 	var cs := _courier_selected()
 	if cs:
 		game.act({"k": "courier_move", "p": ground})

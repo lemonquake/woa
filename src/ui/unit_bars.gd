@@ -25,7 +25,9 @@ const STATUS_ICONS := {"stun": "status/stunned", "slow": "status/slowed", "frost
 	"disarm": "status/sundered", "hex": "status/enfeebled", "break": "status/staggered", "weakened": "status/demoralized",
 	"fountain": "status/aura_mending", "dust": "status/dazzled", "haste": "status/haste", "orb_damage": "status/valor",
 	"orb_magic": "status/overcharged", "orb_shield": "status/shielded", "burn": "status/burning",
-	"ember_mark": "status/marked"}
+	"ember_mark": "status/marked", "time_slow": "status/slowed", "stop_time": "status/frozen",
+	"fast_forward": "status/haste", "magnet": "status/overcharged", "magnet_field": "status/shocked",
+	"static": "status/shocked", "guard": "status/guard", "chill": "status/chilled"}
 
 ## Timer bar colours by disable (Dota's overhead bars: stuns white-gold, the rest in their debuff's colour).
 const DISABLE_COLORS := {"Stunned": Color(1.0, 0.86, 0.35), "Frosted": Color(0.55, 0.85, 1.0), "Hexed": Color(0.45, 1.0, 0.45),

@@ -7,26 +7,31 @@ extends Control
 ## base), right click to sell it (from anywhere).
 
 const U = preload("res://src/ui/ui_kit.gd")
-const W := 820.0
+const W := 950.0
 const H := 700.0
-const GRID_W := 520.0
+const GRID_W := 650.0
 const CELL := Vector2(54, 40)
-const STEP := Vector2(58, 62)
+const STEP := Vector2(58, 58)
 
 ## Basics: [category, heading, column]. Several groups may share a column; they stack top to bottom.
-const BASICS := [["consumables", "Consumables", 0], ["big_parts", "Big Parts", 0], ["attributes", "Attributes", 1],
+const BASICS := [["consumables", "Consumables", 0], ["big_parts", "Big Parts", 4], ["attributes", "Attributes", 1],
 	["armaments", "Armaments", 2], ["misc", "Magic", 3], ["basics", "Other", 3]]
+## Big Parts sit in a fifth column of their own (BASICS_BIG_COL) so the first column keeps room for consumables.
 ## Upgrades in Dota-like groups: [column, heading, item ids]
 const UPGRADES := [
 	[0, "Accessories", ["wraith_band", "tough_band", "smart_band", "magic_wand", "power_treads", "slip_boots",
 		"steady_ring", "mask_of_madness"]],
 	[0, "Swords", ["heavy_sword", "yasha", "spell_sword", "twin_swords", "kugmo_atuli", "igit_atuli"]],
-	[1, "Support", ["mana_ring", "leaf_hat", "mana_boots", "medic_kit", "push_staff", "gold_glove"]],
+	[1, "Support", ["mana_ring", "leaf_hat", "mana_boots", "medic_kit", "push_staff", "gold_glove", "small_shield",
+		"leech_totem", "war_drum", "team_shield"]],
 	[1, "Magic", ["battle_staff", "silence_staff", "root_staff", "hex_staff"]],
 	[2, "Weapons", ["crit_sword", "crit_bow", "stun_club", "stun_blade", "sure_hit_staff", "armor_breaker",
 		"shock_hammer", "cleave_axe", "sneak_blade", "break_blade", "dragon_lance"]],
-	[3, "Armor", ["block_shield", "spike_armor", "spell_shield", "halberd"]],
+	[3, "Armor", ["block_shield", "spike_armor", "spell_shield", "halberd", "battle_armor", "frost_plate", "giant_heart"]],
 	[3, "Abilities", ["upgrade_staff", "upgrade_gem"]],
+	[4, "Casting", ["dagon", "net_staff", "long_lens", "soul_gem", "time_crystal", "refresh_stone"]],
+	[4, "Big Weapons", ["storm_hammer", "burning_cape", "leech_blade", "moth_blade", "crash_knife"]],
+	[4, "Boots", ["travel_boots", "guard_boots"]],
 ]
 
 var hud
@@ -112,14 +117,14 @@ func _draw() -> void:
 func _draw_grid(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 	_rects.clear()
 	var cols := _columns()
-	var col_x := [18.0, 148.0, 278.0, 408.0]
-	var col_y := [104.0, 104.0, 104.0, 104.0]
+	var col_x := [18.0, 148.0, 278.0, 408.0, 538.0]
+	var col_y := [104.0, 104.0, 104.0, 104.0, 104.0]
 	for c in cols:
 		var ids: Array = c[2]
 		var ci: int = c[0]
 		var x0: float = 18.0 if ci < 0 else col_x[ci]
 		var y: float = 104.0 if ci < 0 else col_y[ci]
-		var per_row := 8 if ci < 0 else 2
+		var per_row := 10 if ci < 0 else 2
 		U.text(self, String(c[1]), Vector2(x0, y + 14), 14, U.GOLD, "title")
 		y += 22.0
 		for i in ids.size():

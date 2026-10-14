@@ -18,6 +18,12 @@ const ACTIONS := [
 	["ability_2", "Ability 2", "Abilities", KEY_W],
 	["ability_3", "Ability 3", "Abilities", KEY_E],
 	["ability_4", "Ability 4 (ultimate)", "Abilities", KEY_R],
+	["ability_5", "Extra ability 1", "Abilities", KEY_D],
+	["ability_6", "Extra ability 2", "Abilities", KEY_F],
+	["ability_7", "Extra ability 3", "Abilities", KEY_G],
+	["ability_8", "Extra ability 4", "Abilities", KEY_Y],
+	["ability_9", "Extra ability 5", "Abilities", KEY_U],
+	["ability_10", "Extra ability 6", "Abilities", KEY_I],
 	["item_1", "Item slot 1", "Items", KEY_Z],
 	["item_2", "Item slot 2", "Items", KEY_X],
 	["item_3", "Item slot 3", "Items", KEY_C],
@@ -42,6 +48,33 @@ const ACTIONS := [
 	["scoreboard", "Scoreboard (hold)", "Interface", KEY_TAB],
 	["debug", "Debug panel", "Interface", KEY_F9],
 ]
+
+## Heroes have up to MAX_ABILITIES skills. With four or fewer they sit on Ability 1-4 (Q W E R). With more, as in
+## Dota, the last one (the ultimate) keeps Ability 4 (R) and the ones before it after the third take the extra
+## ability keys in order (six skills: Q W E D F R).
+const MAX_ABILITIES := 10
+
+## The skill slot (0-based) an ability action uses for a hero with `count` skills, or -1.
+static func ability_slot(action: String, count: int) -> int:
+	if not action.begins_with("ability_"):
+		return -1
+	var k := int(action.substr(8)) - 1
+	if k < 0 or count <= 0:
+		return -1
+	if count <= 4:
+		return k if k < count else -1
+	if k == 3:
+		return count - 1
+	var slot := k if k < 3 else k - 1
+	return slot if slot < count - 1 else -1
+
+## The ability action that uses skill slot `slot` of a hero with `count` skills.
+static func slot_action(slot: int, count: int) -> String:
+	if count <= 4 or slot < 3:
+		return "ability_%d" % (slot + 1)
+	if slot == count - 1:
+		return "ability_4"
+	return "ability_%d" % (slot + 2)
 
 ## Keys an action may never take: they open menus or are modifiers.
 const RESERVED := [KEY_ESCAPE, KEY_F10, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META, KEY_CAPSLOCK]
@@ -74,12 +107,14 @@ static func builtin_templates() -> Dictionary:
 	# items on Alt-free keys near the left hand, abilities unchanged
 	var near := defaults()
 	near.merge({"item_1": KEY_1, "item_2": KEY_2, "item_3": KEY_3, "item_4": KEY_4, "item_5": KEY_5, "item_6": KEY_6,
-		"tp": KEY_G, "courier_deliver": KEY_F, "select_courier": KEY_F2}, true)
+		"tp": KEY_G, "courier_deliver": KEY_F, "select_courier": KEY_F2, "ability_5": KEY_D, "ability_6": KEY_K,
+		"ability_7": KEY_L, "ability_8": KEY_Y, "ability_9": KEY_U, "ability_10": KEY_I}, true)
 	# abilities on the home row
 	var home := defaults()
 	home.merge({"ability_1": KEY_Q, "ability_2": KEY_W, "ability_3": KEY_E, "ability_4": KEY_D, "item_1": KEY_Z,
 		"item_2": KEY_X, "item_3": KEY_C, "item_4": KEY_V, "item_5": KEY_F, "item_6": KEY_G, "tp": KEY_T,
-		"hold": KEY_R}, true)
+		"hold": KEY_R, "ability_5": KEY_Y, "ability_6": KEY_U, "ability_7": KEY_I, "ability_8": KEY_O, "ability_9": KEY_P,
+		"ability_10": KEY_L}, true)
 	return {"Default (Dota)": dota, "Items on 1-6": near, "Ultimate on D": home}
 
 static func load_all() -> void:
@@ -96,7 +131,17 @@ static func load_all() -> void:
 	var data = JSON.parse_string(f.get_as_text())
 	if not (data is Dictionary):
 		return
-	binds.merge(_clean(data.get("current", {})), true)
+	var saved := _clean(data.get("current", {}))
+	binds.merge(saved, true)
+	# actions added after the file was saved (the extra ability keys): their default is left unbound when the
+	# player already uses that key for something else
+	for a in ACTIONS:
+		if saved.has(a[0]):
+			continue
+		for b in saved:
+			if int(saved[b]) == int(binds[a[0]]) and b != a[0]:
+				binds[a[0]] = 0
+				break
 	var t = data.get("templates", {})
 	if t is Dictionary:
 		for name in t:

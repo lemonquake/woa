@@ -36,6 +36,16 @@ const MODELS := {
 		"cast": "cast_quick", "idle": "idle_shadowblade", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
 		"death": "death", "R": "dagger", "L": "dagger", "bar": 2.3, "hero": true, "weapon_tint": Color(0.55, 0.45, 0.7),
 		"swing_trail": true, "trail_color": Color(0.7, 0.4, 1.0, 0.6)},
+	# Tock: the hero body with a brass wand; his bolts are golden orbs
+	"hero_tock": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["wand_1", "wand_2", "wand_3"],
+		"cast": "cast_quick", "idle": "idle_wand", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
+		"death": "death", "R": "wand", "L": "", "proj": "sun_orb", "bar": 2.3, "hero": true,
+		"weapon_tint": Color(1.0, 0.8, 0.45), "weapon_glow": Color(1.0, 0.75, 0.3)},
+	# Kragg: the hero body in heavy plate with a sword and a magnet shield crackling blue
+	"hero_kragg": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.05, "attack": ["sword_1", "sword_2", "sword_3", "sword_4"],
+		"cast": "shield_bash", "idle": "idle_shield", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
+		"death": "death", "R": "sword", "L": "shield", "bar": 2.55, "hero": true, "weapon_tint": Color(0.55, 0.62, 0.78),
+		"weapon_glow": Color(0.35, 0.6, 1.0), "swing_trail": true, "trail_color": Color(0.45, 0.7, 1.0, 0.6)},
 	"dawn_melee": {"scene": UNITS + "knight.glb", "scale": 0.86, "attack": ["sword_1", "sword_2", "sword_3"], "idle": "idle_shield",
 		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88)},
 	"dawn_ranged": {"scene": UNITS + "mage.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",

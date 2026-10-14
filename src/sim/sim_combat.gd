@@ -242,6 +242,8 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.frost_heart_hit(s, t)
 	if bool(s.hero) and t.alive:
 		w.abilities.sweet_poison_hit(s, t)
+	if bool(s.hero) and t.alive and not t.is_building() and not t.is_ward() and t.team != s.team:
+		w.abilities.kits2.on_attack_landed(s, t)
 	if bool(s.hero):
 		w.items.on_attack_landed(s, t, base_dmg, pierce)
 	elif src != null and src.alive:
@@ -384,7 +386,7 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 			kill(t, src_u)
 		return hits
 	var raw := amount                                  # before any reduction (Spike Armor returns this)
-	if is_attack and dtype == C.DamageType.PHYSICAL and t.is_hero() and src_team != t.team:
+	if is_attack and dtype == C.DamageType.PHYSICAL and (t.is_hero() or t.has_flag("team_guard_on")) and src_team != t.team:
 		amount = w.items.block_attack(t, amount)       # Block Shield, before armor
 	match dtype:
 		C.DamageType.PHYSICAL:
@@ -444,7 +446,7 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		w.ai.neutral_provoked(t, src)
 	w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": amount, "type": dtype, "attack": is_attack,
 		"key": key, "reflected": reflected, "halved": reflect_amt, "element": elem, "emult": emult})
-	if not reflected and t.is_hero():
+	if not reflected and (t.is_hero() or not t.get_modifier("static_charge").is_empty()):
 		w.items.on_damaged(t, src, raw, dtype, is_attack, elem)
 	if t.hp <= 0.001:
 		t.hp = 0.0

@@ -18,6 +18,7 @@ const AURA_SRC := -1
 
 var w: SimWorld
 var chains: Array = []                     # chain lightning in progress: {src, team, dmg, left, hit, last, next_at}
+var waves: Array = []                      # Frost Plate blasts spreading out: {src, team, pos, start, speed, radius, hit}
 
 func _init(world: SimWorld = null) -> void:
 	w = world
@@ -34,15 +35,25 @@ func equipped(u: SimUnit, item_id: String) -> Dictionary:
 			return it
 	return {}
 
-## The first main-slot item with this passive, or {}.
+## The main-slot item with this passive, or {}: the first one; for chain lightning and block the most expensive one
+## (Storm Hammer's over the Shock Hammer's, Team Shield's over Block Shield's), since copies never stack.
 func passive(u: SimUnit, kind: String) -> Dictionary:
 	if not u.is_hero():
 		return {}
+	var strongest := kind == "chain" or kind == "block"
+	var best: Dictionary = {}
+	var best_cost := -1
 	for i in mini(6, u.inventory.size()):
 		var it = u.inventory[i]
-		if it != null and String(SimData.item(it.id).get("passive", "")) == kind:
+		if it == null:
+			continue
+		var d := SimData.item(it.id)
+		if String(d.get("passive", "")) == kind and not strongest:
 			return it
-	return {}
+		if String(d.get("passive", "")) == kind and int(d.cost) > best_cost:
+			best = it
+			best_cost = int(d.cost)
+	return best
 
 # ---- Targeting, errors and use (called by SimAbilities for these item kinds) ----------------------------------------
 
@@ -51,8 +62,10 @@ static func target_kind(use: String) -> String:
 	match use:
 		"jump":
 			return "point"
-		"push", "gold", "overwhelm", "silence", "root", "disarm", "hex":
+		"push", "gold", "overwhelm", "silence", "root", "disarm", "hex", "blast", "static":
 			return "unit"
+		"net":
+			return "point"
 	return "none"
 
 func cast_range(u: SimUnit, use: String, d: Dictionary, t: SimUnit) -> float:
@@ -61,7 +74,7 @@ func cast_range(u: SimUnit, use: String, d: Dictionary, t: SimUnit) -> float:
 			return INF                             # no walking: a click beyond the range blinks a shorter way
 		"push":
 			return float(d.values.range_enemy) if t != null and t.team != u.team else float(d.values.range_ally)
-		"gold", "overwhelm", "silence", "root", "disarm", "hex":
+		"gold", "overwhelm", "silence", "root", "disarm", "hex", "blast", "static", "net":
 			return float(d.values.range)
 	return 0.0
 
@@ -86,7 +99,10 @@ func error(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, _p: Vector2) -
 		"bottle":
 			if int(it.get("charges", 0)) <= 0 and String(it.get("orb", "")) == "":
 				return "No charges"
-		"overwhelm", "silence", "root", "disarm", "hex":
+		"static":
+			if t == null or not t.alive or t.team != u.team or t.is_building() or t.is_ward() or t.kind == K.COURIER:
+				return "Must target an ally"
+		"overwhelm", "silence", "root", "disarm", "hex", "blast":
 			if t == null or not t.alive or t.team == u.team or t.is_building() or t.is_ward() or t.kind == K.COURIER:
 				return "Must target an enemy unit"
 			if t.is_invulnerable():
@@ -182,6 +198,66 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 			w.events.append({"t": "item_debuff", "u": u.id, "target": t.id, "kind": "hex"})
 		"jump":
 			_jump(u, d, p)
+			if v.has("crash_radius"):
+				_crash(u, v)
+		"blast":
+			# Blast Rod (Dagon): magic damage at once
+			w.combat.deal_damage(u.id, u.team, true, t, float(v.damage), C.DamageType.MAGICAL, false, String(it.id),
+				false, {"element": C.Element.LIGHTNING})
+			w.events.append({"t": "blast_rod", "u": u.id, "target": t.id, "level": int(d.get("level", 1))})
+		"net":
+			# Net Staff (Gleipnir): a net flies at every enemy in the area and roots it on arrival
+			var rad := float(v.radius) + u.aoe_bonus
+			var n := 0
+			for o: SimUnit in w.query(p, rad):
+				if o.alive and o.team != u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER \
+						and not o.is_invulnerable() and w.vision.sees(u.team, o):
+					w.combat.launch_effect(u, o, float(v.speed), "root_staff", {"id": "net_staff", "root": true,
+						"dur": float(v.duration), "fx": "root"})
+					n += 1
+			w.events.append({"t": "net_staff", "u": u.id, "point": p, "radius": rad, "count": n})
+		"static":
+			t.add_modifier({"id": "static_charge", "source": u.id, "expires": w.time + float(v.static_duration),
+				"static": it.id, "fx": "static"})
+			w.events.append({"t": "static_charge", "u": u.id, "target": t.id})
+		"frost_blast":
+			waves.append({"src": u.id, "team": u.team, "pos": u.pos, "start": w.time, "speed": float(v.speed),
+				"radius": float(v.radius) + u.aoe_bonus, "hit": {}, "item": it.id})
+			w.events.append({"t": "frost_blast", "u": u.id, "radius": float(v.radius) + u.aoe_bonus, "speed": float(v.speed)})
+		"rage":
+			u.add_modifier({"id": "leech_rage", "source": u.id, "expires": w.time + float(v.duration),
+				"stats": {"lifesteal": float(v.lifesteal)}, "fx": "berserk"})
+			w.events.append({"t": "leech_rage", "u": u.id})
+		"refresh":
+			for aid in u.ability_ready.keys():
+				if aid != "tp" and aid != "masterful_archery":
+					u.ability_ready[aid] = C.LONG_AGO
+			w.events.append({"t": "refresh", "u": u.id})
+		"greaves":
+			_basic_dispel(u)
+			for o: SimUnit in w.query(u.pos, float(v.radius)):
+				if o.alive and o.team == u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER:
+					w.combat.heal(o, float(v.heal))
+					o.mana = minf(o.max_mana, o.mana + float(v.mana))
+			w.events.append({"t": "mend", "u": u.id, "radius": float(v.radius)})
+		"guard":
+			var blk := float(v.guard_block) + float(v.guard_hp_pct) * u.max_hp
+			for o: SimUnit in w.query(u.pos, float(v.radius)):
+				if o.alive and o.team == u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER:
+					var old := o.get_modifier("team_guard")
+					if not old.is_empty() and float(old.block) > blk and w.time < float(old.expires):
+						continue
+					o.add_modifier({"id": "team_guard", "source": u.id, "expires": w.time + float(v.duration),
+						"block": blk, "team_guard_on": true, "fx": "guard"})
+			w.events.append({"t": "team_guard", "u": u.id, "radius": float(v.radius)})
+		"drum":
+			for o: SimUnit in w.query(u.pos, float(v.radius)):
+				if o.alive and o.team == u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER:
+					o.add_modifier({"id": "war_drum", "source": u.id, "expires": w.time + float(v.duration),
+						"stats": {"attack_speed": float(v.attack_speed), "move_speed_pct": float(v.move_speed_pct)},
+						"fx": "haste"})
+					o.stats_dirty = true
+			w.events.append({"t": "war_drum", "u": u.id, "radius": float(v.radius)})
 		"push":
 			_push(u, d, t)
 		"gold":
@@ -211,6 +287,22 @@ func _jump(u: SimUnit, d: Dictionary, p: Vector2) -> void:
 		u.facing = (to - from).angle()
 	w.combat.disjoint(u)
 	w.events.append({"t": "jump", "u": u.id, "from": from, "to": to})
+
+## Crash Knife (Overwhelming Blink): where its owner lands, enemies within 800 take 100 + 50% of his strength as magic
+## damage at once and 100% of his strength over 6 s, and are slowed 50% (move) and 50 (attack) for 6 s.
+func _crash(u: SimUnit, v: Dictionary) -> void:
+	var dur := float(v.duration)
+	var strength := u.str_total
+	for o: SimUnit in w.query(u.pos, float(v.crash_radius) + u.aoe_bonus):
+		if not o.alive or o.team == u.team or o.is_building() or o.is_ward() or o.kind == K.COURIER or o.is_invulnerable():
+			continue
+		w.combat.deal_damage(u.id, u.team, true, o, float(v.damage_base) + float(v.damage_pct) * strength,
+			C.DamageType.MAGICAL, false, "crash_knife")
+		if o.alive and not o.debuff_immune:
+			w.status.add_dot(o, u, "crash_knife", float(v.dot_pct) * strength / dur, dur, C.Element.NONE, true)
+			w.status.apply(o, u.id, u.team, {"id": "crash_knife", "slow": float(v.slow), "dur": dur,
+				"stats": {"attack_speed": -float(v.attack_slow)}, "fx": "slow"})
+	w.events.append({"t": "crash_knife", "u": u.id, "radius": float(v.crash_radius) + u.aoe_bonus})
 
 ## Push Staff: shoves the target 600 the way it faces over 0.5 s. It is not a disable; trees in the way are cut.
 func _push(u: SimUnit, d: Dictionary, t: SimUnit) -> void:
@@ -265,6 +357,9 @@ func break_sneak(u: SimUnit) -> Dictionary:
 func update() -> void:
 	if w.tick % 6 == 0:
 		_auras()
+		_burns()
+	if not waves.is_empty():
+		_update_waves()
 	for h in w.heroes:
 		if not h.alive:
 			continue
@@ -319,6 +414,80 @@ func _auras() -> void:
 				if not old.is_empty() and float(old.get(key, 0.0)) > amount and w.time < float(old.expires):
 					continue
 				o.add_modifier({"id": mid, "source": AURA_SRC, "expires": w.time + 0.5 + 6.0 * C.DT, key: amount})
+	# stat auras of the newer items (Small Shield, Leech Totem, Battle Armor, Frost Plate, Guard Boots, War Drum): each
+	# {id, stats, radius, enemy (on enemies instead of allies), buildings (buildings too), creep_stats, self_stats,
+	# low_hp + low_hp_stats}. One copy of each aura counts; it lingers 0.5 s past each refresh.
+	for h in w.heroes:
+		if not h.alive or h.is_broken():
+			continue
+		for i in mini(6, h.inventory.size()):
+			var it = h.inventory[i]
+			if it == null:
+				continue
+			for au in SimData.item(it.id).get("auras", []):
+				_stat_aura(h, au)
+
+func _stat_aura(h: SimUnit, au: Dictionary) -> void:
+	var enemy := bool(au.get("enemy", false))
+	for o: SimUnit in w.query(h.pos, float(au.radius)):
+		if not o.alive or o.is_ward() or o.kind == K.COURIER or o.kind == K.FOUNTAIN:
+			continue
+		if o.is_building() and not bool(au.get("buildings", false)):
+			continue
+		if enemy == (o.team == h.team):
+			continue
+		var st: Dictionary = au.stats
+		if o == h and au.has("self_stats"):
+			st = au.self_stats
+		elif not o.is_hero() and au.has("creep_stats"):
+			st = au.creep_stats
+		if au.has("low_hp") and o.hp < o.max_hp * float(au.low_hp):
+			st = au.low_hp_stats
+		var old := o.get_modifier(String(au.id))
+		var had := not old.is_empty()
+		o.add_modifier({"id": String(au.id), "source": AURA_SRC, "expires": w.time + 0.5 + 6.0 * C.DT, "stats": st,
+			"aura": true, "by": h.id})
+		if not had or old.get("stats") != st:
+			o.stats_dirty = true
+
+## Burning Cape: every 0.2 s its owner burns the enemies within 650 (not buildings) for 60 magic damage a second.
+func _burns() -> void:
+	for h in w.heroes:
+		if not h.alive:
+			continue
+		for i in mini(6, h.inventory.size()):
+			var it = h.inventory[i]
+			if it == null:
+				continue
+			var bd: Dictionary = SimData.item(it.id).get("burn", {})
+			if bd.is_empty():
+				continue
+			var amount := float(bd.dps) * 6.0 * C.DT
+			for o: SimUnit in w.query(h.pos, float(bd.radius)):
+				if o.alive and o.team != h.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER \
+						and not o.is_invulnerable():
+					w.combat.deal_damage(h.id, h.team, true, o, amount, C.DamageType.MAGICAL, false, String(it.id), false,
+						{"element": C.Element.FIRE, "no_spell_lifesteal": true, "quiet": true})
+			break
+
+## Frost Plate: the ring spreads at 400 a second; each enemy it reaches (once) takes the damage and the slow.
+func _update_waves() -> void:
+	for i in range(waves.size() - 1, -1, -1):
+		var wv: Dictionary = waves[i]
+		var r := minf(float(wv.radius), (w.time - float(wv.start)) * float(wv.speed))
+		var v: Dictionary = SimData.item(String(wv.item)).values
+		for o: SimUnit in w.query(wv.pos, r):
+			if not o.alive or o.team == int(wv.team) or wv.hit.has(o.id) or o.is_building() or o.is_ward() \
+					or o.kind == K.COURIER or o.is_invulnerable():
+				continue
+			wv.hit[o.id] = true
+			w.combat.deal_damage(int(wv.src), int(wv.team), true, o, float(v.damage), C.DamageType.MAGICAL, false,
+				"frost_plate", false, {"element": C.Element.ICE})
+			if o.alive:
+				w.status.apply(o, int(wv.src), int(wv.team), {"id": "frost_plate", "slow": float(v.slow),
+					"dur": float(v.duration), "fx": "slow"})
+		if r >= float(wv.radius):
+			waves.remove_at(i)
 
 # ---- Attacks ------------------------------------------------------------------------------------------------------
 
@@ -381,7 +550,7 @@ func on_attack_landed(s: Dictionary, t: SimUnit, dmg: float, pierce: Dictionary)
 		var v: Dictionary = SimData.item(ch.id).values
 		if w.status.roll(src, "chain", float(v.chance)):
 			ch["chain_ready"] = w.time + float(v.cooldown)
-			_start_chain(src, t, v)
+			_start_chain(src, t, v, String(ch.id))
 	var cl := passive(src, "cleave")
 	if not cl.is_empty() and not src.is_ranged():
 		_cleave(src, t, dmg, SimData.item(cl.id).values)
@@ -408,9 +577,9 @@ func _corrupt(src: SimUnit, t: SimUnit) -> void:
 		"reduction": float(best.armor_reduction), "stats": {"armor": -float(best.armor_reduction)}, "by": src.id,
 		"item": best_id, "fx": "corruption"})
 
-func _start_chain(src: SimUnit, t: SimUnit, v: Dictionary) -> void:
+func _start_chain(src: SimUnit, t: SimUnit, v: Dictionary, item := "shock_hammer") -> void:
 	var c := {"src": src.id, "team": src.team, "dmg": float(v.damage), "left": int(v.strikes), "hit": {},
-		"last": t.id, "radius": float(v.radius), "delay": float(v.delay), "next_at": w.time, "pos": t.pos}
+		"last": t.id, "radius": float(v.radius), "delay": float(v.delay), "next_at": w.time, "pos": t.pos, "item": item}
 	chains.append(c)
 	_chain_strike(c, t)
 
@@ -422,7 +591,7 @@ func _chain_strike(c: Dictionary, t: SimUnit) -> void:
 	c.next_at = w.time + float(c.delay)
 	w.events.append({"t": "chain", "src": c.src, "u": t.id, "from": c.get("prev_pos", t.pos), "pos": t.pos})
 	c["prev_pos"] = t.pos
-	w.combat.deal_damage(int(c.src), int(c.team), true, t, float(c.dmg), C.DamageType.MAGICAL, false, "shock_hammer")
+	w.combat.deal_damage(int(c.src), int(c.team), true, t, float(c.dmg), C.DamageType.MAGICAL, false, String(c.get("item", "shock_hammer")))
 
 func _update_chains() -> void:
 	for i in range(chains.size() - 1, -1, -1):
@@ -472,6 +641,16 @@ func _cleave(src: SimUnit, main: SimUnit, dmg: float, v: Dictionary) -> void:
 
 ## Block Shield: 60% of attacks on its owner lose 50 damage (25 for a ranged owner), before armor.
 func block_attack(t: SimUnit, amount: float) -> float:
+	# Team Shield's Guard: every attack loses its block (the better of it and an item's block counts)
+	var gm := t.get_modifier("team_guard")
+	if not gm.is_empty() and w.time < float(gm.expires):
+		var gb := float(gm.block)
+		var it0 := passive(t, "block")
+		if not it0.is_empty():
+			var v0: Dictionary = SimData.item(it0.id).values
+			gb = maxf(gb, float(v0.block_ranged if t.is_ranged() else v0.block_melee))
+		w.events.append({"t": "blocked", "u": t.id, "amount": minf(gb, amount)})
+		return maxf(0.0, amount - gb)
 	var it := passive(t, "block")
 	if it.is_empty():
 		return amount
@@ -487,6 +666,8 @@ func block_attack(t: SimUnit, amount: float) -> float:
 func on_damaged(t: SimUnit, src: SimUnit, raw: float, dtype: int, is_attack: bool, elem := 0) -> void:
 	if src == null or not src.alive or src == t or src.team == t.team or src.is_building() or src.is_ward():
 		return
+	if is_attack:
+		_static_strike(t, src)
 	var it := passive(t, "spikes")
 	if it.is_empty():
 		return
@@ -502,6 +683,31 @@ func on_damaged(t: SimUnit, src: SimUnit, raw: float, dtype: int, is_attack: boo
 	w.combat.deal_damage(t.id, t.team, true, src, back, dtype, false, "spike_armor", true,
 		{"no_spell_lifesteal": true, "element": elem})
 	w.events.append({"t": "spikes_return", "u": t.id, "target": src.id, "amount": back, "active": not t.get_modifier("spike_armor").is_empty()})
+
+## Storm Hammer's Static Charge: when the charged unit is attacked, a 20% (pseudo-random) chance, at most once a second,
+## to strike up to 4 enemies within 900 (the attacker first when it is within 600) for 225 magic damage.
+func _static_strike(t: SimUnit, attacker: SimUnit) -> void:
+	var m := t.get_modifier("static_charge")
+	if m.is_empty() or w.time < float(m.get("next", C.LONG_AGO)):
+		return
+	var v: Dictionary = SimData.item(String(m.static)).values
+	if not w.status.roll(t, "static_charge", float(v.static_chance)):
+		return
+	m["next"] = w.time + float(v.static_cooldown)
+	var owner := w.get_unit(int(m.source))
+	var src_id := owner.id if owner != null else t.id
+	var targets: Array = []
+	if attacker.pos.distance_to(t.pos) <= float(v.static_primary_radius) and not attacker.is_building():
+		targets.append(attacker)
+	for o: SimUnit in w.query(t.pos, float(v.static_radius)):
+		if targets.size() >= int(v.static_strikes):
+			break
+		if o.alive and o.team != t.team and not targets.has(o) and not o.is_building() and not o.is_ward() 				and o.kind != K.COURIER and not o.is_invulnerable():
+			targets.append(o)
+	for o: SimUnit in targets:
+		w.combat.deal_damage(src_id, t.team, true, o, float(v.static_damage), C.DamageType.MAGICAL, false, "storm_hammer",
+			false, {"element": C.Element.LIGHTNING})
+		w.events.append({"t": "chain", "src": t.id, "u": o.id, "from": t.pos, "pos": o.pos})
 
 ## Armor Breaker: a hero who dies while corrupted by it gives its owner 2 damage (killer) or 1 (assist), up to 30.
 func on_hero_death(t: SimUnit, killer: SimUnit) -> void:

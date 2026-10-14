@@ -16,6 +16,8 @@ const ROLES := {
 	"azrin": [2, 4, 5, 1],
 	"froster": [2, 5, 4, 3],
 	"caziel": [1, 2, 3],
+	"tock": [5, 4, 2],
+	"kragg": [3, 4, 2, 1],
 }
 ## Lane by role, from the team's side: "safe" (long lane with the tier 1 far out), "mid", "off".
 const ROLE_LANE := {1: "safe", 2: "mid", 3: "off", 4: "off", 5: "safe"}
@@ -42,6 +44,14 @@ const SKILLS := {
 	"caziel": ["swift_dagger", "sweet_poison", "swift_dagger", "master_of_shadows", "swift_dagger", "death_order",
 		"swift_dagger", "sweet_poison", "sweet_poison", "sweet_poison", "death_order", "master_of_shadows",
 		"master_of_shadows", "master_of_shadows", "death_order"],
+	# the bolt first (harass, and it slows enemy cooldowns), Rewind early to live, the field and the passive next
+	"tock": ["time_bolt", "fast_forward", "time_bolt", "rewind", "time_bolt", "stop_time", "time_bolt", "slow_field",
+		"slow_field", "quick_hands", "stop_time", "slow_field", "slow_field", "quick_hands", "quick_hands",
+		"quick_hands", "stop_time", "fast_forward", "fast_forward", "fast_forward", "rewind", "rewind", "rewind"],
+	# the grip to level 4 with a point in Magnetize, Overload next, Repel last
+	"kragg": ["iron_grip", "magnetize", "repel", "iron_grip", "iron_grip", "magnet_field", "iron_grip", "overload",
+		"overload", "overload", "magnet_field", "overload", "repel", "repel", "repel", "magnetize", "magnet_field",
+		"magnetize", "magnetize"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -52,7 +62,8 @@ const SUPPORT_SKILLS := {
 		"unholy_might"],
 }
 ## Talent side per tier (0 left, 1 right), for heroes with a talent tree.
-const TALENTS := {"sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0]}
+const TALENTS := {"sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
+	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -61,73 +72,101 @@ const BUILDS := {
 		"core": [
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "branch", "branch",
 				"magic_wand", "boots", "gloves", "boots_elves", "dragon_lance", "crit_sword", "shock_hammer",
-				"spell_shield", "crit_bow", "armor_breaker"],
+				"spell_shield", "crit_bow", "armor_breaker", "moth_blade"],
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots", "gloves",
 				"boots_elves", "magic_wand", "gold_glove", "yasha", "dragon_lance", "heavy_sword", "twin_swords",
-				"armor_breaker", "spell_shield"],
+				"armor_breaker", "spell_shield", "storm_hammer"],
 			["tango", "faerie_fire", "slippers", "circlet", "quelling_blade", "wraith_band", "boots", "magic_stick",
 				"gloves", "boots_elves", "mask_of_madness", "dragon_lance", "crit_sword", "sure_hit_staff",
 				"spell_shield", "crit_bow"],
 		],
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "wraith_band",
-				"push_staff", "slip_boots", "dragon_lance", "spell_shield"],
+				"push_staff", "slip_boots", "dragon_lance", "long_lens", "spell_shield", "guard_boots"],
 		],
 	},
 	"ezee": {
 		"core": [
 			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "branch", "branch", "magic_stick",
-				"magic_wand", "slip_boots", "stun_club", "spike_armor", "spell_shield", "stun_blade", "armor_breaker"],
+				"magic_wand", "slip_boots", "stun_club", "spike_armor", "spell_shield", "stun_blade", "battle_armor",
+				"giant_heart"],
 			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
 				"magic_wand", "belt_str", "gloves", "block_shield", "cleave_axe", "stun_club", "spell_shield",
 				"stun_blade"],
 		],
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
-				"medic_kit", "root_staff", "push_staff", "spell_shield"],
+				"medic_kit", "root_staff", "small_shield", "team_shield", "push_staff", "guard_boots", "spell_shield"],
 		],
 	},
 	"azrin": {
 		"core": [
 			["tango", "salve", "mantle", "circlet", "smart_band", "branch", "branch", "magic_stick", "boots",
-				"magic_wand", "mana_boots", "spell_sword", "push_staff", "kugmo_atuli", "hex_staff", "spell_shield"],
+				"magic_wand", "mana_boots", "spell_sword", "dagon", "push_staff", "kugmo_atuli", "time_crystal",
+				"hex_staff", "refresh_stone"],
 			["tango", "salve", "mantle", "circlet", "smart_band", "magic_stick", "boots", "magic_wand", "slip_boots",
 				"spell_sword", "igit_atuli", "silence_staff", "hex_staff", "spell_shield"],
 		],
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
-				"push_staff", "spell_sword", "root_staff", "hex_staff"],
+				"push_staff", "spell_sword", "root_staff", "net_staff", "guard_boots", "hex_staff"],
 		],
 	},
 	"froster": {
 		"core": [
 			["tango", "salve", "mantle", "circlet", "smart_band", "branch", "branch", "magic_stick", "boots",
-				"magic_wand", "mana_boots", "spell_sword", "push_staff", "kugmo_atuli", "silence_staff", "spell_shield"],
+				"magic_wand", "mana_boots", "spell_sword", "push_staff", "kugmo_atuli", "time_crystal", "frost_plate",
+				"refresh_stone"],
 		],
 		"support": [
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
-				"push_staff", "medic_kit", "spell_sword", "hex_staff", "spell_shield"],
+				"push_staff", "medic_kit", "war_drum", "spell_sword", "net_staff", "guard_boots", "spell_shield"],
 		],
 	},
 	"caziel": {
 		"core": [
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
 				"magic_wand", "gloves", "boots_elves", "mask_of_madness", "crit_sword", "yasha", "spell_shield",
-				"armor_breaker", "twin_swords"],
+				"armor_breaker", "moth_blade", "leech_blade"],
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "boots", "magic_stick",
-				"gloves", "boots_elves", "magic_wand", "sneak_blade", "crit_sword", "spell_shield", "armor_breaker"],
+				"gloves", "boots_elves", "magic_wand", "sneak_blade", "crit_sword", "spell_shield", "armor_breaker",
+				"battle_armor"],
+		],
+	},
+	"tock": {
+		"core": [
+			["tango", "salve", "mantle", "circlet", "smart_band", "branch", "branch", "magic_stick", "boots",
+				"magic_wand", "mana_boots", "spell_sword", "long_lens", "time_crystal", "refresh_stone", "hex_staff"],
+		],
+		"support": [
+			["tango", "tango", "salve", "clarity", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
+				"war_drum", "long_lens", "time_crystal", "guard_boots", "refresh_stone"],
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
+				"push_staff", "long_lens", "net_staff", "time_crystal", "guard_boots"],
+		],
+	},
+	"kragg": {
+		"core": [
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "slip_boots", "jump_knife", "spell_shield", "crash_knife", "battle_armor", "giant_heart"],
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "slip_boots", "block_shield", "team_shield", "jump_knife", "spell_shield", "frost_plate"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
+				"small_shield", "jump_knife", "team_shield", "spell_shield", "crash_knife"],
 		],
 	},
 	"sludge": {
 		"core": [
 			["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "circlet", "tough_band", "magic_wand",
-				"slip_boots", "jump_knife", "spike_armor", "spell_shield", "upgrade_staff"],
+				"slip_boots", "jump_knife", "spike_armor", "spell_shield", "upgrade_staff", "crash_knife", "giant_heart"],
 			["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "boots", "magic_wand", "block_shield",
 				"jump_knife", "slip_boots", "spell_shield", "halberd", "upgrade_staff"],
 		],
 		"support": [
 			["tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots", "jump_knife",
-				"root_staff", "medic_kit", "spell_shield", "upgrade_staff"],
+				"root_staff", "medic_kit", "war_drum", "spell_shield", "team_shield", "upgrade_staff"],
 			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
 				"push_staff", "jump_knife", "upgrade_gem", "spell_shield"],
 		],
@@ -178,15 +217,19 @@ static func disable_power(hero: String) -> float:
 			return 0.7
 		"caziel":
 			return 0.15
+		"tock":
+			return 0.8
+		"kragg":
+			return 0.85
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
 static func backliner(hero: String) -> bool:
-	return hero == "blood_ranger" or hero == "azrin" or hero == "froster"
+	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock"
 
 ## The hero's ultimate.
 static func ultimate(h: SimUnit) -> String:
-	return String(h.abilities[3]) if h.abilities.size() > 3 else ""
+	return SimData.ultimate_of(h.abilities)
 
 static func ult_ready(w: SimWorld, h: SimUnit) -> bool:
 	var ult := ultimate(h)
@@ -261,6 +304,24 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 					(t.armor if t != null else 3.0) - ab.val(h, "swift_dagger", "armor_cut"))
 			if h.ability_level_of("sweet_poison") > 0:
 				total += ab.val(h, "sweet_poison", "chance") * 5.0 * ab.val(h, "sweet_poison", "dps") * 2.0 * mr * 0.5
+		"tock":
+			if ready.call("time_bolt"):
+				total += ab.val(h, "time_bolt", "damage") * mr * 0.8
+			if ready.call("stop_time"):
+				total += dps(w, h, t) * 2.0
+			total *= 1.0 + h.magic_amp
+		"kragg":
+			var ch := ab.kits2.charges(t) if t != null else 0
+			if ready.call("iron_grip"):
+				total += ab.val(h, "iron_grip", "damage") * mr
+				ch += 2
+			if ready.call("repel"):
+				total += ab.val(h, "repel", "damage") * mr
+			if ready.call("overload"):
+				total += ab.val(h, "overload", "per_charge") * maxi(ch, 2) * mr
+			if ready.call("magnet_field"):
+				total += ab.val(h, "magnet_field", "end_damage") * mr
+			total *= 1.0 + h.magic_amp
 		"sludge":
 			if ready.call("shuriken_hook"):
 				total += ab.val(h, "shuriken_hook", "damage") * 0.6

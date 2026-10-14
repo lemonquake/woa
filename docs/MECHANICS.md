@@ -415,3 +415,62 @@ attack point 0.6, projectile 1000, speed 290. Owner's numbers below; mana, cast 
 | Long Staff | Mystic Staff | Mana Tiara | Tiara of Selemene |
 | Reveal Ward | Sentry Ward | Reveal Dust | Dust of Appearance |
 | Tree Twig | Iron Branch | Frenzy Mask | Mask of Madness |
+| Travel Boots | Boots of Travel | Blast Rod (1-5) | Dagon (1-5) |
+| Net Staff | Gleipnir | Storm Hammer | Mjollnir |
+| Soul Gem | Soul Booster | Time Crystal | Octarine Core |
+| Battle Armor | Assault Cuirass | Small Shield | Buckler |
+| Leech Totem | Vladmir's Offering | Frost Plate | Shiva's Guard |
+| Burning Cape | Radiance | Giant Heart | Heart of Tarrasque |
+| Leech Blade | Satanic | Moth Blade | Butterfly |
+| Refresh Stone | Refresher Orb | Guard Boots | Guardian Greaves |
+| Team Shield | Crimson Guard | War Drum | Drum of Endurance |
+| Long Lens | Aether Lens | Crash Knife | Overwhelming Blink |
+| Mana Gem | Energy Booster | Swift Stone | Hyperstone |
+| Plate Armor | Platemail | Gold Band | Crown |
+| Wide Stone | Chasm Stone | Relic | Sacred Relic |
+| War Axe | Reaver | Troll Ring | Ring of Tarrasque |
+| Feather | Eaglesong | Iron Helm | Helm of Iron Will |
+| Speed Ribbon | Wind Lace | | |
+
+### Cooldowns, spell area, cast range (run 2026-10-15 b)
+
+* **Cooldown reduction** (Time Crystal = Octarine Core, 25%): a spell or item cooldown starts that much shorter. Several
+  items do not stack (the largest counts); the Magic Orb's cut multiplies with it. Teleport cooldowns too.
+* **Cooldown rate** (ours, for Tock): a modifier stat `cooldown_rate` moves every running cooldown of a unit each tick:
+  +1 runs twice as fast, -0.4 runs 40% slower, -1 stands still. Time Bolt (slower), Fast Forward (faster) and Stop
+  Time (frozen) use it; Refresh Stone finishes every spell cooldown (not items, as Refresher Orb in this patch).
+* **Spell area** (Wide Stone = Chasm Stone +40, Net Staff and Frost Plate +75; largest counts): added to every
+  `radius` or `*_radius` value of a hero's spells (not sight radii). **Cast range** (Long Lens = Aether Lens +225,
+  Blast Rod +60..+180; largest counts): added to spell and item cast ranges.
+* **Item auras with a target side**: Small Shield (+2 armor), Leech Totem (allies +2 armor, +1 mana regen, 20% lifesteal
+  for heroes / 12% for creeps, +18% base damage; its owner gets only the armor and mana), Battle Armor (allies and
+  allied buildings +30 attack speed and +5 armor; enemies and enemy buildings -5 armor), Frost Plate (enemies -40
+  attack speed), Guard Boots (+2.5 health regen, +17 below 25% health, +1.5 mana regen), War Drum (+15 speed, +2.5
+  regen). Burning Cape burns enemies within 650 for 60 magic damage a second (Fire). One copy of each aura counts.
+* Actives: Blast Rod 400/500/600/700/800 magic damage (27-15 s); Net Staff roots every enemy in a 325 area for 2 s
+  (a net flies at each at 1900); Storm Hammer's chain lightning 25% for 180 to 12 targets, Static Charge on an ally for
+  12 s (20% when attacked, 225 to up to 4 enemies within 900, 1 s apart); Frost Plate's ring spreads at 400 to 825:
+  225 damage and -40% speed for 4 s; Leech Blade +145% lifesteal for 6 s; Guard Boots heal 325 and 200 mana in 1200
+  and basic dispel their owner; Team Shield: allies within 1200 block 70 + 2% of its owner's health from every attack
+  for 7 s; War Drum: +35 attack speed and +13% speed for 6 s in 1200 (Dota's charges are left out: *chosen*); Crash
+  Knife jumps like the Jump Knife, then 100 + 50% strength magic damage, 100% strength over 6 s and a 50% / -50 slow
+  within 800. Travel Boots teleport with no scroll to an allied building or creep (40 s cooldown).
+* Giant Heart regenerates 1% of max health and 1.5% of missing health a second (this patch's values).
+
+## Tock, the Clockmaker and Kragg, the Magnet Knight (`sim_kits2.gd`; ours, run 2026-10-15 b)
+
+Every number below is *chosen* (no Dota hero is copied); the owner may tune them in `sim_data.gd`.
+* **Tock** (ranged intelligence, Light; Str 19 +2.0, Agi 17 +1.7, Int 25 +3.2, damage 21-27, range 575, speed 295):
+  Time Bolt (Q, line 1000 at 1400, 120 wide: 90/150/210/270 magic, enemy cooldowns 30/40/50/60% slower for 4 s;
+  10-7 s), Fast Forward (W, ally 700: cooldowns 40/60/80/100% faster and 10-22% speed for 5 s; 18-12 s), Rewind (E: back
+  to where he stood 3 s ago with that health, and that mana less the cost, basic dispel, disjoint; 28-16 s), Slow
+  Field (D, 350 area for 5 s: 30-45% slower, -40 to -100 attack speed; 18-12 s), Quick Hands (F, passive: each spell
+  cuts his other cooldowns by 1/1.5/2/2.5 s), Stop Time (R, 400 area: enemies stunned and their cooldowns frozen for
+  2.5/3/3.5 s, through Spell Shield; 110/95/80 s).
+* **Kragg** (melee strength, Lightning; Str 25 +3.1, Agi 14 +1.6, Int 17 +1.8, damage 31-37, armor 2, speed 300):
+  Charges on enemies (one counter per unit, up to 5, 10 s). Iron Grip (Q, enemy 650: both slide to meet halfway in
+  0.3 s, 80-200 magic, stun 0.8-1.4 s, +2 Charges; 14-11 s), Repel (W, 375: 60-180 magic, a physics push 25% stronger
+  per Charge, 30% slow 2 s, crashes 40-130 and 0.8 s stun, +1 Charge; 13-10 s), Magnetize (E, passive: attacks add a
+  Charge; each Charge +3/4/5/6% damage from his spells), Overload (D, 800: 45/65/85/105 magic per Charge, Charges used,
+  heals 35%; 16-10 s), Magnet Field (R, 6 s: enemies within 700 dragged toward him at 60/80/100 + 15 per Charge, +1
+  Charge a second; at the end 100/175/250 and a 1/1.5/2 s stun within 300; 100/90/80 s).

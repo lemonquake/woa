@@ -314,6 +314,7 @@ func step() -> void:
 	if profiling: t = _prof("orders", t)
 	combat.update_projectiles()
 	if profiling: t = _prof("projectiles", t)
+	abilities.kits2.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()
@@ -441,6 +442,8 @@ func _pre_unit(u: SimUnit) -> void:
 		# the fountain's aura lingers 3 s after leaving its radius
 		u.add_modifier({"id": "fountain", "source": -3, "expires": time + C.FOUNTAIN_LINGER, "fountain": true,
 			"fx": "fountain"})
+	if u.cooldown_rate != 0.0:
+		_shift_cooldowns(u)
 	var rates := regen_rates(u)
 	var regen: float = rates.x
 	var mregen: float = rates.y
@@ -460,12 +463,26 @@ func _pre_unit(u: SimUnit) -> void:
 	if not u.knock.is_empty() or not u.leap.is_empty() or not u.hop.is_empty():
 		abilities.update_motion(u)
 
+## Cooldown rate (Tock's Time Bolt, Fast Forward, Stop Time): every running cooldown of the unit's abilities and
+## items moves by the rate each tick: +1 runs twice as fast, -0.4 runs 40% slower, -1 stands still.
+func _shift_cooldowns(u: SimUnit) -> void:
+	var shift := -u.cooldown_rate * C.DT
+	for aid in u.ability_ready:
+		var r := float(u.ability_ready[aid])
+		if r > time:
+			u.ability_ready[aid] = maxf(time, r + shift)
+	for it in u.inventory:
+		if it != null and float(it.get("ready", C.LONG_AGO)) > time:
+			it["ready"] = maxf(time, float(it.ready) + shift)
+
 ## Health and mana restored per second: (total hp, total mana, own hp, own mana). "Own" is the unit's base regen plus
 ## its attributes; the rest (items, auras, consumables, the fountain) is bonus, which the HUD shows separately. Health
 ## restoration amplification (the Heavy Sword family) scales all of it, mana regeneration amplification the mana.
 func regen_rates(u: SimUnit) -> Vector4:
 	var regen := u.hp_regen
 	var mregen := u.mana_regen
+	if u.hp_regen_pct != Vector2.ZERO:
+		regen += u.max_hp * u.hp_regen_pct.x + (u.max_hp - u.hp) * u.hp_regen_pct.y
 	for m in u.modifiers:
 		regen += float(m.get("regen", 0.0))
 		mregen += float(m.get("mana_regen", 0.0))

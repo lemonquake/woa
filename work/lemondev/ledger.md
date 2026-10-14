@@ -172,3 +172,20 @@ Session interrupted; on resume the owner asked to wrap up and build. Only the en
 | N2 latency | 2 | working tree | gate: exported server, real time | n/a | REJECT (68.4 ms > 2 ticks + RTT) then PASS (35 / 38 ms) | gaps between frames counted as stalls raised the jitter buffer; packets waited for the next poll | none |
 | U4 Multiplayer screens | 1-4 | working tree | gate: net_ui_probe (real clicks, two windows) + self-check captures 1080p and real 4K | n/a | REJECT x3, then PASS (gate; self-check look) | in order: titles and buttons on the frames' corner ornaments; empty rows drawn as buttons; frames lost (style box duplicate drops its texture); Stop Hosting stayed on the lobby list; the same server listed twice (127.0.0.1 and its network address); team titles on ornaments, muddy Ready pill, gear icon read as a dot, empty hero panel | blind review UNVERIFIED (no subagents asked for, no Dota lobby frames); 2 probe misses in 6 runs recorded |
 | Integration (G) | 1 | working tree | tests 173/173, check.sh Names OK, net_ui_probe 35/35 + 17/17, view_place_probe PASS, team_probe 11/11, 20-min 5 v 5 bot game, export + dedicated server from the exported build | n/a | PASS (gate, reduced) | performance benchmarks not rerun | main server address from the owner |
+
+## Session 2026-10-15 b (Debug panel, auto-select, unit panel, 10-skill bar, 20 items, icons, Tock and Kragg) — run `work/lemondev/2026-10-15b-ui-items-heroes/` (handoff.md)
+
+No critic subagent was run (none asked for, no Dota reference frames on disk): visual gates are builder self-checks,
+UNVERIFIED for blind review.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| D1 Debug panel | 1 | working tree | gate: hud15_probe 1080p + real 4K (panel inside screen, 27 controls uncut, rest scrolls) | n/a | PASS (gate) | cause: framed box margins ignored by the placement (panel 64 px past the right edge) | none |
+| S1 Auto-select hero | 1 | working tree | gate: hud15_probe (right click, Stop, Hold with a creep / nothing selected) | n/a | PASS (gate) | none | none |
+| S2 Unit panel | 1-2 | working tree | gate + self-check captures (creep, neutral, tower, Throne) | n/a | REJECT then PASS (self-check) | empty 0 / 0 mana bar and a doubled "Neutral" label | none |
+| S3 Skill bar to 10 | 1 | working tree | gate: hud15_probe 6 and 10 skills, keys Q W E D F R / Q W E D F G Y U I R; console art per count | n/a | PASS (gate) | none | none |
+| I1 Cooldown system | 1 | working tree | gate: tests (reduction no stack, rate slower / frozen / faster, items, AoE, cast range) | n/a | PASS (gate) | none | none |
+| I2 Twenty items | 1-2 | working tree | gate: tests (prices and recipes vs items.txt, combine, actives, auras both sides) | n/a | REJECT then PASS | "strongest copy" passive rule changed the bash item order (test_only_one_bash_item_works): limited to chain and block | none |
+| V1 Item and skill icons | 1-2 | working tree | self-check contact sheets (old vs new, 96 and 44 px) | n/a | REJECT then PASS (self-check) | Battle Armor read as Plate Armor | blind review UNVERIFIED |
+| H1 Tock, H2 Kragg | 1-2 | working tree | gate: tests, input probes 13/13 and 6/6, captures | n/a | REJECT then PASS | Rewind refunded its own mana; Stop Time dome too bright | duels / 5 v 5 |
+| T1 Tower ranges on Alt (owner's follow-up) | 1 | working tree | captures with and without Alt (ranges_alt, ranges_none) | n/a | PASS (self-check) | none | none |
