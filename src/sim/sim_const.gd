@@ -129,6 +129,9 @@ const INT_MAGIC_AMP := 0.01 / 20.0
 ## Magic amp from items stacks with diminishing returns: sorted largest first, each source counts half as much as the
 ## one before it (10% + 10% = 15%; 12% + 10% + 10% = 19.5%).
 const ITEM_MAGIC_AMP_FALLOFF := 0.5
+## Cast range from several copies of one source (two Long Lenses, Blast Rods of any level): the largest counts in full,
+## each next copy this much of the one before. Different sources (Long Lens, Blast Rod, talents, buffs) add fully.
+const CAST_RANGE_FALLOFF := 0.5
 const HERO_BASE_HP := 120.0
 const HERO_BASE_MANA := 75.0
 const HERO_BASE_MAGIC_RESIST := 0.25
@@ -197,7 +200,11 @@ const GLYPH_COOLDOWN := 300.0
 const GLYPH_INITIAL_COOLDOWN := 180.0
 const GLYPH_BUILDING_DURATION := 7.0
 const GLYPH_CREEP_DURATION := 3.0
-const GLYPH_EXTRA_TARGETS := 5
+# Fortify's tower buff (owner's rule 2026-10-15, in place of Dota's 5 extra targets): tier 2+ towers, while it lasts
+const GLYPH_SPLASH_RADIUS := 300.0
+const GLYPH_MARK_DAMAGE := 50.0             # physical, per Fortify Mark on the target
+const GLYPH_MARK_TIME := 15.0
+const GLYPH_PROJECTILE_SPEED := 1.5
 ## Team / last-hit gold per building (APPROX): [team gold per hero, last hit min, last hit max]
 const BUILDING_BOUNTY := {
 	"tower1": [90, 150, 150], "tower2": [110, 150, 150], "tower3": [125, 150, 150], "tower4": [125, 150, 150],
@@ -212,8 +219,8 @@ const TP_MANA := 75.0                       # items.txt AbilityManaCost
 # Courier (Dota 7.23 rework, 7.27 flying level, 7.35 hit counts and respawn; npc_units.txt for speed and vision).
 # Its level is its owner's level.
 const COURIER_SPEED := 290.0                # npc_units.txt MovementSpeed
-const COURIER_SPEED_PER_LEVEL := 10.0       # APPROX (wiki: 290 + 10 per level)
-const COURIER_FLY_LEVEL := 4                # 7.27: flying from level 4 (was 5)
+const COURIER_SPEED_PER_LEVEL := 20.0       # owner's rule 2026-10-15 (Dota: 10 per level)
+const COURIER_FLY_LEVEL := 6                # owner's rule 2026-10-15 (Dota 7.27: level 4)
 const COURIER_HITS := 6                     # 7.35: 1 melee hero attack, 2 ranged hero attacks, 6 other attacks
 const COURIER_RESPAWN_BASE := 60.0          # 7.35: 60 + 6 x level
 const COURIER_RESPAWN_PER_LEVEL := 6.0

@@ -69,10 +69,20 @@ func add(e: Dictionary) -> void:
 
 func _process(dt: float) -> void:
 	_now += dt
-	if not lines.is_empty() and (_now - float(lines[-1].t) < SHOW + FADE + 0.5 or is_open()):
+	# the fade needs no more than 30 redraws a second (new lines and typing redraw at once)
+	_redraw_t -= dt
+	if _redraw_t <= 0.0 and not lines.is_empty() and (_now - float(lines[-1].t) < SHOW + FADE + 0.5 or is_open()):
+		_redraw_t = 1.0 / 30.0
 		queue_redraw()
 
+var _redraw_t := 0.0
+
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_body()
+	UiKit.draw_cost("chat", t0)
+
+func _draw_body() -> void:
 	# newest lines last; each wraps onto as many rows as it needs, the name only on its first row
 	var rows: Array = []                   # [[who, text, colour, alpha]]
 	for i in range(lines.size() - 1, -1, -1):

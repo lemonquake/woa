@@ -620,7 +620,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 		var v2 := fx._view_of(int(id))
 		var list: Array = _hearts[id]
 		for i in list.size():
-			var hn: Node3D = list[i]
+			var hn: Node3D = View.live(list[i])
 			if not is_instance_valid(hn) or v2 == null:
 				continue
 			hn.visible = v2.visible
@@ -634,7 +634,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 		if not is_instance_valid(c.node):
 			_curses.erase(uid)
 			continue
-		var cn: Node3D = c.node
+		var cn: Node3D = View.live(c.node)
 		if v3 == null or now - float(c.start) > float(c.total) + 1.0:
 			cn.queue_free()
 			_curses.erase(uid)
@@ -649,7 +649,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 		(c.ring_mat as ShaderMaterial).set_shader_parameter("left", clampf(1.0 - (now - float(c.start)) / float(c.total), 0.0, 1.0))
 	# blizzards stay on Froster
 	for id in _winters:
-		var wn: Node3D = _winters[id]
+		var wn: Node3D = View.live(_winters[id])
 		var v4 := fx._view_of(int(id))
 		if v4 and is_instance_valid(wn):
 			wn.global_position = Vector3(v4.global_position.x, fx.ground_y(View.to2(v4.global_position)), v4.global_position.z)
@@ -658,20 +658,20 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 				vort.rotation.y = now * 1.6
 	# ice blocks and chill follow their units
 	for uid in _blocks:
-		var b: Node3D = _blocks[uid]
+		var b: Node3D = View.live(_blocks[uid])
 		var v5 := fx._view_of(int(uid))
 		if v5 and is_instance_valid(b):
 			b.global_position = v5.global_position
 			b.visible = v5.visible
 	for uid in _chill:
-		var cp: Node3D = _chill[uid]
+		var cp: Node3D = View.live(_chill[uid])
 		var v6 := fx._view_of(int(uid))
 		if v6 and is_instance_valid(cp):
 			cp.global_position = v6.global_position + Vector3(0, 0.25, 0)
 	# shards in flight
 	for i in range(_shards.size() - 1, -1, -1):
 		var s: Dictionary = _shards[i]
-		var sn: Node3D = s.node
+		var sn: Node3D = View.live(s.node)
 		s.t = float(s.t) + dt
 		if not is_instance_valid(sn) or float(s.t) >= float(s.life):
 			if is_instance_valid(sn):
@@ -686,7 +686,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	# breath sheets sweep out and thin away; their ground frost lingers, then melts
 	for i in range(_fans.size() - 1, -1, -1):
 		var fa: Dictionary = _fans[i]
-		var fan: MeshInstance3D = fa.node
+		var fan: MeshInstance3D = View.live(fa.node)
 		fa.t = float(fa.t) + dt
 		if not is_instance_valid(fan) or float(fa.t) >= float(fa.life):
 			if is_instance_valid(fan):
@@ -700,7 +700,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	# frost on the ground spreads, then melts away
 	for i in range(_frosts.size() - 1, -1, -1):
 		var f: Dictionary = _frosts[i]
-		var fnode: MeshInstance3D = f.node
+		var fnode: MeshInstance3D = View.live(f.node)
 		f.t = float(f.t) + dt
 		if not is_instance_valid(fnode) or float(f.t) >= float(f.life):
 			if is_instance_valid(fnode):
@@ -750,7 +750,7 @@ func _scan(w: SimWorld) -> void:
 	_sync(_chill, want_chill, _make_chill)
 	for id in _winters.keys():
 		if not want_winter.has(id):
-			var n: Node3D = _winters[id]
+			var n: Node3D = View.live(_winters[id])
 			if is_instance_valid(n):
 				fire.timed(n, 0.0)
 				for mi in n.find_children("*", "MeshInstance3D", true, false):

@@ -325,6 +325,11 @@ func camp_units(camp_id: int) -> Array:
 
 func spawn_neutrals() -> void:
 	var ups := mini(int(maxf(0.0, w.time) / C.NEUTRAL_UPGRADE_INTERVAL), C.NEUTRAL_MAX_UPGRADES)
+	# camps that still have living creeps (one pass over the units, not one per camp)
+	var alive_in := {}
+	for o in w.units:
+		if o.alive and o.kind == K.NEUTRAL_CREEP and o.camp_id >= 0:
+			alive_in[o.camp_id] = true
 	for c in w.map.camps:
 		if _camp_occupied(c):
 			continue
@@ -336,11 +341,7 @@ func spawn_neutrals() -> void:
 		camp_group[c.id] = gi
 		# creeps of this camp still alive outside the box: this spawn is a stack
 		var stacker := -1
-		var stacking := false
-		for o in w.units:
-			if o.alive and o.camp_id == c.id and o.kind == K.NEUTRAL_CREEP:
-				stacking = true
-				break
+		var stacking := alive_in.has(c.id)
 		if stacking:
 			stacker = int(camp_puller.get(c.id, -1))
 		else:
@@ -448,7 +449,7 @@ func _unit_auras(u: SimUnit) -> void:
 				continue
 			var st: Dictionary = a.get("hero_stats", a.stats) if o.is_hero() else a.stats
 			o.add_modifier({"id": String(a.id), "source": -40, "expires": w.time + 0.5 + 6.0 * C.DT, "stats": st,
-				"aura": true})
+				"aura": true, "by": u.id})
 
 ## A creep's attack landed on `t` for `dmg` (before armor): its on-hit effect (Goblin Digger's disarm, Swamp Troll's
 ## break; each with its own cooldown) and splash (Lava Golem: full damage to enemies around the target). Off while

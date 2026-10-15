@@ -1,0 +1,43 @@
+  Ancient Light calls: teamfights 106, ganks 66, pushes 23 (chained on 12), towers lost 5, bots unstuck 8
+  Black Sun calls: teamfights 70, ganks 42, pushes 20 (chained on 2), towers lost 9, bots unstuck 6
+seed 32: Ancient Light won at 53:38 (578.8 s real)
+  Ancient Light (towers lost 5):
+    Bot Ann  kragg         role 3 top   8/12/26 lvl 26 LH  60 DN 13 nw 14198 | lane 17%, retreat 12%, fight 5%, heal 5%, task 36%, farm 25%
+             items: ["magic_wand", "spell_shield", "slip_boots", "quelling_blade", "tough_band", "jump_knife"]
+    Bot Bob  tock          role 5 bot   5/ 8/37 lvl 26 LH  44 DN  7 nw 13110 | lane 16%, fight 5%, retreat 10%, heal 4%, ward 8%, pull 0%, task 35%, stack 4%, farm 19%
+             items: ["mana_boots", "magic_wand", "war_drum", "long_lens", "time_crystal"]
+    Bot Cat  azrin         role 2 mid  45/ 7/25 lvl 30 LH 183 DN 15 nw 34572 | lane 17%, retreat 8%, fight 4%, task 38%, farm 29%, heal 4%
+             items: ["magic_wand", "spell_shield", "time_crystal", "smart_band", "mana_boots", "dagon", "clarity", "push_staff", "kugmo_atuli"]
+    Bot Dan  caziel        role 1 bot  26/12/24 lvl 27 LH 114 DN 16 nw 21562 | lane 18%, fight 4%, retreat 9%, heal 5%, farm 30%, task 33%
+             items: ["spell_shield", "power_treads", "mask_of_madness", "wraith_band", "quelling_blade", "magic_wand", "crit_sword", "salve", "yasha"]
+    Bot Eve  froster       role 4 top  15/11/26 lvl 26 LH  95 DN  3 nw 18110 | lane 16%, fight 7%, retreat 8%, task 39%, stack 5%, ward 9%, farm 15%, heal 2%
+             items: ["spell_sword", "guard_boots", "push_staff", "magic_wand", "war_drum", "net_staff"]
+  Black Sun (towers lost 9):
+    Bot Fay  kragg         role 3 bot   6/19/10 lvl 20 LH 139 DN  9 nw 11455 | lane 20%, retreat 9%, fight 2%, heal 7%, task 31%, farm 31%
+             items: ["magic_wand", "spell_shield", "slip_boots", "quelling_blade", "tough_band", "spike_armor", "jump_knife"]
+    Bot Gus  tock          role 5 top   3/23/10 lvl 20 LH  28 DN 15 nw  7167 | lane 21%, fight 3%, retreat 13%, pull 0%, task 31%, heal 2%, ward 11%, stack 4%, farm 13%
+             items: ["mana_boots", "observer_ward", "magic_wand", "war_drum", "long_lens"]
+    Bot Hal  azrin         role 2 mid  24/16/ 9 lvl 28 LH 152 DN 13 nw 21879 | lane 22%, fight 7%, retreat 10%, task 27%, heal 5%, farm 29%
+             items: ["spell_shield", "time_crystal", "dagon", "smart_band", "magic_wand", "mana_boots", "push_staff", "kugmo_atuli"]
+    Bot Ivy  caziel        role 1 top   8/23/ 6 lvl 20 LH  71 DN  2 nw  8578 | lane 18%, fight 3%, retreat 11%, heal 9%, task 31%, farm 29%
+             items: ["magic_wand", "spell_shield", "power_treads", "wraith_band", "quelling_blade", "mask_of_madness"]
+    Bot Jo   froster       role 4 bot   9/20/12 lvl 22 LH  81 DN  9 nw  9903 | lane 18%, fight 4%, retreat 12%, task 32%, stack 5%, farm 20%, ward 7%, heal 2%
+             items: ["push_staff", "observer_ward", "medic_kit", "war_drum", "magic_wand", "spell_sword", "mana_boots"]
+  at 10:00 LH/net worth: Ann 9/1064, Bob 0/757, Cat 19/1958, Dan 20/1936, Eve 9/1814, Fay 22/1880, Gus 4/1701, Hal 22/2262, Ivy 16/1323, Jo 3/1930 | team net worth 7529 vs 9096
+  at 20:00 LH/net worth: Ann 17/2112, Bob 11/2743, Cat 55/5883, Dan 48/5567, Eve 30/3242, Fay 38/3994, Gus 8/3347, Hal 51/4780, Ivy 28/2601, Jo 43/4583 | team net worth 19547 vs 19305
+  totals: kills 99 vs 50, net worth 101552 vs 58982
+  stuck: ["Bot Ivy stuck at (5238.0, 2251.0) (farm) from 13:15", "Bot Eve stuck at (-5428.0, 5375.0) (task) from 23:13", "Bot Fay stuck at (-5303.0, -505.0) (task) from 38:34", "Bot Jo stuck at (-5277.0, -588.0) (task) from 49:37"]
+  chat lines: 514
+    [-1:29] Ancient Light Bot Ann: I'll go top.
+    [-1:29] Ancient Light Bot Bob: I'll support Bot Dan in the bottom lane.
+    [-1:29] Ancient Light Bot Cat: I'll go mid.
+    [-1:29] Ancient Light Bot Dan: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Eve: I'll support Bot Ann in the top lane.
+    [-1:29] Black Sun Bot Fay: I'll go bottom.
+    [-1:29] Black Sun Bot Gus: I'll support Bot Ivy in the top lane.
+    [-1:29] Black Sun Bot Hal: I'll go mid.
+    [-1:29] Black Sun Bot Ivy: I'll farm the top lane (safe lane).
+    [-1:29] Black Sun Bot Jo: I'll support Bot Fay in the bottom lane.
+    [0:44] Ancient Light Bot Bob: Going for Kragg.
+    [0:47] Black Sun Bot Jo: Going for Caziel.
+wins: Ancient Light 1, Black Sun 0

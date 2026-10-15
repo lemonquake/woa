@@ -4,6 +4,108 @@
 
 ## Status (keep this section current)
 
+**2026-10-15 f: regen readout, Rejuvenation Orb, tower shots, Fortify, courier, Fast Forward (your list).**
+* **Regen readout**: each bar shows the total per second, large, at its right end (+43.5); at its left end, how it adds
+  up: own + bonus (3.5 + 40.0), and a healing cut as its own red term (3.5 - 2.1). Nothing to add: the total alone.
+  Hover a bar: "Regenerates 43.5 per second", "Own 3.5 + bonus 40.0", the cut if any, "Full in 6 s at this rate".
+* **Rejuvenation Orb** (your name; was Water Orb): already came only at 2:00 and 4:00, and a test now holds it to that
+  (none to 30:00). New look: a bright purple heart in a glassy rim-lit shell with a turning halo and motes.
+* **Tower shots**: Ancient Light fires a lance of sunlight (white-hot core, gold sheath, gold trail) that strikes with a
+  spike of light, gold sparks and a small ring; Black Sun fires a small black sun with a crimson corona (it faces the
+  camera, so it reads as an eclipse from any angle) that swells and collapses on impact, bursts crimson and cracks the
+  ground. Fortified shots are a third bigger.
+* **Fortify**: every building of the team stands in light while it lasts: Ancient Light a gold shell with light rising
+  through it, a beam from the sky and a turning halo; Black Sun a shadowy violet veil with a crimson rim and a black sun
+  over the roof. Both fade in and out. Tier 2+ towers meanwhile: splash 300, shots 50% faster, Fortify Mark (15 s,
+  each adds 50 physical damage to their shots; it shows in the buff bar). This replaces Dota's "5 extra targets" (say
+  if you want both). Allies see "<name> used Fortify" in the kill feed and a note over the panel. A team of bots
+  presses it for a building in danger; a team with a human leaves it to the humans. The button's tooltip no longer
+  blinks (it vanished between the minimap's redraws because the button is outside the minimap's rectangle).
+* **Courier**: 290 + 20 speed per hero level; flies straight over trees, cliffs and walls from its hero's level 6.
+* **Fast Forward**: no more faster cooldowns; it takes 2 / 3.5 / 5 / 6.5 s off the target's basic spell cooldowns at
+  once (not the ultimate, not items) and keeps its 5 s speed boost. Talent: "+1.5s Fast Forward cooldown cut".
+Run `work/lemondev/2026-10-15f-regen-fortify/` (contract.md, handoff.md). Evidence: headless tests 200 passed,
+0 failed (new: Rejuvenation timing, Fortify splash / marks / speed, bot Fortify, updated courier and Fast Forward);
+`tests/tools/fortify_probe.gd` 14/14 at 1080p (the Fortify tooltip up on 60 of 60 frames while hovered) and 12/12 in a
+real 4K frame (two hover checks skipped there: frame larger than the monitor); a 45-minute 5 v 5 bot game (`bot_game.txt`): bots pressed Fortify 10 times (5 each side, from
+12:28), no script errors, no winner at 45:00 (Black Sun far ahead; earlier games ended at 50-60 min, and stronger
+Fortified towers may lengthen them: watch this); "Names OK"; `build/WarriorsOfAether.exe` rebuilt 2026-10-15 15:14, cold start into a Kragg match in 9.8 s,
+no script errors (`shots/export_f.png`). Not done: blind critic review.
+
+**2026-10-15 e: buff bar (your request and screenshot).** The place you marked over the skills now shows every buff,
+debuff, aura and status on the unit the bottom panel shows (your hero, an ally, an enemy, a creep, a tower, your
+courier). Buffs sit on the left with a green rim, debuffs on the right with a red rim, like Dota. Each instance is its
+own icon (Stench from two Sludges is two icons, every burn is its own); Kragg's Charges show their count. Timed
+effects darken clockwise as they run out, like a cooldown, with the seconds along the bottom; auras have no timer and a
+thin inner rim. Hover: name, buff or debuff (or ally / enemy aura), who applied it, what it does ("Moves 20% slower.",
+"-5 armor.", "Broken: its passive abilities do nothing."), time left of its full length, and whether a dispel removes
+it. Debuffs include stuns, slows, silences, roots, disarms, hexes, mutes, Break, lowered stats (armor and attack speed
+loss), more damage taken, healing cuts, reveals, burns and enemy auras. When a row fills it grows upward (three rows),
+then the icons shrink, then each side's last slot becomes "+N" listing the rest. Clicking an icon gives no move order.
+The creep panel's old small status icons are replaced by the bar. Run `work/lemondev/2026-10-15e-buff-bar/`
+(contract.md, handoff.md). Evidence: headless tests 197 passed, 0 failed (new `test_buff_bar_entries`);
+`tests/tools/buff_probe.gd` 29/29 at 1080p and 20/20 in a real 4K frame (hover checked at 1080p only: the 4K frame is
+larger than this monitor); `tests/tools/modifier_census.gd` (three 30-minute bot games, all eight heroes): all 56
+effect kinds seen have names except Sludge's own hook lock, which is hidden as in Dota; "Names OK". Captures in the
+run's `shots/`. Not done: blind critic review (none asked for); the exported build was not rebuilt.
+
+**2026-10-15 d: cast range fixed (your report).** Long Lens and other cast range bonuses now reach everything that
+should grow: spell cast ranges (talents and upgrades that change a spell's range count too; they were ignored), line
+shots' reach (hook, arrow, javelin), Leap Strike's search radius and Jump Knife. The targeting ring showed the bare
+range (and unit spells showed your attack range): it now shows the real cast range, and the ability tooltip says
+"Cast range N (+bonus)". Stacking (your rule): copies of one item add half as much each (two Long Lenses +337.5),
+Blast Rod levels count as one source, different sources add fully. Rules: `docs/MECHANICS.md`, "Cooldowns, spell area,
+cast range". Evidence: headless tests 196 passed, 0 failed (new `test_cast_range_stacking_and_reach`); input probes
+Sludge 12/12, Kragg 8/8; "Names OK"; `build/WarriorsOfAether.exe` rebuilt (below).
+
+**2026-10-15 c: performance in teamfights, bot laning / teamfights / ganks / pushes, more learning, Quick cast.**
+Run `work/lemondev/2026-10-15c-perf-feel-ai/` (contract.md: request, components, conditions; handoff.md: tools and
+file map). Evidence on the final working tree:
+* **Teamfight frame time** (a new real teamfight bench: ten heroes at level 16 with items brawling in mid at 10:00,
+  ~220 units, 1080p, RTX 4060, V-Sync off; three alternating runs each against `81efd48` plus the same bench harness,
+  `bench_ab_final.txt`): average **41 -> 48 fps** (24.2 -> 20.7 ms), p95 39 -> 33 ms, p99 53-61 -> 41-43 ms, worst
+  frame 102-134 -> 61-66 ms, script errors ~510 per run -> 0. This is better, not "perfect": a full level-16 brawl is
+  still under 60 fps on this PC (what is left, per frame: the 30 Hz simulation tick ~8 ms when it runs, engine
+  deferred work ~5 ms, drawing ~6 ms). A background process (`UninstallMonitor`, not ours) held one CPU core all session.
+* Simulation in that fight (headless `sim_profile.gd --fight`): ticks over 15 ms in two minutes 24 -> 2, worst tick
+  30 -> 17 ms, mean tick 5.1 -> 4.7 ms.
+* **Bots**: lone last hits in 8 minutes of mid (`lh_lab.gd`, five heroes): 17-31 -> 37-47. Teamfight A/B (mirrored
+  lineups, team engage on for one side only, sides swapped, 8 games): the side with it ahead in net worth 6 of 8
+  (average +4.5k) and kills 5 of 8 (+4.9). **Games end now: 3 of 4 60-minute games had a winner** (50:02, 57:07,
+  59:55; the fourth was 99-54 in kills at 60:00); before this run no bot game had ended. Carries' last hits at 10:00
+  rose from 5-13 to 16-23 (Dota's bots get ~40: still the largest gap).
+* **Learning**: not shown to help yet. Two learning A/B runs (`learn_ab_v1`, `learn_ab_v2`: three memories trained
+  over three games each, then played against fresh bots from both sides, against a control): the learned side did
+  better than the control as Ancient Light (+2.9k net worth) and worse as Black Sun (-6.4k). Per-hero last-hit timing
+  learning drifted the wrong way in contested lanes and was removed; teamfight and gank learning are kept.
+* Headless tests: 195 passed, 0 failed (188 + 7 new). `sh tools/check.sh`: no parse errors, "Names OK".
+* Input probes with Quick cast: Sludge 12/12, Azrin 14/14 (the key alone casts at the mouse).
+* Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-15 12:29; cold start into a Froster match in 11.6 s, no script
+  errors (`shots/export_froster.png`).
+
+What changed (details and the file map in the run's `handoff.md`):
+* **Fight lag**: Froster's effects hit a script error every frame once he froze or chilled anyone (a freed effect node
+  put into a typed variable), and printing it cost ~10 ms a frame; the same pattern was fixed in 48 more places
+  (`View.live`). The HUD portrait drew the whole world a second time (now only the shown unit, every other frame).
+  Simulation spikes: bots and team brains no longer all think on the same tick; the sight cache is no longer wiped
+  when a tree falls; repeated estimates are cached; the minimap, kill feed, chat and scoreboard draw less often or in
+  one batch; the hover pick and ground ray are cheaper; Spike Armor thorns share one mesh. Options > Video: Low and
+  Medium use one shadow cascade.
+* **Bots**: better last-hit timing; **teamfights as a team** (the team brain weighs both groups, calls "Fight! Focus
+  their ...", and everyone near commits to one target); **ganks** gather out of sight behind the target and strike
+  together, and laning-phase "ganks" by the lane partner are gone; wave clearing after the laning phase; honest camp
+  checks (no more walking back to a camp that nearly killed them); teleport back to lane from the base; regen by
+  courier instead of walking home; Mana Potions used; from 20:00 pushes when even, from 25:00 the whole team pushes
+  together and goes on building after building, tanking tower shots in turn; stuck bots walk out; supports stop
+  stacking late.
+* **Quick cast** (Options > Game, off by default): a spell or item key casts at the mouse with no second click.
+* Ribbon trails no longer streak across the map after a teleport.
+
+Needs you: veto any name in "Names added 2026-10-15 c"; try Quick cast. Known issue (not new: the old build does it
+too): after a long fight benchmark the game can crash on quit (an engine "Leaked instance dependency" warning first);
+normal quits are clean.
+Not verified: no blind critic review (none asked for; the changes are measured, the small visual ones are self-checks).
+
 **2026-10-15 b: Debug panel fix, auto-select, unit panel, 10-skill bar, cooldown system, 20 items, new icons, Tock
 and Kragg, tower ranges on Alt.** Run `work/lemondev/2026-10-15b-ui-items-heroes/` (handoff.md there: plan, file map,
 how-to, state). Evidence on the final working tree (uncommitted):
@@ -168,6 +270,10 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   and name, and the lane you want. Presets: 5 vs 5, 1 vs 1 mid. **Start** goes to the Hotkeys screen and the match.
 * Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
 * Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 155 tests.
+* Teamfight benchmark (the one that matters for lag in fights): `godot --path . res://src/game/main.tscn -- --bench=40
+  --t=600 --fight --autoplay --lineup=ezee,azrin,froster,sludge,tock,blood_ranger,caziel,kragg,azrin,froster
+  [--bench_shot=png]`: prints frame times and the cost of every part (see `work/lemondev/2026-10-15c-perf-feel-ai/
+  handoff.md`). Function-level profile: `python tools/gd_profile.py [--game] -- <args>`.
 * Benchmark: `godot --path . res://src/game/main.tscn -- --bench=60 --t=240 --autoplay` writes `work/bench.txt`. Last measured 2026-10-12 on the new map at 1080p on the RTX 4060 with the HUD (`--bench=50`): 77 fps average, p95 16.67 ms.
 * Screenshot capture (renders, saves, quits): `godot --path . res://src/game/main.tscn -- --capture=work/shots/x.png --t=95 --cam=-1500,-1300 [--autoplay] [--zoom=1.1]`. `--autoplay` lets a bot drive your hero too.
   * `--hero=sludge --bot_hero=blood_ranger` pick the heroes (blood_ranger, ezee, sludge); `--frames=30,34,38` saves several frames;
@@ -219,6 +325,7 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | S | Stop (the hero still auto-attacks enemies in range). Hold S: the hero is stopped again every frame and every order is refused until you let go; held over 0.35 s it stays a hard stop (no auto-attack until your next order) |
 | H | Hold position |
 | Shift + any order or hotkey | Queue it, as in Dota: orders run one after another; a queued spell still cooling down is checked again when its turn comes. Holding Shift shows the queue as numbered waypoints (green move, red attack, blue spell or item, gold hold) |
+| Quick cast (Options > Game) | With it on, an ability or item key casts at once at the mouse (on the unit under it), with no click; over the interface, or with no valid unit under the cursor, the targeting cursor shows as usual |
 | Q W E R (D F G Y U I) | Abilities. Heroes with more than 4 skills use Dota's layout: the last (ultimate) stays on R, the extra ones take D, F, G, Y, U, I (Tock: Q W E D F R; Kragg: Q W E D R). With nothing of yours selected, an ability, item, Stop, Hold, Attack, Teleport key or a right click selects your hero first. No-target spells and toggles (Stench) act at once. Point and unit spells show a pulsing crosshair: red for spells aimed at enemies, green for support (allies, yourself, a place); items too. A click that misses a valid target keeps the cursor and says why; right click or Esc cancels |
 | Ctrl + an ability's hotkey, or the "+" above an ability | Learn the ability (unless that Ctrl combination is bound to something else) |
 | Right click an ability button | Toggle autocast (Frost Quiver) |
@@ -602,11 +709,33 @@ Run `work/lemondev/2026-10-14-elements-azrin/` (contract in `contract.md`). Rule
 * Elements chosen for existing units (veto freely): Blood Ranger Nature, Ezee Dark, Sludge Earth; creeps by team (Light,
   Dark); towers Earth; neutrals as listed in MECHANICS.md.
 
+## Names added 2026-10-15 f (veto any you dislike)
+
+* **Rejuvenation Orb** (your name). **Fortify Mark** (the tower mark in the buff bar).
+* Talent: "+1.5s Fast Forward cooldown cut".
+* Texts: "Regenerates N per second", "Own N + bonus N", "Healing cut: -N", "Full in N s at this rate", "<name> used
+  Fortify", "You used Fortify: buildings protected for 7 s", "Ready in N s", "Fortified towers hit it for N more
+  physical damage (N marks).", Fortify's new tooltip lines.
+
+## Names added 2026-10-15 e (veto any you dislike)
+
+* Buff bar effect names: Stunned, Bashed, Frozen, Burning, Fountain, Flying, Health Regen Aura, Mana Regen Aura,
+  Invisible (wards), Revealed (Reveal Dust), Armor Loss (corruption), Charge (Kragg's counter), Tired (after Unholy
+  Might), Curse (Tainted Touch's curse), Static Charge. Everything else uses its ability, item or aura name.
+* Tooltip words: Buff, Debuff, Aura (ally), Aura (enemy), "from <name>", "its own", "N s left of M", "Lasts while in
+  range", "Any dispel removes it", "Only a strong dispel removes it", "N more buffs" / "N more debuffs".
+
+## Names added 2026-10-15 c (veto any you dislike)
+
+* Options > Game: **Quick cast** (with the note "Quick cast: a spell or item key casts at once where the mouse points
+  (on the unit under it), with no second click."). The bots' learning summary adds "Teamfights called: N (won M)".
+* Bot chat: "Fight! Focus their <hero>." (a teamfight call), "Keep going, their <building> next." (a push moving on).
+
 ## Names added 2026-10-15 b (veto any you dislike)
 
 * Heroes: **Tock**, title the Clockmaker; skills Time Bolt, Fast Forward, Rewind, Slow Field, Quick Hands, Stop Time.
   **Kragg**, title the Magnet Knight; skills Iron Grip, Repel, Magnetize, Overload, Magnet Field; Charges. Talents:
-  "+70 Time Bolt damage", "+2 Mana Regen", "+15% Slow Field slow", "+30% Fast Forward speed", "-6s Rewind cooldown",
+  "+70 Time Bolt damage", "+2 Mana Regen", "+15% Slow Field slow", "+1.5s Fast Forward cooldown cut" (was "+30% Fast Forward speed"), "-6s Rewind cooldown",
   "+1s Quick Hands", "+1s Stop Time", "+30% Time Bolt delay", "+80 Iron Grip damage", "+6 Armor", "-3s Repel
   cooldown", "+2 max Charges", "+25 Overload damage per Charge", "+40 Magnet Field pull", "+1s Magnet Field stun",
   "+2 Iron Grip Charges".
@@ -641,6 +770,14 @@ Run `work/lemondev/2026-10-14-elements-azrin/` (contract in `contract.md`). Rule
   "This server needs a password", "The server is full", "The lobby leader removed you".
 
 ## Backlog: smallest next actions first
+
+0. Bots (2026-10-15 c): carries still farm about half what Dota's bots do by 10:00 (the safe-lane wave drifts to the
+   enemy's tower and the carry gets zoned: lane control, pulls, standing back); games end but late (50-60 min);
+   learning has not yet been shown to make bots stronger (`tests/tools/learn_ab.sh`, more games per arm).
+0. Performance: a level-16 ten-hero brawl runs at ~48 fps on the RTX 4060 PC; the rest is the 30 Hz simulation tick
+   (~8 ms when it runs), engine deferred work and drawing. Next levers: spread the bots' thinking across frames,
+   animate crowds of creeps at a lower rate, or move the simulation's hot loops to C++ (GDExtension; needs a compiler
+   and lockstep checks).
 
 0. Multiplayer: set the main server's address (see Status); a blind review of the new screens; a test over the
    internet between two real machines (only this PC was used).

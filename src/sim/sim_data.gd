@@ -48,6 +48,10 @@ static func unit(id: String) -> Dictionary:
 	_ensure()
 	return _units.get(id, {})
 
+static func units() -> Dictionary:
+	_ensure()
+	return _units
+
 static func has_unit(id: String) -> bool:
 	_ensure()
 	return _units.has(id)
@@ -510,8 +514,8 @@ static func _build_abilities_15b() -> void:
 	_abilities["fast_forward"] = {"id": "fast_forward", "name": "Fast Forward", "behavior": "unit", "key": "W",
 		"target_team": "ally", "max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [18, 16, 14, 12], "cast_point": 0.2,
 		"range": 700, "anim": "cast_quick", "element": "light",
-		"values": {"rate": [0.4, 0.6, 0.8, 1.0], "move_pct": [0.10, 0.14, 0.18, 0.22], "duration": [5, 5, 5, 5]},
-		"desc": "Winds an ally (or Tock) forward for 5 seconds: its cooldowns run 40 / 60 / 80 / 100% faster and it moves faster."}
+		"values": {"cut": [2.0, 3.5, 5.0, 6.5], "move_pct": [0.10, 0.14, 0.18, 0.22], "duration": [5, 5, 5, 5]},
+		"desc": "Winds an ally (or Tock) forward: 2 / 3.5 / 5 / 6.5 seconds come off the cooldowns of its basic spells (not its ultimate, not items), and it moves 10 / 14 / 18 / 22% faster for 5 seconds."}
 	_abilities["rewind"] = {"id": "rewind", "name": "Rewind", "behavior": "no_target", "key": "E", "immediate": true,
 		"max_level": 4, "mana": [75, 75, 75, 75], "cooldown": [28, 24, 20, 16], "cast_point": 0.0, "range": 0,
 		"element": "light", "values": {"back": [3, 3, 3, 3]},
@@ -626,7 +630,7 @@ static func _build_talents() -> void:
 	_talent("tock_bolt_damage", "+70 Time Bolt damage", [{"ability": "time_bolt", "add": {"damage": 70.0}}])
 	_talent("tock_mana_regen", "+2 Mana Regen", [], {"mana_regen": 2.0})
 	_talent("tock_field_slow", "+15% Slow Field slow", [{"ability": "slow_field", "add": {"slow": 0.15}}])
-	_talent("tock_forward_rate", "+30% Fast Forward speed", [{"ability": "fast_forward", "add": {"rate": 0.3}}])
+	_talent("tock_forward_rate", "+1.5s Fast Forward cooldown cut", [{"ability": "fast_forward", "add": {"cut": 1.5}}])
 	_talent("tock_rewind_cooldown", "-6s Rewind cooldown", [{"ability": "rewind", "add": {"cooldown": -6.0}}])
 	_talent("tock_hands", "+1s Quick Hands", [{"ability": "quick_hands", "add": {"cut": 1.0}}])
 	_talent("tock_stop_duration", "+1s Stop Time", [{"ability": "stop_time", "add": {"duration": 1.0}}])
@@ -991,7 +995,7 @@ static func _build_items() -> void:
 	# Aether Lens (Long Lens): +225 cast range
 	_it("long_lens", "Long Lens", 2275, {"stats": {"mana": 300.0, "mana_regen": 2.5, "cast_range_max": 225.0},
 		"category": "upgrades", "components": ["mana_gem", "mana_stone"], "recipe_cost": 775,
-		"text": "+225 cast range for spells and items (several of these do not stack)."})
+		"text": "+225 cast range for spells and items. A second Long Lens adds half as much, a third a quarter."})
 	# Overwhelming Blink (Crash Knife): a Jump Knife whose landing hurts and slows enemies within 800
 	_it("crash_knife", "Crash Knife", 6800, {"use": "jump", "cooldown": 15.0, "stats": {"str": 25.0}, "category": "upgrades",
 		"components": ["jump_knife", "war_axe"], "recipe_cost": 1750,

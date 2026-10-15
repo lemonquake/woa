@@ -38,6 +38,7 @@ func stop() -> void:
 	target = null
 
 static var cost_us := 0                     # benchmark: total time spent rebuilding trails
+const JUMP := 6.0                           # metres moved in one frame that count as a jump, not a motion
 
 func _process(dt: float) -> void:
 	var t0 := Time.get_ticks_usec()
@@ -51,6 +52,9 @@ func _step(dt: float) -> void:
 		_pts.pop_front()
 	if target != null and is_instance_valid(target) and not _stopping and emitting:
 		var gp := target.global_position
+		# a jump (Town Portal, Jump Knife, a placed unit) starts a fresh ribbon instead of a streak across the map
+		if not _pts.is_empty() and (_pts[-1][0] as Vector3).distance_to(gp) > JUMP:
+			_pts.clear()
 		if _pts.is_empty() or (_pts[-1][0] as Vector3).distance_to(gp) > 0.04:
 			_pts.append([gp, 0.0])
 	elif _pts.is_empty() and (_stopping or target == null or not is_instance_valid(target)):

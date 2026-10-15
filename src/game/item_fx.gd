@@ -175,22 +175,27 @@ func event(e: Dictionary) -> void:
 
 # ---- Thorns, blocks and sweeps ------------------------------------------------------------------------------------------
 
+static var _spike_cyl: CylinderMesh
+static var _spike_mat: StandardMaterial3D
+
+## One thorn. The mesh and material are shared by every thorn (a new pair per thorn cost ~1.6 ms each in fights).
 func _spike_mesh() -> MeshInstance3D:
+	if _spike_cyl == null:
+		_spike_cyl = CylinderMesh.new()
+		_spike_cyl.top_radius = 0.0
+		_spike_cyl.bottom_radius = 0.045
+		_spike_cyl.height = 0.32
+		_spike_cyl.radial_segments = 6
+		_spike_mat = StandardMaterial3D.new()
+		_spike_mat.albedo_color = Color(0.35, 0.06, 0.05)
+		_spike_mat.metallic = 0.9
+		_spike_mat.roughness = 0.25
+		_spike_mat.emission_enabled = true
+		_spike_mat.emission = Color(1.0, 0.15, 0.08)
+		_spike_mat.emission_energy_multiplier = 1.6
 	var mi := MeshInstance3D.new()
-	var c := CylinderMesh.new()
-	c.top_radius = 0.0
-	c.bottom_radius = 0.045
-	c.height = 0.32
-	c.radial_segments = 6
-	mi.mesh = c
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.35, 0.06, 0.05)
-	m.metallic = 0.9
-	m.roughness = 0.25
-	m.emission_enabled = true
-	m.emission = Color(1.0, 0.15, 0.08)
-	m.emission_energy_multiplier = 1.6
-	mi.material_override = m
+	mi.mesh = _spike_cyl
+	mi.material_override = _spike_mat
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return mi
 
@@ -272,7 +277,7 @@ func frame(dt: float) -> void:
 	_follow(dt)
 	for i in range(_thorns.size() - 1, -1, -1):
 		var th: Dictionary = _thorns[i]
-		var n: Node3D = th.node
+		var n: Node3D = View.live(th.node)
 		th.t = float(th.t) + dt
 		var to := fx._chest(int(th.to_id), 0.55)
 		var k := clampf(float(th.t) / float(th.dur), 0.0, 1.0)
@@ -421,7 +426,7 @@ func _follow(_dt: float) -> void:
 	for k in _lasting:
 		var e: Dictionary = _lasting[k]
 		var v := fx._view_of(int(e.id))
-		var n: Node3D = e.node
+		var n: Node3D = View.live(e.node)
 		if v == null or not is_instance_valid(n):
 			continue
 		var base := v.global_position

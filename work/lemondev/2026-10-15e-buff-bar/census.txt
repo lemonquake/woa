@@ -1,0 +1,59 @@
+56 modifier ids seen in 3 games of 30 min
+  aura_mana              Mana Regen Aura          buff 245057 debuff     0 timed     0 untimed 245057 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG,CREEP_SIEGE keys id,source,expires,mana_regen,aura,by,t0
+  aura_regen             Health Regen Aura        buff 21979 debuff     0 timed     0 untimed 21979 on HERO,CREEP_MELEE,CREEP_FLAG,CREEP_RANGED,CREEP_SIEGE keys id,source,expires,regen,aura,by,t0
+  berserk                Frenzy Mask              buff   242 debuff     0 timed   240 untimed     2 on HERO keys id,source,expires,stats,fx,t0
+  blood_ranger           Blood Ranger             buff  3960 debuff     0 timed  3956 untimed     4 on HERO keys id,source,expires,fx,stats,leap_chance,leap_distance,leap_time,leap_cooldown,t0
+  blubber                Blubber                  buff  1442 debuff     0 timed  1431 untimed    11 on HERO keys id,source,expires,block_all,fx,t0
+  break_strike           Break Strike             buff     0 debuff  5826 timed  5826 untimed     0 on HERO,CREEP_RANGED,CREEP_SIEGE,CREEP_MELEE keys id,dur,fx,break,source,by,expires,debuff,from_team,dispel,t0
+  breath_of_cold_slow    Breath of Cold           buff     0 debuff  7689 timed  7689 untimed     0 on CREEP_MELEE,HERO,CREEP_RANGED,NEUTRAL_CREEP,CREEP_SIEGE,CREEP_FLAG keys id,dur,slow,fx,source,by,expires,debuff,from_team,dispel,t0
+  burning                Burning                  buff     0 debuff 15999 timed 15999 untimed     0 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG,NEUTRAL_CREEP,CREEP_SIEGE keys id,source,expires,dur,debuff,dispel,fx,t0 HIDDEN
+  chomp                  Chomp                    buff     0 debuff   377 timed     0 untimed   377 on HERO keys id,source,expires,stun,debuff,fx,t0
+  clarity                Mana Potion              buff 23931 debuff     0 timed 23884 untimed    47 on HERO keys id,source,expires,mana_regen,break_on_damage,fx,t0
+  fast_forward           Fast Forward             buff  3160 debuff     0 timed  3138 untimed    22 on HERO keys id,source,expires,stats,fx,t0
+  flying                 Flying                   buff 436434 debuff     0 timed     0 untimed 436434 on COURIER keys id,source,expires,flying,t0
+  fountain               Fountain                 buff 36657 debuff     0 timed 11448 untimed 25209 on HERO keys id,source,expires,fountain,fx,t0
+  frost_heart_slow       Frost Heart              buff     0 debuff  1340 timed  1340 untimed     0 on HERO,CREEP_RANGED,CREEP_SIEGE,NEUTRAL_CREEP,CREEP_MELEE,CREEP_FLAG keys id,dur,slow,fx,source,by,expires,debuff,from_team,dispel,t0
+  frosted                Frozen                   buff     0 debuff   267 timed   267 untimed     0 on CREEP_FLAG,CREEP_RANGED,CREEP_MELEE,HERO keys id,stun,dur,fx,source,by,expires,debuff,from_team,dispel,t0
+  hook_lock                                       buff     0 debuff   208 timed   190 untimed    18 on HERO keys id,source,expires,root,disarm,mute,face_lock,t0 HIDDEN
+  ice_pulse              Ice Pulse                buff     0 debuff  2620 timed  2620 untimed     0 on HERO keys id,dur,defense_loss,dispel,fx,source,by,expires,debuff,from_team,t0
+  iron_grip              Iron Grip                buff     0 debuff  1350 timed  1350 untimed     0 on HERO keys id,stun,dur,fx,source,by,expires,debuff,from_team,dispel,t0
+  leap_strike_slow       Leap Strike              buff     0 debuff   648 timed   648 untimed     0 on HERO,NEUTRAL_CREEP,CREEP_MELEE keys id,dur,slow,fx,source,by,expires,debuff,from_team,dispel,t0
+  magic_armor_aura       Magic Armor Aura         buff 1572317 debuff     0 timed     0 untimed 1572317 on NEUTRAL_CREEP keys id,source,expires,stats,aura,by,t0
+  magnet_charge          Charge                   buff     0 debuff 29011 timed 28630 untimed   381 on HERO,CREEP_MELEE,CREEP_RANGED,NEUTRAL_CREEP,CREEP_FLAG,CREEP_SIEGE keys id,source,expires,charges,by,fx,debuff,t0
+  magnet_field           Magnet Field             buff  1660 debuff     0 timed  1650 untimed    10 on HERO keys id,source,expires,fx,t0
+  magnet_field_stun      Magnet Field             buff     0 debuff   315 timed   315 untimed     0 on CREEP_RANGED,CREEP_FLAG,CREEP_MELEE,HERO,CREEP_SIEGE keys id,stun,dur,fx,source,by,expires,debuff,from_team,dispel,t0
+  master_of_shadows      Master of Shadows        buff  6138 debuff     0 timed  6120 untimed    18 on HERO keys id,source,expires,minimap_hidden,stats,fx,t0
+  orb_damage             Damage Orb               buff  1960 debuff     0 timed  1957 untimed     3 on HERO keys id,source,expires,fx,stats,dispel,t0
+  orb_healing            Healing Orb              buff   290 debuff     0 timed   288 untimed     2 on HERO keys id,source,expires,regen_pct,hurt_until,fx,dispel,t0
+  orb_magic              Magic Orb                buff  1878 debuff     0 timed  1877 untimed     1 on HERO keys id,source,expires,cdr,mana_cut,fx,dispel,t0
+  orb_shield             Shield Orb               buff  2317 debuff     0 timed  2314 untimed     3 on HERO keys id,source,expires,barrier,fx,dispel,t0
+  orb_speed              Speed Orb                buff  1339 debuff     0 timed  1336 untimed     3 on HERO keys id,source,expires,haste,fx,dispel,t0
+  orb_stealth            Stealth Orb              buff   501 debuff     0 timed   499 untimed     2 on HERO keys id,source,expires,fade_until,invisible,resist,fx,dispel,t0
+  pace_aura              Pace Aura                buff 1737825 debuff     0 timed     0 untimed 1737825 on NEUTRAL_CREEP keys id,source,expires,stats,aura,by,t0
+  pack_aura              Pack Aura                buff 1766700 debuff     0 timed     0 untimed 1766700 on NEUTRAL_CREEP keys id,source,expires,stats,aura,by,t0
+  repel_slow             Repel                    buff     0 debuff  2243 timed  2243 untimed     0 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG,CREEP_SIEGE keys id,dur,slow,fx,source,by,expires,debuff,from_team,dispel,t0
+  salve                  Healing Paste            buff 16665 debuff     0 timed 16586 untimed    79 on HERO keys id,source,expires,regen,break_on_damage,fx,t0
+  slip_boots             Slip Boots               buff   425 debuff     0 timed   420 untimed     5 on HERO keys id,source,expires,phased,stats,fx,t0
+  slow_field             Slow Field               buff     0 debuff  3321 timed  3321 untimed     0 on HERO,CREEP_MELEE,CREEP_FLAG,NEUTRAL_CREEP,CREEP_RANGED,CREEP_SIEGE keys id,dur,slow,stats,fx,source,by,expires,debuff,from_team,dispel,t0
+  snarl                  Snarl                    buff     0 debuff  5669 timed  5669 untimed     0 on HERO,CREEP_MELEE,CREEP_FLAG keys id,dur,stats,fx,source,by,expires,debuff,from_team,dispel,t0
+  spell_shield           Spell Shield             buff  1887 debuff     0 timed  1879 untimed     8 on HERO keys id,source,expires,debuff_immune,stats,fx,t0
+  spike_armor            Spike Armor              buff   373 debuff     0 timed   371 untimed     2 on HERO keys id,source,expires,fx,t0
+  spirit_of_fire_slow    Spirit of Fire           buff     0 debuff  4643 timed  4643 untimed     0 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG,CREEP_SIEGE,NEUTRAL_CREEP keys id,dur,slow,fx,source,by,expires,debuff,from_team,dispel,t0
+  stench                 Stench                   buff     0 debuff 10361 timed  8987 untimed  1374 on HERO,CREEP_MELEE,CREEP_FLAG,NEUTRAL_CREEP,CREEP_RANGED,CREEP_SIEGE keys id,source,expires,slow,heal_reduction,debuff,fx,t0
+  stop_time              Stop Time                buff     0 debuff  1286 timed  1286 untimed     0 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG keys id,stun,dur,stats,fx,source,by,expires,debuff,from_team,dispel,t0
+  stunned                Stunned                  buff     0 debuff 10773 timed 10773 untimed     0 on HERO,CREEP_MELEE,CREEP_FLAG,CREEP_SIEGE,CREEP_RANGED,NEUTRAL_CREEP keys id,stun,dur,fx,source,by,expires,debuff,from_team,dispel,t0
+  swift_dagger_armor     Swift Dagger             buff     0 debuff  2570 timed  2570 untimed     0 on HERO keys id,dur,stats,fx,source,by,expires,debuff,from_team,dispel,t0
+  tainted_curse          Curse                    buff     0 debuff  1256 timed  1256 untimed     0 on HERO,CREEP_RANGED,CREEP_SIEGE keys id,dur,reveal,reveal_r,fx,source,by,expires,debuff,from_team,dispel,t0
+  tainted_touch          Tainted Touch            buff  3419 debuff     0 timed  3402 untimed    17 on HERO keys id,source,expires,tainted,fx,t0
+  tango                  Vegan Picker             buff 17308 debuff     0 timed 17268 untimed    40 on HERO keys id,source,expires,regen,fx,t0
+  thick_hide_aura        Thick Hide Aura          buff 731557 debuff     0 timed     0 untimed 731557 on NEUTRAL_CREEP keys id,source,expires,stats,aura,by,t0
+  time_bolt              Time Bolt                buff     0 debuff  7801 timed  7801 untimed     0 on HERO,CREEP_MELEE,CREEP_FLAG,CREEP_RANGED,NEUTRAL_CREEP,CREEP_SIEGE keys id,dur,dispel,stats,fx,source,by,expires,debuff,from_team,t0
+  touch_of_ember         Touch of Ember           buff     0 debuff 15018 timed 15018 untimed     0 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG,CREEP_SIEGE,NEUTRAL_CREEP keys id,dur,dispel,fx,no_resist,source,by,expires,debuff,from_team,t0
+  unholy_fatigue         Tired                    buff     0 debuff   358 timed   352 untimed     6 on HERO keys id,source,expires,slow,fx,t0
+  unholy_might           Unholy Might             buff  2221 debuff     0 timed  2215 untimed     6 on HERO keys id,source,expires,chance,radius,fx,t0
+  war_drum               War Drum                 buff  5009 debuff     0 timed  4976 untimed    33 on HERO,CREEP_FLAG,CREEP_MELEE,CREEP_SIEGE,CREEP_RANGED keys id,source,expires,stats,fx,t0
+  war_drum_aura          March Aura               buff 58507 debuff     0 timed     0 untimed 58507 on HERO,CREEP_MELEE,CREEP_RANGED,CREEP_FLAG,CREEP_SIEGE keys id,source,expires,stats,aura,by,debuff,t0
+  ward_invis             Invisible                buff 239715 debuff     0 timed     0 untimed 239715 on WARD keys id,source,expires,invisible,t0
+  weapon_grab            Weapon Grab              buff     0 debuff  1229 timed  1229 untimed     0 on HERO,CREEP_MELEE,CREEP_SIEGE keys id,dur,fx,disarm,source,by,expires,debuff,from_team,dispel,t0
+burns: { "fiery_javelin": 9771, "sweet_poison": 2766, "spirit_of_fire": 4697 }
+UNNAMED: hook_lock

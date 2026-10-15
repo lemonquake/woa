@@ -340,9 +340,19 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 static func power(w: SimWorld, h: SimUnit, vs: SimUnit) -> float:
 	if h == null or not h.alive:
 		return 0.0
+	# remembered for the rest of the tick: bots and both brains ask for the same pairs many times
+	if w._power_tick != w.tick:
+		w._power_cache.clear()
+		w._power_tick = w.tick
+	var key := h.id * 100000 + (vs.id if vs != null else 99999)
+	var got = w._power_cache.get(key)
+	if got != null:
+		return got
 	var dmg := burst(w, h, vs) + dps(w, h, vs) * 5.0
 	var ehp := h.hp / maxf(0.2, C.armor_multiplier(h.armor) * 0.5 + (1.0 - h.magic_resist) * 0.5)
-	return sqrt(maxf(1.0, dmg) * maxf(1.0, ehp))
+	var pw := sqrt(maxf(1.0, dmg) * maxf(1.0, ehp))
+	w._power_cache[key] = pw
+	return pw
 
 ## Level or item moments when the hero gets much stronger (the bot says so and its team may call a fight).
 static func power_spike(h: SimUnit, item_id: String) -> bool:

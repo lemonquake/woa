@@ -122,6 +122,10 @@ func think() -> void:
 		return
 	# a creep in reach close to dying: look again sooner (the better the bot, the sooner)
 	var quick: bool = _creep_low and mode in ["lane", "farm"] and float(sk.lh_error) <= 0.2
+	if _next_think == C.LONG_AGO:
+		# bots start their think cycles on different ticks, so ten bots never all think in the same tick
+		_next_think = w.time + C.DT * float(hero_id % maxi(1, int(round(float(sk.think) / C.DT))))
+		return
 	_next_think = w.time + (C.DT * 2.0 if quick else float(sk.think))
 	var h := hero()
 	if h == null:
@@ -135,15 +139,21 @@ func think() -> void:
 		_dead(h)
 		return
 	_was_alive = true
+	var pt := Time.get_ticks_usec() if w.profiling else 0
 	_learn(h)
 	_shop(h)
 	if bool(sk.spells):
 		_items(h)
+	if w.profiling: pt = w._prof("  bot:shop_items", pt)
 	_scan(h)
+	if w.profiling: pt = w._prof("  bot:scan", pt)
 	_track_fight(h)
 	_track_retreat(h)
 	_track_lane(h)
 	_track_shot(h)
+	if _unstick(h):
+		return
+	if w.profiling: pt = w._prof("  bot:track", pt)
 	if _busy(h):
 		# a Town Portal is only broken to save our life
 		if not h.channel.is_empty() and String(h.channel.ability) == "tp" and _foes.size() > 0 \
@@ -154,9 +164,11 @@ func think() -> void:
 		_pregame(h)
 		return
 	_choose_mode(h)
+	if w.profiling: pt = w._prof("  bot:choose", pt)
 	if mode != "retreat" and mode != "fight" and _grab_orb(h):
 		return
 	_run_mode(h)
+	if w.profiling: w._prof("  bot:run_" + mode, pt)
 
 ## An orb the team can see close by is worth a detour (the mid hero also goes for the river orbs from farther), unless
 ## an enemy hero stands nearer to it than half our distance.
@@ -296,8 +308,16 @@ func _choose_mode(h: SimUnit) -> void:
 	var ft := _pick_fight(h)
 	_fight_target = ft[0].id if ft[0] != null else -1
 	d["fight"] = float(ft[1])
+	if w.debug_flags.has("brawl") and not _foes.is_empty():
+		# benchmarks (SimDebug.stage_fight): every bot fights the nearest enemy hero it sees
+		var near_e: SimUnit = _foes[0]
+		for e in _foes:
+			if e.pos.distance_to(h.pos) < near_e.pos.distance_to(h.pos):
+				near_e = e
+		_fight_target = near_e.id
+		d["fight"] = 1.0
 	if not task.is_empty() and String(task.kind) != "retreat":
-		d["task"] = {"defend": 0.8, "gank": 0.78, "push": 0.62, "group": 0.6}.get(String(task.kind), 0.5)
+		d["task"] = {"fight": 0.88, "defend": 0.8, "gank": 0.78, "push": 0.62, "group": 0.6}.get(String(task.kind), 0.5)
 	if _laning_phase(h):
 		d["lane"] = 0.45
 	else:
@@ -385,17 +405,34 @@ func _retreat_desire(h: SimUnit, task: Dictionary) -> float:
 			for c in _acreeps:
 				if c.pos.distance_to(tw.pos) < tw.attack_range + 100.0:
 					creeps_tank = true
-	if _tower_on_me and (not creeps_tank or hpf < 0.6):
+	# a pushing group takes the tower's shots in turn (Dota's tower diving late in the game): a hero in a push with two
+	# allies beside it and health to spare does not run from tower aggro alone. Every hero used to back off the moment
+	# the tower turned on it, so groups without a creep wave never took a building and games never ended.
+	var diving := not task.is_empty() and String(task.kind) == "push" and w.time > 1200.0 and hpf > 0.45 \
+			and _allies.filter(func(a): return a.pos.distance_to(h.pos) < 900.0).size() >= 2
+	if _tower_on_me and (not creeps_tank or hpf < 0.6) and not diving:
 		return 0.92
 	if hpf < bar and (not _known.is_empty() or _tower_on_me):
 		return 0.95
 	if hpf < bar * 0.7:
 		return 0.9
-	if _threat > 1.7 and not _foes.is_empty() and _nearest(h, _foes).distance_to(h.pos) < 1000.0:
+	var team_fight := not task.is_empty() and String(task.kind) == "fight"
+	if _threat > 1.7 and not team_fight and not _foes.is_empty() and _nearest(h, _foes).distance_to(h.pos) < 1000.0:
 		return clampf(0.6 + (_threat - 1.7) * 0.3, 0.6, 0.9)
-	if BotMemory.danger(h.team, h.pos) > 0.6 and hpf < bar + 0.2 and not _known.is_empty():
+	if BotMemory.danger(h.team, h.pos) > 0.6 and hpf < bar + 0.2 and not _known.is_empty() and not team_fight:
 		return 0.8
 	return 0.0
+
+## A Healing Paste, Vegan Picker or Mana Potion in the stash or on the courier, and a courier alive to bring it.
+func _regen_coming(h: SimUnit) -> bool:
+	var c := w.get_unit(h.courier_id)
+	if c == null or not c.alive:
+		return false
+	for arr in [h.stash, h.courier_items]:
+		for it in arr:
+			if it != null and String(it.id) in ["salve", "tango", "clarity"]:
+				return true
+	return false
 
 func _heal_desire(h: SimUnit) -> float:
 	var hpf := h.hp / h.max_hp
@@ -403,9 +440,16 @@ func _heal_desire(h: SimUnit) -> float:
 	var home := h.pos.distance_to(w.map.fountains[h.team]) < C.FOUNTAIN_AURA_RADIUS
 	if home and (hpf < 0.9 or mpf < 0.7) and mode in ["heal", "retreat"]:
 		return 0.75
-	if hpf < 0.4 and not _has_item(h, "salve") and not _has_item(h, "tango") and not _has_mod(h, "salve"):
+	# healing on its way by courier: wait for it in lane rather than walk home (unless badly hurt)
+	var coming := _regen_coming(h)
+	# a late push with two allies beside keeps its heroes down to a quarter of their health (pushes lost their momentum
+	# while half-healthy heroes went home)
+	var low := 0.4
+	if w.time > 1500.0 and String(brain().task_for(h.id).get("kind", "")) == "push" 			and _allies.filter(func(a): return a.pos.distance_to(h.pos) < 1200.0).size() >= 2:
+		low = 0.25
+	if hpf < low and not _has_item(h, "salve") and not _has_item(h, "tango") and not _has_mod(h, "salve") 			and not (coming and hpf > 0.22):
 		return 0.62
-	if mpf < 0.12 and role != 1 and h.max_mana > 300.0 and not _has_item(h, "clarity"):
+	if mpf < 0.12 and role != 1 and h.max_mana > 300.0 and not _has_item(h, "clarity") and not coming:
 		return 0.5
 	return 0.0
 
@@ -725,6 +769,43 @@ func _track_lane(h: SimUnit) -> void:
 		if SimMap._polyline_distance(e.pos, w.map.lane_path(lane, h.team)) < 900.0:
 			lane_foe = String(e.def.id)
 
+var _still_since := C.LONG_AGO              # when the hero last moved more than 60 units
+var _still_pos := Vector2.INF
+var _unstick_until := C.LONG_AGO             # walking out of a stuck spot until then
+
+## A bot whose hero has an order to walk or attack something out of reach, yet has not moved 60 units in 6 s, is
+## stuck (an unreachable spot, a target across a cliff): it drops the camp, the farm lane and its team play, and walks
+## to a safe point for a few seconds. Late-game bots used to stand like this for minutes.
+func _unstick(h: SimUnit) -> bool:
+	if _still_pos == Vector2.INF or h.pos.distance_to(_still_pos) > 60.0:
+		_still_pos = h.pos
+		_still_since = w.time
+	if w.time < _unstick_until:
+		return true
+	var reaching := false
+	if h.order == O.MOVE and h.pos.distance_to(h.order_point) > 150.0:
+		reaching = true
+	elif h.order == O.ATTACK_UNIT:
+		var t := w.get_unit(h.order_target)
+		reaching = t != null and t.alive and h.edge_distance(t) > h.attack_range + 100.0
+	if h.moving or not h.is_stunned() and h.blocked_time <= 0.0 and not h.path.is_empty():
+		reaching = false                   # it is walking (or has a way): not stuck
+	if not reaching or w.time - _still_since < 6.0 or h.atk_phase != SimUnit.AtkPhase.NONE or not h.channel.is_empty():
+		return false
+	_camp = -1
+	_farm_lane = ""
+	var task := brain().task_for(h.id)
+	if not task.is_empty():
+		_give_up(task, 20.0)
+	_still_since = w.time
+	_unstick_until = w.time + 2.5
+	unstuck_count += 1
+	var away := _safe_point(h)
+	_order(h, {"type": O.MOVE, "point": h.pos + (away - h.pos).limit_length(700.0)}, true)
+	return true
+
+var unstuck_count := 0                      # report counter (bot games)
+
 var _shot := {}                            # a skill shot in flight: {ability, dist, t, target}
 
 func _track_shot(h: SimUnit) -> void:
@@ -769,7 +850,15 @@ func _run_task(h: SimUnit, task: Dictionary) -> void:
 			return
 	match String(task.kind):
 		"gank":
-			if t != null and t.alive and w.vision.sees(h.team, t) and h.pos.distance_to(t.pos) < 1300.0:
+			var gather := not bool(task.get("strike", true))
+			if gather and t != null and t.alive and h.edge_distance(t) > h.attack_range + 150.0:
+				# gathering out of its sight: wait at the rally point for the others
+				var rally: Vector2 = task.rally
+				if h.pos.distance_to(rally) > 120.0:
+					_go(h, rally)
+				else:
+					_order(h, {"type": O.HOLD})
+			elif t != null and t.alive and w.vision.sees(h.team, t) and h.pos.distance_to(t.pos) < 1300.0:
 				_run_fight(h, t)
 			elif t == null or not t.alive or h.pos.distance_to(where) < 350.0:
 				# reached where it was last seen and it is gone: no point standing there
@@ -782,6 +871,23 @@ func _run_task(h: SimUnit, task: Dictionary) -> void:
 		"push":
 			if not _run_push(h, t, String(task.lane)):
 				_give_up(task)
+		"fight":
+			# the team's focus; an enemy already in reach is hit rather than walked past on the way
+			var focus: SimUnit = t if t != null and t.alive and w.vision.sees(h.team, t) else null
+			var near: SimUnit = null
+			for e in _foes:
+				var in_reach := e.alive and not e.is_invulnerable() and h.edge_distance(e) <= h.attack_range + 120.0
+				if in_reach and (near == null or h.edge_distance(e) < h.edge_distance(near)):
+					near = e
+			if focus != null and h.pos.distance_to(focus.pos) < 1900.0:
+				if near != null and near != focus and h.edge_distance(focus) > h.attack_range + 350.0:
+					_run_fight(h, near)
+				else:
+					_run_fight(h, focus)
+			elif near != null:
+				_run_fight(h, near)
+			else:
+				_go(h, where)
 		"group":
 			if h.pos.distance_to(where) > 600.0:
 				_go(h, where)
@@ -918,11 +1024,15 @@ func _run_farm(h: SimUnit) -> void:
 	if pick_camp >= 0:
 		_camp = pick_camp
 		b.claim_camp(pick_camp, h.id)
+		if _tp_out(h, w.map.camps[pick_camp].pos):
+			return
 		_farm_camp(h, pick_camp)
 		return
 	if pick != "":
 		_farm_lane = pick
 		_farm_lane_until = w.time + 6.0
+		if _tp_out(h, _lane_front(h, pick)):
+			return
 		_farm_wave(h, pick)
 		return
 	_go(h, _waiting_spot(h))
@@ -930,10 +1040,59 @@ func _run_farm(h: SimUnit) -> void:
 var _farm_lane_until := C.LONG_AGO
 
 func _farm_wave(h: SimUnit, ln: String) -> void:
+	if not _laning_phase(h) and _foes.is_empty() and _clear_wave(h, ln):
+		return
 	var old := lane
 	lane = ln
 	_lane(h)
 	lane = old
+
+## After the laning phase, with no enemy hero in sight, a lane wave is farmed by killing it: last hits first, else the
+## weakest creep in reach, area spells on three or more; never under an enemy tower that is not busy with our creeps.
+## Waiting for creep-on-creep last hits, as in lane, left cores standing idle for most of each wave. False when there
+## is nothing to clear here (the caller lanes as before).
+func _clear_wave(h: SimUnit, ln: String) -> bool:
+	var ns: Array[SimUnit] = []
+	var towers: Array[SimUnit] = []
+	var allies: Array[SimUnit] = []
+	for u: SimUnit in w.query(h.pos, 1300.0):
+		if not u.alive:
+			continue
+		if u.kind == K.TOWER and u.team != h.team:
+			towers.append(u)
+		elif u.is_lane_creep() and u.team == h.team:
+			allies.append(u)
+		elif u.is_lane_creep() and u.team != h.team and u.lane == ln and w.vision.sees(h.team, u):
+			ns.append(u)
+	var safe: Array[SimUnit] = []
+	for n in ns:
+		var under := false
+		for tw in towers:
+			var busy := w.get_unit(tw.atk_target)
+			if n.pos.distance_to(tw.pos) <= tw.attack_range + tw.hull + 60.0 and not (busy != null and busy.team == h.team and not busy.is_hero()):
+				under = true
+		if not under:
+			safe.append(n)
+	if safe.is_empty():
+		return false
+	if _busy(h):
+		return true
+	var mid := Vector2.ZERO
+	for n in safe:
+		mid += n.pos
+	mid /= safe.size()
+	if safe.size() >= 3 and _aoe_farm(h, safe, mid):
+		return true
+	var lh := _last_hit_target(h, safe, allies)
+	if lh != null and lh.team != h.team:
+		_order(h, {"type": O.ATTACK_UNIT, "target": lh.id})
+		return true
+	var best: SimUnit = null
+	for n in safe:
+		if best == null or n.hp < best.hp:
+			best = n
+	_order(h, {"type": O.ATTACK_UNIT, "target": best.id})
+	return true
 
 ## Where a lane's creep waves meet, from our side: our furthest creep along the lane, else our front tower.
 func _lane_front(h: SimUnit, ln: String) -> Vector2:
@@ -970,29 +1129,60 @@ func _camp_creeps(camp_id: int) -> Array[SimUnit]:
 			out.append(u)
 	return out
 
-## Whether the hero can clear a camp without dying: its damage against the camp's health, the camp's damage back.
+## Whether the hero can clear a camp without dropping below half its health: the camp's creeps as they stand (grown
+## and stacked; its usual group when unseen), all hitting at once while we kill them, against our health. A camp
+## kind that nearly killed this bot is skipped until it has two more levels (a carry used to walk back to a camp
+## it could not clear again and again, crossing the map each time).
 func _can_clear(h: SimUnit, c: Dictionary) -> bool:
+	var kind := String(c.kind)
+	if h.level < int(_camp_fail.get(kind, 0)):
+		return false
+	if h.level < {"small": 2, "medium": 4, "large": 6, "ancient": 10}.get(kind, 4) and not (role == 1 and h.level >= 4 and kind != "ancient"):
+		return false
 	var hp := 0.0
 	var dps := 0.0
-	for id in SimMap.CAMP_GROUPS[c.kind][0]:
-		var d := SimData.unit(id)
-		hp += float(d.hp)
-		dps += (float(d.dmg_min) + float(d.dmg_max)) * 0.5 / float(d.get("bat", 2.0))
-	var t := _clear_time(h, c)
-	var taken := dps * t * 0.55 * C.armor_multiplier(h.armor)
-	return taken < h.hp * 0.6 and (h.level >= {"small": 2, "medium": 4, "large": 6, "ancient": 10}.get(String(c.kind), 4) or role == 1 and h.level >= 3)
+	var live := _camp_creeps(int(c.id)).filter(func(n): return w.vision.sees(h.team, n))
+	if not live.is_empty():
+		for n in live:
+			hp += n.hp
+			dps += (n.dmg_min + n.dmg_max) * 0.5 / maxf(0.2, n.attack_interval())
+	else:
+		var stacks := 1.0 + float(brain().stack_count.get(c.id, 0))
+		for id in SimMap.CAMP_GROUPS[c.kind][0]:
+			var d := SimData.unit(id)
+			hp += float(d.hp) * stacks
+			dps += (float(d.dmg_min) + float(d.dmg_max)) * 0.5 / float(d.get("bat", 2.0)) * stacks
+	var t := hp / maxf(10.0, _my_camp_dps(h))
+	# the camp's damage shrinks as its creeps die: about two thirds of it over the whole clear
+	var taken := dps * t * 0.65 * C.armor_multiplier(h.armor)
+	return taken < h.hp * 0.5
 
-func _clear_time(h: SimUnit, c: Dictionary) -> float:
-	var hp := 0.0
-	for id in SimMap.CAMP_GROUPS[c.kind][0]:
-		hp += float(SimData.unit(id).hp)
+var _camp_fail := {}                       # camp kind -> hero level needed before trying that kind again
+
+func _my_camp_dps(h: SimUnit) -> float:
 	var my := KITS.dps(w, h, null) * 0.85
 	if kit == "sludge" and h.ability_level_of("stench") > 0:
 		my += w.abilities.val(h, "stench", "dps") * 2.0
-	return hp / maxf(10.0, my)
+	return my
+
+func _clear_time(h: SimUnit, c: Dictionary) -> float:
+	var hp := 0.0
+	var live := _camp_creeps(int(c.id)).filter(func(n): return w.vision.sees(h.team, n))
+	if not live.is_empty():
+		for n in live:
+			hp += n.hp
+	else:
+		for id in SimMap.CAMP_GROUPS[c.kind][0]:
+			hp += float(SimData.unit(id).hp)
+	return hp / maxf(10.0, _my_camp_dps(h))
 
 func _farm_camp(h: SimUnit, camp_id: int) -> void:
 	var c: Dictionary = w.map.camps[camp_id]
+	if h.hp < h.max_hp * 0.35 and not _camp_creeps(camp_id).is_empty():
+		_camp_fail[String(c.kind)] = h.level + 2
+		_camp = -1
+		_go(h, _safe_point(h))
+		return
 	var ns: Array[SimUnit] = []
 	for n in _camp_creeps(camp_id):
 		if w.vision.sees(h.team, n):
@@ -1004,7 +1194,17 @@ func _farm_camp(h: SimUnit, camp_id: int) -> void:
 			# nobody home: the camp was cleared (the team marks it) and we move on
 			_camp = -1
 		return
-	# AoE spells on a crowd, then the creep that hurts most (ranged) or the weakest
+	# AoE spells on a crowd, then the weakest creep
+	if _aoe_farm(h, ns, c.pos):
+		return
+	var best: SimUnit = null
+	for n in ns:
+		if best == null or n.hp < best.hp:
+			best = n
+	_order(h, {"type": O.ATTACK_UNIT, "target": best.id})
+
+## Area spells on a crowd of creeps (a camp or a lane wave): true when one was cast.
+func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 	var close := 0
 	for n in ns:
 		if n.pos.distance_to(h.pos) < 350.0:
@@ -1020,7 +1220,7 @@ func _farm_camp(h: SimUnit, camp_id: int) -> void:
 				if close >= 2 and h.mana > h.max_mana * 0.5 and ab.cast_error(h, "dark_stomp", -1, null, h.pos) == "":
 					_order(h, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"}, true)
 					_cast_deadline = w.time + 0.8
-					return
+					return true
 			"azrin":
 				var mid2 := Vector2.ZERO
 				for n in ns:
@@ -1030,11 +1230,11 @@ func _farm_camp(h: SimUnit, camp_id: int) -> void:
 						and h.pos.distance_to(mid2) < 760.0:
 					_order(h, {"type": O.CAST_POINT, "ability": "touch_of_ember", "point": mid2}, true)
 					_cast_deadline = w.time + 0.9
-					return
+					return true
 				if ab.spirits(h) >= 3 and ab.cast_error(h, "spirit_of_fire", -1, null, mid2) == "" and h.pos.distance_to(mid2) < 800.0:
 					_order(h, {"type": O.CAST_POINT, "ability": "spirit_of_fire", "point": mid2}, true)
 					_cast_deadline = w.time + 0.7
-					return
+					return true
 			"froster":
 				var mid3 := Vector2.ZERO
 				for n in ns:
@@ -1044,20 +1244,16 @@ func _farm_camp(h: SimUnit, camp_id: int) -> void:
 						and h.pos.distance_to(mid3) < 700.0:
 					_order(h, {"type": O.CAST_POINT, "ability": "breath_of_cold", "point": mid3}, true)
 					_cast_deadline = w.time + 0.7
-					return
+					return true
 			"blood_ranger":
-				if ns.size() >= 3 and h.mana > h.max_mana * 0.6 and ab.cast_error(h, "burst_shot", -1, null, c.pos) == "":
+				if ns.size() >= 3 and h.mana > h.max_mana * 0.6 and ab.cast_error(h, "burst_shot", -1, null, centre) == "":
 					var mid := Vector2.ZERO
 					for n in ns:
 						mid += n.pos
 					_order(h, {"type": O.CAST_POINT, "ability": "burst_shot", "point": mid / ns.size()}, true)
 					_cast_deadline = w.time + 2.6
-					return
-	var best: SimUnit = null
-	for n in ns:
-		if best == null or n.hp < best.hp:
-			best = n
-	_order(h, {"type": O.ATTACK_UNIT, "target": best.id})
+					return true
+	return false
 
 # ---- Stacking, pulling, wards -------------------------------------------------------------------------------------------
 
@@ -1065,8 +1261,8 @@ var _stack := {}                           # {camp, phase, dir}: a stack or pull
 
 ## Supports stack a camp near them at :53 when their lane can spare them (offlane support any time).
 func _stack_desire(h: SimUnit) -> float:
-	if role < 4 or w.time < 120.0:
-		return 0.0
+	if role < 4 or w.time < 120.0 or w.time > 1500.0:
+		return 0.0                             # late in the game supports group with the team instead
 	var sec := fposmod(w.time, 60.0)
 	if not _stack.is_empty() and String(_stack.kind) == "stack":
 		if sec > 2.5 and sec < 30.0:
@@ -1339,12 +1535,17 @@ func _shop(h: SimUnit) -> void:
 			and w.time - _last_salve_buy > 40.0 and not h.stash.any(func(x): return x != null and x.id == "salve"):
 		if w.shop.buy(h, "salve") == "":
 			_last_salve_buy = w.time
+	# casters low on mana in lane: a Mana Potion by courier
+	if h.max_mana > 300.0 and h.mana < h.max_mana * 0.25 and w.time < 900.0 and role != 1 and not _has_item(h, "clarity") 			and h.gold() >= 50 and w.time - _last_clarity_buy > 45.0:
+		if w.shop.buy(h, "clarity") == "":
+			_last_clarity_buy = w.time
 	# drink a salve when hurt and not in the fountain
 	if h.hp < h.max_hp * 0.55 and bool(sk.spells):
 		_use_item(h, "salve")
 
 var _last_ward_buy := C.LONG_AGO
 var _last_salve_buy := C.LONG_AGO
+var _last_clarity_buy := C.LONG_AGO
 
 ## Items the game calls for: a Spell Shield early against two or more disablers, Spike Armor for a strength hero
 ## against a fed right-clicker, a Push Staff for a support whose cores keep dying.
@@ -1397,6 +1598,9 @@ func _items(h: SimUnit) -> void:
 		var ws := _ready_slot(h, wid)
 		if ws >= 0 and h.stick_charges >= 4 and (h.hp < h.max_hp * 0.45 or h.mana < h.max_mana * 0.2):
 			w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": ws})
+	# a Mana Potion when short of mana and no enemy hero is close (damage ends it)
+	if h.mana < h.max_mana * 0.55 and not _has_mod(h, "clarity") and not _enemy_hero_near(h, 1100.0):
+		_use_item(h, "clarity")
 	var ms := _ready_slot(h, "mana_boots")
 	if ms >= 0 and h.max_mana - h.mana >= 160.0:
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": ms})
@@ -1547,10 +1751,23 @@ var _trade_id := -1
 var _trade_until := C.LONG_AGO
 var _next_trade := C.LONG_AGO
 
+## Back to work by Town Portal: a bot at its base (healed, or just respawned) whose lane or farm is over 5000 away
+## teleports to the allied building nearest it instead of walking for half a minute, as Dota's bots do.
+func _tp_out(h: SimUnit, p: Vector2) -> bool:
+	if p == Vector2.INF or h.pos.distance_to(w.map.fountains[h.team]) > 2600.0 or h.pos.distance_to(p) < 5000.0:
+		return false
+	if h.hp < h.max_hp * 0.8 or w.abilities.cast_error(h, "tp", -1, null, p) != "":
+		return false
+	_order(h, {"type": O.CAST_POINT, "ability": "tp", "point": p}, true)
+	_cast_deadline = w.time + 3.5
+	return true
+
 func _lane(h: SimUnit) -> void:
 	if _busy(h):
 		return
 	var path := w.map.lane_path(lane, h.team)
+	if h.pos.distance_to(w.map.fountains[h.team]) < 2600.0 and _tp_out(h, _front(h, [], path)):
+		return
 	var allies: Array[SimUnit] = []
 	var foes: Array[SimUnit] = []
 	var enemy_heroes: Array[SimUnit] = []
@@ -1772,7 +1989,7 @@ func _last_hit_target(h: SimUnit, foes: Array[SimUnit], allies: Array[SimUnit]) 
 			var land := wait + turn + walk + h.attack_point_time() + 0.05
 			if h.is_ranged():
 				land += maxf(0.0, c.pos.distance_to(h.pos) - h.hull) / float(h.def.projectile_speed)
-			var hp_then := _hp_when(c, maxf(0.0, land + err))
+			var hp_then := _hp_when(c, maxf(0.0, land + err + lh_lead))
 			if hp_then <= 0.0:
 				continue
 			if c.team != h.team and hp_then <= my_min * 1.8:
@@ -1787,6 +2004,12 @@ func _last_hit_target(h: SimUnit, foes: Array[SimUnit], allies: Array[SimUnit]) 
 	return null
 
 var _creep_low := false                    # a creep in reach is close to dying (think faster)
+## Seconds added to when our hit lands, in the creep health forecast. Calibrated in the last-hit lab
+## (tests/tools/lh_lab.gd, five heroes alone in mid for 8 minutes): -0.2 s took last hits from 17-31 to 37-47; the raw
+## forecast fired too late. (Learning it per hero in games was tried and drifted towards 0 in contested lanes, which
+## the lab shows halves last hits, so it stays fixed.)
+var lh_lead := -0.2
+var lh_bias := 0.5                         # where in their damage range the other attackers' hits are counted
 
 ## A creep's health `t` seconds from now, counting the hits already on their way and the next ones its attackers will
 ## land in that time.
@@ -1798,7 +2021,7 @@ func _hp_when(c: SimUnit, t: float) -> float:
 		# only attackers already in reach (one still walking up will not hit in time)
 		if o.atk_phase != SimUnit.AtkPhase.WINDUP and o.edge_distance(c) > o.attack_range + 40.0:
 			continue
-		var avg := (o.dmg_min + o.dmg_max) * 0.5 + o.bonus_damage
+		var avg := lerpf(o.dmg_min, o.dmg_max, lh_bias) + o.bonus_damage
 		var snap := {"hero": o.is_hero(), "class": o.weapon, "element": o.element}
 		var hit := avg * w.combat.attack_class_multiplier(snap, c) * C.armor_multiplier(c.armor)
 		var fly := 0.0
@@ -1911,13 +2134,14 @@ func _tock_spells(h: SimUnit, e: SimUnit) -> void:
 		for a in _allies:
 			if not a.alive or a.pos.distance_to(h.pos) > 700.0:
 				continue
+			# Fast Forward cuts basic spells' cooldowns: give it to whoever waits longest on them
 			var waiting := 0.0
-			for aid in a.abilities:
-				waiting += ab.cooldown_left(a, aid)
+			for aid in SimKits2.basic_spells(a):
+				waiting += minf(ab.cooldown_left(a, aid), ab.val(h, "fast_forward", "cut"))
 			if waiting > most:
 				most = waiting
 				best = a
-		if most > 8.0:
+		if most > 4.0:
 			_order(h, {"type": O.CAST_UNIT, "ability": "fast_forward", "target": best.id}, true)
 			_cast_deadline = w.time + 0.5
 			_spent()
@@ -2135,8 +2359,7 @@ func _ranger_spells(h: SimUnit, e: SimUnit) -> void:
 		_cast_deadline = w.time + 1.0
 		_spent()
 		return
-	var a := SimData.ability("burst_shot")
-	if ab.cast_error(h, "burst_shot", -1, null, e.pos) == "" and d < float(a.range) + 100.0 and e.hp < e.max_hp * 0.85:
+	if ab.cast_error(h, "burst_shot", -1, null, e.pos) == "" and d < ab.cast_range(h, "burst_shot", -1) + 100.0 and e.hp < e.max_hp * 0.85:
 		var crowd := 0
 		for o: SimUnit in w.query(e.pos, 400.0):
 			if o.alive and o.team == e.team and not o.is_building() and o != e:

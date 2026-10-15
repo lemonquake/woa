@@ -60,6 +60,37 @@ static func teleport(w: SimWorld, h: SimUnit, p: Vector2) -> void:
 	h.order_queue.clear()
 	w.nudge_out(p, h.hull)
 
+## A teamfight for benchmarks: the dead come back, every hero is refreshed and the two teams stand face to face across
+## `centre` (Ancient Light to the south-west), five abreast. On the first call each hero is levelled to `lvl` (bots
+## learn their own kits) and given the last five items of its first core bot build.
+static func stage_fight(w: SimWorld, centre: Vector2, lvl: int, first: bool) -> void:
+	w.debug_flags["brawl"] = true
+	var i := [0, 0]
+	for h in w.heroes:
+		if not h.alive:
+			w.respawn(h)
+		if first:
+			level_up(w, h, lvl - h.level)
+			var kit: Dictionary = SimBotKits.BUILDS.get(String(h.def.id), {})
+			var build: Array = (kit.get("core", [[]]) as Array)[0]
+			var n := 0
+			for k in range(build.size() - 1, -1, -1):
+				if n >= 5:
+					break
+				var item := w.shop.new_item(String(build[k]))
+				if item.is_empty():
+					continue
+				h.inventory[n] = item
+				h.inventory[n]["owner"] = h.id
+				n += 1
+			h.refresh_stats()
+		refresh(w, h)
+		var side := -1.0 if h.team == C.DAWN else 1.0
+		var k2: int = i[h.team]
+		i[h.team] += 1
+		teleport(w, h, centre + Vector2(side * 380.0, side * 380.0) + Vector2(1, -1).normalized() * (float(k2) - 2.0) * 160.0)
+	w.vision.update()
+
 ## Jump the clock forward. Waves and camps that would have spawned in the skipped time are skipped too, so the jump
 ## does not flood the lanes.
 static func skip_time(w: SimWorld, seconds: float) -> void:

@@ -84,6 +84,17 @@ func _lvl_val(a: Dictionary, key: String, lv: int) -> float:
 ## An ability value for this hero right now: the level's value plus the Upgrade Staff and Upgrade Gem bonuses, then
 ## talents (added, then multiplied). Works for per-level keys in `values` and for "mana", "cooldown", "range".
 func val(u: SimUnit, aid: String, key: String) -> float:
+	# remembered per unit until its stats change, for this ability level and number of talents
+	var ck := aid + "|" + key
+	var lvl := u.ability_level_of(aid)
+	var got = u._val_cache.get(ck)
+	if got != null and int(got[0]) == lvl and int(got[1]) == u.talents.size():
+		return float(got[2])
+	var v := _val(u, aid, key)
+	u._val_cache[ck] = [lvl, u.talents.size(), v]
+	return v
+
+func _val(u: SimUnit, aid: String, key: String) -> float:
 	var a := SimData.ability(aid)
 	if a.is_empty():
 		return 0.0
@@ -101,6 +112,9 @@ func val(u: SimUnit, aid: String, key: String) -> float:
 			if String(m.ability) == aid:
 				v += float((m.get("add", {}) as Dictionary).get(key, 0.0))
 				v *= float((m.get("mult", {}) as Dictionary).get(key, 1.0))
+	# cast range bonuses also lengthen line shots that always fly their full distance (as Dota's Meat Hook)
+	if key == "distance" and u.cast_range_bonus > 0.0 and bool(a.get("line", false)) and v > 0.0:
+		v += u.cast_range_bonus
 	# Wide Stone family: spell areas grow (not sight radii)
 	if u.aoe_bonus > 0.0 and v > 0.0 and (key == "radius" or key.ends_with("_radius")) and not key.begins_with("vision") 			and not key.begins_with("curse"):
 		v += u.aoe_bonus
@@ -271,7 +285,7 @@ func cast_range(u: SimUnit, aid: String, slot: int, t: SimUnit = null) -> float:
 		return u.attack_range
 	if a.get("direction", false):
 		return INF                               # aimed by direction only: cast from where the hero stands
-	var r := float(a.range)
+	var r := val(u, aid, "range")                # talents and upgrades that change the range count
 	return r + u.cast_range_bonus if r > 0.0 else r
 
 func cast_point(aid: String, slot: int) -> float:
@@ -799,8 +813,7 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 
 ## Leap Strike's target: the visible enemy in range with the lowest health fraction, the nearest if none is hurt.
 func leap_target(u: SimUnit, lv: int) -> SimUnit:
-	var a := SimData.ability("leap_strike")
-	var rng := float(a.range)
+	var rng := cast_range(u, "leap_strike", -1)
 	var hurt: SimUnit = null
 	var hurt_key := INF
 	var near: SimUnit = null

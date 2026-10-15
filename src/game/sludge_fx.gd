@@ -207,7 +207,7 @@ func frame(w: SimWorld, alpha: float, dt: float) -> void:
 			h.cur = np
 			h.tick = w.tick
 		var pos := (h.prev as Vector3).lerp(h.cur, alpha)
-		var tip: Node3D = h.tip
+		var tip: Node3D = View.live(h.tip)
 		tip.global_position = pos
 		var was: String = h.state
 		h.state = String(e.state)
@@ -294,8 +294,8 @@ func _end_hook(seq: int) -> void:
 	var v := fx._view_of(int(h.src))
 	if v:
 		v.hide_weapon("L", false)
-	var root: Node3D = h.root
-	var tip: Node3D = h.tip
+	var root: Node3D = View.live(h.root)
+	var tip: Node3D = View.live(h.tip)
 	if is_instance_valid(tip) and fx._seen(View.to2(tip.global_position)):
 		fx.sparks(tip.global_position, Vector3.UP, 4, Color(0.9, 0.95, 1.0), 3.0)
 	# let the trails fade, then clear up
@@ -406,7 +406,7 @@ func _update_clouds(w: SimWorld, dt: float) -> void:
 		var v := fx._view_of(uid)
 		var centre := v.global_position if v else View.to3(u.pos, game.terrain.height_at(u.pos))
 		var radius: float = game.world.abilities.val(u, "stench", "radius") * View.S
-		var node: Node3D = c.node
+		var node: Node3D = View.live(c.node)
 		node.global_position = centre
 		node.visible = fx._seen(u.pos)
 		var st: MeshInstance3D = c.stain

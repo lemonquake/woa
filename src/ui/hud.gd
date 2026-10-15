@@ -83,13 +83,50 @@ func _portrait() -> void:
 	portrait_vp.own_world_3d = false
 	portrait_vp.transparent_bg = false
 	portrait_vp.msaa_3d = Viewport.MSAA_4X
+	portrait_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 	svc.add_child(portrait_vp)
 	portrait_cam = Camera3D.new()
 	portrait_cam.fov = 26.0
 	portrait_cam.near = 0.05
-	portrait_cam.far = 30.0
-	portrait_cam.cull_mask = 1
+	portrait_cam.far = 14.0
+	# the portrait sees only the shown unit's model (its own render layer), not the whole map: it used to draw the
+	# world a second time each frame, about 460 draw calls and 2 ms in a teamfight
+	portrait_cam.cull_mask = PORTRAIT_LAYER
+	var env: Environment = game.atmosphere.env.duplicate() if game and game.get("atmosphere") else Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color(0.07, 0.08, 0.1)
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY if env.sky != null else Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.55, 0.58, 0.65)
+	env.ssao_enabled = false
+	env.ssil_enabled = false
+	env.sdfgi_enabled = false
+	env.glow_enabled = false
+	env.fog_enabled = false
+	env.volumetric_fog_enabled = false
+	env.ssr_enabled = false
+	portrait_cam.environment = env
 	portrait_vp.add_child(portrait_cam)
+
+## The render layer only the portrait camera draws (layer 20); the shown unit's meshes carry it as well as layer 1.
+const PORTRAIT_LAYER := 1 << 19
+var _portrait_view: Node3D = null
+var _portrait_flip := false
+var _portrait_layer_t := 0.0
+
+## Put the shown unit's meshes on the portrait layer (and take the last one's off). Rechecked every half second, so
+## meshes added later (a new weapon, a hat) join it.
+func _portrait_layers(v: Node3D, dt: float) -> void:
+	_portrait_layer_t -= dt
+	if v == _portrait_view and _portrait_layer_t > 0.0:
+		return
+	_portrait_layer_t = 0.5
+	if _portrait_view != v and is_instance_valid(_portrait_view):
+		for n in _portrait_view.find_children("*", "VisualInstance3D", true, false):
+			(n as VisualInstance3D).layers &= ~PORTRAIT_LAYER
+	_portrait_view = v
+	if v != null:
+		for n in v.find_children("*", "VisualInstance3D", true, false):
+			(n as VisualInstance3D).layers |= PORTRAIT_LAYER
 
 func hero() -> SimUnit:
 	return game.world.get_unit(game.player_hero_id) if game and game.world else null
@@ -145,7 +182,7 @@ func _process(dt: float) -> void:
 	to_buy.visible = to_buy.wanted()
 	var tbx: float = shop.position.x - ToBuyPanel.W - 8 if shop.visible else vs.x - ToBuyPanel.W - 10
 	to_buy.position = Vector2(tbx, vs.y - BottomPanel.H - 72 - to_buy.size.y)
-	_update_portrait()
+	_update_portrait(dt)
 	_tip_lines = []
 	queue_redraw()
 	# panels redraw at 20 Hz (their contents change slowly); the tooltip follows the mouse every frame
@@ -156,13 +193,19 @@ func _process(dt: float) -> void:
 			c.queue_redraw()
 	tip.queue_redraw()
 
-func _update_portrait() -> void:
+func _update_portrait(dt: float) -> void:
 	var h := shown()
 	if h == null:
 		return
 	var v = game.views.get(h.id)
 	if v == null or not (v is Node3D):
 		return
+	_portrait_layers(v, dt)
+	# the portrait renders every other frame (its shadow pass still costs ~200 draw calls); a 166 px face at 30+ fps
+	# looks the same
+	_portrait_flip = not _portrait_flip
+	if _portrait_flip and not game.args.has("noportrait"):
+		portrait_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 	var sk: Skeleton3D = v.get("skeleton") if v is UnitView else null
 	var bi := sk.find_bone("head") if sk != null else -1
 	if bi < 0:
@@ -177,6 +220,11 @@ func _update_portrait() -> void:
 	portrait_cam.look_at(head - Vector3(0, 0.05, 0), Vector3.UP)
 
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_body()
+	UiKit.draw_cost("hud", t0)
+
+func _draw_body() -> void:
 	var vs := get_viewport_rect().size
 	if _msg_t > 0.0:
 		var a := clampf(_msg_t / 0.5, 0.0, 1.0)
@@ -375,7 +423,7 @@ func unit_skills(u: SimUnit) -> Array:
 		var a := SimData.ability(String(aid))
 		if a.is_empty():
 			continue
-		out.append({"name": String(a.name), "icon": String(U.ABILITY_ICONS.get(aid, NEUTRAL_SKILL_ICONS.get(aid, "skills/keen_eye"))),
+		out.append({"name": String(a.name), "icon": String(U.ABILITY_ICONS.get(aid, U.NEUTRAL_SKILL_ICONS.get(aid, "skills/keen_eye"))),
 			"desc": String(a.desc), "kind": "Spell", "cd_key": String(aid), "cooldown": float(a.cooldown[0])})
 	for au in d.get("auras", []):
 		var parts: Array = []
@@ -413,7 +461,7 @@ func unit_skills(u: SimUnit) -> Array:
 			"desc": "Takes much less damage and heals while no enemy creeps are near it."})
 		if u.kind == K.TOWER or u.kind == K.ANCIENT or u.kind == K.BARRACKS:
 			out.append({"name": "Fortify", "icon": "status/shielded", "kind": "Team",
-				"desc": "When its team uses Fortify, it cannot be hurt for a while."})
+				"desc": "When its team uses Fortify, it cannot be hurt for 7 seconds; tier 2+ towers also splash, shoot faster and mark what they hit."})
 	if bool(d.get("ancient", false)):
 		out.append({"name": "Ancient", "icon": "status/titan", "kind": "Passive",
 			"desc": "An ancient creep: some spells and items cannot target it, and Gold Glove cannot take it."})
@@ -421,8 +469,6 @@ func unit_skills(u: SimUnit) -> Array:
 		out.append({"name": "Flying", "icon": "status/windstep", "kind": "Passive",
 			"desc": "Flies over trees and cliffs."})
 	return out.slice(0, Keybinds.MAX_ABILITIES)
-
-const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}
 
 func _stat_text(k: String, v: float) -> String:
 	var names := {"move_speed": "move speed", "base_damage_pct": "base damage", "magic_resist": "magic resistance",
@@ -594,6 +640,8 @@ func unit_sheet(u: SimUnit) -> Array:
 		more.append("Cast Speed " + pct(u.cast_speed))
 	if u.mana_cost_cut > 0.0:
 		more.append("Mana Cost -" + pct(u.mana_cost_cut))
+	if u.cast_range_bonus > 0.0:
+		more.append("Cast Range +%d" % roundi(u.cast_range_bonus))
 	if u.lifesteal > 0.0 or u.lifesteal_ability > 0.0:
 		more.append("Lifesteal " + pct(u.lifesteal + u.lifesteal_ability))
 	if u.spell_lifesteal > 0.0:
@@ -670,7 +718,9 @@ class BottomPanel extends Control:
 	const STASH_Y := -58.0
 	const CHIPS_X := 192.0                     # element / damage type / armor type, above the stats column
 	const CHIPS_Y := -14.0
+	const BUFF_Y := -4.0                       # the buff bar's lowest row ends here (it grows upward)
 	var _chips_end := CHIPS_X
+	var _buff_rects: Array = []                # the buff bar's icons (local), for hover and clicks
 	# the layout for the shown unit's skill count (Keybinds.MAX_ABILITIES at most): console width, slot step and
 	# size, and where the items and the gold column start
 	var n_slots := 4
@@ -777,6 +827,12 @@ class BottomPanel extends Control:
 		return h.stash.any(func(x): return x != null) or hud.game.world.shop.in_shop(h)
 
 	func _draw() -> void:
+		var t0 := Time.get_ticks_usec()
+		_draw_body()
+		UiKit.draw_cost("BottomPanel", t0)
+
+	func _draw_body() -> void:
+		_buff_rects = []
 		var h: SimUnit = hud.shown()
 		if h == null:
 			return
@@ -799,11 +855,13 @@ class BottomPanel extends Control:
 			_courier_panel(h, cour, w)
 			_gold(h)
 			_tp_and_courier(h, w)
+			_buff_bar(cour, w)
 			if overlay:
 				overlay.queue_redraw()
 			return
 		if not h.is_hero():
 			_unit_view(h, w)
+			_buff_bar(h, w)
 			if overlay:
 				overlay.queue_redraw()
 			return
@@ -823,6 +881,7 @@ class BottomPanel extends Control:
 			U.text(self, "Viewing " + ("an ally" if h.team == hud.game.player_team else "the enemy"), Vector2(side_x, 70), 15, U.TEXT_DIM, "bold")
 			U.text(self, Keybinds.key_name("select_hero") + " or the portrait:", Vector2(side_x, 94), 12, U.TEXT_DIM, "body")
 			U.text(self, "back to your hero", Vector2(side_x, 110), 12, U.TEXT_DIM, "body")
+		_buff_bar(h, w)
 		if talents_open:
 			_talent_tree(h, w)
 		if mine:
@@ -835,6 +894,12 @@ class BottomPanel extends Control:
 					draw_texture_rect(ic, Rect2(get_local_mouse_position() - Vector2(22, 22), Vector2(44, 44)), false, Color(1, 1, 1, 0.85))
 		if overlay:
 			overlay.queue_redraw()
+
+	## The buff bar (BuffBar) over the skills: from the type chips' end (or the first skill) to just short of the
+	## items, its lowest row resting on the console's top edge.
+	func _buff_bar(u: SimUnit, w: SimWorld) -> void:
+		var x0 := maxf(ABIL_X, _chips_end + 10.0)
+		_buff_rects = BuffBar.draw(self, hud, u, w, x0, item_x - 20.0, BUFF_Y)
 
 	## How many skill slots the shown unit needs: a hero's skills (its innate one sits apart), or what a creep or
 	## building can do (spells, auras, attack effects, true sight).
@@ -904,7 +969,7 @@ class BottomPanel extends Control:
 			iy += 19
 			if iy > ir.end.y - 6:
 				break
-		# side column: whose it is, its status effects, how to get back to your hero
+		# side column: whose it is and how to get back to your hero (its effects are in the buff bar)
 		var team_col := U.DAWN if u.team == C.DAWN else (U.DUSK if u.team == C.DUSK else Color(0.95, 0.8, 0.4))
 		var who := "Neutral" if u.team == C.NEUTRAL else String(C.TEAM_NAMES[u.team])
 		U.text(self, who, Vector2(side_x, 52), 17, team_col, "title")
@@ -914,22 +979,6 @@ class BottomPanel extends Control:
 		elif u.team == hud.game.player_team:
 			rel = "Ally"
 		U.text(self, (rel + "  ·  " if rel != who else "") + hud.kind_name(u), Vector2(side_x, 72), 12, U.TEXT_DIM, "bold")
-		var sx := side_x
-		var shown_fx := {}
-		for md in u.modifiers:
-			var key := String(md.get("fx", ""))
-			if key == "" and float(md.get("slow", 0.0)) > 0.0:
-				key = "slow"
-			if key == "" or shown_fx.has(key) or not UnitBars.STATUS_ICONS.has(key) or sx > side_x + 120:
-				continue
-			shown_fx[key] = true
-			var sic: Texture2D = U.icon(UnitBars.STATUS_ICONS[key])
-			if sic:
-				draw_texture_rect(sic, Rect2(sx, 84, 20, 20), false)
-				var left := float(md.get("expires", INF)) - w.time
-				if left > 0.0 and is_finite(left):
-					U.text(self, "%d" % ceili(left), Vector2(sx + 6, 116), 11, U.TEXT_DIM, "bold")
-				sx += 30.0
 		U.text(self, Keybinds.key_name("select_hero") + " or the portrait:", Vector2(side_x, 150), 12, U.TEXT_DIM, "body")
 		U.text(self, "back to your hero", Vector2(side_x, 166), 12, U.TEXT_DIM, "body")
 
@@ -1247,6 +1296,15 @@ class BottomPanel extends Control:
 				var fv := float(v)
 				parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (k.contains("slow") or k.ends_with("pct") or k.contains("chance") or k == "lifesteal") else str(v))
 			lines.append(["%s: %s" % [k.replace("_", " ").capitalize(), " / ".join(parts)], 13, Color(0.8, 0.85, 0.75), "body"])
+		if String(a.behavior) in ["point", "unit"] or (String(a.behavior) == "no_target" and float(a.get("range", 0.0)) > 0.0):
+			# the range the hero casts from now (talents, upgrades, Long Lens and other cast range bonuses included)
+			var rng: float = hud.game.world.abilities.cast_range(h, aid, -1)
+			var dist: float = hud.game.world.abilities.val(h, aid, "distance")
+			var reach := "Cast range %d" % roundi(rng) if is_finite(rng) else ("Reach %d" % roundi(dist) if dist > 0.0 else "")
+			if reach != "" and h.cast_range_bonus > 0.0:
+				reach += "  (+%d bonus)" % roundi(h.cast_range_bonus)
+			if reach != "":
+				lines.append([reach, 13, Color(0.75, 0.85, 1.0), "body"])
 		if a.behavior != "passive":
 			lines.append(["Mana: %s    Cooldown: %s" % [" / ".join(a.mana.map(func(x): return str(x))), " / ".join(a.cooldown.map(func(x): return str(x)))], 13, Color(0.6, 0.75, 1.0), "body"])
 		if a.behavior == "autocast_attack":
@@ -1263,8 +1321,15 @@ class BottomPanel extends Control:
 		var hr := Rect2(ABIL_X, BARS_Y, bw, 24)
 		U.bar(self, hr, h.hp / maxf(1.0, h.max_hp), U.HP)
 		U.text_c(self, "%d / %d" % [int(h.hp), int(h.max_hp)], hr.get_center() + Vector2(0, 7), 16, U.TEXT, "bold")
-		_regen_text(rates.z, rates.x - rates.z, Vector2(hr.end.x - 4, hr.position.y + 17), Color(0.85, 1.0, 0.85),
-			Color(0.45, 1.0, 0.35))
+		# a healing cut (Stench with the Upgrade Staff) shows as its own red term: before the cut = total / (1 - cut)
+		var red := h.heal_reduction()
+		var hcut := 0.0
+		if red > 0.0 and red < 0.999 and rates.x > 0.0:
+			hcut = rates.x / (1.0 - red) - rates.x
+		_regen_text(rates.z, rates.x + hcut - rates.z, hr, 16, Color(0.8, 1.0, 0.75), Color(0.45, 1.0, 0.35), hcut)
+		var m := get_local_mouse_position()
+		if hr.has_point(m):
+			hud.show_tip(get_global_mouse_position(), _regen_tip("Health", h.hp, h.max_hp, rates.z, rates.x + hcut - rates.z, hcut))
 		var mr := Rect2(ABIL_X, BARS_Y + 30, bw, 20)
 		if h.max_mana <= 0.0:
 			draw_rect(mr, Color(0.03, 0.035, 0.05, 0.9))
@@ -1272,17 +1337,56 @@ class BottomPanel extends Control:
 			return
 		U.bar(self, mr, h.mana / maxf(1.0, h.max_mana), U.MANA)
 		U.text_c(self, "%d / %d" % [int(h.mana), int(h.max_mana)], mr.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
-		_regen_text(rates.w, rates.y - rates.w, Vector2(mr.end.x - 4, mr.position.y + 15), Color(0.85, 0.9, 1.0),
-			Color(0.45, 0.95, 1.0))
+		_regen_text(rates.w, rates.y - rates.w, mr, 14, Color(0.78, 0.9, 1.0), Color(0.45, 0.95, 1.0))
+		if mr.has_point(m):
+			hud.show_tip(get_global_mouse_position(), _regen_tip("Mana", h.mana, h.max_mana, rates.w, rates.y - rates.w))
 
-	## Regeneration at the right end of a bar: the hero's own regen, then the bonus (items, auras, consumables, the
-	## fountain) as a separate "+N" in a brighter colour; a negative bonus (healing reduction) shows in red.
-	func _regen_text(own: float, bonus: float, right: Vector2, own_col: Color, bonus_col: Color) -> void:
-		var x := right.x
+	## Hovering a bar: the amount, the regen per second and how it adds up, and how long to fill up at that rate.
+	func _regen_tip(what: String, cur: float, mx: float, own: float, bonus: float, cut := 0.0) -> Array:
+		var total := own + bonus - cut
+		var lines: Array = [["%s %d / %d" % [what, int(cur), int(mx)], 17, U.GOLD, "title"],
+			["Regenerates %s per second" % _regen_num(total, false), 15, U.TEXT, "bold"],
+			["Own %s %s bonus %s" % [_regen_num(own, false), "+" if bonus >= 0.0 else "-", _regen_num(absf(bonus), false)],
+				14, U.TEXT_DIM, "body"]]
+		if cut > 0.05:
+			lines.append(["Healing cut: -%s" % _regen_num(cut, false), 14, Color(1.0, 0.45, 0.4), "body"])
+		if total > 0.05 and cur < mx:
+			lines.append(["Full in %d s at this rate" % ceili((mx - cur) / total), 13, Color(0.6, 0.75, 1.0), "body"])
+		return lines
+
+	## Regeneration on a bar, read at a glance: the total per second large at the right end (where Dota shows it);
+	## at the left end, smaller, how it adds up: the unit's own regen + the bonus (items, auras, consumables, the
+	## fountain), and - the cut in red when healing is reduced. The breakdown hides when there is nothing to add.
+	func _regen_text(own: float, bonus: float, bar: Rect2, size: int, total_col: Color, bonus_col: Color, cut := 0.0) -> void:
+		var total := own + bonus - cut
+		var base_y := bar.position.y + bar.size.y * 0.5 + size * 0.36
+		var tcol := total_col if total >= 0.0 else Color(1.0, 0.45, 0.4)
+		_outlined_r(_regen_num(total, true), Vector2(bar.end.x - 5.0, base_y), size, tcol, "bold")
+		if absf(bonus) < 0.05 and cut < 0.05:
+			return
+		var small := size - 2
+		var y := bar.position.y + bar.size.y * 0.5 + small * 0.36
+		var x := _outlined_l(_regen_num(own, false), Vector2(bar.position.x + 6.0, y), small, U.TEXT, "bold")
 		if absf(bonus) >= 0.05:
-			var bs := ("+%.1f" if bonus > 0.0 else "%.1f") % bonus
-			x = _outlined_r(bs, Vector2(x, right.y), 13, bonus_col if bonus > 0.0 else Color(1.0, 0.45, 0.4), "bold") - 5.0
-		_outlined_r("+%.1f" % own, Vector2(x, right.y), 12, own_col, "body")
+			x = _outlined_l(" + " if bonus > 0.0 else " - ", Vector2(x, y), small, U.TEXT, "bold")
+			x = _outlined_l(_regen_num(absf(bonus), false), Vector2(x, y), small, bonus_col if bonus > 0.0 else Color(1.0, 0.45, 0.4), "bold")
+		if cut >= 0.05:
+			x = _outlined_l(" - ", Vector2(x, y), small, U.TEXT, "bold")
+			_outlined_l(_regen_num(cut, false), Vector2(x, y), small, Color(1.0, 0.45, 0.4), "bold")
+
+	## A regen number: one decimal below 100 ("+8.3"), whole above ("+122"); `plus` puts the + in front.
+	static func _regen_num(v: float, plus: bool) -> String:
+		var s := ("%.1f" % absf(v)) if absf(v) < 99.95 else str(roundi(absf(v)))
+		if v < -0.0001:
+			return "-" + s
+		return ("+" + s) if plus else s
+
+	## Left-aligned text with a dark outline; returns its right edge.
+	func _outlined_l(s: String, at: Vector2, size: int, col: Color, kind: String) -> float:
+		var f := U.font(kind)
+		draw_string_outline(f, at, s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, 4, Color(0, 0, 0, 0.85))
+		draw_string(f, at, s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, col)
+		return at.x + f.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 
 	## Right-aligned text with a dark outline (readable on the coloured bars); returns its left edge.
 	func _outlined_r(s: String, at: Vector2, size: int, col: Color, kind: String) -> float:
@@ -1504,6 +1608,9 @@ class BottomPanel extends Control:
 			return true
 		if Rect2(CHIPS_X, CHIPS_Y, _chips_end - CHIPS_X, 22).has_point(p):
 			return true
+		for r in _buff_rects:
+			if (r as Rect2).has_point(p):
+				return true
 		var h: SimUnit = hud.hero()
 		if stash_visible(h) and Rect2(item_x - 8, STASH_Y - 8, 330, 56).has_point(p):
 			return true
@@ -1796,6 +1903,11 @@ class PortraitOverlay extends Control:
 		size = panel.size if panel else Vector2(BottomPanel.W, BottomPanel.H)
 
 	func _draw() -> void:
+		var t0 := Time.get_ticks_usec()
+		_draw_body()
+		UiKit.draw_cost("PortraitOverlay", t0)
+
+	func _draw_body() -> void:
 		panel.draw_overlay(self)
 
 
@@ -1823,6 +1935,11 @@ class ToBuyPanel extends Control:
 		size = Vector2(W, 40 + maxi(n, 1) * ROW + (22 if more else 0) + 30)
 
 	func _draw() -> void:
+		var t0 := Time.get_ticks_usec()
+		_draw_body()
+		UiKit.draw_cost("ToBuyPanel", t0)
+
+	func _draw_body() -> void:
 		_rows.clear()
 		var h: SimUnit = hud.hero()
 		if h == null:
@@ -2126,6 +2243,11 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		return o
 
 	func _draw() -> void:
+		var t0 := Time.get_ticks_usec()
+		_draw_body()
+		UiKit.draw_cost("Minimap", t0)
+
+	func _draw_body() -> void:
 		if hud.game == null or hud.game.world == null:
 			return
 		if _base == null:
@@ -2138,43 +2260,55 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 			_fog_t = 0.2
 			_fog_img.set_data(SimMap.VN, SimMap.VN, false, Image.FORMAT_L8, w.vision.visible[team])
 			_fog_tex.update(_fog_img)
+		# buildings, creeps and neutrals go into one triangle batch (one draw call instead of one per dot); heroes are
+		# drawn after them, on top
+		var heroes: Array[SimUnit] = []
 		for u in w.units:
 			if not u.alive:
 				continue
-			var p := _to_mm(u.pos)
-			var seen := u.team == team or w.vision.sees(team, u)
 			if u.is_building():
-				var col := U.DAWN if u.team == 0 else U.DUSK
-				var sz := 7.0 if u.kind == K.TOWER else (11.0 if u.kind == K.ANCIENT else 6.0)
 				if u.kind == K.FOUNTAIN:
 					continue
-				draw_rect(Rect2(p - Vector2(sz, sz) * 0.5, Vector2(sz, sz)), Color(0, 0, 0, 0.8))
-				draw_rect(Rect2(p - Vector2(sz - 2, sz - 2) * 0.5, Vector2(sz - 2, sz - 2)), col)
+				var col := U.DAWN if u.team == 0 else U.DUSK
+				var sz := 7.0 if u.kind == K.TOWER else (11.0 if u.kind == K.ANCIENT else 6.0)
+				var bp := _to_mm(u.pos)
+				_quad(Rect2(bp - Vector2(sz, sz) * 0.5, Vector2(sz, sz)), Color(0, 0, 0, 0.8))
+				_quad(Rect2(bp - Vector2(sz - 2, sz - 2) * 0.5, Vector2(sz - 2, sz - 2)), col)
 				continue
-			if not seen:
+			if u.team != team and not w.vision.sees(team, u):
 				continue
 			# Master of Shadows: gone from the enemy's minimap
 			if u.team != team and u.has_flag("minimap_hidden"):
 				continue
 			if u.is_hero():
-				var col2 := U.DAWN if u.team == 0 else U.DUSK
-				if u.id == hud.game.player_hero_id:
-					col2 = Color(0.35, 1.0, 0.45)
-				draw_circle(p, 6.5, Color(0, 0, 0, 0.9))
-				draw_circle(p, 5.0, col2)
-				if u.team != team and w.vision.revealed_to(u, team):
-					draw_arc(p, 9.0, 0.0, TAU, 20, Color(0.75, 0.4, 1.0), 2.0)
-			elif u.team == C.NEUTRAL:
-				draw_rect(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), Color(0.95, 0.85, 0.35))
+				heroes.append(u)
+				continue
+			var p := _to_mm(u.pos)
+			if u.team == C.NEUTRAL:
+				_quad(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), Color(0.95, 0.85, 0.35))
 			elif u.kind == K.WARD:
-				draw_circle(p, 3.0, Color(1.0, 0.9, 0.3))
+				_quad(Rect2(p - Vector2(2.5, 2.5), Vector2(5, 5)), Color(1.0, 0.9, 0.3))
 			else:
-				draw_rect(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), (U.DAWN if u.team == 0 else U.DUSK).lightened(0.1))
+				_quad(Rect2(p - Vector2(1.5, 1.5), Vector2(3, 3)), (U.DAWN if u.team == 0 else U.DUSK).lightened(0.1))
+		_flush_tris()
+		for u in heroes:
+			var hp2 := _to_mm(u.pos)
+			var col2 := U.DAWN if u.team == 0 else U.DUSK
+			if u.id == hud.game.player_hero_id:
+				col2 = Color(0.35, 1.0, 0.45)
+			draw_circle(hp2, 6.5, Color(0, 0, 0, 0.9))
+			draw_circle(hp2, 5.0, col2)
+			if u.team != team and w.vision.revealed_to(u, team):
+				draw_arc(hp2, 9.0, 0.0, TAU, 20, Color(0.75, 0.4, 1.0), 2.0)
 		# neutral camps: Dota's tier marks (a triangle; one bar for medium, two for large, a triangle in a triangle for
 		# ancient); with Alt held, the spawn boxes too
 		var show_boxes: bool = hud.game.camps != null and hud.game.camps.boxes_wanted()
 		for c in w.map.camps:
 			_camp_mark(c, show_boxes)
+		_flush_tris()
+		if _lines.size() > 0:
+			draw_multiline(_lines, Color(1.0, 0.86, 0.35, 0.95), 1.4)
+			_lines.clear()
 		# orbs your team can see: a dot in the orb's colour with a dark rim
 		for o in w.orbs.orbs:
 			if not w.vision.cell_visible(team, o.pos):
@@ -2215,26 +2349,74 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		if cd > 0.0:
 			U.text_c(self, str(ceili(cd)), gr.get_center() + Vector2(0, 6), 14, Color(1, 1, 1), "bold")
 		if gr.has_point(get_local_mouse_position()):
-			hud.show_tip(get_global_mouse_position(), [["Fortify", 18, U.GOLD, "title"],
+			var tl: Array = [["Fortify", 18, U.GOLD, "title"],
 				["Your buildings take no damage for 7 seconds and your lane creeps for 3.", 14, U.TEXT, "body"],
-				["Tier 2+ towers attack 5 extra targets. Cooldown 5 minutes. (%s)" % Keybinds.key_name("glyph"), 13, U.TEXT_DIM, "body"]])
+				["Tier 2+ towers meanwhile: splash within 300, shots 50% faster, and each hit marks the", 14, U.TEXT, "body"],
+				["enemy for 15 s; every mark adds 50 physical damage to their shots.", 14, U.TEXT, "body"],
+				["Cooldown 5 minutes. (%s)" % Keybinds.key_name("glyph"), 13, U.TEXT_DIM, "body"]]
+			if cd > 0.0:
+				tl.append(["Ready in %d s" % ceili(cd), 13, Color(1.0, 0.6, 0.5), "bold"])
+			hud.show_tip(get_global_mouse_position(), tl)
+
+	## Batched drawing: rectangles and triangles collect here and go to the renderer as one triangle array.
+	var _tp := PackedVector2Array()
+	var _tc := PackedColorArray()
+	var _ti := PackedInt32Array()
+	var _lines := PackedVector2Array()          # camp mark outlines, drawn as one multiline
+
+	func _quad(r: Rect2, c: Color) -> void:
+		var b := _tp.size()
+		_tp.append(r.position)
+		_tp.append(Vector2(r.end.x, r.position.y))
+		_tp.append(r.end)
+		_tp.append(Vector2(r.position.x, r.end.y))
+		for k in 4:
+			_tc.append(c)
+		_ti.append_array(PackedInt32Array([b, b + 1, b + 2, b, b + 2, b + 3]))
+
+	func _tri(a: Vector2, b2: Vector2, c2: Vector2, c: Color) -> void:
+		var b := _tp.size()
+		_tp.append(a)
+		_tp.append(b2)
+		_tp.append(c2)
+		for k in 3:
+			_tc.append(c)
+		_ti.append_array(PackedInt32Array([b, b + 1, b + 2]))
+
+	func _flush_tris() -> void:
+		if not _ti.is_empty():
+			RenderingServer.canvas_item_add_triangle_array(get_canvas_item(), _ti, _tp, _tc)
+		_tp.clear()
+		_tc.clear()
+		_ti.clear()
+
+	func _seg(a: Vector2, b: Vector2) -> void:
+		_lines.append(a)
+		_lines.append(b)
 
 	func _camp_mark(c: Dictionary, boxes: bool) -> void:
 		var p := _to_mm(c.pos)
-		var col := Color(1.0, 0.86, 0.35, 0.95)
 		var sz := 5.0 if c.kind != "ancient" else 7.0
-		var tri := PackedVector2Array([p + Vector2(0, -sz), p + Vector2(sz * 0.9, sz * 0.6), p + Vector2(-sz * 0.9, sz * 0.6)])
-		draw_colored_polygon(tri, Color(0, 0, 0, 0.75))
-		draw_polyline(PackedVector2Array([tri[0], tri[1], tri[2], tri[0]]), col, 1.4)
+		var ta := p + Vector2(0, -sz)
+		var tb := p + Vector2(sz * 0.9, sz * 0.6)
+		var td := p + Vector2(-sz * 0.9, sz * 0.6)
+		_tri(ta, tb, td, Color(0, 0, 0, 0.75))
+		_seg(ta, tb)
+		_seg(tb, td)
+		_seg(td, ta)
 		match String(c.kind):
 			"medium":
-				draw_line(p + Vector2(-sz * 0.8, sz + 2.0), p + Vector2(sz * 0.8, sz + 2.0), col, 1.4)
+				_seg(p + Vector2(-sz * 0.8, sz + 2.0), p + Vector2(sz * 0.8, sz + 2.0))
 			"large":
-				draw_line(p + Vector2(-sz * 0.8, sz + 2.0), p + Vector2(sz * 0.8, sz + 2.0), col, 1.4)
-				draw_line(p + Vector2(-sz * 0.8, sz + 4.5), p + Vector2(sz * 0.8, sz + 4.5), col, 1.4)
+				_seg(p + Vector2(-sz * 0.8, sz + 2.0), p + Vector2(sz * 0.8, sz + 2.0))
+				_seg(p + Vector2(-sz * 0.8, sz + 4.5), p + Vector2(sz * 0.8, sz + 4.5))
 			"ancient":
-				var t2 := PackedVector2Array([p + Vector2(0, -sz * 0.45), p + Vector2(sz * 0.4, sz * 0.3), p + Vector2(-sz * 0.4, sz * 0.3), p + Vector2(0, -sz * 0.45)])
-				draw_polyline(t2, col, 1.2)
+				var t0 := p + Vector2(0, -sz * 0.45)
+				var t1 := p + Vector2(sz * 0.4, sz * 0.3)
+				var t2 := p + Vector2(-sz * 0.4, sz * 0.3)
+				_seg(t0, t1)
+				_seg(t1, t2)
+				_seg(t2, t0)
 		if boxes:
 			var b: Vector2 = c.box
 			var a2 := _to_mm((c.pos as Vector2) + Vector2(-b.x, b.y))
@@ -2292,6 +2474,11 @@ class TopBar extends Control:
 		mouse_filter = Control.MOUSE_FILTER_PASS
 
 	func _draw() -> void:
+		var t0 := Time.get_ticks_usec()
+		_draw_body()
+		UiKit.draw_cost("TopBar", t0)
+
+	func _draw_body() -> void:
 		if hud.game == null or hud.game.world == null:
 			return
 		var w: SimWorld = hud.game.world
@@ -2368,18 +2555,28 @@ class TopBar extends Control:
 
 class Tip extends Control:
 	var hud
+	var showing := false                       # whether the last draw showed a tooltip (probes read it)
 
 	func _ready() -> void:
 		set_anchors_preset(Control.PRESET_FULL_RECT)
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	func _draw() -> void:
+		var t0 := Time.get_ticks_usec()
+		_draw_body()
+		UiKit.draw_cost("Tip", t0)
+
+	func _draw_body() -> void:
 		var lines: Array = hud._tip_lines
 		# panels only redraw at 20 Hz: keep showing the last tooltip while the mouse stays over them
 		if lines.is_empty() and hud._last_tip.size() > 0:
 			var m := get_viewport().get_mouse_position()
+			# each panel's own hit test: the Fortify button sits above the minimap's rectangle and the buff bar and
+			# stash above the bottom panel's (a rectangle test let those tooltips blink between redraws)
 			for c in [hud.bottom, hud.minimap, hud.shop]:
-				var over: bool = Rect2(c.global_position, c.size).has_point(m) 					or (c == hud.bottom and hud.bottom.covers_extra(m - c.global_position))
+				var lp: Vector2 = m - c.global_position
+				var over: bool = (Rect2(Vector2.ZERO, c.size).has_point(lp)
+					or (c == hud.bottom and hud.bottom.covers_extra(lp)) or (c == hud.minimap and hud.minimap._has_point(lp)))
 				if c.visible and over:
 					lines = hud._last_tip
 					break
@@ -2387,6 +2584,7 @@ class Tip extends Control:
 				lines = hud._last_tip
 		if lines.is_empty():
 			hud._last_tip = []
+		showing = not lines.is_empty()
 		if lines.is_empty():
 			return
 		var wmax := 0.0

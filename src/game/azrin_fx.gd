@@ -322,7 +322,7 @@ func _follow(w: SimWorld, dt: float) -> void:
 			var s: Dictionary = list[i]
 			var ang := now * 1.6 + TAU * i / maxf(1.0, list.size()) + float(s.phase) * 0.05
 			var target := base + Vector3(cos(ang) * SPIRIT_ORBIT, FLOAT + 1.25 + sin(now * 2.3 + i) * 0.15, sin(ang) * SPIRIT_ORBIT)
-			var node: Node3D = s.node
+			var node: Node3D = View.live(s.node)
 			node.global_position = node.global_position.lerp(target, clampf(dt * 10.0, 0.0, 1.0))
 	for id in _burning:
 		var bv: UnitView = game.views.get(id)
@@ -409,7 +409,7 @@ func _javelin_move(e: Dictionary) -> void:
 	var j = _javelins.get(int(e.seq))
 	if j == null:
 		return
-	var n: Node3D = j.node
+	var n: Node3D = View.live(j.node)
 	var pos: Vector2 = e.pos
 	n.visible = fx._seen(pos) or bool(j.seen) and n.visible
 	n.global_position = fx.ground3(pos, 1.3)
@@ -447,7 +447,7 @@ func _update_flyers(dt: float) -> void:
 		if not is_instance_valid(f.node):
 			_flyers.remove_at(i)
 			continue
-		var n: Node3D = f.node
+		var n: Node3D = View.live(f.node)
 		f.t = float(f.t) + dt
 		var k := clampf(float(f.t) / float(f.dur), 0.0, 1.0)
 		n.global_position = (f.from as Vector3).lerp(f.to, k) + Vector3(0, sin(k * PI) * float(f.arc), 0)
@@ -527,7 +527,7 @@ func _update_hammers(dt: float) -> void:
 		if not is_instance_valid(hm.node):
 			_hammers.erase(seq)
 			continue
-		var n: Node3D = hm.node
+		var n: Node3D = View.live(hm.node)
 		hm.t = float(hm.t) + dt
 		var goal2: Vector2 = hm.goal
 		var goal := fx.ground3(goal2, 1.4)
@@ -547,7 +547,7 @@ func _update_hammers(dt: float) -> void:
 func _smite_hit(e: Dictionary) -> void:
 	var seq := int(e.seq)
 	if _hammers.has(seq):
-		var n: Node3D = _hammers[seq].node
+		var n: Node3D = View.live(_hammers[seq].node)
 		for m in n.find_children("*", "MeshInstance3D", true, false):
 			m.visible = false
 		fire.timed(n, 0.0)

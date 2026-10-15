@@ -21,6 +21,11 @@ func _init() -> void:
 	w.setup_match()
 	var h := w.spawn_hero(hero, C.DAWN)
 	var bot := SimBot.new(w, h.id, "mid", "Lab")
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--lead="):
+			bot.lh_lead = float(a.substr(7))
+		elif a.begins_with("--bias="):
+			bot.lh_bias = float(a.substr(7))
 	w.bots.append(bot)
 	var by := {"hero": 0, "creep": 0, "tower": 0, "other": 0}
 	var last_target := -1

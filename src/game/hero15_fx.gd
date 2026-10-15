@@ -112,7 +112,7 @@ func event(e: Dictionary) -> void:
 		"time_bolt_move":
 			var b = _bolts.get(int(e.seq))
 			if b != null:
-				var n2: Node3D = b.node
+				var n2: Node3D = View.live(b.node)
 				var p: Vector2 = e.pos
 				n2.global_position = fx.ground3(p, 1.1)
 				(b.ring as Node3D).rotation.z += 0.35
@@ -235,7 +235,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	for i in range(_timed.size() - 1, -1, -1):
 		var t: Dictionary = _timed[i]
 		t.t = float(t.t) + dt
-		var n: Node3D = t.node
+		var n: Node3D = View.live(t.node)
 		if not is_instance_valid(n) or float(t.t) >= float(t.life):
 			if is_instance_valid(n):
 				fire.timed(n, 0.0)
@@ -274,7 +274,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	for id in _charges:
 		var c: Dictionary = _charges[id]
 		var v := fx._view_of(int(id))
-		var n2: Node3D = c.node
+		var n2: Node3D = View.live(c.node)
 		if v == null or not is_instance_valid(n2):
 			continue
 		n2.visible = v.visible
@@ -285,7 +285,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 			(kids[j] as Node3D).position = Vector3(cos(a), 0.15 * sin(now * 5.0 + j), sin(a)) * 0.55
 	for id in _delayed:
 		var dv := fx._view_of(int(id))
-		var dn: Node3D = _delayed[id]
+		var dn: Node3D = View.live(_delayed[id])
 		if dv and is_instance_valid(dn):
 			dn.visible = dv.visible
 			dn.global_position = dv.global_position + Vector3(0, dv.bar_height + 0.15, 0)
@@ -309,7 +309,7 @@ func _scan(w: SimWorld) -> void:
 				want_delayed[id] = true
 	for id in _charges.keys():
 		if not want_charges.has(id) or int(_charges[id].n) != int(want_charges[id]):
-			var old: Node3D = _charges[id].node
+			var old: Node3D = View.live(_charges[id].node)
 			if is_instance_valid(old):
 				old.queue_free()
 			_charges.erase(id)
@@ -322,7 +322,7 @@ func _scan(w: SimWorld) -> void:
 			_charges[id] = {"node": n, "n": int(want_charges[id])}
 	for id in _delayed.keys():
 		if not want_delayed.has(id):
-			var old2: Node3D = _delayed[id]
+			var old2: Node3D = View.live(_delayed[id])
 			if is_instance_valid(old2):
 				old2.queue_free()
 			_delayed.erase(id)

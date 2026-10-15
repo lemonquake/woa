@@ -96,6 +96,7 @@ func apply(t: SimUnit, src_id: int, src_team: int, m: Dictionary, pierce := fals
 	if dur <= 0.0:
 		return false
 	m["source"] = int(m.get("source", src_id))
+	m["by"] = int(m.get("by", src_id))            # who applied it (a stun group's source is the group's)
 	m["dur"] = dur
 	m["expires"] = w.time + dur
 	m["debuff"] = enemy
@@ -252,12 +253,13 @@ func add_dot(t: SimUnit, src: SimUnit, key: String, dps: float, dur: float, elem
 		for d in dots:
 			if int(d.t) == t.id and int(d.src) == src.id and String(d.key) == key and float(d.until) > w.time:
 				d.until = w.time + dur
+				d.total = dur
 				d.dps = dps
 				_burn_mark(t)
 				w.events.append({"t": "burn", "u": t.id, "src": src.id, "key": key, "dur": dur, "element": element})
 				return true
 	dots.append({"t": t.id, "src": src.id, "team": src.team, "key": key, "element": element, "dps": dps,
-		"until": w.time + dur, "next_at": w.time + DOT_TICK})
+		"until": w.time + dur, "total": dur, "next_at": w.time + DOT_TICK})
 	_burn_mark(t)
 	w.events.append({"t": "burn", "u": t.id, "src": src.id, "key": key, "dur": dur, "element": element})
 	return true
@@ -268,17 +270,19 @@ func extend_dots(t: SimUnit, team: int, element: int, secs: float) -> int:
 	for d in dots:
 		if int(d.t) == t.id and int(d.team) == team and int(d.element) == element and float(d.until) > w.time:
 			d.until = float(d.until) + secs
+			d.total = float(d.get("total", 0.0)) + secs
 			n += 1
 	if n > 0:
 		_burn_mark(t)
 	return n
 
-## The burns on a unit (for the HUD and bots): [{key, element, dps, left}].
+## The burns on a unit (for the HUD and bots): [{key, element, dps, left, total, src}].
 func dots_on(t: SimUnit) -> Array:
 	var out: Array = []
 	for d in dots:
 		if int(d.t) == t.id and float(d.until) > w.time:
-			out.append({"key": d.key, "element": d.element, "dps": d.dps, "left": float(d.until) - w.time})
+			out.append({"key": d.key, "element": d.element, "dps": d.dps, "left": float(d.until) - w.time,
+				"total": float(d.get("total", 0.0)), "src": int(d.src)})
 	return out
 
 func _burn_mark(t: SimUnit) -> void:

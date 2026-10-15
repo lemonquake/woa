@@ -23,7 +23,7 @@ const DEFAULTS := {
 	"window_mode": 0, "resolution": 0, "vsync": true, "frame_limit": 5, "render_scale": 1.0, "quality": 2,
 	"show_fps": false,
 	"edge_pan": true, "lock_cursor": false, "camera_speed": 32.0, "screen_shake": true, "damage_numbers": true, "center_on_respawn": true,
-	"bots_learn": true, "bot_chat": true,
+	"bots_learn": true, "bot_chat": true, "quick_cast": false,
 }
 
 static var data := {}
@@ -151,14 +151,17 @@ static func apply_cursor() -> void:
 	if Input.mouse_mode in [Input.MOUSE_MODE_VISIBLE, Input.MOUSE_MODE_CONFINED] and Input.mouse_mode != want:
 		Input.mouse_mode = want
 
-## Match-only quality switches (the environment lives in the match scene): SSAO from High, glow from Medium.
-static func apply_environment(env: Environment) -> void:
+## Match-only quality switches (the environment and sun live in the match scene): SSAO from High, glow from Medium;
+## the sun's shadow in two cascades from High, one on Low and Medium (half the shadow draw calls in fights).
+static func apply_environment(env: Environment, sun: DirectionalLight3D = null) -> void:
 	_ensure()
 	if env == null or automated():
 		return
 	var q := int(data.quality)
 	env.ssao_enabled = q >= 2
 	env.glow_enabled = q >= 1
+	if sun != null:
+		sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS if q >= 2 else DirectionalLight3D.SHADOW_ORTHOGONAL
 
 ## A quiet menu click on the Interface bus (played by the persistent helper node).
 static func click() -> void:

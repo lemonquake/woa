@@ -20,7 +20,14 @@ func _ready() -> void:
 
 func _process(_dt: float) -> void:
 	show_board = Keybinds.held("scoreboard") or OS.get_cmdline_user_args().has("--board")
-	queue_redraw()
+	# only the board (Tab) or the death recap draws anything: redraw while one shows, and once when it goes
+	var h: SimUnit = hud.hero() if hud else null
+	var showing := show_board or (h != null and not h.alive and not recap.is_empty())
+	if showing or _was_showing:
+		queue_redraw()
+	_was_showing = showing
+
+var _was_showing := true
 
 static func source_name(key: String) -> String:
 	match key:
@@ -78,6 +85,11 @@ func capture_recap(h: SimUnit, w: SimWorld) -> void:
 	recap_killer = hud._name(k) if k else "Unknown"
 
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_body()
+	UiKit.draw_cost("board", t0)
+
+func _draw_body() -> void:
 	var h: SimUnit = hud.hero()
 	if h == null:
 		return

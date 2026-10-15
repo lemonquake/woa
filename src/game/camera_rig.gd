@@ -127,11 +127,17 @@ func _apply() -> void:
 	cam.look_at(target, Vector3.UP)
 
 ## The ground point (sim coordinates) under a screen position, intersecting the terrain by marching the ray.
+var ground_top := 60.0                     # metres: the highest ground (Main sets it from the terrain)
+
 func ground_at(screen: Vector2) -> Vector2:
 	var o := cam.project_ray_origin(screen)
 	var dir := cam.project_ray_normal(screen)
 	var t := 0.0
-	var last := o
+	# start the march where the ray comes down to the highest ground the camera can look at (nothing to hit above
+	# it): about 4x fewer height samples than marching from the lens
+	if dir.y < -0.05 and o.y > ground_top:
+		t = maxf(0.0, (o.y - ground_top) / -dir.y - 0.25)
+	var last := o + dir * t
 	for i in 240:
 		t += 0.25
 		var p := o + dir * t

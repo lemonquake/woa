@@ -7,7 +7,7 @@ const C = preload("res://src/sim/sim_const.gd")
 
 func _init() -> void:
 	var opts := {"min": "20", "window": "5", "seed": "3", "a": "sludge,ezee,blood_ranger,azrin,sludge",
-		"b": "blood_ranger,ezee,sludge,azrin,ezee", "deep": ""}
+		"b": "blood_ranger,ezee,sludge,azrin,ezee", "deep": "", "fight": ""}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--"):
 			var kv := arg.substr(2).split("=", true, 1)
@@ -22,6 +22,13 @@ func _init() -> void:
 			var h := w.spawn_hero(id, team)
 			w.bots.append(SimBot.new(w, h.id, "mid", "Bot %d" % n, "hard"))
 			n += 1
+	if opts.fight != "":
+		# --fight=T: play to T seconds, then stage a level 16 teamfight in mid every 20 s (SimDebug.stage_fight)
+		while w.time < float(opts.fight):
+			w.step()
+			w.events.clear()
+	var fight_next := w.time if opts.fight != "" else INF
+	var first_fight := true
 	w.profiling = true
 	var win := float(opts.window) * 60.0
 	var next := win
@@ -31,9 +38,22 @@ func _init() -> void:
 	var all_n := 0
 	var tick_times := PackedFloat32Array()
 	while w.time < float(opts.min) * 60.0 and w.winner < 0:
+		if w.time >= fight_next:
+			SimDebug.stage_fight(w, Vector2(-150, -150), 16, first_fight)
+			first_fight = false
+			fight_next = w.time + 20.0
+		var before := w.prof.duplicate()
 		var t0 := Time.get_ticks_usec()
 		w.step()
 		var dt := (Time.get_ticks_usec() - t0) / 1000.0
+		if dt > 15.0:
+			# a slow tick: what it was made of
+			var spk := []
+			for k in w.prof:
+				var dk := float(w.prof[k]) - float(before.get(k, 0.0))
+				if dk > 0.5 and not String(k).contains("n_"):
+					spk.append("%s %.1f" % [k, dk])
+			print("  slow tick %.1f ms at %s: %s" % [dt, w.clock_text(), ", ".join(spk)])
 		w.events.clear()
 		ticks += 1
 		worst = maxf(worst, dt)

@@ -26,16 +26,17 @@ func _init(world: SimWorld = null) -> void:
 ## day turns to night.
 var static_dirty := true
 var reveal_all := false                     # Debug panel: every cell is in sight for both teams
-var _static: Array[PackedByteArray] = []
 var _static_night := false
 
 func update() -> void:
 	var night := w.is_night()
-	if static_dirty or night != _static_night or _static.is_empty():
-		_rebuild_static(night)
 	if w.map.vision_rev != _stamp_rev:
-		_stamps.clear()
+		_forget_stamps(w.map.vision_changes)
+		w.map.vision_changes.clear()
 		_stamp_rev = w.map.vision_rev
+		static_dirty = true
+	if static_dirty or night != _static_night or _static_img.is_empty():
+		_rebuild_static(night)
 	if _team_img.is_empty():
 		for t in 2:
 			_team_img.append(Image.create(VN, VN, false, Image.FORMAT_LA8))
@@ -71,6 +72,25 @@ func update() -> void:
 		visible[team] = l8.get_data()
 	_true_sight_sources()
 
+## A tree fell or grew: only the cached sight shapes whose disc reaches a changed cell are cast again (a stamp's key holds
+## its centre cell and radius; flying sight ignores trees). With no list of changes (a loaded snapshot) all are dropped.
+## Dropping every shape on each felled tree used to cost a 20-30 ms tick in fights.
+func _forget_stamps(changed: Array[Vector2i]) -> void:
+	if changed.is_empty() or changed.size() > 24:
+		_stamps.clear()
+		return
+	for key: int in _stamps.keys():
+		if key & 1 == 1:
+			continue
+		var rc := (key >> 1) % 128
+		var cell := (key >> 1) / 128
+		var cx := cell % VN
+		var cy := cell / VN
+		for v in changed:
+			if absi(v.x - cx) <= rc and absi(v.y - cy) <= rc:
+				_stamps.erase(key)
+				break
+
 ## Sight shapes cached per (vision cell, radius, flying) until a tree changes: each is a small luminance + alpha image
 ## (alpha 255 where seen, value 1) blitted into the team's grid by the engine, so a unit that stays in its cell costs one
 ## blit instead of a ray cast. The result is exactly the union of the ray casts.
@@ -86,7 +106,13 @@ func _blit(img: Image, c: Vector2i, radius: float, flying: bool) -> void:
 	if st == null:
 		st = _make_stamp(c, rc, flying)
 		if _stamps.size() > 6000:
-			_stamps.clear()
+			# full: drop the oldest quarter (a dictionary keeps insertion order), not everything at once
+			var n := 0
+			for k in _stamps.keys():
+				_stamps.erase(k)
+				n += 1
+				if n >= 1500:
+					break
 		_stamps[key] = st
 	var size := 2 * rc + 1
 	img.blit_rect_mask(st, st, Rect2i(0, 0, size, size), Vector2i(c.x - rc, c.y - rc))
@@ -164,34 +190,27 @@ func prune_sources() -> void:
 func _rebuild_static(night: bool) -> void:
 	static_dirty = false
 	_static_night = night
-	_static.clear()
 	_static_img.clear()
 	for team in 2:
-		var vis := PackedByteArray()
-		vis.resize(VN * VN)
+		# the buildings' sight from the cached stamps (the same union as casting each one)
+		var img := Image.create(VN, VN, false, Image.FORMAT_LA8)
 		for u in w.units:
 			if u.alive and u.team == team and u.is_building():
-				_cast(vis, u.pos, u.vision_night if night else u.vision_day, false)
-		_static.append(vis)
-		# the same grid as a luminance + alpha image (alpha 255 where seen) to start each update from
-		var la := PackedByteArray()
-		la.resize(VN * VN * 2)
-		for i in VN * VN:
-			if vis[i] == 1:
-				la[i * 2] = 1
-				la[i * 2 + 1] = 255
-		_static_img.append(Image.create_from_data(VN, VN, false, Image.FORMAT_LA8, la))
+				var r := u.vision_night if night else u.vision_day
+				if r > 0.0:
+					_blit(img, w.map.world_to_vcell(u.pos), r, false)
+		_static_img.append(img)
 
+## One sight disc cast cell by cell (tests use it as the reference the cached stamps must match).
 func _cast(vis: PackedByteArray, p: Vector2, radius: float, flying: bool) -> void:
 	var m := w.map
 	var c := m.world_to_vcell(p)
 	var rc := int(ceil(radius / C.VISION_CELL))
 	var src_level := m.vision_level[c.y * VN + c.x]
 	vis[c.y * VN + c.x] = 1
-	var rays: Array = _rays(rc)
 	var block := m.vision_block
 	var lvl := m.vision_level
-	for ray: PackedInt32Array in rays:
+	for ray: PackedInt32Array in _rays(rc):
 		var n := ray.size()
 		var i := 0
 		while i < n:

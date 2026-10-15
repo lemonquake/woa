@@ -123,5 +123,44 @@ func _run() -> void:
 				errs.append(w.events[k].msg)
 		if not errs.is_empty():
 			print("  errors: ", errs)
+	await _quick_cast_check(h, foe)
 	print("\n%d passed, %d failed" % [_passes, _fails])
 	quit(1 if _fails > 0 else 0)
+
+## Quick cast (Options > Game, not saved here): with the mouse over the enemy, the key alone casts the first point or
+## unit spell at it, without a click.
+func _quick_cast_check(h: SimUnit, foe: SimUnit) -> void:
+	var w: SimWorld = game.world
+	var inp: InputController = game.input
+	var slot := -1
+	for i in h.abilities.size():
+		var a := SimData.ability(h.abilities[i])
+		if String(a.behavior) in ["unit", "point"] and String(a.get("target_team", "enemy")) == "enemy" and h.ability_level_of(h.abilities[i]) > 0:
+			slot = i
+			break
+	if slot < 0:
+		print("quick cast: no enemy-target spell on this hero, skipped")
+		return
+	var aid: String = h.abilities[slot]
+	var was = Options.get_value("quick_cast")
+	Options.set_value("quick_cast", true)
+	h.mana = h.max_mana
+	h.ability_ready[aid] = C.LONG_AGO
+	h.channel = {}
+	w.orders.clear(h)
+	if not foe.alive:
+		w.respawn(foe)
+	foe.pos = h.pos + Vector2(250, 0)
+	foe.hp = foe.max_hp
+	w.orders.clear(foe)
+	await frames(3)
+	var sp: Vector2 = game.camera.cam.unproject_position(View.to3(foe.pos, game.terrain.height_at(foe.pos)) + Vector3(0, 0.9, 0))
+	game.get_viewport().warp_mouse(sp)
+	await process_frame
+	await process_frame
+	var mana0 := h.mana
+	inp._action(Keybinds.slot_action(slot, h.abilities.size()), h)
+	check(inp.targeting == "", "quick cast: %s needs no click (targeting=%s)" % [aid, inp.targeting])
+	await frames(45)
+	check(h.mana < mana0 or w.abilities.cooldown_left(h, aid) > 0.0, "quick cast: %s went off at the mouse (mana %.0f -> %.0f)" % [aid, mana0, h.mana])
+	Options.set_value("quick_cast", was)

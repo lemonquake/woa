@@ -55,7 +55,7 @@ static func _apply(w: SimWorld, hero_id: int, c: Dictionary) -> String:
 			if text != "":
 				w.chat(h.team, h.id, text)
 		"glyph":
-			if not w.glyph(h.team):
+			if not w.glyph(h.team, h.id):
 				return "Fortify is not ready"
 		"buy":
 			return w.shop.buy(h, String(c.get("item", "")))

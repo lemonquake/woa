@@ -39,9 +39,20 @@ func _process(dt: float) -> void:
 		_banner.t += dt
 		if _banner.t >= _banner.dur:
 			_banner = _queue.pop_front() if not _queue.is_empty() else {}
-	queue_redraw()
+	# redraw while something shows (lines fade and slide), once more when the last one goes, never when empty
+	var showing := not lines.is_empty() or not _banner.is_empty()
+	if showing or _was_showing:
+		queue_redraw()
+	_was_showing = showing
+
+var _was_showing := true
 
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_body()
+	UiKit.draw_cost("feed", t0)
+
+func _draw_body() -> void:
 	var vs := get_viewport_rect().size
 	var y := 196.0
 	for l in lines:

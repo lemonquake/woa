@@ -4,7 +4,8 @@ extends RefCounted
 ## see docs/MECHANICS.md "Orbs"). A hero picks one up by walking within 150 of it (a right click on it).
 ##   Gold Orb (Bounty): 0:00 at the two gold spots and the two river spots, then every 4:00 at the gold spots. Every hero
 ##     of the team gets 40 + 6 per 4 minutes of reliable gold.
-##   Water Orb: 2:00 and 4:00 at both river spots: 40 health and 80 mana.
+##   Rejuvenation Orb (Dota's Water rune; owner's name 2026-10-15): 2:00 and 4:00 at both river spots and never
+##     again: 40 health and 80 mana.
 ##   Wisdom Orb: 7:00 and every 7:00 at both wisdom spots: 280 experience per 7 minutes to the picker and to the
 ##     team's hero with the least experience (the next one if the picker is that hero), dead or alive.
 ##   Power orbs: from 6:00 every 2:00 at one of the two river spots, chosen at random. A cycle shows every kind once
@@ -13,14 +14,14 @@ extends RefCounted
 ##     damage taken while invisible + 5% per cycle; broken by attacking or casting), Healing (6% of max health and mana
 ##     per second for 30 s, 1% for 3 s after damage from a hero, ends when both are full), Magic (25% shorter cooldowns,
 ##     30% cheaper mana costs, 50 s), Shield (absorbs damage up to 50% of max health, 75 s).
-## Gold and Wisdom orbs stay until taken (a new one lies beside an old one); Water and power orbs vanish when the next
+## Gold and Wisdom orbs stay until taken (a new one lies beside an old one); Rejuvenation and power orbs vanish when the next
 ## river orb spawns. (Dota's Illusion rune is not in the cycle yet: the game has no illusions.)
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
 
 const POWER := ["speed", "damage", "stealth", "healing", "magic", "shield"]
-const NAMES := {"gold": "Gold Orb", "water": "Water Orb", "wisdom": "Wisdom Orb", "speed": "Speed Orb",
+const NAMES := {"gold": "Gold Orb", "rejuvenation": "Rejuvenation Orb", "wisdom": "Wisdom Orb", "speed": "Speed Orb",
 	"damage": "Damage Orb", "stealth": "Stealth Orb", "healing": "Healing Orb", "magic": "Magic Orb",
 	"shield": "Shield Orb"}
 const PICKUP_RANGE := 150.0
@@ -35,7 +36,7 @@ var _next_id := 1
 var _bag: Array = []                       # power kinds left in this cycle
 var _last_power := ""
 var _next_gold := 0.0
-var _next_water := 120.0
+var _next_rejuv := 120.0                  # 2:00, then 4:00, then never
 var _next_power := 360.0
 var _next_wisdom := 420.0
 
@@ -60,11 +61,11 @@ func update() -> void:
 		for p in spots.gold:
 			_spawn("gold", p, "gold")
 		_next_gold += 240.0
-	if _next_water <= 240.0 and w.time >= _next_water:
+	if _next_rejuv <= 240.0 and w.time >= _next_rejuv:
 		_clear_river()
 		for p in spots.power:
-			_spawn("water", p, "power")
-		_next_water += 120.0
+			_spawn("rejuvenation", p, "power")
+		_next_rejuv += 120.0
 	if w.time >= _next_power:
 		_clear_river()
 		var p2: Vector2 = spots.power[w.rng.randi_range(0, 1)]
@@ -96,7 +97,7 @@ func _draw_power() -> String:
 	_last_power = kind
 	return kind
 
-## Water and power orbs at the river spots go when the next river orb comes (gold orbs there stay).
+## Rejuvenation and power orbs at the river spots go when the next river orb comes (gold orbs there stay).
 func _clear_river() -> void:
 	for i in range(orbs.size() - 1, -1, -1):
 		var o: Dictionary = orbs[i]
@@ -129,13 +130,13 @@ func take(h: SimUnit, id: int) -> bool:
 		return false
 	orbs.erase(o)
 	w.events.append({"t": "orb_gone", "id": o.id})
-	# a Flask with room keeps the orb (and refills: 2 charges for a gold or water orb, 3 for the others)
+	# a Flask with room keeps the orb (and refills: 2 charges for a gold or rejuvenation orb, 3 for the others)
 	var b := _bottle(h)
 	if not b.is_empty() and String(b.get("orb", "")) == "":
 		var kind := String(o.kind)
 		b["orb"] = kind
 		b["orb_until"] = w.time + float(SimData.item("bottle").values.orb_expire)
-		b["charges"] = maxi(int(b.get("charges", 0)), 2 if kind in ["gold", "water"] else 3)
+		b["charges"] = maxi(int(b.get("charges", 0)), 2 if kind in ["gold", "rejuvenation"] else 3)
 		w.events.append({"t": "orb_bottled", "u": h.id, "kind": kind, "name": String(NAMES.get(kind, kind))})
 		return true
 	activate(h, String(o.kind))
@@ -171,7 +172,7 @@ func activate(h: SimUnit, kind: String) -> void:
 				w.combat.give_xp(lowest, xp)
 				info["also"] = lowest.id
 			info["xp"] = xp
-		"water":
+		"rejuvenation":
 			w.combat.heal(h, 40.0)
 			h.mana = minf(h.max_mana, h.mana + 80.0)
 		"speed":

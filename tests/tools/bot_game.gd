@@ -3,7 +3,7 @@ extends SceneTree
 ## their time, their team chat, and any hero that got stuck.
 ##   godot --headless --path . -s tests/tools/bot_game.gd -- [--a=sludge,ezee,blood_ranger,sludge,ezee]
 ##       [--b=blood_ranger,ezee,sludge,ezee,blood_ranger] [--min=45] [--seeds=3,7,11] [--skill=hard] [--skill_b=hard]
-##       [--learn=path/to/memory.json] [--chat] [--out=work/file.txt]
+##       [--learn=path/to/memory.json] [--chat] [--out=work/file.txt] [--tf_off=0|1]
 ## --learn turns the bots' memory on with that file (it is read first and written after each game), so repeated runs
 ## show what learning changes. Without it the bots use their built-in values.
 
@@ -41,7 +41,7 @@ func out(s: String) -> void:
 func _init() -> void:
 	var opts := {"a": "sludge,ezee,blood_ranger,sludge,ezee", "b": "blood_ranger,ezee,sludge,ezee,blood_ranger",
 		"min": "45", "seeds": "3,7,11", "skill": "hard", "skill_b": "", "learn": "", "learn_teams": "1,1", "chat": "",
-		"out": "", "no_save": ""}
+		"out": "", "no_save": "", "tf_off": ""}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--"):
 			var kv := arg.substr(2).split("=", true, 1)
@@ -71,12 +71,16 @@ func _init() -> void:
 				w.bots.append(SimBot.new(w, h.id, "mid", names[n], skill))
 				heroes.append(h)
 				n += 1
+		if String(opts.tf_off) != "":
+			# --tf_off=0 or 1: that team's brain never calls teamfights (A/B test of the team engage)
+			w.brain(int(opts.tf_off)).teamfights = false
 		var t0 := Time.get_ticks_msec()
 		var modes := {}
 		var last_pos := {}
 		var still := {}
 		var stuck := {}
 		var chat: Array = []
+		var fortify: Array = []                 # "[clock] team (who)" for every Fortify pressed
 		var marks := {}
 		while w.time < float(opts.min) * 60.0 and w.winner < 0:
 			w.step()
@@ -92,6 +96,9 @@ func _init() -> void:
 			for e in w.events:
 				if e.t == "chat":
 					chat.append("[%s] %s %s: %s" % [w.clock_text(), C.TEAM_NAMES[int(e.team)], e.name, e.text])
+				elif e.t == "glyph":
+					var fb := w.get_unit(int(e.get("by", -1)))
+					fortify.append("[%s] %s (%s)" % [w.clock_text(), C.TEAM_NAMES[int(e.team)], fb.bot_name if fb != null else "?"])
 			w.events.clear()
 			if w.tick % 15 == 0:
 				for b in w.bots:
@@ -117,6 +124,28 @@ func _init() -> void:
 			wins[w.winner] += 1
 		# a game cut off at the time cap still teaches (net worth decides the build scores)
 		SimTeamAI.match_over(w)
+		if w.winner < 0:
+			# no winner at the cap: what still stands, and what every bot is doing
+			for bt in [C.DAWN, C.DUSK]:
+				var left := []
+				for u in w.units:
+					if u.alive and u.team == bt and u.is_building() and u.kind != C.Kind.FOUNTAIN:
+						left.append("%s%s %d%%%s" % [u.def.id, (" " + u.building_lane) if u.building_lane != "" else "",
+							roundi(u.hp / u.max_hp * 100.0), " inv" if u.is_invulnerable() else ""])
+				out("  %s standing: %s" % [C.TEAM_NAMES[bt], ", ".join(left)])
+			for b in w.bots:
+				var bh: SimUnit = b.hero()
+				var tk: Dictionary = w.brain(bh.team).task_for(bh.id)
+				out("    end %s %s %s hp %d%% pos %s task %s" % [b.name, b.mode, "alive" if bh.alive else "dead",
+					roundi(bh.hp / bh.max_hp * 100.0), str(bh.pos.round()), String(tk.get("kind", "-"))])
+		for bt in [C.DAWN, C.DUSK]:
+			var br := w.brain(bt)
+			var unstuck := 0
+			for b in w.bots:
+				if b.hero() != null and b.hero().team == bt:
+					unstuck += b.unstuck_count
+			out("  %s calls: teamfights %d, ganks %d, pushes %d (chained on %d), towers lost %d, bots unstuck %d" % [
+				C.TEAM_NAMES[bt], br.fights_called, br.ganks_called, br.pushes_called, br.pushes_chained, _towers_lost(w, bt), unstuck])
 		out("seed %d: %s at %s (%.1f s real)" % [seed, ("%s won" % C.TEAM_NAMES[w.winner]) if w.winner >= 0 else "no winner", w.clock_text(),
 			(Time.get_ticks_msec() - t0) / 1000.0])
 		for team in [C.DAWN, C.DUSK]:
@@ -145,6 +174,7 @@ func _init() -> void:
 			nw[hh.team] += hh.networth()
 		out("  totals: kills %d vs %d, net worth %d vs %d" % [kills[0], kills[1], nw[0], nw[1]])
 		out("  stuck: %s" % (str(stuck.values()) if not stuck.is_empty() else "none"))
+		out("  Fortify pressed %d times: %s" % [fortify.size(), ", ".join(fortify)])
 		out("  chat lines: %d" % chat.size())
 		if String(opts.chat) != "":
 			for c in chat:
@@ -161,3 +191,10 @@ func _init() -> void:
 		var f := FileAccess.open(String(opts.out), FileAccess.WRITE)
 		f.store_string("\n".join(lines) + "\n")
 	quit()
+
+static func _towers_lost(w: SimWorld, team: int) -> int:
+	var n := 0
+	for u in w.units:
+		if u.team == team and u.kind == C.Kind.TOWER and not u.alive:
+			n += 1
+	return n

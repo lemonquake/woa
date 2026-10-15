@@ -156,11 +156,14 @@ func pick(screen: Vector2) -> int:
 	var d := cam.project_ray_normal(screen)
 	var best := -1
 	var best_t := INF
-	for v in game.views.values():
-		if not v.visible:
+	# only units standing near the ground under the cursor can be under it (a tall building's top shows a few metres
+	# from its base): a query there instead of testing every unit view each frame
+	var near: Array = game.world.query(game.camera.ground_at(screen), 900.0, true)
+	for u: SimUnit in near:
+		if u.kind == C.Kind.FOUNTAIN:
 			continue
-		var u: SimUnit = game.world.get_unit(v.uid)
-		if u == null or not u.alive or u.kind == C.Kind.FOUNTAIN:
+		var v = game.views.get(u.id)
+		if v == null or not v.visible:
 			continue
 		var base: Vector3 = v.global_position
 		var height: float = v.bar_height * 0.85
@@ -451,6 +454,18 @@ func begin_ability(aid: String, queue := false) -> void:
 		"point", "unit", "autocast_attack":
 			targeting = aid
 			_target_queue = queue
+			_quick_cast()
+
+## Quick cast (Options > Game): the targeted spell or item goes off at once at the mouse, as if the target were
+## clicked; a key pressed with the mouse over the interface, or with no valid unit under the cursor for a unit spell,
+## leaves the targeting cursor up as usual (with the reason).
+func _quick_cast() -> void:
+	if not bool(Options.get_value("quick_cast")) or targeting == "":
+		return
+	var m: Vector2 = game.get_viewport().get_mouse_position()
+	if game.hud and game.hud.has_method("over_hud") and game.hud.over_hud(m):
+		return
+	_left_click(m, _target_queue)
 
 func _error(msg: String) -> void:
 	if game.hud and game.hud.has_method("error"):
@@ -562,6 +577,7 @@ func use_item(slot: int, queue := false) -> void:
 	else:
 		targeting = "item:%d" % slot
 		_target_queue = queue
+		_quick_cast()
 
 ## A courier command for your courier (see SimWorld.courier_command).
 func courier_cmd(cmd: String) -> void:

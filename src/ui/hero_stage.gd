@@ -496,7 +496,7 @@ func _stage_aura(id: String, cfg: Dictionary) -> void:
 func _process(dt: float) -> void:
 	_t += dt
 	for i in _braziers.size():
-		var bl: OmniLight3D = _braziers[i]
+		var bl: OmniLight3D = View.live(_braziers[i])
 		bl.light_energy = 1.8 * (0.82 + 0.12 * sin(_t * 11.0 + i * 2.0) + 0.06 * sin(_t * 23.0 + i))
 	if not dragging:
 		yaw += dt * spin

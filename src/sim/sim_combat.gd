@@ -5,6 +5,7 @@ extends RefCounted
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
+const FORTIFY_MARK_SRC := -70              # one Fortify Mark per unit, whichever tower put it there
 
 var w: SimWorld
 var _deaths: Array = []                    # [{u, killer}]
@@ -28,34 +29,50 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 		snap["burst"] = w.abilities.masterful_bonus(u, t)
 		if w.abilities.frost_heart_spend(u, t):
 			snap["frost"] = true
+	var speed := float(u.def.projectile_speed)
+	if fortified_tower(u):
+		# Fortify (owner's rule 2026-10-15): tier 2+ towers shoot 50% faster, splash and mark what they hit
+		snap["fortify"] = true
+		speed *= C.GLYPH_PROJECTILE_SPEED
 	if u.is_ranged():
 		var p := {"id": _next_proj, "src": u.id, "target": t.id, "pos": u.pos + Vector2.from_angle(u.facing) * u.hull,
-			"speed": float(u.def.projectile_speed), "snap": snap, "kind": "attack", "model": u.def.model, "mod": mod}
+			"speed": speed, "snap": snap, "kind": "attack", "model": u.def.model, "mod": mod}
 		_next_proj += 1
 		w.projectiles.append(p)
 		w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": t.id, "kind": "attack", "mod": mod,
-			"burst": float(snap.get("burst", 0.0)) > 0.0, "frost": bool(snap.get("frost", false))})
-		# glyph: tier 2+ towers also fire at extra nearby enemies
-		if u.kind == K.TOWER and u.lane_tier >= 2 and w.time < u.glyph_until:
-			_glyph_multishot(u, t, snap)
+			"burst": float(snap.get("burst", 0.0)) > 0.0, "frost": bool(snap.get("frost", false)),
+			"fortify": bool(snap.get("fortify", false))})
 	else:
 		land_attack(snap, t)
 
-func _glyph_multishot(u: SimUnit, main: SimUnit, snap: Dictionary) -> void:
-	var n := 0
-	for o: SimUnit in w.query(u.pos, u.attack_range + 200.0, true):
-		if n >= C.GLYPH_EXTRA_TARGETS:
-			break
-		if o == main or o.team == u.team or o.is_building() or o.is_ward() or not w.vision.sees(u.team, o):
+## A tier 2 or higher tower while its team's Fortify lasts.
+func fortified_tower(u: SimUnit) -> bool:
+	return u.kind == K.TOWER and u.lane_tier >= 2 and w.time < u.glyph_until
+
+## Fortify Mark: a Fortified tower's hit adds a mark (15 s, a new one renews them all); each mark adds 50 physical
+## damage to Fortified towers' attacks on the unit, the hit that adds it included. Not on debuff-immune units, but
+## the marks they already carry still count. Returns the marks now on `t`.
+func fortify_mark(s: Dictionary, t: SimUnit) -> int:
+	var m := t.get_modifier("fortify_mark")
+	var n := int(m.get("charges", 0)) if not m.is_empty() and w.time < float(m.expires) else 0
+	if t.is_invulnerable() or t.debuff_immune:
+		return n
+	n += 1
+	t.add_modifier({"id": "fortify_mark", "source": FORTIFY_MARK_SRC, "expires": w.time + C.GLYPH_MARK_TIME,
+		"charges": n, "tower_bonus": C.GLYPH_MARK_DAMAGE * n, "debuff": true, "by": int(s.src), "fx": "marked"})
+	return n
+
+## Splash from a Fortified tower: every other enemy within 300 of where the shot landed takes the attack's damage
+## (by its own armor type) and its own marks' bonus. Not buildings, wards or couriers.
+func _fortify_splash(s: Dictionary, t: SimUnit, rolled: float) -> void:
+	w.events.append({"t": "fortify_splash", "u": int(s.src), "team": int(s.team), "pos": t.pos,
+		"radius": C.GLYPH_SPLASH_RADIUS})
+	for o: SimUnit in w.query(t.pos, C.GLYPH_SPLASH_RADIUS, true):
+		if o == t or not o.alive or o.team == int(s.team) or o.is_building() or o.is_ward() or o.kind == K.COURIER:
 			continue
-		if u.edge_distance(o) > u.attack_range:
-			continue
-		var p := {"id": _next_proj, "src": u.id, "target": o.id, "pos": u.pos, "speed": float(u.def.projectile_speed),
-			"snap": snap, "kind": "attack", "model": u.def.model, "mod": ""}
-		_next_proj += 1
-		w.projectiles.append(p)
-		w.events.append({"t": "projectile", "id": p.id, "src": u.id, "target": o.id, "kind": "attack", "mod": ""})
-		n += 1
+		var n := fortify_mark(s, o)
+		var d := rolled * attack_class_multiplier(s, o) + C.GLYPH_MARK_DAMAGE * n
+		deal_damage(int(s.src), int(s.team), false, o, d, C.DamageType.PHYSICAL, true, "fortify_splash")
 
 ## An attack snapshot for an ability that strikes with the unit's attack (Swift Dagger's stab).
 func attack_snapshot(u: SimUnit, mod: String) -> Dictionary:
@@ -213,6 +230,9 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		# Dota shows the critical number in red before the target's reductions
 		w.events.append({"t": "crit", "u": s.src, "target": t.id, "amount": dmg, "mult": crit})
 	# Death Order: Caziel's blow on an enemy about to die is pure damage
+	var fortified := bool(s.get("fortify", false)) and t.team != int(s.team) and not t.is_building() and not t.is_ward()
+	if fortified:
+		dmg += C.GLYPH_MARK_DAMAGE * fortify_mark(s, t)
 	var dtype := _attack_dtype(s)
 	var executes := w.abilities.death_order(s, t)
 	if executes:
@@ -250,6 +270,8 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.ai.on_creep_hit(src, t, base_dmg)
 	if t.alive and t.is_hero() and src != null:
 		w.abilities.on_attacked(t, src)
+	if fortified:
+		_fortify_splash(s, t, base_dmg)
 	return true
 
 ## Evasion and the uphill miss, each its own pseudo-random roll: the target's evasion (its sources multiplied), then

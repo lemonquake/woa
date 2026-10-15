@@ -72,7 +72,7 @@ func _ready() -> void:
 		["Spawn neutral camps", func(): SimDebug.force_neutrals(_w()); _say("Neutral camps spawned")],
 		["Skip 1 minute", func(): SimDebug.skip_time(_w(), 60.0); _say("Clock +60 s")],
 		["Skip 5 minutes", func(): SimDebug.skip_time(_w(), 300.0); _say("Clock +5 min")],
-		["Use glyph", func(): _w().glyph(game.player_team)],
+		["Use glyph", func(): _w().glyph(game.player_team, game.player_hero_id)],
 	])
 	_section(v, "Your hero")
 	_grid(v, [

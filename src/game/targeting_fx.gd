@@ -91,7 +91,7 @@ func frame() -> void:
 		var r: float = game.world.abilities.cast_range(h, "", int(aid.substr(5)))
 		var it = h.inventory[int(aid.substr(5))]
 		if it != null and not is_finite(r):
-			r = float(SimData.item(it.id).values.get("range", 0.0))
+			r = float(SimData.item(it.id).values.get("range", 0.0)) + h.cast_range_bonus
 		if r > 0.0 and r < 5000.0:
 			_place_ring(_range, h.pos, r + h.hull)
 		return
@@ -110,7 +110,9 @@ func frame() -> void:
 	var beh := String(a.behavior)
 	match beh:
 		"point":
-			var rng := float(a.range)
+			var rng: float = game.world.abilities.cast_range(h, aid, -1)
+			if not is_finite(rng):
+				rng = game.world.abilities.val(h, aid, "distance")   # aimed by direction: how far it flies
 			_place_ring(_range, h.pos, rng + h.hull)
 			if hovered:
 				return
@@ -133,8 +135,10 @@ func frame() -> void:
 				# the box's local +Z runs along the shot: (dir.x, 0, -dir.y) in the rendered world
 				_line.rotation = Vector3(0, atan2(dir.x, -dir.y), 0)
 				_line.visible = true
-		"autocast_attack", "unit":
+		"autocast_attack":
 			_place_ring(_range, h.pos, h.attack_range + h.hull)
+		"unit":
+			_place_ring(_range, h.pos, game.world.abilities.cast_range(h, aid, -1) + h.hull)
 		"no_target":
 			match aid:
 				"dark_stomp":
@@ -142,7 +146,7 @@ func frame() -> void:
 				"unholy_might":
 					_place_ring(_area_ring, h.pos, float((vals.reflect_radius as Array)[lv - 1]))
 				"leap_strike":
-					_place_ring(_range, h.pos, float(a.range) + h.hull)
+					_place_ring(_range, h.pos, game.world.abilities.cast_range(h, "leap_strike", -1) + h.hull)
 					var t: SimUnit = game.world.abilities.leap_target(h, lv)
 					if t:
 						_place_ring(_pick, t.pos, maxf(t.hull, 24.0) * 2.2, 0.08)

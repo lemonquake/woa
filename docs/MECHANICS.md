@@ -122,7 +122,14 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
   * Tier 4 towers need any tier 3 destroyed.
   * The Ancient needs both tier 4 towers destroyed.
 * Backdoor protection: tier 2 towers and in-base buildings take 50% less damage and regenerate what enemies dealt, unless enemy lane creeps are near. Tier 2 towers use a 900 radius around themselves; in-base buildings use 4000 around the Ancient. The protection lingers 15 s after creeps arrive.
-* Glyph: buildings are immune for 7 s and lane creeps for 3 s. Tier 2+ towers fire 5 extra projectiles. Cooldown 5 min; first available at 3:00.
+* Fortify (Dota's Glyph): buildings are immune for 7 s and lane creeps for 3 s. Cooldown 5 min; first available at
+  3:00. Owner's rules 2026-10-15, in place of Dota's 5 extra projectiles: while it lasts, tier 2+ towers' shots fly 50%
+  faster, splash every other enemy within 300 of where they land (full attack damage, not buildings, wards or
+  couriers), and mark each enemy they hit: a Fortify Mark lasts 15 s (a new one renews them), and every mark adds 50
+  physical damage to Fortified towers' shots on that unit, the hit that adds it included (not added to debuff-immune
+  units; marks they carry still count). The allies are told who pressed it. A team of bots presses it for a building
+  in danger (under 35% with two attackers, under 60% with four including a hero, or a tier 2+ tower with three enemy
+  heroes fighting under it); a team with a human leaves it to the humans.
 * Building bounties: team gold to every enemy hero, plus last-hit gold. Denied towers pay a reduced amount.
 
 ## Gold and experience (`sim_combat.gd`)
@@ -209,6 +216,9 @@ Break, Invisibility, Disjoint; Valve's game data for the numbers.
   **Root** blocks movement, Jump Knife and Teleport (and ends a Teleport channel), not attacks or spells. **Break**
   turns off the unit's own passive abilities (Masterful Archery, the neutrals' passives and auras), never item
   passives.
+* **Buffs and debuffs** (the HUD's buff bar, `src/ui/buff_bar.gd`): a debuff is any disable, slow, extra damage
+  taken, healing cut, reveal or burn, an enemy aura, Kragg's Charge, or an effect whose stats are all negative (armor
+  or attack speed loss); everything else is a buff. Each instance shows on its own, as in Dota.
 * **Dispels**: basic removes slows, silences, roots, disarms, mutes; strong also removes stuns and hexes. An enemy's
   dispel removes buffs instead. Auras are never dispelled.
 * **Health restoration amplification** (Kugmo family, 12-16%) raises regeneration, heals and lifesteal; healing
@@ -277,7 +287,8 @@ Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom
   units under the cursor). Orbs are seen only in vision; the minimap shows the ones your team sees.
 * Gold Orb (Bounty): 0:00 at the two gold spots and both river spots, then every 4:00 at the gold spots. Every hero of
   the team gets 40 + 6 per 4 minutes of reliable gold.
-* Water Orb: 2:00 and 4:00 in both river spots: 40 health and 80 mana at once.
+* Rejuvenation Orb (Dota's Water rune; named by the owner 2026-10-15): 2:00 and 4:00 in both river spots, never
+  after: 40 health and 80 mana at once.
 * Wisdom Orb: 7:00 and every 7:00 at both wisdom spots: 280 experience per 7 minutes to the hero who takes it and to
   the team's hero with the least experience (the next one if that is the taker), alive or dead.
 * Power orbs from 6:00 every 2:00 in one river spot chosen at random; each cycle shows every kind once and the same
@@ -292,7 +303,7 @@ Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom
   * Magic (Arcane): 25% shorter cooldowns and 30% cheaper mana costs (spells and items), 50 s.
   * Shield: a barrier absorbing damage of every type up to 50% of max health, 75 s.
 * Flask (Dota's Bottle; 675 gold, Consumables): 3 charges of 110 health and 60 mana over 2.7 s (lost to damage from an enemy hero),
-  refilled to 3 at the fountain. An orb taken while carrying it is stored (gold and water refill it to 2 charges, the
+  refilled to 3 at the fountain. An orb taken while carrying it is stored (gold and rejuvenation orbs refill it to 2 charges, the
   others to 3) and let out by drinking, or by itself after 90 s (lost if the hero is dead then).
 * Not yet: the Illusion rune (the game has no illusions), destroying orbs by attacking them.
 
@@ -354,8 +365,9 @@ attack point 0.6, projectile 1000, speed 290. Owner's numbers below; mana, cast 
   sets it to buy itself as soon as gold allows. **Owner's rule (not Dota):** an auto-buy made away from the shop goes
   to your courier if it waits at the fountain; otherwise to the stash. A purchase removes its entries.
 * Courier (one per player; Dota 7.23 rework, 7.27 and 7.35 changes; `npc_units.txt`, `npc_abilities.txt`):
-  * Its level is its owner's. Speed 290 + 10 per level (*APPROX*: wiki formula); walks with pathing until level 4,
-    then flies straight (flying vision). Vision 200. Passes through units.
+  * Its level is its owner's. Speed 290 + 20 per level (owner's rule 2026-10-15; Dota: + 10); walks with pathing until
+    its owner reaches level 6 (owner's rule; Dota: 4), then flies straight over trees, cliffs and walls (flying
+    vision). Vision 200. Passes through units.
   * Dies to hits, not damage (7.35): one melee hero attack, two ranged hero attacks, six of anything else (*APPROX*:
     a spell counts as one hit). Heals only in the fountain. Respawns after 60 + 6 x level (7.35). Every enemy hero
     gets 25 + 5 x level gold (*APPROX*, 7.23 notes). It keeps what it carries while dead.
@@ -437,11 +449,16 @@ attack point 0.6, projectile 1000, speed 290. Owner's numbers below; mana, cast 
 * **Cooldown reduction** (Time Crystal = Octarine Core, 25%): a spell or item cooldown starts that much shorter. Several
   items do not stack (the largest counts); the Magic Orb's cut multiplies with it. Teleport cooldowns too.
 * **Cooldown rate** (ours, for Tock): a modifier stat `cooldown_rate` moves every running cooldown of a unit each tick:
-  +1 runs twice as fast, -0.4 runs 40% slower, -1 stands still. Time Bolt (slower), Fast Forward (faster) and Stop
-  Time (frozen) use it; Refresh Stone finishes every spell cooldown (not items, as Refresher Orb in this patch).
+  +1 runs twice as fast, -0.4 runs 40% slower, -1 stands still. Time Bolt (slower) and Stop Time (frozen) use it; Refresh Stone finishes every spell cooldown (not items, as Refresher Orb in this patch).
 * **Spell area** (Wide Stone = Chasm Stone +40, Net Staff and Frost Plate +75; largest counts): added to every
   `radius` or `*_radius` value of a hero's spells (not sight radii). **Cast range** (Long Lens = Aether Lens +225,
-  Blast Rod +60..+180; largest counts): added to spell and item cast ranges.
+  Blast Rod +60..+180): added to spell and item cast ranges, to the reach of line shots that always fly their full
+  distance (Shuriken Hook, Gale Impact, Fiery Javelin...; as Dota's Meat Hook), to Leap Strike's search radius and to
+  Jump Knife's 1200 / 960. Copies of one source stack with diminishing returns (owner's rule 2026-10-15 c, not
+  Dota's): the largest counts in full, each next copy half the one before (two Long Lenses +337.5, three +393.75;
+  Blast Rods of any level are one source). Different sources add fully: items, talents (a `cast_range` stat or an
+  ability's own `range`) and buffs (`cast_range` in a modifier's stats). The ability tooltip shows the cast range now,
+  and the stat sheet the bonus.
 * **Item auras with a target side**: Small Shield (+2 armor), Leech Totem (allies +2 armor, +1 mana regen, 20% lifesteal
   for heroes / 12% for creeps, +18% base damage; its owner gets only the armor and mana), Battle Armor (allies and
   allied buildings +30 attack speed and +5 armor; enemies and enemy buildings -5 armor), Frost Plate (enemies -40
@@ -462,7 +479,9 @@ attack point 0.6, projectile 1000, speed 290. Owner's numbers below; mana, cast 
 Every number below is *chosen* (no Dota hero is copied); the owner may tune them in `sim_data.gd`.
 * **Tock** (ranged intelligence, Light; Str 19 +2.0, Agi 17 +1.7, Int 25 +3.2, damage 21-27, range 575, speed 295):
   Time Bolt (Q, line 1000 at 1400, 120 wide: 90/150/210/270 magic, enemy cooldowns 30/40/50/60% slower for 4 s;
-  10-7 s), Fast Forward (W, ally 700: cooldowns 40/60/80/100% faster and 10-22% speed for 5 s; 18-12 s), Rewind (E: back
+  10-7 s), Fast Forward (W, ally 700: 2/3.5/5/6.5 s off the
+  target's basic spell cooldowns at once, not its ultimate or items (owner's rule 2026-10-15), and 10-22% speed for 5 s;
+  18-12 s), Rewind (E: back
   to where he stood 3 s ago with that health, and that mana less the cost, basic dispel, disjoint; 28-16 s), Slow
   Field (D, 350 area for 5 s: 30-45% slower, -40 to -100 attack speed; 18-12 s), Quick Hands (F, passive: each spell
   cuts his other cooldowns by 1/1.5/2/2.5 s), Stop Time (R, 400 area: enemies stunned and their cooldowns frozen for

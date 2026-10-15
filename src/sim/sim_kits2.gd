@@ -41,11 +41,16 @@ func cast(u: SimUnit, aid: String, lv: int, t: SimUnit, p: Vector2) -> void:
 			if t == null or not t.alive:
 				return
 			var dur := ab.val(u, aid, "duration")
+			# flat seconds off the basic spells' cooldowns (owner's rule 2026-10-15: not the ultimate, not items)
+			var cut := ab.val(u, aid, "cut")
+			for other in basic_spells(t):
+				var r := float(t.ability_ready.get(other, C.LONG_AGO))
+				if r > w.time:
+					t.ability_ready[other] = maxf(w.time, r - cut)
 			t.add_modifier({"id": "fast_forward", "source": u.id, "expires": w.time + dur,
-				"stats": {"cooldown_rate": ab.val(u, aid, "rate"), "move_speed_pct": ab.val(u, aid, "move_pct")},
-				"fx": "fast_forward"})
+				"stats": {"move_speed_pct": ab.val(u, aid, "move_pct")}, "fx": "fast_forward"})
 			t.refresh_stats()
-			w.events.append({"t": "fast_forward", "u": u.id, "target": t.id, "dur": dur})
+			w.events.append({"t": "fast_forward", "u": u.id, "target": t.id, "dur": dur, "cut": cut})
 		"rewind":
 			_rewind(u, aid)
 		"slow_field":
@@ -183,6 +188,11 @@ func _stop_time(u: SimUnit, aid: String, p: Vector2) -> void:
 			w.ai.neutral_provoked(o, u)
 	w.events.append({"t": "stop_time", "u": u.id, "pos": p, "radius": r, "dur": dur, "frozen": frozen})
 
+## A unit's basic spells: its abilities but the ultimate (the one with hero level requirements).
+static func basic_spells(t: SimUnit) -> Array:
+	var ult := SimData.ultimate_of(t.abilities) if t.is_hero() else ""
+	return t.abilities.filter(func(a): return String(a) != ult)
+
 ## Quick Hands: a spell Tock casts takes seconds off the cooldowns of his other spells.
 func on_cast(u: SimUnit, aid: String) -> void:
 	if u.ability_level_of("quick_hands") <= 0 or u.is_broken():
@@ -228,7 +238,7 @@ func add_charges(t: SimUnit, src: SimUnit, n: int) -> void:
 	var mx := int(ab.val(src, "magnetize", "max_charges")) if src.ability_level_of("magnetize") > 0 else 5
 	var c := mini(mx, charges(t) + n)
 	t.add_modifier({"id": "magnet_charge", "source": CHARGE_SRC, "expires": w.time + 10.0, "charges": c, "by": src.id,
-		"fx": "magnet"})
+		"fx": "magnet", "debuff": true})
 	w.events.append({"t": "magnet_charge", "u": t.id, "charges": c})
 
 ## Kragg's spell damage on a charged enemy: Magnetize adds a share per Charge.

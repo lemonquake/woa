@@ -1,0 +1,20 @@
+== base_f1 exit 139
+505
+BENCH frames 1650 avg 24.25 ms (41 fps) p50 21.55 p95 40.00 p99 54.33 max 102.04 over16.7 1197 units 222
+== new_f1 exit 139
+0
+BENCH frames 1932 avg 20.71 ms (48 fps) p50 18.52 p95 33.33 p99 40.87 max 65.56 over16.7 1227 units 221
+== base_f2 exit 139
+519
+BENCH frames 1658 avg 24.13 ms (41 fps) p50 20.83 p95 38.89 p99 52.85 max 133.79 over16.7 1269 units 222
+== new_f2 exit 139
+0
+BENCH frames 1934 avg 20.68 ms (48 fps) p50 18.52 p95 33.33 p99 42.56 max 60.90 over16.7 1179 units 221
+== base_f3 exit 139
+508
+BENCH frames 1641 avg 24.39 ms (41 fps) p50 20.83 p95 38.72 p99 60.92 max 101.84 over16.7 1279 units 222
+== new_f3 exit 139
+0
+BENCH frames 1940 avg 20.62 ms (48 fps) p50 18.52 p95 33.33 p99 40.69 max 64.88 over16.7 1213 units 221
+
+[exited with code 0]

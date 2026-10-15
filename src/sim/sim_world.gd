@@ -352,6 +352,8 @@ func state_hash() -> int:
 ## Profiling (tools only): milliseconds spent in each part of the step, summed over ticks.
 var profiling := false
 var prof := {}
+var _power_cache := {}                      # SimBotKits.power results of this tick (a cache, not state)
+var _power_tick := -1
 
 func _prof(key: String, t0: int) -> int:
 	var t1 := Time.get_ticks_usec()
@@ -433,9 +435,14 @@ func _pre_unit(u: SimUnit) -> void:
 		u.expire_modifiers(time)
 	if u.stats_dirty:
 		u.refresh_stats()
-	# fast path: a creep or neutral at full health and mana with nothing on it (most sleeping camps, fresh waves) has
-	# nothing to regenerate, nothing to expire and no motion
-	if u.modifiers.is_empty() and u.hp >= u.max_hp and u.mana >= u.max_mana and u.kind != K.HERO and not u.is_building() 			and u.kind != K.WARD and u.hp_regen >= 0.0 and u.mana_regen >= 0.0 and u.knock.is_empty() and u.leap.is_empty() 			and u.hop.is_empty():
+	# fast path: a creep or neutral at full health and mana (most sleeping camps, fresh waves, creeps under auras) has
+	# nothing to regenerate (no modifier lowers health through "regen"); only cooldown shifts and pushes remain
+	var k := u.kind
+	if k != K.HERO and k != K.WARD and not (k >= K.TOWER and k <= K.FOUNTAIN) and u.hp >= u.max_hp 			and u.mana >= u.max_mana and u.hp_regen >= 0.0 and u.mana_regen >= 0.0:
+		if u.cooldown_rate != 0.0:
+			_shift_cooldowns(u)
+		if not u.knock.is_empty() or not u.leap.is_empty() or not u.hop.is_empty():
+			abilities.update_motion(u)
 		return
 	# regeneration (fountain aura, consumables)
 	if u.is_hero() and u.pos.distance_to(map.fountains[u.team]) < C.FOUNTAIN_AURA_RADIUS:
@@ -757,7 +764,10 @@ func command(uid: int, o: Dictionary) -> void:
 		return
 	orders.issue(u, o, true)
 
-func glyph(team: int) -> bool:
+## Fortify (Dota's glyph): the team's buildings take no damage for 7 s and its lane creeps for 3 s; its tier 2+
+## towers splash, mark and shoot faster meanwhile (SimCombat.fortified_tower). `by`: the hero who pressed it (the
+## allies are told who).
+func glyph(team: int, by := -1) -> bool:
 	if time < glyph_ready_at[team]:
 		return false
 	glyph_ready_at[team] = time + C.GLYPH_COOLDOWN
@@ -768,7 +778,7 @@ func glyph(team: int) -> bool:
 			u.glyph_until = time + C.GLYPH_BUILDING_DURATION
 		elif u.is_lane_creep():
 			u.glyph_until = time + C.GLYPH_CREEP_DURATION
-	events.append({"t": "glyph", "team": team})
+	events.append({"t": "glyph", "team": team, "by": by, "until": time + C.GLYPH_BUILDING_DURATION})
 	return true
 
 # ---- Team chat and pings -------------------------------------------------------------------------------------------

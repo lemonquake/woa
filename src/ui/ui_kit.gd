@@ -1,6 +1,13 @@
 class_name UiKit
 extends RefCounted
+
 ## Shared look for the HUD: fonts, colours, icon lookup and drawing helpers (panels, bevels, bars, cooldown sweeps).
+
+## Benchmarks: microseconds each interface panel spent in _draw (UiKit.draw_cost at the end of each _draw).
+static var draw_us := {}
+
+static func draw_cost(panel: String, t0: int) -> void:
+	draw_us[panel] = int(draw_us.get(panel, 0)) + Time.get_ticks_usec() - t0
 
 const GOLD := Color(0.95, 0.78, 0.38)
 const GOLD_DIM := Color(0.55, 0.43, 0.2)
@@ -56,6 +63,9 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"slow_field": "skills/gen/slow_field", "quick_hands": "skills/gen/quick_hands", "stop_time": "skills/gen/stop_time",
 	"iron_grip": "skills/gen/iron_grip", "repel": "skills/gen/repel", "magnetize": "skills/gen/magnetize",
 	"overload": "skills/gen/overload", "magnet_field": "skills/gen/magnet_field"}
+
+## Neutral creeps' spells (the HUD's unit panel and the buff bar).
+const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}
 
 static var _fonts := {}
 static var _icons := {}

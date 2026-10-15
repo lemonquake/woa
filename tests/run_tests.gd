@@ -2434,22 +2434,25 @@ func test_courier_speed_flying_and_level() -> void:
 	var h: SimUnit = a[1]
 	var c: SimUnit = a[2]
 	w.step()
-	near(c.move_speed, 290.0 + 10.0 * 1, 0.01, "level 1 courier speed 290 + 10 x level")
-	check(not c.has_flag("flying"), "walks before level 4")
-	w.combat.give_xp(h, float(C.XP_TABLE[3]) - h.xp)
+	near(c.move_speed, 290.0 + 20.0 * 1, 0.01, "level 1 courier speed 290 + 20 x level")
+	check(not c.has_flag("flying"), "walks before level 6")
+	w.combat.give_xp(h, float(C.XP_TABLE[4]) - h.xp)
 	w.step()
-	check(h.level == 4 and c.has_flag("flying"), "flies from its owner's level 4")
-	near(c.move_speed, 290.0 + 40.0, 0.01, "level 4 speed")
+	check(h.level == 5 and not c.has_flag("flying"), "still walks at level 5")
+	w.combat.give_xp(h, float(C.XP_TABLE[5]) - h.xp)
+	w.step()
+	check(h.level == 6 and c.has_flag("flying"), "flies from its owner's level 6")
+	near(c.move_speed, 290.0 + 120.0, 0.01, "level 6 speed")
 	check(w.courier_command(h, "burst").begins_with("Speed Burst needs level"), "no Speed Burst before level 10")
 	check(w.courier_command(h, "shield").begins_with("Shield needs level"), "no Shield before level 20")
 	w.combat.give_xp(h, float(C.XP_TABLE[19]) - h.xp)
 	w.step()
 	check(w.courier_command(h, "burst") == "", "Speed Burst at level %d" % h.level)
 	w.step()
-	near(c.move_speed, (290.0 + 10.0 * h.level) * 1.5, 0.01, "Speed Burst: +50%")
+	near(c.move_speed, (290.0 + 20.0 * h.level) * 1.5, 0.01, "Speed Burst: +50%")
 	check(w.courier_command(h, "burst") == "Speed Burst on cooldown", "120 s cooldown")
 	run(w, 6.1)
-	near(c.move_speed, 290.0 + 10.0 * h.level, 0.01, "lasts 6 s")
+	near(c.move_speed, 290.0 + 20.0 * h.level, 0.01, "lasts 6 s")
 	check(w.courier_command(h, "shield") == "", "Shield at level 20")
 	w.step()
 	check(c.is_invulnerable(), "Shield: invulnerable")
@@ -3864,7 +3867,7 @@ func test_orb_schedule_and_power_cycle() -> void:
 	check(kinds.count("gold") == 4, "0:00: four Gold Orbs (two gold spots, two river spots) (%s)" % str(kinds))
 	w.time = 119.9
 	run(w, 0.2)
-	check(w.orbs.orbs.filter(func(o): return String(o.kind) == "water").size() == 2, "2:00: two Water Orbs in the river")
+	check(w.orbs.orbs.filter(func(o): return String(o.kind) == "rejuvenation").size() == 2, "2:00: two Rejuvenation Orbs in the river")
 	# power orbs from 6:00 every 2:00: a full cycle before any repeats, never twice in a row
 	var seen: Array = []
 	for k in 12:
@@ -3952,12 +3955,12 @@ func test_orb_rewards_and_effects() -> void:
 	w.items.break_sneak(s)
 	check(not s.has_flag("invisible"), "attacking breaks it")
 	# a right-click order walks to it and takes it
-	w.orbs._spawn("water", Vector2(300, -300), "power")
+	w.orbs._spawn("rejuvenation", Vector2(300, -300), "power")
 	var wid: int = w.orbs.orbs[-1].id
 	s.mana = 0.0
 	w.command(s.id, {"type": O.PICKUP_ORB, "orb": wid})
 	run(w, 2.0)
-	check(w.orbs.get_orb(wid).is_empty() and s.mana >= 80.0 - 0.01, "the pick-up order walks over and takes the Water Orb")
+	check(w.orbs.get_orb(wid).is_empty() and s.mana >= 80.0 - 0.01, "the pick-up order walks over and takes the Rejuvenation Orb")
 
 func test_bottle_drinks_refills_and_stores_orbs() -> void:
 	var w := empty_world()
@@ -4013,6 +4016,20 @@ func test_vision_cache_matches_ray_casts() -> void:
 			for i in 40:
 				if w.map.trees[i * 7].alive:
 					w.cut_tree(i * 7, Vector2.INF)
+		if phase == 2:
+			# a few trees near the heroes: only the stamps that reach them are cast again
+			var cut := 0
+			for i in w.map.trees.size():
+				var t: Dictionary = w.map.trees[i]
+				if t.alive and cut < 4 and (t.pos as Vector2).distance_to(w.heroes[0].pos) < 1500.0:
+					w.cut_tree(i, Vector2.INF)
+					cut += 1
+			w.vision.update()
+			var regrown := false
+			for i in w.map.trees.size():
+				if not w.map.trees[i].alive and not regrown and w.map.can_regrow(i):
+					w.map.regrow_tree(i)
+					regrown = true
 		w.vision.update()
 		var night := w.is_night()
 		for team in 2:
@@ -4844,12 +4861,22 @@ func test_tock_fast_forward_quick_hands_rewind() -> void:
 	var w := empty_world()
 	var t := _hero15(w, "tock", Vector2(-2000, -4000))
 	var ally := _sludge(w, Vector2(-1800, -4000))
+	# Fast Forward (level 4): 6.5 s off the ally's basic spells, not its ultimate (Chomp), not its items
 	ally.ability_ready["blubber"] = w.time + 10.0
+	ally.ability_ready["stench"] = w.time + 4.0
+	ally.ability_ready["chomp"] = w.time + 30.0
+	var it := _give(w, ally, "jump_knife")
+	it["ready"] = w.time + 12.0
+	var t0 := w.time
 	w.command(t.id, {"type": O.CAST_UNIT, "ability": "fast_forward", "target": ally.id})
 	run(w, 0.3)
-	var left0 := w.abilities.cooldown_left(ally, "blubber")
+	var spent := w.time - t0
+	near(w.abilities.cooldown_left(ally, "blubber"), 10.0 - spent - 6.5, 0.1, "Fast Forward: 6.5 s off a basic spell")
+	near(w.abilities.cooldown_left(ally, "stench"), 0.0, 0.01, "a shorter cooldown ends (never below zero)")
+	near(w.abilities.cooldown_left(ally, "chomp"), 30.0 - spent, 0.1, "the ultimate is untouched")
+	near(float(it.ready) - w.time, 12.0 - spent, 0.1, "items are untouched")
 	run(w, 1.0)
-	near(left0 - w.abilities.cooldown_left(ally, "blubber"), 2.0, 0.05, "Fast Forward: cooldowns twice as fast")
+	near(w.abilities.cooldown_left(ally, "blubber"), 10.0 - (w.time - t0) - 6.5, 0.1, "then cooldowns run at the normal rate")
 	# Quick Hands: Fast Forward's cast took 2.5 s off Time Bolt's cooldown
 	t.ability_ready["time_bolt"] = w.time + 5.0
 	t.ability_ready["fast_forward"] = C.LONG_AGO
@@ -4944,3 +4971,347 @@ func test_kragg_repel_and_magnet_field() -> void:
 	run(w, 3.5)
 	check(far.is_stunned() or far.get_modifier("magnet_field_stun").size() > 0 or far.pos.distance_to(k.pos) > 300.0,
 		"enemies close at the end are stunned")
+
+# ---- Bots: teamfights, ganks, pushes, camps, learning (2026-10-15 c) ------------------------------------------------
+
+## Three of ours beside two hurt enemies they can see, after the laning phase: the team brain calls a teamfight, every
+## bot near is in it and the focus is one of the two enemies.
+func test_teamfight_called_with_the_odds() -> void:
+	var w := empty_world()
+	w.time = 900.0
+	var ours: Array[SimUnit] = []
+	for i in 3:
+		var h := w.spawn_hero("kragg", C.DAWN)
+		h.pos = Vector2(-300.0 + i * 120.0, 0.0)
+		w.bots.append(SimBot.new(w, h.id, "mid", "A%d" % i))
+		ours.append(h)
+	var theirs: Array[SimUnit] = []
+	for i in 2:
+		var e := w.spawn_hero("tock", C.DUSK)
+		e.pos = Vector2(300.0 + i * 120.0, 100.0)
+		e.hp = e.max_hp * 0.6
+		theirs.append(e)
+	for h in w.heroes:
+		h.bot = true
+	w.vision.update()
+	var br := w.brain(C.DAWN)
+	br._update_seen()
+	br._call_teamfight()
+	var plan := br.task_for(ours[0].id)
+	check(String(plan.get("kind", "")) == "fight", "a teamfight was called (got %s)" % str(plan.get("kind", "none")))
+	if not plan.is_empty():
+		check(theirs.has(w.get_unit(int(plan.target))), "the focus is one of the enemies")
+		for h in ours:
+			check((plan.members as Dictionary).has(h.id), "%d is in the fight" % h.id)
+	check(br.fight_odds(ours, theirs) > SimTeamAI.ENGAGE, "the odds favour us")
+
+## Two of ours against three healthy enemies: no teamfight (the danger call is for that).
+func test_no_teamfight_against_the_odds() -> void:
+	var w := empty_world()
+	w.time = 900.0
+	var ours: Array[SimUnit] = []
+	for i in 2:
+		var h := w.spawn_hero("tock", C.DAWN)
+		h.pos = Vector2(-300.0 + i * 120.0, 0.0)
+		h.bot = true
+		ours.append(h)
+	for i in 3:
+		var e := w.spawn_hero("kragg", C.DUSK)
+		e.pos = Vector2(300.0 + i * 120.0, 100.0)
+	w.vision.update()
+	var br := w.brain(C.DAWN)
+	br._update_seen()
+	br._call_teamfight()
+	check(br.task_for(ours[0].id).is_empty(), "no plan against stronger enemies")
+
+## A gank's rally point is near the target but out of its team's sight (at night, beyond its night vision), on the
+## side of its way home.
+func test_gank_rally_out_of_sight() -> void:
+	var w := empty_world()
+	w.time = 400.0
+	var e := w.spawn_hero("tock", C.DUSK)
+	e.pos = Vector2(0.0, -3000.0)
+	var g := w.spawn_hero("kragg", C.DAWN)
+	g.pos = Vector2(-2500.0, -4000.0)
+	w.vision.update()
+	var br := w.brain(C.DAWN)
+	var q := br._gank_rally(e, [g])
+	var d := q.distance_to(e.pos)
+	check(d >= 600.0 and d <= 950.0, "rally 650-900 from the target (got %.0f)" % d)
+	check(not w.vision.cell_visible(C.DUSK, q), "rally out of the target team's sight")
+	check(w.map.is_walkable(q), "rally is walkable")
+	var home: Vector2 = w.map.fountains[C.DUSK] - e.pos
+	check((q - e.pos).dot(home) > 0.0, "rally on the target's way home")
+
+## A push whose tower fell goes on to the next building in that lane.
+func test_push_goes_on_to_next_building() -> void:
+	var w := world(1500.0)
+	w.setup_match()
+	var br := w.brain(C.DAWN)
+	var t1 := br.front_tower(C.DUSK, "mid")
+	var ours: Array[SimUnit] = []
+	for i in 3:
+		var h := w.spawn_hero("kragg", C.DAWN)
+		h.pos = t1.pos + Vector2(-700.0 - i * 100.0, -700.0)
+		h.bot = true
+		ours.append(h)
+	var p := br._new_plan("push", "mid", t1.id, t1.pos, 45.0)
+	for h in ours:
+		p.members[h.id] = true
+	SimDebug.kill(w, t1, ours[0])
+	br._advance_pushes()
+	var nxt := br.front_tower(C.DUSK, "mid")
+	check(nxt != null and nxt != t1, "a next building exists")
+	check(int(p.target) == nxt.id, "the push moved on to the %s (target %d, next %d)" % [str(nxt.def.id) if nxt else "?", int(p.target), nxt.id if nxt else -1])
+	check(br.pushes_chained == 1, "counted as chained")
+
+## A bot does not farm a camp it cannot clear: low level for the camp, or a camp kind that nearly killed it until it
+## has two more levels.
+func test_bot_skips_camp_it_cannot_clear() -> void:
+	var w := world(900.0)
+	w.setup_match()
+	var h := w.spawn_hero("caziel", C.DAWN)
+	var b := SimBot.new(w, h.id, "mid", "A")
+	b.role = 3
+	var large: Dictionary = {}
+	var small: Dictionary = {}
+	for c in w.map.camps:
+		if c.kind == "large" and large.is_empty():
+			large = c
+		if c.kind == "small" and small.is_empty():
+			small = c
+	check(not b._can_clear(h, large), "level 1: no large camp")
+	SimDebug.level_up(w, h, 11)
+	h.refresh_stats()
+	h.hp = h.max_hp
+	b._camp_fail["small"] = h.level + 2
+	check(not b._can_clear(h, small), "a camp kind that nearly killed it waits two levels")
+	b._camp_fail.clear()
+	check(b._can_clear(h, small), "level 12: a small camp is fine")
+
+## What bots learn from teamfights and ganks moves the right way (learning on, a throwaway file).
+func test_bot_memory_learns_fights_ganks() -> void:
+	var old_path := BotMemory.path
+	BotMemory.path = "user://test_bot_memory.json"
+	BotMemory.active = true
+	BotMemory.reset()
+	var bar := BotMemory.engage_bar(SimTeamAI.ENGAGE)
+	BotMemory.note_teamfight(SimTeamAI.ENGAGE, bar, 0.0)
+	check(BotMemory.engage_bar(SimTeamAI.ENGAGE) > bar, "a lost close fight raises the odds needed")
+	var bar2 := BotMemory.engage_bar(SimTeamAI.ENGAGE)
+	BotMemory.note_teamfight(SimTeamAI.ENGAGE, bar2, 1.0)
+	check(BotMemory.engage_bar(SimTeamAI.ENGAGE) < bar2, "a won close fight lowers it")
+	var r0 := BotMemory.gank_rate(2)
+	BotMemory.note_gank(2, true)
+	check(BotMemory.gank_rate(2) > r0, "a working gank raises the success rate")
+	BotMemory.active = false
+	BotMemory.teams = [true, true]
+	BotMemory.reset()
+	BotMemory.path = old_path
+	BotMemory._loaded = false
+	check(not BotMemory.on(), "learning off again after the test")
+
+## View.live: a freed node reads as null (effect lists hold nodes others may free).
+func test_view_live_freed_node() -> void:
+	var n := Node3D.new()
+	check(View.live(n) == n, "a live node comes back")
+	n.free()
+	check(View.live(n) == null, "a freed node is null")
+
+## Cast range (owner's rule 2026-10-15): copies of one source stack with diminishing returns (a second Long Lens adds
+## half, a third a quarter; Blast Rods of any level are one source), different sources add fully; the bonus reaches
+## talents' and upgrades' ranges, line shots' reach, Leap Strike's search radius and Jump Knife.
+func test_cast_range_stacking_and_reach() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	h.ability_level["chomp"] = 1
+	h.ability_level["shuriken_hook"] = 1
+	var base := w.abilities.cast_range(h, "chomp", -1)
+	var hook0 := w.abilities.val(h, "shuriken_hook", "distance")
+	_give(w, h, "long_lens", 0)
+	near(h.cast_range_bonus, 225.0, 0.01, "one Long Lens: +225")
+	_give(w, h, "long_lens", 1)
+	near(h.cast_range_bonus, 225.0 + 112.5, 0.01, "two: the second adds half")
+	_give(w, h, "long_lens", 2)
+	near(h.cast_range_bonus, 225.0 + 112.5 + 56.25, 0.01, "three: the third a quarter")
+	_give(w, h, "dagon", 3)
+	near(h.cast_range_bonus, 225.0 + 112.5 + 56.25 + 60.0, 0.01, "Blast Rod is another source: its +60 adds in full")
+	_give(w, h, "dagon_5", 4)
+	near(h.cast_range_bonus, 225.0 + 112.5 + 56.25 + 180.0 + 30.0, 0.01, "Blast Rod 1 and 5 are one source: 180 + 60 x 0.5")
+	near(w.abilities.cast_range(h, "chomp", -1), base + h.cast_range_bonus, 0.01, "Chomp's cast range grows")
+	near(w.abilities.val(h, "shuriken_hook", "distance"), hook0 + h.cast_range_bonus, 0.01, "the hook flies further")
+	h.perm_stats["cast_range"] = 100.0
+	h.refresh_stats()
+	near(h.cast_range_bonus, 225.0 + 112.5 + 56.25 + 180.0 + 30.0 + 100.0, 0.01, "a talent's cast range adds")
+	h.add_modifier({"id": "test_range", "source": h.id, "expires": INF, "stats": {"cast_range": 50.0}})
+	h.refresh_stats()
+	near(h.cast_range_bonus, 225.0 + 112.5 + 56.25 + 180.0 + 30.0 + 150.0, 0.01, "a buff's cast range adds")
+	# a talent that changes an ability's own range goes through val()
+	var e := _sludge(w, Vector2(0, 0))
+	e.ability_level["chomp"] = 1
+	SimData._ensure()
+	SimData._talents["test_chomp_range"] = {"id": "test_chomp_range", "name": "t", "stats": {},
+		"mods": [{"ability": "chomp", "add": {"range": 75.0}}]}
+	e.talents[0] = "test_chomp_range"
+	e.refresh_stats()
+	near(w.abilities.cast_range(e, "chomp", -1), base + 75.0, 0.01, "a range talent lengthens the cast range")
+	SimData._talents.erase("test_chomp_range")
+	# Jump Knife reaches further with cast range
+	var j := _sludge(w, Vector2(3000, -3000))
+	_give(w, j, "jump_knife", 0)
+	_give(w, j, "long_lens", 1)
+	var from := j.pos
+	w.command(j.id, {"type": O.CAST_POINT, "ability": "", "item_slot": 0, "point": from + Vector2(1400, 0)})
+	run(w, 0.2)
+	check(j.pos.distance_to(from) > 1300.0, "Jump Knife with Long Lens blinks 1400 (went %.0f)" % j.pos.distance_to(from))
+
+## The buff bar (BuffBar): buffs and debuffs sorted by what they do (an enemy aura and a break are debuffs), one icon
+## per instance (two Stench clouds, two burns), timers from the start stamp, no timer on auras, a name for each.
+func test_buff_bar_entries() -> void:
+	var w := empty_world()
+	var h := _sludge(w, Vector2(-2000, -4000))
+	var a := _sludge(w, Vector2(-1900, -4000), {}, C.DUSK)
+	var b := _sludge(w, Vector2(-1800, -4000), {}, C.DUSK)
+	h.add_modifier({"id": "salve", "source": h.id, "expires": w.time + 10.0, "regen": 40.0, "fx": "heal"})
+	h.add_modifier({"id": "small_shield_aura", "source": SimItems.AURA_SRC, "expires": w.time + 0.7,
+		"stats": {"armor": 2.0}, "aura": true, "by": h.id})
+	h.add_modifier({"id": "battle_armor_curse", "source": SimItems.AURA_SRC, "expires": w.time + 0.7,
+		"stats": {"armor": -5.0}, "aura": true, "by": a.id, "debuff": true})
+	h.add_modifier({"id": "stench", "source": a.id, "expires": w.time + 3.0, "slow": 0.2, "debuff": true})
+	h.add_modifier({"id": "stench", "source": b.id, "expires": w.time + 3.0, "slow": 0.2, "debuff": true})
+	check(w.status.apply(h, a.id, a.team, {"id": "silence_staff", "silence": true, "dur": 5.0}), "silence lands")
+	check(w.status.apply(h, b.id, b.team, {"id": "break_blade", "break": true, "dur": 4.0}), "break lands")
+	w.status.add_dot(h, a, "fiery_javelin", 30.0, 6.0, C.Element.FIRE)
+	w.status.add_dot(h, b, "fiery_javelin", 30.0, 6.0, C.Element.FIRE)
+	for i in 3:
+		w.step()
+	var by_id := {}
+	for e in BuffBar.entries(h, w):
+		by_id[e.id] = by_id.get(e.id, []) + [e]
+	check(not by_id.has("burning"), "the burns' summary mark is hidden (each burn shows)")
+	check(by_id.get("fiery_javelin", []).size() == 2, "two burns, two icons")
+	check(by_id.get("stench", []).size() == 2, "Stench from two enemies, two icons")
+	var expect := {"salve": false, "small_shield_aura": false, "battle_armor_curse": true, "stench": true,
+		"silence_staff": true, "break_blade": true, "fiery_javelin": true}
+	for id in expect:
+		var list: Array = by_id.get(id, [])
+		check(not list.is_empty(), "%s shows" % id)
+		for e in list:
+			check(bool(e.debuff) == bool(expect[id]), "%s is a %s" % [id, "debuff" if expect[id] else "buff"])
+			check(BuffBar.name_of(String(id)) != "" and String(e.name) == BuffBar.name_of(String(id)), "%s has a name (%s)" % [id, e.name])
+			check(e.icon != null, "%s has an icon" % id)
+	var salve: Dictionary = by_id.salve[0]
+	near(float(salve.total), 10.0, 0.1, "a timed buff knows its full length from the start stamp")
+	check(float(salve.left) < float(salve.total), "and how much is left")
+	near(float(by_id.silence_staff[0].total), 5.0, 0.01, "a debuff keeps its length after status resistance")
+	near(float(by_id.fiery_javelin[0].total), 6.0, 0.01, "a burn knows its length")
+	check(float(by_id.small_shield_aura[0].total) == 0.0 and float(by_id.small_shield_aura[0].left) == 0.0,
+		"an aura has no timer")
+	check(by_id.battle_armor_curse[0].aura, "the enemy aura is marked as an aura")
+	var tip: Array = BuffBar.tip(by_id.battle_armor_curse[0], h, w)
+	check(String(tip[0][0]) == "Armor Loss Aura", "aura tooltip title is the aura's name")
+	check(" ".join(tip.map(func(l): return String(l[0]))).contains("-5 armor"), "its tooltip says -5 armor")
+	tip = BuffBar.tip(by_id.silence_staff[0], h, w)
+	check(" ".join(tip.map(func(l): return String(l[0]))).contains("cannot cast"), "a silence says what it stops")
+	# a refreshed aura does not mark stats dirty just because of the start stamp
+	h.refresh_stats()
+	h.add_modifier({"id": "small_shield_aura", "source": SimItems.AURA_SRC, "expires": w.time + 0.7,
+		"stats": {"armor": 2.0}, "aura": true, "by": h.id})
+	check(not h.stats_dirty, "refreshing the same aura leaves stats clean")
+	# layout: buffs from the left, debuffs from the right, wrapping upward, never overlapping
+	var lay := BuffBar.layout(9, 7, 400.0, 720.0, -4.0)
+	var all: Array = lay[0] + lay[1]
+	check(all.size() == 16, "16 icons fit in three rows of 8")
+	for i in all.size():
+		var r: Rect2 = all[i]
+		check(r.position.x >= 400.0 - 0.01 and r.end.x <= 720.0 + 0.01 and r.end.y <= -4.0 + 0.01, "icon %d inside the area" % i)
+		for j in range(i + 1, all.size()):
+			check(not r.intersects(all[j]), "icons %d and %d do not overlap" % [i, j])
+
+## Rejuvenation Orb (owner's rule 2026-10-15): two at 2:00, two at 4:00, never again (checked to 30:00).
+func test_rejuvenation_orb_only_at_2_and_4_minutes() -> void:
+	var w := empty_world()
+	var times: Array = []
+	for sec in range(0, 1801):
+		w.time = float(sec)
+		w.events.clear()
+		w.orbs.update()
+		for e in w.events:
+			if e.t == "orb_spawn" and String(e.kind) == "rejuvenation":
+				times.append(sec)
+	check(times == [120, 120, 240, 240], "Rejuvenation Orbs only at 2:00 and 4:00 (%s)" % str(times))
+	check(SimOrbs.NAMES.rejuvenation == "Rejuvenation Orb", "its name")
+
+## Fortify (owner's rules 2026-10-15): tier 2+ towers splash within 300, shoot 50% faster and mark what they hit; each
+## mark adds 50 physical damage to their shots and lasts 15 s. Tier 1 towers and towers after Fortify do none of it.
+func test_fortify_towers_splash_mark_speed() -> void:
+	var w := empty_world()
+	w.time = 200.0
+	var t2 := w.spawn("tower2", C.DUSK, Vector2(-1000, -4000))
+	t2.lane_tier = 2
+	var t1 := w.spawn("tower1", C.DUSK, Vector2(1500, -4000))
+	t1.lane_tier = 1
+	var a := _dummy(w, "ezee", C.DAWN, Vector2(-1000, -3400))
+	var b := _dummy(w, "ezee", C.DAWN, Vector2(-1000, -3200))       # 200 from a: in the splash
+	var c := _dummy(w, "ezee", C.DAWN, Vector2(-1000, -2900))       # 500 from a: outside it
+	w._rebuild_grid()
+	var speed0 := float(t2.def.projectile_speed)
+	w.combat.release_attack(t2, a, "")
+	near(float(w.projectiles[-1].speed), speed0, 0.01, "before Fortify: normal shot speed")
+	w.projectiles.clear()
+	w.events.clear()
+	var by := _dummy(w, "sludge", C.DUSK, Vector2(-1200, -4200))
+	check(w.glyph(C.DUSK, by.id), "Fortify pressed")
+	var ge: Array = w.events.filter(func(e): return e.t == "glyph")
+	check(ge.size() == 1 and int(ge[0].by) == by.id, "the event says who pressed it")
+	w.combat.release_attack(t2, a, "")
+	var p: Dictionary = w.projectiles[-1]
+	near(float(p.speed), speed0 * 1.5, 0.01, "Fortified tier 2 tower: shots 50% faster")
+	check(bool(p.snap.get("fortify", false)), "and Fortified")
+	var ha := a.hp
+	var hb := b.hp
+	var hc := c.hp
+	w.combat.land_attack(p.snap, a)
+	var d1 := ha - a.hp
+	check(int(a.get_modifier("fortify_mark").get("charges", 0)) == 1, "the target gets a Fortify Mark")
+	near(float(a.get_modifier("fortify_mark").expires) - w.time, 15.0, 0.01, "for 15 s")
+	check(hb - b.hp > 0.0 and int(b.get_modifier("fortify_mark").get("charges", 0)) == 1, "splash hits and marks an enemy 200 away")
+	check(hc == c.hp and c.get_modifier("fortify_mark").is_empty(), "nothing 500 away")
+	ha = a.hp
+	w.combat.land_attack(p.snap, a)
+	var d2 := ha - a.hp
+	var per := 50.0 * C.armor_multiplier(a.armor)
+	check(absf((d2 - d1) - per) < 10.0, "a second mark: +50 physical before armor (%.1f more, expected %.1f)" % [d2 - d1, per])
+	check(int(a.get_modifier("fortify_mark").charges) == 2, "two marks")
+	w.combat.release_attack(t1, a, "")
+	check(not bool(w.projectiles[-1].snap.get("fortify", false)), "a tier 1 tower is not Fortified")
+	w.time += C.GLYPH_BUILDING_DURATION + 0.1
+	w.combat.release_attack(t2, a, "")
+	check(not bool(w.projectiles[-1].snap.get("fortify", false)), "after Fortify ends, normal shots")
+	w.time += 15.0
+	a.expire_modifiers(w.time)
+	check(a.get_modifier("fortify_mark").is_empty(), "marks fall off after 15 s")
+
+## Bots press Fortify for a building in danger, but only on a team with no human player.
+func test_bots_fortify_tower_in_danger() -> void:
+	for human in [false, true]:
+		var w := empty_world()
+		w.time = 400.0
+		var tw := w.spawn("tower2", C.DUSK, Vector2(-1000, -4000))
+		tw.lane_tier = 2
+		tw.hp = tw.max_hp * 0.25
+		var bot := _dummy(w, "sludge", C.DUSK, Vector2(-1100, -4300))
+		bot.bot = not human
+		for i in 3:
+			var e := w.spawn("dawn_melee", C.DAWN, tw.pos + Vector2(150 + 30 * i, 0))
+			e.atk_target = tw.id
+		w._rebuild_grid()
+		w.events.clear()
+		w.brain(C.DUSK)._glyph()
+		var used := w.time < tw.glyph_until
+		if human:
+			check(not used, "a team with a human leaves Fortify to the human")
+		else:
+			check(used, "a bot team Fortifies a tower at 25% under attack")
+			var ge: Array = w.events.filter(func(e): return e.t == "glyph")
+			check(ge.size() == 1 and int(ge[0].by) == bot.id, "and the allies are told which bot did")

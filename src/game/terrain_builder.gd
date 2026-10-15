@@ -56,6 +56,15 @@ func build(parent: Node3D) -> void:
 	_outer_ring(root)
 	_water(parent)
 
+var _max_h := -INF
+
+## The highest point of the battlefield's height grid, in game units (camera ray marches start below it).
+func max_height() -> float:
+	if _max_h == -INF:
+		for h in heights:
+			_max_h = maxf(_max_h, h)
+	return _max_h
+
 ## Height in game units at a world point, including the rendered displacement (units stand on this).
 func height_at(p: Vector2) -> float:
 	var fx := clampf((p.x + SimMap.HALF) / STEP, 0.0, V - 1.001)

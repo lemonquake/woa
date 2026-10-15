@@ -35,6 +35,11 @@ var _pending_pings: Array = []
 var _lane_watch := {}                      # human hero id -> [lane, since]
 var _missing_called := {}                  # enemy hero id -> time of the last "missing" call
 var _fight_called := C.LONG_AGO
+var _gank_cool := {}                       # enemy hero id -> laning-phase time before it may be ganked again
+var fights_called := 0                     # report counters (bot games): teamfights, ganks, pushes called, pushes chained
+var ganks_called := 0
+var pushes_called := 0
+var pushes_chained := 0
 
 func _init(world: SimWorld = null, p_team := 0) -> void:
 	if world == null:
@@ -97,25 +102,41 @@ static func hero_label(h: SimUnit) -> String:
 func think() -> void:
 	if w == null or w.time < _next_think:
 		return
-	_next_think = w.time + 0.5
+	# the two brains think a quarter second apart (their work never lands in the same tick)
+	_next_think = w.time + 0.5 if _next_think != C.LONG_AGO or team == 0 else w.time + 0.25
 	if not _assigned:
 		assign_lanes()
 		_assigned = true
 		_announce_lanes()
+	var pt := Time.get_ticks_usec() if w.profiling else 0
 	_update_seen()
 	_update_camps()
+	if w.profiling: pt = w._prof("  brain:seen_camps", pt)
 	_watch_players()
 	for pg in _pending_pings:
 		_answer_ping(pg)
 	_pending_pings.clear()
+	_advance_pushes()
+	_fill_late_pushes()
+	for p in plans:
+		if String(p.kind) == "gank" and not (w.time < float(p.until) and _plan_alive(p)):
+			var gt := w.get_unit(int(p.target))
+			BotMemory.note_gank((p.members as Dictionary).size(), gt != null and gt.deaths > int(p.get("d0", 0)), team)
 	plans = plans.filter(func(p): return w.time < float(p.until) and _plan_alive(p))
 	if w.time >= 0.0:
 		_call_defence()
+		if w.profiling: pt = w._prof("  brain:defence", pt)
 		_call_ganks()
+		_gank_strikes()
+		if w.profiling: pt = w._prof("  brain:ganks", pt)
+		_call_teamfight()
+		if w.profiling: pt = w._prof("  brain:teamfight", pt)
 		_call_push()
+		if w.profiling: pt = w._prof("  brain:push", pt)
 		_call_missing()
 		_call_danger()
 		_glyph()
+		if w.profiling: pt = w._prof("  brain:other", pt)
 
 # ---- Roles and lanes ------------------------------------------------------------------------------------------------
 
@@ -390,6 +411,8 @@ func _plan_alive(p: Dictionary) -> bool:
 				and (last_seen(t)[0] as Vector2).distance_to(p.pos) < (2600.0 if w.time < 600.0 else 3800.0)
 		"push", "defend":
 			return t == null or t.alive
+		"fight":
+			return t != null and t.alive
 	return true
 
 ## The plan a hero is part of (or {}).
@@ -402,7 +425,7 @@ func task_for(hid: int) -> Dictionary:
 	return best
 
 static func _plan_rank(kind: String) -> int:
-	return {"retreat": 5, "defend": 4, "gank": 3, "push": 2, "group": 1}.get(kind, 0)
+	return {"retreat": 5, "fight": 4, "defend": 4, "gank": 3, "push": 2, "group": 1}.get(kind, 0)
 
 func leave_plan(hid: int, plan_id := -1) -> void:
 	for p in plans:
@@ -422,15 +445,29 @@ func eta(h: SimUnit, p: Vector2) -> Dictionary:
 				out = {"time": tp_time, "tp": true, "building": b.id}
 	return out
 
+var _bld: Array[SimUnit] = []              # the team's buildings (cache; they never spawn during a match)
+var _nb_cache := {}                        # point -> nearest building, this tick
+var _nb_tick := -1
+
 func _nearest_building(p: Vector2) -> SimUnit:
+	if _nb_tick != w.tick:
+		_nb_cache.clear()
+		_nb_tick = w.tick
+	if _nb_cache.has(p):
+		return _nb_cache[p]
+	if _bld.is_empty():
+		for b in w.units:
+			if b.team == team and b.is_building() and b.kind != K.FOUNTAIN:
+				_bld.append(b)
 	var best: SimUnit = null
 	var bd := INF
-	for b in w.units:
-		if b.alive and b.team == team and b.is_building() and b.kind != K.FOUNTAIN:
+	for b in _bld:
+		if b.alive:
 			var d := b.pos.distance_to(p)
 			if d < bd:
 				bd = d
 				best = b
+	_nb_cache[p] = best
 	return best
 
 # ---- Calls: defence -------------------------------------------------------------------------------------------------
@@ -490,7 +527,7 @@ func _call_defence() -> void:
 			var cur := task_for(h.id)
 			if not cur.is_empty() and _plan_rank(String(cur.kind)) >= 4:
 				continue
-			if h.hp < h.max_hp * 0.35:
+			if h.hp < h.max_hp * 0.5:
 				continue
 			if early and String(lane_of.get(h.id, "")) != lane and int(roles.get(h.id, 3)) != 4:
 				continue
@@ -549,6 +586,8 @@ func _call_ganks() -> void:
 		var laning := w.time < 600.0
 		if w.time < 120.0:
 			continue
+		if laning and w.time < float(_gank_cool.get(e.id, C.LONG_AGO)):
+			continue
 		var cands: Array = []
 		for h in members():
 			if not h.bot or not h.alive or h.hp < h.max_hp * 0.45:
@@ -556,11 +595,19 @@ func _call_ganks() -> void:
 			var cur := task_for(h.id)
 			if not cur.is_empty() and _plan_rank(String(cur.kind)) >= 3:
 				continue
+			# a hero on a push stays with it unless the gank is right beside it
+			if not cur.is_empty() and String(cur.kind) == "push" and h.pos.distance_to(e.pos) > 2500.0:
+				continue
 			if not _may_roam(h, e):
 				continue
 			var et := eta(h, e.pos)
+			# from 20:00 the team plays together: a gank is a short walk (no teleporting across the map for one kill)
+			if w.time > 1200.0 and (bool(et.tp) or float(et.time) > 8.0) and e.hp > e.max_hp * 0.4:
+				continue
 			if float(et.time) > (14.0 if et.tp else 10.0):
 				continue
+			if int(roles.get(h.id, 3)) == 1 and w.time < 900.0 and float(et.time) > 5.0:
+				continue                       # the carry farms; it only joins a gank that comes to it
 			cands.append([float(et.time), h])
 		if cands.is_empty():
 			continue
@@ -586,15 +633,25 @@ func _call_ganks() -> void:
 		# during the laning phase a gank is a rotation: someone from another lane has to come
 		var rotating := false
 		for h in chosen:
-			if String(lane_of.get(h.id, "")) != lane_of_point(e.pos) or int(roles.get(h.id, 3)) == 4:
-				rotating = true
+			if String(lane_of.get(h.id, "")) != lane_of_point(e.pos) and lane_of_point(h.pos) != lane_of_point(e.pos):
+				rotating = true                # someone comes from another lane (laners fight their own lane alone)
 		if laning and (not rotating or chosen.size() < 2 and not low):
 			continue
+		# ganks that keep failing with this many gankers ask for a clearer chance (BotMemory), ones that work for less
+		var need := clampf(1.5 - BotMemory.gank_rate(chosen.size(), team), 0.8, 1.3)
+		ratio /= need
 		if not ((low and ratio > 1.1) or (alone and ratio > 1.6 and chosen.size() >= 2) or (ratio > 2.2)) or not (tower_safe or e.hp < e.max_hp * 0.2):
 			continue
 		var p := _new_plan("gank", lane_of_point(e.pos), e.id, e.pos, 22.0)
+		ganks_called += 1
+		_gank_cool[e.id] = w.time + 60.0
+		p["d0"] = e.deaths
 		for h in chosen:
 			p.members[h.id] = true
+		# gather out of its sight behind it (on its way home), then strike together
+		p["rally"] = _gank_rally(e, chosen)
+		p["strike"] = false
+		p["gather_until"] = w.time + 9.0
 		var lead: SimUnit = chosen[0]
 		var names := []
 		for i in range(1, chosen.size()):
@@ -608,6 +665,54 @@ func _call_ganks() -> void:
 		for i in range(1, chosen.size()):
 			var et2 := eta(chosen[i], e.pos)
 			say(chosen[i], "Coming (TP)." if et2.tp else "On my way.", "gank_go_%d_%d" % [chosen[i].id, e.id], 25.0)
+
+## Where gankers gather before a gank: 650-900 from the target, in the fog for its team, walkable, on the side of its
+## way home (so the strike cuts off its escape) and not far round from where the gankers come from.
+func _gank_rally(e: SimUnit, gankers: Array) -> Vector2:
+	var from := Vector2.ZERO
+	for g in gankers:
+		from += (g as SimUnit).pos
+	from /= maxf(1.0, gankers.size())
+	var home: Vector2 = w.map.fountains[e.team] - e.pos
+	home = home.normalized() if home.length() > 1.0 else Vector2.RIGHT
+	var best := e.pos + (from - e.pos).normalized() * 800.0
+	var best_s := -INF
+	for k in 12:
+		var d := Vector2.from_angle(TAU * k / 12.0)
+		for r in [650.0, 900.0]:
+			var q: Vector2 = e.pos + d * r
+			if not w.map.is_walkable(q):
+				continue
+			var s := d.dot(home) * 0.8 - q.distance_to(from) / 3000.0
+			if w.vision.cell_visible(e.team, q):
+				s -= 2.0
+			if s > best_s:
+				best_s = s
+				best = q
+	return best
+
+## A gank strikes once its gankers have gathered (all within 550 of the rally point), when gathering takes too long,
+## when the target walks off, or when one of them is already on top of it.
+func _gank_strikes() -> void:
+	for p in plans:
+		if String(p.kind) != "gank" or bool(p.get("strike", true)):
+			continue
+		var t := w.get_unit(int(p.target))
+		if t == null or not t.alive:
+			continue
+		var rally: Vector2 = p.rally
+		var all_in := true
+		var close := false
+		for hid in p.members:
+			var g := w.get_unit(int(hid))
+			if g == null or not g.alive:
+				continue
+			if g.pos.distance_to(rally) > 550.0:
+				all_in = false
+			if g.edge_distance(t) < g.attack_range + 150.0:
+				close = true
+		if all_in or close or w.time >= float(p.gather_until) or t.pos.distance_to(rally) > 1400.0:
+			p.strike = true
 
 func _may_roam(h: SimUnit, e: SimUnit) -> bool:
 	var r := int(roles.get(h.id, 3))
@@ -627,6 +732,152 @@ func _under_enemy_tower(p: Vector2) -> bool:
 			return true
 	return false
 
+# ---- Calls: teamfights ------------------------------------------------------------------------------------------------
+
+## Teamfights (Valve's team-level "fight" desire): two or more of us near a group of enemies we can see, and the odds
+## (Lanchester's square law over both groups' damage and effective health, ultimates ready, towers) favour us: every
+## bot near commits together and focuses one target, re-picked every think. A fight in progress goes on while the
+## odds hold (hysteresis); when they turn clearly against us the danger call pulls everyone back. Bots used to weigh
+## each fight alone, so an even 5 v 5 never started: each bot alone saw a coin flip and walked away.
+var teamfights := true                     # off for one side in A/B tests
+const ENGAGE := 1.08                       # odds to start a teamfight
+const HOLD := 0.85                         # odds to keep fighting one already started
+var _fight_plan := {}
+
+func _call_teamfight() -> void:
+	if not teamfights:
+		return
+	if not _fight_plan.is_empty() and not plans.has(_fight_plan):
+		_score_fight(_fight_plan)
+		_fight_plan = {}
+	var best_odds := 0.0
+	var best_es: Array[SimUnit] = []
+	var best_al: Array[SimUnit] = []
+	var done := {}                             # enemies already counted in a group (each group is weighed once)
+	for e in w.heroes:
+		if e.team == team or not e.alive or done.has(e.id) or not w.vision.sees(team, e):
+			continue
+		var es := enemies_near(e.pos, 1400.0, 2.0)
+		if es.is_empty():
+			es.append(e)
+		for x in es:
+			done[x.id] = true
+		var al := allies_near(e.pos, 1700.0)
+		if al.size() < 2:
+			continue
+		# the laning phase's skirmishes stay with each bot; a teamfight there needs three of us and two of them
+		if w.time < 600.0 and (al.size() < 3 or es.size() < 2):
+			continue
+		var odds := fight_odds(al, es)
+		if odds > best_odds:
+			best_odds = odds
+			best_es = es
+			best_al = al
+	var going := not _fight_plan.is_empty()
+	if best_es.is_empty() or best_odds < (HOLD if going else BotMemory.engage_bar(ENGAGE, team)):
+		if going:
+			_score_fight(_fight_plan)
+			plans.erase(_fight_plan)
+			_fight_plan = {}
+		return
+	var focus := _focus_target(best_es, best_al)
+	if focus == null:
+		return
+	if not going:
+		_fight_plan = _new_plan("fight", lane_of_point(focus.pos), focus.id, focus.pos, 4.0)
+		_fight_plan["odds"] = best_odds
+		_fight_plan["k0"] = _deaths_of(1 - team)
+		_fight_plan["d0"] = _deaths_of(team)
+		fights_called += 1
+		var who := _first_bot_of(best_al)
+		if who != null and say(who, "Fight! Focus their %s." % hero_label(focus), "teamfight", 20.0, true):
+			w.ping(team, focus.pos, who.id, focus.id, "attack")
+	_fight_plan.target = focus.id
+	_fight_plan.pos = focus.pos
+	_fight_plan.until = w.time + 4.0
+	for a in allies_near(focus.pos, 2200.0):
+		if a.bot and a.hp > a.max_hp * 0.2:
+			_fight_plan.members[a.id] = true
+
+## Our odds in a fight between `al` (ours) and `es` (theirs): above 1 we are stronger. Each side's strength is the
+## square root of its total damage (ready spells plus five seconds of attacks) times its total effective health; each
+## ready ultimate of ours adds a little; enemies standing under their tower count much stronger, under ours weaker.
+func fight_odds(al: Array[SimUnit], es: Array[SimUnit]) -> float:
+	var dmg_a := 0.0
+	var ehp_a := 0.0
+	var ults := 0
+	for a in al:
+		dmg_a += KITS.burst(w, a, es[0]) + KITS.dps(w, a, es[0]) * 5.0
+		ehp_a += a.hp / maxf(0.2, C.armor_multiplier(a.armor) * 0.5 + (1.0 - a.magic_resist) * 0.5)
+		if KITS.ult_ready(w, a):
+			ults += 1
+	var dmg_e := 0.0
+	var ehp_e := 0.0
+	for e in es:
+		dmg_e += KITS.burst(w, e, al[0]) + KITS.dps(w, e, al[0]) * 5.0
+		ehp_e += e.hp / maxf(0.2, C.armor_multiplier(e.armor) * 0.5 + (1.0 - e.magic_resist) * 0.5)
+	var odds := sqrt(maxf(1.0, dmg_a * ehp_a) / maxf(1.0, dmg_e * ehp_e)) * (1.0 + 0.05 * ults)
+	var c := Vector2.ZERO
+	for e in es:
+		c += e.pos
+	c /= es.size()
+	if _under_enemy_tower(c):
+		odds *= 0.7
+	for u: SimUnit in w.query(c, 1100.0):
+		if u.alive and u.team == team and u.kind == K.TOWER and c.distance_to(u.pos) <= u.attack_range + u.hull:
+			odds *= 1.15
+			break
+	return odds
+
+## The enemy to focus: the one we can kill soonest, its effective health shared among the allies who can reach it now;
+## the current focus is kept unless another is clearly quicker (no target flipping).
+func _focus_target(es: Array[SimUnit], al: Array[SimUnit]) -> SimUnit:
+	var best: SimUnit = null
+	var best_s := INF
+	var cur := w.get_unit(int(_fight_plan.get("target", -1)))
+	var cur_s := INF
+	for e in es:
+		if not e.alive or not w.vision.sees(team, e) or e.is_invulnerable():
+			continue
+		var reach := 0
+		for a in al:
+			if a.alive and a.pos.distance_to(e.pos) <= a.attack_range + a.hull + e.hull + 450.0:
+				reach += 1
+		var ehp := e.hp / maxf(0.2, C.armor_multiplier(e.armor) * 0.5 + (1.0 - e.magic_resist) * 0.5)
+		if e.is_stunned():
+			ehp *= 0.7                         # a disabled hero cannot run or fight back
+		var s := ehp / (1.0 + float(reach))
+		if s < best_s:
+			best_s = s
+			best = e
+		if e == cur:
+			cur_s = s
+	if cur != null and cur_s < best_s * 1.4:
+		return cur
+	return best
+
+## Score a finished teamfight for BotMemory: enemy heroes that died while it lasted against ours.
+func _score_fight(p: Dictionary) -> void:
+	var kills := _deaths_of(1 - team) - int(p.get("k0", 0))
+	var lost := _deaths_of(team) - int(p.get("d0", 0))
+	if kills == 0 and lost == 0:
+		return
+	var result := 1.0 if kills > lost else (0.0 if lost > kills else 0.5)
+	BotMemory.note_teamfight(ENGAGE, float(p.get("odds", ENGAGE)), result, team)
+
+func _deaths_of(t: int) -> int:
+	var n := 0
+	for h in w.heroes:
+		if h.team == t:
+			n += h.deaths
+	return n
+
+func _first_bot_of(arr: Array[SimUnit]) -> SimUnit:
+	for a in arr:
+		if a.bot and a.alive:
+			return a
+	return null
+
 # ---- Calls: push ----------------------------------------------------------------------------------------------------
 
 func _call_push() -> void:
@@ -641,7 +892,8 @@ func _call_push() -> void:
 			dead += 1
 	var late := w.time > 25.0 * 60.0
 	var ratio := _team_power_ratio() if w.time > 1200.0 else 1.0
-	var want := (dead >= 2 and aa >= 2) or (aa - ea >= 2) or (dead >= 1 and aa >= ea and ratio > 1.1 and w.time > 900.0) 		or (late and aa >= ea and aa >= 3 and ratio > 0.95)
+	# time presses as in Dota: from 20:00 an even team pushes when about as strong, from 30:00 any three heroes up do
+	var want := (dead >= 2 and aa >= 2) or (aa - ea >= 2) or (dead >= 1 and aa >= ea and ratio > 1.1 and w.time > 900.0) 		or (late and aa >= ea and aa >= 3 and ratio > 0.95) or (w.time > 1200.0 and aa >= ea and aa >= 3 and ratio > 0.9) 		or (w.time > 1800.0 and aa >= 3 and aa >= ea - 1 and ratio > 0.8)
 	if not want or w.time < 300.0:
 		return
 	# the lane whose enemy front tower is weakest and closest to our creeps
@@ -664,20 +916,73 @@ func _call_push() -> void:
 			target = t
 	if target == null:
 		return
-	var p := _new_plan("push", best, target.id, target.pos, 45.0 if not late else 60.0)
+	# from 25:00 the whole team pushes together (the far ones teleport in), as Dota teams group up late
+	var grouped := w.time > 1500.0
+	var p := _new_plan("push", best, target.id, target.pos, 90.0 if grouped else (45.0 if not late else 60.0))
 	for h in members():
-		if h.bot and h.alive and h.hp > h.max_hp * 0.4:
+		if h.bot and h.alive and h.hp > h.max_hp * (0.45 if grouped else 0.4):
 			var cur := task_for(h.id)
 			if cur.is_empty() or _plan_rank(String(cur.kind)) < 2:
-				if float(eta(h, target.pos).time) < 30.0:
+				if grouped or float(eta(h, target.pos).time) < 30.0:
 					p.members[h.id] = true
 	if (p.members as Dictionary).size() < mini(2, aa):
 		plans.erase(p)
 		return
+	pushes_called += 1
 	var lead := w.get_unit(int((p.members as Dictionary).keys()[0]))
 	var why := "%d of them are dead" % dead if dead >= 2 else ("we have more heroes up" if aa - ea >= 2 else "we're stronger now")
 	say(lead, "%s. Let's push %s and take their %s." % [why.left(1).to_upper() + why.substr(1), lane_label(best), _building_word(target)],
 		"push_%d" % target.id, 45.0)
+
+## From 25:00 a push gathers the whole team: bots that were dead or busy when it was called join it once they are
+## free (alive, over half health, in no bigger play).
+func _fill_late_pushes() -> void:
+	if w.time < 1500.0:
+		return
+	for p in plans:
+		if String(p.kind) != "push":
+			continue
+		for h in members():
+			if not h.bot or not h.alive or h.hp < h.max_hp * 0.5 or (p.members as Dictionary).has(h.id):
+				continue
+			var cur := task_for(h.id)
+			if cur.is_empty() or _plan_rank(String(cur.kind)) < 2:
+				p.members[h.id] = true
+
+## A push whose building fell goes on to the next one in that lane (tier 2, tier 3, barracks, the Throne) while its
+## heroes are up and the team is not clearly weaker: pushes used to end with each tower, and games never ended.
+func _advance_pushes() -> void:
+	for p in plans:
+		if String(p.kind) != "push":
+			continue
+		var t := w.get_unit(int(p.target))
+		if t != null and t.alive:
+			continue
+		var up := 0
+		for hid in p.members:
+			var m := w.get_unit(int(hid))
+			if m != null and m.alive and m.hp > m.max_hp * 0.35:
+				up += 1
+		if up < 2 or (w.time > 1200.0 and _team_power_ratio() < 0.8):
+			continue
+		var nxt := front_tower(1 - team, String(p.lane))
+		if nxt == null or nxt.kind == K.FOUNTAIN:
+			continue
+		p.target = nxt.id
+		p.pos = nxt.pos
+		p.until = maxf(float(p.until), w.time + 40.0)
+		pushes_chained += 1
+		var lead := _first_bot_of(_members_of(p))
+		if lead != null:
+			say(lead, "Keep going, their %s next." % _building_word(nxt), "push_on_%d" % nxt.id, 30.0)
+
+func _members_of(p: Dictionary) -> Array[SimUnit]:
+	var out: Array[SimUnit] = []
+	for hid in p.members:
+		var m := w.get_unit(int(hid))
+		if m != null:
+			out.append(m)
+	return out
 
 func _team_power_ratio() -> float:
 	var ours := 0.0
@@ -748,28 +1053,40 @@ func _call_danger() -> void:
 				w.ping(team, es[0].pos, who.id, -1, "danger")
 			return
 
+## Fortify for a building in danger: a tower, barracks or the Ancient under attack and low (under 35% with two or
+## more attackers, or under 60% with enemy heroes among four or more), or a tier 2+ tower with three enemy heroes
+## fighting under it (Fortify makes it splash). Only a team of bots presses it on its own: a team with a human
+## leaves the button to the humans.
 func _glyph() -> void:
 	if w.time < w.glyph_ready_at[team]:
 		return
+	for h in members():
+		if not h.bot:
+			return
 	for b in w.units:
-		if not b.alive or b.team != team or b.kind != K.TOWER or b.is_invulnerable():
+		if not b.alive or b.team != team or b.is_invulnerable():
 			continue
-		if b.hp > b.max_hp * 0.3:
+		if b.kind != K.TOWER and b.kind != K.BARRACKS and b.kind != K.ANCIENT:
 			continue
 		var attackers := 0
+		var heroes := 0
+		var heroes_near := 0
 		for u: SimUnit in w.query(b.pos, 900.0):
-			if u.alive and u.team != team and u.team != C.NEUTRAL and u.atk_target == b.id:
+			if not u.alive or u.team == team or u.team == C.NEUTRAL:
+				continue
+			if u.is_hero():
+				heroes_near += 1
+			if u.atk_target == b.id:
 				attackers += 1
-		var help := false
-		for p in plans:
-			if p.kind == "defend" and int(p.target) == b.id and not (p.members as Dictionary).is_empty():
-				help = true
-		if attackers >= 3 and help:
-			# only a bot team uses Fortify on its own: a player's team leaves the button to the player
-			for h in members():
-				if not h.bot:
-					return
-			w.glyph(team)
+				if u.is_hero():
+					heroes += 1
+		var frac := b.hp / maxf(1.0, b.max_hp)
+		var danger := (frac < 0.35 and attackers >= 2) or (frac < 0.6 and attackers >= 4 and heroes >= 1)
+		if b.kind == K.TOWER and b.lane_tier >= 2 and heroes_near >= 3 and attackers >= 1:
+			danger = true
+		if danger:
+			var who := _first_bot()
+			w.glyph(team, who.id if who != null else -1)
 			return
 
 # ---- Pings ------------------------------------------------------------------------------------------------------------

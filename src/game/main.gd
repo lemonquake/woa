@@ -23,6 +23,7 @@ var azrin_fx: AzrinFx
 var froster_fx: FrosterFx
 var caziel_fx: CazielFx
 var hero15_fx: Hero15Fx
+var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
 var targeting_fx: TargetingFx
@@ -72,7 +73,7 @@ func _ready() -> void:
 	atmosphere = Atmosphere.new()
 	add_child(atmosphere)
 	atmosphere.build()
-	Options.apply_environment(atmosphere.env)
+	Options.apply_environment(atmosphere.env, atmosphere.sun)
 	await _stage(0.3, "Loading mountains")
 	terrain = TerrainBuilder.new(map)
 	terrain.build(self)
@@ -111,6 +112,10 @@ func _ready() -> void:
 	caziel_fx.fx = fx
 	caziel_fx.fire = fire_fx
 	add_child(caziel_fx)
+	fortify_fx = FortifyFx.new()
+	fortify_fx.game = self
+	fortify_fx.fx = fx
+	add_child(fortify_fx)
 	hero15_fx = Hero15Fx.new()
 	hero15_fx.game = self
 	hero15_fx.fx = fx
@@ -144,6 +149,7 @@ func _ready() -> void:
 	add_child(camera)
 	camera.set_process(false)              # held still until the match is shown (edge pan while loading moved it)
 	camera.height_at = func(p: Vector2) -> float: return terrain.height_at(p)
+	camera.ground_top = terrain.max_height() * View.S + 0.5
 	camera.follow = func():
 		var h := world.get_unit(player_hero_id)
 		return View.to3(h.pos, terrain.height_at(h.pos)) if h and h.alive else null
@@ -204,8 +210,15 @@ func _ready() -> void:
 			"fow": _fog_quad.visible = false
 			"terrain": get_node("Terrain").visible = false
 			"units":
-				for v in views.values():
-					if v is UnitView: v.visible = false
+				_units_off = true
+	for part in String(args.get("hide", "")).split(",", false):
+		var hn = hud.get(part)
+		if hn is CanvasItem:
+			hn.visible = false
+	if args.has("shadow1"):
+		atmosphere.sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
+	if args.has("scale3d"):
+		get_viewport().scaling_3d_scale = float(args.scale3d)
 	if args.has("noui"):
 		if args.has("bars"):
 			# health bars only: hide every other piece of the interface
@@ -242,6 +255,7 @@ func order(uid: int, o: Dictionary) -> void:
 func _exit_tree() -> void:
 	if BotMemory.active and BotMemory.dirty:
 		BotMemory.save()
+
 
 ## Centre the camera on the player's hero (start of the match, respawn, F1 twice, portrait click).
 func center_on_hero() -> void:
@@ -391,7 +405,17 @@ func _scripted_slots(automated: bool, rng: RandomNumberGenerator) -> Array:
 		bot_id = "blood_ranger"
 	var out := [{"team": C.DAWN, "kind": "you", "hero": my_id, "skill": "hard", "name": "", "lane": "mid"},
 		{"team": C.DUSK, "kind": "bot", "hero": bot_id, "skill": "hard", "name": "Bot Gerald", "lane": ""}]
-	if String(args.get("bots", "")) == "5v5":
+	if args.has("lineup"):
+		# --lineup=a,b,...: ten heroes, Ancient Light's five then Black Sun's five; the first is yours
+		var ids := String(args.lineup).split(",")
+		out[0].hero = ids[0]
+		out[1].hero = ids[5] if ids.size() > 5 else bot_id
+		for i in range(1, 5):
+			if i < ids.size():
+				out.append({"team": C.DAWN, "kind": "bot", "hero": ids[i], "skill": "hard", "name": GameSettings.BOT_NAMES[i], "lane": ""})
+			if i + 5 < ids.size():
+				out.append({"team": C.DUSK, "kind": "bot", "hero": ids[i + 5], "skill": "hard", "name": GameSettings.BOT_NAMES[i + 4], "lane": ""})
+	elif String(args.get("bots", "")) == "5v5":
 		var pool := ["sludge", "ezee", "blood_ranger", "azrin", "azrin", "blood_ranger", "sludge", "ezee"]
 		for i in 4:
 			out.append({"team": C.DAWN, "kind": "bot", "hero": pool[i], "skill": "hard", "name": GameSettings.BOT_NAMES[i + 1], "lane": ""})
@@ -450,6 +474,7 @@ func _step() -> void:
 	world.step()
 	t = _tm("sim", t)
 	_drain_events()
+	t = _tm("events", t)
 	_sync_views()
 	_tm("sync", t)
 
@@ -499,7 +524,7 @@ func _sync_ground_items() -> void:
 		var g: Dictionary = want[gid]
 		if not _ground_views.has(gid):
 			_ground_views[gid] = _make_ground_item(g)
-		var n: Node3D = _ground_views[gid]
+		var n: Node3D = View.live(_ground_views[gid])
 		var p := View.to3(g.pos, terrain.height_at(g.pos))
 		n.global_position = p
 		n.visible = fx._seen(g.pos)
@@ -578,13 +603,16 @@ func _make_view(u: SimUnit) -> void:
 		views[u.id] = v
 		v.place()                                  # where it stands from the start, before its first frame()
 
+## Events the item effects draw (a lookup, not a list built for every event).
+const ITEM_EVENTS := {"jump": 1, "chain": 1, "spell_shield": 1, "gold_glove": 1, "mana_burst": 1, "mend": 1, "knockback": 1,
+	"sneak_end": 1, "combine": 1, "spikes_return": 1, "blocked": 1, "cleave": 1, "item_use": 1, "blast_rod": 1, "net_staff": 1,
+	"static_charge": 1, "frost_blast": 1, "refresh": 1, "team_guard": 1, "war_drum": 1, "crash_knife": 1}
+
 func _drain_events() -> void:
 	for e in world.events:
 		if audio and _capture_frames < 0:
 			audio.event(e, world)
-		if e.t in ["jump", "chain", "spell_shield", "gold_glove", "mana_burst", "mend", "knockback", "sneak_end", "combine",
-				"spikes_return", "blocked", "cleave", "item_use", "blast_rod", "net_staff", "static_charge", "frost_blast",
-				"refresh", "team_guard", "war_drum", "crash_knife"]:
+		if ITEM_EVENTS.has(e.t):
 			item_fx.event(e)
 		if e.t in AzrinFx.EVENTS:
 			azrin_fx.event(e)
@@ -617,6 +645,10 @@ func _drain_events() -> void:
 				fx.dust(e)
 			"orb_taken":
 				_on_orb(e)
+			"glyph":
+				_on_glyph(e)
+			"fortify_splash":
+				fortify_fx.on_splash(e)
 			"crit":
 				# Dota: a red number with the critical damage (before the target's reductions) over the target
 				var ct := world.get_unit(int(e.target))
@@ -826,6 +858,7 @@ func _drain_events() -> void:
 	world.events.clear()
 
 var _frame_no := 0
+var _units_off := false                     # --off=units (benchmarks): unit views stay hidden
 
 ## The part of the ground the camera shows, in simulation units, grown by a margin (units outside it are not animated).
 func _view_rect() -> Rect2:
@@ -849,6 +882,20 @@ func _view_rect() -> Rect2:
 	return r.grow(500.0)
 
 ## Damage: hit reactions, melee sparks and floating numbers (yours, on you, and enemy hero spells you can see).
+## Fortify: the light over the buildings; the allies are told who pressed it (the kill feed and a note over the
+## bottom panel). The enemy sees the light only where it has vision.
+func _on_glyph(e: Dictionary) -> void:
+	fortify_fx.on_glyph(e)
+	if int(e.team) != player_team or hud == null:
+		return
+	var by := world.get_unit(int(e.get("by", -1)))
+	var who := "Your team"
+	if by != null:
+		who = "You" if by.id == player_hero_id else (by.bot_name if by.bot_name != "" else String(by.look.get("display_name", by.name)))
+	var col := UiKit.DAWN if player_team == 0 else UiKit.DUSK
+	hud.kill_feed.add_line([[who, col], [" used Fortify", UiKit.GOLD]], "status/fortified")
+	hud.notice("%s used Fortify: buildings protected for %d s" % [who, int(SimConst.GLYPH_BUILDING_DURATION)])
+
 ## An orb was taken: everyone hears of it in the kill feed (Dota's rune message); your team sees the gold or
 ## experience it gave over the heroes.
 func _on_orb(e: Dictionary) -> void:
@@ -944,8 +991,8 @@ func _process(dt: float) -> void:
 	_frame_no += 1
 	for v in views.values():
 		if v is UnitView:
-			v.visible = v.fog_ok
-			if not v.fog_ok or (not v.is_hero and not vr.has_point(v.cur_pos)):
+			v.visible = v.fog_ok and not _units_off
+			if not v.visible or (not v.is_hero and not vr.has_point(v.cur_pos)):
 				v.offscreen = true
 				if v.anim and v.anim.active:
 					v.anim.active = false
@@ -955,14 +1002,20 @@ func _process(dt: float) -> void:
 			v.frame(alpha, dt, camera.cam, _frame_no)
 	_t = _tm("views", _t)
 	fx.frame(world, alpha, dt)
+	_t = _tm("fx", _t)
 	sludge_fx.update(world, alpha, dt)
 	azrin_fx.update(world, alpha, dt)
+	_t = _tm("fx_azrin", _t)
+	var _c0 := Time.get_ticks_usec()
 	froster_fx.update(world, alpha, dt)
+	UiKit.draw_cost("fro_call", _c0)
+	_t = _tm("fx_froster", _t)
 	caziel_fx.update(world, alpha, dt)
 	hero15_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
-	_t = _tm("fx", _t)
+	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)
+	fortify_fx.frame(dt)
 	orb_view.frame(dt)
 	_t = _tm("status", _t)
 	targeting_fx.frame()
@@ -1053,6 +1106,7 @@ func _update_fog(dt: float) -> void:
 # ---- Benchmark ------------------------------------------------------------------------------------------------------
 
 var _bench_frames: PackedFloat32Array = PackedFloat32Array()
+var _bench_ticks: PackedInt32Array = PackedInt32Array()
 var _bench_until := -1.0
 var _bench_warm := 0.0
 var _bench_acc := {}
@@ -1067,27 +1121,70 @@ func _start_bench() -> void:
 		if world.tick % 30 == 0:
 			_sync_views()
 	_sync_views()
+	if args.has("fight"):
+		_stage_fight(true)
 	_bench_warm = 3.0
 	_bench_until = float(args.bench)
+	# the whole script frame: one node runs first and one last in _process and _physics_process
+	for pri in [-100000, 100000]:
+		var probe := BenchProbe.new()
+		probe.first = pri < 0
+		probe.process_priority = pri
+		probe.process_physics_priority = pri
+		add_child(probe)
 	RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
 	Engine.max_fps = 0
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 
+## --fight (bench): a teamfight. Every hero levelled to --lvl (default 16, the bots learn their kits) with the last items
+## of its first bot build; the two teams face each other across the mid lane by the river, so the bots fight with every
+## spell. Every --restage seconds (default 20) the dead come back and both teams are lined up again. The camera
+## watches the middle of the fight rather than the player's hero.
+var _fight_next := 0.0
+
+func _stage_fight(first: bool) -> void:
+	SimDebug.stage_fight(world, Vector2(-150, -150), int(args.get("lvl", "16")), first)
+	for h in world.heroes:
+		var v = views.get(h.id)
+		if v is UnitView:
+			v.prev_pos = h.pos
+			v.cur_pos = h.pos
+	_fight_next = world.time + float(args.get("restage", "20"))
+
 func _bench_frame(dt: float) -> void:
+	if args.has("fight"):
+		if world.time >= _fight_next:
+			_stage_fight(false)
+		camera.focus(View.to3(Vector2(-150, -150), terrain.height_at(Vector2(-150, -150))))
+		if _bench_warm > 0.0 and _bench_warm + dt >= 3.0:
+			camera.zoom = float(args.get("zoom", "1.0"))
 	var h := world.get_unit(player_hero_id)
-	if h:
+	if h and not args.has("fight"):
 		camera.focus(View.to3(h.pos, terrain.height_at(h.pos)))
 	if _bench_warm > 0.0:
 		_bench_warm -= dt
 		Trail3D.cost_us = 0
 		UnitBars.cost_us = 0
+		UiKit.draw_us.clear()
 		return
 	_bench_frames.append(dt * 1000.0)
+	if args.has("bench_shot") and _bench_frames.size() == 300:
+		# --bench_shot=path: a picture of the benchmark scene (is the fight really on?)
+		get_viewport().get_texture().get_image().save_png(String(args.bench_shot))
+	var ph := BenchProbe.take_phys()
+	_bench_ticks.append(ph.y)
+	_bench_acc["script_proc"] = _bench_acc.get("script_proc", 0.0) + BenchProbe.proc_us / 1000.0
+	_bench_acc["script_phys"] = _bench_acc.get("script_phys", 0.0) + ph.x / 1000.0
+	if ph.y > 0:
+		_bench_acc["n_tick_frames"] = _bench_acc.get("n_tick_frames", 0.0) + 1.0
 	var vrid := get_viewport().get_viewport_rid()
 	_bench_acc["gpu"] = _bench_acc.get("gpu", 0.0) + RenderingServer.viewport_get_measured_render_time_gpu(vrid)
 	_bench_acc["rcpu"] = _bench_acc.get("rcpu", 0.0) + RenderingServer.viewport_get_measured_render_time_cpu(vrid)
-	_bench_acc["proc"] = _bench_acc.get("proc", 0.0) + Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
-	_bench_acc["phys"] = _bench_acc.get("phys", 0.0) + Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+	_bench_acc["setup"] = _bench_acc.get("setup", 0.0) + RenderingServer.get_frame_setup_time_cpu()
+	_bench_acc["other"] = _bench_acc.get("other", 0.0) + dt * 1000.0 - BenchProbe.proc_us / 1000.0 - ph.x / 1000.0
+	_bench_acc["flush"] = _bench_acc.get("flush", 0.0) + BenchProbe.flush_us / 1000.0
+	_bench_acc["draw"] = _bench_acc.get("draw", 0.0) + BenchProbe.draw_us / 1000.0
+	_bench_acc["gap"] = _bench_acc.get("gap", 0.0) + BenchProbe.gap_us / 1000.0
 	_bench_acc["draws"] = _bench_acc.get("draws", 0.0) + Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
 	_bench_acc["prims"] = _bench_acc.get("prims", 0.0) + Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)
 	_bench_until -= dt
@@ -1103,11 +1200,25 @@ func _bench_frame(dt: float) -> void:
 			n, avg, 1000.0 / avg, a[n / 2], a[int(n * 0.95)], a[int(n * 0.99)], a[n - 1], a.filter(func(v): return v > 16.7).size(), world.units.size()]
 		_bench_acc["trails"] = Trail3D.cost_us / 1000.0
 		_bench_acc["bars"] = UnitBars.cost_us / 1000.0
+		for k in UiKit.draw_us:
+			_bench_acc["ui_" + String(k)] = UiKit.draw_us[k] / 1000.0
 		var parts := []
 		for k in _bench_acc:
 			parts.append("%s %.2f" % [k, _bench_acc[k] / n])
-		line += "
-  per-frame means: " + ", ".join(parts)
+		# frames that ran a simulation tick against frames that did not (the 30 Hz tick lands in one frame)
+		var with_t := 0.0
+		var nw := 0
+		var without_t := 0.0
+		var nwo := 0
+		for fi in _bench_frames.size():
+			if _bench_ticks[fi] > 0:
+				with_t += _bench_frames[fi]
+				nw += 1
+			else:
+				without_t += _bench_frames[fi]
+				nwo += 1
+		line += "\n  frames with a tick %d avg %.2f ms, without %d avg %.2f ms" % [nw, with_t / maxf(1, nw), nwo, without_t / maxf(1, nwo)]
+		line += "\n  per-frame means: " + ", ".join(parts)
 		print(line)
 		var f := FileAccess.open("res://work/bench.txt", FileAccess.WRITE)
 		f.store_line(line)

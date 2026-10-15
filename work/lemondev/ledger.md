@@ -189,3 +189,47 @@ UNVERIFIED for blind review.
 | V1 Item and skill icons | 1-2 | working tree | self-check contact sheets (old vs new, 96 and 44 px) | n/a | REJECT then PASS (self-check) | Battle Armor read as Plate Armor | blind review UNVERIFIED |
 | H1 Tock, H2 Kragg | 1-2 | working tree | gate: tests, input probes 13/13 and 6/6, captures | n/a | REJECT then PASS | Rewind refunded its own mana; Stop Time dome too bright | duels / 5 v 5 |
 | T1 Tower ranges on Alt (owner's follow-up) | 1 | working tree | captures with and without Alt (ranges_alt, ranges_none) | n/a | PASS (self-check) | none | none |
+
+## Session 2026-10-15 c (performance in teamfights, bots, learning, Quick cast) — run `work/lemondev/2026-10-15c-perf-feel-ai/` (contract.md)
+
+No critic subagent was run (none asked for); these components are measured, not judged by eye. Visual changes
+(portrait backdrop, trails) are builder self-checks, UNVERIFIED for blind review.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| P1 teamfight frame time | 1 | 81efd48 + working tree | gate: bench `--fight` (real brawl) | n/a | REJECT (baseline) | 24 fps; Froster's effects aborted on a freed node every frame and printed the error (~10-12 ms/frame) | View.live at 49 sites |
+| P1 | 2 | working tree | gate: same-session A/B vs 81efd48 + harness | n/a | PASS (gate) | see the final A/B in docs/HANDOFF.md | none |
+| P2 sim spikes | 1-3 | working tree | gate: sim_profile --fight (ticks > 15 ms) | n/a | REJECT x2 then PASS | in order: ten bots thinking on one tick; vision cache wiped on every felled tree (20-30 ms ticks); team brains on one tick and repeated power / building scans | none |
+| P3 interface | 1 | working tree | gate: bench ui_* means, draws, capture | n/a | PASS (gate) | the portrait re-rendered the whole world (~460 draw calls) | none |
+| A1 last hits | 1-2 | working tree | gate: lh_lab 8 min, five heroes | n/a | REJECT (baseline 17-31) then PASS (37-47) | the forecast fired late; -0.2 s lead | per-hero learning tried, drifted the wrong way, removed |
+| A2 teamfights | 1 | working tree | gate: mirrored A/B, 8 games, tf_off swapped | n/a | PASS (gate, modest) | side with team engage ahead in net worth 6/8 (avg +4.5k), kills 5/8 (+4.9) | more games for confidence |
+| A3 ganks | 1 | working tree | gate: tests (rally out of sight, way home) | n/a | PASS (gate) | laning-phase lane-partner "ganks" every 30-60 s pulled laners off the wave | none |
+| A4 farm | 1-3 | working tree | gate: carry LH@10 in 5v5 | n/a | PARTIAL | carries 5-13 -> 16-23 at 10:00; still below Dota bots (~40) | lane equilibrium near the enemy tower; lane control |
+| A5 ending games | 1-5 | working tree | gate: an Ancient falls within 60 min | n/a | REJECT x4 then PASS 3/4 | in order: pushes ended per tower; late ganks across the map; stuck bots; no group; every hero ran from tower aggro | games still long (50-60 min) |
+| L1 learning | 1-2 | working tree | gate: learn_ab (3 trainers x 3 games, eval both sides vs control) | n/a | REJECT x2 (not shown to help) | v1: last-hit lead drifted to +0.3; v2: learned side better as Ancient Light (+2.9k), worse as Black Sun (-6.4k) | last-hit learning removed; engage / gank learning kept, benefit UNVERIFIED |
+| U1 Quick cast | 1 | working tree | gate: input_probe sludge 12/12, azrin 14/14 | n/a | PASS (gate) | none | none |
+
+## Session 2026-10-15 e (buff bar) — run `work/lemondev/2026-10-15e-buff-bar/` (contract.md, handoff.md)
+
+No critic subagent was run (none asked for, no Dota reference frames on disk): the look is a builder self-check,
+UNVERIFIED for blind review.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| B1 Effect data | 1 | working tree | gate: test_buff_bar_entries, full suite 197/197 | n/a | PASS (gate) | none | none |
+| B2 Buff bar | 1-3 | working tree | gate: buff_probe 1080p 29/29, real 4K 20/20 (3 hover checks skipped: frame larger than the monitor) + self-check captures | n/a | REJECT x2 then PASS (gate; self-check look) | in order: overflow dropped silently; centred seconds hid the icons | blind review UNVERIFIED |
+| B3 Effect names | 1-2 | working tree | gate: modifier_census (3 x 30 min, all heroes), Names OK | n/a | REJECT then PASS | four effects unnamed, Charge counted as a buff | none |
+
+## Session 2026-10-15 f (regen readout, Rejuvenation Orb, tower shots, Fortify, courier, Fast Forward) — run `work/lemondev/2026-10-15f-regen-fortify/`
+
+No critic subagent was run (none asked for, no Dota frames on disk): looks are builder self-checks, UNVERIFIED for
+blind review.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| R1 Regen readout | 1-2 | working tree | probe 1080p + 4K captures | n/a | REJECT then PASS (self-check) | healing cut hidden in the bonus; faint "+" | blind review UNVERIFIED |
+| O1 Rejuvenation Orb | 1 | working tree | test (to 30:00) + capture | n/a | PASS | none | none |
+| T1 Tower shots | 1-2 | working tree | probe captures both teams | n/a | REJECT then PASS (self-check) | Black Sun corona edge-on to the camera | blind review UNVERIFIED |
+| F1 Fortify | 1-2 | working tree | tests (splash, marks, speed, bots), probe (tooltip 60/60 frames), captures, bot game | n/a | REJECT then PASS | shells too big and opaque | blind review UNVERIFIED |
+| C1 Courier | 1 | working tree | test | n/a | PASS (gate) | none | none |
+| K1 Fast Forward | 1 | working tree | test | n/a | PASS (gate) | none | none |

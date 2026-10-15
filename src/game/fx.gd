@@ -212,7 +212,7 @@ func _update_bits(dt: float) -> void:
 				(b.node as Node).queue_free()
 			_bits.remove_at(i)
 			continue
-		var n: MeshInstance3D = b.node
+		var n: MeshInstance3D = View.live(b.node)
 		if not b.rest:
 			var v: Vector3 = b.vel
 			v.y -= (16.0 if b.streak else 11.0) * dt
@@ -339,7 +339,7 @@ func _update_spikes(dt: float) -> void:
 			continue
 		s.t += dt
 		var t: float = s.t
-		var n: MeshInstance3D = s.node
+		var n: MeshInstance3D = View.live(s.node)
 		# burst up with an overshoot, hold, then sink
 		var k := 0.0
 		if t < 0.0:
@@ -563,13 +563,15 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 			arc = 3.5
 			h0 = 2.4
 		"tower_dawn", "tower_dusk":
-			var col := Color(1.0, 0.85, 0.45) if style == "tower_dawn" else Color(1.0, 0.25, 0.25)
-			node.add_child(_sphere(0.2, _glow(col, 8.0)))
-			trail = Trail3D.make(node, Color(col.r, col.g, col.b, 0.9), 0.16, 0.25)
+			var big := bool(e.get("fortify", false))
+			var dawn := style == "tower_dawn"
+			node.add_child(_tower_shot(dawn, big))
+			var tcol := Color(1.0, 0.86, 0.5, 0.9) if dawn else Color(0.55, 0.06, 0.28, 0.75)
+			trail = Trail3D.make(node, tcol, (0.12 if dawn else 0.1) * (1.35 if big else 1.0), 0.3 if dawn else 0.26)
 			var l := OmniLight3D.new()
-			l.light_color = col
-			l.light_energy = 1.5
-			l.omni_range = 3.0
+			l.light_color = Color(1.0, 0.85, 0.5) if dawn else Color(0.9, 0.15, 0.4)
+			l.light_energy = 2.2 if big else 1.5
+			l.omni_range = 3.5 if big else 3.0
 			node.add_child(l)
 			var bv = game.views.get(src.id)
 			h0 = (bv as BuildingView).bolt_height if bv is BuildingView else 4.0
@@ -616,7 +618,7 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 	var p0 := View.to3(src.pos, game.terrain.height_at(src.pos)) + Vector3(0, h0, 0)
 	node.global_position = p0
 	_proj[e.id] = {"node": node, "start": p0, "h0": h0, "arc": arc, "t": 0.0, "target": e.target, "style": style,
-		"trail": trail, "last": p0, "src_team": src.team}
+		"trail": trail, "last": p0, "src_team": src.team, "big": bool(e.get("fortify", false))}
 
 func _is_arrow(style: String) -> bool:
 	return style in ["arrow", "burst_arrow", "blood_arrow", "spear"]
@@ -626,7 +628,7 @@ func projectile_end(e: Dictionary) -> void:
 	if p == null:
 		return
 	_proj.erase(e.id)
-	var node: Node3D = p.node
+	var node: Node3D = View.live(p.node)
 	var style: String = p.style
 	var hit := bool(e.get("hit", false))
 	var miss := bool(e.get("miss", false))
@@ -660,11 +662,23 @@ func projectile_end(e: Dictionary) -> void:
 	if p.trail:
 		(p.trail as Trail3D).stop()
 	match style:
-		"tower_dawn", "tower_dusk":
-			var col := Color(1.0, 0.85, 0.45) if style == "tower_dawn" else Color(1.0, 0.3, 0.25)
-			impact(at, col, 0.45)
-			sparks(at, Vector3.UP, 8, col, 4.0)
-			flash_light(at, col, 3.0, 4.0, 0.25)
+		"tower_dawn":
+			# a spike of light where the lance strikes, gold sparks, a small ring on the ground
+			var k := 1.35 if bool(p.get("big", false)) else 1.0
+			impact(at, Color(1.0, 0.95, 0.78), 0.32 * k)
+			_light_spike(at, Color(1.0, 0.88, 0.55), 2.2 * k)
+			sparks(at, Vector3.UP, 9, Color(1.0, 0.82, 0.4), 4.5)
+			if _seen(View.to2(at)):
+				shockwave(ground3(View.to2(at)), 0.8 * k, Color(1.0, 0.85, 0.45), 0.3, 0.22, 2.0)
+			flash_light(at, Color(1.0, 0.85, 0.5), 3.2 * k, 4.5, 0.25)
+		"tower_dusk":
+			# the black sun collapses into itself, then bursts crimson; the ground cracks under it
+			var k2 := 1.35 if bool(p.get("big", false)) else 1.0
+			_implode(at, 0.5 * k2)
+			sparks(at, Vector3.UP, 8, Color(0.95, 0.2, 0.4), 3.8)
+			if _seen(View.to2(at)):
+				crack(ground3(View.to2(at)), 0.7 * k2, Color(0.9, 0.15, 0.35), 1.1)
+			flash_light(at, Color(0.85, 0.15, 0.45), 3.0 * k2, 4.0, 0.3)
 		"boulder_sun", "boulder_doom":
 			impact(at, Color(1.0, 0.7, 0.4), 0.5)
 			debris(at, 7, Color(0.32, 0.28, 0.25) if style == "boulder_sun" else Color(0.18, 0.12, 0.2), 3.5, 1.1)
@@ -724,7 +738,7 @@ func _update_flyers(dt: float) -> void:
 		if not is_instance_valid(f.node):
 			_flyers.remove_at(i)
 			continue
-		var n: Node3D = f.node
+		var n: Node3D = View.live(f.node)
 		f.t += dt
 		var k := clampf(f.t / f.dur, 0.0, 1.0)
 		var old := n.global_position
@@ -749,7 +763,7 @@ func _update_stuck(dt: float) -> void:
 		if not is_instance_valid(s.node):
 			_stuck.remove_at(i)
 			continue
-		var n: Node3D = s.node
+		var n: Node3D = View.live(s.node)
 		var left: float = s.until - now
 		if left <= 0.0:
 			n.queue_free()
@@ -769,7 +783,7 @@ func frame(w: SimWorld, alpha: float, dt: float) -> void:
 	for id in _proj.keys():
 		var v: Dictionary = _proj[id]
 		var sp = live.get(id)
-		var node: Node3D = v.node
+		var node: Node3D = View.live(v.node)
 		var tgt := w.get_unit(v.target)
 		if sp == null:
 			continue
@@ -814,6 +828,105 @@ func frame(w: SimWorld, alpha: float, dt: float) -> void:
 			_lights.remove_at(i)
 		else:
 			(l.light as OmniLight3D).light_energy = float(l.energy) * (1.0 - lk) * (1.0 - lk)
+
+## A tower's shot. Ancient Light: a lance of sunlight (a white-hot core in a gold sheath, a bright head). Black Sun:
+## a small black sun with a crimson corona in a violet haze. Fortified shots are a third bigger. Travels along -Z.
+func _tower_shot(dawn: bool, big: bool) -> Node3D:
+	var n := Node3D.new()
+	var s := 1.35 if big else 1.0
+	if dawn:
+		var core := MeshInstance3D.new()
+		var cap := CapsuleMesh.new()
+		cap.radius = 0.06 * s
+		cap.height = 0.85 * s
+		core.mesh = cap
+		core.rotation.x = PI * 0.5
+		core.material_override = _glow(Color(1.0, 0.97, 0.86), 9.0)
+		core.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		n.add_child(core)
+		var sheath := MeshInstance3D.new()
+		var cap2 := CapsuleMesh.new()
+		cap2.radius = 0.16 * s
+		cap2.height = 1.3 * s
+		sheath.mesh = cap2
+		sheath.rotation.x = PI * 0.5
+		sheath.material_override = _glow(Color(1.0, 0.78, 0.32, 0.32), 3.0)
+		sheath.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		n.add_child(sheath)
+		var head := _sphere(0.12 * s, _glow(Color(1.0, 1.0, 0.92), 10.0))
+		head.position.z = -0.38 * s
+		n.add_child(head)
+	else:
+		n.add_child(_sphere(0.15 * s, _solid(Color(0.03, 0.0, 0.04), 1.0)))
+		# the corona always faces the camera, so it reads as an eclipse from any angle
+		var corona := MeshInstance3D.new()
+		var q := QuadMesh.new()
+		q.size = Vector2(0.75, 0.75) * s
+		corona.mesh = q
+		corona.material_override = _corona_mat()
+		corona.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		n.add_child(corona)
+	return n
+
+var _corona: ShaderMaterial
+
+## The Black Sun shot's corona: a camera-facing crimson ring with soft flares, dark in the middle where the black core
+## sits.
+func _corona_mat() -> ShaderMaterial:
+	if _corona == null:
+		var sh := Shader.new()
+		sh.code = """
+shader_type spatial;
+render_mode unshaded, blend_add, depth_draw_never, cull_disabled, shadows_disabled;
+void vertex() {
+	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
+}
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float r = length(p);
+	float a = atan(p.y, p.x);
+	float ring = exp(-pow((r - 0.42) * 14.0, 2.0));
+	float flare = (0.55 + 0.45 * sin(a * 7.0 + TIME * 5.0)) * smoothstep(1.0, 0.42, r) * step(0.42, r) * 0.55;
+	vec3 col = mix(vec3(1.0, 0.22, 0.38), vec3(0.65, 0.15, 0.95), smoothstep(0.42, 0.95, r));
+	ALBEDO = col * (ring * 2.4 + flare);
+}
+"""
+		_corona = ShaderMaterial.new()
+		_corona.shader = sh
+		_corona.render_priority = 3
+	return _corona
+
+## A thin spike of light standing up from a point, shooting up and fading (the Ancient Light tower's hit).
+func _light_spike(at: Vector3, col: Color, height: float) -> void:
+	var mi := MeshInstance3D.new()
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.01
+	cyl.bottom_radius = 0.1
+	cyl.height = height
+	cyl.radial_segments = 12
+	mi.mesh = cyl
+	var m := _glow(col, 7.0).duplicate() as StandardMaterial3D
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	mi.global_position = at + Vector3(0, height * 0.35, 0)
+	mi.scale = Vector3(1.0, 0.2, 1.0)
+	var tw := mi.create_tween()
+	tw.tween_property(mi, "scale", Vector3(1.4, 1.0, 1.4), 0.12)
+	tw.parallel().tween_property(m, "albedo_color:a", 0.0, 0.32)
+	tw.tween_callback(mi.queue_free)
+
+## A dark sphere that swells, then collapses to nothing, ringed by a crimson flash (the Black Sun tower's hit).
+func _implode(at: Vector3, size: float) -> void:
+	var dark := _sphere(size, _solid(Color(0.02, 0.0, 0.03), 1.0))
+	add_child(dark)
+	dark.global_position = at
+	dark.scale = Vector3.ONE * 0.4
+	var tw := dark.create_tween()
+	tw.tween_property(dark, "scale", Vector3.ONE, 0.07)
+	tw.tween_property(dark, "scale", Vector3.ONE * 0.05, 0.16).set_ease(Tween.EASE_IN)
+	tw.tween_callback(impact.bind(at, Color(1.0, 0.25, 0.42), size * 0.8))
+	tw.tween_callback(dark.queue_free)
 
 func impact(at: Vector3, col: Color, size := 0.4) -> void:
 	var s := _sphere(size, _glow(col, 6.0).duplicate())
@@ -882,7 +995,7 @@ func gale_move(src: int, pos: Vector2, done: bool) -> void:
 		node.add_child(l)
 		g = {"node": node, "prev": p, "trails": trails, "spin": 0.0}
 		_gales[src] = g
-	var n: Node3D = g.node
+	var n: Node3D = View.live(g.node)
 	var dir: Vector3 = p - (g.prev as Vector3)
 	n.global_position = p
 	if dir.length() > 0.01:
@@ -890,7 +1003,7 @@ func gale_move(src: int, pos: Vector2, done: bool) -> void:
 	g.prev = p
 	g.spin = float(g.spin) + 0.9
 	for k in 2:
-		var anchor: Node3D = g.trails[k][0]
+		var anchor: Node3D = View.live(g.trails[k][0])
 		var ang := float(g.spin) + k * PI
 		anchor.position = Vector3(cos(ang) * 0.38, sin(ang) * 0.38, 0.3)
 	if _seen(pos) and randf() < 0.6:
@@ -907,7 +1020,7 @@ func _end_gale(src: int) -> void:
 		var tr: Trail3D = pair[1]
 		if is_instance_valid(tr):
 			tr.stop()
-	var n: Node3D = g.node
+	var n: Node3D = View.live(g.node)
 	var at := n.global_position
 	if _seen(View.to2(at)):
 		shockwave(ground3(View.to2(at)), 1.8, Color(0.8, 1.0, 0.95), 0.4, 0.12, 2.0)

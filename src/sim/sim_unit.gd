@@ -61,7 +61,7 @@ var magic_amp_items := 0.0
 var cooldown_reduction := 0.0              # cooldowns start this much shorter (Time Crystal; largest item counts)
 var cooldown_rate := 0.0                   # cooldowns run this much faster (+) or slower (-); -1 freezes them
 var aoe_bonus := 0.0                       # spell areas are this much wider (Wide Stone family; largest counts)
-var cast_range_bonus := 0.0                # spell and item cast range (Long Lens, Blast Rod; largest counts)
+var cast_range_bonus := 0.0                # spell and item cast range (items, talents, buffs; see item_cast_range)
 var hp_regen_pct := Vector2.ZERO           # regeneration in fractions of max health and of missing health (Giant Heart)
 var mana_cost_cut := 0.0                   # spells and items cost this much less mana (largest item counts)
 var cast_speed := 0.0                      # cast points are this much faster: time / (1 + cast_speed)                 # the part from items, diminishing (see SimConst.ITEM_MAGIC_AMP_FALLOFF)
@@ -225,7 +225,7 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 	if armor_type < 0:
 		if kind == K.HERO:
 			armor_type = C.ArmorType.HERO
-		elif kind in [K.TOWER, K.BARRACKS, K.ANCIENT, K.FILLER, K.FOUNTAIN]:
+		elif is_building():
 			armor_type = C.ArmorType.STRUCTURE
 		elif kind == K.CREEP_SIEGE:
 			armor_type = C.ArmorType.ARMORED
@@ -264,11 +264,13 @@ func setup(p_id: int, p_def: Dictionary, p_team: int, p_pos: Vector2, now: float
 func is_hero() -> bool:
 	return kind == K.HERO
 
+## Kinds are ordered (SimConst.Kind): lane creeps 1-4, buildings TOWER..FOUNTAIN. Plain comparisons, no array per call
+## (these run thousands of times a tick).
 func is_building() -> bool:
-	return kind in [K.TOWER, K.BARRACKS, K.ANCIENT, K.FILLER, K.FOUNTAIN]
+	return kind >= K.TOWER and kind <= K.FOUNTAIN
 
 func is_lane_creep() -> bool:
-	return kind in [K.CREEP_MELEE, K.CREEP_RANGED, K.CREEP_SIEGE, K.CREEP_FLAG]
+	return kind >= K.CREEP_MELEE and kind <= K.CREEP_FLAG
 
 func is_creep() -> bool:
 	return is_lane_creep() or kind == K.NEUTRAL_CREEP
@@ -302,13 +304,15 @@ func is_night_vision(night: bool) -> float:
 
 ## A modifier: {id, source, expires (game time, INF = forever; pre-game times are negative), stats: {}, stun, root, silence, disarm, slow (0..1),
 ## invulnerable, regen (hp/s), mana_regen (mana/s), break_on_damage, stack_key}. Same id + source refreshes.
+## expire_modifiers stamps "t0", the game time it was first seen, so the HUD's buff bar knows how long it lasts in all.
 func add_modifier(m: Dictionary) -> void:
 	for i in modifiers.size():
 		var o: Dictionary = modifiers[i]
 		if o.id == m.id and o.get("source", -1) == m.get("source", -1):
 			var same_stats: bool = o.get("stats", {}) == m.get("stats", {}) and o.get("slow", 0.0) == m.get("slow", 0.0)
 			modifiers[i] = m
-			if not same_stats or o.keys().size() != m.keys().size():
+			# "t0" (when it started, for the HUD's timer) is stamped later and changes no stat
+			if not same_stats or o.keys().size() - int(o.has("t0")) != m.keys().size() - int(m.has("t0")):
 				stats_dirty = true
 			return
 	modifiers.append(m)
@@ -401,6 +405,8 @@ func expire_modifiers(now: float) -> void:
 		if now >= e:
 			modifiers.remove_at(i)
 			stats_dirty = true
+		elif not modifiers[i].has("t0"):
+			modifiers[i]["t0"] = now
 
 # ---- Stats ------------------------------------------------------------------------------------------------------------
 
@@ -435,10 +441,47 @@ static func _stack(a: float, b: float, k: String) -> float:
 
 func _add_item_stats(out: Dictionary, st: Dictionary) -> void:
 	for k in st:
+		if k == "cast_range_max":
+			continue                       # item_cast_range() sums it by source
 		if k == "boot_ms" or k.ends_with("_max"):
 			out[k] = maxf(float(out.get(k, 0.0)), float(st[k]))
 		else:
 			out[k] = _stack(float(out.get(k, 0.0)), float(st[k]), k)
+
+## Cast range from the main-slot items: copies of one source (an item and its upgraded levels: Blast Rod 1-5 are one
+## source) stack with diminishing returns (C.CAST_RANGE_FALLOFF), different sources add up. Owner's rule 2026-10-15.
+func item_cast_range() -> float:
+	if kind != K.HERO:
+		return 0.0
+	var by_source := {}
+	for i in mini(6, inventory.size()):
+		var it = inventory[i]
+		if it == null:
+			continue
+		var r := float(SimData.item(it.id).stats.get("cast_range_max", 0.0))
+		if r <= 0.0:
+			continue
+		var src := cast_range_source(String(it.id))
+		if not by_source.has(src):
+			by_source[src] = []
+		(by_source[src] as Array).append(r)
+	var total := 0.0
+	for src in by_source:
+		var vals: Array = by_source[src]
+		vals.sort()
+		vals.reverse()
+		var f := 1.0
+		for v in vals:
+			total += float(v) * f
+			f *= C.CAST_RANGE_FALLOFF
+	return total
+
+## The source an item's cast range comes from: its id without a level suffix ("dagon_3" -> "dagon").
+static func cast_range_source(item_id: String) -> String:
+	var m := item_id.rfind("_")
+	if m > 0 and item_id.substr(m + 1).is_valid_int():
+		return item_id.substr(0, m)
+	return item_id
 
 ## Magic amp from each main-slot item, largest first (they stack with diminishing returns).
 func item_magic_amps() -> Array:
@@ -474,7 +517,12 @@ func _mod_stat(k: String) -> float:
 	return s
 
 ## Recompute derived stats from definition, level, attributes, items, abilities and modifiers.
+## SimAbilities.val results (a cache, not state): "ability|key" -> [ability level, talents, value]. Emptied whenever
+## the stats are recomputed (items, auras, Upgrade Staff and Gem, area bonus).
+var _val_cache := {}
+
 func refresh_stats() -> void:
+	_val_cache.clear()
 	var items := _item_stats() if kind == K.HERO else {}
 	var f := func(k: String) -> float:
 		return _stack(_stack(float(items.get(k, 0.0)), _mod_stat(k), k), float(perm_stats.get(k, 0.0)), k)
@@ -557,7 +605,7 @@ func refresh_stats() -> void:
 	cooldown_reduction = _stack(float(items.get("cooldown_reduction_max", 0.0)), _mod_stat("cooldown_reduction"), "evasion")
 	cooldown_rate = maxf(-1.0, _mod_stat("cooldown_rate"))
 	aoe_bonus = float(items.get("aoe_bonus_max", 0.0)) + _mod_stat("aoe_bonus")
-	cast_range_bonus = float(items.get("cast_range_max", 0.0)) + _mod_stat("cast_range")
+	cast_range_bonus = item_cast_range() + _mod_stat("cast_range") + float(perm_stats.get("cast_range", 0.0))
 	hp_regen_pct = Vector2(float(items.get("hp_regen_pct_max", 0.0)), float(items.get("hp_regen_pct_missing", 0.0)))
 	vision_day = float(def.vision_day)
 	vision_night = float(def.vision_night)

@@ -163,7 +163,7 @@ func _follow(dt: float) -> void:
 		var v: UnitView = game.views.get(id)
 		if not is_instance_valid(_stun[id]):
 			continue
-		var n: Node3D = _stun[id]
+		var n: Node3D = View.live(_stun[id])
 		if v:
 			n.global_position = v.global_position + Vector3(0, v.bar_height * 0.88, 0)
 			n.rotation.y = t * 5.0
@@ -171,7 +171,7 @@ func _follow(dt: float) -> void:
 		var v2: UnitView = game.views.get(id)
 		if not is_instance_valid(_curse[id]):
 			continue
-		var c: Node3D = _curse[id]
+		var c: Node3D = View.live(_curse[id])
 		if v2:
 			var gp := v2.global_position
 			c.global_position = Vector3(gp.x, fx.ground_y(View.to2(gp)) + 0.07, gp.z)
@@ -185,7 +185,7 @@ func _follow(dt: float) -> void:
 		for id in store2:
 			var vh: UnitView = game.views.get(id)
 			if vh and is_instance_valid(store2[id]):
-				var n2: Node3D = store2[id]
+				var n2: Node3D = View.live(store2[id])
 				# at head height, under the health bar that is drawn over the unit
 				n2.global_position = vh.global_position + Vector3(0, vh.bar_height * (0.74 if store2 == _disarm else 0.8), 0)
 				n2.rotation.y = t * (1.6 if store2 == _silence else 0.0)
@@ -465,7 +465,7 @@ func _sync_aura(want: Dictionary, dt: float) -> void:
 		a.on = want.has(id)
 		a.k = clampf(float(a.k) + (dt / 0.35 if a.on else -dt / 0.5), 0.0, 1.0)
 		var v: UnitView = game.views.get(id)
-		var n: MeshInstance3D = a.node
+		var n: MeshInstance3D = View.live(a.node)
 		if v == null or (not a.on and a.k <= 0.0):
 			n.queue_free()
 			_aura.erase(id)
@@ -495,7 +495,7 @@ func _sync_blubber(want: Dictionary, dt: float) -> void:
 		b.on = want.has(id)
 		b.k = clampf(float(b.k) + (dt / 0.2 if b.on else -dt / 0.4), 0.0, 1.0)
 		var v: UnitView = game.views.get(id)
-		var n: MeshInstance3D = b.node
+		var n: MeshInstance3D = View.live(b.node)
 		if v == null or (not b.on and b.k <= 0.0):
 			n.queue_free()
 			_blubber.erase(id)

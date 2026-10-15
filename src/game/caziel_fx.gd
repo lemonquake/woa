@@ -225,7 +225,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	for i in range(_ghosts.size() - 1, -1, -1):
 		var g: Dictionary = _ghosts[i]
 		g.t = float(g.t) + dt
-		var n: Node3D = g.node
+		var n: Node3D = View.live(g.node)
 		if not is_instance_valid(n) or float(g.t) >= float(g.life):
 			if is_instance_valid(n):
 				n.queue_free()
@@ -235,7 +235,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	for i in range(_slashes.size() - 1, -1, -1):
 		var s: Dictionary = _slashes[i]
 		s.t = float(s.t) + dt
-		var sn: Node3D = s.node
+		var sn: Node3D = View.live(s.node)
 		if not is_instance_valid(sn) or float(s.t) >= float(s.life):
 			if is_instance_valid(sn):
 				sn.queue_free()
@@ -245,7 +245,7 @@ func update(w: SimWorld, _alpha: float, dt: float) -> void:
 	for store in [_feet, _shroud, _poison]:
 		for id in store:
 			var v := fx._view_of(int(id))
-			var p: Node3D = store[id]
+			var p: Node3D = View.live(store[id])
 			if v and is_instance_valid(p):
 				p.global_position = v.global_position + Vector3(0, 0.1 if store == _feet else 0.9, 0)
 				p.visible = v.visible

@@ -270,13 +270,13 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 	u.stats_dirty = true
 	return false
 
-## Jump Knife: appear at the target point; a point beyond 1200 lands 960 toward it. Lands on the nearest open spot.
+## Jump Knife: appear at the target point; a point beyond 1200 (plus cast range bonuses) lands 960 (plus them) toward it. Lands on the nearest open spot.
 func _jump(u: SimUnit, d: Dictionary, p: Vector2) -> void:
 	var v: Dictionary = d.values
 	var from := u.pos
 	var to := p
-	if p.distance_to(u.pos) > float(v.range):
-		to = u.pos + (p - u.pos).normalized() * float(v.clamp)
+	if p.distance_to(u.pos) > float(v.range) + u.cast_range_bonus:
+		to = u.pos + (p - u.pos).normalized() * (float(v.clamp) + u.cast_range_bonus)
 	if not w.map.is_walkable(to):
 		var c := w.map.nearest_walkable(w.map.world_to_cell(to))
 		to = w.map.cell_center(c.x, c.y)
@@ -413,7 +413,8 @@ func _auras() -> void:
 				var old := o.get_modifier(mid)
 				if not old.is_empty() and float(old.get(key, 0.0)) > amount and w.time < float(old.expires):
 					continue
-				o.add_modifier({"id": mid, "source": AURA_SRC, "expires": w.time + 0.5 + 6.0 * C.DT, key: amount})
+				o.add_modifier({"id": mid, "source": AURA_SRC, "expires": w.time + 0.5 + 6.0 * C.DT, key: amount,
+					"aura": true, "by": h.id})
 	# stat auras of the newer items (Small Shield, Leech Totem, Battle Armor, Frost Plate, Guard Boots, War Drum): each
 	# {id, stats, radius, enemy (on enemies instead of allies), buildings (buildings too), creep_stats, self_stats,
 	# low_hp + low_hp_stats}. One copy of each aura counts; it lingers 0.5 s past each refresh.
@@ -446,7 +447,7 @@ func _stat_aura(h: SimUnit, au: Dictionary) -> void:
 		var old := o.get_modifier(String(au.id))
 		var had := not old.is_empty()
 		o.add_modifier({"id": String(au.id), "source": AURA_SRC, "expires": w.time + 0.5 + 6.0 * C.DT, "stats": st,
-			"aura": true, "by": h.id})
+			"aura": true, "by": h.id, "debuff": enemy})
 		if not had or old.get("stats") != st:
 			o.stats_dirty = true
 

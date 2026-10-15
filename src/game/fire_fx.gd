@@ -410,7 +410,7 @@ func _process(_dt: float) -> void:
 		if not is_instance_valid(e.node):
 			_timed.remove_at(i)
 			continue
-		var n: Node3D = e.node
+		var n: Node3D = View.live(e.node)
 		if not bool(e.stopped) and now >= float(e.stop_at):
 			e.stopped = true
 			for p: GPUParticles3D in n.find_children("*", "GPUParticles3D", true, false):

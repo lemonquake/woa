@@ -38,7 +38,8 @@ var trees: Array = []                      # [{pos, alive, kind, scale, regrow (
 var astar := AStarGrid2D.new()
 var vision_block := PackedByteArray()      # VN*VN 1 = a tree stands here (blocks sight beyond)
 var vision_level := PackedByteArray()
-var vision_rev := 0                         # bumped whenever vision_block changes (SimVision's sight cache)      # VN*VN terrain level
+var vision_rev := 0                         # bumped whenever vision_block changes (SimVision's sight cache)
+var vision_changes: Array[Vector2i] = []    # the vision cells changed since SimVision last looked (it clears this)
 
 var lanes := {}                            # "top"/"mid"/"bot" -> PackedVector2Array from Dawn's base to Dusk's
 var ramps: Array = []                      # [{pos: Vector2, radius: float}]
@@ -542,6 +543,7 @@ func destroy_tree(index: int, regrow_time: float) -> bool:
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 0
 	vision_rev += 1
+	vision_changes.append(v)
 	_refresh_vision_cell(v)
 	return true
 
@@ -555,6 +557,7 @@ func regrow_tree(index: int) -> void:
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 1
 	vision_rev += 1
+	vision_changes.append(v)
 
 ## Whether a fallen natural tree may grow back now: its cell must not hold a planted tree.
 func can_regrow(index: int) -> bool:

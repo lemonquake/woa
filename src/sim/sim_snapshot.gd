@@ -11,7 +11,8 @@ const FORMAT := 1
 const MARK := "__snapshot_id"
 ## Fields that are caches or tool switches, rebuilt or reset after loading.
 const TRANSIENT := {"_stamps": true, "_stamp_rev": true, "_team_img": true, "_static_img": true, "_static": true,
-	"_templates": true, "prof": true, "profiling": true}
+	"_templates": true, "prof": true, "profiling": true, "_power_cache": true, "_power_tick": true, "_bld": true,
+	"_nb_cache": true, "_nb_tick": true, "_val_cache": true}
 
 ## The world at this tick boundary (call between steps, after its events were read), compressed.
 static func capture(w: SimWorld) -> PackedByteArray:
@@ -67,6 +68,7 @@ static func _restore_map(m: SimMap, d: Dictionary) -> void:
 	m.tree_cell = d.tree_cell
 	m.vision_block = d.vision_block
 	m.vision_rev = int(d.vision_rev) + 1
+	m.vision_changes.clear()                 # no list of changes: SimVision drops its whole sight cache
 	var walk: PackedByteArray = d.walkable
 	var n := SimMap.N
 	for y in n:

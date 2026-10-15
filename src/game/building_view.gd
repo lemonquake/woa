@@ -132,7 +132,7 @@ func _find_floaters() -> void:
 func _process(dt: float) -> void:
 	_t += dt
 	for f in _floaters:
-		var n: Node3D = f.node
+		var n: Node3D = View.live(f.node)
 		if not is_instance_valid(n):
 			continue
 		var bob := sin(_t * 1.3 + f.phase) * 0.12

@@ -16,6 +16,9 @@ extends RefCounted
 ## * Retreat bar per hero: raised when a bot dies while running away, lowered slowly when it runs with health to spare.
 ## * Lane matchups: lane deaths per (hero, enemy laner) set how hard a bot trades in that lane.
 ## * The player: which lane the player takes with each hero, so the bots leave it free from the start.
+## * Teamfights: each fight the team brain calls is scored (enemy heroes killed against ours lost while it lasted); wins
+##   taken at slim odds lower the odds the team needs to engage, losses raise them.
+## * Ganks: success by number of gankers; teams whose ganks keep failing need a clearer chance before the next one.
 
 const DEFAULT_PATH := "user://bot_memory.json"
 const VERSION := 1
@@ -34,7 +37,8 @@ static var dirty := false
 
 static func _fresh() -> Dictionary:
 	return {"version": VERSION, "games": 0, "wins": 0, "fight_w": FIGHT_DEFAULT.duplicate(), "fights": 0,
-		"danger": {}, "builds": {}, "hook": {}, "retreat": {}, "matchup": {}, "player_lane": {}, "lessons": []}
+		"danger": {}, "builds": {}, "hook": {}, "retreat": {}, "matchup": {}, "player_lane": {}, "lessons": [],
+		"engage": -1.0, "teamfights": [0, 0], "gank": {}}
 
 static func load_data() -> void:
 	_loaded = true
@@ -201,6 +205,51 @@ static func shot_rate(ability: String, dist: float, team := -1) -> float:
 	var b: Array = (data.hook.get(ability, {}) as Dictionary).get(str(int(dist / SHOT_BIN)), [0, 0])
 	return (float(b[0]) + 1.0) / (float(b[1]) + 2.0)
 
+# ---- Teamfights -----------------------------------------------------------------------------------------------------
+
+## The odds the team brain needs to start a teamfight (SimTeamAI.ENGAGE until learned).
+static func engage_bar(base: float, team := -1) -> float:
+	if not on(team):
+		return base
+	_ensure()
+	var v := float(data.engage)
+	return base if v <= 0.0 else v
+
+## A teamfight ended: `odds` when it was called, `result` 1 won (more of them died), 0 lost, 0.5 even. Close calls
+## teach most: a win at slim odds lowers the bar, a loss raises it.
+static func note_teamfight(base: float, odds: float, result: float, team := -1) -> void:
+	if not on(team):
+		return
+	_ensure()
+	var bar := engage_bar(base, team)
+	var weight := clampf(1.0 - absf(odds - bar) / 0.6, 0.2, 1.0)
+	data.engage = clampf(bar + (0.5 - result) * 0.04 * weight, 0.98, 1.5)
+	var tf: Array = data.teamfights
+	tf[0] = int(tf[0]) + (1 if result > 0.5 else 0)
+	tf[1] = int(tf[1]) + 1
+	dirty = true
+
+# ---- Ganks ----------------------------------------------------------------------------------------------------------
+
+## How often ganks with this many gankers worked (a prior of one success in two tries).
+static func gank_rate(n: int, team := -1) -> float:
+	if not on(team):
+		return 0.5
+	_ensure()
+	var g: Array = data.gank.get(str(clampi(n, 1, 4)), [0, 0])
+	return (float(g[0]) + 1.0) / (float(g[1]) + 2.0)
+
+static func note_gank(n: int, success: bool, team := -1) -> void:
+	if not on(team):
+		return
+	_ensure()
+	var k := str(clampi(n, 1, 4))
+	var g: Array = data.gank.get(k, [0, 0])
+	g[0] = int(g[0]) + (1 if success else 0)
+	g[1] = int(g[1]) + 1
+	data.gank[k] = g
+	dirty = true
+
 # ---- Retreat bar ----------------------------------------------------------------------------------------------------
 
 static func retreat_hp(hero: String, base: float, team := -1) -> float:
@@ -309,6 +358,10 @@ static func summary() -> Array:
 		for k in data.hook[a]:
 			shots += int((data.hook[a][k] as Array)[1])
 	out.append("Skill shots tracked: %d" % shots)
+	var tf: Array = data.teamfights
+	if int(tf[1]) > 0:
+		out.append("Teamfights called: %d (won %d)" % [int(tf[1]), int(tf[0])])
+
 	var lessons: Array = data.lessons
 	if not lessons.is_empty():
 		out.append("Last lesson: " + String(lessons[-1]))

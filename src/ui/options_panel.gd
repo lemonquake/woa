@@ -106,7 +106,7 @@ func _video_tab() -> void:
 	_choice(v, "Quality", "quality", Options.QUALITIES, func():
 		Options.apply_video(get_tree())
 		if game and game.get("atmosphere"):
-			Options.apply_environment(game.atmosphere.env))
+			Options.apply_environment(game.atmosphere.env, game.atmosphere.sun))
 	_slider(v, "Render scale", "render_scale", 0.5, 1.0, 0.05, func(x): return "%d%%" % roundi(x * 100.0), apply)
 	_check(v, "Show FPS", "show_fps", Callable())
 	_note(v, "Window size applies in Windowed mode. Borderless and Fullscreen keep the cursor inside the game. Quality sets shadows, anti-aliasing, ambient occlusion and glow.")
@@ -120,13 +120,15 @@ func _game_tab() -> void:
 	_check(v, "Pan the camera at the screen edges", "edge_pan", cam)
 	_check(v, "Lock cursor to window (Windowed)", "lock_cursor", Options.apply_cursor)
 	_slider(v, "Camera speed", "camera_speed", 12.0, 60.0, 1.0, func(x): return str(roundi(x)), cam)
+	_check(v, "Quick cast", "quick_cast", Callable())
+	_note(v, "Quick cast: a spell or item key casts at once where the mouse points (on the unit under it), with no second click.")
 	_check(v, "Center camera on hero at respawn", "center_on_respawn", Callable())
 	_check(v, "Screen shake", "screen_shake", Callable())
 	_check(v, "Damage numbers", "damage_numbers", Callable())
 	_check(v, "Show bot chat", "bot_chat", Callable())
 	_check(v, "Bots learn from games", "bots_learn", func():
 		BotMemory.active = bool(Options.get_value("bots_learn")) and game != null)
-	_note(v, "Bots learn what worked: their fights, where they died, which items won, how far their skill shots land and which lane you like. It is saved on this computer.")
+	_note(v, "Bots learn what worked: their fights and teamfights, their ganks, where they died, which items won, how far their skill shots land and which lane you like. It is saved on this computer.")
 	var learned := Label.new()
 	learned.text = "
 ".join(BotMemory.summary())
@@ -259,7 +261,7 @@ func _reset() -> void:
 	Options.reset()
 	Options.apply_all(get_tree())
 	if game and game.get("atmosphere"):
-		Options.apply_environment(game.atmosphere.env)
+		Options.apply_environment(game.atmosphere.env, game.atmosphere.sun)
 	if game and game.get("camera"):
 		game.camera.edge_pan_enabled = bool(Options.get_value("edge_pan"))
 		game.camera.edge_speed = float(Options.get_value("camera_speed"))

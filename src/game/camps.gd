@@ -356,7 +356,7 @@ func boxes_wanted() -> bool:
 func _process(dt: float) -> void:
 	_t += dt
 	for e in _lights:
-		var l: OmniLight3D = e[0]
+		var l: OmniLight3D = View.live(e[0])
 		var ph: float = e[1]
 		l.light_energy = 1.35 + 0.25 * sin(_t * 9.0 + ph) + 0.15 * sin(_t * 23.0 + ph * 2.0)
 	var show := boxes_wanted()

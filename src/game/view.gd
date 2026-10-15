@@ -15,3 +15,9 @@ static func to2(v: Vector3) -> Vector2:
 ## Rendered facing (rotation about y) for a simulation facing angle (0 = east, counter-clockwise).
 static func yaw(sim_angle: float) -> float:
 	return sim_angle - PI * 0.5
+
+## The node itself, or null once it has been freed. Effect lists hold nodes that other code may free first (a timed
+## fade, a unit view going away); assigning a freed node to a typed variable is a script error that aborts the whole
+## update (in a fight with Froster that error and its printout cost about 10 ms every frame).
+static func live(o: Variant) -> Variant:
+	return o if is_instance_valid(o) else null
