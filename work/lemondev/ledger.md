@@ -289,3 +289,21 @@ No critic subagent was run (none asked for); the Switch Boots icons are a builde
 | U1 Unfair bots | 1 | working tree | gate: tests, Unfair bot game | n/a | PASS (gate) | none | none |
 | P1 Pushing and lead | 1 | working tree | gate: tests, bot games (2 seeds + before) | n/a | PASS (gate) | none | more seeds to show games end sooner |
 | X1 Integration | 1 | working tree | gate: tests 235/235, check.sh, export, cold start | n/a | PASS (gate) | none | none |
+
+## Session 2026-10-17 b (Azrael, talents, trees, labels, kill card, Bot Log, Blau bot, gap report) — run `work/lemondev/2026-10-17-azrael/`
+
+No critic subagent was run (none asked for); looks and effects are builder self-checks. The gap report was written by
+a research subagent (read-only on the code).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| T1 Talent trees | 1-2 | working tree | gate: tests | n/a | PASS (gate) | test read strength before refreshing stats | none |
+| R1 Tree felling | 1-2 | working tree | gate: tests | n/a | PASS (gate) | felled trees and resting boulders leaked into later tests (shared map) | none |
+| U1 Labels and kill card | 1-2 | working tree | self-check `kill_card_sheet.png` | n/a | PASS (self-check) | card title over the top bar | none |
+| B1 Bot Log + Blau bot | 1-3 | working tree | gate: tests, duels before / after | n/a | PASS (gate) | lane / retreat flapping every 1-2 s | Blau vs Azrin lane |
+| A1 Azrael kit | 1-2 | working tree | gate: 5 tests | n/a | PASS (gate) | test tolerances (cooldown timing, mana regen) | none |
+| A2 Azrael look | 1-5 | working tree | self-check captures | n/a | PASS (self-check) | in order: blown-out face; base underwear through the robe; blade facing the wrong way (owner's report, measured with swing_dir.gd) | blind review UNVERIFIED |
+| A3 Azrael effects | 1-3 | working tree | self-check captures | n/a | PASS (self-check) | swing trail as a flat plank; wings flat paper; door milky | blind review UNVERIFIED |
+| A4 Azrael bot | 1-3 | working tree | gate: duels, 5 v 5 bot game | n/a | PASS (gate) | exit re-ordered every think (cast cancelled); early dives | out-farmed by Ezee / Caziel |
+| X1 Integration | 1 | working tree | gate: tests 244/244, check.sh, bot game, export, cold start | n/a | PASS (gate) | none | none |
+

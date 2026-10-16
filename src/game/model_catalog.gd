@@ -28,6 +28,13 @@ const MODELS := {
 	"hero_azrin": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["cast_quick"],
 		"cast": "cast_quick", "idle": "idle_mage", "run": "idle_mage", "run_female": "idle_mage", "glide": true,
 		"float": 0.75, "bob": 0.08, "death": "death", "R": "", "L": "", "proj": "fireball", "bar": 2.85, "hero": true},
+	# Azrael (2026-10-17): the sculpted body as a soul of white flame (body shader spirit mode), floating, a great
+	# scythe in both hands (tools/blender/azrael.py); her charged slash and wings are AzraelFx. The blade points to the
+	# weapon's +X, the way the head moves in gs_1 / gs_3 / gs_4 (tests/tools/swing_dir.gd), so its tip leads every
+	# swing; gs_2 is a backhand (the head moves -X) and is left out
+	"hero_azrael": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
+		"cast": "cast_quick", "idle": "idle_staff", "run": "idle_staff", "run_female": "idle_staff", "glide": true,
+		"float": 0.42, "bob": 0.06, "death": "death", "R": "scythe", "L": "", "bar": 2.7, "hero": true, "spirit": {"spirit": 1.0, "fade_z": 1.0, "hair_glow": 0.35, "keep_hair": true, "no_base": true}},
 	# Froster: the hero body with a frost staff; his bolts are ice
 	"hero_froster": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["staff_1", "staff_2"],
 		"cast": "cast_quick", "idle": "idle_staff", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,

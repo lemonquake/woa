@@ -27,6 +27,7 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 		w.abilities.pay_attack_modifier(u, mod)
 	if u.is_hero():
 		snap["burst"] = w.abilities.masterful_bonus(u, t)
+		snap["soul"] = w.abilities.kits4.soul_charged(u)
 		if w.abilities.frost_heart_spend(u, t):
 			snap["frost"] = true
 	var speed := u.projectile_speed()
@@ -269,6 +270,8 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.sweet_poison_hit(s, t)
 	if bool(s.hero) and t.alive and not t.is_building() and not t.is_ward() and t.team != s.team:
 		w.abilities.kits2.on_attack_landed(s, t)
+	if bool(s.get("soul", false)) and t.team != s.team:
+		w.abilities.kits4.on_attack_landed(s, t, base_dmg)
 	if bool(s.hero):
 		w.items.on_attack_landed(s, t, base_dmg, pierce)
 	elif src != null and src.alive:
@@ -384,6 +387,12 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	if key == "":
 		key = "attack" if is_attack else "spell"
 	var src0 := w.get_unit(src_id)
+	# Death Scythe (Azrael): the blow may strike as pure damage, with bonus pure damage on top
+	if src0 != null and not reflected and src0.team != t.team and String(src0.def.id) == "azrael":
+		var scythe := w.abilities.kits4.death_scythe(src0, t, key)
+		if scythe >= 0.0:
+			dtype = C.DamageType.PURE
+			amount += scythe
 	# spell amplification raises every non-attack damage its source deals (not returned or attack-derived damage);
 	# magic amp (intelligence and items) adds to it for magic damage
 	if not is_attack and not reflected and not opts.get("no_amp", false) and src0 != null:

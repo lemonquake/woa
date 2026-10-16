@@ -161,6 +161,9 @@ func _set_alt_body(key: String) -> void:
 	alt_mat = ShaderMaterial.new()
 	alt_mat.shader = BODY_SHADER
 	alt_mat.set_shader_parameter(&"albedo_tex", src.tex)
+	for k in _spirit:
+		if not (k in ["keep_hair", "no_base"]):
+			alt_mat.set_shader_parameter(StringName(k), _spirit[k])
 	mi.material_override = alt_mat
 	alt_body = mi
 	# a fresh body has no cut-outs yet: dress() sets them again
@@ -168,6 +171,25 @@ func _set_alt_body(key: String) -> void:
 	dress(outfit, dyes)
 
 static var _alt_cache := {}
+
+var _spirit := {}                          # body shader parameters of a spirit body (Azrael), kept across rebuilds
+
+## A soul of white flame (Azrael): body_texture.gdshader's spirit mode on the sculpted body and glowing hair.
+## `params` are shader parameters ({"spirit": 1.0, ...}); hair_glow lights the hair from within.
+func set_spirit(params: Dictionary) -> void:
+	_spirit = params.duplicate()
+	var hg := float(_spirit.get("hair_glow", 0.0))
+	_spirit.erase("hair_glow")
+	if bool(_spirit.get("keep_hair", false)):
+		_hide_hair = false                     # her white hair falls out of the hood
+		_refresh_hair_visibility()
+	_hide_base_wear()
+	if alt_mat:
+		for k in _spirit:
+			if not (k in ["keep_hair", "no_base"]):
+				alt_mat.set_shader_parameter(StringName(k), _spirit[k])
+	if _hair_mat:
+		_hair_mat.set_shader_parameter(&"glow", hg)
 
 static func _alt_src(path: String) -> Dictionary:
 	if _alt_cache.has(path):
@@ -316,8 +338,18 @@ func dress(p_outfit: Dictionary, p_dyes := {}) -> void:
 		skin.set_shader_parameter(StringName("hide_" + k), hide.get(k, NO_HIDE))
 		if alt_mat:
 			alt_mat.set_shader_parameter(StringName("hide_" + k), hide.get(k, NO_HIDE))
-	_hide_hair = bool(plan.hide_hair) and bool(look.get("show_helm", true))
+	_hide_hair = bool(plan.hide_hair) and bool(look.get("show_helm", true)) and not bool(_spirit.get("keep_hair", false))
 	_refresh_hair_visibility()
+	_hide_base_wear()
+
+## A spirit body wears nothing under its robe: the base underclothes and shoes (pieces whose ids start with "_") would
+## show through the robe's slits as solid patches.
+func _hide_base_wear() -> void:
+	if not bool(_spirit.get("no_base", false)):
+		return
+	for m in _wear:
+		if is_instance_valid(m) and String(m.name).begins_with("Wear__"):
+			m.visible = false
 
 static func _range(v: Variant) -> Vector2:
 	return Vector2(float(v[0]), float(v[1])) if v is Array and (v as Array).size() == 2 else NO_HIDE

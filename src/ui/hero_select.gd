@@ -29,6 +29,8 @@ const INFO := {
 		"story": "Roydo fell out of the night sky in a burning stone and stood up unhurt. He bends this world's gravity like clay: he throws his enemies where he wants them, turns their blows back on them, and when a fight goes their way he stops looking like a man at all."},
 	"blau": {"title": "the Master Tactician", "role": "Ranged  ·  Agility  ·  Carry, Pusher, Escape",
 		"story": "Blau never fights on ground he has not chosen. A rifle, a bag of snares, a few rolling stones and a turret he can build in seconds: by the time his enemies see the trap, every shot he fires is already bouncing toward them."},
+	"azrael": {"title": "the Death Dealer", "role": "Melee  ·  Agility  ·  Carry, Initiator, Escape",
+		"story": "Azrael comes for the dead. She drifts over the battlefield in a black robe, a soul of white flame with eyes like coals, and gathers what is left of the fallen into her scythe. When she opens her wings, the light goes out for everyone near her."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }

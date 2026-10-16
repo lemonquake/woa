@@ -12,13 +12,13 @@ const ACCENTS := {
 	"blood_ranger": Color(0.95, 0.22, 0.25), "ezee": Color(0.66, 0.3, 1.0), "azrin": Color(1.0, 0.5, 0.15),
 	"sludge": Color(0.55, 0.78, 0.3), "froster": Color(0.45, 0.82, 1.0), "caziel": Color(0.66, 0.36, 1.0),
 	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0), "roydo": Color(0.62, 0.42, 1.0),
-	"blau": Color(0.35, 0.82, 1.0)}
+	"blau": Color(0.35, 0.82, 1.0), "azrael": Color(0.92, 0.12, 0.16)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
 	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
-	"roydo": "roydo_cast_shoot", "blau": "blau_reload"}
+	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_mage", "sludge": "idle_1h",
 	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
-	"roydo": "roydo_idle_fold", "blau": "blau_idle"}
+	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff"}
 
 var hero_id := ""
 var model: Node3D
@@ -380,6 +380,8 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 		var lk: Dictionary = (look if not look.is_empty() else GameSettings.look_for(id)).duplicate(true)
 		app.apply(lk.get("look", {}))
 		app.dress(lk.get("outfit", {}), lk.get("dyes", {}))
+		if cfg.has("spirit"):
+			app.set_spirit(cfg.spirit)
 		skeleton = app.skeleton
 	for side in ["R", "L"]:
 		var ps := ModelCatalog.weapon(String(cfg.get(side, "")))
@@ -496,6 +498,20 @@ func _stage_aura(id: String, cfg: Dictionary) -> void:
 			var lr := FireFx.light(Color(0.6, 0.4, 1.0), 0.9, 4.0)
 			lr.position = Vector3(0.3, 1.2, 0.7)
 			_aura.add_child(lr)
+		"azrael":
+			# white soul flame round her hem, pale motes, a cold light and a red one low behind her
+			var sf := FireFx.flames(0.26, 0.26, 34.0, 0.55, 0.6, "soul", 0.55)
+			sf.position.y = 0.3
+			_aura.add_child(sf)
+			var sm2 := FireFx.embers(0.6, 10.0, 1.8, 0.5, 0.035, Color(0.85, 0.92, 1.0))
+			sm2.position.y = 0.9
+			_aura.add_child(sm2)
+			var la := FireFx.light(Color(0.8, 0.88, 1.0), 0.9, 4.0)
+			la.position = Vector3(0.3, 1.3, 0.7)
+			_aura.add_child(la)
+			var lr2 := FireFx.light(Color(1.0, 0.1, 0.1), 0.7, 3.0)
+			lr2.position = Vector3(-0.4, 0.6, -0.6)
+			_aura.add_child(lr2)
 		"blau":
 			var bm2 := CazielFx.motes(0.7, 10.0, Color(0.4, 0.85, 1.0), 1.4, 0.6, 0.03)
 			bm2.position.y = 0.5

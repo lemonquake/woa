@@ -1,0 +1,12 @@
+seed 3 at 12:00: A(azrael) 0/0/0 lvl 8 LH 23 DN 6 nw 1819 | B(ezee) 0/0/0 lvl 8 LH 46 DN 10 nw 2537 | towers lost A 0 B 1
+seed 7 at 12:00: A(azrael) 0/0/0 lvl 9 LH 34 DN 6 nw 2292 | B(ezee) 0/0/0 lvl 8 LH 37 DN 11 nw 2230 | towers lost A 0 B 0
+seed 11 at 12:00: A(azrael) 0/0/0 lvl 9 LH 33 DN 11 nw 2192 | B(ezee) 0/0/0 lvl 8 LH 29 DN 8 nw 1695 | towers lost A 0 B 0
+seed 3 at 12:00: A(azrael) 0/7/0 lvl 7 LH 18 DN 8 nw 1617 | B(azrin) 7/0/0 lvl 11 LH 49 DN 2 nw 4947 | towers lost A 1 B 0
+seed 7 at 12:00: A(azrael) 0/3/0 lvl 7 LH 17 DN 9 nw 1239 | B(azrin) 3/0/0 lvl 9 LH 49 DN 3 nw 4154 | towers lost A 1 B 0
+seed 11 at 12:00: A(azrael) 0/2/0 lvl 8 LH 25 DN 4 nw 1351 | B(azrin) 2/0/0 lvl 9 LH 57 DN 6 nw 4132 | towers lost A 1 B 0
+seed 3 at 12:00: A(azrael) 1/1/0 lvl 8 LH 18 DN 5 nw 1585 | B(caziel) 1/1/0 lvl 9 LH 45 DN 3 nw 2822 | towers lost A 0 B 0
+seed 7 at 12:00: A(azrael) 0/3/0 lvl 8 LH 26 DN 8 nw 1554 | B(caziel) 3/0/0 lvl 9 LH 34 DN 3 nw 2899 | towers lost A 0 B 0
+seed 11 at 12:00: A(azrael) 0/2/0 lvl 7 LH 14 DN 5 nw 1286 | B(caziel) 2/0/0 lvl 9 LH 34 DN 7 nw 2852 | towers lost A 0 B 1
+seed 3 at 12:00: A(azrael) 0/0/0 lvl 7 LH 21 DN 5 nw 1060 | B(blau) 0/0/0 lvl 8 LH 37 DN 8 nw 2073 | towers lost A 0 B 0
+seed 7 at 12:00: A(azrael) 0/0/0 lvl 7 LH 17 DN 10 nw 929 | B(blau) 0/0/0 lvl 9 LH 36 DN 4 nw 2095 | towers lost A 1 B 0
+seed 11 at 12:00: A(azrael) 0/2/0 lvl 8 LH 27 DN 14 nw 1668 | B(blau) 2/0/0 lvl 9 LH 35 DN 2 nw 2942 | towers lost A 0 B 0

@@ -13,11 +13,13 @@ var hook_hits := {}                        # caster id -> [game time, caught uni
 
 var kits2: SimKits2                         # Tock's and Kragg's kits (run 2026-10-15 b)
 var kits3: SimKits3                         # Roydo's and Blau's kits (run 2026-10-16)
+var kits4: SimKits4                         # Azrael's kit (2026-10-17)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
 	kits2 = SimKits2.new(world, self)
 	kits3 = SimKits3.new(world, self)
+	kits4 = SimKits4.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -167,6 +169,12 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		return "Ability is passive"
 	if u.is_silenced():
 		return "Silenced"
+	if kits4.in_door(u) or kits4.handles(aid):
+		var k4 := kits4.cast_error(u, aid, target, point, check_target)
+		if k4 != "":
+			return k4
+		if aid == "door_of_the_end" and kits4.exit_pending(u):
+			return ""                              # the exit: no mana, no cooldown
 	if cooldown_left(u, aid) > 0.0:
 		return "Ability on cooldown"
 	if u.mana < ability_mana(u, aid):
@@ -295,6 +303,8 @@ func cast_range(u: SimUnit, aid: String, slot: int, t: SimUnit = null) -> float:
 		return u.attack_range
 	if a.get("direction", false):
 		return INF                               # aimed by direction only: cast from where the hero stands
+	if aid == "door_of_the_end" and kits4.exit_pending(u):
+		return val(u, aid, "exit_range") + u.cast_range_bonus
 	var r := val(u, aid, "range")                # talents and upgrades that change the range count
 	return r + u.cast_range_bonus if r > 0.0 else r
 
@@ -321,6 +331,8 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	if aid == "pilot_turret" and kits3.is_piloting(u):
 		kits3.leave_turret(u)                    # getting out is free and has no cooldown
 		return
+	if aid == "door_of_the_end" and kits4.try_exit_cast(u, p):
+		return                                   # the door's exit: free
 	u.mana -= ability_mana(u, aid)
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
@@ -341,6 +353,9 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	if kits3.handles(aid):
 		kits3.cast(u, aid, lv, t, p)
+		return
+	if kits4.handles(aid):
+		kits4.cast(u, aid, lv, t, p)
 		return
 	match aid:
 		"fiery_javelin":
@@ -572,6 +587,8 @@ func update_effects() -> void:
 					done = kits2.update_effect(e)
 				elif kits3.owns_effect(String(e.kind)):
 					done = kits3.update_effect(e)
+				elif kits4.owns_effect(String(e.kind)):
+					done = kits4.update_effect(e)
 		if done:
 			w.effects.remove_at(i)
 

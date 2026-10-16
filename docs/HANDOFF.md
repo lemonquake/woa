@@ -4,6 +4,85 @@
 
 ## Status (keep this section current)
 
+**2026-10-17 b: Azrael, talent trees, tree-felling spells, player labels, kill card, Bot Log, Blau's bot, Dota gap
+report (your list).** Run `work/lemondev/2026-10-17-azrael/` (captures in `shots/`, Blender previews in `preview/`).
+* **Talent trees for Blood Ranger and Ezee** (the two heroes without one). Their spells read the old way and ignored
+  talents; they now go through `SimAbilities.val` / `_cv`, so talents and the Wide Stone family count. Blood Ranger:
+  +10% Masterful Archery chance or +20 Attack Speed; +100 Gale Impact damage or +15% Burst Shot damage; +150 Blood
+  Ranger attack range or -4s Gale Impact cooldown; +20% Blood Ranger lifesteal or +25% Masterful Archery damage.
+  Ezee: +10 Strength or +60 Dark Stomp damage; +0.6s Dark Stomp stun or +50 Tainted Touch damage; -4s Leap Strike
+  cooldown or +40% Leap Strike strength damage; +10% Unholy Might chance or +4s Unholy Might. Bots pick them.
+* **Trees**: Fiery Javelin knocks down every tree on its path; Bounce Shot fells the tree it ricochets off.
+* **Player names**: heroes read "lemonQ (Ezee)": the player in their player colour (Dota's ten slot colours, by team
+  and order), the hero in its team's colour, over the health bar, in the kill feed, kill card, chat and scoreboard.
+  Your own name is the name in Multiplayer settings (it starts as your Windows user name).
+* **Kill card**: a hero kill shows both portraits sliding in, a blade slash across the fallen hero, a few sparks off
+  the blade, a light sweeping the band and your gold counting up (First Blood, Shutdown and multi-kills as its title);
+  2.8 s, shortened to 1.9 s while more kills wait. New kill-feed lines get a soft light running across them once.
+* **Bot Log** (Debug panel, F9): per bot, thoughts, orders and whether its own thinking or a team call gave them,
+  orders by kind, skills used out of ordered, items used, time in each mode, mode changes with the scores behind them,
+  team calls, lines said, and its latest 24 steps; "Every bot" lists the summaries; **Save Bot Log** writes all of it
+  to `user://bot_log.txt`. Headless: `bot_game.gd -- --botlog[=Bot Ann]`, `bot_duel.gd -- --log=A`.
+* **Blau's bot** (the log showed it: 12 Bounce Shots in 14 minutes, 11 s fighting, lane/retreat flips every second or
+  two): it pokes with every sure Bounce Shot (a pending last hit no longer stops a shot that passes the hero squarely),
+  drops a turret on the enemy laner near its wave from level 6, goes for the kill with boulders, turret, shot and
+  attacks when its spells and three seconds of attacks can finish the laner (not under a tower, not into more heroes),
+  and its damage estimate counts the shot's usual two passes. **Every bot**: backing off from a stronger enemy now
+  holds 2.5 s (or until it is 1400 away) instead of flipping back into lane the moment it steps out of 1000. Duels
+  (12 min, 3 seeds, `blau_duels_before.txt` / `blau_duels_after2.txt`): deaths against Azrin 9 -> 3, Roydo 1-2 ->
+  2-2 in kills, last hits against Ezee even (it was behind). Azrin still out-farms him.
+* **Azrael, the Death Dealer** (your kit and numbers; melee 150, Dark): Soul Tap, Door of the End, Death Scythe,
+  Divine Darkness as you wrote them (`src/sim/sim_kits4.gd`). How the open points were settled (veto any): Soul Tap
+  counts every unit in the area but her (not buildings, wards, couriers); the charged blow cleaves with Dota's cleave
+  cone (150 to 360 wide, 650 long) and ignores armor; recasting replaces the charge. Door of the End: she and allied
+  heroes step in by walking onto the door (a move order ending there, or standing on it), two allies at most; inside
+  they are hidden, invulnerable and cannot act; the second cast places the exit (no mana, no cooldown, castable from
+  inside); with no exit placed they come out of the entrance; the blast is at the exit. Death Scythe works on her
+  attacks and her spells' damage (not items), pseudo-random, 1.5 s apart. Divine Darkness: her night sight becomes
+  her day sight, then +30/50/70%; enemies within 700 lose 30/40/50% of their sight; she flies straight over cliffs,
+  trees and units and lands on open ground (felling trees she lands among).
+  * **Look**: your female body (Azrin's) as a soul of white flame: a spirit mode in its shader (pale, glowing edges,
+    flame rising through her, red eyes in darkened sockets, the legs gone below the hips), long white hair falling
+    from a black hood, a long black robe, white soul fire streaming off the hem as she floats, motes and a cold light,
+    red eye glints. The great scythe (carved dark shaft, leather wraps, old silver fittings, crescent blade with an
+    etched band and a bright edge, a back spike) and the wings (white feathers, three jointed parts each, they open,
+    beat and fold) are modelled in `tools/blender/azrael.py`. **Fixed after your report**: the blade faced the wrong
+    way. Measured with `tests/tools/swing_dir.gd`: in her swings the head moves toward the weapon's +X, so the blade
+    now points that way and its tip leads; the one backhand clip (gs_2) is left out of her attacks.
+  * **Effects** (`src/game/azrael_fx.gd`): Soul Tap's crimson ring with a soul wisp flying from every unit to her and
+    the crimson charge on her blade; the charged slash, a black-and-crimson crescent; a thin white crescent on every
+    blow; Death Scythe's silver slash; the spirit door (a dark swirling void with white threads and red veins in a
+    bright arch) at both ends, units fading in and out, the spirit blast; the wings with darkness pooled round her and
+    a dark haze on blinded enemies. All particles and small shaders, freed with what they show.
+  * **Bots** (`src/sim/sim_bot17.gd`): wings when a fight is on; Soul Tap where it gathers the most souls with the
+    target among them, then the slash; in lane Soul Tap on the laner standing among its creeps; Door of the End to
+    escape (a door at her feet, the exit toward safety) and, with the door at level 3+, to dive (the exit placed on
+    the weakest enemy in reach in the last 0.9 s); Soul Tap on creep packs to cleave them; allied bots that are
+    running walk into her open door. Duels (12 min, `azrael_duels*.txt`): she trades evenly with Ezee and Caziel in
+    kills but out-farmed by them; Azrin wins the lane as he does against most heroes.
+  * Chosen numbers (veto any): agility, str 19 (+2.2) / agi 22 (+3.0) / int 17 (+1.7), 27-31 damage, armor 1, 300
+    speed, attack point 0.35; Door of the End mana 100-130, entry reach 110; Divine Darkness mana 100/150/200; cast
+    points; talents: +25 Attack Speed / +6 Soul Tap damage per unit; +250 Health / +1s Door of the End; +8% Death
+    Scythe chance / +40 Death Scythe damage; +150 Door of the End damage / -20s Divine Darkness cooldown.
+* **Dota 2 gap report** (`work/lemondev/2026-10-17-azrael/dota_gap_report.md`): what the game has, the top 10 gaps
+  (kill economy numbers, ward stock, the Attribute Bonus and talent points, Roshan, Upgrade Staff and Gem for 8 of 10
+  heroes, illusions, Smoke and Scan, control items and effects, neutral items, the 7.38-7.41 map layer) and tables by
+  area with Dota's numbers and sources. Its numbers are from the Fandom wiki and patch summaries (Liquipedia rate
+  limited); see its last section for what could not be confirmed. Nothing in it is implemented yet.
+Evidence: headless tests 244 passed, 0 failed (new: Blood Ranger and Ezee talents, Fiery Javelin and Bounce Shot fell
+trees, Azrael data, Soul Tap charge and cleave, Door of the End (two allies, free exit, blast, no exit), Death Scythe
+(pure, 1.5 s apart, not items), Divine Darkness (sight, blind, flight, landing), Blau hunt, Bot Log counters); every
+test world now starts with the whole forest; `sh tools/check.sh` no parse errors, "Names OK"; a 20-minute 5 v 5 bot
+game with two Azraels and two Blaus (`bot_game.txt`): no script errors, no hang (224 s), both Azraels used all four
+skills (Soul Tap 18 and 31, Door 3 and 4 doors, the wings 3 and 5 times); captures `shots/` (kill card, Hero
+Select, look variants, Soul Tap, the slash, the wings, the door, the swing sheet); `build/WarriorsOfAether.exe`
+rebuilt 2026-10-17 04:01, cold start into a match as Azrael, no script errors (`shots/export_azrael.png`).
+Not verified: no blind critic review (none asked for); the look and every effect are builder self-checks, not
+compared with a commercial reference; the door shows its entry only to her team and to enemies who see the spot.
+Names added (veto any): the talent names above; Bot Log, Save Bot Log, Every bot, "Going for <hero>." (bots),
+"Opening the door.", "Into the door.", "No escape from me." (Azrael's bot lines), "Inside the door", "Cannot place a
+door there" (cast errors). New owner names recorded in `lemondev/references/naming.md`.
+
 **2026-10-17: Monitor option.** Options > Video has a new first row, **Monitor**: "Main monitor" (the one Windows
 calls main, the default) or "Monitor 1 (1920 x 1080)", "Monitor 2 ..." for each plugged-in screen. The game opens on
 that screen at boot and moves there at once when you change it, in every window mode; if the chosen monitor is
@@ -509,6 +588,10 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   --autoplay --nolearn --min=6`.
 * Rebuild Azrin's body from your female_generic model (about a minute; `-- --preview=dir` renders checks):
   `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/azrin_body.py`
+* Azrael's scythe and wings: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup
+  --python tools/blender/azrael.py`; her look variants side by side: `godot --path . -s tests/tools/azrael_look.gd --
+  --out=x.png [--close]`; which way a weapon's head moves in a swing: `godot --headless --path . -s
+  tests/tools/swing_dir.gd -- [--clips=gs_1,gs_3]`.
 * Rebuild the building models: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/buildings.py`.
 * Re-bake the terrain texture arrays (needs the GPU, not headless): `godot --path . -s tests/tools/bake_terrain_arrays.gd`.
 

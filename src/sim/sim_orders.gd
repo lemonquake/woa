@@ -613,6 +613,8 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 	if to_goal <= maxf(stop_dist, 4.0):
 		u.path = PackedVector2Array()
 		return true
+	if u.is_hero() and u.has_flag("free_flight"):
+		return _fly_to(u, goal, stop_dist)
 	var need_path := u.path.is_empty() or u.path_goal.distance_to(goal) > 96.0 or w.time >= u.repath_at
 	if need_path:
 		var tp := Time.get_ticks_usec() if w.profiling else 0
@@ -665,6 +667,18 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 	if u.pos.distance_to(nxt) < maxf(step, 8.0):
 		u.path_i += 1
 	return false
+
+## Free flight (Azrael's Divine Darkness): straight at the goal over cliffs, trees and units, inside the map.
+func _fly_to(u: SimUnit, goal: Vector2, stop_dist: float) -> bool:
+	u.path = PackedVector2Array()
+	var dir := goal - u.pos
+	if not _turn_towards(u, dir.angle()):
+		return false
+	var step := minf(u.move_speed * C.DT, maxf(0.0, dir.length() - stop_dist * 0.5))
+	var np := u.pos + Vector2.from_angle(u.facing) * step
+	u.pos = Vector2(clampf(np.x, -7900.0, 7900.0), clampf(np.y, -7900.0, 7900.0))
+	u.moving = step > 0.01
+	return u.pos.distance_to(goal) <= maxf(stop_dist, 4.0)
 
 ## Walk towards a point for a unit with no order of its own (a ground courier).
 func move_toward(u: SimUnit, goal: Vector2, stop: float) -> bool:

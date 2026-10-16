@@ -1,0 +1,118 @@
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 92%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 98%, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 78%, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 63%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 64%, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 88%, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+    end Bot Ann task dead hp 0% pos (7771.0, 5825.0) task -
+    end Bot Bob stack alive hp 92% pos (-5615.0, -2571.0) task -
+    end Bot Cat retreat dead hp 0% pos (7680.0, 6011.0) task -
+    end Bot Dan retreat dead hp 0% pos (3711.0, 2594.0) task -
+    end Bot Eve task dead hp 0% pos (7675.0, 6058.0) task -
+    end Bot Fay farm alive hp 100% pos (1883.0, 1834.0) task -
+    end Bot Gus farm alive hp 100% pos (-1546.0, 5914.0) task -
+    end Bot Hal heal alive hp 35% pos (3378.0, 6130.0) task -
+    end Bot Ivy farm alive hp 100% pos (2082.0, 1958.0) task -
+    end Bot Jo farm alive hp 100% pos (6614.0, 6.0) task -
+  Ancient Light calls: teamfights 22, ganks 9, pushes 5 (chained on 1), towers lost 3, bots unstuck 2
+  Black Sun calls: teamfights 26, ganks 15, pushes 3 (chained on 1), towers lost 3, bots unstuck 9
+seed 5: no winner at 20:00 (223.6 s real)
+  Ancient Light (towers lost 3):
+    Bot Ann  azrael        role 1 bot   2/ 3/ 3 lvl 11 LH  38 DN  7 nw  4020 | lane 37%, fight 2%, retreat 11%, heal 5%, task 14%, farm 30%
+             items: ["halberd", "wraith_band", "quelling_blade"]
+    Bot Bob  blau          role 4 top   5/ 7/ 7 lvl  9 LH   9 DN  1 nw  3877 | lane 23%, fight 4%, retreat 7%, task 21%, ward 12%, stack 9%, farm 22%, heal 3%
+             items: ["reveal_dust", "reveal_ward", "magic_stick", "wraith_band", "quelling_blade", "boots", "glimmer_cape", "observer_ward"]
+    Bot Cat  ezee          role 3 top   5/ 5/ 3 lvl 10 LH  25 DN  5 nw  3867 | lane 23%, retreat 12%, task 20%, fight 3%, heal 4%, farm 38%
+             items: ["spike_armor", "quelling_blade", "tough_band", "magic_wand"]
+    Bot Dan  sludge        role 5 bot   5/ 9/ 4 lvl  9 LH  24 DN  3 nw  4354 | lane 24%, fight 3%, retreat 9%, task 20%, ward 17%, stack 9%, farm 17%, heal 1%
+             items: ["reveal_dust", "boots", "medic_kit", "magic_wand", "reveal_ward"]
+    Bot Eve  froster       role 2 mid   9/ 5/ 3 lvl 11 LH  49 DN  0 nw  6600 | lane 36%, fight 6%, heal 9%, task 15%, retreat 8%, farm 26%
+             items: ["branch", "branch", "magic_stick", "smart_band", "frost_plate"]
+  Black Sun (towers lost 3):
+    Bot Fay  caziel        role 2 mid   8/ 7/ 7 lvl 10 LH  34 DN  3 nw  5272 | lane 42%, fight 5%, retreat 12%, heal 5%, task 14%, farm 22%
+             items: ["magic_stick", "boots", "reveal_dust", "wraith_band", "quelling_blade"]
+    Bot Gus  azrael        role 1 top   3/ 5/ 8 lvl  9 LH  29 DN  0 nw  4250 | lane 38%, retreat 12%, fight 4%, task 18%, heal 3%, farm 25%
+             items: ["reveal_dust", "magic_stick", "wraith_band", "quelling_blade"]
+    Bot Hal  roydo         role 3 bot   5/ 5/ 9 lvl  9 LH  29 DN  4 nw  4443 | lane 29%, retreat 8%, heal 6%, fight 1%, task 19%, farm 36%
+             items: ["gauntlets", "smart_band", "magic_stick"]
+    Bot Ivy  tock          role 5 top   5/ 7/ 9 lvl 10 LH  12 DN  5 nw  4218 | lane 42%, retreat 8%, task 18%, fight 3%, pull 0%, farm 23%, stack 2%, heal 5%
+             items: ["magic_stick", "reveal_dust", "branch", "branch", "glimmer_cape", "observer_ward", "reveal_ward"]
+    Bot Jo   blau          role 4 bot   2/ 4/10 lvl 10 LH  18 DN  5 nw  4670 | lane 25%, fight 4%, retreat 10%, task 22%, ward 8%, stack 8%, farm 22%, heal 1%
+             items: ["magic_stick", "reveal_ward", "reveal_dust", "wraith_band", "quelling_blade", "glimmer_cape", "observer_ward", "boots", "gloves"]
+  at 10:00 LH/net worth: Ann 11/1756, Bob 3/1675, Cat 13/2363, Dan 6/2067, Eve 16/2973, Fay 20/2316, Gus 11/1657, Hal 14/2171, Ivy 4/1470, Jo 5/2165 | team net worth 10834 vs 9779
+  at 20:00 LH/net worth: Ann 38/4020, Bob 9/3877, Cat 25/3867, Dan 24/4354, Eve 49/6600, Fay 34/5272, Gus 29/4250, Hal 29/4443, Ivy 12/4218, Jo 18/4670 | team net worth 22718 vs 22853
+  totals: kills 26 vs 23, net worth 22718 vs 22853
+  stuck: ["Bot Dan stuck at (-5303.0, -2371.0) (ward) from 17:25"]
+  Fortify pressed 5 times: [6:42] Ancient Light (Bot Ann), [6:52] Black Sun (Bot Fay), [11:43] Ancient Light (Bot Ann), [12:31] Black Sun (Bot Fay), [17:31] Black Sun (Bot Fay)
+  Ancient Light: counter-ganks called 25 (helpers fought in 25), juked home 3, counter items azrael:halberd, azrael:spell_shield, blau:glimmer_cape, ezee:spike_armor, ezee:jump_knife, sludge:medic_kit, sludge:push_staff, froster:frost_plate, froster:push_staff
+  Black Sun: counter-ganks called 25 (helpers fought in 29), juked home 7, counter items caziel:spell_shield, azrael:spell_shield, roydo:spell_shield, tock:glimmer_cape, tock:medic_kit, blau:glimmer_cape
+Bot Ann (Azrael): now task
+  thoughts 7149   orders 1242 (own thinking 1140, team calls 102)   62 orders a minute
+  orders: Move 965, Attack 227, Cast 36, Take orb 14
+  skills used (of ordered): Soul Tap 18 of 19, Town Portal 8 of 8, Door of the End 3 of 6, Divine Darkness 3 of 3
+  items used: Healing Paste 11, Vegan Picker 3
+  time by mode: lane 435s, farm 315s, task 158s, retreat 134s, heal 49s, dead 43s   mode changes 94   team calls 21   lines said 19
+Bot Bob (Blau): now stack
+  thoughts 6157   orders 1144 (own thinking 967, team calls 177)   57 orders a minute
+  orders: Move 870, Item 6, Cast 54, Attack 212, Take orb 2
+  skills used (of ordered): Bounce Shot 25 of 25, Town Portal 8 of 8, Summon Boulders 7 of 7, Lay Trap 10 of 10, Place Turret 4 of 4
+  items used: Eye Ward 6, Healing Paste 8, Vegan Picker 3, Mana Potion 6, Zap Stick 9
+  time by mode: lane 243s, task 232s, farm 215s, ward 122s, dead 109s, stack 95s   mode changes 122   team calls 39   lines said 19
+Bot Cat (Ezee): now retreat
+  thoughts 6652   orders 1321 (own thinking 1186, team calls 135)   66 orders a minute
+  orders: Move 1041, Attack 223, Cast 52, Take orb 5
+  skills used (of ordered): Dark Stomp 18 of 18, Town Portal 6 of 6, Tainted Touch 14 of 14, Leap Strike 8 of 10, Unholy Might 4 of 4
+  items used: Healing Paste 10, Vegan Picker 3, Mana Potion 12
+  time by mode: farm 378s, lane 254s, task 216s, retreat 124s, dead 104s, heal 48s   mode changes 89   team calls 23   lines said 24
+Bot Dan (Sludge): now retreat
+  thoughts 6103   orders 985 (own thinking 853, team calls 132)   49 orders a minute
+  orders: Move 740, Item 5, Cast 84, Attack 156
+  skills used (of ordered): Shuriken Hook 12 of 12, Stench 0 of 57, Town Portal 6 of 6, Blubber 8 of 8, Chomp 1 of 1
+  items used: Eye Ward 5, Vegan Picker 3, Healing Paste 10, Zap Stick 1, Mana Potion 2, Zap Wand 8, Medic Kit 4
+  time by mode: lane 260s, task 210s, ward 183s, farm 168s, dead 110s, retreat 104s   mode changes 90   team calls 21   lines said 15
+Bot Eve (Froster): now task
+  thoughts 6614   orders 1390 (own thinking 1296, team calls 94)   69 orders a minute
+  orders: Move 1085, Attack 225, Take orb 7, Cast 72, Hold 1
+  skills used (of ordered): Breath of Cold 44 of 44, Ice Pulse 16 of 16, Town Portal 9 of 9, Endless Winter 3 of 3
+  items used: Healing Paste 8, Vegan Picker 3, Mana Potion 4, Zap Stick 10, Frost Plate 3
+  time by mode: lane 393s, farm 259s, task 160s, dead 100s, heal 98s, retreat 91s   mode changes 105   team calls 30   lines said 20
+Bot Fay (Caziel): now farm
+  thoughts 6583   orders 1358 (own thinking 1265, team calls 93)   68 orders a minute
+  orders: Move 1088, Attack 202, Cast 61, Take orb 7
+  skills used (of ordered): Swift Dagger 29 of 29, Town Portal 12 of 12, Master of Shadows 20 of 20
+  items used: Healing Paste 11, Vegan Picker 3, Zap Stick 9, Mana Potion 2
+  time by mode: lane 449s, farm 207s, dead 142s, task 140s, retreat 117s, fight 57s   mode changes 104   team calls 40   lines said 20
+Bot Gus (Azrael): now farm
+  thoughts 6577   orders 1364 (own thinking 1253, team calls 111)   68 orders a minute
+  orders: Move 1077, Attack 231, Cast 55, Take orb 1
+  skills used (of ordered): Soul Tap 31 of 31, Town Portal 11 of 11, Door of the End 4 of 8, Divine Darkness 5 of 5
+  items used: Vegan Picker 3, Healing Paste 11, Zap Stick 10
+  time by mode: lane 437s, farm 260s, task 189s, retreat 137s, dead 61s, fight 41s   mode changes 141   team calls 37   lines said 25
+Bot Hal (Roydo): now heal
+  thoughts 6646   orders 1338 (own thinking 1182, team calls 156)   67 orders a minute
+  orders: Move 1039, Attack 236, Cast 55, Take orb 8
+  skills used (of ordered): Grip of the Ruler 25 of 27, Town Portal 10 of 10, Void Rush 15 of 15, Anomaly 3 of 3
+  items used: Healing Paste 11, Vegan Picker 3, Zap Stick 7, Mana Potion 2
+  time by mode: farm 379s, lane 326s, task 203s, retreat 96s, dead 77s, heal 68s   mode changes 75   team calls 41   lines said 15
+Bot Ivy (Tock): now farm
+  thoughts 6606   orders 1077 (own thinking 938, team calls 139)   54 orders a minute
+  orders: Move 768, Item 1, Cast 60, Attack 243, Take orb 5
+  skills used (of ordered): Time Bolt 37 of 37, Town Portal 10 of 10, Rewind 4 of 4, Stop Time 5 of 5, Slow Field 4 of 4
+  items used: Eye Ward 1, Healing Paste 9, Vegan Picker 6, Mana Potion 6, Zap Stick 6
+  time by mode: lane 453s, farm 214s, task 177s, dead 129s, retreat 81s, heal 48s   mode changes 110   team calls 38   lines said 21
+Bot Jo (Blau): now farm
+  thoughts 6313   orders 1185 (own thinking 977, team calls 208)   59 orders a minute
+  orders: Move 933, Item 5, Cast 43, Attack 198, Take orb 6
+  skills used (of ordered): Bounce Shot 19 of 19, Town Portal 5 of 5, Lay Trap 10 of 10, Summon Boulders 5 of 5, Place Turret 4 of 4
+  items used: Eye Ward 4, Healing Paste 6, Vegan Picker 3, Mana Potion 6, Zap Stick 7, Fade Cape 1
+  time by mode: lane 282s, task 243s, farm 235s, retreat 113s, stack 94s, ward 81s   mode changes 117   team calls 41   lines said 21
+  chat lines: 239
+    [-1:29] Ancient Light Bot Ann: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Bob: I'll support Bot Cat in the top lane.
+    [-1:29] Ancient Light Bot Cat: I'll go top.
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Ann in the bottom lane.
+    [-1:29] Ancient Light Bot Eve: I'll go mid.
+    [-1:29] Black Sun Bot Fay: I'll go mid.
+    [-1:29] Black Sun Bot Gus: I'll farm the top lane (safe lane).
+    [-1:29] Black Sun Bot Hal: I'll go bottom.
+    [-1:29] Black Sun Bot Ivy: I'll support Bot Gus in the top lane.
+    [-1:29] Black Sun Bot Jo: I'll support Bot Hal in the bottom lane.
+    [0:44] Black Sun Bot Jo: Going for Azrael.
+    [0:46] Ancient Light Bot Dan: Going for Roydo.
+wins: Ancient Light 0, Black Sun 0

@@ -7,6 +7,7 @@ uniform vec3 hair_color = vec3(0.17, 0.11, 0.08);      // sRGB
 uniform float sway = 1.0;
 uniform float opacity = 1.0;
 uniform float decay = 0.0;
+uniform float glow = 0.0;                              // soul light (Azrael): the hair shines from within, tips most
 
 varying float shade;
 
@@ -34,6 +35,10 @@ void fragment() {
 		c = mix(mix(c, vec3(g), decay * 0.6), vec3(0.021, 0.018, 0.014), decay * 0.55);
 	}
 	ALBEDO = c;
+	if (glow > 0.0) {
+		float rim = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.0);
+		EMISSION = c * glow * (0.35 + 0.9 * rim) * (0.8 + 0.4 * sin(TIME * 2.0 + shade * 9.0));
+	}
 	ROUGHNESS = 0.52;
 	SPECULAR = 0.4;
 	RIM = 0.2;

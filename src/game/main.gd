@@ -24,6 +24,7 @@ var froster_fx: FrosterFx
 var caziel_fx: CazielFx
 var hero15_fx: Hero15Fx
 var hero16_fx: Hero16Fx
+var azrael_fx: AzraelFx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
@@ -127,6 +128,11 @@ func _ready() -> void:
 	hero16_fx.fx = fx
 	hero16_fx.fire = fire_fx
 	add_child(hero16_fx)
+	azrael_fx = AzraelFx.new()
+	azrael_fx.game = self
+	azrael_fx.fx = fx
+	azrael_fx.fire = fire_fx
+	add_child(azrael_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -440,6 +446,13 @@ static func bot_look(id: String) -> Dictionary:
 			if (az.dyes[slot] as Dictionary).has("cloth"):
 				az.dyes[slot]["cloth"] = "2a0a0a"
 		return az
+	if id == "azrael":
+		# Black Sun's Azrael: the same white soul, her robe in deep crimson-black
+		var ar := GameSettings.default_look("azrael")
+		ar.display_name = "Bot Gerald"
+		ar.dyes["armor"]["cloth"] = "1a0406"
+		ar.dyes["helm"]["cloth"] = "1a0406"
+		return ar
 	if id in GameSettings.OWN_BODY:
 		var o := GameSettings.default_look(id)
 		o.display_name = "Bot Gerald"
@@ -631,6 +644,8 @@ func _drain_events() -> void:
 			hero15_fx.event(e)
 		elif e.t in Hero16Fx.EVENTS:
 			hero16_fx.event(e)
+		elif e.t in AzraelFx.EVENTS:
+			azrael_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -947,6 +962,8 @@ func _on_damage(e: Dictionary) -> void:
 		dv.on_hit(su.pos if su else tu.pos, amt, tu.max_hp, atk or String(e.get("key", "")) == "burst_shot")
 		if atk and su and not su.is_ranged() and dv.visible:
 			fx.melee_hit(su, tu, amt)
+			if String(su.def.model) == "hero_azrael":
+				azrael_fx.scythe_hit(su, tu)
 	if not (tu.team == player_team or world.vision.sees(player_team, tu)):
 		return
 	# the hit of a critical strike already showed its red number
@@ -1022,6 +1039,7 @@ func _process(dt: float) -> void:
 	caziel_fx.update(world, alpha, dt)
 	hero15_fx.update(world, alpha, dt)
 	hero16_fx.update(world, alpha, dt)
+	azrael_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)

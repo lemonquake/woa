@@ -101,6 +101,8 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		appearance = HeroAppearance.new(model)
 		appearance.apply(u.look.get("look", {}))
 		appearance.dress(u.look.get("outfit", {}), u.look.get("dyes", {}))
+		if cfg.has("spirit"):
+			appearance.set_spirit(cfg.spirit)
 	if cfg.has("skin_shader"):
 		_skin(model, String(cfg.skin_shader), String(cfg.get("skin_material", "SludgeSkin")), cfg.get("skin_params", {}))
 	_weapons()

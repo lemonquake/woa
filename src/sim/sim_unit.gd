@@ -634,6 +634,13 @@ func refresh_stats() -> void:
 	hp_regen_pct = Vector2(float(items.get("hp_regen_pct_max", 0.0)), float(items.get("hp_regen_pct_missing", 0.0)))
 	vision_day = float(def.vision_day)
 	vision_night = float(def.vision_night)
+	# sight changes (Divine Darkness): the day range at night too, and a share more or less of it
+	if has_flag("day_vision"):
+		vision_night = vision_day
+	var vpct := _mod_stat("vision_pct")
+	if vpct != 0.0:
+		vision_day *= maxf(0.1, 1.0 + vpct)
+		vision_night *= maxf(0.1, 1.0 + vpct)
 	acquire_range = float(def.acquire)
 	lifesteal = float(items.get("lifesteal", 0.0)) + _mod_stat("lifesteal")
 	lifesteal_ability = _mod_stat("lifesteal_ability")

@@ -182,6 +182,10 @@ func think() -> void:
 		_items(h)
 	if w.profiling: pt = w._prof("  bot:shop_items", pt)
 	_scan(h)
+	# inside Azrael's door: nothing to do but wait (her bot places the exit)
+	if w.abilities.kits4.in_door(h):
+		SimBot17.tick(self, h)
+		return
 	if w.vision.sees(1 - h.team, h):
 		_seen_by_enemy_at = w.time
 	if w.profiling: pt = w._prof("  bot:scan", pt)
@@ -203,6 +207,9 @@ func think() -> void:
 		return
 	_choose_mode(h)
 	if w.profiling: pt = w._prof("  bot:choose", pt)
+	# Azrael's door (hers, and every bot stepping into an allied one when hurt)
+	if SimBot17.tick(self, h):
+		return
 	# Blau's turrets (his own piloting and turret drops, and every bot knocking enemy turrets down)
 	if SimBot16.tick(self, h):
 		return
@@ -676,6 +683,8 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 		return false
 	if SimBot16.handles(kit):
 		return SimBot16.escape(self, h, fd)
+	if SimBot17.handles(kit):
+		return SimBot17.escape(self, h, fd)
 	var ab := w.abilities
 	match kit:
 		"tock":
@@ -1389,6 +1398,8 @@ func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 			close += 1
 	if _spells_ok() and SimBot16.handles(kit):
 		return SimBot16.aoe_farm(self, h, ns, centre)
+	if _spells_ok() and SimBot17.handles(kit):
+		return SimBot17.aoe_farm(self, h, ns, centre)
 	if _spells_ok():
 		var ab := w.abilities
 		match kit:
@@ -2378,6 +2389,8 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		_kragg_spells(h, e)
 	elif SimBot16.handles(kit):
 		SimBot16.spells(self, h, e)
+	elif SimBot17.handles(kit):
+		SimBot17.spells(self, h, e)
 	else:
 		_ranger_spells(h, e)
 

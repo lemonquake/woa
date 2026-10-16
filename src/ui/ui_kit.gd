@@ -91,7 +91,9 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"grip_of_the_ruler": "skills/gen/grip_of_the_ruler", "void_rush": "skills/gen/void_rush",
 	"dark_matter_skin": "skills/gen/dark_matter_skin", "anomaly": "skills/gen/anomaly", "bounce_shot": "skills/gen/bounce_shot",
 	"summon_boulders": "skills/gen/summon_boulders", "lay_trap": "skills/gen/lay_trap", "place_turret": "skills/gen/place_turret",
-	"pilot_turret": "skills/gen/pilot_turret"}
+	"pilot_turret": "skills/gen/pilot_turret", "soul_tap": "skills/gen/soul_tap",
+	"door_of_the_end": "skills/gen/door_of_the_end", "death_scythe": "skills/gen/death_scythe",
+	"divine_darkness": "skills/gen/divine_darkness"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
 const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}

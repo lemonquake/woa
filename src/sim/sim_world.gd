@@ -324,6 +324,7 @@ func step() -> void:
 	if profiling: t = _prof("projectiles", t)
 	abilities.kits2.tick()
 	abilities.kits3.tick()
+	abilities.kits4.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()

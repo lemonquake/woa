@@ -43,6 +43,7 @@ static func _ensure() -> void:
 	_build_neutral_abilities()
 	_build_abilities_15b()
 	_build_abilities_16()
+	_build_abilities_17()
 	_build_talents()
 
 static func unit(id: String) -> Dictionary:
@@ -289,6 +290,7 @@ static func _build_units() -> void:
 		"model": "hero_caziel"})
 	_add_heroes_15b()
 	_add_heroes_16()
+	_add_heroes_17()
 
 static func _add_heroes_15b() -> void:
 	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
@@ -352,6 +354,22 @@ static func _add_heroes_16() -> void:
 		"backswing": 0.25, "acquire": 650.0, "range": 650.0, "projectile_speed": 2200.0, "move_speed": 0.0,
 		"can_move": false, "turn_rate": 2.5, "vision_day": 900.0, "vision_night": 700.0, "xp": 40.0, "gold_min": 40,
 		"gold_max": 50, "element": EL.NONE, "model": "blau_turret"})
+
+static func _add_heroes_17() -> void:
+	# Azrael, the Death Dealer (the owner's hero, 2026-10-17): a melee (150) hero of the Dark element, a soul of white
+	# flame in a black hooded robe who floats over the ground with a great scythe. The owner gave the kit and the
+	# range; agility as her attribute and the stats follow the melee agility template (chosen, see HANDOFF).
+	_add("azrael", {"name": "Azrael", "title": "the Death Dealer", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 0.5, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 1.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 27.0, "dmg_max": 31.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.35, "backswing": 0.5, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 300.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "agi", "str": 19.0, "str_gain": 2.2, "agi": 22.0, "agi_gain": 3.0, "int": 17.0,
+		"int_gain": 1.7, "element": EL.DARK,
+		"abilities": ["soul_tap", "door_of_the_end", "death_scythe", "divine_darkness"],
+		"talents": [["azrael_attack_speed", "azrael_soul_damage"], ["azrael_health", "azrael_door_time"],
+			["azrael_scythe_chance", "azrael_scythe_damage"], ["azrael_door_damage", "azrael_darkness_cooldown"]],
+		"model": "hero_azrael"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -694,6 +712,38 @@ static func _build_neutral_abilities() -> void:
 
 # ---- Talents ---------------------------------------------------------------------------------------------------------
 
+## Azrael, the Death Dealer (2026-10-17). The owner's numbers: Soul Tap 700 range, 300 area, +15/20/25/30 damage a
+## unit and +20 more a hero, 15 s, spent by one attack that cleaves 100%, 18 s, 80 mana; Door of the End 400 to the
+## entrance, 800 to the exit, 3/4/5/6 s, 150/250/350/450 magic damage in 450, 12 s, her and two allies; Death Scythe
+## 15/18/21/24% to strike pure with +30/40/50/60 pure, 1.5 s; Divine Darkness 25 s, flight, +30/50/70% sight, enemies
+## within 700 -30/40/50% sight, +30/40/50 attack speed, 60 s. Chosen: the mana of Door of the End and Divine
+## Darkness, cast points, the cleave cone (Dota's), the door's entry reach.
+static func _build_abilities_17() -> void:
+	_abilities["soul_tap"] = {"id": "soul_tap", "name": "Soul Tap", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [18, 18, 18, 18], "cast_point": 0.3, "range": 700,
+		"anim": "cast_area", "damage_type": "physical", "aoe": true,
+		"values": {"radius": [300, 300, 300, 300], "per_unit": [15, 20, 25, 30], "per_hero": [20, 20, 20, 20],
+		"duration": [15, 15, 15, 15], "cleave_pct": [1.0, 1.0, 1.0, 1.0], "cleave_start": [150, 150, 150, 150],
+		"cleave_end": [360, 360, 360, 360], "cleave_distance": [650, 650, 650, 650]},
+		"desc": "Azrael draws the souls out of every unit in the area, enemies and allies alike: each gives her bonus damage, heroes more. Her next attack spends it all in one great slash that cleaves its full damage. Lasts 15 seconds."}
+	_abilities["door_of_the_end"] = {"id": "door_of_the_end", "name": "Door of the End", "behavior": "point", "key": "W",
+		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.3, "range": 400,
+		"anim": "cast_heavy", "damage_type": "magical", "aoe": true,
+		"values": {"duration": [3, 4, 5, 6], "exit_range": [800, 800, 800, 800], "damage": [150, 250, 350, 450],
+		"radius": [450, 450, 450, 450], "allies": [2, 2, 2, 2], "enter_radius": [110, 110, 110, 110]},
+		"desc": "Azrael opens a door to the spirit world. She and up to two allied heroes can walk into it, hidden and unharmed. Cast again to place the exit, up to 800 away. When the door closes, everyone inside steps out of the exit in a spirit blast that deals magic damage around it (out of the entrance if no exit was placed)."}
+	_abilities["death_scythe"] = {"id": "death_scythe", "name": "Death Scythe", "behavior": "passive", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [1.5, 1.5, 1.5, 1.5], "cast_point": 0.0, "range": 0,
+		"damage_type": "pure",
+		"values": {"chance": [0.15, 0.18, 0.21, 0.24], "bonus": [30, 40, 50, 60], "proc_cooldown": [1.5, 1.5, 1.5, 1.5]},
+		"desc": "Azrael's attacks and spells have a chance to strike as pure damage, with bonus pure damage on top. Cooldown after each strike."}
+	_abilities["divine_darkness"] = {"id": "divine_darkness", "name": "Divine Darkness", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 150, 200], "cooldown": [60, 60, 60],
+		"cast_point": 0.4, "range": 0, "anim": "cast_ultimate",
+		"values": {"duration": [25, 25, 25], "vision_bonus": [0.3, 0.5, 0.7], "vision_cut": [0.3, 0.4, 0.5],
+		"radius": [700, 700, 700], "attack_speed": [30, 40, 50]},
+		"desc": "Azrael spreads her white wings for 25 seconds: she flies over cliffs and trees, sees further day and night and attacks faster. Enemies within 700 of her lose part of their sight."}
+
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
 	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}
 
@@ -770,6 +820,15 @@ static func _build_talents() -> void:
 	_talent("ezee_leap_strength", "+40% Leap Strike strength damage", [{"ability": "leap_strike", "add": {"str_mult": 0.40}}])
 	_talent("ezee_might_chance", "+10% Unholy Might chance", [{"ability": "unholy_might", "add": {"chance": 0.10}}])
 	_talent("ezee_might_duration", "+4s Unholy Might", [{"ability": "unholy_might", "add": {"duration": 4.0}}])
+	# Azrael (chosen, 2026-10-17)
+	_talent("azrael_attack_speed", "+25 Attack Speed", [], {"attack_speed": 25.0})
+	_talent("azrael_soul_damage", "+6 Soul Tap damage per unit", [{"ability": "soul_tap", "add": {"per_unit": 6.0}}])
+	_talent("azrael_health", "+250 Health", [], {"hp": 250.0})
+	_talent("azrael_door_time", "+1s Door of the End", [{"ability": "door_of_the_end", "add": {"duration": 1.0}}])
+	_talent("azrael_scythe_chance", "+8% Death Scythe chance", [{"ability": "death_scythe", "add": {"chance": 0.08}}])
+	_talent("azrael_scythe_damage", "+40 Death Scythe damage", [{"ability": "death_scythe", "add": {"bonus": 40.0}}])
+	_talent("azrael_door_damage", "+150 Door of the End damage", [{"ability": "door_of_the_end", "add": {"damage": 150.0}}])
+	_talent("azrael_darkness_cooldown", "-20s Divine Darkness cooldown", [{"ability": "divine_darkness", "add": {"cooldown": -20.0}}])
 	# Tock (chosen)
 	_talent("tock_bolt_damage", "+70 Time Bolt damage", [{"ability": "time_bolt", "add": {"damage": 70.0}}])
 	_talent("tock_mana_regen", "+2 Mana Regen", [], {"mana_regen": 2.0})

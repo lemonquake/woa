@@ -6320,6 +6320,194 @@ func test_blau_boulders_roll_to_the_point() -> void:
 		for bd in k3.boulders:
 			k3._unrest(bd)
 
+# ---- Azrael (2026-10-17) ---------------------------------------------------------------------------------------------
+
+func test_azrael_data() -> void:
+	var d := SimData.unit("azrael")
+	check(not d.is_empty() and d.kind == K.HERO, "Azrael is a hero")
+	check(int(d.element) == C.Element.DARK, "of the Dark element")
+	near(float(d.range), 150.0, 0.01, "melee, 150 range")
+	check((d.talents as Array).size() == 4, "4 talent tiers")
+	for tier in d.talents:
+		for tid in tier:
+			check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+	near(float(SimData.ability("soul_tap").mana[0]), 80.0, 0.01, "Soul Tap costs 80")
+	near(float(SimData.ability("soul_tap").cooldown[0]), 18.0, 0.01, "Soul Tap 18 s")
+	near(float(SimData.ability("door_of_the_end").cooldown[0]), 12.0, 0.01, "Door of the End 12 s")
+	near(float(SimData.ability("divine_darkness").cooldown[0]), 60.0, 0.01, "Divine Darkness 60 s")
+	check(SimBotKits.ROLES.has("azrael") and SimBotKits.SKILLS.has("azrael"), "bots know her")
+	check("azrael" in GameSettings.HEROES, "she can be picked")
+
+func test_azrael_soul_tap_charge_and_cleave() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "azrael", o)
+	var target := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(140, 0), 5000.0)
+	var beside := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(260, 60), 5000.0)
+	var foe := _dummy(w, "ezee", C.DUSK, o + Vector2(250, -70), 5000.0)
+	var friend := _dummy(w, "dawn_melee", C.DAWN, o + Vector2(200, 130), 5000.0)
+	var far := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(1600, 0), 5000.0)
+	run(w, 0.1)
+	var dmg0 := a.bonus_damage
+	# area centred so that the four near units are in it, Azrael herself is not counted
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "soul_tap", "point": o + Vector2(210, 30)})
+	run(w, 0.6)
+	var ev := _events_of(w, "soul_tap")
+	check(not ev.is_empty(), "Soul Tap goes off")
+	if not ev.is_empty():
+		check((ev[0].souls as Array).size() == 4 and not (a.id in ev[0].souls) and not (far.id in ev[0].souls),
+			"four souls: enemies and the ally in the area, not her, not the far one (%s)" % str(ev[0].souls))
+	near(a.bonus_damage - dmg0, 4.0 * 30.0 + 20.0, 0.01, "+30 a unit, +20 more for the hero")
+	near(a.mana, a.max_mana - 80.0, 1.0, "80 mana")
+	# one attack spends it and cleaves its full damage
+	var hp_b := beside.hp
+	w.events.clear()
+	a.auto_attack = true
+	w.command(a.id, {"type": O.ATTACK_UNIT, "target": target.id})
+	for i in 60:
+		w.step()
+		if not _events_of(w, "soul_slash").is_empty():
+			break
+	check(not _events_of(w, "soul_slash").is_empty(), "the charged slash lands")
+	check(a.get_modifier("soul_tap").is_empty(), "the charge is spent by one attack")
+	near(a.bonus_damage, dmg0, 0.01, "the bonus damage is gone")
+	check(beside.hp < hp_b - 150.0, "the slash cleaves into the creep beside the target (%d)" % int(hp_b - beside.hp))
+	check(friend.hp == friend.max_hp, "allies are not cleaved")
+	# unused, it fades after 15 s
+	var w2 := empty_world()
+	var a2 := _hero16(w2, "azrael", o)
+	_dummy(w2, "dusk_melee", C.DUSK, o + Vector2(300, 0), 5000.0)
+	run(w2, 0.1)
+	w2.command(a2.id, {"type": O.CAST_POINT, "ability": "soul_tap", "point": o + Vector2(300, 0)})
+	run(w2, 1.0)
+	check(not a2.get_modifier("soul_tap").is_empty(), "charged")
+	run(w2, 15.0)
+	check(a2.get_modifier("soul_tap").is_empty(), "the charge fades after 15 s")
+
+func test_azrael_door_of_the_end() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "azrael", o)
+	var allies: Array = []
+	for k in 3:
+		allies.append(_hero16(w, ["ezee", "froster", "caziel"][k], o + Vector2(-150, -120 + 120 * k)))
+	var exit_p := o + Vector2(0, 700)
+	var foe := _dummy(w, "dusk_melee", C.DUSK, exit_p + Vector2(200, 0), 5000.0)
+	var far_foe := _dummy(w, "dusk_melee", C.DUSK, exit_p + Vector2(900, 0), 5000.0)
+	run(w, 0.1)
+	var door_p := o + Vector2(300, 0)
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "door_of_the_end", "point": door_p})
+	run(w, 0.5)
+	check(w.abilities.kits4.exit_pending(a), "the door is open, the exit not yet set")
+	near(w.abilities.cooldown_left(a, "door_of_the_end"), 11.8, 0.15, "cooldown from the entrance")
+	var mana_after := a.mana
+	check(w.abilities.cast_error(a, "door_of_the_end", -1, null, exit_p) == "", "the exit can be cast at once")
+	near(w.abilities.cast_range(a, "door_of_the_end", -1), 800.0, 0.01, "exit range 800")
+	# everyone walks in: her and two allies; the third is turned away
+	w.command(a.id, {"type": O.MOVE, "point": door_p})
+	for h in allies:
+		w.command(h.id, {"type": O.MOVE, "point": door_p})
+	run(w, 1.6)
+	var inside := allies.filter(func(h): return w.abilities.kits4.in_door(h))
+	check(w.abilities.kits4.in_door(a), "Azrael is inside")
+	check(inside.size() == 2, "two allies inside, not three (%d)" % inside.size())
+	check(a.is_invulnerable() and a.has_flag("hidden"), "hidden and invulnerable inside")
+	check(w.abilities.cast_error(a, "soul_tap", -1, null, a.pos) != "", "no other spells from inside")
+	# the exit, from inside: free
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "door_of_the_end", "point": exit_p})
+	run(w, 0.5)
+	check(not w.abilities.kits4.exit_pending(a), "the exit is set")
+	check(a.mana >= mana_after - 0.5, "the exit costs no mana (%.1f, was %.1f)" % [a.mana, mana_after])
+	run(w, 6.0)
+	check(not w.abilities.kits4.in_door(a) and a.pos.distance_to(exit_p) < 160.0, "she steps out of the exit (%s)" % str(a.pos))
+	for h in inside:
+		check(h.pos.distance_to(exit_p) < 200.0 and not h.is_invulnerable(), "an ally steps out with her")
+	var blast := _events_of(w, "door_blast")
+	check(not blast.is_empty(), "a spirit blast at the exit")
+	near(foe.max_hp - foe.hp, 450.0 * (1.0 + a.magic_amp + a.spell_amp) * (1.0 - foe.magic_resist), 70.0, "450 magic damage near the exit")
+	check(far_foe.hp == far_foe.max_hp, "not beyond 450")
+	# no exit placed: out of the entrance
+	var w2 := empty_world()
+	var a2 := _hero16(w2, "azrael", o)
+	run(w2, 0.1)
+	w2.command(a2.id, {"type": O.CAST_POINT, "ability": "door_of_the_end", "point": o + Vector2(200, 0)})
+	run(w2, 0.5)
+	w2.command(a2.id, {"type": O.MOVE, "point": o + Vector2(200, 0)})
+	run(w2, 7.0)
+	check(not w2.abilities.kits4.in_door(a2) and a2.pos.distance_to(o + Vector2(200, 0)) < 160.0, "no exit: out at the entrance")
+
+func test_azrael_death_scythe() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "azrael", o)
+	var t := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(140, 0), 1e6)
+	t.def = t.def.duplicate()
+	t.def.armor = 20.0
+	t.refresh_stats()
+	run(w, 0.1)
+	a.auto_attack = true
+	w.command(a.id, {"type": O.ATTACK_UNIT, "target": t.id})
+	var procs: Array = []
+	var pure_hits := 0
+	for i in int(40.0 * C.TICK_RATE):
+		w.step()
+		for ev in w.events:
+			if ev.t == "death_scythe":
+				procs.append(w.time)
+			if ev.t == "damage" and int(ev.u) == t.id and int(ev.get("type", -1)) == C.DamageType.PURE:
+				pure_hits += 1
+		w.events.clear()
+	check(procs.size() >= 3, "Death Scythe strikes over 40 s of attacks (%d)" % procs.size())
+	check(pure_hits >= procs.size(), "each strike is pure damage")
+	var ok := true
+	for k in range(1, procs.size()):
+		if float(procs[k]) - float(procs[k - 1]) < 1.49:
+			ok = false
+	check(ok, "never twice within 1.5 s")
+	# the bonus: a forced strike adds 60 pure
+	var w2 := empty_world()
+	var a2 := _hero16(w2, "azrael", o)
+	var t2 := _dummy(w2, "dusk_melee", C.DUSK, o + Vector2(140, 0), 1e6)
+	var got := -1.0
+	for k in 200:
+		got = w2.abilities.kits4.death_scythe(a2, t2, "attack")
+		if got >= 0.0:
+			break
+		w2.time += 0.1
+	near(got, 60.0, 0.01, "+60 pure at level 4")
+	check(w2.abilities.kits4.death_scythe(a2, t2, "item_x") < 0.0, "not on item damage")
+
+func test_azrael_divine_darkness() -> void:
+	var w := empty_world()
+	w.time = 400.0                               # night
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "azrael", o)
+	var e := _dummy(w, "ezee", C.DUSK, o + Vector2(500, 0), 5000.0)
+	var e_far := _dummy(w, "ezee", C.DUSK, o + Vector2(1500, 0), 5000.0)
+	run(w, 0.1)
+	var as0 := a.attack_speed
+	var ev0 := e.vision_night
+	w.command(a.id, {"type": O.CAST_NO_TARGET, "ability": "divine_darkness"})
+	run(w, 0.8)
+	check(not a.get_modifier("divine_darkness").is_empty(), "the wings open")
+	near(a.attack_speed - as0, 50.0, 0.5, "+50 attack speed")
+	near(a.vision_night, 1800.0 * 1.7, 1.0, "+70% sight, the day range at night too")
+	near(e.vision_night, ev0 * 0.5, 1.0, "an enemy within 700 loses half its sight")
+	near(e_far.vision_night, ev0, 1.0, "not one further away")
+	# flight: straight over a tree line (the walking path is longer)
+	var spot := _tree_spot()
+	var tp: Vector2 = _map.trees[int(spot[0])].pos
+	var out: Vector2 = -(spot[2] as Vector2)
+	a.pos = tp + out * 250.0
+	var goal := tp - out * 250.0
+	w.command(a.id, {"type": O.MOVE, "point": goal})
+	run(w, 2.0)
+	check(a.pos.distance_to(goal) < 40.0, "she flies straight over the trees (%d left)" % int(a.pos.distance_to(goal)))
+	run(w, 24.0)
+	check(a.get_modifier("divine_darkness").is_empty(), "after 25 s the wings fold")
+	check(w.map.is_walkable(a.pos), "she lands on open ground")
+	near(e.vision_night, ev0, 1.0, "the enemy's sight comes back")
+
 func test_unfair_bots_gold_and_xp() -> void:
 	var w := empty_world()
 	var a := _hero16(w, "ezee", Vector2(-2000, -4000))

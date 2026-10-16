@@ -20,6 +20,7 @@ const ROLES := {
 	"kragg": [3, 4, 2, 1],
 	"roydo": [3, 2, 4, 1],
 	"blau": [1, 2, 3],
+	"azrael": [1, 2, 3],
 }
 ## Lane by role, from the team's side: "safe" (long lane with the tier 1 far out), "mid", "off".
 const ROLE_LANE := {1: "safe", 2: "mid", 3: "off", 4: "off", 5: "safe"}
@@ -61,6 +62,10 @@ const SKILLS := {
 	"blau": ["bounce_shot", "lay_trap", "bounce_shot", "summon_boulders", "bounce_shot", "place_turret", "bounce_shot",
 		"lay_trap", "lay_trap", "lay_trap", "place_turret", "summon_boulders", "summon_boulders", "summon_boulders",
 		"place_turret"],
+	# Azrael: Soul Tap first (farm and trades), the door early for escapes, Death Scythe next
+	"azrael": ["soul_tap", "death_scythe", "soul_tap", "door_of_the_end", "soul_tap", "divine_darkness", "soul_tap",
+		"death_scythe", "death_scythe", "death_scythe", "divine_darkness", "door_of_the_end", "door_of_the_end",
+		"door_of_the_end", "divine_darkness"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -72,7 +77,8 @@ const SUPPORT_SKILLS := {
 }
 ## Talent side per tier (0 left, 1 right), for heroes with a talent tree.
 const TALENTS := {"blood_ranger": [1, 1, 0, 1], "ezee": [0, 0, 1, 0], "sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
-	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0]}
+	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0],
+	"azrael": [0, 1, 1, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -179,6 +185,17 @@ const BUILDS := {
 				"jump_knife", "team_shield", "spike_armor", "spell_shield"],
 		],
 	},
+	# Azrael: an aggressive melee carry: attack speed, a way in, cleave on top of Soul Tap's, Spell Shield
+	"azrael": {
+		"core": [
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "mask_of_madness", "jump_knife", "shock_hammer", "spell_shield",
+				"armor_breaker", "crit_sword", "moth_blade"],
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots", "gloves",
+				"boots_elves", "magic_wand", "yasha", "cleave_axe", "jump_knife", "spell_shield", "armor_breaker",
+				"crit_sword"],
+		],
+	},
 	# Blau: attack speed and range first, the Upgrade Staff for Pilot Turret, then crits
 	"blau": {
 		"core": [
@@ -254,6 +271,8 @@ static func disable_power(hero: String) -> float:
 			return 0.75
 		"blau":
 			return 0.45
+		"azrael":
+			return 0.3
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
@@ -365,6 +384,17 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 			if ready.call("anomaly"):
 				total += ab.val(h, "anomaly", "damage") * 4.0 * arm
 			total *= 1.0 + h.magic_amp
+		"azrael":
+			# Soul Tap's slash: a few souls' worth (the target and the creeps round it), then Death Scythe on the blows
+			# that follow and the door's blast
+			if ready.call("soul_tap"):
+				total += (ab.val(h, "soul_tap", "per_unit") * 4.0 + ab.val(h, "soul_tap", "per_hero")) * arm
+			if h.ability_level_of("death_scythe") > 0:
+				total += ab.val(h, "death_scythe", "chance") * ab.val(h, "death_scythe", "bonus") * 4.0
+			if ready.call("door_of_the_end"):
+				total += ab.val(h, "door_of_the_end", "damage") * mr * 0.7
+			if ready.call("divine_darkness"):
+				total += dps(w, h, t) * 2.5
 		"blau":
 			# the bullet usually passes its target twice (out and back off a tree, boulder or wall)
 			if ready.call("bounce_shot"):

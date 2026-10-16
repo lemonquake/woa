@@ -1210,6 +1210,72 @@ def make_skills():
         at(ic, 52, 36, figure("#ffffff", 0.6))
         at(ic, 0, 0, L("M52,48 L52,58", "#ffffff", 3, 0.9))
 
+    # ---- Azrael (2026-10-17) ----
+
+    def scythe(ic, sc=1.0, blade=STEEL):
+        """A great scythe: a dark shaft rising to the right, the crescent blade sweeping left over the top."""
+        s = L("M-34,40 L22,-34", INK, 9) + L("M-34,40 L22,-34", "#4a2e1e", 5) + L("M-31,36 L19,-30", "#8a5a3a", 1.5, 0.8)
+        for t in (0.25, 0.55):
+            x, y = -34 + 56 * t, 40 - 74 * t
+            s += L("M%.1f,%.1f L%.1f,%.1f" % (x - 3, y - 2, x + 3, y + 2), "#1a100a", 6)
+        blade_d = "M22,-34 Q-6,-48 -38,-30 Q-50,-20 -46,-2 Q-36,-24 -10,-30 Q8,-32 18,-26 Z"
+        s += P(blade_d, ic.metal(blade, -46, -48, 22, -2), sw=3)
+        s += L("M-44,-6 Q-34,-26 -10,-30", "#ffffff", 1.6, 0.9)
+        s += P("M18,-38 L28,-30 L20,-24 L14,-30 Z", ic.metal(IRON, 14, -38, 28, -24), sw=2)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def wisp(col="#ffffff", sc=1.0):
+        d = "M0,-14 Q8,-2 5,6 Q2,12 0,12 Q-2,12 -5,6 Q-8,-2 0,-14 Z"
+        return '<g transform="scale(%s)">%s</g>' % (sc, P(d, col, stroke="#9ab0d8", sw=1.5))
+
+    @icon("soul_tap", "blood")
+    def _(ic):
+        at(ic, 64, 96, E(0, 0, 46, 14, "none", stroke="#ff4050", sw=3.5, extra=' opacity="0.9"'))
+        at(ic, 64, 96, E(0, 0, 30, 9, "none", stroke="#ff8090", sw=1.8, extra=' opacity="0.7"'))
+        for x, y, s in ((34, 80, 0.8), (50, 66, 0.9), (78, 70, 0.85), (94, 82, 0.75), (64, 52, 1.0)):
+            at(ic, x, y, wisp("#f4f8ff", s))
+        for x, y in ((40, 74), (88, 76), (64, 60)):
+            at(ic, 0, 0, L("M%d,%d Q%d,%d 64,30" % (x, y, (x + 64) // 2 - 8, (y + 30) // 2), "#ffffff", 1.6, 0.45))
+        at(ic, 64, 34, scythe(ic, 0.62))
+
+    @icon("door_of_the_end", "dark")
+    def _(ic):
+        arch = "M-24,40 L-24,-10 Q-24,-40 0,-40 Q24,-40 24,-10 L24,40 Z"
+        at(ic, 64, 64, P(arch, ic.rad([(0, "#ffffff"), (0.55, "#c8d4f0"), (1, "#3a3a5a")], 0, 0, 44), stroke="#ffffff", sw=3))
+        at(ic, 64, 64, L("M-14,-20 Q-4,-6 -12,8 Q-18,20 -6,32 M10,-26 Q2,-8 12,4 Q20,16 8,34", "#ff3040", 2.4, 0.9))
+        for k in (-1, 1):
+            at(ic, 64 + k * 30, 64, P("M-5,44 L-5,-18 Q-5,-30 0,-34 Q5,-30 5,-18 L5,44 Z", ic.metal(BLACK, -5, -34, 5, 44), sw=2))
+        at(ic, 64, 82, figure("#0a0610", 0.5))
+
+    @icon("death_scythe", "dark")
+    def _(ic):
+        at(ic, 60, 66, scythe(ic, 1.15))
+        at(ic, 0, 0, L("M18,104 Q64,60 112,22", "#ffffff", 7, 0.25) + L("M18,104 Q64,60 112,22", "#ffffff", 2.5, 0.95))
+        for x, y in ((64, 62), (96, 34)):
+            at(ic, x, y, star("#ffffff", 8, 2.5, 4))
+
+    @icon("divine_darkness", "dark")
+    def _(ic):
+        for k in (-1, 1):
+            # the wing's arm rises up and out from her back; long feathers hang from it, longest at the tip
+            ax = [64 + k * (10 + t * 44) for t in (0.0, 0.25, 0.5, 0.75, 1.0)]
+            ay = [62 - math.sin(t * 2.4) * 34 for t in (0.0, 0.25, 0.5, 0.75, 1.0)]
+            for j in range(9):
+                t = j / 8.0
+                rx = 64 + k * (10 + t * 44)
+                ry = 62 - math.sin(t * 2.4) * 34
+                ln = 22 + t * 26
+                tx = rx + k * (4 + t * 14)
+                ty = ry + ln
+                feather_d = "M%.1f,%.1f Q%.1f,%.1f %.1f,%.1f" % (rx, ry, rx + k * 2, ry + ln * 0.6, tx, ty)
+                ic.add(L(feather_d, INK, 9) + L(feather_d, "#f4f8ff", 6) + L(feather_d, "#b8c6e2", 1.2, 0.8))
+            arm_d = "M%.1f,%.1f Q%.1f,%.1f %.1f,%.1f" % (ax[0], ay[0], ax[2], ay[2] - 8, ax[4], ay[4])
+            ic.add(L(arm_d, INK, 8) + L(arm_d, "#ffffff", 5))
+        at(ic, 64, 64, C(0, 0, 15, "#05020a", stroke="#3a2a4a", sw=2))
+        for k in (-1, 1):
+            at(ic, 64 + k * 5, 62, C(0, 0, 2.6, "#ff2020", stroke="#ff8080", sw=1))
+        at(ic, 64, 64, rings("#20102a", 20, 3, 10, 0.5))
+
     return R
 
 
