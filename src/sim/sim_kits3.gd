@@ -112,29 +112,19 @@ func cast_error(u: SimUnit, aid: String, t: SimUnit, p: Vector2, check_target: b
 		"place_turret":
 			if check_target and p != Vector2.INF and not w.map.is_walkable(p):
 				return "Cannot build there"
+		"grip_of_the_ruler":
+			if check_target and p != Vector2.INF and grip_pool(u, p).is_empty():
+				return "No valid target"
 	return ""
 
 # ---- Roydo -------------------------------------------------------------------------------------------------------------
 
 ## Grip of the Ruler: one unit in the area is thrown to its middle over 0.8 s (enemy heroes first, then other enemies;
-## with no enemy at all an ally, unharmed); when it lands the whole area is hit and stunned.
+## with no enemy at all an ally, unharmed); when it lands the whole area is hit and stunned. With nobody to throw the
+## spell does not go off ("No valid target", nothing spent).
 func _grip(u: SimUnit, aid: String, p: Vector2) -> void:
 	var r := ab.val(u, aid, "radius")
-	var heroes: Array = []
-	var others: Array = []
-	var allies: Array = []
-	for o: SimUnit in w.query(p, r + 40.0):
-		if o == u or not _movable(o) or o.pos.distance_to(p) > r + o.hull:
-			continue
-		if not o.knock.is_empty() or not o.leap.is_empty():
-			continue
-		if o.team != u.team:
-			if not w.vision.sees(u.team, o) or not ab.can_debuff(o, u.team):
-				continue
-			(heroes if o.is_hero() else others).append(o)
-		else:
-			allies.append(o)
-	var pool: Array = heroes if not heroes.is_empty() else (others if not others.is_empty() else allies)
+	var pool := grip_pool(u, p, r)
 	var center := _land_spot(p)
 	var dur := ab.val(u, aid, "toss_time")
 	var picked: SimUnit = null
@@ -152,6 +142,27 @@ func _grip(u: SimUnit, aid: String, p: Vector2) -> void:
 		"damage": ab.val(u, aid, "damage"), "stun": ab.val(u, aid, "stun"), "seq": _seq})
 	w.events.append({"t": "grip", "u": u.id, "target": picked.id if picked else -1, "from": picked.pos if picked else p,
 		"pos": center, "radius": r, "dur": dur, "ally": picked != null and picked.team == u.team, "seq": _seq})
+
+## The units Grip of the Ruler at `p` may throw: enemy heroes, else other enemies, else allies. Units hidden in the
+## fog count (the grip seizes what is there); invisible enemies do not, unless the team has True Sight on them.
+func grip_pool(u: SimUnit, p: Vector2, r := -1.0) -> Array:
+	if r < 0.0:
+		r = ab.val(u, "grip_of_the_ruler", "radius")
+	var heroes: Array = []
+	var others: Array = []
+	var allies: Array = []
+	for o: SimUnit in w.query(p, r + 40.0):
+		if o == u or not _movable(o) or o.pos.distance_to(p) > r + o.hull:
+			continue
+		if not o.knock.is_empty() or not o.leap.is_empty():
+			continue
+		if o.team != u.team:
+			if (o.has_flag("invisible") and not w.vision.sees(u.team, o)) or not ab.can_debuff(o, u.team):
+				continue
+			(heroes if o.is_hero() else others).append(o)
+		else:
+			allies.append(o)
+	return heroes if not heroes.is_empty() else (others if not others.is_empty() else allies)
 
 func _update_grip(e: Dictionary) -> bool:
 	if w.time < float(e.at):
@@ -228,6 +239,7 @@ func _bounce_shot(u: SimUnit, aid: String, p: Vector2) -> void:
 	var start := u.pos + dir * (u.hull + 10.0)
 	w.effects.append({"kind": "bounce_shot", "ability": aid, "src": u.id, "team": u.team, "pos": start, "dir": dir,
 		"left": ab.val(u, aid, "distance"), "speed": ab.val(u, aid, "speed"), "bounces": int(ab.val(u, aid, "bounces")),
+		"bounce_distance": ab.val(u, aid, "bounce_distance"),
 		"damage": ab.val(u, aid, "damage"), "max_hits": int(ab.val(u, aid, "max_hits")), "hits": {}, "inside": {},
 		"touching": -1, "seq": _seq})
 	w.events.append({"t": "bounce_shot", "u": u.id, "from": start, "dir": dir, "seq": _seq,
@@ -293,6 +305,7 @@ func _update_bullet(e: Dictionary) -> bool:
 				done = true
 				break
 			e.bounces = int(e.bounces) - 1
+			e.left = float(e.left) + float(e.get("bounce_distance", 0.0))   # each ricochet reaches 400 further
 			e.dir = reflect(dir, hit.normal)
 			e.touching = int(hit.id) if hit.what == "unit" else -1
 			w.events.append({"t": "bounce_shot_bounce", "seq": e.seq, "pos": np, "normal": hit.normal, "what": hit.what,
@@ -336,9 +349,9 @@ func _bullet_hits(e: Dictionary) -> void:
 ## holds the units near the path in packed arrays so many traces can share one gathering; `step` trades precision for
 ## speed (the bullet itself moves in SUBSTEP steps).
 func trace_bullet(from: Vector2, dir: Vector2, team: int, dist: float, bounces: int, shooter := -1, step := SUBSTEP,
-		prep: Dictionary = {}) -> Dictionary:
+		prep: Dictionary = {}, bounce_dist := 0.0) -> Dictionary:
 	if prep.is_empty():
-		prep = trace_prep(from, dist, team, shooter)
+		prep = trace_prep(from, dist + bounce_dist * float(bounces), team, shooter)
 	var bpos: PackedVector2Array = prep.bpos
 	var brad: PackedFloat32Array = prep.brad
 	var bid: PackedInt32Array = prep.bid
@@ -361,6 +374,7 @@ func trace_bullet(from: Vector2, dir: Vector2, team: int, dist: float, bounces: 
 			if bounces <= 0:
 				break
 			bounces -= 1
+			left += bounce_dist
 			d = reflect(d, hit.normal)
 			touching = int(hit.id) if hit.what == "unit" else -1
 			pos += d * 4.0
@@ -430,9 +444,10 @@ func _trace_obstacle(p: Vector2, dir: Vector2, skip_unit: int, bpos: PackedVecto
 
 # ---- Blau: boulders ------------------------------------------------------------------------------------------------------
 
-## Summon Boulders: 3-6 boulders roll out ahead at random angles for 1-2 s. They bounce off each other, walls, trees and
-## units; an enemy they run into is hurt (once per cast, whichever boulder) and knocked 200 back. Resting boulders block
-## every walking unit, phased ones too, for 10 s.
+## Summon Boulders: 3-6 boulders roll out toward the target point at random angles, slowing to a stop about as far as
+## the point (200 at least, 700 at most: a short cast stays short). They bounce off each other, walls, trees and units;
+## an enemy they run into is hurt (once per cast, whichever boulder) and knocked 200 back. Resting boulders block every
+## walking unit, phased ones too, for 10 s.
 func _summon_boulders(u: SimUnit, aid: String, p: Vector2) -> void:
 	var dir := p - u.pos
 	dir = Vector2.from_angle(u.facing) if dir.length() < 1.0 else dir.normalized()
@@ -443,19 +458,23 @@ func _summon_boulders(u: SimUnit, aid: String, p: Vector2) -> void:
 	var cast := _seq
 	_boulder_hits[cast] = {}
 	var made: Array = []
+	var reach := clampf(p.distance_to(u.pos), ab.val(u, aid, "min_distance"), ab.val(u, aid, "distance"))
+	var roll_max := ab.val(u, aid, "roll_max")
 	for i in n:
 		var base := -spread + 2.0 * spread * (float(i) + 0.5) / float(n)
 		var a := dir.angle() + base + w.rng.randf_range(-0.12, 0.12)
 		var bd := Vector2.from_angle(a)
-		var roll := w.rng.randf_range(ab.val(u, aid, "roll_min"), ab.val(u, aid, "roll_max"))
-		var speed := w.rng.randf_range(ab.val(u, aid, "speed_min"), ab.val(u, aid, "speed_max"))
 		var at := u.pos + bd * (u.hull + BOULDER_R + 16.0 + 24.0 * float(i % 2))
+		# slowing evenly from `speed` to a stop covers speed * roll / 2: pick the roll that ends near the point
+		var dist := maxf(40.0, reach * w.rng.randf_range(0.85, 1.0) - at.distance_to(u.pos))
+		var speed := maxf(w.rng.randf_range(ab.val(u, aid, "speed_min"), ab.val(u, aid, "speed_max")), 2.0 * dist / roll_max)
+		var roll := 2.0 * dist / speed
 		if not w.map.is_walkable(at):
 			at = u.pos + bd * (u.hull + 8.0)
 		var b := {"id": _next_boulder, "pos": at, "vel": bd * speed, "r": BOULDER_R, "decel": speed / roll,
 			"rest_at": w.time + roll, "until": w.time + ab.val(u, aid, "duration"), "team": u.team, "src": u.id,
 			"cast": cast, "resting": false, "cells": [], "damage": ab.val(u, aid, "damage"),
-			"push": ab.val(u, aid, "push"), "spin": 0.0}
+			"push": ab.val(u, aid, "push"), "spin": 0.0, "from": u.pos, "reach": reach}
 		_next_boulder += 1
 		boulders.append(b)
 		made.append({"id": b.id, "pos": at, "vel": b.vel})
@@ -553,10 +572,15 @@ func _update_boulders() -> void:
 			var vn3 := v.dot(-nrm2)
 			if vn3 > 0.0:
 				v -= -nrm2 * vn3 * 0.35
+		# never past the cast's reach (bumps between boulders can speed one up)
+		var from: Vector2 = b.get("from", np)
+		var past := np.distance_to(from) > float(b.get("reach", INF))
+		if past:
+			np = from + (np - from).normalized() * float(b.reach)
 		b.pos = np
 		b.vel = v
 		b.spin = float(b.spin) + v.length() * C.DT / float(b.r)
-		if sp <= 15.0 or w.time >= float(b.rest_at):
+		if past or sp <= 15.0 or w.time >= float(b.rest_at):
 			_rest(b)
 
 func _open_for_boulder(p: Vector2, r: float) -> bool:

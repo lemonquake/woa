@@ -10,7 +10,7 @@ extends RefCounted
 ## prediction, denies, harass, creep and tower aggro, when to leave a lane, which jungle camps it can clear and when
 ## they respawn, stacking at :53, pulling the safe lane's camps into its own wave, wards, Town Portal for defence,
 ## ganks and escapes, buyback late in the game. Skill levels follow Dota's bot difficulties (reaction delay, last hit
-## error, spell lockouts; Unfair gets +25% gold and experience). With learning on (BotMemory) it uses and improves its
+## error, spell lockouts; Unfair gets +200% gold and +50% experience, the owner's numbers). With learning on (BotMemory) it uses and improves its
 ## fight model, retreat bar, item build choice, skill shot ranges and lane matchups.
 
 const C = preload("res://src/sim/sim_const.gd")
@@ -20,18 +20,18 @@ const KITS = preload("res://src/sim/sim_bot_kits.gd")
 
 ## Dota's bot difficulties (Valve, research/bots.md section 6): think interval, spell reaction delay, last hit timing
 ## error (s), skill shot lead (0..1), spells allowed, stacking / pulling / warding, spell lockout every N s for M s,
-## lockout after each use, gold and experience multiplier.
+## lockout after each use, gold and experience multipliers (Unfair: the owner's +200% gold, +50% experience).
 const SKILLS := {
 	"passive": {"think": 0.45, "react": 9.0, "lh_error": 0.4, "aim": 0.0, "spells": false, "advanced": false,
-		"lock_every": 0.0, "lock_for": 0.0, "after_use": 0.0, "gain": 1.0, "aggr": 0.0},
+		"lock_every": 0.0, "lock_for": 0.0, "after_use": 0.0, "gold": 1.0, "xp": 1.0, "aggr": 0.0},
 	"easy": {"think": 0.4, "react": 0.75, "lh_error": 0.4, "aim": 0.35, "spells": true, "advanced": false,
-		"lock_every": 8.0, "lock_for": 6.0, "after_use": 6.0, "gain": 1.0, "aggr": 0.8},
+		"lock_every": 8.0, "lock_for": 6.0, "after_use": 6.0, "gold": 1.0, "xp": 1.0, "aggr": 0.8},
 	"medium": {"think": 0.3, "react": 0.45, "lh_error": 0.2, "aim": 0.7, "spells": true, "advanced": true,
-		"lock_every": 10.0, "lock_for": 3.0, "after_use": 3.0, "gain": 1.0, "aggr": 0.9},
+		"lock_every": 10.0, "lock_for": 3.0, "after_use": 3.0, "gold": 1.0, "xp": 1.0, "aggr": 0.9},
 	"hard": {"think": 0.2, "react": 0.15, "lh_error": 0.0, "aim": 1.0, "spells": true, "advanced": true,
-		"lock_every": 0.0, "lock_for": 0.0, "after_use": 0.0, "gain": 1.0, "aggr": 1.0},
+		"lock_every": 0.0, "lock_for": 0.0, "after_use": 0.0, "gold": 1.0, "xp": 1.0, "aggr": 1.0},
 	"unfair": {"think": 0.15, "react": 0.11, "lh_error": 0.0, "aim": 1.0, "spells": true, "advanced": true,
-		"lock_every": 0.0, "lock_for": 0.0, "after_use": 0.0, "gain": 1.25, "aggr": 1.05},
+		"lock_every": 0.0, "lock_for": 0.0, "after_use": 0.0, "gold": 3.0, "xp": 1.5, "aggr": 1.05},
 }
 const SKILL_IDS := ["passive", "easy", "medium", "hard", "unfair"]
 
@@ -85,8 +85,10 @@ func set_skill(p_skill: String) -> void:
 	sk = SKILLS[skill]
 	var h := hero()
 	if h != null:
-		h.gain_mult = float(sk.gain)
+		h.gold_mult = float(sk.gold)
+		h.xp_mult = float(sk.xp)
 	aggression = float(sk.aggr) * rng.randf_range(0.9, 1.12)
+	_plan_knife()
 
 ## Role (1..5) and lane from the team's brain. The build is picked (or learned, BotMemory) once, before anything is
 ## bought; later role changes keep the items already planned.
@@ -99,6 +101,32 @@ func set_role(r: int, p_lane: String) -> void:
 		var opts: Array = KITS.builds(kit, r)
 		build_idx = BotMemory.pick_build(KITS.build_key(kit, r), opts.size(), 0, _team())
 		build = (opts[clampi(build_idx, 0, opts.size() - 1)] as Array).duplicate()
+	_plan_knife()
+
+const BOOT_UPGRADES := ["power_treads", "slip_boots", "mana_boots", "guard_boots", "travel_boots"]
+
+## Unfair bots on melee heroes buy a Jump Knife right after their boots (the owner's rule): to jump on a target to
+## gank it, or away to escape.
+func _plan_knife() -> void:
+	if skill != "unfair" or build.is_empty():
+		return
+	var h := hero()
+	if h == null or float(h.def.projectile_speed) > 0.0:
+		return
+	var want := -1
+	for i in build.size():
+		if String(build[i]) in BOOT_UPGRADES:
+			want = i + 1
+			break
+	if want < 0:
+		want = mini(build.size(), 7)
+	want = maxi(want, _build_i)
+	var at := build.find("jump_knife")
+	if at >= 0 and at <= want:
+		return
+	if at >= 0:
+		build.remove_at(at)
+	build.insert(mini(want, build.size()), "jump_knife")
 
 func hero() -> SimUnit:
 	return w.get_unit(hero_id) if w != null else null
@@ -396,9 +424,16 @@ func _laning_phase(h: SimUnit) -> bool:
 
 # ---- Retreat and heal ---------------------------------------------------------------------------------------------------
 
+## How bold the bot plays now: its personality (aggression), more while its team is ahead in net worth (the owner's
+## rule): from 10% ahead, +0.1 for every further 10%, at most +0.4.
+func _boldness() -> float:
+	var b := brain()
+	var lead := b.networth_lead() if b != null else 0.0
+	return aggression + clampf(lead - 0.1, 0.0, 0.4)
+
 func _retreat_bar() -> float:
 	var base := 0.28 if role <= 3 else 0.33
-	base += (1.0 - aggression) * 0.2
+	base += (1.0 - _boldness()) * 0.2
 	return BotMemory.retreat_hp(kit, base, _team())
 
 func _retreat_desire(h: SimUnit, task: Dictionary) -> float:
@@ -751,7 +786,7 @@ func _pick_fight(h: SimUnit) -> Array:
 	var best: SimUnit = null
 	var best_s := -INF
 	var best_p := 0.0
-	var thresh := 0.58 - (aggression - 1.0) * 0.25
+	var thresh := 0.58 - (_boldness() - 1.0) * 0.25
 	if _laning_phase(h):
 		thresh += 0.06                     # in lane, commit only to clear chances (trading is handled by _lane)
 		var foe_kit := lane_foe
@@ -1847,6 +1882,8 @@ func _ally_hurt_near(h: SimUnit, r: float) -> bool:
 ## disables (Hex Staff, Stun Blade, Silence Staff, Root Staff, Halberd) on a target that is not already disabled.
 func _fight_items(h: SimUnit, e: SimUnit) -> void:
 	var d := h.edge_distance(e)
+	if _jump_in(h, e, d):
+		return
 	var held: Dictionary = w.status.disable_info(e)
 	if held.is_empty() or float(held.left) < 0.3:
 		for dis in ["hex_staff", "stun_blade", "silence_staff", "root_staff", "halberd"]:
@@ -1914,6 +1951,36 @@ func _fight_items(h: SimUnit, e: SimUnit) -> void:
 	if rs >= 0 and ult != "" and h.ability_level_of(ult) > 0 and w.abilities.cooldown_left(h, ult) > 10.0 \
 			and h.mana >= float(SimData.item("refresh_stone").mana) + w.abilities.ability_mana(h, ult) and d < 900.0:
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": rs})
+
+## A melee hero with a Jump Knife jumps onto the enemy hero it fights (a gank opener): healthy, the target out of
+## reach but within the knife's, not onto an enemy tower (unless the target is nearly dead) and not into a crowd.
+## Sludge has his own (the knife when Chomp is ready).
+func _jump_in(h: SimUnit, e: SimUnit, d: float) -> bool:
+	if h.is_ranged() or kit == "sludge" or not e.is_hero() or d < 300.0 or d > 1100.0 or h.hp < h.max_hp * 0.55:
+		return false
+	var land := e.pos + (h.pos - e.pos).normalized() * (h.hull + e.hull + 30.0)
+	if e.moving:
+		land += Vector2.from_angle(e.facing) * e.move_speed * 0.15
+	var jk := _jump_slot(h, land)
+	if jk < 0:
+		return false
+	if e.hp > e.max_hp * 0.35:
+		for t in _etowers:
+			if t.alive and t.pos.distance_to(land) < 800.0:
+				return false
+	var crowd := 0
+	for f in _foes:
+		if f.alive and f != e and f.pos.distance_to(land) < 800.0:
+			crowd += 1
+	var friends := 0
+	for a in _allies:
+		if a.alive and a.pos.distance_to(land) < 1200.0:
+			friends += 1
+	if crowd > friends + 1 or (crowd > friends and e.hp > e.max_hp * 0.5):
+		return false
+	_order(h, {"type": O.CAST_POINT, "ability": "", "item_slot": jk, "point": land}, true)
+	_cast_deadline = w.time + 0.5
+	return true
 
 ## A Jump Knife or Crash Knife ready to jump toward `p`, or -1.
 func _jump_slot(h: SimUnit, p: Vector2) -> int:
@@ -2014,14 +2081,23 @@ func _lane(h: SimUnit) -> void:
 		var mine := h.hp / h.max_hp
 		var theirs := e.hp / e.max_hp
 		var safe := not _under_enemy_tower(h, e.pos, enemy_towers)
-		var winning := theirs < 0.3 and mine > 0.4 or theirs < mine - 0.3 and mine > 0.55 and h.level >= e.level
+		var edge := (_boldness() - 1.0) * 0.25          # ahead in net worth: go in on smaller leads
+		var winning := theirs < 0.3 + edge and mine > 0.4 or theirs < mine - 0.3 + edge and mine > 0.55 and h.level >= e.level
 		if winning and (safe or theirs < 0.15) and h.pos.distance_to(e.pos) < 1100.0:
 			if _spells_ok(e):
 				_spells_on(h, e)
 			if not _busy(h):
 				_order(h, {"type": O.ATTACK_UNIT, "target": e.id})
 			return
-	# 2. last hit / deny (melee heroes commit to the walk-up instead of second-guessing it every think)
+	# 2. no enemy hero around (none seen near for 3 s), or the team well ahead in net worth with none in sight: push
+	# (the owner's rule). Kill the wave (last hits first, then the weakest creep), then hit the tower while our creeps
+	# tank it (step 5). A support beside its core leaves the creeps to the core.
+	var alone := enemy_heroes.is_empty() and _known.is_empty()
+	var pushing := h.hp > h.max_hp * 0.5 and not _tower_on_me and enemy_heroes.is_empty() 		and (alone or _boldness() > 1.15)
+	var shy := role >= 4 and _allies.any(func(a): return a.alive and a.pos.distance_to(h.pos) < 900.0)
+	if pushing and not shy and _clear_wave(h, lane):
+		return
+	# 3. last hit / deny (melee heroes commit to the walk-up instead of second-guessing it every think)
 	var committed := w.get_unit(_lh_id)
 	if committed != null and committed.alive and w.time < _lh_until and h.order == O.ATTACK_UNIT and h.order_target == _lh_id:
 		return
@@ -2031,7 +2107,7 @@ func _lane(h: SimUnit) -> void:
 		_lh_id = lh.id
 		_lh_until = w.time + (1.3 if not h.is_ranged() else 0.0)
 		return
-	# 3. harass: melee heroes trade blows when the enemy hero wanders into reach; Blood Ranger pokes from range.
+	# 4. harass: melee heroes trade blows when the enemy hero wanders into reach; Blood Ranger pokes from range.
 	# Sludge also throws the hook from range whenever the chain would reach the hero first. Supports harass more.
 	if kit == "sludge" and spells:
 		for e in enemy_heroes:
@@ -2057,7 +2133,7 @@ func _lane(h: SimUnit) -> void:
 				if not trading:
 					_trade_id = e.id
 					_trade_until = w.time + 3.5
-					_next_trade = w.time + (9.0 / aggression)
+					_next_trade = w.time + (9.0 / _boldness())
 				if _spells_ok(e):
 					_spells_on(h, e)
 				if not _busy(h):
@@ -2075,22 +2151,22 @@ func _lane(h: SimUnit) -> void:
 			_spells_on(h, e)
 			if _busy(h):
 				return
-	# 4. push the tower when our creeps are tanking it (but never at the cost of a last hit coming up)
+	# 5. push the tower when our creeps are tanking it (but never at the cost of a last hit coming up)
 	var lh_near := false
 	for f in foes:
 		if h.edge_distance(f) < h.attack_range + 300.0 and f.hp < (h.dmg_min + h.bonus_damage) * 3.0:
 			lh_near = true
 	# early in the laning phase, or with an enemy hero close, a tower is not worth our health and last hits
-	if _laning_phase(h) and (w.time < 300.0 or not enemy_heroes.is_empty()):
+	if _laning_phase(h) and (w.time < 300.0 or not enemy_heroes.is_empty()) and not pushing:
 		lh_near = true
 	for tw in enemy_towers:
 		if tw.is_invulnerable() or lh_near:
 			continue
 		var tanking := w.get_unit(tw.atk_target)
-		if tanking != null and tanking.team == h.team and not tanking.is_hero() and allies.size() >= 2:
+		if tanking != null and tanking.team == h.team and not tanking.is_hero() and allies.size() >= (1 if pushing else 2):
 			_order(h, {"type": O.ATTACK_UNIT, "target": tw.id})
 			return
-	# 5. stand behind the wave, just outside the enemies' reach
+	# 6. stand behind the wave, just outside the enemies' reach
 	var front := _front(h, allies, path)
 	var spot := front
 	var nearest_foe: SimUnit = null

@@ -891,7 +891,7 @@ class BottomPanel extends Control:
 		if _dragging and _press_slot >= 0:
 			var it = _drag_item(h)
 			if it != null:
-				var ic: Texture2D = U.item_icon(it.id)
+				var ic: Texture2D = U.held_item_icon(it)
 				if ic:
 					draw_texture_rect(ic, Rect2(get_local_mouse_position() - Vector2(22, 22), Vector2(44, 44)), false, Color(1, 1, 1, 0.85))
 		if overlay:
@@ -1461,7 +1461,7 @@ class BottomPanel extends Control:
 			U.text(self, "Backpack", Vector2(item_x, 156), 10, U.TEXT_DIM, "body")
 
 	func _item_icon(it: Dictionary, r: Rect2, dim: bool, h: SimUnit, w: SimWorld, slot: int) -> void:
-		var ic: Texture2D = U.item_icon(it.id)
+		var ic: Texture2D = U.held_item_icon(it)
 		if ic:
 			var sq := minf(r.size.x, r.size.y) - 6
 			draw_texture_rect(ic, Rect2(r.get_center() - Vector2(sq, sq) * 0.5, Vector2(sq, sq)), false,

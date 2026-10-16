@@ -228,7 +228,7 @@ func _bounce_path(h: SimUnit, mouse: Vector2, lv: int) -> void:
 	dir = dir.normalized()
 	var ab: SimAbilities = game.world.abilities
 	var tr := k3.trace_bullet(h.pos + dir * (h.hull + 10.0), dir, h.team, ab.val(h, "bounce_shot", "distance"),
-		int(ab.val(h, "bounce_shot", "bounces")), h.id)
+		int(ab.val(h, "bounce_shot", "bounces")), h.id, SimKits3.SUBSTEP, {}, ab.val(h, "bounce_shot", "bounce_distance"))
 	_ribbon(tr.corners, 0.16)
 	_bounce_pick = -1
 	for id in tr.passed:
@@ -246,7 +246,8 @@ func _boulder_fan(h: SimUnit, mouse: Vector2, lv: int) -> void:
 	var ab: SimAbilities = game.world.abilities
 	var n := int(ab.val(h, "summon_boulders", "count"))
 	var spread := ab.val(h, "summon_boulders", "spread")
-	var reach := (ab.val(h, "summon_boulders", "speed_min") + ab.val(h, "summon_boulders", "speed_max")) * 0.5 		* (ab.val(h, "summon_boulders", "roll_min") + ab.val(h, "summon_boulders", "roll_max")) * 0.25
+	# they roll about as far as the cursor, 200 at least and 700 at most
+	var reach := clampf(dir.length(), ab.val(h, "summon_boulders", "min_distance"), ab.val(h, "summon_boulders", "distance"))
 	_path_mesh.clear_surfaces()
 	for i in n:
 		var a := dir.angle() - spread + 2.0 * spread * (float(i) + 0.5) / float(n)

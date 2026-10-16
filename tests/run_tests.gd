@@ -2910,10 +2910,10 @@ func test_unfair_bots_earn_more() -> void:
 	w.bots.append(SimBot.new(w, h.id, "mid", "Bot", "unfair"))
 	var g0 := h.gold()
 	w.combat.give_gold(h, 100, false, h.pos)
-	check(h.gold() - g0 == 125, "Unfair: +25% gold")
+	check(h.gold() - g0 == 300, "Unfair: +200% gold (the owner's number)")
 	var x0 := h.xp
 	w.combat.give_xp(h, 100.0)
-	near(h.xp - x0, 125.0, 0.01, "Unfair: +25% experience")
+	near(h.xp - x0, 150.0, 0.01, "Unfair: +50% experience (the owner's number)")
 
 func test_game_setup_roles_are_kept() -> void:
 	BotMemory.active = false
@@ -5836,8 +5836,8 @@ func test_blau_boulders() -> void:
 	run(w, 0.4)
 	var k3 := w.abilities.kits3
 	check(k3.boulders.size() == 6, "6 boulders at level 4 (%d)" % k3.boulders.size())
-	run(w, 2.2)
-	check(k3.boulders.all(func(x): return bool(x.resting)), "they roll for at most 2 s, then rest")
+	run(w, 2.7)
+	check(k3.boulders.all(func(x): return bool(x.resting)), "they roll for at most 2.5 s, then rest")
 	var dealt := _dmg_events(w.events, e.id, "summon_boulders")
 	near(dealt, 140.0 * (1.0 + b.magic_amp + b.spell_amp) * (1.0 - e.magic_resist), 2.0, "an enemy is hurt once, whichever boulders hit it")
 	check(e.pos.distance_to(e_pos) > 120.0, "and knocked back (%d)" % int(e.pos.distance_to(e_pos)))
@@ -6105,3 +6105,221 @@ func test_bots_knock_down_enemy_turrets() -> void:
 	b.mode = "lane"
 	check(SimBot16.tick(b, h), "the bot takes it on")
 	check(h.order == O.ATTACK_UNIT and h.order_target == t.id, "it attacks the enemy turret")
+
+# ---- 2026-10-16 b: the owner's mechanics list (grip target check, Blau's reach, Unfair bots, pushing) -----------------
+
+func test_roydo_grip_needs_a_target() -> void:
+	var w := empty_world()
+	var r := _hero16(w, "roydo", Vector2(-2000, -4000))
+	var center := Vector2(-1500, -4000)
+	run(w, 0.2)
+	var mana0 := r.mana
+	w.events.clear()
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "grip_of_the_ruler", "point": center})
+	run(w, 0.6)
+	var errs := _events_of(w, "error").filter(func(x): return int(x.u) == r.id)
+	check(not errs.is_empty() and String(errs[0].msg) == "No valid target", "an empty area: No valid target (%s)" % str(errs))
+	check(r.mana == mana0 and w.abilities.cooldown_left(r, "grip_of_the_ruler") == 0.0, "nothing spent")
+	check(_events_of(w, "grip").is_empty(), "and the spell does not go off")
+	# an enemy in the fog is seized; an invisible one is not
+	var e := _dummy(w, "ezee", C.DUSK, center + Vector2(200, 0))
+	run(w, 0.1)
+	e.add_modifier({"id": "test_invis", "source": -1, "expires": INF, "invisible": true})
+	e.refresh_stats()
+	run(w, 0.1)
+	check(e.has_flag("invisible") and not w.vision.sees(r.team, e), "the enemy is invisible to Roydo")
+	check(w.abilities.cast_error(r, "grip_of_the_ruler", -1, null, center) == "No valid target", "an invisible enemy is no target")
+	e.remove_modifier("test_invis")
+	e.refresh_stats()
+	var hidden := _dummy(w, "ezee", C.DUSK, center + Vector2(-150, 60))
+	w.vision.reveal_all = false
+	var pool := w.abilities.kits3.grip_pool(r, center)
+	check(pool.has(e) and pool.has(hidden), "units in the area are thrown, seen or in the fog (seen: %s)" % str(w.vision.sees(r.team, hidden)))
+	check(w.abilities.cast_error(r, "grip_of_the_ruler", -1, null, center + Vector2(2000, 0)) == "No valid target", "far from anyone: refused")
+	check(w.abilities.cast_error(r, "grip_of_the_ruler", -1, null, center, false, false) == "", "the hotkey alone is not refused (no point yet)")
+
+func test_blau_bounce_shot_reach_grows_per_bounce() -> void:
+	var w := empty_world()
+	var spot := _bounce_spot(w, "wall")
+	check(spot != Vector2.INF, "found a wall")
+	if spot == Vector2.INF:
+		return
+	var b := _hero16(w, "blau", spot - Vector2(420, 0))
+	var k3 := w.abilities.kits3
+	var from := b.pos + Vector2(b.hull + 10.0, 0)
+	var plain := k3.trace_bullet(from, Vector2.RIGHT, b.team, 1800.0, 9, b.id, SimKits3.SUBSTEP, {}, 0.0)
+	var longer := k3.trace_bullet(from, Vector2.RIGHT, b.team, 1800.0, 9, b.id, SimKits3.SUBSTEP, {},
+		w.abilities.val(b, "bounce_shot", "bounce_distance"))
+	var length := func(tr: Dictionary) -> float:
+		var s := 0.0
+		var cs: Array = tr.corners
+		for i in range(1, cs.size()):
+			s += (cs[i] as Vector2).distance_to(cs[i - 1])
+		return s
+	check((longer.corners as Array).size() >= 3, "the shot ricochets (%d corners)" % (longer.corners as Array).size())
+	check(float(length.call(longer)) > float(length.call(plain)) + 300.0, "each bounce adds reach (%d against %d)" % [int(length.call(longer)), int(length.call(plain))])
+	# the real bullet: its distance left grows by 400 at a bounce
+	run(w, 0.1)
+	w.events.clear()
+	w.command(b.id, {"type": O.CAST_POINT, "ability": "bounce_shot", "point": spot})
+	var gain := -INF
+	var left0 := -1.0
+	for i in 40:
+		var n0 := _events_of(w, "bounce_shot_bounce").size()
+		w.step()
+		for e in w.effects:
+			if String(e.kind) == "bounce_shot":
+				if left0 >= 0.0 and _events_of(w, "bounce_shot_bounce").size() > n0 and gain == -INF:
+					gain = float(e.left) - left0
+				left0 = float(e.left)
+	check(not _events_of(w, "bounce_shot_bounce").is_empty(), "it bounced off the wall")
+	near(gain, 400.0 - 2400.0 * C.DT, 1.0, "the bounce gave it 400 more distance (less this step's travel)")
+	near(w.abilities.val(b, "bounce_shot", "bounce_distance"), 400.0, 0.01, "400 per bounce")
+
+func test_blau_boulders_roll_to_the_point() -> void:
+	for want in [300.0, 700.0, 2000.0]:
+		var w := empty_world()
+		var b := _hero16(w, "blau", Vector2(5600, -5700))
+		run(w, 0.1)
+		var start := b.pos
+		w.command(b.id, {"type": O.CAST_POINT, "ability": "summon_boulders", "point": b.pos + Vector2(want, 0)})
+		run(w, 3.2)
+		var k3 := w.abilities.kits3
+		check(k3.boulders.size() == 6 and k3.boulders.all(func(x): return bool(x.resting)), "6 boulders at rest after 3 s (%.0f)" % want)
+		var far := 0.0
+		for bd in k3.boulders:
+			far = maxf(far, (bd.pos as Vector2).distance_to(start))
+		var cap := minf(want, 700.0)
+		check(far <= cap + 40.0 and far >= cap * 0.7, "cast %.0f away: they roll about that far, 700 at most (%d)" % [want, int(far)])
+		check(b.pos.distance_to(start) < 30.0, "Blau casts where he stands (%.0f)" % want)
+		for bd in k3.boulders:
+			k3._unrest(bd)
+
+func test_unfair_bots_gold_and_xp() -> void:
+	var w := empty_world()
+	var a := _hero16(w, "ezee", Vector2(-2000, -4000))
+	var h := _hero16(w, "blau", Vector2(-2200, -4000))
+	SimBot.new(w, a.id, "mid", "Unfair", "unfair")
+	SimBot.new(w, h.id, "top", "Hard", "hard")
+	near(a.gold_mult, 3.0, 1e-6, "Unfair: +200% gold")
+	near(a.xp_mult, 1.5, 1e-6, "Unfair: +50% experience")
+	near(h.gold_mult, 1.0, 1e-6, "Hard: no bonus")
+	var g0 := a.gold()
+	w.combat.give_gold(a, 100, false, a.pos)
+	check(a.gold() - g0 == 300, "100 gold earned is 300 (%d)" % (a.gold() - g0))
+	a.level = 1
+	a.xp = 0.0
+	w.combat.give_xp(a, 100.0)
+	near(a.xp, 150.0, 0.01, "100 experience is 150")
+	var ga := a.gold()
+	var gh := h.gold()
+	run(w, 30.0)
+	var pa := float(a.gold() - ga)
+	var ph := float(h.gold() - gh)
+	check(ph > 0.0 and absf(pa / ph - 3.0) < 0.2, "passive gold three times as fast (%d against %d)" % [int(pa), int(ph)])
+
+func test_unfair_melee_bots_plan_jump_knife() -> void:
+	var w := empty_world()
+	for id in ["ezee", "kragg", "roydo", "sludge"]:
+		var h := _hero16(w, id, Vector2(-2000, -4000))
+		var b := SimBot.new(w, h.id, "mid", "Unfair", "unfair")
+		var k := b.build.find("jump_knife")
+		var boots := -1
+		for i in b.build.size():
+			if String(b.build[i]) in SimBot.BOOT_UPGRADES:
+				boots = i
+				break
+		check(k >= 0 and (boots < 0 or k == boots + 1), "%s (Unfair) buys a Jump Knife right after its boots (%s)" % [id, str(b.build)])
+	var rb := _hero16(w, "blau", Vector2(-2000, -4400))
+	var rbot := SimBot.new(w, rb.id, "mid", "Ranged", "unfair")
+	var plan: Array = (SimBotKits.builds("blau", rbot.role)[rbot.build_idx] as Array)
+	check(rbot.build == plan, "a ranged Unfair bot keeps its build")
+
+func test_bot_jumps_in_with_jump_knife() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "ezee", o)
+	_give(w, h, "jump_knife", 0)
+	var e := _dummy(w, "blau", C.DUSK, o + Vector2(800, 0))
+	run(w, 0.2)
+	var b := _bot16(w, h, [e])
+	b._fight_items(h, e)
+	check(h.order == O.CAST_POINT and h.cast_item_slot == 0, "a melee bot jumps on the hero it fights (order %d)" % h.order)
+	run(w, 0.3)
+	check(h.pos.distance_to(e.pos) < 250.0, "and lands beside it (%d)" % int(h.pos.distance_to(e.pos)))
+
+func test_bots_push_when_no_enemy_hero_is_near() -> void:
+	var w := empty_world()
+	w.time = 120.0
+	var o := Vector2(-1800, -1800)
+	var h := _hero16(w, "ezee", o)
+	var c := w.spawn("dusk_melee", C.DUSK, o + Vector2(160, 0))
+	c.lane = "mid"
+	c.order = O.HOLD
+	var mine := w.spawn("dawn_melee", C.DAWN, o + Vector2(80, 60))
+	mine.lane = "mid"
+	mine.order = O.HOLD
+	run(w, 0.2)
+	var b := _bot16(w, h, [])
+	b.lane = "mid"
+	b._known.clear()
+	b._lane(h)
+	check(h.order == O.ATTACK_UNIT and h.order_target == c.id, "alone in lane, the bot hits the full-health creep (pushes)")
+	# an enemy hero beside the wave: back to last hits and trades, no free pushing
+	var e := _dummy(w, "blau", C.DUSK, o + Vector2(900, 0))
+	run(w, 0.2)
+	h.order = O.NONE
+	h.order_target = -1
+	b._last_order = {}
+	b._known.clear()
+	b._known.append(e)
+	b._next_trade = w.time + 60.0
+	b._lane(h)
+	check(not (h.order == O.ATTACK_UNIT and h.order_target == c.id), "with an enemy hero near it does not push the wave")
+
+func test_team_networth_lead_makes_bots_bold() -> void:
+	var w := empty_world()
+	var a := _hero16(w, "ezee", Vector2(-2000, -4000))
+	var e := _hero16(w, "blau", Vector2(2000, 4000), C.DUSK)
+	var b := SimBot.new(w, a.id, "mid", "Bot", "hard")
+	a.gold_reliable = e.gold_reliable
+	a.gold_unreliable = e.gold_unreliable
+	near(w.brain(C.DAWN).networth_lead(), 0.0, 1e-6, "even net worth: no lead")
+	var bold0 := b._boldness()
+	a.gold_reliable += 6000
+	var lead := w.brain(C.DAWN).networth_lead()
+	check(lead > 0.3, "6000 gold more is a lead (%.2f)" % lead)
+	check(w.brain(C.DUSK).networth_lead() < 0.0, "the other team is behind")
+	check(b._boldness() > bold0 + 0.15, "and the bot plays bolder (%.2f against %.2f)" % [b._boldness(), bold0])
+
+func test_bots_hit_the_tower_when_alone_early() -> void:
+	var w := empty_world()
+	w.time = 150.0                                  # before 5:00 a laning bot used to leave towers alone
+	var tw := w.spawn("tower1", C.DUSK, Vector2(-1000, -4000))
+	var h := _hero16(w, "ezee", tw.pos + Vector2(-tw.attack_range - 60.0, 0))
+	var mine := w.spawn("dawn_melee", C.DAWN, tw.pos + Vector2(-140, 0))
+	mine.lane = "bot"
+	mine.order = O.HOLD
+	run(w, 0.3)
+	tw.atk_target = mine.id
+	var b := _bot16(w, h, [])
+	b.lane = "bot"
+	b._known.clear()
+	b._lane(h)
+	check(h.order == O.ATTACK_UNIT and h.order_target == tw.id, "no enemy hero near: the bot hits the tower its creep tanks (order %d -> %d)" % [h.order, h.order_target])
+
+func test_switch_boots_icon_follows_attribute() -> void:
+	var w := empty_world()
+	var h := _hero16(w, "ezee", Vector2(-2000, -4000))
+	var it := _give(w, h, "power_treads", 0)
+	it["attr"] = "str"
+	var seen := {}
+	for k in 3:
+		var tex := UiKit.held_item_icon(it)
+		check(tex != null and tex != UiKit.item_icon("power_treads"), "%s: its own icon" % String(it.attr))
+		check(tex != null and tex.resource_path.ends_with("power_treads_%s.svg" % String(it.attr)), "the %s icon (%s)" % [String(it.attr), tex.resource_path if tex else "none"])
+		seen[tex] = true
+		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
+		run(w, 0.1)
+	check(seen.size() == 3, "three different icons as it switches (%d)" % seen.size())
+	check(UiKit.held_item_icon({"id": "boots"}) == UiKit.item_icon("boots"), "other items keep their icon")

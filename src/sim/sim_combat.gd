@@ -624,7 +624,7 @@ func _share_xp(t: SimUnit, amount: float, team: int, always: SimUnit = null) -> 
 func give_xp(h: SimUnit, amount: float) -> void:
 	if amount <= 0.0 or h.level >= C.MAX_LEVEL:
 		return
-	amount *= h.gain_mult
+	amount *= h.xp_mult
 	h.xp += amount
 	w.events.append({"t": "xp", "u": h.id, "amount": amount})
 	var lvl := C.xp_level(h.xp)
@@ -637,8 +637,8 @@ func give_xp(h: SimUnit, amount: float) -> void:
 func give_gold(h: SimUnit, amount: int, reliable: bool, at: Vector2) -> void:
 	if amount == 0:
 		return
-	if amount > 0 and h.gain_mult != 1.0:
-		amount = int(round(amount * h.gain_mult))
+	if amount > 0 and h.gold_mult != 1.0:
+		amount = int(round(amount * h.gold_mult))
 	if reliable:
 		h.gold_reliable += amount
 	else:

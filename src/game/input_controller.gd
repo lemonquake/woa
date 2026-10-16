@@ -27,6 +27,7 @@ var hover_ability := ""                     # the ability button under the mouse
 var drag_rect := Rect2()                    # the green selection box while dragging (screen space)
 var _last_f1 := 0.0
 var _last_f2 := 0.0
+var _last_tp := -10.0                       # when the Teleport key or slot was last pressed (a double tap goes home)
 var _press_at := Vector2.ZERO
 var _pressing := false
 var _dragging := false
@@ -488,14 +489,24 @@ func targeting_team() -> String:
 		return String(SimData.item(it.id).get("target_team", "ally"))
 	return String(SimData.ability(targeting).get("target_team", "enemy"))
 
+## The Teleport key or slot: target a place. Pressed again within 0.5 s (a double tap or double click) it teleports to
+## your fountain at once, as in Dota.
 func begin_tp() -> void:
 	var h := hero()
 	var err: String = game.world.abilities.cast_error(h, "tp", -1, null, h.pos)
 	if err != "":
+		_last_tp = -10.0
 		if game.hud and game.hud.has_method("error"):
 			game.hud.error(err)
 		return
+	var now := Time.get_ticks_msec() / 1000.0
+	if targeting == "tp" and now - _last_tp < 0.5:
+		_last_tp = -10.0
+		target_point(game.world.map.fountains[h.team], _target_queue)
+		return
+	_last_tp = now
 	targeting = "tp"
+	_target_queue = false
 
 ## Buy a Teleport Scroll (100 gold), also while dead: into the Teleport slot at the shop, otherwise into the stash
 ## for the courier to bring, as in Dota.
@@ -658,6 +669,11 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 				return
 			game.order(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
 		else:
+			# an area spell with nothing to act on there (Grip of the Ruler) keeps the cursor and says so
+			var perr: String = w.abilities.cast_error(h, targeting, -1, null, ground)
+			if perr == "No valid target":
+				_error(perr)
+				return
 			game.order(h.id, {"type": O.CAST_POINT, "ability": targeting, "point": ground, "queue": shift})
 	# as in Dota, targeting ends after the click even with Shift held (press the hotkey again to queue another)
 	targeting = ""

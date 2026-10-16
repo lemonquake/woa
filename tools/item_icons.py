@@ -565,6 +565,30 @@ def make_icons():
         for x, y, col in ((64, 16, RED), (22, 92, GREEN), (106, 92, BLUE)):
             at(ic, x, y, gem(ic, col, 11, 6))
 
+    # Switch Boots as worn: one icon per attribute it is set to (the inventory shows the active one)
+    @icon("power_treads_str", "str")
+    def _(ic):  # strength: a red boot, a red gem and a fist
+        at(ic, 0, 0, '<g transform="translate(66 60)">%s</g>' % speed_lines("#ffd0b0", 3, -62, 24, -8, 12, 0.5))
+        at(ic, 58, 64, boot(ic, RED, GOLD), 0, 0.95)
+        at(ic, 24, 24, gem(ic, RED, 13, 6))
+        ic.add(badge(ic, '<g transform="scale(0.3)">%s</g>' % glove(ic, GOLD), "#3a0606"))
+
+    @icon("power_treads_agi", "agi")
+    def _(ic):  # agility: a green boot with speed lines, a green gem and a feather
+        at(ic, 0, 0, '<g transform="translate(66 60)">%s</g>' % speed_lines("#d8ffc0", 4, -66, 34, -16, 11, 0.75))
+        at(ic, 58, 64, boot(ic, GREEN, GOLD), 0, 0.95)
+        at(ic, 24, 24, gem(ic, GREEN, 13, 6))
+        ic.add(badge(ic, '<g transform="rotate(35) scale(0.3)">%s</g>' % feather(ic, WHITE, GOLD), "#06300a"))
+
+    @icon("power_treads_int", "int")
+    def _(ic):  # intelligence: a blue boot with sparks, a blue gem and a star of magic
+        at(ic, 0, 0, '<g transform="translate(66 60)">%s</g>' % speed_lines("#c8dcff", 3, -62, 24, -8, 12, 0.5))
+        at(ic, 58, 64, boot(ic, BLUE, GOLD), 0, 0.95)
+        at(ic, 24, 24, gem(ic, BLUE, 13, 6))
+        for x, y, r in ((96, 30, 6), (110, 52, 4)):
+            at(ic, x, y, star("#e0ecff", r, r * 0.4, 4))
+        ic.add(badge(ic, star("#c8e0ff", 12, 5, 8), "#081a4a"))
+
     @icon("slip_boots", "agi")
     def _(ic):  # Slip Boots: a boot passing through a unit, ghost copies behind it
         for k, op in ((2, 0.22), (1, 0.42)):

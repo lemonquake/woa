@@ -4,6 +4,39 @@
 
 ## Status (keep this section current)
 
+**2026-10-16 b: your mechanics list.** Run `work/lemondev/2026-10-16b-mechanics/`.
+* **Grip of the Ruler** needs someone to throw: on an area with no unit it does not go off, says "No valid target",
+  keeps the targeting cursor and spends no mana or cooldown (also checked again when the cast point ends). It now
+  seizes units hidden in the fog, but never an invisible enemy (unless your team has True Sight on it).
+* **Town Portal double tap**: T twice within 0.5 s, or two clicks on the Teleport slot, teleports to your fountain
+  (the usual 3 s channel).
+* **Bots push** in lane when no enemy hero is near (none seen within 1600 in the last 3 s): they kill the wave (last
+  hits first, then the weakest creep) and hit the tower while one of their creeps tanks it, from the start of the game
+  (a support next to its core leaves the creeps to the core). **Ahead in net worth** (10% or more, gaps under 1000 gold
+  ignored): bolder: lower retreat bar, fights taken on smaller chances, trades more often, kills chased on smaller
+  leads, the lane push also with an enemy known nearby but out of sight, and a team 20% ahead calls pushes from 10:00
+  ("We're ahead in gold. Let's push ...").
+* **Blau**: Bounce Shot flies 400 further after every ricochet (aim line and bots include it). Summon Boulders rolls
+  toward the point you click, as far as it, 200 at least and 700 at most (cast range 700, cast from where he stands);
+  no boulder rolls past that distance. They rest within 2.5 s (was 1-2 s).
+* **Switch Boots** (Power Treads): three icons for the attribute they are set to, in the inventory, backpack, stash,
+  courier, drag and on the ground: red boot with a fist (strength), green boot with a feather (agility), blue boot
+  with a star (intelligence). The shop keeps the old icon. `tools/item_icons.py`, sheet `treads.png`.
+* **Unfair bots** (your numbers): +200% gold (bounties and passive gold) and +50% experience (was +25% of both); melee
+  Unfair bots buy a Jump Knife right after their boots. Every bot with a Jump Knife (melee, not Sludge, who has his
+  own) now jumps onto the enemy hero it fights from 300-1100 away when healthy, not onto an enemy tower unless the
+  target is nearly dead and not into more enemies than allies; escapes with it as before.
+Evidence: headless tests 235 passed, 0 failed (new: grip with no target, fog and invisible; bounce reach; boulders at
+300 / 700 / 2000; Unfair gold, xp, passive gold; Unfair knife plans; jump-in; pushing alone and not with a hero near;
+tower hits early; net worth lead; Switch Boots icons); `sh tools/check.sh` no parse errors, "Names OK"; live
+`input_probe.gd` as Roydo 15/15 (grip on empty ground keeps the cursor, HUD shows "No valid target", nothing spent;
+T, slow T, double T: the hero arrives at the fountain) and as Blau 17/17. 20-minute 5 v 5 bot games (`bot_game_*.txt`):
+Hard seed 3 and Unfair seed 7: no script errors, no hangs; Unfair: every melee bot bought a Jump Knife, team net worth
+88559 / 82991 at 20:00 against 19634 / 21034 on Hard. Same seed before the change (`bot_game_before.txt`): towers
+lost 4 and 3 after, so pushing in real games is not shown to be stronger yet (one seed). `build/WarriorsOfAether.exe`
+rebuilt 2026-10-16 22:19; cold start into a Blau match 20 s, no script errors (`export_blau.png`).
+Not verified: no blind critic review (none asked for); the new icons are a builder self-check.
+
 **2026-10-16: two new heroes, Roydo and Blau (your kits and numbers).** Run `work/lemondev/2026-10-16-roydo-blau/`
 (contract.md, sources.md; captures in `shots/`, frame sheets in `preview/`).
 * **Models**: free CC0 Quaternius packs (Universal Base Characters, Universal Animation Library 1 and 2, Modular
@@ -492,7 +525,7 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | F4, the Shop button, or B with an empty slot 5 | Shop. A click anywhere else (world, minimap, top bar) or Esc closes it; clicks on your items, stash and To Buy keep it open |
 | , (comma), or right click the Teleport slot | Buy a Teleport Scroll for 100 gold (also first in the shop's Consumables). At the shop it goes into the Teleport slot; elsewhere into the stash, and into the slot once it reaches you (F3 sends the courier) |
 | J, or the button above the minimap | Glyph |
-| T | Town Portal: target a point or the minimap; the hero teleports beside the nearest allied building after a 3 s channel |
+| T | Town Portal: target a point or the minimap; the hero teleports beside the nearest allied building after a 3 s channel. Press T (or click the Teleport slot) twice quickly: straight to your fountain |
 | F3, or the Deliver button | Courier picks up your items lying in the fountain area, takes the stash and flies it all to you |
 | F2 (courier selected) | Q Return to Base, W Retrieve Items, E Return Items to Stash, R Deliver, Z Transfer, X Speed Burst (level 10), C Shield (level 20), V Auto Deliver; right click moves it |
 | Buyback button (while dead) | Buy back: 200 + net worth / 13 gold, 8 minute cooldown |
@@ -742,7 +775,8 @@ names in `docs/MECHANICS.md`, "Items and shop").
 * Pings and typed calls from the player are answered: the quickest two or three bots go (by teleport when that is
   faster); others say why not: dead (and when they are back), low health, out of mana, TP on cooldown or none and too
   far, defending elsewhere, too many enemies there, ultimate on cooldown, the carry farming early, or simply not now.
-* Difficulty follows Dota's bot levels (reaction delay, last hit error, spell lockouts; Unfair +25% gold and xp).
+* Difficulty follows Dota's bot levels (reaction delay, last hit error, spell lockouts). Unfair (your numbers, 2026-10-16 b):
+  +200% gold (passive gold too) and +50% experience; melee Unfair bots buy a Jump Knife right after their boots.
 * Learning (Options > Game, "Bots learn from games", on by default; "Forget what bots learned" clears it): a fight
   model trained on every fight a bot starts, a danger map of where heroes died, item builds chosen by UCB1 from their
   results, Shuriken Hook hit rates by distance, a retreat bar per hero, lane matchups, the player's usual lane.
@@ -863,6 +897,13 @@ Run `work/lemondev/2026-10-14-elements-azrin/` (contract in `contract.md`). Rule
   "Not enough room", "Cannot be disassembled".
 * Elements chosen for existing units (veto freely): Blood Ranger Nature, Ezee Dark, Sludge Earth; creeps by team (Light,
   Dark); towers Earth; neutrals as listed in MECHANICS.md.
+
+## Names added 2026-10-16 b (veto any you dislike)
+
+* Error: "No valid target". Bot chat: "We're ahead in gold. Let's push <lane> and take their <building>."
+* Code: `SimKits3.grip_pool`, `SimTeamAI.networth_lead`, `SimBot._boldness`, `_jump_in`, `_plan_knife`,
+  `BOOT_UPGRADES`, `SimUnit.gold_mult` / `xp_mult` (was `gain_mult`), `UiKit.held_item_icon`, ability values
+  `bounce_distance`, `min_distance`, icons `power_treads_str` / `_agi` / `_int`.
 
 ## Names added 2026-10-16 (veto any you dislike)
 

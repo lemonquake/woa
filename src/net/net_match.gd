@@ -119,7 +119,8 @@ func _system(c: Dictionary) -> void:
 						world.bots.erase(b)
 				h.bot = false
 				h.bot_name = ""
-				h.gain_mult = 1.0
+				h.gold_mult = 1.0
+				h.xp_mult = 1.0
 				world.orders.clear(h)
 	if on_system.is_valid():
 		on_system.call(c)

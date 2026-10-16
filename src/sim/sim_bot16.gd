@@ -108,7 +108,7 @@ static func _blau(b: SimBot, h: SimUnit, e: SimUnit) -> void:
 	if not e.is_ranged() and h.edge_distance(e) < 200.0:
 		if _trap_away(b, h, e):
 			return
-		if _cast_point(b, h, "summon_boulders", e.pos, 0.5):
+		if _cast_point(b, h, "summon_boulders", e.pos + (e.pos - h.pos).normalized() * 250.0, 0.5):
 			return
 	# the turret: in every fight, between him and the target and within its reach of the target
 	if on and d < 1000.0 and _place_turret(b, h, e.pos):
@@ -172,8 +172,9 @@ static func best_bounce(b: SimBot, h: SimUnit, focus: SimUnit, farm: bool) -> Di
 	var dist := ab.val(h, "bounce_shot", "distance")
 	var bounces := int(ab.val(h, "bounce_shot", "bounces"))
 	var max_hits := int(ab.val(h, "bounce_shot", "max_hits"))
+	var bdist := ab.val(h, "bounce_shot", "bounce_distance")
 	var start := h.pos
-	var prep := k3.trace_prep(start, dist, h.team, h.id)
+	var prep := k3.trace_prep(start, dist + bdist * float(bounces), h.team, h.id)
 	if (prep.eid as PackedInt32Array).is_empty():
 		return {}
 	var score_of := func(tr: Dictionary) -> float:
@@ -216,7 +217,7 @@ static func best_bounce(b: SimBot, h: SimUnit, focus: SimUnit, farm: bool) -> Di
 				exact.append(sol2)
 	var ranked: Array = []
 	for dir: Vector2 in coarse:
-		var trc := k3.trace_bullet(start + dir * (h.hull + 10.0), dir, h.team, dist, bounces, h.id, 40.0, prep)
+		var trc := k3.trace_bullet(start + dir * (h.hull + 10.0), dir, h.team, dist, bounces, h.id, 40.0, prep, bdist)
 		var sc: float = score_of.call(trc)
 		if sc > 0.0:
 			ranked.append([sc, dir])
@@ -227,7 +228,7 @@ static func best_bounce(b: SimBot, h: SimUnit, focus: SimUnit, farm: bool) -> Di
 	var best := {}
 	var best_score := 0.0
 	for dir: Vector2 in exact:
-		var tr := k3.trace_bullet(start + dir * (h.hull + 10.0), dir, h.team, dist, bounces, h.id, SimKits3.SUBSTEP, prep)
+		var tr := k3.trace_bullet(start + dir * (h.hull + 10.0), dir, h.team, dist, bounces, h.id, SimKits3.SUBSTEP, prep, bdist)
 		var score: float = score_of.call(tr)
 		if score > best_score:
 			best_score = score

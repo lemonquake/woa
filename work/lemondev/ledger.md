@@ -275,3 +275,17 @@ ran the integration gate (tests, check.sh, duels, bot game, export, cold start).
 | B1 Bots | 1-2 | working tree | gate: 6 bot tests, duels (`duels.txt`, `duels_final.txt`), 5 v 5 bot game (`bot_game.txt`) | n/a | REJECT (integration hang, see I1) then PASS (gate) | Blau loses lane to Azrin (0-12 kills over 3 seeds) | lane trading vs strong laners |
 | I1 Integration | 1 | working tree | gate: tests 224/224, check.sh, export, cold start; Roydo duels and 5 v 5 bot game | n/a | REJECT | every game froze in one sim step once Roydo's bot used Anomaly in a lane (last-hit forecast divided by his zero projectile speed: infinite loop) | form projectile speed + guard; regression test |
 | I1 Integration | 2 | working tree | gate: tests 225/225, check.sh, duels, bot game, export, cold start | n/a | PASS (gate) | none | Blau's laning (out-farmed by Roydo and Azrin) |
+
+## Session 2026-10-16 b (the owner's mechanics list) — run `work/lemondev/2026-10-16b-mechanics/`
+
+No critic subagent was run (none asked for); the Switch Boots icons are a builder self-check.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| G1 Grip target check | 1 | working tree | gate: tests, input_probe (Roydo) | n/a | PASS (gate) | none | none |
+| T1 Town Portal double tap | 1-2 | working tree | gate: input_probe (Roydo, Blau) | n/a | PASS (gate) | probe read the channel too early (probe fix) | none |
+| B1 Blau reach | 1-2 | working tree | gate: tests | n/a | REJECT then PASS (gate) | boulders bumped past the reach (758 at 700) | none |
+| I1 Switch Boots icons | 1-2 | working tree | self-check `treads.png`, test | n/a | REJECT then PASS (self-check) | strength boot rendered grey | blind review UNVERIFIED |
+| U1 Unfair bots | 1 | working tree | gate: tests, Unfair bot game | n/a | PASS (gate) | none | none |
+| P1 Pushing and lead | 1 | working tree | gate: tests, bot games (2 seeds + before) | n/a | PASS (gate) | none | more seeds to show games end sooner |
+| X1 Integration | 1 | working tree | gate: tests 235/235, check.sh, export, cold start | n/a | PASS (gate) | none | none |

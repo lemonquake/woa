@@ -251,7 +251,8 @@ Break, Invisibility, Disjoint; Valve's game data for the numbers.
 
 * Teleport Scroll: an item, so mutes and hexes block it and end its channel; roots block it and end its channel
   (Dota's "root disables" flag). Bought at the shop it goes into the Teleport slot; bought away from the shop it waits
-  in the stash (the courier brings it) and moves into the slot when it reaches the hero.
+  in the stash (the courier brings it) and moves into the slot when it reaches the hero. Pressing its key (or clicking
+  its slot) twice within 0.5 s teleports to your own fountain at once, as Dota's double tap does.
 * Channels (Town Portal, Burst Shot): mana and cooldown are spent when the channel starts. Any new order ends it
   (move, attack, stop, hold, another cast), except an item that acts at once without a target (Zap Stick). Stuns,
   silence, roots and pushes end it too. Shift-queued orders wait until it finishes. The HUD shows a channel bar.

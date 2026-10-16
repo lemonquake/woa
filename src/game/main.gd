@@ -541,7 +541,7 @@ func _make_ground_item(g: Dictionary) -> Node3D:
 	var n := Node3D.new()
 	add_child(n)
 	var spr := Sprite3D.new()
-	spr.texture = UiKit.item_icon(String(g.item.id))
+	spr.texture = UiKit.held_item_icon(g.item)
 	spr.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	spr.no_depth_test = false
 	spr.shaded = false

@@ -1001,6 +1001,21 @@ func _first_bot_of(arr: Array[SimUnit]) -> SimUnit:
 
 # ---- Calls: push ----------------------------------------------------------------------------------------------------
 
+## How far our team's net worth is ahead of the enemy's: 0.2 = 20% more, negative when behind; 0 while the gap is
+## under 1000 gold (early on every gap is a large share). Bots play bolder on a lead (SimBot._boldness), and a team
+## 20% ahead pushes from 10:00.
+func networth_lead() -> float:
+	var ours := 0.0
+	var theirs := 0.0
+	for h in w.heroes:
+		if h.team == team:
+			ours += float(h.networth())
+		elif h.team == 1 - team:
+			theirs += float(h.networth())
+	if absf(ours - theirs) < 1000.0 or theirs <= 0.0:
+		return 0.0
+	return ours / theirs - 1.0
+
 func _call_push() -> void:
 	for p in plans:
 		if p.kind == "push" and not bool(p.ping):
@@ -1015,6 +1030,8 @@ func _call_push() -> void:
 	var ratio := _team_power_ratio() if w.time > 1200.0 else 1.0
 	# time presses as in Dota: from 20:00 an even team pushes when about as strong, from 30:00 any three heroes up do
 	var want := (dead >= 2 and aa >= 2) or (aa - ea >= 2) or (dead >= 1 and aa >= ea and ratio > 1.1 and w.time > 900.0) 		or (late and aa >= ea and aa >= 3 and ratio > 0.95) or (w.time > 1200.0 and aa >= ea and aa >= 3 and ratio > 0.9) 		or (w.time > 1800.0 and aa >= 3 and aa >= ea - 1 and ratio > 0.8)
+	var rich := w.time > 600.0 and aa >= ea and aa >= 2 and networth_lead() > 0.2
+	want = want or rich
 	if not want or w.time < 300.0:
 		return
 	# the lane whose enemy front tower is weakest and closest to our creeps
@@ -1051,7 +1068,7 @@ func _call_push() -> void:
 		return
 	pushes_called += 1
 	var lead := w.get_unit(int((p.members as Dictionary).keys()[0]))
-	var why := "%d of them are dead" % dead if dead >= 2 else ("we have more heroes up" if aa - ea >= 2 else "we're stronger now")
+	var why := "%d of them are dead" % dead if dead >= 2 else ("we have more heroes up" if aa - ea >= 2 else 		("we're ahead in gold" if rich else "we're stronger now"))
 	say(lead, "%s. Let's push %s and take their %s." % [why.left(1).to_upper() + why.substr(1), lane_label(best), _building_word(target)],
 		"push_%d" % target.id, 45.0)
 

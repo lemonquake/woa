@@ -124,6 +124,8 @@ func _run() -> void:
 		if not errs.is_empty():
 			print("  errors: ", errs)
 	await _quick_cast_check(h, foe)
+	await _grip_empty_check(h, foe)
+	await _tp_double_tap_check(h)
 	print("\n%d passed, %d failed" % [_passes, _fails])
 	quit(1 if _fails > 0 else 0)
 
@@ -164,3 +166,55 @@ func _quick_cast_check(h: SimUnit, foe: SimUnit) -> void:
 	await frames(45)
 	check(h.mana < mana0 or w.abilities.cooldown_left(h, aid) > 0.0, "quick cast: %s went off at the mouse (mana %.0f -> %.0f)" % [aid, mana0, h.mana])
 	Options.set_value("quick_cast", was)
+
+## Roydo: Grip of the Ruler clicked on empty ground says "No valid target", keeps the cursor and spends nothing.
+func _grip_empty_check(h: SimUnit, foe: SimUnit) -> void:
+	var slot := h.abilities.find("grip_of_the_ruler")
+	if slot < 0:
+		return
+	var w: SimWorld = game.world
+	var inp: InputController = game.input
+	h.mana = h.max_mana
+	h.ability_ready["grip_of_the_ruler"] = C.LONG_AGO
+	w.orders.clear(h)
+	foe.pos = h.pos + Vector2(-1500, 0)
+	await frames(3)
+	var empty_spot := h.pos + Vector2(450, 300)
+	var sp: Vector2 = game.camera.cam.unproject_position(View.to3(empty_spot, game.terrain.height_at(empty_spot)))
+	var mana0 := h.mana
+	inp._action(Keybinds.slot_action(slot, h.abilities.size()), h)
+	inp._left_click(sp, false)
+	check(inp.targeting == "grip_of_the_ruler", "grip on empty ground keeps the cursor (targeting=%s)" % inp.targeting)
+	check(String(game.hud.get("_msg")) == "No valid target", "and the HUD says No valid target (%s)" % str(game.hud.get("_msg")))
+	await frames(30)
+	check(h.mana == mana0 and w.abilities.cooldown_left(h, "grip_of_the_ruler") == 0.0, "grip on empty ground spends nothing")
+	inp.targeting = ""
+
+## The Teleport key pressed twice quickly teleports to the fountain; pressed twice slowly it just stays targeting.
+func _tp_double_tap_check(h: SimUnit) -> void:
+	var w: SimWorld = game.world
+	var inp: InputController = game.input
+	w.orders.clear(h)
+	h.channel = {}
+	h.tp_charges = maxi(h.tp_charges, 2)
+	h.ability_ready["tp"] = C.LONG_AGO
+	h.mana = h.max_mana
+	inp.targeting = ""
+	inp._action("tp", h)
+	check(inp.targeting == "tp", "T starts Town Portal targeting")
+	await frames(20)                                # about 0.66 s: too slow for a double tap
+	inp._action("tp", h)
+	check(inp.targeting == "tp", "T again after 0.6 s keeps targeting (no teleport)")
+	inp._action("tp", h)                            # within 0.5 s of the last press: home
+	check(inp.targeting == "", "a double tap ends targeting")
+	var dest := Vector2.INF
+	for k in 30:
+		await frames(1)
+		if not h.channel.is_empty() and String(h.channel.ability) == "tp":
+			dest = h.channel.dest
+			break
+	var home: Vector2 = w.map.fountains[h.team]
+	check(dest.distance_to(home) < 900.0,
+		"a double tap teleports to the fountain (dest %s, fountain %s)" % [str(dest), str(home)])
+	await frames(100)
+	check(h.pos.distance_to(home) < 900.0, "and the hero arrives there (%d away)" % int(h.pos.distance_to(home)))

@@ -107,6 +107,15 @@ static func item_icon(id: String) -> Texture2D:
 		return icon("items/quest_letter")
 	return icon(item_icon_path(id))
 
+## The icon of an item someone holds: Switch Boots show the attribute they are set to (power_treads_str / _agi / _int).
+static func held_item_icon(it: Dictionary) -> Texture2D:
+	var id := String(it.get("id", ""))
+	if id == "power_treads" and it.has("attr"):
+		var t := icon(item_icon_path("power_treads_" + String(it.attr)))
+		if t:
+			return t
+	return item_icon(id)
+
 static var _gen_icons := {}
 
 static func item_icon_path(id: String) -> String:

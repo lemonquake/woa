@@ -638,16 +638,18 @@ static func _build_abilities_16() -> void:
 		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [12, 11, 10, 9], "cast_point": 0.25, "range": 800,
 		"anim": "blau_shoot", "damage_type": "magical", "bounce_path": true,
 		"values": {"damage": [70, 110, 150, 190], "bounces": [3, 5, 7, 9], "max_hits": [2, 2, 2, 2],
-		"distance": [1800, 1800, 1800, 1800], "speed": [2400, 2400, 2400, 2400]}, "hidden_values": ["speed"],
-		"desc": "Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times. Each enemy it passes takes magic damage, at most twice."}
+		"distance": [1800, 1800, 1800, 1800], "bounce_distance": [400, 400, 400, 400], "speed": [2400, 2400, 2400, 2400]},
+		"hidden_values": ["speed"],
+		"desc": "Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times; each ricochet lets it fly 400 further. Each enemy it passes takes magic damage, at most twice."}
 	_abilities["summon_boulders"] = {"id": "summon_boulders", "name": "Summon Boulders", "behavior": "point",
 		"key": "W", "max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [20, 19, 18, 17], "cast_point": 0.3,
-		"range": 600, "anim": "blau_cast_throw", "damage_type": "magical", "direction": true,
+		"range": 700, "anim": "blau_cast_throw", "damage_type": "magical", "direction": true,
 		"values": {"count": [3, 4, 5, 6], "damage": [80, 100, 120, 140], "push": [200, 200, 200, 200],
-		"duration": [10, 10, 10, 10], "roll_min": [1.0, 1.0, 1.0, 1.0], "roll_max": [2.0, 2.0, 2.0, 2.0],
-		"speed_min": [520, 520, 520, 520], "speed_max": [760, 760, 760, 760], "spread": [0.6, 0.6, 0.6, 0.6]},
-		"hidden_values": ["roll_min", "roll_max", "speed_min", "speed_max", "spread"],
-		"desc": "3 / 4 / 5 / 6 boulders roll out ahead of Blau at random angles for 1 to 2 seconds, bouncing off each other, walls and units. An enemy they hit takes magic damage once and is knocked 200 back. They stay for 10 seconds and block every unit, even phased ones. Bounce Shot ricochets off them."}
+		"duration": [10, 10, 10, 10], "distance": [700, 700, 700, 700], "min_distance": [200, 200, 200, 200],
+		"roll_max": [2.5, 2.5, 2.5, 2.5], "speed_min": [520, 520, 520, 520], "speed_max": [760, 760, 760, 760],
+		"spread": [0.6, 0.6, 0.6, 0.6]},
+		"hidden_values": ["min_distance", "roll_max", "speed_min", "speed_max", "spread"],
+		"desc": "3 / 4 / 5 / 6 boulders roll out toward the target point at random angles, as far as it (at most 700), bouncing off each other, walls and units. An enemy they hit takes magic damage once and is knocked 200 back. They stay for 10 seconds and block every unit, even phased ones. Bounce Shot ricochets off them."}
 	_abilities["lay_trap"] = {"id": "lay_trap", "name": "Lay Trap", "behavior": "no_target", "key": "E",
 		"max_level": 4, "mana": [50, 55, 60, 65], "cooldown": [10, 9, 8, 7], "cast_point": 0.1, "range": 0,
 		"anim": "blau_jump_start",

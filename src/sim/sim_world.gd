@@ -378,7 +378,7 @@ func _clock() -> void:
 	if time >= 0.0:
 		var per_tick := C.passive_gpm(time) / 60.0 * C.DT
 		for h in heroes:
-			_gold_acc[h.id] += per_tick
+			_gold_acc[h.id] += per_tick * h.gold_mult
 			if _gold_acc[h.id] >= 1.0:
 				var g := int(_gold_acc[h.id])
 				_gold_acc[h.id] -= g

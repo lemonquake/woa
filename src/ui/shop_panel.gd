@@ -261,7 +261,7 @@ func _draw_bags(h: SimUnit, x: float, y: float, m: Vector2) -> void:
 		var it = h.inventory[i]
 		U.slot(self, r, r.has_point(m) or i == sell_slot)
 		if it != null:
-			var ic: Texture2D = U.item_icon(it.id)
+			var ic: Texture2D = U.held_item_icon(it)
 			if ic:
 				draw_texture_rect(ic, Rect2(r.position + Vector2(8, 2), Vector2(32, 32)), false,
 					Color(1, 1, 1) if i < 6 else Color(0.7, 0.7, 0.7))
@@ -289,7 +289,7 @@ func _draw_stash(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 		U.slot(self, r, r.has_point(m) and h.stash[i] != null and here)
 		var it = h.stash[i]
 		if it != null:
-			var ic: Texture2D = U.item_icon(it.id)
+			var ic: Texture2D = U.held_item_icon(it)
 			if ic:
 				draw_texture_rect(ic, Rect2(r.position + Vector2(10, 2), Vector2(42, 42)), false)
 			_pane_rects.append([r, "stash", i])

@@ -575,6 +575,8 @@ func _update_cast(u: SimUnit) -> void:
 		var err := w.abilities.cast_error(u, u.cast_ability, u.cast_item_slot, t, u.cast_point, true)
 		if err == "":
 			w.abilities.execute(u, u.cast_ability, u.cast_item_slot, t, u.cast_point)
+		elif u.order_from_player:
+			w.events.append({"t": "error", "u": u.id, "msg": err})     # nothing spent; the player is told why
 		u.cast_phase = CP.BACKSWING
 		u.cast_timer = 0.3
 		u.order = O.NONE
