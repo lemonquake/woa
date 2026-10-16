@@ -44,6 +44,10 @@ func near(a: float, b: float, tol: float, msg: String) -> void:
 
 ## Mechanics tests check one rule at a time, so worlds start without the element table (test_element_* turn it on).
 func world(start_time := 0.0) -> SimWorld:
+	# every test starts on the whole forest: spells that fell trees (Gale Impact, Fiery Javelin, Bounce Shot) in an
+	# earlier test must not change a later one
+	for i in _map.trees.size():
+		_restore_tree(i)
 	var w := SimWorld.new(1, _map)
 	w.elements = false
 	w.time = start_time
@@ -1903,6 +1907,70 @@ func test_growing_gut_stacks() -> void:
 	w.combat.deal_damage(-1, C.DUSK, false, a, 1000.0, C.DamageType.PURE)
 	w.combat.process_deaths()
 	near(s.str_total - str0, 4.0, 0.001, "an ally's death does not count")
+
+func test_ranger_ezee_talents() -> void:
+	for id in ["blood_ranger", "ezee"]:
+		var d := SimData.unit(id)
+		check((d.talents as Array).size() == 4, "%s has 4 talent tiers" % id)
+		for tier in d.talents:
+			for tid in tier:
+				check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+	var w := empty_world()
+	var r := _ranger(w, Vector2(-2000, -4000))
+	r.level = 25
+	r.ability_points = 4
+	var chance0 := w.abilities.val(r, "masterful_archery", "chance")
+	check(w.abilities.learn_talent(r, 0, 0), "ranger level 10 talent")
+	near(w.abilities.val(r, "masterful_archery", "chance"), chance0 + 0.10, 0.001, "+10% Masterful Archery chance")
+	check(w.abilities.learn_talent(r, 1, 0), "ranger level 15 talent")
+	near(w.abilities.val(r, "gale_impact", "damage"), 460.0, 0.001, "+100 Gale Impact damage")
+	check(w.abilities.learn_talent(r, 2, 1), "ranger level 20 talent")
+	near(w.abilities.ability_cooldown(r, "gale_impact"), 8.0, 0.001, "-4 s Gale Impact cooldown")
+	check(w.abilities.learn_talent(r, 3, 0), "ranger level 25 talent")
+	w.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "blood_ranger_ult"})
+	run(w, 0.6)
+	var m := r.get_modifier("blood_ranger")
+	check(not m.is_empty() and is_equal_approx(float(m.stats.lifesteal_ability), 0.8), "the cast carries +20% lifesteal (%s)" % str(m.get("stats")))
+	# Ezee: values read by his spells as they go off
+	var w2 := empty_world()
+	var e := _ezee(w2, Vector2(-2000, -4000))
+	e.level = 25
+	e.ability_points = 4
+	e.refresh_stats()
+	var str0 := e.str_total
+	check(w2.abilities.learn_talent(e, 0, 0), "ezee level 10 talent")
+	near(e.str_total, str0 + 10.0, 0.001, "+10 strength")
+	check(w2.abilities.learn_talent(e, 1, 0), "ezee level 15 talent")
+	near(w2.abilities.val(e, "dark_stomp", "impact_stun"), 2.8 + 0.6, 0.001, "+0.6 s Dark Stomp stun")
+	check(w2.abilities.learn_talent(e, 2, 1), "ezee level 20 talent")
+	near(w2.abilities.val(e, "leap_strike", "str_mult"), 1.0, 0.001, "+40% Leap Strike strength damage")
+	check(w2.abilities.learn_talent(e, 3, 1), "ezee level 25 talent")
+	w2.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "unholy_might"})
+	run(w2, 0.8)
+	var um := e.get_modifier("unholy_might")
+	check(not um.is_empty() and float(um.expires) - w2.time > 12.0, "Unholy Might lasts 14 s with the talent")
+	check(SimBotKits.TALENTS.has("blood_ranger") and SimBotKits.TALENTS.has("ezee"), "bots pick their talents")
+
+func test_azrin_javelin_fells_trees() -> void:
+	var w := empty_world()
+	var spot := _tree_spot()
+	var ti: int = spot[0]
+	var tp: Vector2 = _map.trees[ti].pos
+	var out: Vector2 = -(spot[2] as Vector2)
+	var a := _azrin(w, tp + out * 500.0)
+	w.vision.update()
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "fiery_javelin", "point": tp - out * 300.0})
+	var felled := []
+	for i in 60:
+		w.step()
+		for ev in w.events:
+			if ev.t == "tree" and not ev.alive:
+				felled.append(int(ev.i))
+		w.events.clear()
+	check(ti in felled, "the tree in the javelin's path is knocked down")
+	check(not _map.trees[ti].alive, "and stays down")
+	for i in felled:
+		_restore_tree(i)
 
 func test_sludge_talents_and_shard() -> void:
 	var w := empty_world()
@@ -5779,6 +5847,14 @@ func test_blau_bounce_shot_ricochets() -> void:
 		check(not bounces.is_empty() and String(bounces[0].what) == what, "the bullet bounces off the %s (%s)" % [what, str(bounces.map(func(x): return x.what))])
 		if not bounces.is_empty():
 			check((bounces[0].pos as Vector2).distance_to(spot) < 100.0, "at the %s it was fired at" % what)
+		if what == "tree":
+			var ti := _map.tree_at(spot, 60.0)
+			var felled := _events_of(w, "tree").filter(func(x): return not x.alive)
+			check(not felled.is_empty() and (_map.trees[int(felled[0].i)].pos as Vector2).distance_to(spot) < 80.0,
+				"the tree it bounced off is knocked down")
+			for ev in felled:
+				_restore_tree(int(ev.i))
+			check(ti < 0 or _map.trees[ti].alive, "test map restored")
 		if what == "wall" and not bounces.is_empty() and bounces[0].has("dir"):
 			check((bounces[0].dir as Vector2).x < -0.2, "and comes back off the wall (%s)" % str(bounces[0].dir))
 	# enemies are passed through, an allied unit is bounced off
@@ -6014,6 +6090,55 @@ func test_bot_blau_banks_bounce_shot() -> void:
 	for x in k3.boulders:
 		k3._unrest(x)
 
+func test_bot_blau_hunts_a_killable_laner() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "blau", o)
+	var e := _dummy(w, "ezee", C.DUSK, o + Vector2(560, 0), 2000.0)
+	e.hp = 260.0                                     # well within his shot, boulders and a few attacks
+	run(w, 0.1)
+	var b := _bot16(w, h, [e])
+	b.mode = "lane"
+	check(SimBotKits.burst(w, h, e) + SimBotKits.dps(w, h, e) * 3.0 > e.hp, "his combo can finish it")
+	w.events.clear()
+	_think16(w, b, 2.4, func(): SimBot16.tick(b, h))
+	var casts := _events_of(w, "cast").filter(func(x): return int(x.u) == h.id)
+	check(not casts.is_empty(), "he spends spells on it (%s)" % str(casts.map(func(x): return x.ability)))
+	check(e.hp < 260.0, "and the laner takes damage")
+	check(b._hunt_target == e.id, "the hunt is recorded")
+	# (this bot is not in w.bots, so only the orders it gave are logged, not the casts the world carried out)
+	check(b.botlog.orders > 0 and not b.botlog.cast_orders.is_empty(), "the Bot Log counts his orders and spell orders")
+	var sm := b.botlog.summary("Bot Test", "Blau", b.mode, w.time)
+	check(sm.contains("Bounce Shot") or sm.contains("Place Turret") or sm.contains("Summon Boulders"),
+		"the summary names the skills he ordered (%s)" % sm)
+	for bd in w.abilities.kits3.boulders:
+		w.abilities.kits3._unrest(bd)                  # resting boulders block the shared test map's cells
+	# a healthy laner is not hunted
+	var w2 := empty_world()
+	var h2 := _hero16(w2, "blau", o)
+	var e2 := _dummy(w2, "ezee", C.DUSK, o + Vector2(560, 0), 3000.0)
+	run(w2, 0.1)
+	var b2 := _bot16(w2, h2, [e2])
+	b2.mode = "lane"
+	check(not SimBot16._blau_hunt(b2, h2), "no hunt on a healthy laner")
+
+func test_bot_log_counts_thinking() -> void:
+	var w := world()
+	w.setup_match()
+	var a := w.spawn_hero("blau", C.DAWN)
+	var bb := w.spawn_hero("ezee", C.DUSK)
+	w.bots.append(SimBot.new(w, a.id, "mid", "Bot A"))
+	w.bots.append(SimBot.new(w, bb.id, "mid", "Bot B"))
+	run(w, 60.0)
+	var lg: SimBotLog = w.bot_for(a.id).botlog
+	check(lg.thinks > 100, "thoughts counted (%d)" % lg.thinks)
+	check(lg.orders > 5 and lg.orders == lg.from_thought + lg.from_command, "orders counted and split by source")
+	check(not lg.entries.is_empty() and lg.entries.size() <= SimBotLog.MAX_ENTRIES, "latest steps kept")
+	check(w.bot_for(-5) == null, "no bot for a missing hero")
+	var snap := SimSnapshot.capture(w)
+	check(snap.size() > 0, "a snapshot leaves the log out and still works")
+	w.dispose()
+
 func test_bot_blau_trap_escape() -> void:
 	var w := empty_world()
 	var o := Vector2(5600, -5700)
@@ -6191,7 +6316,7 @@ func test_blau_boulders_roll_to_the_point() -> void:
 			far = maxf(far, (bd.pos as Vector2).distance_to(start))
 		var cap := minf(want, 700.0)
 		check(far <= cap + 40.0 and far >= cap * 0.7, "cast %.0f away: they roll about that far, 700 at most (%d)" % [want, int(far)])
-		check(b.pos.distance_to(start) < 30.0, "Blau casts where he stands (%.0f)" % want)
+		check(b.pos.distance_to(start) < 30.0, "Blau casts where he stands (%.0f): moved to %s from %s, order %d" % [want, str(b.pos), str(start), b.order])
 		for bd in k3.boulders:
 			k3._unrest(bd)
 

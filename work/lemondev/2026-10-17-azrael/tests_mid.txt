@@ -1,0 +1,5 @@
+    x Blau casts where he stands (300)
+    x Blau casts where he stands (700)
+    x Blau casts where he stands (2000)
+FAIL test_blau_boulders_roll_to_the_point (174 ms)
+238 passed, 3 failed

@@ -1,14 +1,16 @@
 extends SceneTree
 ## Let two laning bots play for N minutes and report the scoreline and ability use:
-##   godot --headless --path . -s tests/tools/bot_duel.gd -- [--a=blood_ranger] [--b=ezee] [--min=15]
+##   godot --headless --path . -s tests/tools/bot_duel.gd -- [--a=blood_ranger] [--b=ezee] [--min=15] [--log=A|B]
+## [--seeds=3,7,11]; --log prints that bot's Bot Log (summary and latest steps) after each duel.
 const C = preload("res://src/sim/sim_const.gd")
 func _init() -> void:
-	var opts := {"a": "blood_ranger", "b": "ezee", "min": "15"}
+	var opts := {"a": "blood_ranger", "b": "ezee", "min": "15", "log": "", "seeds": "3,7,11"}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--") and arg.contains("="):
 			var kv := arg.substr(2).split("=")
 			opts[kv[0]] = kv[1]
-	for seed in [3, 7, 11]:
+	for seed_s in String(opts.seeds).split(","):
+		var seed := int(seed_s)
 		var m := SimMap.new()                     # a fresh map per duel (trees are cut and planted)
 		m.build(1)
 		var w := SimWorld.new(seed, m)
@@ -43,5 +45,10 @@ func _init() -> void:
 		print("    casts: ", casts)
 		for hh in [a, b]:
 			print("    %s items: %s" % [hh.def.id, str(hh.inventory.filter(func(i): return i != null).map(func(i): return i.id))])
+		if String(opts.log) in ["A", "B"]:
+			var lb = w.bots[0 if String(opts.log) == "A" else 1]
+			var lh: SimUnit = lb.hero()
+			print(lb.botlog.summary(String(lb.name), String(lh.def.name), String(lb.mode), w.time))
+			print(lb.botlog.recent(SimBotLog.MAX_ENTRIES))
 		w.dispose()
 	quit()

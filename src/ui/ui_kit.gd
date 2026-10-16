@@ -19,6 +19,31 @@ const HP := Color(0.24, 0.72, 0.22)
 const MANA := Color(0.22, 0.45, 0.95)
 const DAWN := Color(0.4, 0.75, 1.0)
 const DUSK := Color(1.0, 0.36, 0.3)
+## Player colours by team and slot (Dota's: blue, teal, purple, yellow, orange; pink, olive, light blue, green, brown).
+const PLAYER_COLORS := [
+	[Color8(51, 117, 255), Color8(102, 255, 191), Color8(191, 0, 191), Color8(243, 240, 11), Color8(255, 107, 0)],
+	[Color8(254, 134, 194), Color8(161, 180, 71), Color8(101, 217, 247), Color8(0, 131, 33), Color8(164, 105, 0)]]
+
+static func team_color(team: int) -> Color:
+	return DAWN if team == 0 else (DUSK if team == 1 else Color(0.95, 0.8, 0.4))
+
+## A hero's player colour (its team colour for anything else).
+static func player_color(u: SimUnit) -> Color:
+	if u == null or not u.is_hero() or u.team < 0 or u.team > 1 or u.color_slot < 0:
+		return team_color(u.team if u else 2)
+	return PLAYER_COLORS[u.team][u.color_slot % 5]
+
+## A hero's name as coloured parts for the kill feed and labels: the player in their colour, the hero in its team's.
+static func who_parts(u: SimUnit) -> Array:
+	if u == null:
+		return [["?", TEXT]]
+	if not u.is_hero():
+		return [[String(u.look.get("display_name", u.name)), team_color(u.team)]]
+	var hero := String(u.def.get("name", u.name))
+	var p := u.player_label()
+	if p == "" or p == hero:
+		return [[hero, player_color(u)]]
+	return [[p, player_color(u)], ["(%s)" % hero, team_color(u.team)]]
 
 const ITEM_ICONS := {
 	"tp_scroll": "ui/teleport", "bottle": "items/elixir_rejuvenation", "reveal_ward": "status/spirit_ward", "reveal_dust": "items/mat_arcane_dust", "tango": "status/regen", "salve": "items/potion_health", "clarity": "items/potion_mana", "mango": "status/vigor",

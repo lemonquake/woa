@@ -1,0 +1,277 @@
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 97%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 100% inv, tower1 mid 67%, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 100% inv, tower1 bot 10%, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 100% inv, tower1 bot 10%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 100% inv, tower1 mid 51%, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 100% inv, tower1 top 33%, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+    end Bot Ann farm alive hp 81% pos (-5623.0, -842.0) task -
+    end Bot Bob farm alive hp 100% pos (-6163.0, 4946.0) task -
+    end Bot Cat task alive hp 56% pos (5040.0, -5249.0) task push
+    end Bot Dan retreat alive hp 13% pos (1445.0, -6685.0) task -
+    end Bot Eve task alive hp 56% pos (5029.0, -5313.0) task push
+    end Bot Fay retreat dead hp 0% pos (3963.0, -5685.0) task -
+    end Bot Gus retreat dead hp 0% pos (3989.0, -5796.0) task -
+    end Bot Hal retreat dead hp 0% pos (3958.0, -5742.0) task -
+    end Bot Ivy farm alive hp 69% pos (6399.0, -4772.0) task -
+    end Bot Jo farm alive hp 79% pos (4567.0, 1096.0) task -
+  Ancient Light calls: teamfights 16, ganks 8, pushes 4 (chained on 0), towers lost 1, bots unstuck 1
+  Black Sun calls: teamfights 16, ganks 9, pushes 3 (chained on 0), towers lost 0, bots unstuck 2
+seed 3: no winner at 14:00 (113.7 s real)
+  Ancient Light (towers lost 1):
+    Bot Ann  blau          role 1 bot   2/ 4/ 5 lvl  7 LH  18 DN  0 nw  2537 | lane 47%, retreat 21%, fight 1%, task 15%, farm 16%
+             items: ["salve", "wraith_band", "quelling_blade", "magic_stick"]
+    Bot Bob  ezee          role 3 top   0/ 8/ 4 lvl  7 LH  14 DN  9 nw  1905 | lane 57%, fight 3%, task 10%, retreat 12%, heal 3%, farm 15%
+             items: ["clarity", "magic_stick", "reveal_dust", "quelling_blade", "tough_band", "branch", "branch", "salve"]
+    Bot Cat  azrin         role 2 mid  11/ 3/ 3 lvl 10 LH  35 DN  4 nw  5737 | lane 46%, fight 5%, heal 5%, retreat 8%, task 23%, farm 13%
+             items: ["boots", "smart_band", "magic_wand"]
+    Bot Dan  sludge        role 4 top   5/ 4/ 7 lvl  8 LH  12 DN  1 nw  3053 | lane 41%, fight 2%, retreat 10%, task 18%, ward 8%, stack 8%, farm 12%, heal 1%
+             items: ["reveal_dust", "reveal_ward", "clarity", "magic_wand", "boots", "salve"]
+    Bot Eve  froster       role 5 bot   5/ 5/ 6 lvl  8 LH  21 DN  4 nw  3102 | lane 50%, retreat 4%, heal 1%, task 24%, fight 2%, ward 7%, stack 2%, pull 1%, farm 10%
+             items: ["boots", "reveal_dust", "branch", "branch", "magic_stick", "clarity", "salve", "reveal_ward"]
+  Black Sun (towers lost 0):
+    Bot Fay  caziel        role 2 mid   5/ 6/ 4 lvl  8 LH  19 DN  3 nw  3596 | lane 54%, retreat 9%, fight 5%, task 19%, farm 13%
+             items: ["wraith_band", "quelling_blade"]
+    Bot Gus  kragg         role 3 bot   5/ 7/ 7 lvl  7 LH  16 DN  5 nw  3551 | lane 47%, retreat 13%, task 21%, fight 3%, heal 2%, farm 14%
+             items: ["boots", "magic_stick", "quelling_blade", "tough_band"]
+    Bot Hal  roydo         role 4 bot   2/ 5/ 8 lvl  8 LH   9 DN  2 nw  2640 | lane 43%, task 27%, fight 2%, retreat 4%, ward 9%, stack 5%, farm 9%
+             items: ["magic_wand", "boots"]
+    Bot Ivy  tock          role 5 top   7/ 4/ 7 lvl  8 LH   6 DN  5 nw  4044 | lane 41%, fight 5%, retreat 8%, heal 1%, ward 11%, task 23%, pull 1%, stack 4%, farm 6%
+             items: ["tango", "glimmer_cape", "magic_wand", "salve", "boots"]
+    Bot Jo   blood_ranger  role 1 top   4/ 2/ 4 lvl  8 LH  30 DN  5 nw  4181 | lane 54%, fight 3%, retreat 9%, heal 2%, task 22%, farm 11%
+             items: ["salve", "wraith_band", "quelling_blade", "magic_wand"]
+  at 10:00 LH/net worth: Ann 11/2355, Bob 11/1616, Cat 24/3759, Dan 4/2342, Eve 12/1997, Fay 11/1757, Gus 12/2247, Hal 2/1964, Ivy 4/2642, Jo 21/3299 | team net worth 12069 vs 11909
+  totals: kills 23 vs 23, net worth 16334 vs 18012
+  stuck: none
+  Fortify pressed 3 times: [6:20] Black Sun (Bot Fay), [9:49] Ancient Light (Bot Ann), [11:27] Black Sun (Bot Fay)
+  Ancient Light: counter-ganks called 16 (helpers fought in 20), juked home 1, counter items blau:spell_shield, ezee:spell_shield, azrin:spell_shield, sludge:glimmer_cape, froster:glimmer_cape
+  Black Sun: counter-ganks called 27 (helpers fought in 25), juked home 6, counter items caziel:spell_shield, kragg:spell_shield, roydo:glimmer_cape, tock:glimmer_cape, blood_ranger:spell_shield
+Bot Ann (Blau): now farm
+  thoughts 4936   orders 950 (own thinking 874, team calls 76)   68 orders a minute
+  orders: Move 720, Attack 195, Cast 35
+  skills used (of ordered): Bounce Shot 12 of 13, Lay Trap 13 of 13, tp 0 of 4, Summon Boulders 3 of 3, Place Turret 2 of 2
+  items used: Vegan Picker 3, Healing Paste 9, Zap Stick 7
+  time by mode: lane 378s, retreat 164s, task 122s, farm 108s, dead 66s, fight 11s   mode changes 85   team calls 22   lines said 11
+7:48  said: Going for Roydo.
+7:48  Attack on Bot Hal (Roydo)  [team call]
+7:48  said: Going for Kragg.
+7:48  Attack on Bot Gus (Kragg)  [team call]
+7:49  team call: push bot
+7:49  task -> fight  (fight 0.90, task 0.62, lane 0.45)
+7:51  fight -> task  (task 0.62, lane 0.45, retreat 0.00)
+7:51  Move  [team call]
+7:58  task -> lane  (lane 0.45, retreat 0.00, heal 0.00)
+7:58  Attack on Skeleton Archer  [lane]
+8:10  Move  [lane]
+8:16  Attack on Tier 1 Tower  [lane]
+8:17  Move  [lane]
+8:20  Attack on Bot Gus (Kragg)  [lane]
+8:20  Move  [lane]
+8:21  Attack on Footman  [lane]
+8:22  Move  [lane]
+8:22  Attack on Footman  [lane]
+8:22  Move  [lane]
+8:22  Attack on Footman  [lane]
+8:22  Move  [lane]
+8:22  Attack on Footman  [lane]
+8:22  Move  [lane]
+8:22  Attack on Footman  [lane]
+8:23  Move  [lane]
+8:23  Attack on Bot Gus (Kragg)  [lane]
+8:24  Move  [lane]
+8:25  used Healing Paste
+8:26  Attack on Bot Gus (Kragg)  [lane]
+8:30  used Zap Stick
+8:31  Move  [lane]
+8:34  lane -> retreat  (retreat 0.95, heal 0.62, lane 0.45)
+8:34  Move  [retreat]
+8:35  Attack on Bot Gus (Kragg)  [retreat]
+8:35  Cast Lay Trap  [retreat]
+8:35  used Lay Trap
+8:36  Cast Summon Boulders at (6259, -3449)  [retreat]
+8:36  used Summon Boulders
+8:36  Move  [retreat]
+9:00  used Healing Paste
+9:03  retreat -> lane  (lane 0.45, retreat 0.00, heal 0.00)
+9:03  Move  [lane]
+9:21  team call: defend top
+9:21  lane -> task  (task 0.80, lane 0.45, retreat 0.00)
+9:21  Cast tp at (-6300, 1900)  [team call]
+9:25  Attack on Ghoul  [team call]
+9:32  Move  [team call]
+9:35  task -> lane  (lane 0.45, retreat 0.00, heal 0.00)
+9:35  Move  [lane]
+9:56  Attack on Ghoul  [lane]
+9:57  Move  [lane]
+9:57  Attack on Ghoul  [lane]
+9:57  Move  [lane]
+9:57  Attack on Ghoul  [lane]
+9:57  Move  [lane]
+10:00  lane -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+10:00  Attack on Skeleton Archer  [farm]
+10:11  Move  [farm]
+10:15  Attack on Ghoul  [farm]
+10:18  Move  [farm]
+10:18  Attack on Ogre  [farm]
+10:23  Move  [farm]
+10:28  Attack on Ogre  [farm]
+10:29  Move  [farm]
+10:29  Attack on Ogre  [farm]
+10:44  Move  [farm]
+10:48  used Healing Paste
+10:53  team call: retreat mid
+10:53  farm -> retreat  (retreat 0.95, farm 0.40, heal 0.00)
+10:53  Move  [retreat]
+11:00  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+11:00  Move  [farm]
+11:02  farm -> retreat  (retreat 0.83, farm 0.40, heal 0.00)
+11:02  Move  [retreat]
+11:03  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+11:03  Move  [farm]
+11:03  farm -> retreat  (retreat 0.90, farm 0.40, heal 0.00)
+11:03  Move  [retreat]
+11:03  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+11:03  Move  [farm]
+11:03  farm -> retreat  (retreat 0.90, farm 0.40, heal 0.00)
+11:03  Move  [retreat]
+11:05  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+11:05  Move  [farm]
+11:05  farm -> retreat  (retreat 0.90, farm 0.40, heal 0.00)
+11:05  Move  [retreat]
+11:34  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+11:34  Cast tp at (5175, -6204)  [farm]
+11:37  Attack on Bone Golem  [farm]
+11:45  Move  [farm]
+11:53  Attack on Ghoul  [farm]
+11:54  Cast Bounce Shot at (5718, -4215)  [farm]
+11:55  used Bounce Shot
+11:55  Attack on Skeleton Archer  [farm]
+12:08  Move  [farm]
+12:09  Attack on Footman  [farm]
+12:09  Move  [farm]
+12:09  Attack on Footman  [farm]
+12:10  Move  [farm]
+12:10  Attack on Footman  [farm]
+12:10  Move  [farm]
+12:10  Attack on Footman  [farm]
+12:10  Move  [farm]
+12:10  Attack on Footman  [farm]
+12:11  Move  [farm]
+12:11  Attack on Footman  [farm]
+12:11  Move  [farm]
+12:11  Attack on Footman  [farm]
+12:16  farm -> fight  (fight 0.55, farm 0.40, retreat 0.00)
+12:16  Attack on Bot Jo (Blood Ranger)  [fight]
+12:16  Cast Bounce Shot at (6060, -2059)  [fight]
+12:17  used Bounce Shot
+12:17  team call: fight bot
+12:17  fight -> task  (task 0.88, farm 0.40, retreat 0.00)
+12:17  Attack on Bot Jo (Blood Ranger)  [team call]
+12:20  said: Going for Blood Ranger.
+12:22  task -> fight  (fight 0.90, farm 0.40, retreat 0.00)
+12:22  team call: fight bot
+12:22  Cast Place Turret at (5577, -1653)  [fight]
+12:23  used Place Turret
+12:23  Attack on Bot Jo (Blood Ranger)  [fight]
+12:24  team call: gank bot
+12:24  fight -> task  (task 0.78, farm 0.40, retreat 0.00)
+12:24  Move  [team call]
+12:26  task -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+12:33  Move  [farm]
+12:36  team call: fight bot
+12:36  farm -> task  (task 0.88, farm 0.40, retreat 0.00)
+12:36  Attack on Bot Ivy (Tock)  [team call]
+12:40  Cast Bounce Shot at (5796, -2099)  [team call]
+12:40  used Bounce Shot
+12:41  used Zap Stick
+12:41  Attack on Bot Ivy (Tock)  [team call]
+12:44  Cast Place Turret at (5941, -2329)  [team call]
+12:45  used Place Turret
+12:45  team call: fight bot
+12:45  Attack on Bot Ivy (Tock)  [team call]
+12:49  team call: retreat bot
+12:49  task -> retreat  (retreat 0.95, farm 0.40, heal 0.00)
+12:49  Attack on Bot Fay (Caziel)  [retreat]
+12:49  Cast Lay Trap  [retreat]
+12:49  used Lay Trap
+12:50  Move  [retreat]
+12:57  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+12:57  Move  [farm]
+12:58  used Zap Stick
+12:58  farm -> retreat  (retreat 0.90, farm 0.40, heal 0.00)
+12:58  Cast Summon Boulders at (7355, -3069)  [retreat]
+12:58  used Summon Boulders
+12:58  Move  [retreat]
+13:00  used Healing Paste
+13:01  Move  [retreat]
+13:35  retreat -> farm  (farm 0.40, retreat 0.00, heal 0.00)
+13:35  Cast tp at (-6460, 3114)  [farm]
+13:38  Move  [farm]
+13:41  Attack on Orc  [farm]
+13:41  Move  [farm]
+13:42  Attack on Orc  [farm]
+13:42  Move  [farm]
+13:42  Attack on Orc  [farm]
+Bot Bob (Ezee): now farm
+  thoughts 4825   orders 1015 (own thinking 944, team calls 71)   72 orders a minute
+  orders: Move 773, Attack 199, Cast 42, Take orb 1
+  skills used (of ordered): Dark Stomp 15 of 16, Tainted Touch 12 of 12, tp 0 of 6, Leap Strike 5 of 5, Unholy Might 3 of 3
+  items used: Healing Paste 7, Vegan Picker 3, Mana Potion 2, Zap Stick 5
+  time by mode: lane 431s, dead 110s, farm 100s, retreat 89s, task 76s, heal 23s   mode changes 100   team calls 18   lines said 8
+Bot Cat (Azrin): now task
+  thoughts 5152   orders 1142 (own thinking 1003, team calls 139)   82 orders a minute
+  orders: Move 863, Attack 213, Cast 61, Take orb 5
+  skills used (of ordered): Touch of Ember 20 of 21, Fiery Javelin 14 of 15, Spirit of Fire 11 of 11, tp 0 of 8, Divine Smite 5 of 6
+  items used: Healing Paste 5, Vegan Picker 3, Mana Potion 7
+  time by mode: lane 364s, task 185s, farm 91s, retreat 69s, dead 67s, heal 42s   mode changes 80   team calls 22   lines said 15
+Bot Dan (Sludge): now retreat
+  thoughts 4738   orders 816 (own thinking 662, team calls 154)   58 orders a minute
+  orders: Move 568, Item 4, Cast 84, Attack 156, Take orb 4
+  skills used (of ordered): Shuriken Hook 10 of 12, Stench 0 of 55, tp 0 of 7, Blubber 8 of 8, Chomp 2 of 2
+  items used: Eye Ward 4, Healing Paste 1, Zap Stick 1, Vegan Picker 3, Mana Potion 3, Zap Wand 6
+  time by mode: lane 336s, task 150s, farm 74s, retreat 74s, ward 67s, stack 62s   mode changes 71   team calls 22   lines said 10
+Bot Eve (Froster): now task
+  thoughts 4685   orders 794 (own thinking 601, team calls 193)   57 orders a minute
+  orders: Move 563, Item 3, Cast 42, Attack 184, Take orb 2
+  skills used (of ordered): Breath of Cold 22 of 23, tp 0 of 7, Ice Pulse 11 of 11, Endless Winter 1 of 1
+  items used: Eye Ward 3, Healing Paste 3, Vegan Picker 6, Zap Stick 6, Mana Potion 6
+  time by mode: lane 387s, task 187s, dead 84s, farm 71s, ward 50s, retreat 31s   mode changes 56   team calls 23   lines said 17
+Bot Fay (Caziel): now retreat
+  thoughts 4744   orders 1027 (own thinking 866, team calls 161)   73 orders a minute
+  orders: Move 785, Attack 203, Cast 35, Take orb 4
+  skills used (of ordered): Swift Dagger 17 of 17, tp 0 of 8, Master of Shadows 10 of 10
+  items used: Healing Paste 6, Vegan Picker 3, Mana Potion 2
+  time by mode: lane 432s, task 149s, farm 87s, retreat 72s, dead 72s, fight 40s   mode changes 107   team calls 38   lines said 12
+Bot Gus (Kragg): now retreat
+  thoughts 4756   orders 1119 (own thinking 990, team calls 129)   80 orders a minute
+  orders: Move 898, Attack 179, Cast 41, Take orb 1
+  skills used (of ordered): Iron Grip 21 of 23, tp 0 of 8, Repel 8 of 8, Magnet Field 2 of 2
+  items used: Healing Paste 7, Vegan Picker 3, Zap Stick 8, Mana Potion 3
+  time by mode: lane 379s, task 159s, retreat 104s, farm 100s, dead 65s, fight 27s   mode changes 91   team calls 32   lines said 20
+Bot Hal (Roydo): now retreat
+  thoughts 4397   orders 789 (own thinking 592, team calls 197)   56 orders a minute
+  orders: Move 571, Item 4, Cast 41, Attack 171, Take orb 2
+  skills used (of ordered): Grip of the Ruler 20 of 22, tp 0 of 6, Void Rush 10 of 10, Anomaly 3 of 3
+  items used: Eye Ward 4, Healing Paste 6, Zap Stick 2, Vegan Picker 6, Mana Potion 3, Zap Wand 7
+  time by mode: lane 346s, task 216s, ward 72s, dead 66s, farm 61s, stack 42s   mode changes 84   team calls 40   lines said 18
+Bot Ivy (Tock): now farm
+  thoughts 4670   orders 937 (own thinking 696, team calls 241)   67 orders a minute
+  orders: Move 651, Item 4, Attack 244, Cast 38
+  skills used (of ordered): Time Bolt 29 of 29, tp 0 of 5, Rewind 1 of 1, Stop Time 2 of 2, Slow Field 1 of 1
+  items used: Eye Ward 4, Healing Paste 4, Vegan Picker 5, Mana Potion 6, Zap Stick 1, Zap Wand 5
+  time by mode: lane 324s, task 186s, ward 86s, retreat 64s, dead 58s, farm 43s   mode changes 170   team calls 29   lines said 23
+Bot Jo (Blood Ranger): now farm
+  thoughts 5596   orders 1219 (own thinking 1101, team calls 118)   87 orders a minute
+  orders: Move 909, Attack 281, Cast 26, Take orb 3
+  skills used (of ordered): tp 0 of 6, Gale Impact 12 of 12, Burst Shot 7 of 7, Blood Ranger 1 of 1
+  items used: Healing Paste 6, Vegan Picker 3, Zap Stick 1, Zap Wand 5
+  time by mode: lane 434s, task 185s, retreat 74s, farm 68s, dead 30s, fight 25s   mode changes 96   team calls 19   lines said 14
+  chat lines: 177
+    [-1:29] Ancient Light Bot Ann: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll go mid.
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Bob in the top lane.
+    [-1:29] Ancient Light Bot Eve: I'll support Bot Ann in the bottom lane.
+    [-1:29] Black Sun Bot Fay: I'll go mid.
+    [-1:29] Black Sun Bot Gus: I'll go bottom.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Gus in the bottom lane.
+    [-1:29] Black Sun Bot Ivy: I'll support Bot Jo in the top lane.
+    [-1:29] Black Sun Bot Jo: I'll farm the top lane (safe lane).
+    [0:26] Ancient Light Bot Cat: Going for Caziel.
+    [0:42] Ancient Light Bot Eve: Lost them in the trees, going home.
+wins: Ancient Light 0, Black Sun 0

@@ -220,6 +220,8 @@ static func _build_units() -> void:
 		"projectile_speed": 1250.0, "move_speed": 300.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
 		"xp": 0.0, "primary": "agi", "str": 16.0, "str_gain": 1.9, "agi": 24.0, "agi_gain": 2.8, "int": 15.0,
 		"int_gain": 1.4, "element": EL.NATURE, "abilities": ["burst_shot", "gale_impact", "masterful_archery", "blood_ranger_ult"],
+		"talents": [["ranger_archery_chance", "ranger_attack_speed"], ["ranger_gale_damage", "ranger_burst_damage"],
+			["ranger_ult_range", "ranger_gale_cooldown"], ["ranger_ult_lifesteal", "ranger_archery_damage"]],
 		"model": "hero"})
 	# Ezee, the Dark Paladin: a melee strength fighter (stats follow the classic melee-strength template).
 	_add("ezee", {"name": "Ezee", "title": "the Dark Paladin", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
@@ -229,6 +231,8 @@ static func _build_units() -> void:
 		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
 		"xp": 0.0, "primary": "str", "str": 24.0, "str_gain": 3.2, "agi": 16.0, "agi_gain": 2.0, "int": 18.0,
 		"int_gain": 1.7, "element": EL.DARK, "abilities": ["dark_stomp", "leap_strike", "tainted_touch", "unholy_might"],
+		"talents": [["ezee_strength", "ezee_stomp_damage"], ["ezee_stomp_stun", "ezee_touch_damage"],
+			["ezee_leap_cooldown", "ezee_leap_strength"], ["ezee_might_chance", "ezee_might_duration"]],
 		"model": "hero_ezee"})
 	# Sludge, the Butcher: Dota 2's Pudge one to one (patch 7.41d, Liquipedia and the game's hero data), renamed.
 	_add("sludge", {"name": "Sludge", "title": "the Butcher", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
@@ -460,7 +464,7 @@ static func _build_abilities() -> void:
 		"anim": "cast_heavy", "damage_type": "magical", "element": "fire", "line": true, "direction": true,
 		"values": {"burn_dps": [35, 70, 105, 140], "burn_duration": [5, 5, 5, 5], "distance": [1000, 1000, 1000, 1000],
 		"min_distance": [300, 300, 300, 300], "speed": [1400, 1400, 1400, 1400], "width": [150, 150, 150, 150]},
-		"desc": "Azrin hurls a great flaming javelin up to 1000 range. Every enemy near its path is caught and dragged along to where it lands, and burns for magic damage every second for 5 seconds."}
+		"desc": "Azrin hurls a great flaming javelin up to 1000 range. Every enemy near its path is caught and dragged along to where it lands, and burns for magic damage every second for 5 seconds. Trees in its path are knocked down."}
 	_abilities["touch_of_ember"] = {"id": "touch_of_ember", "name": "Touch of Ember", "behavior": "point", "key": "W",
 		"max_level": 4, "mana": [110, 120, 130, 140], "cooldown": [9, 9, 9, 9], "cast_point": 0.3, "range": 700,
 		"anim": "cast_area", "damage_type": "magical", "element": "fire",
@@ -640,7 +644,7 @@ static func _build_abilities_16() -> void:
 		"values": {"damage": [70, 110, 150, 190], "bounces": [3, 5, 7, 9], "max_hits": [2, 2, 2, 2],
 		"distance": [1800, 1800, 1800, 1800], "bounce_distance": [400, 400, 400, 400], "speed": [2400, 2400, 2400, 2400]},
 		"hidden_values": ["speed"],
-		"desc": "Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times; each ricochet lets it fly 400 further. Each enemy it passes takes magic damage, at most twice."}
+		"desc": "Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times; each ricochet lets it fly 400 further. A tree it ricochets off is knocked down. Each enemy it passes takes magic damage, at most twice."}
 	_abilities["summon_boulders"] = {"id": "summon_boulders", "name": "Summon Boulders", "behavior": "point",
 		"key": "W", "max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [20, 19, 18, 17], "cast_point": 0.3,
 		"range": 700, "anim": "blau_cast_throw", "damage_type": "magical", "direction": true,
@@ -749,6 +753,23 @@ static func _build_talents() -> void:
 	_talent("blau_turret_damage", "+10% Turret damage", [{"ability": "place_turret", "add": {"damage_pct": 0.10}}])
 	_talent("blau_shot_hits", "+1 Bounce Shot hit per enemy", [{"ability": "bounce_shot", "add": {"max_hits": 1.0}}])
 	_talent("blau_turret_health", "+700 Turret health", [{"ability": "place_turret", "add": {"hp": 700.0}}])
+	# Blood Ranger and Ezee (added 2026-10-17; chosen beside Dota's agility archers and strength initiators)
+	_talent("ranger_archery_chance", "+10% Masterful Archery chance", [{"ability": "masterful_archery", "add": {"chance": 0.10}}])
+	_talent("ranger_attack_speed", "+20 Attack Speed", [], {"attack_speed": 20.0})
+	_talent("ranger_gale_damage", "+100 Gale Impact damage", [{"ability": "gale_impact", "add": {"damage": 100.0}}])
+	_talent("ranger_burst_damage", "+15% Burst Shot damage", [{"ability": "burst_shot", "add": {"attack_pct": 0.15}}])
+	_talent("ranger_ult_range", "+150 Blood Ranger attack range", [{"ability": "blood_ranger_ult", "add": {"bonus_range": 150.0}}])
+	_talent("ranger_gale_cooldown", "-4s Gale Impact cooldown", [{"ability": "gale_impact", "add": {"cooldown": -4.0}}])
+	_talent("ranger_ult_lifesteal", "+20% Blood Ranger lifesteal", [{"ability": "blood_ranger_ult", "add": {"lifesteal": 0.20}}])
+	_talent("ranger_archery_damage", "+25% Masterful Archery damage", [{"ability": "masterful_archery", "add": {"agility_pct": 0.25}}])
+	_talent("ezee_strength", "+10 Strength", [], {"str": 10.0})
+	_talent("ezee_stomp_damage", "+60 Dark Stomp damage", [{"ability": "dark_stomp", "add": {"damage": 60.0}}])
+	_talent("ezee_stomp_stun", "+0.6s Dark Stomp stun", [{"ability": "dark_stomp", "add": {"impact_stun": 0.6}}])
+	_talent("ezee_touch_damage", "+50 Tainted Touch damage", [{"ability": "tainted_touch", "add": {"bonus_damage": 50.0}}])
+	_talent("ezee_leap_cooldown", "-4s Leap Strike cooldown", [{"ability": "leap_strike", "add": {"cooldown": -4.0}}])
+	_talent("ezee_leap_strength", "+40% Leap Strike strength damage", [{"ability": "leap_strike", "add": {"str_mult": 0.40}}])
+	_talent("ezee_might_chance", "+10% Unholy Might chance", [{"ability": "unholy_might", "add": {"chance": 0.10}}])
+	_talent("ezee_might_duration", "+4s Unholy Might", [{"ability": "unholy_might", "add": {"duration": 4.0}}])
 	# Tock (chosen)
 	_talent("tock_bolt_damage", "+70 Time Bolt damage", [{"ability": "time_bolt", "add": {"damage": 70.0}}])
 	_talent("tock_mana_regen", "+2 Mana Regen", [], {"mana_regen": 2.0})

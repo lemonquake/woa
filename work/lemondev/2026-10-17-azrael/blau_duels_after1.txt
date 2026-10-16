@@ -1,0 +1,9 @@
+seed 3 at 12:00: A(blau) 0/0/0 lvl 9 LH 33 DN 4 nw 2053 | B(ezee) 0/0/0 lvl 8 LH 38 DN 5 nw 2542 | towers lost A 0 B 0
+seed 7 at 12:00: A(blau) 0/1/0 lvl 9 LH 35 DN 4 nw 2459 | B(ezee) 1/0/0 lvl 8 LH 27 DN 5 nw 2275 | towers lost A 0 B 1
+seed 11 at 12:00: A(blau) 0/0/0 lvl 8 LH 38 DN 4 nw 2387 | B(ezee) 0/0/0 lvl 8 LH 35 DN 6 nw 1831 | towers lost A 0 B 0
+seed 3 at 12:00: A(blau) 0/3/0 lvl 8 LH 22 DN 8 nw 1708 | B(azrin) 3/0/0 lvl 10 LH 59 DN 3 nw 4765 | towers lost A 1 B 0
+seed 7 at 12:00: A(blau) 1/4/0 lvl 9 LH 24 DN 7 nw 2426 | B(azrin) 4/1/0 lvl 10 LH 56 DN 4 nw 4468 | towers lost A 1 B 0
+seed 11 at 12:00: A(blau) 0/2/0 lvl 8 LH 17 DN 4 nw 1347 | B(azrin) 2/0/0 lvl 10 LH 50 DN 3 nw 3615 | towers lost A 0 B 0
+seed 3 at 12:00: A(blau) 1/0/0 lvl 8 LH 34 DN 5 nw 2642 | B(roydo) 0/1/0 lvl 8 LH 34 DN 8 nw 2347 | towers lost A 0 B 0
+seed 7 at 12:00: A(blau) 0/1/0 lvl 8 LH 25 DN 9 nw 1799 | B(roydo) 1/0/0 lvl 9 LH 35 DN 8 nw 3152 | towers lost A 0 B 0
+seed 11 at 12:00: A(blau) 0/0/0 lvl 8 LH 30 DN 11 nw 1781 | B(roydo) 0/0/0 lvl 8 LH 40 DN 10 nw 2422 | towers lost A 0 B 0

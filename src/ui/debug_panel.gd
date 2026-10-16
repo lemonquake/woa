@@ -2,6 +2,8 @@ class_name DebugPanel
 extends Control
 ## The Debug panel (F9, or the Debug button at the top right of the match): test functions for playtesting. Every
 ## button calls a SimDebug helper; switches stay on until turned off. Built from standard controls with the game theme.
+## The Bot Log section shows what each bot did (SimBotLog): thoughts, orders and where they came from, the skills and
+## items it used, time in each mode, and its latest steps; Save Bot Log writes every bot's log to user://bot_log.txt.
 
 const U = preload("res://src/ui/ui_kit.gd")
 const W := 420.0                           # content width (the frame adds its own margins round it)
@@ -16,6 +18,10 @@ var _speed_btns: Array[Button] = []
 var _fps: Label
 var _scroll: ScrollContainer
 var _box: VBoxContainer
+var _bot_pick: OptionButton
+var _bot_text: Label
+var _bot_ids: Array = []                   # hero id per entry of _bot_pick (-1: every bot, summaries only)
+var _bot_refresh := 0.0
 
 func _ready() -> void:
 	theme = U.theme()
@@ -125,6 +131,29 @@ func _ready() -> void:
 		_speed_btns.append(b)
 		row.add_child(b)
 	v.add_child(row)
+	_section(v, "Bot Log")
+	var brow := HBoxContainer.new()
+	brow.add_theme_constant_override("separation", 6)
+	_bot_pick = OptionButton.new()
+	_bot_pick.focus_mode = Control.FOCUS_NONE
+	_bot_pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_bot_pick.add_theme_font_size_override("font_size", 14)
+	_bot_pick.item_selected.connect(func(_i): _bot_refresh = 0.0)
+	brow.add_child(_bot_pick)
+	var save := Button.new()
+	save.text = "Save Bot Log"
+	save.focus_mode = Control.FOCUS_NONE
+	save.add_theme_font_size_override("font_size", 14)
+	save.tooltip_text = "Writes every bot's log to bot_log.txt in the game's user folder"
+	save.pressed.connect(_save_bot_log)
+	brow.add_child(save)
+	v.add_child(brow)
+	_bot_text = Label.new()
+	_bot_text.add_theme_font_size_override("font_size", 12)
+	_bot_text.add_theme_color_override("font_color", U.TEXT)
+	_bot_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_bot_text.custom_minimum_size = Vector2(W - 20, 0)
+	v.add_child(_bot_text)
 
 func _section(v: VBoxContainer, text: String) -> void:
 	var l := Label.new()
@@ -242,6 +271,58 @@ func _process(_dt: float) -> void:
 	if panel.visible and _w():
 		var h := _h()
 		_status.text = "Clock %s   Wave %d   Level %d   Gold %d" % [_w().clock_text(), _w().wave, h.level, h.gold()]
+		_bot_refresh -= _dt
+		if _bot_refresh <= 0.0:
+			_bot_refresh = 0.5
+			_update_bot_log()
+
+## Bot Log: the bots of the match in the picker (kept in step with the world), and the chosen one's log.
+func _update_bot_log() -> void:
+	var w := _w()
+	if w == null or _bot_pick == null:
+		return
+	var ids: Array = [-1]
+	for b in w.bots:
+		ids.append(int(b.hero_id))
+	if ids != _bot_ids:
+		var keep: int = _bot_ids[_bot_pick.selected] if _bot_pick.selected >= 0 and _bot_pick.selected < _bot_ids.size() else -1
+		_bot_ids = ids
+		_bot_pick.clear()
+		_bot_pick.add_item("Every bot")
+		for b in w.bots:
+			var h := w.get_unit(int(b.hero_id))
+			_bot_pick.add_item(h.who() if h != null else String(b.name))
+		_bot_pick.select(maxi(0, _bot_ids.find(keep)))
+	var pick := int(_bot_ids[_bot_pick.selected]) if _bot_pick.selected >= 0 else -1
+	if w.bots.is_empty():
+		_bot_text.text = "No bots in this match."
+	elif pick < 0:
+		var parts: Array = []
+		for b in w.bots:
+			parts.append(_bot_summary(b))
+		_bot_text.text = "\n".join(parts)
+	else:
+		var b = w.bot_for(pick)
+		_bot_text.text = (_bot_summary(b) + "\n\nLatest:\n" + b.botlog.recent(24)) if b != null else ""
+
+func _bot_summary(b) -> String:
+	var h: SimUnit = _w().get_unit(int(b.hero_id))
+	return b.botlog.summary(String(b.name), String(h.def.name) if h != null else "?", String(b.mode), _w().time)
+
+func _save_bot_log() -> void:
+	var w := _w()
+	if w == null:
+		return
+	var out: Array = ["Bot Log at %s" % w.clock_text(), ""]
+	for b in w.bots:
+		out.append(_bot_summary(b))
+		out.append(b.botlog.recent(SimBotLog.MAX_ENTRIES))
+		out.append("")
+	var f := FileAccess.open("user://bot_log.txt", FileAccess.WRITE)
+	if f:
+		f.store_string("\n".join(out))
+		f.close()
+		_say("Bot Log saved to " + ProjectSettings.globalize_path("user://bot_log.txt"))
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0

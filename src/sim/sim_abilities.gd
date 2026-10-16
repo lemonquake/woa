@@ -324,6 +324,10 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	u.mana -= ability_mana(u, aid)
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
+	if u.bot:
+		var bb = w.bot_for(u.id)
+		if bb != null:
+			bb.botlog.on_cast(w.time, aid)
 	kits2.on_cast(u, aid)
 	_charge_sticks(u)
 	# Touch of Ember: an enemy carrying its flames sets them off by casting a spell
@@ -373,19 +377,19 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 			var dir := (p - u.pos).normalized()
 			if dir == Vector2.ZERO:
 				dir = Vector2.from_angle(u.facing)
-			var reach := _v(a, "distance", lv)       # always the full range, wherever the player clicked
+			var reach := val(u, aid, "distance")       # always the full range, wherever the player clicked
 			_cast_seq += 1
 			w.effects.append({"kind": "line", "ability": aid, "src": u.id, "team": u.team, "pos": u.pos, "dir": dir,
-				"speed": _v(a, "speed", lv), "left": reach, "width": _v(a, "width", lv), "damage": _v(a, "damage", lv),
-				"push_speed": _v(a, "push_speed", lv), "lv": lv, "seq": _cast_seq, "hit": {}})
+				"speed": val(u, aid, "speed"), "left": reach, "width": val(u, aid, "width"), "damage": val(u, aid, "damage"),
+				"push_speed": val(u, aid, "push_speed"), "lv": lv, "seq": _cast_seq, "hit": {}})
 			w.events.append({"t": "gale_impact", "u": u.id, "from": u.pos, "dir": dir, "dist": reach,
-				"speed": _v(a, "speed", lv), "width": _v(a, "width", lv)})
+				"speed": val(u, aid, "speed"), "width": val(u, aid, "width")})
 		"blood_ranger_ult":
-			var dur := _v(a, "duration", lv)
+			var dur := val(u, aid, "duration")
 			u.add_modifier({"id": "blood_ranger", "source": u.id, "expires": w.time + dur, "fx": "blood",
-				"stats": {"lifesteal_ability": _v(a, "lifesteal", lv), "range": _v(a, "bonus_range", lv)},
-				"leap_chance": _v(a, "leap_chance", lv), "leap_distance": _v(a, "leap_distance", lv),
-				"leap_time": _v(a, "leap_time", lv), "leap_cooldown": _v(a, "leap_cooldown", lv)})
+				"stats": {"lifesteal_ability": val(u, aid, "lifesteal"), "range": val(u, aid, "bonus_range")},
+				"leap_chance": val(u, aid, "leap_chance"), "leap_distance": val(u, aid, "leap_distance"),
+				"leap_time": val(u, aid, "leap_time"), "leap_cooldown": val(u, aid, "leap_cooldown")})
 			u.refresh_stats()
 			w.events.append({"t": "blood_ranger_start", "u": u.id, "dur": dur})
 		"dark_stomp":
@@ -395,7 +399,7 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		"leap_strike":
 			var lt := leap_target(u, lv)
 			if lt != null:
-				u.leap = {"target": lt.id, "from": u.pos, "to": lt.pos, "t": 0.0, "dur": _v(a, "leap_time", lv), "lv": lv,
+				u.leap = {"target": lt.id, "from": u.pos, "to": lt.pos, "t": 0.0, "dur": val(u, aid, "leap_time"), "lv": lv,
 					"z": 0.0, "height": 150.0 + 0.12 * u.pos.distance_to(lt.pos)}
 				u.facing = (lt.pos - u.pos).angle()
 				w.events.append({"t": "leap_start", "u": u.id, "target": lt.id, "dur": u.leap.dur})
@@ -409,19 +413,27 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		"chomp":
 			_start_chomp(u, aid, lv, t)
 		"tainted_touch":
-			u.add_modifier({"id": "tainted_touch", "source": u.id, "expires": w.time + _v(a, "duration", lv), "tainted": lv,
+			u.add_modifier({"id": "tainted_touch", "source": u.id, "expires": w.time + val(u, aid, "duration"), "tainted": lv,
 				"fx": "taint"})
-			w.events.append({"t": "taint_cast", "u": u.id, "dur": _v(a, "duration", lv)})
+			w.events.append({"t": "taint_cast", "u": u.id, "dur": val(u, aid, "duration")})
 		"unholy_might":
-			var dur := _v(a, "duration", lv)
-			u.add_modifier({"id": "unholy_might", "source": u.id, "expires": w.time + dur, "chance": _v(a, "chance", lv),
-				"radius": _v(a, "reflect_radius", lv), "fx": "unholy"})
+			var dur := val(u, aid, "duration")
+			u.add_modifier({"id": "unholy_might", "source": u.id, "expires": w.time + dur, "chance": val(u, aid, "chance"),
+				"radius": val(u, aid, "reflect_radius"), "fx": "unholy"})
 			w.effects.append({"kind": "delayed", "what": "unholy_end", "unit": u.id, "at": w.time + dur, "cast_t": w.time,
-				"slow": _v(a, "fatigue_slow", lv), "slow_t": _v(a, "fatigue_duration", lv)})
+				"slow": val(u, aid, "fatigue_slow"), "slow_t": val(u, aid, "fatigue_duration")})
 			w.events.append({"t": "unholy_start", "u": u.id, "dur": dur})
 
 func _v(a: Dictionary, key: String, lv: int) -> float:
 	return _lvl_val(a, key, lv)
+
+## A caster's ability value with its talents and items, for effects that outlive the cast (pushes, curses); the plain
+## level value once the caster is gone or has a different level.
+func _cv(src_id: int, aid: String, key: String, lv: int) -> float:
+	var s := w.get_unit(src_id)
+	if s != null and s.ability_level_of(aid) == lv:
+		return val(s, aid, key)
+	return _lvl_val(SimData.ability(aid), key, lv)
 
 ## Whether an effect from `src_team` may put a debuff (stun, push, slow, curse) on `t`: never on a debuff-immune
 ## enemy (Spell Shield) unless the effect pierces it (Shuriken Hook, Chomp).
@@ -485,6 +497,10 @@ func _start_tp(u: SimUnit, p: Vector2) -> void:
 		u.ability_ready["tp"] = w.time + C.TP_COOLDOWN * SimOrbs.cooldown_mult(u)
 	u.channel = {"ability": "tp", "until": w.time + C.TP_CHANNEL, "dest": dest, "building": best.id}
 	w.events.append({"t": "tp_start", "u": u.id, "dest": dest, "until": u.channel.until})
+	if u.bot:
+		var bb = w.bot_for(u.id)
+		if bb != null:
+			bb.botlog.on_cast(w.time, "tp")
 
 # ---- Attack modifier (orb) ------------------------------------------------------------------------------------------
 
@@ -559,6 +575,21 @@ func update_effects() -> void:
 		if done:
 			w.effects.remove_at(i)
 
+## Fells every tree within `r` (+40, the trunk) of the segment `from`-`to`; each falls away along the line (Gale
+## Impact's arrow, Fiery Javelin).
+func fell_trees_on(from: Vector2, to: Vector2, r: float) -> void:
+	var dir := (to - from).normalized()
+	var c0 := w.map.world_to_cell(Vector2(minf(from.x, to.x), minf(from.y, to.y)) - Vector2(r, r))
+	var c1 := w.map.world_to_cell(Vector2(maxf(from.x, to.x), maxf(from.y, to.y)) + Vector2(r, r))
+	for cy in range(maxi(c0.y, 0), mini(c1.y, SimMap.N - 1) + 1):
+		for cx in range(maxi(c0.x, 0), mini(c1.x, SimMap.N - 1) + 1):
+			var ti := w.map.tree_cell[cy * SimMap.N + cx]
+			if ti < 0 or not w.map.trees[ti].alive:
+				continue
+			var tp: Vector2 = w.map.trees[ti].pos
+			if Geometry2D.get_closest_point_to_segment(tp, from, to).distance_to(tp) <= r + 40.0:
+				w.cut_tree(ti, tp - dir * 100.0, true)
+
 ## Gale Impact's arrow, one tick: it fells the trees it passes and strikes each enemy once, hurling it sideways off
 ## the arrow's line (away from the side it stood on) with a little of the arrow's momentum.
 func _update_line(e: Dictionary) -> bool:
@@ -568,18 +599,7 @@ func _update_line(e: Dictionary) -> bool:
 	e.pos = to
 	e.left -= step
 	var dir: Vector2 = e.dir
-	# trees in the arrow's path
-	var r: float = e.width
-	var c0 := w.map.world_to_cell(Vector2(minf(from.x, to.x), minf(from.y, to.y)) - Vector2(r, r))
-	var c1 := w.map.world_to_cell(Vector2(maxf(from.x, to.x), maxf(from.y, to.y)) + Vector2(r, r))
-	for cy in range(c0.y, c1.y + 1):
-		for cx in range(c0.x, c1.x + 1):
-			var ti := w.map.tree_cell[cy * SimMap.N + cx]
-			if ti < 0 or not w.map.trees[ti].alive:
-				continue
-			var tp: Vector2 = w.map.trees[ti].pos
-			if Geometry2D.get_closest_point_to_segment(tp, from, to).distance_to(tp) <= r + 40.0:
-				w.cut_tree(ti, tp - dir * 100.0, true)
+	fell_trees_on(from, to, e.width)
 	for o: SimUnit in w.query(to, e.width + 200.0, true):
 		if o.team == e.team or o.is_building() or o.is_ward() or o.kind == K.COURIER or e.hit.has(o.id) or not o.alive:
 			continue
@@ -625,20 +645,20 @@ func _ezee_can_hit(u: SimUnit, o: SimUnit) -> bool:
 ## Dark Stomp: magic damage around Ezee, then a physics push away from him. A pushed enemy that crashes into a unit,
 ## tree, cliff or building takes impact damage and is stunned once it comes to rest.
 func _dark_stomp(u: SimUnit, a: Dictionary, lv: int) -> void:
-	var r := _v(a, "radius", lv)
+	var r := val(u, "dark_stomp", "radius")
 	_cast_seq += 1
 	w.events.append({"t": "stomp", "u": u.id, "pos": u.pos, "radius": r})
 	for o: SimUnit in w.query(u.pos, r, true):
 		if not _ezee_can_hit(u, o) or u.edge_distance(o) > r:
 			continue
-		w.combat.deal_damage(u.id, u.team, true, o, _v(a, "damage", lv), C.DamageType.MAGICAL, false, "dark_stomp")
+		w.combat.deal_damage(u.id, u.team, true, o, val(u, "dark_stomp", "damage"), C.DamageType.MAGICAL, false, "dark_stomp")
 		if not o.alive:
 			continue
 		var dir := o.pos - u.pos
 		if dir.length() < 1.0:
 			dir = Vector2.from_angle(u.facing)
 		var near := clampf(1.0 - u.pos.distance_to(o.pos) / r, 0.0, 1.0)
-		var speed := _v(a, "push_speed", lv) * lerpf(0.72, 1.0, near) / mass(o)
+		var speed := val(u, "dark_stomp", "push_speed") * lerpf(0.72, 1.0, near) / mass(o)
 		if can_debuff(o, u.team):
 			start_push(o, dir.normalized() * speed, u.id, u.team, "dark_stomp", lv, _cast_seq)
 
@@ -833,11 +853,11 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 	var lv := int(k.lv)
 	if aid == "gale_impact":
 		# Gale Impact: the crash deals another 20% of the arrow's damage, no stun
-		w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "damage", lv) * _v(a, "impact_pct", lv),
+		w.combat.deal_damage(int(k.src), int(k.team), true, u, _cv(int(k.src), aid, "damage", lv) * _cv(int(k.src), aid, "impact_pct", lv),
 			C.DamageType.MAGICAL, false, "gale_impact")
 		return
-	w.combat.deal_damage(int(k.src), int(k.team), true, u, _v(a, "impact_damage", lv), C.DamageType.MAGICAL, false, aid)
-	k.stun = _v(a, "impact_stun", lv)
+	w.combat.deal_damage(int(k.src), int(k.team), true, u, _cv(int(k.src), aid, "impact_damage", lv), C.DamageType.MAGICAL, false, aid)
+	k.stun = _cv(int(k.src), aid, "impact_stun", lv)
 
 ## Leap Strike's target: the visible enemy in range with the lowest health fraction, the nearest if none is hurt.
 func leap_target(u: SimUnit, lv: int) -> SimUnit:
@@ -890,11 +910,11 @@ func _update_leap(u: SimUnit) -> void:
 		if hit:
 			var a := SimData.ability("leap_strike")
 			var lv := int(L.lv)
-			var dmg := _v(a, "damage", lv) + _v(a, "str_mult", lv) * u.str_total
+			var dmg := val(u, "leap_strike", "damage") + val(u, "leap_strike", "str_mult") * u.str_total
 			w.combat.deal_damage(u.id, u.team, true, t, dmg, C.DamageType.PURE, false, "leap_strike")
 			if t.alive and can_debuff(t, u.team):
-				w.status.apply(t, u.id, u.team, {"id": "leap_strike_slow", "dur": _v(a, "slow_duration", lv),
-					"slow": _v(a, "slow", lv), "fx": "slow"})
+				w.status.apply(t, u.id, u.team, {"id": "leap_strike_slow", "dur": val(u, "leap_strike", "slow_duration"),
+					"slow": val(u, "leap_strike", "slow"), "fx": "slow"})
 				if u.order == O.NONE:
 					w.orders.issue(u, {"type": O.ATTACK_UNIT, "target": t.id}, false)
 		return
@@ -904,10 +924,10 @@ func _update_leap(u: SimUnit) -> void:
 func tainted_hit(s: Dictionary, t: SimUnit) -> void:
 	var a := SimData.ability("tainted_touch")
 	var lv := int(s.taint)
-	w.combat.deal_damage(s.src, s.team, bool(s.hero), t, _v(a, "bonus_damage", lv), C.DamageType.MAGICAL, false, "tainted_touch")
+	w.combat.deal_damage(s.src, s.team, bool(s.hero), t, _cv(int(s.src), "tainted_touch", "bonus_damage", lv), C.DamageType.MAGICAL, false, "tainted_touch")
 	if t.alive and can_debuff(t, int(s.team)):
-		w.status.apply(t, int(s.src), int(s.team), {"id": "tainted_curse", "dur": _v(a, "curse_duration", lv),
-			"reveal": int(s.team), "reveal_r": _v(a, "curse_vision", lv), "fx": "curse"})
+		w.status.apply(t, int(s.src), int(s.team), {"id": "tainted_curse", "dur": _cv(int(s.src), "tainted_touch", "curse_duration", lv),
+			"reveal": int(s.team), "reveal_r": _cv(int(s.src), "tainted_touch", "curse_vision", lv), "fx": "curse"})
 		w.events.append({"t": "curse", "u": t.id, "src": s.src})
 
 ## Unholy Might: a random enemy of `t` near it to take the deflected half of a blow (null if none).
@@ -925,14 +945,14 @@ func unholy_victim(t: SimUnit, radius: float) -> SimUnit:
 ## Burst Shot: mana and cooldown are spent as the channel begins (Dota); the arrows go out in waves while it lasts.
 ## The 30 arrows are split into 5 waves of 4-7 at random (the split always sums to 30).
 func _start_burst(u: SimUnit, a: Dictionary, lv: int, p: Vector2) -> void:
-	var waves := int(_v(a, "waves", lv))
-	var total := int(_v(a, "arrows", lv))
-	var split := burst_split(total, waves, int(_v(a, "wave_min", lv)), int(_v(a, "wave_max", lv)))
-	var interval := _v(a, "wave_interval", lv)
+	var waves := int(val(u, "burst_shot", "waves"))
+	var total := int(val(u, "burst_shot", "arrows"))
+	var split := burst_split(total, waves, int(val(u, "burst_shot", "wave_min")), int(val(u, "burst_shot", "wave_max")))
+	var interval := val(u, "burst_shot", "wave_interval")
 	u.channel = {"ability": "burst_shot", "until": w.time + interval * waves, "start": w.time, "dur": interval * waves,
-		"point": p, "radius": _v(a, "radius", lv),
-		"waves": split, "next_wave": 0, "next_at": w.time, "interval": interval, "pct": _v(a, "attack_pct", lv),
-		"speed": _v(a, "arrow_speed", lv)}
+		"point": p, "radius": val(u, "burst_shot", "radius"),
+		"waves": split, "next_wave": 0, "next_at": w.time, "interval": interval, "pct": val(u, "burst_shot", "attack_pct"),
+		"speed": val(u, "burst_shot", "arrow_speed")}
 	u.facing = (p - u.pos).angle() if p.distance_to(u.pos) > 1.0 else u.facing
 	w.events.append({"t": "channel_start", "u": u.id, "ability": "burst_shot", "until": u.channel.until,
 		"point": p, "radius": u.channel.radius})
@@ -994,10 +1014,10 @@ func masterful_bonus(u: SimUnit, t: SimUnit) -> float:
 		return 0.0
 	# pseudo-random like every chance-on-attack passive in Dota; no roll while it cools down
 	var a := SimData.ability("masterful_archery")
-	if not w.status.roll(u, "masterful_archery", _v(a, "chance", lv)):
+	if not w.status.roll(u, "masterful_archery", val(u, "masterful_archery", "chance")):
 		return 0.0
-	u.ability_ready["masterful_archery"] = w.time + _v(a, "proc_cooldown", lv)
-	return u.agi_total * _v(a, "agility_pct", lv)
+	u.ability_ready["masterful_archery"] = w.time + val(u, "masterful_archery", "proc_cooldown")
+	return u.agi_total * val(u, "masterful_archery", "agility_pct")
 
 ## Blood Ranger: an attack that hit her may make her leap back, away from the attacker (1 s apart at most).
 func on_attacked(t: SimUnit, attacker: SimUnit) -> void:
@@ -1118,6 +1138,7 @@ func _update_javelin(e: Dictionary) -> bool:
 	var to := from + dir * step
 	e.pos = to
 	e.left = float(e.left) - step
+	fell_trees_on(from, to, float(e.width))         # the javelin knocks down the trees it passes
 	for o: SimUnit in w.query(to, float(e.width) + step + 80.0, true):
 		if e.hit.has(o.id) or not _azrin_can_hit(int(e.team), o):
 			continue
@@ -1769,6 +1790,10 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 		_:
 			consumed = w.items.use(u, it, d, t, p)
 	w.events.append({"t": "item_use", "u": u.id, "item": it.id})
+	if u.bot:
+		var bb = w.bot_for(u.id)
+		if bb != null:
+			bb.botlog.on_item(w.time, String(it.id))
 	if consumed:
 		it.charges = int(it.get("charges", 1)) - 1
 		if it.charges <= 0:

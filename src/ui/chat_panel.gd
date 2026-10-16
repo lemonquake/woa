@@ -62,7 +62,8 @@ func add(e: Dictionary) -> void:
 	if is_bot and not bool(Options.get_value("bot_chat")):
 		return
 	lines.append({"name": String(e.name), "text": String(e.text), "me": int(e.u) == hud.game.player_hero_id,
-		"hero": SimTeamAI.hero_label(u) if u != null else "", "t": _now})
+		"hero": SimTeamAI.hero_label(u) if u != null else "", "t": _now,
+		"col": U.player_color(u) if u != null and u.is_hero() else U.DAWN})
 	while lines.size() > 40:
 		lines.pop_front()
 	queue_redraw()
@@ -92,7 +93,7 @@ func _draw_body() -> void:
 			break
 		var a := 1.0 if is_open() else clampf((SHOW + FADE - age) / FADE, 0.0, 1.0)
 		var who := String(l.name) + (" (%s)" % l.hero if String(l.hero) != "" and String(l.hero) != String(l.name) else "") + ": "
-		var col := Color(0.55, 1.0, 0.55, a) if bool(l.me) else Color(U.DAWN.lerp(Color.WHITE, 0.25), a)
+		var col := Color((l.get("col", U.DAWN) as Color).lerp(Color.WHITE, 0.2), a)
 		var wx := U.font("bold").get_string_size(who, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
 		var parts := U.wrap(String(l.text), W - wx, 16, "body")
 		var block: Array = []

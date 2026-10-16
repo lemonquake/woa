@@ -189,6 +189,13 @@ func _init() -> void:
 						ct.append("%s:%s" % [bh.def.id, c])
 			out("  %s: counter-ganks called %d (helpers fought in %d), juked home %d, counter items %s" % [C.TEAM_NAMES[team],
 				w.brain(team).saves_called, cs, jk, ", ".join(ct)])
+		if String(opts.get("botlog", "")) != "":
+			# --botlog: every bot's Bot Log summary (--botlog=Bot Ann also prints that bot's latest steps)
+			for b in w.bots:
+				var bh2: SimUnit = b.hero()
+				out(b.botlog.summary(String(b.name), String(bh2.def.name) if bh2 else "?", String(b.mode), w.time))
+				if String(opts.botlog) == String(b.name):
+					out(b.botlog.recent(SimBotLog.MAX_ENTRIES))
 		out("  chat lines: %d" % chat.size())
 		if String(opts.chat) != "":
 			for c in chat:

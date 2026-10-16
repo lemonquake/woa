@@ -71,7 +71,7 @@ const SUPPORT_SKILLS := {
 		"unholy_might"],
 }
 ## Talent side per tier (0 left, 1 right), for heroes with a talent tree.
-const TALENTS := {"sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
+const TALENTS := {"blood_ranger": [1, 1, 0, 1], "ezee": [0, 0, 1, 0], "sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
 	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
@@ -366,10 +366,12 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 				total += ab.val(h, "anomaly", "damage") * 4.0 * arm
 			total *= 1.0 + h.magic_amp
 		"blau":
+			# the bullet usually passes its target twice (out and back off a tree, boulder or wall)
 			if ready.call("bounce_shot"):
-				total += ab.val(h, "bounce_shot", "damage") * mr * 1.3
+				total += ab.val(h, "bounce_shot", "damage") * mr * 1.7
+			# boulders hit, then wall the target in for a few more of his shots
 			if ready.call("summon_boulders"):
-				total += ab.val(h, "summon_boulders", "damage") * mr * 0.6
+				total += ab.val(h, "summon_boulders", "damage") * mr * 0.8 + dps(w, h, t) * 1.5
 			if ready.call("place_turret"):
 				total += dps(w, h, t) * ab.val(h, "place_turret", "damage_pct") * 1.13 * 6.0
 			total *= 1.0 + h.magic_amp

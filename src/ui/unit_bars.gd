@@ -276,7 +276,16 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		_texts.append([font, Vector2(badge.position.x + 9 - tw * 0.5, badge.position.y + 13), lv, 12, 0, Color(1, 0.92, 0.7)])
 		var dy := _disable_bar(u, Rect2(r.position.x, r.end.y + 9, width, 6), true)
 		_status_icons(u, Vector2(r.position.x, r.end.y + 9 + dy))
-		var nm := u.name if u.look.get("display_name", "") == "" else String(u.look.display_name)
+		# "lemonQ (Ezee)": the player in their player colour, the hero in its team's colour
+		var parts := UiKit.who_parts(u)
 		var nf := UiKit.font("bold")
-		var nw := nf.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
-		_texts.append([nf, Vector2(s.x - nw * 0.5, r.position.y - 7), nm, 16, 5, col.lightened(0.45)])
+		var gap := 5.0
+		var nw := -gap
+		for pt in parts:
+			nw += nf.get_string_size(String(pt[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x + gap
+		var nx := s.x - nw * 0.5
+		for i in parts.size():
+			var pc: Color = parts[i][1]
+			_texts.append([nf, Vector2(nx, r.position.y - 7), String(parts[i][0]), 16, 5,
+				pc.lightened(0.15) if i == 0 else pc.lightened(0.35)])
+			nx += nf.get_string_size(String(parts[i][0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x + gap

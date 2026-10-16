@@ -44,6 +44,13 @@ var items: SimItems
 var status: SimStatus
 var orbs: SimOrbs
 var bots: Array = []                       # SimBot instances
+
+## The bot playing a hero (null for a human's hero).
+func bot_for(hid: int) -> SimBot:
+	for b in bots:
+		if b.hero_id == hid:
+			return b
+	return null
 var brains := [null, null]                 # SimTeamAI per team (made when the team's first bot joins)
 var chat_log: Array = []                   # [{team, u, name, text, t}] team chat, newest last (all teams)
 var pings: Array = []                      # [{id, team, pos, kind, target, from, t}] newest last
@@ -112,6 +119,7 @@ func spawn(def_id: String, team: int, p: Vector2) -> SimUnit:
 func spawn_hero(def_id: String, team: int, look := {}) -> SimUnit:
 	var u := spawn(def_id, team, map.fountains[team] + Vector2(300, 300) * (1.0 if team == C.DAWN else -1.0))
 	u.look = look
+	u.color_slot = heroes.filter(func(o): return o.team == team).size() - 1
 	u.facing = PI * 0.25 if team == C.DAWN else -PI * 0.75
 	var c := spawn("courier", team, map.fountains[team] + Vector2(150, 420) * (1.0 if team == C.DAWN else -1.0))
 	c.owner_id = u.id
@@ -797,7 +805,7 @@ func chat(team: int, from_id: int, text: String) -> void:
 	var u := get_unit(from_id)
 	var who := ""
 	if u != null:
-		who = u.bot_name if u.bot_name != "" else String(u.look.get("display_name", u.def.get("name", "")))
+		who = u.player_label() if u.player_label() != "" else String(u.look.get("display_name", u.def.get("name", "")))
 	var line := {"team": team, "u": from_id, "name": who, "text": text, "t": time}
 	chat_log.append(line)
 	if chat_log.size() > 80:

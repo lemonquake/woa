@@ -130,7 +130,7 @@ func _board() -> void:
 		var band := Rect2(r.position.x + 12, y - 24, width - 24, 34)
 		draw_rect(band, Color(U.DAWN if hh.team == 0 else U.DUSK, 0.10))
 		draw_rect(Rect2(band.position, Vector2(4, band.size.y)), U.DAWN if hh.team == 0 else U.DUSK)
-		var vals := [hud._name(hh) + "  (" + String(hh.def.name) + ")", str(hh.level),
+		var vals := [hud._name(hh), str(hh.level),
 			"%d / %d / %d" % [hh.kills, hh.deaths, hh.assists], "%d / %d" % [hh.last_hits, hh.denies],
 			str(hh.networth()), str(int(_earned(hh) / minutes)), str(int(hh.xp / minutes)), str(int(t.hero)),
 			str(int(t.building)), str(int(t.taken)), str(int(hh.healed))]

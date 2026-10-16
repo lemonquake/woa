@@ -58,8 +58,10 @@ var lane_foe := ""                         # the enemy hero it laned against (le
 var lane_kills := 0
 var lane_deaths := 0
 var poke_at := C.LONG_AGO                  # Blau: when the bot next looks for a Bounce Shot poke (SimBot16)
+var _hunt_target := -1                     # Blau: the laner it went in to kill (SimBot16._blau_hunt)
 var _next_think := C.LONG_AGO
 var _last_order := {}
+var botlog := SimBotLog.new()             # the Debug panel's Bot Log (left out of snapshots)
 var _was_alive := true
 
 func _init(world: SimWorld = null, hid := -1, p_lane := "mid", p_name := "Bot", p_skill := "hard") -> void:
@@ -139,10 +141,14 @@ func brain() -> SimTeamAI:
 	var h := hero()
 	return w.brain(h.team) if h != null else null
 
+const ORDER_NAMES := ["None", "Move", "Attack", "Attack move", "Hold", "Stop", "Cast", "Cast", "Cast", "Follow",
+	"Drop item", "Pick up item", "Give item", "Take orb"]
+
 func say(text: String, key := "", every := 30.0, urgent := false) -> void:
 	var b := brain()
 	if b != null:
 		b.say(hero(), text, key, every, urgent)
+		botlog.on_say(w.time, text)
 
 # ---- Thinking ---------------------------------------------------------------------------------------------------------
 
@@ -159,6 +165,7 @@ func think() -> void:
 	var h := hero()
 	if h == null:
 		return
+	botlog.on_think(C.DT * 2.0 if quick else float(sk.think), mode if h.alive else "dead")
 	h.bot = true
 	h.auto_attack = false
 	if not h.alive:
@@ -337,6 +344,8 @@ func _choose_mode(h: SimUnit) -> void:
 	var task := brain().task_for(h.id)
 	if not task.is_empty() and w.time < float(_given_up.get(int(task.get("id", -1)), C.LONG_AGO)):
 		task = {}                                  # this bot gave up on that play (nothing to do there)
+	if not task.is_empty():
+		botlog.on_task(w.time, task)
 	d["retreat"] = _retreat_desire(h, task)
 	d["heal"] = _heal_desire(h)
 	var ft := _pick_fight(h)
@@ -375,6 +384,7 @@ func _choose_mode(h: SimUnit) -> void:
 	if best != mode and w.time - mode_since < 1.0 and bv < 0.85 and d.has(mode) and float(d[mode]) > 0.0:
 		best = mode
 	if best != mode:
+		botlog.on_mode(w.time, mode, best, d)
 		_leave_mode(h, mode, best)
 		mode = best
 		mode_since = w.time
@@ -436,6 +446,8 @@ func _retreat_bar() -> float:
 	base += (1.0 - _boldness()) * 0.2
 	return BotMemory.retreat_hp(kit, base, _team())
 
+var _threat_back_until := C.LONG_AGO      # a retreat from a stronger enemy holds until then (see _retreat_desire)
+
 func _retreat_desire(h: SimUnit, task: Dictionary) -> float:
 	if not task.is_empty() and String(task.kind) == "retreat" and h.pos.distance_to(task.pos) < 2800.0:
 		return 0.95
@@ -463,7 +475,12 @@ func _retreat_desire(h: SimUnit, task: Dictionary) -> float:
 		return 0.9
 	var team_fight := not task.is_empty() and (String(task.kind) == "fight" or String(task.kind) == "save" 		and int(task.get("victim", -1)) != h.id)
 	if _threat > 1.7 and not team_fight and not _foes.is_empty() and _nearest(h, _foes).distance_to(h.pos) < 1000.0:
+		_threat_back_until = w.time + 2.5
 		return clampf(0.6 + (_threat - 1.7) * 0.3, 0.6, 0.9)
+	# backing off from a stronger enemy lasts a moment: it used to flip back to the lane the instant it stepped out of
+	# 1000 range and walk straight back in, every second or two (seen in the Bot Log)
+	if mode == "retreat" and w.time < _threat_back_until and _threat > 1.3 and not team_fight and not _known.is_empty() 			and _nearest(h, _known).distance_to(h.pos) < 1400.0:
+		return 0.6
 	if BotMemory.danger(h.team, h.pos) > 0.6 and hpf < bar + 0.2 and not _known.is_empty() and not team_fight:
 		return 0.8
 	return 0.0
@@ -2688,3 +2705,4 @@ func _order(h: SimUnit, o: Dictionary, force := false) -> void:
 		return
 	_last_order = o
 	w.command(h.id, o)
+	botlog.on_order(w.time, o, mode, ORDER_NAMES[clampi(int(o.get("type", 0)), 0, ORDER_NAMES.size() - 1)], w)

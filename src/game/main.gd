@@ -312,6 +312,7 @@ func _spawn_heroes() -> void:
 	if mine == null:
 		mine = (made[0][0] as SimUnit)
 	mine.player = true
+	mine.player_name = String(NetBrowser.load_prefs().get("name", ""))
 	player_hero_id = mine.id
 	player_team = mine.team
 	for m in made:

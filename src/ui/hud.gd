@@ -353,6 +353,8 @@ func on_kill(e: Dictionary) -> void:
 func _name(u: SimUnit) -> String:
 	if u == null:
 		return "?"
+	if u.is_hero():
+		return u.who()
 	return String(u.look.get("display_name", u.name))
 
 func toggle_shop() -> void:

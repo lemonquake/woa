@@ -57,6 +57,7 @@ static func spawn_heroes(w: SimWorld, cfg: Dictionary, me: int, look_of: Callabl
 		slot_heroes[int(s.slot)] = h.id
 		if String(s.kind) == "human":
 			h.player = true
+			h.player_name = String(s.get("name", ""))
 			w.brain(team).player_pref[h.id] = String(s.get("lane", ""))
 			if int(s.peer) == me:
 				mine = h.id

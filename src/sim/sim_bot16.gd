@@ -8,8 +8,9 @@ extends RefCounted
 ## firing the one that passes enemy heroes most (twice when the bounces allow); boulders roll ahead of a fleeing target
 ## to wall it in, or into a melee hero on top of him; when chased he turns to face the chaser so Lay Trap's leap takes
 ## him away and leaves the snare in its path; turrets go down in every fight (between him and the target, within
-## their 650) and in front of towers he pushes; with the Upgrade Staff he climbs into a turret when hurt and stays
-## while it holds.
+## their 650), in lane against the enemy laner and in front of towers he pushes; with the Upgrade Staff he climbs into
+## a turret when hurt and stays while it holds. In lane he pokes with every sure Bounce Shot and, when his spells and a
+## few attacks can finish the enemy laner, goes for the kill (2026-10-17: the bot used to poke rarely and never kill).
 ## Roydo: Void Rush first when enemy heroes are near (their status resistance drops, so the stun after lasts longer),
 ## then Grip of the Ruler with its middle between the target and him (the target is thrown to his side and the slam
 ## catches whoever stands near); Anomaly once a real fight is on; Void Rush's speed to run.
@@ -339,7 +340,12 @@ static func tick(b: SimBot, h: SimUnit) -> bool:
 			return _inside(b, h)
 		if _climb_in(b, h):
 			return true
-		# laning: Bounce Shot is his poke (the shared lane logic waits for 60% mana, more than his small pool has)
+		# laning: a kill when his combo can finish the laner, then the turret and Bounce Shot as harass (the shared
+		# lane logic waits for 60% mana, more than his small pool has)
+		if b.mode in ["lane", "farm"] and _blau_hunt(b, h):
+			return true
+		if b.mode == "lane" and _lane_turret(b, h):
+			return true
 		if b.mode == "lane" and _lane_poke(b, h):
 			return true
 		# pushing a tower: a turret in front of it
@@ -366,8 +372,8 @@ static func _lane_poke(b: SimBot, h: SimUnit) -> bool:
 	var ab := w.abilities
 	if not b._spells_ok() or w.time < b.poke_at:
 		return false
-	# never at the cost of a last hit, and not while losing the lane
-	if b._creep_low or h.hp < h.max_hp * 0.5:
+	# not while losing the lane badly
+	if h.hp < h.max_hp * 0.35:
 		return false
 	if ab.cast_error(h, "bounce_shot", -1, null, h.pos) != "":
 		return false
@@ -380,11 +386,67 @@ static func _lane_poke(b: SimBot, h: SimUnit) -> bool:
 			target = f
 	if target == null:
 		return false
-	b.poke_at = w.time + 1.0
+	b.poke_at = w.time + 0.5
 	var aim := best_bounce(b, h, target, false)
-	if aim.is_empty() or float(aim.score) < 3.0:
+	# a last hit is due: only a shot that passes the hero squarely (a sure hit) is worth the attack it delays
+	var need := 4.5 if b._creep_low else 3.0
+	if aim.is_empty() or float(aim.score) < need:
 		return false
 	return _cast_point(b, h, "bounce_shot", aim.point, 0.45)
+
+## The enemy laner within reach whom his ready spells and a few seconds of attacks can kill: Blau goes for it
+## (boulders to wall it in, the turret, the shot, then attacks), and keeps at it while that stays true. Not under an
+## enemy tower unless the target is nearly dead, and not into more heroes than are with him.
+static func _blau_hunt(b: SimBot, h: SimUnit) -> bool:
+	var w := b.w
+	if not b._spells_ok() or h.hp < h.max_hp * 0.4:
+		return false
+	var best: SimUnit = null
+	for f in b._foes:
+		if not f.alive or f.is_invulnerable() or h.pos.distance_to(f.pos) > 1000.0:
+			continue
+		var reach := SimBotKits.burst(w, h, f) + SimBotKits.dps(w, h, f) * 3.0
+		if f.hp > reach:
+			continue
+		if f.hp > f.max_hp * 0.15:
+			var under := false
+			for t in b._etowers:
+				if t.alive and f.pos.distance_to(t.pos) < t.attack_range + 250.0:
+					under = true
+			if under:
+				continue
+		if _foes_near(b, f.pos, 1200.0) > _allies_near(b, h, h.pos, 1200.0) + 1:
+			continue
+		if best == null or f.hp < best.hp:
+			best = f
+	if best == null:
+		return false
+	if b._hunt_target != best.id:
+		b._hunt_target = best.id
+		b.say("Going for %s." % SimTeamAI.hero_label(best), "hunt_%d" % best.id, 20.0)
+		b.botlog.add(w.time, "think", "can kill %s (%d health left): going in" % [best.who(), int(best.hp)])
+	_blau(b, h, best)
+	if b._busy(h):
+		return true
+	if h.is_ranged() and not best.is_ranged() and h.edge_distance(best) < 200.0 and w.time < h.next_attack_at - 0.2:
+		b._go(h, h.pos + (h.pos - best.pos).normalized() * 250.0)
+	else:
+		b._order(h, {"type": O.ATTACK_UNIT, "target": best.id})
+	return true
+
+## In lane from level 6: a turret beside the enemy laner when it stands near our wave (it shoots him and his creeps,
+## and zones him off them), with mana left for Bounce Shot.
+static func _lane_turret(b: SimBot, h: SimUnit) -> bool:
+	var w := b.w
+	var ab := w.abilities
+	if not b._spells_ok() or h.ability_level_of("place_turret") <= 0 or ab.cooldown_left(h, "place_turret") > 0.0:
+		return false
+	if h.mana < ab.ability_mana(h, "place_turret") + ab.ability_mana(h, "bounce_shot") * 0.5 or h.hp < h.max_hp * 0.5:
+		return false
+	for f in b._foes:
+		if f.alive and h.pos.distance_to(f.pos) < 1000.0 and not b._ecreeps.is_empty():
+			return _place_turret(b, h, f.pos)
+	return false
 
 ## Blau climbs into a nearby turret of his when hurt with enemies about (Upgrade Staff).
 static func _climb_in(b: SimBot, h: SimUnit) -> bool:

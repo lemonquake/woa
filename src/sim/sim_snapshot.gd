@@ -12,7 +12,7 @@ const MARK := "__snapshot_id"
 ## Fields that are caches or tool switches, rebuilt or reset after loading.
 const TRANSIENT := {"_stamps": true, "_stamp_rev": true, "_team_img": true, "_static_img": true, "_static": true,
 	"_templates": true, "prof": true, "profiling": true, "_power_cache": true, "_power_tick": true, "_bld": true,
-	"_nb_cache": true, "_nb_tick": true, "_val_cache": true}
+	"_nb_cache": true, "_nb_tick": true, "_val_cache": true, "botlog": true}
 
 ## The world at this tick boundary (call between steps, after its events were read), compressed.
 static func capture(w: SimWorld) -> PackedByteArray:

@@ -9,7 +9,7 @@ extends RefCounted
 ## hit and stunned; Void Rush weakens enemies (status resistance and damage dealt) and strengthens allies (armor and
 ## speed) around him; Dark Matter Skin sometimes returns part of a hit to every enemy near him; Anomaly turns him into a
 ## ranged monster with a shorter base attack time and more damage.
-## Blau: Bounce Shot's bullet passes through enemies and ricochets off trees, walls, boulders and other units; Summon
+## Blau: Bounce Shot's bullet passes through enemies and ricochets off trees (felling them), walls, boulders and other units; Summon
 ## Boulders rolls rocks that knock enemies back and then block every unit (phased ones too) for 10 s; Lay Trap leaps
 ## back and leaves a hidden snare; Place Turret builds a turret that shoots with a share of his attack (its procs too);
 ## with the Upgrade Staff, Pilot Turret puts him inside one.
@@ -299,6 +299,8 @@ func _update_bullet(e: Dictionary) -> bool:
 		var np: Vector2 = (e.pos as Vector2) + dir * step
 		var hit := bullet_obstacle(np, dir, int(e.team), int(e.touching), int(e.src))
 		if not hit.is_empty():
+			if hit.what == "tree":
+				w.cut_tree(int(hit.id), np - dir * 100.0, true)      # the tree it strikes comes down
 			if int(e.bounces) <= 0:
 				w.events.append({"t": "bounce_shot_bounce", "seq": e.seq, "pos": np, "normal": hit.normal, "what": hit.what,
 					"last": true})

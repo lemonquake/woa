@@ -113,6 +113,8 @@ var bot := false
 var gold_mult := 1.0                       # gold earned, passive gold too (Unfair bots: 3.0, +200%)
 var xp_mult := 1.0                         # experience earned (Unfair bots: 1.5, +50%)
 var bot_name := ""                         # a bot hero's player name (shown in chat and on the scoreboard)
+var player_name := ""                      # a human player's name (single player: the name in Multiplayer settings)
+var color_slot := -1                       # heroes: 0-4, the order on its team (picks the player colour)
 var look := {}                             # appearance dictionary (HeroLook) for the renderer
 var dmg_out := {}                          # damage source key -> [to heroes, to other units, to buildings]
 var dmg_in := {}                           # damage source key -> damage taken
@@ -701,3 +703,13 @@ func is_idle() -> bool:
 ## Whether this unit is currently attacking `target_id` (an order, or a swing in progress).
 func is_attacking(target_id: int) -> bool:
 	return atk_target == target_id and (atk_phase != AtkPhase.NONE or order == C.Order.ATTACK_UNIT or order == C.Order.ATTACK_MOVE)
+
+## The name of whoever plays this hero: the bot's or the human's ("" when nobody is named).
+func player_label() -> String:
+	return bot_name if bot_name != "" else player_name
+
+## How a hero is named in the game's text: "lemonQ (Ezee)", or just the hero when no player name is known.
+func who() -> String:
+	var hero := String(def.get("name", name))
+	var p := player_label()
+	return hero if p == "" or p == hero else "%s (%s)" % [p, hero]
