@@ -1,0 +1,95 @@
+natural bend forearm.L: (0.0, 0.0, -1.0)
+natural bend forearm.R: (0.0, 0.0, 1.0)
+natural bend shin.L: (-1.0, 0.0, 0.0)
+natural bend shin.R: (-1.0, 0.0, 0.0)
+== blood_ranger (R -, L bow)
+  idle_bow         ok
+  bow_1            ok
+  cast_quick       ok
+  hero_run         ok
+  death            ok
+  bow_draw_hold    ok
+  war_cry          ok
+  -> 0 findings
+== ezee (R greatsword, L -)
+  idle_2h          ok
+  boss_roar        ok
+  cast_quick       ok
+  hero_run         ok
+  death            ok
+  gs_1             pop hand.R 9% of frames (worst 46 deg at 0.17 s); pop weapon.R 9% of frames (worst 46 deg at 0.17 s); pop hand.L 5% of frames (worst 54 deg at 0.27 s); pop weapon.L 5% of frames (worst 54 deg at 0.27 s)
+  gs_2             pop forearm.L 9% of frames (worst 50 deg at 0.40 s); pop hand.L 9% of frames (worst 53 deg at 0.40 s); pop weapon.L 9% of frames (worst 53 deg at 0.40 s)
+  gs_3             ok
+  gs_4             pop forearm.L 3% of frames (worst 49 deg at 0.50 s); pop hand.L 3% of frames (worst 54 deg at 0.50 s); pop weapon.L 3% of frames (worst 54 deg at 0.50 s)
+  boss_slam        pop hand.R 2% of frames (worst 47 deg at 0.70 s); pop weapon.R 2% of frames (worst 47 deg at 0.70 s); pop forearm.L 2% of frames (worst 52 deg at 0.77 s); pop hand.L 2% of frames (worst 55 deg at 0.77 s); pop weapon.L 2% of frames (worst 55 deg at 0.77 s); pop forearm.R 2% of frames (worst 47 deg at 0.77 s)
+  leap_slam        pop forearm.L 11% of frames (worst 176 deg at 0.47 s); pop hand.L 8% of frames (worst 165 deg at 0.47 s); pop weapon.L 8% of frames (worst 165 deg at 0.47 s); pop upper_arm.L 5% of frames (worst 179 deg at 0.60 s); elbow points the wrong way L 5% of frames (worst 168 deg at 0.53 s); pop forearm.R 3% of frames (worst 56 deg at 0.67 s); pop hand.R 3% of frames (worst 56 deg at 0.67 s); pop weapon.R 3% of frames (worst 56 deg at 0.67 s); wrist bent L 5% of frames (worst 79 deg at 1.10 s)
+  cast_weapon      pop hand.R 4% of frames (worst 47 deg at 0.13 s); pop weapon.R 4% of frames (worst 47 deg at 0.13 s)
+  -> 27 findings
+== sludge (R cleaver, L shuriken_hook)
+  idle_1h          ok
+  hero_axe_smash   pop hand.L 2% of frames (worst 50 deg at 0.67 s); pop weapon.L 2% of frames (worst 50 deg at 0.67 s); pop forearm.R 7% of frames (worst 60 deg at 0.70 s); pop hand.R 15% of frames (worst 76 deg at 0.73 s); pop weapon.R 15% of frames (worst 76 deg at 0.73 s); pop forearm.L 2% of frames (worst 46 deg at 0.70 s); pop upper_arm.R 5% of frames (worst 53 deg at 0.73 s)
+  cast_quick       ok
+  hero_run         ok
+  death            ok
+  axe_1            ok
+  axe_2            pop hand.R 11% of frames (worst 49 deg at 0.20 s); pop weapon.R 11% of frames (worst 49 deg at 0.20 s)
+  axe_3            pop hand.R 10% of frames (worst 50 deg at 0.23 s); pop weapon.R 10% of frames (worst 50 deg at 0.23 s); pop forearm.R 5% of frames (worst 51 deg at 0.37 s)
+  cast_channel     ok
+  -> 12 findings
+== azrin (R -, L -)
+  idle_mage        ok
+  cast_area        pop hand.L 10% of frames (worst 64 deg at 0.47 s); pop weapon.L 10% of frames (worst 64 deg at 0.47 s); pop hand.R 6% of frames (worst 63 deg at 0.47 s); pop weapon.R 6% of frames (worst 63 deg at 0.47 s); wrist bent L 26% of frames (worst 111 deg at 0.67 s); wrist bent R 26% of frames (worst 115 deg at 0.67 s); pop forearm.L 6% of frames (worst 61 deg at 0.47 s); pop forearm.R 6% of frames (worst 62 deg at 0.47 s)
+  cast_quick       ok
+  death            ok
+  cast_heavy       ok
+  cast_ultimate    pop forearm.L 7% of frames (worst 63 deg at 0.87 s); pop hand.L 7% of frames (worst 71 deg at 0.87 s); pop weapon.L 7% of frames (worst 71 deg at 0.87 s); pop forearm.R 7% of frames (worst 64 deg at 0.87 s); pop hand.R 7% of frames (worst 71 deg at 0.87 s); pop weapon.R 7% of frames (worst 71 deg at 0.87 s); pop upper_arm.R 2% of frames (worst 45 deg at 0.87 s)
+  -> 15 findings
+== froster (R staff_aether, L -)
+  idle_staff       ok
+  cast_area        pop hand.L 10% of frames (worst 64 deg at 0.47 s); pop weapon.L 10% of frames (worst 64 deg at 0.47 s); pop hand.R 6% of frames (worst 63 deg at 0.47 s); pop weapon.R 6% of frames (worst 63 deg at 0.47 s); wrist bent L 26% of frames (worst 111 deg at 0.67 s); wrist bent R 26% of frames (worst 115 deg at 0.67 s); pop forearm.L 6% of frames (worst 61 deg at 0.47 s); pop forearm.R 6% of frames (worst 62 deg at 0.47 s); staff_aether through thigh R 6% of frames (worst at 0.53 s); staff_aether through torso 13% of frames (worst at 0.57 s)
+  cast_quick       ok
+  hero_run         ok
+  death            ok
+  staff_1          ok
+  staff_2          pop hand.R 6% of frames (worst 45 deg at 0.10 s); pop weapon.R 6% of frames (worst 45 deg at 0.10 s); staff_aether through torso 22% of frames (worst at 0.13 s); pop forearm.L 6% of frames (worst 46 deg at 0.33 s); pop upper_arm.R 6% of frames (worst 46 deg at 0.33 s)
+  cast_heavy       staff_aether through torso 17% of frames (worst at 0.33 s)
+  cast_channel     ok
+  -> 16 findings
+== caziel (R dagger, L dagger)
+  idle_shadowblade pop weapon.R 13% of frames (worst 66 deg at 0.80 s)
+  dual_heavy       pop forearm.L 3% of frames (worst 55 deg at 0.67 s); pop forearm.R 3% of frames (worst 56 deg at 0.67 s)
+  cast_quick       ok
+  hero_run         ok
+  death            ok
+  dual_1           ok
+  dual_2           pop hand.R 6% of frames (worst 47 deg at 0.30 s); pop weapon.R 6% of frames (worst 47 deg at 0.30 s)
+  dual_3           ok
+  dual_4           pop upper_arm.L 11% of frames (worst 63 deg at 0.23 s); pop forearm.L 7% of frames (worst 61 deg at 0.47 s); pop hand.L 15% of frames (worst 62 deg at 0.47 s); pop weapon.L 15% of frames (worst 62 deg at 0.47 s); pop upper_arm.R 26% of frames (worst 60 deg at 0.47 s); pop hips 4% of frames (worst 61 deg at 0.47 s); pop spine 4% of frames (worst 61 deg at 0.47 s); pop chest 4% of frames (worst 61 deg at 0.47 s); pop neck 4% of frames (worst 61 deg at 0.47 s); pop head 4% of frames (worst 61 deg at 0.47 s); pop forearm.R 19% of frames (worst 58 deg at 0.47 s); pop hand.R 19% of frames (worst 55 deg at 0.47 s); pop weapon.R 19% of frames (worst 55 deg at 0.47 s); pop thigh.L 4% of frames (worst 62 deg at 0.47 s); pop shin.L 4% of frames (worst 62 deg at 0.47 s); pop foot.L 4% of frames (worst 61 deg at 0.47 s); pop thigh.R 4% of frames (worst 63 deg at 0.47 s); pop shin.R 4% of frames (worst 63 deg at 0.47 s); pop foot.R 4% of frames (worst 61 deg at 0.47 s); pop shoulder.L 4% of frames (worst 61 deg at 0.47 s); pop shoulder.R 4% of frames (worst 61 deg at 0.47 s)
+  blink            pop hand.L 6% of frames (worst 50 deg at 0.23 s); pop weapon.L 6% of frames (worst 50 deg at 0.23 s); pop hand.R 6% of frames (worst 51 deg at 0.23 s); pop weapon.R 6% of frames (worst 51 deg at 0.23 s)
+  -> 30 findings
+== tock (R wand, L -)
+  idle_wand        ok
+  wand_heavy       ok
+  cast_quick       ok
+  hero_run         ok
+  death            ok
+  wand_1           ok
+  wand_2           pop forearm.R 7% of frames (worst 45 deg at 0.17 s); pop hand.R 7% of frames (worst 47 deg at 0.17 s); pop weapon.R 7% of frames (worst 47 deg at 0.17 s)
+  wand_3           ok
+  cast_area        pop hand.L 10% of frames (worst 64 deg at 0.47 s); pop weapon.L 10% of frames (worst 64 deg at 0.47 s); pop hand.R 6% of frames (worst 63 deg at 0.47 s); pop weapon.R 6% of frames (worst 63 deg at 0.47 s); wrist bent L 26% of frames (worst 111 deg at 0.67 s); wrist bent R 26% of frames (worst 115 deg at 0.67 s); pop forearm.L 6% of frames (worst 61 deg at 0.47 s); pop forearm.R 6% of frames (worst 62 deg at 0.47 s); wand through thigh R 10% of frames (worst at 0.63 s)
+  cast_ultimate    pop forearm.L 7% of frames (worst 63 deg at 0.87 s); pop hand.L 7% of frames (worst 71 deg at 0.87 s); pop weapon.L 7% of frames (worst 71 deg at 0.87 s); pop forearm.R 7% of frames (worst 64 deg at 0.87 s); pop hand.R 7% of frames (worst 71 deg at 0.87 s); pop weapon.R 7% of frames (worst 71 deg at 0.87 s); pop upper_arm.R 2% of frames (worst 45 deg at 0.87 s)
+  -> 19 findings
+== kragg (R sword, L shield)
+  idle_shield      ok
+  idle_knight      shield through torso 66% of frames (worst at 0.87 s); sword through shield 3% of frames (worst at 0.97 s); shield through thigh L 25% of frames (worst at 1.10 s)
+  shield_bash      shield through thigh L 40% of frames (worst at 0.13 s)
+  hero_run         shield through torso 15% of frames (worst at 0.23 s); sword through shield 10% of frames (worst at 0.23 s); shield through head 10% of frames (worst at 0.37 s)
+  death            ok
+  sword_1          shield through thigh L 6% of frames (worst at 0.00 s); sword through shield 6% of frames (worst at 0.00 s)
+  sword_2          sword through shield 11% of frames (worst at 0.03 s)
+  sword_3          shield through thigh L 21% of frames (worst at 0.10 s)
+  sword_4          shield through thigh L 50% of frames (worst at 0.07 s); pop upper_arm.R 7% of frames (worst 179 deg at 0.37 s); pop forearm.R 11% of frames (worst 180 deg at 0.37 s); pop hand.R 18% of frames (worst 180 deg at 0.37 s); pop weapon.R 18% of frames (worst 180 deg at 0.37 s); sword through shield 39% of frames (worst at 0.43 s); shield through thigh R 25% of frames (worst at 0.47 s); wrist bent R 7% of frames (worst 87 deg at 0.73 s); sword through torso 4% of frames (worst at 0.77 s); sword through thigh R 4% of frames (worst at 0.87 s)
+  war_cry          shield through thigh L 17% of frames (worst at 0.00 s); sword through shield 23% of frames (worst at 0.00 s); shield through shin L 3% of frames (worst at 0.17 s); shield through torso 6% of frames (worst at 0.27 s)
+  boss_roar        shield through thigh L 21% of frames (worst at 0.00 s); sword through shield 9% of frames (worst at 0.00 s)
+  -> 27 findings
+TOTAL findings 146

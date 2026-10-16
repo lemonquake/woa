@@ -1,0 +1,115 @@
+natural bend forearm.L: (0.0, 0.0, -1.0)
+natural bend forearm.R: (0.0, 0.0, 1.0)
+natural bend shin.L: (-1.0, 0.0, 0.0)
+natural bend shin.R: (-1.0, 0.0, 0.0)
+== unit:dawn_melee knight.glb (R sword, L shield)
+  idle_shield      ok
+  run              ok
+  death            ok
+  sword_1          pop forearm.R 11% of frames (worst 52 deg at 0.40 s); shield through thigh L 28% of frames (worst at 0.30 s); pop hand.R 6% of frames (worst 59 deg at 0.40 s); pop weapon.R 6% of frames (worst 59 deg at 0.40 s)
+  sword_2          shield through thigh L 28% of frames (worst at 0.00 s); sword through shield 28% of frames (worst at 0.00 s)
+  sword_3          shield through thigh L 53% of frames (worst at 0.20 s)
+  -> 7 findings
+== unit:dawn_ranged mage.glb (R staff_aether, L -)
+  idle_staff       ok
+  run              ok
+  death            ok
+  staff_1          staff_aether through torso 6% of frames (worst at 0.20 s); staff_aether through thigh L 6% of frames (worst at 0.23 s)
+  staff_2          staff_aether through torso 11% of frames (worst at 0.17 s)
+  -> 3 findings
+== unit:dawn_siege rune_golem.glb (R -, L -)
+  idle             ok
+  walk             ok
+  death            ok
+  boss_slam        elbow points the wrong way L 2% of frames (worst 155 deg at 0.23 s); wrist bent L 16% of frames (worst 83 deg at 1.03 s); wrist bent R 16% of frames (worst 85 deg at 1.10 s)
+  -> 3 findings
+== unit:dusk_melee ghoul_brute.glb (R axe, L -)
+  idle             ok
+  run              ok
+  death            ok
+  axe_2            pop hand.R 5% of frames (worst 45 deg at 0.33 s); pop weapon.R 5% of frames (worst 45 deg at 0.33 s)
+  -> 2 findings
+== unit:dusk_ranged necromancer.glb (R staff, L -)
+  idle_staff       staff through shin R 2% of frames (worst at 0.20 s)
+  run              ok
+  death            ok
+  staff_1          staff through torso 6% of frames (worst at 0.20 s); staff through thigh L 6% of frames (worst at 0.23 s)
+  cast_quick       ok
+  -> 3 findings
+== unit:dusk_flag warband_chieftain.glb (R axe, L -)
+  idle             ok
+  run              ok
+  death            ok
+  axe_1            ok
+  axe_2            pop hand.R 5% of frames (worst 45 deg at 0.33 s); pop weapon.R 5% of frames (worst 45 deg at 0.33 s)
+  -> 2 findings
+== unit:dusk_siege obsidian_golem.glb (R -, L -)
+  idle             ok
+  walk             ok
+  death            ok
+  boss_slam        elbow points the wrong way L 2% of frames (worst 152 deg at 0.23 s); wrist bent L 16% of frames (worst 83 deg at 1.03 s); wrist bent R 16% of frames (worst 85 deg at 1.10 s)
+  -> 3 findings
+== unit:mudling goblin_skulker.glb (R dagger, L -)
+  idle             ok
+  run              ok
+  death            ok
+  dagger_1         ok
+  dagger_2         ok
+  -> 0 findings
+== unit:mudling_digger goblin_sapper.glb (R dagger, L -)
+  idle             ok
+  run              ok
+  death            ok
+  dagger_1         ok
+  dagger_2         ok
+  -> 0 findings
+== unit:mudling_foreman goblin_summoner.glb (R -, L -)
+  idle             ok
+  run              ok
+  death            ok
+  staff_1          ok
+  cast_quick       ok
+  -> 0 findings
+== unit:strider orc_reaver.glb (R axe, L -)
+  idle             ok
+  run              ok
+  death            ok
+  axe_1            ok
+  axe_3            pop upper_arm.R 5% of frames (worst 68 deg at 0.17 s); pop forearm.R 5% of frames (worst 53 deg at 0.17 s); pop hand.R 5% of frames (worst 55 deg at 0.17 s); pop weapon.R 5% of frames (worst 55 deg at 0.17 s)
+  -> 4 findings
+== unit:strider_warlord orc_shaman.glb (R staff, L -)
+  idle             ok
+  run              ok
+  death            ok
+  staff_1          hand L in torso 6% of frames (worst at 0.13 s); staff through torso 6% of frames (worst at 0.20 s)
+  cast_quick       ok
+  -> 2 findings
+== unit:hill_troll mire_troll.glb (R -, L -)
+  idle             ok
+  run              ok
+  death            ok
+  axe_1            wrist bent R 21% of frames (worst 79 deg at 0.37 s)
+  axe_2            wrist bent R 11% of frames (worst 77 deg at 0.27 s); pop upper_arm.R 5% of frames (worst 46 deg at 0.33 s); pop hand.R 5% of frames (worst 45 deg at 0.33 s); pop weapon.R 5% of frames (worst 45 deg at 0.33 s)
+  -> 5 findings
+== unit:ogre_brute ogre_crusher.glb (R -, L -)
+  idle             ok
+  run              ok
+  death            ok
+  boss_slam        elbow points the wrong way L 2% of frames (worst 159 deg at 0.23 s); wrist bent L 14% of frames (worst 85 deg at 1.07 s); wrist bent R 5% of frames (worst 81 deg at 1.00 s); hand R in thigh R 5% of frames (worst at 1.00 s)
+  gs_1             wrist bent R 36% of frames (worst 82 deg at 0.30 s); wrist bent L 55% of frames (worst 85 deg at 0.60 s)
+  -> 6 findings
+== unit:cinder_wyrmling cinder_imp.glb (R wand, L -)
+  idle             ok
+  run              ok
+  death            ok
+  wand_1           ok
+  cast_quick       ok
+  -> 0 findings
+== unit:elder_cinder_wyrm magma_golem.glb (R -, L -)
+  idle             ok
+  run              ok
+  death            ok
+  cast_heavy       ok
+  boss_slam        elbow points the wrong way L 2% of frames (worst 154 deg at 0.23 s); wrist bent L 16% of frames (worst 82 deg at 1.03 s); wrist bent R 14% of frames (worst 85 deg at 1.07 s); hand L in thigh L 2% of frames (worst at 1.20 s)
+  -> 4 findings
+TOTAL findings 44

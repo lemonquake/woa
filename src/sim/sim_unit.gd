@@ -69,6 +69,9 @@ var element := 0                           # SimConst.Element: what its attacks 
 var weapon := 0                            # SimConst.Weapon: its attacks' damage type
 var armor_type := 0                        # SimConst.ArmorType
 var attack_out_pct := 0.0                  # change to attack damage dealt (Intimidate: -0.6)
+var damage_out_pct := 0.0                  # change to all damage dealt, attacks and spells (Void Rush: -0.25)
+var ranged_form := false                   # cached: a melee unit attacking at range for now (Anomaly)
+var form_proj_speed := 0.0                 # cached: its projectile speed meanwhile
 var prd := {}                              # pseudo-random counters: effect key -> rolls since the last proc
 var debuff_immune := false                 # cached from modifiers in refresh_stats
 var phased := false                        # cached: walks through units
@@ -279,7 +282,11 @@ func is_ward() -> bool:
 	return kind == K.WARD
 
 func is_ranged() -> bool:
-	return float(def.projectile_speed) > 0.0
+	return ranged_form or float(def.projectile_speed) > 0.0
+
+## Attack projectile speed (a melee hero in a ranged form uses the form's).
+func projectile_speed() -> float:
+	return form_proj_speed if ranged_form and float(def.projectile_speed) <= 0.0 else float(def.projectile_speed)
 
 func can_attack_at_all() -> bool:
 	return bool(def.can_attack)
@@ -571,9 +578,24 @@ func refresh_stats() -> void:
 	var raw_pct: float = f.call("base_damage_pct")
 	bonus_damage = f.call("damage") + (base_dmg_min + base_dmg_max) * 0.5 * raw_pct
 	attack_out_pct = f.call("attack_out_pct")
-	attack_speed = clampf(float(def.attack_speed) + attr_as + f.call("attack_speed"), C.ATTACK_SPEED_MIN, C.ATTACK_SPEED_MAX)
-	# item range counts for ranged heroes; a melee-only bonus (Sure Hit Staff) comes as "range_melee"
-	attack_range = float(def.range) + range_bonus + (f.call("range") if is_ranged() else f.call("range_melee"))
+	damage_out_pct = f.call("damage_out_pct")
+	# a ranged form (Anomaly): ranged attacks with the form's projectile and a shorter base attack time
+	ranged_form = false
+	form_proj_speed = 0.0
+	var bat_cut := 0.0
+	for m in modifiers:
+		if m.get("ranged_form", false):
+			ranged_form = true
+			form_proj_speed = maxf(form_proj_speed, float(m.get("proj_speed", 900.0)))
+		bat_cut += float(m.get("bat_cut", 0.0))
+	bat = maxf(0.5, float(def.bat) - bat_cut)
+	# attack speed: flat bonuses, then percentage changes (Dark Matter Skin's slow: -80%)
+	attack_speed = clampf((float(def.attack_speed) + attr_as + f.call("attack_speed")) * maxf(0.0, 1.0 + f.call("attack_speed_pct")),
+		C.ATTACK_SPEED_MIN, C.ATTACK_SPEED_MAX)
+	# item range counts for ranged heroes; a melee-only bonus (Sure Hit Staff) comes as "range_melee"; a form's own
+	# range ("range_form") always counts
+	attack_range = float(def.range) + range_bonus + (f.call("range") if is_ranged() else f.call("range_melee")) \
+		+ f.call("range_form")
 	# the strongest slow counts, shrunk by slow resistance (the Heavy Sword family's does not stack: largest wins)
 	slow_resist = _stack(float(items.get("slow_resist_max", 0.0)), f.call("slow_resist"), "slow_resist")
 	status_resist = _stack(float(items.get("status_resist_max", 0.0)), f.call("status_resist"), "status_resist")

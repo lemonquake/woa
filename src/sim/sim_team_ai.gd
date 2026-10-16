@@ -38,6 +38,7 @@ var _fight_called := C.LONG_AGO
 var _gank_cool := {}                       # enemy hero id -> laning-phase time before it may be ganked again
 var fights_called := 0                     # report counters (bot games): teamfights, ganks, pushes called, pushes chained
 var ganks_called := 0
+var saves_called := 0                      # counter-ganks called (report counter)
 var pushes_called := 0
 var pushes_chained := 0
 
@@ -126,6 +127,7 @@ func think() -> void:
 	if w.time >= 0.0:
 		_call_defence()
 		if w.profiling: pt = w._prof("  brain:defence", pt)
+		_call_saves()
 		_call_ganks()
 		_gank_strikes()
 		if w.profiling: pt = w._prof("  brain:ganks", pt)
@@ -413,6 +415,9 @@ func _plan_alive(p: Dictionary) -> bool:
 			return t == null or t.alive
 		"fight":
 			return t != null and t.alive
+		"save":
+			var v := w.get_unit(int(p.get("victim", -1)))
+			return t != null and t.alive and v != null and v.alive
 	return true
 
 ## The plan a hero is part of (or {}).
@@ -425,7 +430,7 @@ func task_for(hid: int) -> Dictionary:
 	return best
 
 static func _plan_rank(kind: String) -> int:
-	return {"retreat": 5, "fight": 4, "defend": 4, "gank": 3, "push": 2, "group": 1}.get(kind, 0)
+	return {"retreat": 5, "save": 5, "fight": 4, "defend": 4, "gank": 3, "push": 2, "group": 1}.get(kind, 0)
 
 func leave_plan(hid: int, plan_id := -1) -> void:
 	for p in plans:
@@ -665,6 +670,122 @@ func _call_ganks() -> void:
 		for i in range(1, chosen.size()):
 			var et2 := eta(chosen[i], e.pos)
 			say(chosen[i], "Coming (TP)." if et2.tp else "On my way.", "gank_go_%d_%d" % [chosen[i].id, e.id], 25.0)
+
+# ---- Calls: counter-ganks ----------------------------------------------------------------------------------------------
+
+## Counter-ganks (run 2026-10-15 g). An ally caught by enemy heroes (hurt by them in the last 2 s, or two of them on
+## it) is not left to run alone when help is close: the brain weighs the gankers against the victim plus every bot
+## that can be there before the victim would die (walking, or a Town Portal to a building near it). When that fight
+## favours us it calls a save: the helpers come, the victim (a bot) runs toward them dragging the gankers along, and
+## once the helpers are close everyone turns on the same ganker. Each think the focus and the place are updated; the
+## save ends when the gankers are dead, gone from sight for 4 s, or the victim died.
+func _call_saves() -> void:
+	for p in plans:
+		if String(p.kind) == "save":
+			_update_save(p)
+	for v in members():
+		if not v.alive or w.time < 60.0:
+			continue
+		var already := false
+		for p in plans:
+			if String(p.kind) == "save" and int(p.get("victim", -1)) == v.id:
+				already = true
+		if already:
+			continue
+		var cur := task_for(v.id)
+		if not cur.is_empty() and String(cur.kind) in ["fight", "gank"]:
+			continue                       # already fighting as a team (or the one ganking)
+		var es: Array[SimUnit] = []
+		for e in enemies_near(v.pos, 1100.0, 1.5):
+			if e.alive and not e.is_invulnerable():
+				es.append(e)
+		if es.is_empty():
+			continue
+		var hit := false
+		var incoming := 0.0
+		for e in es:
+			if w.time - float(v.hero_damage_log.get(e.id, C.LONG_AGO)) < 2.0:
+				hit = true
+			incoming += KITS.dps(w, e, v) + KITS.burst(w, e, v) / 4.0
+		if not hit and es.size() < 2:
+			continue
+		# how long the victim lasts (it runs, so a little longer than standing still)
+		var lasts := clampf(v.hp / maxf(1.0, incoming) * 1.4, 2.0, 12.0)
+		var helpers: Array[SimUnit] = []
+		var arrive := 0.0
+		for a in members():
+			if a == v or not a.bot or not a.alive or a.hp < a.max_hp * 0.35:
+				continue
+			var acur := task_for(a.id)
+			if not acur.is_empty() and String(acur.kind) in ["fight", "defend", "save"]:
+				continue
+			var et := eta(a, v.pos)
+			# in the laning phase a lane skirmish is not worth a Town Portal: helpers walk in or stay
+			if bool(et.tp) and w.time < 600.0:
+				continue
+			if float(et.time) <= lasts + 1.5:
+				helpers.append(a)
+				arrive = maxf(arrive, float(et.time))
+		if helpers.is_empty():
+			continue
+		var al: Array[SimUnit] = [v]
+		al.append_array(helpers)
+		var odds := fight_odds(al, es)
+		# helpers arriving late are worth less; under the gankers' tower worth much less
+		odds *= clampf(1.15 - arrive / 20.0, 0.6, 1.1)
+		if odds < 1.05:
+			continue
+		var focus := _save_focus(es, v)
+		var p := _new_plan("save", lane_of_point(v.pos), focus.id, v.pos, 12.0)
+		p["victim"] = v.id
+		p["t_seen"] = w.time
+		saves_called += 1
+		if v.bot:
+			p.members[v.id] = true
+		for a in helpers:
+			p.members[a.id] = true
+		var lead: SimUnit = helpers[0]
+		var et0 := eta(lead, v.pos)
+		var text := "Hold on, %s! %s." % [_name_of(v), "TP coming" if bool(et0.tp) else "Coming"]
+		if say(lead, text, "save_%d" % v.id, 20.0, true):
+			w.ping(team, v.pos, lead.id, focus.id, "defend")
+		if v.bot and helpers.size() >= 1:
+			say(v, "Running to you, help me turn on them.", "save_run_%d" % v.id, 20.0)
+		return                             # one call per think
+
+## The ganker to turn on: the one hurting the victim most lately, else the easiest to kill.
+func _save_focus(es: Array[SimUnit], v: SimUnit) -> SimUnit:
+	var best: SimUnit = es[0]
+	var best_s := -INF
+	for e in es:
+		var ehp := e.hp / maxf(0.2, C.armor_multiplier(e.armor) * 0.5 + (1.0 - e.magic_resist) * 0.5)
+		var s := -ehp / 1000.0
+		if w.time - float(v.hero_damage_log.get(e.id, C.LONG_AGO)) < 2.0:
+			s += 1.0
+		if s > best_s:
+			best_s = s
+			best = e
+	return best
+
+func _update_save(p: Dictionary) -> void:
+	var v := w.get_unit(int(p.victim))
+	if v == null or not v.alive:
+		p.until = w.time
+		return
+	var es: Array[SimUnit] = []
+	for e in enemies_near(v.pos, 1600.0, 2.0):
+		if e.alive:
+			es.append(e)
+	if es.is_empty():
+		if w.time - float(p.t_seen) > 4.0:
+			p.until = w.time                # they ran or hid: over
+		return
+	p.t_seen = w.time
+	p.pos = v.pos
+	var cur := w.get_unit(int(p.target))
+	if cur == null or not cur.alive or not (cur in es):
+		p.target = _save_focus(es, v).id
+	p.until = maxf(float(p.until), w.time + 3.0)
 
 ## Where gankers gather before a gank: 650-900 from the target, in the fog for its team, walkable, on the side of its
 ## way home (so the strike cuts off its escape) and not far round from where the gankers come from.

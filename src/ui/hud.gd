@@ -208,6 +208,8 @@ func _update_portrait(dt: float) -> void:
 		portrait_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 	var sk: Skeleton3D = v.get("skeleton") if v is UnitView else null
 	var bi := sk.find_bone("head") if sk != null else -1
+	if bi < 0 and sk != null:
+		bi = sk.find_bone("Head")                       # the Universal rig (Roydo, Blau)
 	if bi < 0:
 		_frame_portrait(v)
 		return
@@ -919,10 +921,24 @@ class BottomPanel extends Control:
 			draw_texture_rect(ic, INNATE.grow(-3), false)
 		U.skin(self, "slot_small", INNATE.grow(2), Color.WHITE, false)
 		if INNATE.has_point(get_local_mouse_position()):
-			var lines := _ability_tip(h, aid)
-			lines[1] = ["Innate (always on)", 13, U.TEXT_DIM, "body"]
-			lines.pop_back()
-			hud.show_tip(get_global_mouse_position(), lines)
+			hud.show_tip(get_global_mouse_position(), _innate_tip(h, aid))
+
+	## An innate skill's tooltip: always learned from level 1; values that grow with hero level show their value now.
+	func _innate_tip(h: SimUnit, aid: String) -> Array:
+		var a := SimData.ability(aid)
+		var lines: Array = [[String(a.name), 20, U.GOLD, "title"], ["Innate: always learned, from level 1", 13, U.TEXT_DIM, "body"]]
+		for l in U.wrap(String(a.desc), 330, 15):
+			lines.append([l, 15, U.TEXT, "body"])
+		var ab: SimAbilities = hud.game.world.abilities
+		for k in a.values:
+			if String(k).ends_with("_per_level") or not (a.values as Dictionary).has(String(k) + "_per_level"):
+				continue
+			var now := ab.val(h, aid, k) + ab.val(h, aid, String(k) + "_per_level") * float(h.level)
+			var txt := ("%.2f%%" % (now * 100.0)) if absf(now) < 1.0 else ("%.1f" % now)
+			lines.append(["%s at level %d: %s" % [String(k).replace("_", " ").capitalize(), h.level, txt], 14, Color(0.8, 0.85, 0.75), "body"])
+		lines.append(["Grows with hero level" if (a.values as Dictionary).keys().any(func(x): return String(x).ends_with("_per_level"))
+			else "Always on", 12, U.TEXT_DIM, "body"])
+		return lines
 
 	# ---- A unit that is not a hero (creep, neutral, building, ward, someone else's courier) ----------------------
 
@@ -1147,8 +1163,14 @@ class BottomPanel extends Control:
 			draw_texture_rect(ic, Rect2(TALENT_C - Vector2(13, 13), Vector2(26, 26)), false, U.GOLD if h.talents.size() > 0 or can else Color(0.55, 0.55, 0.55))
 		U.text_c(self, "Talents", TALENT_C + Vector2(0, 38), 11, U.TEXT_DIM, "bold")
 		if _talent_rect.has_point(get_local_mouse_position()) and not talents_open:
-			hud.show_tip(get_global_mouse_position(), [["Talents", 18, U.GOLD, "title"],
-				["Click to open. At levels 10, 15, 20 and 25 spend an ability point on one of two talents.", 14, U.TEXT, "body"]])
+			var tl: Array = [["Talents", 18, U.GOLD, "title"],
+				["Click to open. At levels 10, 15, 20 and 25 spend an ability point on one of two talents.", 14, U.TEXT, "body"]]
+			# Dota shows the hero's innate skill with the talents
+			var inn := String(h.def.get("innate", ""))
+			if inn != "":
+				tl.append(["", 8, U.TEXT, "body"])
+				tl.append_array(_innate_tip(h, inn))
+			hud.show_tip(get_global_mouse_position(), tl)
 
 	## The open tree: level 25 at the top, each row a choice of two.
 	func _talent_tree(h: SimUnit, w: SimWorld) -> void:
@@ -1191,6 +1213,16 @@ class BottomPanel extends Control:
 				var tc := Color(0.12, 0.07, 0.0) if picked else (Color(0.45, 0.45, 0.45) if other else U.TEXT)
 				U.text_c(self, nm, tr.get_center() + Vector2(0, 5), 14, tc, "bold")
 				_talent_rows.append([tr, tier, side])
+		# the innate skill, named at the tree's title (hover it for the full text)
+		var inn := String(h.def.get("innate", ""))
+		if inn != "":
+			var ir := Rect2(r.end.x - 200, r.position.y + 4, 192, 24)
+			var iic: Texture2D = U.ability_icon(inn)
+			if iic:
+				draw_texture_rect(iic, Rect2(ir.position + Vector2(0, 1), Vector2(22, 22)), false)
+			U.text(self, "Innate: " + String(SimData.ability(inn).name), ir.position + Vector2(28, 17), 13, U.TEXT, "bold")
+			if ir.has_point(m):
+				hud.show_tip(get_global_mouse_position(), _innate_tip(h, inn))
 
 	func _abilities(h: SimUnit, w: SimWorld) -> void:
 		var m := get_local_mouse_position()
@@ -1279,6 +1311,10 @@ class BottomPanel extends Control:
 	func _ability_tip(h: SimUnit, aid: String, slot := -1) -> Array:
 		var a := SimData.ability(aid)
 		var lv := h.ability_level_of(aid)
+		if aid == "pilot_turret" and hud.game.world.abilities.kits3.is_piloting(h):
+			# inside: the same button gets him out
+			return [["Leave Turret", 20, U.GOLD, "title"], ["No target", 13, U.TEXT_DIM, "body"],
+				["Blau climbs out of the turret. Moving does the same.", 15, U.TEXT, "body"]]
 		var lines: Array = [[String(a.name), 20, U.GOLD, "title"]]
 		var kind := {"autocast_attack": "Attack modifier (autocast)", "point": "Point target", "passive": "Passive",
 			"unit": "Unit target", "no_target": "No target", "toggle": "Toggle"}
@@ -1290,6 +1326,8 @@ class BottomPanel extends Control:
 		for l in U.wrap(String(a.desc), 330, 15):
 			lines.append([l, 15, U.TEXT, "body"])
 		for k in a.values:
+			if k in a.get("hidden_values", []):
+				continue                           # tuning numbers the description already covers
 			var vals: Array = a.values[k]
 			var parts := []
 			for v in vals:

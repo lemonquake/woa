@@ -5,8 +5,10 @@ extends RefCounted
 
 const UNITS := "res://assets/characters/units/"
 const WEAPONS := "res://assets/weapons/"
+const H16 := "res://assets/characters/heroes16/"
 
-## scale: model scale (1.0 = the 1.8 m rig). attack: clip names tried in order (cycled per swing).
+## scale: model scale (1.0 = the 1.8 m rig). attack: clip names tried in order (cycled per swing); every one must be in
+## the model (tests/tools/anim_audit.gd --units reports MISSING clips).
 ## proj: projectile style for ranged units. bar: health bar height above the ground (m).
 const MODELS := {
 	"hero": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["bow_1"], "cast": "cast_quick",
@@ -45,18 +47,40 @@ const MODELS := {
 	"hero_kragg": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.05, "attack": ["sword_1", "sword_2", "sword_3", "sword_4"],
 		"cast": "shield_bash", "idle": "idle_shield", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
 		"death": "death", "R": "sword", "L": "shield", "bar": 2.55, "hero": true, "weapon_tint": Color(0.55, 0.62, 0.78),
-		"weapon_glow": Color(0.35, 0.6, 1.0), "swing_trail": true, "trail_color": Color(0.45, 0.7, 1.0, 0.6)},
+		"weapon_glow": Color(0.35, 0.6, 1.0), "swing_trail": true, "trail_color": Color(0.45, 0.7, 1.0, 0.6),
+		# the shield strapped along the forearm (it sat centred on the fist and covered his face and thighs):
+		# 80% size, 15 cm toward the elbow, 8 cm lower, 6 cm off the arm (run 2026-10-15 g)
+		"L_xform": [0.8, Vector3(0.15, -0.08, 0.06)]},
+	# Roydo (run 2026-10-16): his own body (tools/blender/heroes16.py) with the night-sky skin; Anomaly is his form
+	"hero_roydo": {"scene": H16 + "roydo.glb", "scale": 1.0, "attack": ["roydo_punch_jab", "roydo_punch_cross"],
+		"cast": "roydo_cast_shoot", "idle": "roydo_idle", "run": "roydo_run", "run_min": 0.6, "death": "death", "R": "",
+		"L": "", "bar": 2.45, "skin_shader": "res://src/game/roydo_skin.gdshader", "skin_material": "RoydoSkin",
+		"skin_params": {"mode": 0.0}, "forms": {"anomaly": "hero_anomaly"}},
+	"hero_anomaly": {"scene": H16 + "anomaly.glb", "scale": 1.2, "attack": ["anomaly_blast", "anomaly_cast_shoot"],
+		"cast": "anomaly_cast_shoot", "idle": "anomaly_idle", "run": "anomaly_run", "run_min": 0.55, "death": "death",
+		"R": "", "L": "", "proj": "gravity_orb", "bar": 2.95, "skin_shader": "res://src/game/roydo_skin.gdshader",
+		"skin_material": "AnomalySkin", "skin_params": {"mode": 1.0, "glow": 0.8}},
+	# Blau: his own body in the recoloured ranger coat with the rifle in both hands; tracer bullets
+	"hero_blau": {"scene": H16 + "blau.glb", "scale": 1.0, "attack": ["blau_shoot"], "attack_aim": "blau_aim",
+		"cast": "blau_cast_shoot", "idle": "blau_idle", "run": "blau_run_rifle", "run_min": 0.6, "death": "death", "R": "",
+		"L": "", "proj": "bullet", "bar": 2.4},
+	# his turret: the walker in his navy and steel (the pack's white shell blows out in daylight)
+	"blau_turret": {"scene": H16 + "blau_turret.glb", "scale": 0.8, "attack": ["turret_attack"], "idle": "turret_idle",
+		"run": "turret_idle", "death": "death", "R": "", "L": "", "proj": "turret_shot", "bar": 2.1,
+		"tint": Color(0.42, 0.52, 0.78)},
 	"dawn_melee": {"scene": UNITS + "knight.glb", "scale": 0.86, "attack": ["sword_1", "sword_2", "sword_3"], "idle": "idle_shield",
-		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88)},
+		"run": "run", "death": "death", "R": "sword", "L": "shield", "bar": 2.0, "tint": Color(1.0, 0.97, 0.88),
+		"L_xform": [0.8, Vector3(0.15, -0.08, 0.06)]},
 	"dawn_ranged": {"scene": UNITS + "mage.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",
 		"run": "run", "death": "death", "R": "staff_aether", "L": "", "proj": "sun_orb", "bar": 2.0},
 	"dawn_flag": {"scene": UNITS + "knight.glb", "scale": 0.92, "attack": ["sword_1", "sword_2"], "idle": "idle_shield",
-		"run": "run", "death": "death", "R": "sword_aether", "L": "shield", "bar": 2.1, "banner": Color(1.0, 0.82, 0.3)},
+		"run": "run", "death": "death", "R": "sword_aether", "L": "shield", "bar": 2.1, "banner": Color(1.0, 0.82, 0.3),
+		"L_xform": [0.8, Vector3(0.15, -0.08, 0.06)]},
 	"dawn_siege": {"scene": UNITS + "rune_golem.glb", "scale": 1.15, "attack": ["boss_slam"], "idle": "idle", "run": "walk",
 		"death": "death", "R": "", "L": "", "proj": "boulder_sun", "bar": 2.9},
 	"dusk_melee": {"scene": UNITS + "ghoul_brute.glb", "scale": 0.86, "attack": ["axe_2"], "idle": "idle", "run": "run",
 		"death": "death", "R": "axe", "L": "", "bar": 2.0},
-	"dusk_ranged": {"scene": UNITS + "necromancer.glb", "scale": 0.86, "attack": ["staff_1", "staff_2"], "idle": "idle_staff",
+	"dusk_ranged": {"scene": UNITS + "necromancer.glb", "scale": 0.86, "attack": ["staff_1", "cast_quick"], "idle": "idle_staff",
 		"run": "run", "death": "death", "R": "staff", "L": "", "proj": "doom_orb", "bar": 2.0},
 	"dusk_flag": {"scene": UNITS + "warband_chieftain.glb", "scale": 0.92, "attack": ["axe_1", "axe_2"], "idle": "idle",
 		"run": "run", "death": "death", "R": "axe", "L": "", "bar": 2.1, "banner": Color(0.6, 0.1, 0.2)},
@@ -68,7 +92,7 @@ const MODELS := {
 		"run": "run", "death": "death", "R": "dagger", "L": "", "bar": 1.6},
 	"mudling_digger": {"scene": UNITS + "goblin_sapper.glb", "scale": 0.85, "attack": ["dagger_1", "dagger_2"], "idle": "idle",
 		"run": "run", "death": "death", "R": "dagger", "L": "", "bar": 1.7},
-	"mudling_foreman": {"scene": UNITS + "goblin_summoner.glb", "scale": 0.95, "attack": ["staff_1", "wand_1", "dagger_1"],
+	"mudling_foreman": {"scene": UNITS + "goblin_summoner.glb", "scale": 0.95, "attack": ["staff_1", "cast_quick"],
 		"idle": "idle", "run": "run", "death": "death", "R": "", "L": "", "bar": 1.9},
 	"ashfang": {"scene": UNITS + "dire_wolf.glb", "scale": 0.8, "attack": ["wolf_bite"], "idle": "idle", "run": "run",
 		"death": "death", "R": "", "L": "", "bar": 1.5},
@@ -78,9 +102,9 @@ const MODELS := {
 		"death": "death", "R": "axe", "L": "", "bar": 2.1},
 	"strider_warlord": {"scene": UNITS + "orc_shaman.glb", "scale": 1.15, "attack": ["staff_1", "cast_quick"], "idle": "idle",
 		"run": "run", "death": "death", "R": "staff", "L": "", "bar": 2.5},
-	"hill_troll": {"scene": UNITS + "mire_troll.glb", "scale": 0.95, "attack": ["spear_1", "staff_1", "cast_quick"],
+	"hill_troll": {"scene": UNITS + "mire_troll.glb", "scale": 0.95, "attack": ["axe_1", "axe_2"],
 		"idle": "idle", "run": "run", "death": "death", "R": "", "L": "", "proj": "spear", "bar": 2.2},
-	"ogre_brute": {"scene": UNITS + "ogre_crusher.glb", "scale": 1.0, "attack": ["boss_slam", "axe_1"], "idle": "idle",
+	"ogre_brute": {"scene": UNITS + "ogre_crusher.glb", "scale": 1.0, "attack": ["boss_slam", "gs_1"], "idle": "idle",
 		"run": "run", "death": "death", "R": "", "L": "", "bar": 2.6},
 	"cinder_wyrmling": {"scene": UNITS + "cinder_imp.glb", "scale": 1.0, "attack": ["wand_1", "cast_quick"], "idle": "idle",
 		"run": "run", "death": "death", "R": "wand", "L": "", "proj": "fire", "bar": 2.0},
@@ -103,7 +127,8 @@ static func scene(model_key: String) -> PackedScene:
 ## Timing data for a clip: {length, hits, release, ground_speed, ...} (empty if unknown).
 static func clip(name: String) -> Dictionary:
 	if _meta.is_empty():
-		for f in [UNITS + "anim_meta.json", UNITS + "creature_meta.json", "res://assets/characters/hero/hero_meta.json"]:
+		for f in [UNITS + "anim_meta.json", UNITS + "creature_meta.json", "res://assets/characters/hero/hero_meta.json",
+				H16 + "heroes16_meta.json"]:
 			var d = JSON.parse_string(FileAccess.get_file_as_string(f))
 			if d is Dictionary and d.has("animations"):
 				for k in d.animations:
@@ -120,6 +145,17 @@ static func strike_time(name: String) -> float:
 		var h: Array = c.hits[0]
 		return (float(h[0]) + float(h[1])) * 0.5
 	return float(c.get("length", 0.5)) * 0.5
+
+## Where a prop sits on its weapon bone for this model: the catalog's "<side>_xform" [scale, offset] (offsets are
+## written for the left hand; the right mirrors x), else where the bone is.
+static func prop_transform(cfg: Dictionary, side: String) -> Transform3D:
+	var x = cfg.get(side + "_xform", null)
+	if x == null:
+		return Transform3D()
+	var off: Vector3 = x[1]
+	if side == "R":
+		off.x = -off.x
+	return Transform3D(Basis().scaled(Vector3.ONE * float(x[0])), off)
 
 static func weapon(name: String) -> PackedScene:
 	if name == "":

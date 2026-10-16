@@ -54,6 +54,9 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 		var instant := type == O.CAST_NO_TARGET and w.abilities.is_instant(u, String(o.get("ability", "")), islot)
 		if not instant:
 			cancel_channel(u)
+	# Blau inside his turret: a move order (or one to walk to a unit or item) gets him out first
+	if u.is_hero() and (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB) 			and w.abilities.kits3.is_piloting(u):
+		w.abilities.kits3.leave_turret(u)
 	# a hard stop (S held) keeps the unit from acquiring targets until it gets another order
 	u.no_acquire = type == O.STOP and bool(o.get("hard", false))
 	var tgt: SimUnit = w.get_unit(int(o.get("target", -1)))
@@ -717,6 +720,10 @@ func _blocker(u: SimUnit, p: Vector2, chase: SimUnit, near: Array) -> SimUnit:
 	return best
 
 func _free(u: SimUnit, p: Vector2, chase: SimUnit, near: Array, loose := false) -> bool:
+	# Blau's resting boulders stop every walking unit, phased ones too
+	if not w.abilities.kits3.boulders.is_empty() and u.kind != K.COURIER and w.abilities.kits3.blocks(p, u.hull) \
+			and not w.abilities.kits3.blocks(u.pos, u.hull):
+		return false
 	if not w.map.is_walkable(p):
 		# a unit standing inside a blocked cell (pushed or spawned there) may move within it to get out
 		var cc := w.map.world_to_cell(u.pos)

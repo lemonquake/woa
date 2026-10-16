@@ -795,33 +795,173 @@
    ],
    "kind": "image"
   },
+  "menu_plate_normal": {
+   "file": "menu_plate_normal.png",
+   "size": [
+    200,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    63,
+    14,
+    31,
+    14
+   ],
+   "content": [
+    69,
+    8,
+    31,
+    8
+   ]
+  },
+  "menu_plate_hover": {
+   "file": "menu_plate_hover.png",
+   "size": [
+    200,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    63,
+    14,
+    31,
+    14
+   ],
+   "content": [
+    69,
+    8,
+    31,
+    8
+   ]
+  },
+  "menu_plate_pressed": {
+   "file": "menu_plate_pressed.png",
+   "size": [
+    200,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    63,
+    14,
+    31,
+    14
+   ],
+   "content": [
+    69,
+    8,
+    31,
+    8
+   ]
+  },
+  "menu_plate_gold_normal": {
+   "file": "menu_plate_gold_normal.png",
+   "size": [
+    200,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    63,
+    14,
+    31,
+    14
+   ],
+   "content": [
+    69,
+    8,
+    31,
+    8
+   ]
+  },
+  "menu_plate_gold_hover": {
+   "file": "menu_plate_gold_hover.png",
+   "size": [
+    200,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    63,
+    14,
+    31,
+    14
+   ],
+   "content": [
+    69,
+    8,
+    31,
+    8
+   ]
+  },
+  "menu_plate_gold_pressed": {
+   "file": "menu_plate_gold_pressed.png",
+   "size": [
+    200,
+    64
+   ],
+   "kind": "nine",
+   "margins": [
+    63,
+    14,
+    31,
+    14
+   ],
+   "content": [
+    69,
+    8,
+    31,
+    8
+   ]
+  },
+  "menu_banner": {
+   "file": "menu_banner.png",
+   "size": [
+    440,
+    1000
+   ],
+   "kind": "image"
+  },
+  "menu_footer": {
+   "file": "menu_footer.png",
+   "size": [
+    256,
+    44
+   ],
+   "kind": "nine",
+   "margins": [
+    8,
+    10,
+    8,
+    2
+   ]
+  },
+  "menu_nameplate": {
+   "file": "menu_nameplate.png",
+   "size": [
+    160,
+    120
+   ],
+   "kind": "nine",
+   "margins": [
+    66,
+    66,
+    66,
+    66
+   ],
+   "content": [
+    30,
+    30,
+    30,
+    30
+   ]
+  },
   "hud_console": {
    "file": "hud_console.png",
    "size": [
     1140,
     206
-   ],
-   "kind": "image"
-  },
-  "hud_minimap": {
-   "file": "hud_minimap.png",
-   "size": [
-    300,
-    300
-   ],
-   "kind": "image",
-   "inner": [
-    14,
-    14,
-    272,
-    272
-   ]
-  },
-  "hud_topbar": {
-   "file": "hud_topbar.png",
-   "size": [
-    1200,
-    80
    ],
    "kind": "image"
   },
@@ -870,6 +1010,28 @@
    "size": [
     1400,
     206
+   ],
+   "kind": "image"
+  },
+  "hud_minimap": {
+   "file": "hud_minimap.png",
+   "size": [
+    300,
+    300
+   ],
+   "kind": "image",
+   "inner": [
+    14,
+    14,
+    272,
+    272
+   ]
+  },
+  "hud_topbar": {
+   "file": "hud_topbar.png",
+   "size": [
+    1200,
+    80
    ],
    "kind": "image"
   }

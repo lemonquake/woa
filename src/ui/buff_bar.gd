@@ -29,7 +29,8 @@ const NAMES := {"stunned": "Stunned", "bashed": "Bashed", "frosted": "Frozen", "
 	"orb_speed": "Speed Orb", "orb_damage": "Damage Orb", "orb_stealth": "Stealth Orb", "orb_healing": "Healing Orb",
 	"orb_magic": "Magic Orb", "orb_shield": "Shield Orb", "reveal_dust": "Revealed", "corruption": "Armor Loss",
 	"magnet_charge": "Charge", "unholy_fatigue": "Tired", "tainted_curse": "Curse", "static_charge": "Static Charge",
-	"fortify_mark": "Fortify Mark"}
+	"fortify_mark": "Fortify Mark", "ensnared": "Caught", "piloting": "In a Turret", "piloted": "Piloted",
+	"void_rush_buff": "Void Rush", "dark_matter_slow": "Dark Matter Skin"}
 
 ## Icons for those (assets/ui/<path>.svg); abilities and items use their own.
 const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "frosted": "status/frozen",
@@ -39,7 +40,8 @@ const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "froste
 	"orb_damage": "status/valor", "orb_stealth": "status/stealth", "orb_healing": "status/regen",
 	"orb_magic": "status/overcharged", "orb_shield": "status/shielded", "reveal_dust": "status/dazzled",
 	"corruption": "status/armor_broken", "magnet_charge": "status/overcharged", "unholy_fatigue": "status/weakened",
-	"tainted_curse": "status/cursed", "static_charge": "status/shocked", "fortify_mark": "status/marked"}
+	"tainted_curse": "status/cursed", "static_charge": "status/shocked", "fortify_mark": "status/marked",
+	"ensnared": "status/webbed", "piloted": "status/fortified"}
 
 ## Endings that name a part of an ability or item (Leap Strike's slow is "leap_strike_slow").
 const SUFFIXES := ["_slow", "_stun", "_armor", "_curse", "_aura"]
@@ -54,13 +56,16 @@ const STAT_NAMES := {"armor": "armor", "attack_speed": "attack speed", "move_spe
 	"heal_amp": "healing amp", "cooldown_reduction": "cooldown reduction", "attack_out_pct": "attack damage",
 	"spell_lifesteal": "spell lifesteal", "mana_regen_amp": "mana regen amp", "magic_amp": "magic amp",
 	"max_mana_pct": "max mana", "hp_regen_pct_missing": "missing health regen", "cast_speed": "cast speed",
-	"mana_cost_cut": "mana cost cut", "aoe_bonus": "spell area"}
+	"mana_cost_cut": "mana cost cut", "aoe_bonus": "spell area", "damage_out_pct": "damage dealt",
+	"attack_speed_pct": "attack speed", "range_form": "attack range"}
 const PCT := ["move_speed_pct", "base_damage_pct", "magic_resist", "spell_amp", "lifesteal", "lifesteal_ability",
 	"evasion", "status_resist", "slow_resist", "heal_amp", "cooldown_reduction", "attack_out_pct", "spell_lifesteal",
-	"mana_regen_amp", "magic_amp", "max_mana_pct", "hp_regen_pct_missing", "cast_speed", "mana_cost_cut"]
+	"mana_regen_amp", "magic_amp", "max_mana_pct", "hp_regen_pct_missing", "cast_speed", "mana_cost_cut",
+	"damage_out_pct", "attack_speed_pct"]
 
 ## Effects named after something else: Blood Ranger's ultimate is the ability "blood_ranger_ult".
-const ALIAS := {"blood_ranger": "blood_ranger_ult"}
+const ALIAS := {"blood_ranger": "blood_ranger_ult", "void_rush_buff": "void_rush", "dark_matter_slow": "dark_matter_skin",
+	"ensnared": "lay_trap", "piloting": "pilot_turret", "piloted": "pilot_turret"}
 
 static var _index := {}                    # effect id -> {name, item | icon}: auras, creep attack effects, item uses
 
@@ -191,9 +196,20 @@ static func entries(u: SimUnit, w: SimWorld) -> Array:
 		if HIDDEN.has(id):
 			continue
 		var e := float(m.get("expires", INF))
-		out.append({"id": id, "name": _display_name(id), "icon": icon_of(id, m), "debuff": is_debuff(u, m),
+		var en := {"id": id, "name": _display_name(id), "icon": icon_of(id, m), "debuff": is_debuff(u, m),
 			"aura": is_aura(m), "left": e - w.time if is_finite(e) and not is_aura(m) else 0.0,
-			"total": total_time(m, w.time), "count": int(m.get("charges", 0)), "mod": m, "burn": false})
+			"total": total_time(m, w.time), "count": int(m.get("charges", 0)), "mod": m, "burn": false}
+		if id == "magnet_charge":
+			# how much more of the Kragg's spell damage the Charges add (Magnetize grows with his level)
+			var kr := w.get_unit(int(m.get("by", -1)))
+			if kr != null and kr.ability_level_of("magnetize") > 0:
+				en["amp"] = w.abilities.kits2.amp_per_charge(kr) * float(m.get("charges", 0))
+		out.append(en)
+	# Kragg's Overload counts his attacks to the next burst (a lasting counter, like Dota's attack counters)
+	var oc: Vector2i = w.abilities.kits2.overload_count(u)
+	if oc.y > 0:
+		out.append({"id": "overload", "name": "Overload", "icon": U.ability_icon("overload"), "debuff": false,
+			"aura": false, "left": 0.0, "total": 0.0, "count": oc.x, "mod": {"by": u.id, "counter": oc}, "burn": false})
 	for d in w.status.dots_on(u):
 		var key := String(d.key)
 		var nm := name_of(key)
@@ -320,6 +336,11 @@ static func effects(e: Dictionary, u: SimUnit) -> Array:
 		out.append("Fast health and mana regen at the fountain.")
 	if m.get("flying", false):
 		out.append("Flies over trees and cliffs.")
+	if m.has("counter"):
+		var oc: Vector2i = m.counter
+		out.append("%d of %d attacks: attack %d bursts in an Overload." % [oc.x, oc.y, oc.y])
+	if e.has("amp"):
+		out.append("Takes %s%% more damage from Kragg's spells." % _amp_text(float(e.amp) * 100.0))
 	if float(m.get("tower_bonus", 0.0)) > 0.0:
 		out.append("Fortified towers hit it for %d more physical damage (%d marks)." % [roundi(float(m.tower_bonus)), int(m.get("charges", 0))])
 	elif int(m.get("charges", 0)) > 0:
@@ -336,6 +357,9 @@ static func effects(e: Dictionary, u: SimUnit) -> Array:
 			var dot := txt.find(". ")
 			out.append(txt.substr(0, dot + 1) if dot > 0 else txt)
 	return out
+
+static func _amp_text(pct: float) -> String:
+	return "%.2f" % pct if pct < 10.0 else "%.1f" % pct
 
 static func _num(v: float) -> String:
 	return ("%d" % roundi(v)) if absf(v - roundf(v)) < 0.05 else ("%.1f" % v)
@@ -446,7 +470,7 @@ static func _icon(ci: CanvasItem, e: Dictionary, r: Rect2, hot: bool) -> void:
 	if left > 0.0:
 		var s := str(ceili(left)) if left >= 1.0 else "%.1f" % left
 		U.text_c(ci, s, Vector2(r.get_center().x, r.end.y - 3.0), fs, Color(1, 1, 1), "bold")
-	if int(e.count) > 1:
+	if int(e.count) > 1 or (int(e.count) > 0 and (e.mod as Dictionary).has("counter")):
 		U.text_r(ci, str(int(e.count)), Vector2(r.end.x - 2.0, r.position.y + fs), fs, U.GOLD, "bold")
 
 static func _sweep(ci: CanvasItem, r: Rect2, spent: float) -> void:

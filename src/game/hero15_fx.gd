@@ -7,7 +7,7 @@ extends Node
 ##   he lands), Slow Field (a slowly turning ground dial with 12 ticks for its 5 s), Stop Time (a pale dome over the area,
 ##   a still clock face on the ground), Quick Hands (gold sparks at his hands); delayed enemies carry a slow grey ring.
 ##   Kragg: Iron Grip (a lightning arc between them, a snap at the middle), Repel (a blue force wall and shockwave),
-##   Overload (bolts from the sky onto every charged enemy, arcs to Kragg), Magnet Field (blue rings on the ground
+##   Overload (a ring of arcs bursting from Kragg and a bolt to each enemy hit), Magnet Field (blue rings on the ground
 ##   closing in on him, arcs to the enemies it drags), its end (a shockwave); Charges: small blue sparks orbiting the
 ##   enemy, one per Charge.
 
@@ -195,15 +195,22 @@ func event(e: Dictionary) -> void:
 			fx.shockwave(at2 + Vector3(0, 0.05, 0), rr, SPARK, 0.4, 0.25, 2.5)
 			fx.flash_light(at2 + Vector3(0, 1, 0), SPARK, 3.0, rr * 1.5, 0.25)
 		"overload":
+			# a burst of electric charge around Kragg: a ring of arcs over the ground and a bolt to everyone hit
 			var ou: SimUnit = w.get_unit(int(e.u))
-			if ou:
+			if ou and fx._seen(ou.pos):
 				var oc := fx._chest(ou.id, 0.6)
-				fx.flash_light(oc, SPARK, 3.5, 6.0, 0.35)
-				for h in e.get("hits", []):
-					var tc := fx._chest(int(h[0]), 0.55)
-					fx.lightning(tc + Vector3(0, 4.0, 0), tc, Color(0.75, 0.9, 1.0), 0.4, 0.07 + 0.02 * int(h[1]), 10)
-					fx.lightning(oc, tc, SPARK, 0.3, 0.05, 12)
-					fx.impact(tc, SPARK, 0.25 + 0.06 * int(h[1]))
+				var og := fx.ground3(e.get("pos", ou.pos))
+				var orr := float(e.radius) * View.S
+				fx.flash_light(oc, SPARK, 3.0, orr * 3.0, 0.3)
+				fx.shockwave(og + Vector3(0, 0.05, 0), orr, SPARK, 0.3, 0.2, 2.0)
+				for i in 6:
+					var ang := TAU * i / 6.0 + float(Time.get_ticks_msec() % 1000) * 0.006
+					var rim := og + Vector3(cos(ang) * orr, 0.25, sin(ang) * orr)
+					fx.lightning(oc, rim, Color(0.75, 0.9, 1.0), 0.22, 0.04, 8)
+				for id in e.get("hits", []):
+					var tc := fx._chest(int(id), 0.55)
+					fx.lightning(oc, tc, SPARK, 0.28, 0.06, 10)
+					fx.impact(tc, SPARK, 0.3)
 		"magnet_field":
 			var mf := Node3D.new()
 			add_child(mf)

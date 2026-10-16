@@ -5,3 +5,5 @@ work/research/d2_*
 /build/
 work/benchmark/
 work/downloads/mpfb/
+work/downloads/q_*/
+work/heroes16_tex/

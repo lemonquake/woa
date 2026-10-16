@@ -128,7 +128,7 @@ func _draw_all() -> void:
 		var u: SimUnit = w.get_unit(v.uid)
 		if u == null or not u.alive or not v.visible:
 			continue
-		if u.kind == K.WARD:
+		if u.kind == K.WARD or u.has_flag("hidden"):
 			continue
 		var top: Vector3 = v.global_position + Vector3(0, v.bar_height, 0)
 		if cam.is_position_behind(top):

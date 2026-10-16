@@ -1,0 +1,57 @@
+== roydo vs ezee
+exit 0
+seed 3 at 12:00: A(roydo) 1/0/0 lvl 9 LH 48 DN 24 nw 3467 | B(ezee) 0/1/0 lvl 6 LH 16 DN 2 nw 1184 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 20, "B:dark_stomp": 14, "A:item_salve": 4, "A:item_tango": 3, "B:item_tango": 3, "B:item_salve": 4, "A:void_rush": 6, "A:item_clarity": 1, "B:tainted_touch": 10, "A:anomaly": 4, "B:leap_strike": 4, "A:item_magic_stick": 1, "B:item_magic_stick": 3, "B:item_clarity": 2, "A:item_magic_wand": 1, "B:snarl": 4, "A:item_slip_boots": 1, "B:smash": 1 }
+    roydo items: ["gauntlets", "magic_wand", "smart_band", "slip_boots"]
+    ezee items: ["branch", "branch", "magic_stick", "quelling_blade", "tough_band", "salve", "clarity"]
+seed 7 at 12:00: A(roydo) 0/0/0 lvl 9 LH 46 DN 27 nw 3443 | B(ezee) 0/0/0 lvl 5 LH 11 DN 6 nw 623 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 18, "B:dark_stomp": 14, "A:void_rush": 6, "A:item_salve": 3, "B:item_salve": 8, "B:item_clarity": 3, "B:tainted_touch": 8, "B:item_tango": 3, "A:item_tango": 3, "A:item_clarity": 2, "B:snarl": 8, "A:anomaly": 4, "B:leap_strike": 2, "A:item_magic_wand": 1, "B:stomp": 3 }
+    roydo items: ["gauntlets", "magic_wand", "smart_band", "boots"]
+    ezee items: ["gauntlets", "quelling_blade", "circlet"]
+seed 11 at 12:00: A(roydo) 0/0/0 lvl 8 LH 42 DN 16 nw 2817 | B(ezee) 0/0/0 lvl 7 LH 30 DN 6 nw 1417 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 16, "B:dark_stomp": 15, "B:item_salve": 9, "A:item_salve": 4, "A:void_rush": 11, "A:item_tango": 3, "B:item_tango": 3, "B:snarl": 11, "B:tainted_touch": 11, "B:item_clarity": 9, "B:leap_strike": 3, "A:item_clarity": 3, "A:item_magic_stick": 1, "A:anomaly": 2, "B:item_magic_stick": 2, "B:unholy_might": 1, "A:item_magic_wand": 1, "B:stomp": 3, "B:smash": 2 }
+    roydo items: ["gauntlets", "magic_wand", "boots", "smart_band"]
+    ezee items: ["magic_stick", "quelling_blade", "tough_band", "branch", "branch"]
+== roydo vs sludge
+exit 0
+seed 3 at 12:00: A(roydo) 0/1/0 lvl 7 LH 33 DN 15 nw 1990 | B(sludge) 0/0/0 lvl 7 LH 32 DN 11 nw 1865 | towers lost A 0 B 0
+    casts: { "B:shuriken_hook": 10, "B:hooked_hero": 6, "A:grip_of_the_ruler": 13, "A:item_salve": 7, "A:item_tango": 3, "B:stench_on": 22, "B:item_salve": 2, "B:item_tango": 3, "A:void_rush": 8, "B:item_magic_stick": 2, "B:blubber": 6, "B:stomp": 5, "B:hooked_creep": 4, "A:item_magic_stick": 2, "B:item_magic_wand": 2, "A:item_clarity": 1, "A:anomaly": 2, "B:chomp": 1, "B:item_clarity": 1, "B:smash": 5, "B:snarl": 2 }
+    roydo items: ["gauntlets", "magic_wand", "salve", "smart_band", "boots"]
+    sludge items: ["tough_band", "magic_wand", "salve"]
+seed 7 at 12:00: A(roydo) 0/1/0 lvl 8 LH 34 DN 24 nw 2423 | B(sludge) 1/0/0 lvl 6 LH 25 DN 16 nw 1651 | towers lost A 0 B 0
+    casts: { "B:shuriken_hook": 8, "B:hooked_hero": 5, "A:grip_of_the_ruler": 15, "A:item_salve": 4, "A:item_tango": 3, "B:stench_on": 28, "B:hooked_creep": 2, "B:item_tango": 3, "B:item_salve": 1, "B:snarl": 8, "A:void_rush": 10, "B:item_magic_stick": 1, "B:item_clarity": 2, "B:blubber": 7, "B:item_magic_wand": 4, "A:item_magic_stick": 1, "A:item_clarity": 1, "A:anomaly": 1, "B:chomp": 1, "A:item_magic_wand": 1, "B:smash": 1, "B:stomp": 2 }
+    roydo items: ["salve", "gauntlets", "boots", "smart_band", "magic_wand"]
+    sludge items: ["tough_band", "magic_wand", "salve"]
+seed 11 at 12:00: A(roydo) 0/0/0 lvl 8 LH 27 DN 19 nw 2090 | B(sludge) 0/0/0 lvl 6 LH 18 DN 10 nw 753 | towers lost A 0 B 0
+    casts: { "B:shuriken_hook": 8, "B:hooked_hero": 7, "A:grip_of_the_ruler": 14, "A:item_salve": 6, "A:item_tango": 3, "B:stench_on": 24, "B:item_salve": 1, "B:item_tango": 3, "A:void_rush": 6, "B:item_magic_stick": 4, "B:hooked_creep": 1, "B:item_clarity": 2, "B:snarl": 4, "B:blubber": 5, "A:anomaly": 2, "B:stomp": 2, "B:smash": 2, "A:item_magic_wand": 1 }
+    roydo items: ["magic_wand", "gauntlets", "boots", "smart_band"]
+    sludge items: ["circlet", "gauntlets", "branch", "branch", "magic_stick", "salve"]
+== roydo vs blood_ranger
+exit 0
+seed 3 at 12:00: A(roydo) 0/1/0 lvl 8 LH 33 DN 11 nw 2070 | B(blood_ranger) 1/0/0 lvl 8 LH 36 DN 19 nw 2928 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 18, "B:item_salve": 2, "B:item_tango": 3, "A:item_tango": 3, "B:gale_impact": 11, "A:item_salve": 6, "A:void_rush": 4, "B:item_clarity": 2, "B:burst_shot": 5, "B:item_magic_stick": 1, "B:blood_ranger_ult": 3, "B:item_magic_wand": 2, "A:item_magic_stick": 1, "A:anomaly": 1, "B:snarl": 3 }
+    roydo items: ["gauntlets", "magic_stick", "salve", "smart_band"]
+    blood_ranger items: ["cloak", "magic_wand", "salve", "wraith_band", "quelling_blade", "clarity"]
+seed 7 at 12:00: A(roydo) 1/1/0 lvl 8 LH 36 DN 21 nw 2750 | B(blood_ranger) 1/1/0 lvl 9 LH 37 DN 17 nw 2744 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 19, "B:item_salve": 7, "B:gale_impact": 16, "A:void_rush": 6, "A:item_salve": 6, "A:item_tango": 3, "B:burst_shot": 3, "B:item_tango": 3, "B:item_clarity": 4, "B:item_magic_wand": 3, "A:item_magic_stick": 3, "A:anomaly": 3, "A:item_clarity": 2, "B:blood_ranger_ult": 1, "B:snarl": 2 }
+    roydo items: ["gauntlets", "magic_stick", "smart_band"]
+    blood_ranger items: ["cloak", "magic_wand", "wraith_band", "quelling_blade", "boots", "clarity"]
+seed 11 at 12:00: A(roydo) 1/1/0 lvl 8 LH 43 DN 20 nw 3169 | B(blood_ranger) 1/1/0 lvl 7 LH 22 DN 7 nw 1736 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 19, "B:item_salve": 2, "A:void_rush": 6, "A:item_tango": 3, "B:item_tango": 3, "A:item_salve": 7, "B:gale_impact": 14, "B:burst_shot": 5, "A:item_magic_stick": 1, "B:item_clarity": 1, "A:item_magic_wand": 2, "A:anomaly": 4, "B:item_magic_stick": 1, "B:item_magic_wand": 2, "B:blood_ranger_ult": 2, "B:snarl": 2, "B:stomp": 2 }
+    roydo items: ["gauntlets", "magic_wand", "smart_band", "boots"]
+    blood_ranger items: ["boots", "magic_wand", "wraith_band", "quelling_blade", "salve", "clarity"]
+== roydo vs kragg
+exit 0
+seed 3 at 12:00: A(roydo) 0/0/0 lvl 8 LH 48 DN 23 nw 2892 | B(kragg) 0/0/0 lvl 6 LH 25 DN 13 nw 1267 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 19, "B:iron_grip": 13, "A:item_salve": 7, "A:void_rush": 10, "B:item_salve": 8, "B:item_clarity": 5, "A:item_tango": 3, "B:repel": 9, "B:item_tango": 3, "B:item_magic_stick": 4, "A:item_magic_stick": 2, "A:item_clarity": 2, "A:anomaly": 2, "B:stomp": 6, "B:smash": 5, "B:snarl": 2, "B:magnet_field": 1 }
+    roydo items: ["magic_wand", "boots", "gauntlets", "smart_band", "cloak"]
+    kragg items: ["magic_stick", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(roydo) 0/1/0 lvl 7 LH 22 DN 5 nw 1629 | B(kragg) 1/0/0 lvl 10 LH 47 DN 30 nw 3449 | towers lost A 0 B 1
+    casts: { "A:grip_of_the_ruler": 21, "B:iron_grip": 18, "A:item_salve": 6, "B:item_tango": 3, "A:void_rush": 13, "B:item_salve": 7, "A:item_tango": 3, "B:item_magic_stick": 2, "A:item_clarity": 2, "B:item_clarity": 6, "B:item_magic_wand": 3, "B:magnet_field": 2, "B:snarl": 5, "A:anomaly": 1 }
+    roydo items: ["gauntlets", "salve", "smart_band"]
+    kragg items: ["boots", "magic_wand", "quelling_blade", "tough_band", "cloak"]
+seed 11 at 12:00: A(roydo) 1/1/0 lvl 8 LH 23 DN 7 nw 2777 | B(kragg) 1/1/0 lvl 8 LH 39 DN 19 nw 2877 | towers lost A 0 B 0
+    casts: { "A:grip_of_the_ruler": 18, "B:iron_grip": 15, "B:item_salve": 6, "A:item_salve": 3, "B:item_tango": 3, "A:void_rush": 8, "A:item_tango": 3, "A:item_clarity": 1, "B:stomp": 4, "B:item_clarity": 5, "B:item_magic_stick": 3, "B:repel": 3, "B:magnet_field": 1, "A:anomaly": 2, "A:item_magic_stick": 1, "B:snarl": 7 }
+    roydo items: ["magic_wand", "gauntlets", "salve", "smart_band", "cloak", "boots"]
+    kragg items: ["boots", "magic_wand", "cloak", "quelling_blade", "tough_band"]
+== blau vs roydo

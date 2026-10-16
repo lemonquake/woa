@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+match ready in 12122 ms
+PASS playing Kragg
+PASS Magnetize learned at level 1
+PASS four skill slots (4)
+SKIP hovering Talents shows the innate () (frame larger than the monitor)
+SKIP with its value at his level (frame larger than the monitor)
+saved A:/Python/woa/work/lemondev/2026-10-15g-kragg-bots-menu/shots/kragg_talent_tip_4k.png (3840, 2160)
+SKIP the innate slot's tooltip (frame larger than the monitor)
+saved A:/Python/woa/work/lemondev/2026-10-15g-kragg-bots-menu/shots/kragg_innate_tip_4k.png (3840, 2160)
+PASS the 3rd attack bursts in an Overload
+PASS the enemy beside him is hurt (58)
+PASS and slowed
+saved A:/Python/woa/work/lemondev/2026-10-15g-kragg-bots-menu/shots/kragg_overload_4k.png (3840, 2160)
+PASS his buff bar counts toward the next Overload ([0] of 3, record 0)
+PASS the enemy carries 4 Charges at most
+saved A:/Python/woa/work/lemondev/2026-10-15g-kragg-bots-menu/shots/kragg_buffbar_4k.png (3840, 2160)
+RESULT 8 passed, 0 failed
+WARNING: 157 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 14 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

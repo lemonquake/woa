@@ -11,11 +11,14 @@ extends Node3D
 const ACCENTS := {
 	"blood_ranger": Color(0.95, 0.22, 0.25), "ezee": Color(0.66, 0.3, 1.0), "azrin": Color(1.0, 0.5, 0.15),
 	"sludge": Color(0.55, 0.78, 0.3), "froster": Color(0.45, 0.82, 1.0), "caziel": Color(0.66, 0.36, 1.0),
-	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0)}
+	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0), "roydo": Color(0.62, 0.42, 1.0),
+	"blau": Color(0.35, 0.82, 1.0)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
-	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash"}
+	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
+	"roydo": "roydo_cast_shoot", "blau": "blau_reload"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_mage", "sludge": "idle_1h",
-	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_knight"}
+	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
+	"roydo": "roydo_idle_fold", "blau": "blau_idle"}
 
 var hero_id := ""
 var model: Node3D
@@ -332,6 +335,8 @@ func _aim_portrait() -> void:
 	var head := Vector3(0, 1.62 + _lift, 0)
 	if skeleton:
 		var bi := skeleton.find_bone("head")
+		if bi < 0:
+			bi = skeleton.find_bone("Head")             # the Universal rig (Roydo, Blau)
 		if bi >= 0:
 			head = (skeleton.global_transform * skeleton.get_bone_global_pose(bi)).origin + Vector3(0, 0.05, 0)
 	cam.position = head + Vector3(0.0, 0.05, 1.9)
@@ -360,6 +365,7 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
 	var own := id in GameSettings.OWN_BODY
 	model = (load(String(cfg.scene) if own else HeroLook.MODEL) as PackedScene).instantiate()
+	RepairedClips.patch(model)
 	add_child(model)
 	model.rotation.y = yaw
 	var anims := model.find_children("*", "AnimationPlayer", true, false)
@@ -383,6 +389,7 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 			skeleton.add_child(at)
 			var wpn := ps.instantiate() as Node3D
 			at.add_child(wpn)
+			wpn.transform = ModelCatalog.prop_transform(cfg, side)
 			if cfg.has("weapon_tint"):
 				for mi: MeshInstance3D in wpn.find_children("*", "MeshInstance3D", true, false):
 					for i in mi.mesh.get_surface_count():
@@ -481,6 +488,21 @@ func _stage_aura(id: String, cfg: Dictionary) -> void:
 			lk.position = Vector3(0.4, 1.1, 0.6)
 			_aura.add_child(lk)
 			_fire_fx.flicker(lk)
+		"roydo":
+			# stars drifting up round him, a violet glow, his own skin is the night sky
+			var st := FireFx.embers(0.8, 14.0, 2.6, 0.45, 0.03, Color(0.7, 0.55, 1.0))
+			st.position.y = 0.5
+			_aura.add_child(st)
+			var lr := FireFx.light(Color(0.6, 0.4, 1.0), 0.9, 4.0)
+			lr.position = Vector3(0.3, 1.2, 0.7)
+			_aura.add_child(lr)
+		"blau":
+			var bm2 := CazielFx.motes(0.7, 10.0, Color(0.4, 0.85, 1.0), 1.4, 0.6, 0.03)
+			bm2.position.y = 0.5
+			_aura.add_child(bm2)
+			var lb := FireFx.light(Color(0.4, 0.8, 1.0), 0.6, 4.0)
+			lb.position = Vector3(-0.3, 1.2, 0.7)
+			_aura.add_child(lb)
 		"caziel":
 			var sm := CazielFx.shadow_smoke(0.7, 14.0, 0.9, 1.8, 0.35, 0.45)
 			sm.position.y = 0.05

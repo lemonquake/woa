@@ -54,6 +54,9 @@ The owner's own names are never changed by an agent, even when they break this r
 * Heroes (2026-10-14 b): **Froster**, title **the Winter Master**; abilities **Breath of Cold**, **Ice Pulse**,
   **Frost Heart**, **Endless Winter**. **Caziel**, title **the Void Assassin**; abilities **Swift Dagger**, **Sweet
   Poison**, **Master of Shadows**, **Death Order**
+* Heroes (2026-10-16): **Roydo**, title **the Anomaly**; abilities **Grip of the Ruler**, **Void Rush**, **Dark Matter
+  Skin**, **Anomaly**. **Blau**, title **the Master Tactician**; abilities **Bounce Shot**, **Summon Boulders**,
+  **Lay Trap**, **Place Turret**
 * Damage type (2026-10-14): **Aether** (pure damage). Only the exact label is allowed (see `OWNER_EXACT` in
   `tools/check_names.py`), so new "Aether ..." compounds are still caught.
 

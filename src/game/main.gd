@@ -23,6 +23,7 @@ var azrin_fx: AzrinFx
 var froster_fx: FrosterFx
 var caziel_fx: CazielFx
 var hero15_fx: Hero15Fx
+var hero16_fx: Hero16Fx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
@@ -121,6 +122,11 @@ func _ready() -> void:
 	hero15_fx.fx = fx
 	hero15_fx.fire = fire_fx
 	add_child(hero15_fx)
+	hero16_fx = Hero16Fx.new()
+	hero16_fx.game = self
+	hero16_fx.fx = fx
+	hero16_fx.fire = fire_fx
+	add_child(hero16_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -622,6 +628,8 @@ func _drain_events() -> void:
 			caziel_fx.event(e)
 		elif e.t in Hero15Fx.EVENTS:
 			hero15_fx.event(e)
+		elif e.t in Hero16Fx.EVENTS:
+			hero16_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -1012,6 +1020,7 @@ func _process(dt: float) -> void:
 	_t = _tm("fx_froster", _t)
 	caziel_fx.update(world, alpha, dt)
 	hero15_fx.update(world, alpha, dt)
+	hero16_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)

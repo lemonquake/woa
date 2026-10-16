@@ -827,6 +827,29 @@ def make_icons():
         at(ic, 64, 66, cape(ic, ORANGE, RED), 0, 0.85)
         at(ic, 64, 60, flame(ic, 0.42))
 
+    # run 2026-10-15 g: magic defence (Dota's Shawl, Cloak, Glimmer Cape)
+    @icon("shawl", "magic")
+    def _(ic):  # Scarf: a wrapped wool scarf with a faint violet ward ring
+        at(ic, 64, 60, rings("#d8a0ff", 30, 1, 12, 0.45))
+        at(ic, 64, 62, P("M-38,-14 Q0,-30 38,-14 Q40,0 30,6 Q0,-8 -30,6 Q-40,0 -38,-14 Z", ic.metal(VIOLET), sw=3))
+        at(ic, 64, 62, P("M14,0 L24,40 L12,36 L6,42 L2,2 Z", ic.metal(VIOLET), sw=2.6))
+        at(ic, 64, 62, L("M-30,-10 Q0,-22 30,-10", "#f0c8ff", 1.6, 0.7) + L("M8,8 L14,34", "#2a0848", 1.4, 0.6))
+
+    @icon("cloak", "magic")
+    def _(ic):  # Spell Cloak: a violet cloak with a ward ring and a badge of a broken bolt
+        at(ic, 64, 58, rings("#d8a0ff", 36, 2, 12, 0.5))
+        at(ic, 64, 64, cape(ic, VIOLET, BLUE), 0, 0.9)
+        ic.add(badge(ic, C(0, 0, 9, "none", stroke="#d8a0ff", sw=2.5) + L("M-6,-6 L6,6", "#d8a0ff", 2.5), "#1c0a2a", VIOLET))
+
+    @icon("glimmer_cape", "dark")
+    def _(ic):  # Fade Cape: a cape half faded into sparkles, a shield ring round it
+        at(ic, 64, 60, C(0, 0, 44, "none", stroke="#c8a8ff", sw=3, extra=' opacity="0.55" stroke-dasharray="6 5"'))
+        at(ic, 64, 64, cape(ic, VIOLET, BLACK), 0, 0.88, )
+        at(ic, 64, 64, P("M8,-38 Q28,-8 36,30 Q20,24 10,36 Z", "#08060c", stroke="none", sw=0, extra=' opacity="0.45"'))
+        for x, y, r in ((92, 36, 6), (100, 58, 5), (88, 80, 4), (104, 76, 3)):
+            at(ic, x, y, star("#f0d8ff", r, r * 0.4, 4))
+        ic.add(badge(ic, eye("#e0c8ff"), "#140a20", VIOLET))
+
     @icon("crash_knife", "str")
     def _(ic):  # Crash Knife: the Jump Knife hitting the ground with a shockwave
         at(ic, 64, 104, E(0, 0, 50, 10, "none", stroke="#ffb070", sw=3, extra=' opacity="0.8"'))
@@ -947,7 +970,7 @@ def make_icons():
     return R
 
 
-# ---- Ability icons for Tock and Kragg (assets/ui/skills/gen) ---------------------------------------------------------
+# ---- Ability icons for Tock, Kragg, Roydo and Blau (assets/ui/skills/gen) ---------------------------------------------------------
 
 SKILL_OUT = os.path.join(os.path.dirname(__file__), "..", "assets", "ui", "skills", "gen")
 
@@ -1065,6 +1088,103 @@ def make_skills():
         at(ic, 64, 64, rings("#a8c8ff", 30, 2, 14, 0.6))
         at(ic, 64, 64, arrows_in("#c0dcff", 58, 4, inward=True))
         at(ic, 64, 66, magnet(ic, 0.6))
+
+    # ---- Roydo and Blau (run 2026-10-16) ----
+
+    def rock_shape(ic, sc=1.0, col=("#c8bca8", "#7a7064", "#2a241e"), vein="#7ae8ff"):
+        d = "M-26,8 L-22,-14 L-6,-26 L14,-22 L27,-6 L24,14 L6,26 L-14,24 Z"
+        s = P(d, ic.metal(col, -26, -26, 26, 26), sw=3)
+        s += L("M-14,-8 L-2,0 L4,-12 M-2,0 L6,12 L16,8", vein, 2.2, 0.95)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def figure(col="#f0e8ff", sc=1.0):
+        s = C(0, -22, 7, col, sw=2) + P("M-9,-12 L9,-12 L7,10 L12,28 L4,28 L0,14 L-4,28 L-12,28 L-7,10 Z", col, sw=2)
+        s += P("M-9,-10 L-20,4 M9,-10 L20,4", "none", stroke=col, sw=4)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def turret(ic, sc=1.0, body=STEEL):
+        s = ""
+        for k in (-1, 1):
+            s += L("M%d,6 L%d,22 L%d,34" % (k * 10, k * 26, k * 34), INK, 8) + L("M%d,6 L%d,22 L%d,34" % (k * 10, k * 26, k * 34), "#9aa8c0", 4)
+        s += P("M-22,8 Q-24,-18 0,-20 Q24,-18 22,8 Z", ic.metal(body, -22, -20, 22, 8), sw=3)
+        s += P("M8,-8 L40,-12 L40,-4 L8,0 Z M8,0 L40,2 L40,10 L8,6 Z", ic.metal(IRON, 8, -12, 40, 10), sw=2.5)
+        s += C(-6, -8, 5, "#7ae8ff", sw=2)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    @icon("grip_of_the_ruler", "magic")
+    def _(ic):
+        at(ic, 64, 74, E(0, 0, 48, 18, "none", stroke="#d8a0ff", sw=3, extra=' opacity="0.8"'))
+        for k in range(4):
+            a = k * math.pi / 2
+            sp = "M%.1f,%.1f Q%.1f,%.1f 0,0" % (math.cos(a) * 46, math.sin(a) * 17, math.cos(a + 1.2) * 26, math.sin(a + 1.2) * 12)
+            at(ic, 64, 74, L(sp, "#f0d0ff", 2.5, 0.7))
+        at(ic, 64, 40, glove(ic, VIOLET), 180, 0.62)
+        at(ic, 64, 76, figure("#ffe0f0", 0.55))
+        for x, y in ((30, 30), (98, 26), (100, 54)):
+            at(ic, x, y, star("#f0d8ff", 5, 2, 4))
+
+    @icon("void_rush", "dark")
+    def _(ic):
+        at(ic, 64, 64, rings("#c8a8ff", 14, 4, 12, 0.75))
+        at(ic, 64, 64, C(0, 0, 12, "#05020a", stroke="#d8b8ff", sw=2.5))
+        at(ic, 64, 64, arrows_in("#a8f0ff", 56, 4, inward=False))
+        ic.add(badge(ic, '<g transform="scale(0.32)">%s</g>' % shield(ic, IRON, CYAN), rim=CYAN[1]))
+
+    @icon("dark_matter_skin", "dark")
+    def _(ic):
+        at(ic, 60, 66, figure("#2a1650", 1.25))
+        at(ic, 60, 66, figure("none", 1.25).replace('fill="none"', 'fill="none" stroke="#c8a8ff"'))
+        for k in range(5):
+            a = -math.pi * 0.9 + k * 0.42
+            x0, y0 = 60 + math.cos(a) * 30, 60 + math.sin(a) * 30
+            x1, y1 = 60 + math.cos(a) * 54, 60 + math.sin(a) * 54
+            ic.add(L("M%.1f,%.1f L%.1f,%.1f" % (x0, y0, x1, y1), INK, 6) + L("M%.1f,%.1f L%.1f,%.1f" % (x0, y0, x1, y1), "#ff80d8", 3))
+        for x, y in ((40, 54), (70, 82), (58, 40)):
+            at(ic, x, y, star("#ffffff", 3.5, 1.5, 4))
+
+    @icon("anomaly", "magic")
+    def _(ic):
+        head = "M-26,10 Q-30,-22 0,-28 Q30,-22 26,10 Q14,30 0,30 Q-14,30 -26,10 Z"
+        at(ic, 64, 70, P(head, ic.lin([(0, "#4a1a6a"), (1, "#1a0626")], 0, -28, 0, 30), stroke="#ff9ae8", sw=3))
+        for k in (-1, 1):
+            at(ic, 64, 70, P("M%d,-18 L%d,-52 L%d,-22 Z" % (k * 12, k * 30, k * 22), ic.metal(("#ffe0ff", "#d060ff", "#4a1060")), sw=2.5))
+            at(ic, 64, 70, P("M%d,-6 L%d,-1 L%d,2 Z" % (k * 6, k * 18, k * 8), "#ffffff", stroke="#ff60c0", sw=1.5))
+        at(ic, 64, 70, L("M-12,16 L-6,12 L0,18 L6,12 L12,16", "#ff9ae8", 2.5))
+        ic.add(badge(ic, L("M-8,0 L8,0 M2,-6 L8,0 L2,6", "#ffffff", 3), rim="#ff60c0"))
+
+    @icon("bounce_shot", "storm")
+    def _(ic):
+        at(ic, 0, 0, L("M10,96 L44,30 L76,94 L112,26", "#7ae8ff", 10, 0.35) + L("M10,96 L44,30 L76,94 L112,26", "#e8ffff", 3.5, 0.95))
+        for x, y in ((44, 30), (76, 94)):
+            at(ic, x, y, star("#ffffff", 9, 3, 6))
+        at(ic, 108, 32, C(0, 0, 7, "#ffffff", stroke="#40c8f0", sw=3))
+
+    @icon("summon_boulders", "earth" if "earth" in BACK else "armor")
+    def _(ic):
+        at(ic, 40, 84, rock_shape(ic, 0.8))
+        at(ic, 80, 74, rock_shape(ic, 1.0))
+        at(ic, 56, 44, rock_shape(ic, 0.7))
+        at(ic, 0, 0, '<g transform="translate(28 64)">%s</g>' % speed_lines("#e8f8ff", 3, -24, 18, 0, 12, 0.6))
+
+    @icon("lay_trap", "armor")
+    def _(ic):
+        at(ic, 64, 78, E(0, 0, 44, 16, "none", stroke="#7ae8ff", sw=3, extra=' opacity="0.8"'))
+        for k in range(9):
+            x = -36 + k * 9
+            at(ic, 64, 70, P("M%d,8 L%d,-14 L%d,8 Z" % (x - 4, x, x + 4), ic.metal(STEEL, x - 4, -14, x + 4, 8), sw=2))
+        at(ic, 64, 74, P("M-44,4 Q0,22 44,4 L44,12 Q0,30 -44,12 Z", ic.metal(IRON, -44, 4, 44, 30), sw=2.5))
+        ic.add(badge(ic, '<g transform="scale(0.4)">%s</g>' % chevrons("#e0ffff", back=True), rim=CYAN[1]))
+
+    @icon("place_turret", "storm")
+    def _(ic):
+        at(ic, 58, 70, turret(ic, 1.1))
+        at(ic, 0, 0, L("M100,58 L118,54 M100,66 L118,68", "#e8ffff", 3, 0.8))
+
+    @icon("pilot_turret", "gold")
+    def _(ic):
+        at(ic, 60, 76, turret(ic, 1.0, GOLD))
+        at(ic, 52, 36, figure("#ffffff", 0.6))
+        at(ic, 0, 0, L("M52,48 L52,58", "#ffffff", 3, 0.9))
 
     return R
 

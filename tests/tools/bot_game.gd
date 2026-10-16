@@ -175,6 +175,20 @@ func _init() -> void:
 		out("  totals: kills %d vs %d, net worth %d vs %d" % [kills[0], kills[1], nw[0], nw[1]])
 		out("  stuck: %s" % (str(stuck.values()) if not stuck.is_empty() else "none"))
 		out("  Fortify pressed %d times: %s" % [fortify.size(), ", ".join(fortify)])
+		# run 2026-10-15 g: counter-ganks, jukes and counter items per team
+		for team in [C.DAWN, C.DUSK]:
+			var jk := 0
+			var cs := 0
+			var ct: Array = []
+			for b in w.bots:
+				var bh: SimUnit = b.hero()
+				if bh != null and bh.team == team:
+					jk += b.jukes
+					cs += b.counter_saves
+					for c in b.counters_bought:
+						ct.append("%s:%s" % [bh.def.id, c])
+			out("  %s: counter-ganks called %d (helpers fought in %d), juked home %d, counter items %s" % [C.TEAM_NAMES[team],
+				w.brain(team).saves_called, cs, jk, ", ".join(ct)])
 		out("  chat lines: %d" % chat.size())
 		if String(opts.chat) != "":
 			for c in chat:

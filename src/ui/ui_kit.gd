@@ -62,7 +62,11 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"time_bolt": "skills/gen/time_bolt", "fast_forward": "skills/gen/fast_forward", "rewind": "skills/gen/rewind",
 	"slow_field": "skills/gen/slow_field", "quick_hands": "skills/gen/quick_hands", "stop_time": "skills/gen/stop_time",
 	"iron_grip": "skills/gen/iron_grip", "repel": "skills/gen/repel", "magnetize": "skills/gen/magnetize",
-	"overload": "skills/gen/overload", "magnet_field": "skills/gen/magnet_field"}
+	"overload": "skills/gen/overload", "magnet_field": "skills/gen/magnet_field",
+	"grip_of_the_ruler": "skills/gen/grip_of_the_ruler", "void_rush": "skills/gen/void_rush",
+	"dark_matter_skin": "skills/gen/dark_matter_skin", "anomaly": "skills/gen/anomaly", "bounce_shot": "skills/gen/bounce_shot",
+	"summon_boulders": "skills/gen/summon_boulders", "lay_trap": "skills/gen/lay_trap", "place_turret": "skills/gen/place_turret",
+	"pilot_turret": "skills/gen/pilot_turret"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
 const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}

@@ -160,8 +160,8 @@ func pick(screen: Vector2) -> int:
 	# from its base): a query there instead of testing every unit view each frame
 	var near: Array = game.world.query(game.camera.ground_at(screen), 900.0, true)
 	for u: SimUnit in near:
-		if u.kind == C.Kind.FOUNTAIN:
-			continue
+		if u.kind == C.Kind.FOUNTAIN or u.has_flag("hidden"):
+			continue                                   # (Blau inside his turret: the turret is what is there)
 		var v = game.views.get(u.id)
 		if v == null or not v.visible:
 			continue

@@ -315,6 +315,7 @@ func step() -> void:
 	combat.update_projectiles()
 	if profiling: t = _prof("projectiles", t)
 	abilities.kits2.tick()
+	abilities.kits3.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()

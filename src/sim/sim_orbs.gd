@@ -228,8 +228,9 @@ func _stealth_fade() -> void:
 			h.atk_target = -1
 
 ## Damage about to be taken (after armor and other reductions): Stealth Orb's resistance while invisible, then the
-## Shield Orb's barrier absorbs what it can. Returns what is left; `from_hero` marks player damage (Healing Orb).
-func absorb(t: SimUnit, amount: float, from_hero: bool) -> float:
+## Shield Orb's barrier absorbs what it can, else (magic damage) the Fade Cape's. Returns what is left; `from_hero`
+## marks player damage (Healing Orb).
+func absorb(t: SimUnit, amount: float, from_hero: bool, magic := false) -> float:
 	if t.modifiers.is_empty():
 		return amount
 	var st := t.get_modifier("orb_stealth")
@@ -239,6 +240,15 @@ func absorb(t: SimUnit, amount: float, from_hero: bool) -> float:
 	if not hl.is_empty() and from_hero and amount > 0.0:
 		hl["hurt_until"] = w.time + 3.0
 	var sh := t.get_modifier("orb_shield")
+	if sh.is_empty() and magic and amount > 0.0:
+		sh = t.get_modifier("glimmer_cape")       # Fade Cape's barrier takes magic damage only
+		if not sh.is_empty() and float(sh.get("magic_barrier", 0.0)) > 0.0:
+			var mb := float(sh.magic_barrier)
+			var took2 := minf(mb, amount)
+			sh["magic_barrier"] = mb - took2
+			amount -= took2
+			w.events.append({"t": "barrier", "u": t.id, "amount": took2})
+		return amount
 	if not sh.is_empty() and amount > 0.0:
 		var b := float(sh.barrier)
 		var took := minf(b, amount)

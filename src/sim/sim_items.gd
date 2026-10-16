@@ -62,7 +62,7 @@ static func target_kind(use: String) -> String:
 	match use:
 		"jump":
 			return "point"
-		"push", "gold", "overwhelm", "silence", "root", "disarm", "hex", "blast", "static":
+		"push", "gold", "overwhelm", "silence", "root", "disarm", "hex", "blast", "static", "fade":
 			return "unit"
 		"net":
 			return "point"
@@ -74,7 +74,7 @@ func cast_range(u: SimUnit, use: String, d: Dictionary, t: SimUnit) -> float:
 			return INF                             # no walking: a click beyond the range blinks a shorter way
 		"push":
 			return float(d.values.range_enemy) if t != null and t.team != u.team else float(d.values.range_ally)
-		"gold", "overwhelm", "silence", "root", "disarm", "hex", "blast", "static", "net":
+		"gold", "overwhelm", "silence", "root", "disarm", "hex", "blast", "static", "net", "fade":
 			return float(d.values.range)
 	return 0.0
 
@@ -101,6 +101,9 @@ func error(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, _p: Vector2) -
 				return "No charges"
 		"static":
 			if t == null or not t.alive or t.team != u.team or t.is_building() or t.is_ward() or t.kind == K.COURIER:
+				return "Must target an ally"
+		"fade":
+			if t == null or not t.alive or t.team != u.team or t.is_building() or t.is_ward():
 				return "Must target an ally"
 		"overwhelm", "silence", "root", "disarm", "hex", "blast":
 			if t == null or not t.alive or t.team == u.team or t.is_building() or t.is_ward() or t.kind == K.COURIER:
@@ -156,6 +159,13 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 			u.add_modifier({"id": "spell_shield", "source": u.id, "expires": w.time + dur, "debuff_immune": true,
 				"stats": {"magic_resist": float(v.magic_resist)}, "fx": "spell_shield"})
 			w.events.append({"t": "spell_shield", "u": u.id, "dur": dur})
+		"fade":
+			# Fade Cape: the barrier at once, invisible after the fade time (SimItems.update)
+			t.add_modifier({"id": "glimmer_cape", "source": u.id, "by": u.id, "expires": w.time + float(v.duration),
+				"fade_until": w.time + float(v.fade), "invisible": false, "magic_barrier": float(v.barrier),
+				"stats": {"move_speed_pct": float(v.move_speed_pct)}, "fx": "sneak"})
+			t.refresh_stats()
+			w.events.append({"t": "fade_cape", "u": u.id, "target": t.id})
 		"sneak":
 			u.add_modifier({"id": "sneak_blade", "source": u.id, "expires": w.time + float(v.duration),
 				"fade_until": w.time + float(v.fade), "invisible": false, "bonus": float(v.bonus_damage),
@@ -345,6 +355,12 @@ func break_sneak(u: SimUnit) -> Dictionary:
 	if not u.get_modifier("orb_stealth").is_empty():
 		u.remove_modifier("orb_stealth")
 		w.events.append({"t": "sneak_end", "u": u.id})
+	# Fade Cape: the invisibility ends, the magic barrier stays
+	var gm := u.get_modifier("glimmer_cape")
+	if not gm.is_empty() and not bool(gm.get("broken", false)):
+		gm["invisible"] = false
+		gm["broken"] = true
+		w.events.append({"t": "sneak_end", "u": u.id})
 	var m := u.get_modifier("sneak_blade")
 	if m.is_empty():
 		return {}
@@ -363,6 +379,14 @@ func update() -> void:
 	for h in w.heroes:
 		if not h.alive:
 			continue
+		# Fade Cape: invisible once the fade time has passed (its barrier stays when it breaks)
+		var gm := h.get_modifier("glimmer_cape")
+		if not gm.is_empty() and not bool(gm.invisible) and not bool(gm.get("broken", false)) and w.time >= float(gm.fade_until):
+			gm["invisible"] = true
+			if not w.vision.true_sighted(1 - h.team, h):
+				w.combat.disjoint(h)
+			if h.order != C.Order.ATTACK_UNIT and h.order != C.Order.ATTACK_MOVE:
+				h.atk_target = -1
 		# Sneak Blade: invisible once the fade time has passed
 		var sm := h.get_modifier("sneak_blade")
 		if not sm.is_empty() and not bool(sm.invisible) and w.time >= float(sm.fade_until):

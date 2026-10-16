@@ -33,6 +33,7 @@ var level := PackedByteArray()             # N*N terrain level per path cell
 var height := PackedFloat32Array()         # (N+1)*(N+1) smooth corner heights in game units (for rendering + z)
 var walkable := PackedByteArray()          # N*N 1 = walkable for ground units (static: terrain + trees + buildings)
 var tree_cell := PackedInt32Array()        # N*N index into trees or -1
+var rock := PackedByteArray()              # N*N resting boulders on the cell (Summon Boulders); blocks walking
 var trees: Array = []                      # [{pos, alive, kind, scale, regrow (s left, <= 0 = not regrowing), rot,
                                            #   planted: true for Ironwood Twig trees, expires, under (cell's old index)}]
 var astar := AStarGrid2D.new()
@@ -531,8 +532,9 @@ func destroy_tree(index: int, regrow_time: float) -> bool:
 	t.alive = false
 	t.regrow = 0.0 if t.get("planted", false) else regrow_time
 	var c := world_to_cell(t.pos)
-	walkable[c.y * N + c.x] = 1
-	astar.set_point_solid(c, false)
+	var rocked := rock_at(c) > 0
+	walkable[c.y * N + c.x] = 0 if rocked else 1
+	astar.set_point_solid(c, rocked)
 	if t.get("planted", false):
 		# give the cell back to the natural tree (alive or not) that stood there before
 		tree_cell[c.y * N + c.x] = int(t.get("under", -1))
@@ -558,6 +560,44 @@ func regrow_tree(index: int) -> void:
 	vision_block[v.y * VN + v.x] = 1
 	vision_rev += 1
 	vision_changes.append(v)
+
+## Resting boulders: their cells (centres within `radius`) stop walking units and paths until remove_rock. Returns the
+## cells taken (to give back later). Cells already blocked by terrain, trees or buildings are left alone.
+func add_rock(center: Vector2, radius: float) -> Array:
+	if rock.size() != N * N:
+		rock.resize(N * N)
+	var out: Array = []
+	var c0 := world_to_cell(center - Vector2(radius, radius))
+	var c1 := world_to_cell(center + Vector2(radius, radius))
+	for cy in range(maxi(0, c0.y), mini(N - 1, c1.y) + 1):
+		for cx in range(maxi(0, c0.x), mini(N - 1, c1.x) + 1):
+			if cell_center(cx, cy).distance_to(center) > radius + CELL * 0.25:
+				continue
+			var i := cy * N + cx
+			if rock[i] == 0 and walkable[i] == 0:
+				continue
+			rock[i] = mini(255, rock[i] + 1)
+			walkable[i] = 0
+			astar.set_point_solid(Vector2i(cx, cy), true)
+			out.append(Vector2i(cx, cy))
+	return out
+
+func remove_rock(cells: Array) -> void:
+	for c: Vector2i in cells:
+		var i := c.y * N + c.x
+		if rock.size() != N * N or rock[i] == 0:
+			continue
+		rock[i] -= 1
+		if rock[i] == 0:
+			var ti := tree_cell[i]
+			var open: bool = not (ti >= 0 and trees[ti].alive)
+			walkable[i] = 1 if open else 0
+			astar.set_point_solid(c, not open)
+
+func rock_at(c: Vector2i) -> int:
+	if rock.size() != N * N or c.x < 0 or c.y < 0 or c.x >= N or c.y >= N:
+		return 0
+	return rock[c.y * N + c.x]
 
 ## Whether a fallen natural tree may grow back now: its cell must not hold a planted tree.
 func can_regrow(index: int) -> bool:
@@ -700,6 +740,34 @@ func line_walkable(a: Vector2, b: Vector2) -> bool:
 			tmy += tdy
 			y += sy
 	return true
+
+## Whether sight from a to b is cut by a tree or higher ground (the vision cells between them, as SimVision casts
+## sight). Bots use it to pick escape spots a chaser cannot see.
+func sight_blocked(a: Vector2, b: Vector2) -> bool:
+	var ca := world_to_vcell(a)
+	var cb := world_to_vcell(b)
+	var lvl := vision_level[ca.y * VN + ca.x]
+	var n := maxi(absi(cb.x - ca.x), absi(cb.y - ca.y))
+	for i in range(1, n):
+		var f := float(i) / float(n)
+		var cx := int(round(lerpf(ca.x, cb.x, f)))
+		var cy := int(round(lerpf(ca.y, cb.y, f)))
+		var idx := cy * VN + cx
+		if vision_block[idx] == 1 or vision_level[idx] > lvl:
+			return true
+	return vision_level[cb.y * VN + cb.x] > lvl
+
+## How many tree cells stand within `rc` vision cells of a point (0 in the open, high in a wood).
+func tree_cover(p: Vector2, rc := 2) -> int:
+	var c := world_to_vcell(p)
+	var n := 0
+	for oy in range(-rc, rc + 1):
+		for ox in range(-rc, rc + 1):
+			var x := c.x + ox
+			var y := c.y + oy
+			if x >= 0 and y >= 0 and x < VN and y < VN and vision_block[y * VN + x] == 1:
+				n += 1
+	return n
 
 # ---- Vision grid ------------------------------------------------------------------------------------------------------
 

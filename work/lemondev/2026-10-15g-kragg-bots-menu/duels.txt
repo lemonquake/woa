@@ -1,0 +1,30 @@
+== kragg vs sludge
+seed 3 at 12:00: A(kragg) 1/2/0 lvl 8 LH 22 DN 10 nw 1976 | B(sludge) 2/1/0 lvl 9 LH 45 DN 19 nw 3072 | towers lost A 0 B 0
+seed 7 at 12:00: A(kragg) 0/1/0 lvl 7 LH 30 DN 17 nw 1701 | B(sludge) 1/0/0 lvl 8 LH 39 DN 15 nw 2289 | towers lost A 1 B 0
+seed 11 at 12:00: A(kragg) 0/1/0 lvl 7 LH 30 DN 14 nw 1925 | B(sludge) 1/0/0 lvl 6 LH 21 DN 7 nw 1788 | towers lost A 0 B 0
+== kragg vs ezee
+seed 3 at 12:00: A(kragg) 2/0/0 lvl 9 LH 37 DN 21 nw 3391 | B(ezee) 0/2/0 lvl 6 LH 25 DN 2 nw 1230 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 17, "B:dark_stomp": 17, "A:item_tango": 3, "B:item_salve": 7, "A:item_salve": 4, "B:item_tango": 3, "B:snarl": 7, "B:tainted_touch": 5, "A:item_clarity": 5, "B:stomp": 3, "B:smash": 7, "B:leap_strike": 3, "A:magnet_field": 2, "B:item_clarity": 1, "A:item_magic_wand": 3, "B:item_magic_stick": 2, "A:repel": 2 }
+seed 7 at 12:00: A(kragg) 3/0/0 lvl 9 LH 35 DN 20 nw 3270 | B(ezee) 0/3/0 lvl 7 LH 27 DN 12 nw 1680 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 14, "B:dark_stomp": 14, "B:item_salve": 7, "B:tainted_touch": 10, "A:item_salve": 5, "B:item_tango": 3, "A:item_tango": 3, "A:repel": 4, "A:item_clarity": 4, "B:leap_strike": 4, "B:item_clarity": 5, "A:item_magic_stick": 1, "B:unholy_might": 2, "A:item_magic_wand": 2, "B:item_magic_stick": 2, "A:magnet_field": 2, "B:snarl": 5, "B:stomp": 3, "A:item_slip_boots": 1 }
+seed 11 at 12:00: A(kragg) 1/0/0 lvl 9 LH 40 DN 27 nw 2751 | B(ezee) 0/1/0 lvl 6 LH 25 DN 7 nw 1690 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 13, "B:dark_stomp": 17, "B:item_salve": 2, "A:item_tango": 3, "A:item_salve": 6, "B:item_tango": 3, "B:tainted_touch": 9, "A:repel": 5, "B:leap_strike": 6, "A:item_clarity": 3, "B:item_clarity": 6, "A:item_magic_stick": 2, "B:item_magic_stick": 2, "A:item_magic_wand": 3, "A:magnet_field": 1, "B:unholy_might": 1, "B:snarl": 7 }
+== kragg vs blood_ranger
+seed 3 at 12:00: A(kragg) 3/1/0 lvl 9 LH 30 DN 17 nw 3069 | B(blood_ranger) 1/3/0 lvl 9 LH 32 DN 8 nw 2755 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 17, "B:item_salve": 4, "A:item_tango": 3, "B:gale_impact": 18, "A:item_salve": 4, "A:item_clarity": 4, "B:item_tango": 3, "A:repel": 2, "B:item_clarity": 2, "B:snarl": 4, "A:item_magic_stick": 3, "B:burst_shot": 4, "A:magnet_field": 2, "B:item_magic_stick": 1, "B:blood_ranger_ult": 2, "B:item_magic_wand": 2 }
+seed 7 at 12:00: A(kragg) 2/1/0 lvl 9 LH 37 DN 15 nw 2901 | B(blood_ranger) 1/2/0 lvl 8 LH 31 DN 14 nw 2612 | towers lost A 0 B 0
+    casts: { "A:iron_grip": 13, "B:item_salve": 6, "B:item_tango": 3, "B:gale_impact": 15, "A:item_salve": 5, "A:item_tango": 3, "B:snarl": 3, "A:item_clarity": 3, "B:burst_shot": 7, "B:item_clarity": 6, "A:item_magic_stick": 3, "A:repel": 1, "A:magnet_field": 1, "B:item_magic_wand": 1, "B:blood_ranger_ult": 2, "B:stomp": 3, "B:smash": 2 }
+seed 11 at 12:00: A(kragg) 0/2/0 lvl 6 LH 21 DN 6 nw 1778 | B(blood_ranger) 2/0/0 lvl 9 LH 48 DN 30 nw 3851 | towers lost A 0 B 0
+== kragg vs caziel
+seed 3 at 12:00: A(kragg) 5/0/0 lvl 9 LH 43 DN 25 nw 4285 | B(caziel) 0/5/0 lvl 5 LH 8 DN 1 nw 908 | towers lost A 0 B 0
+    casts: { "B:swift_dagger": 15, "A:iron_grip": 13, "B:item_salve": 6, "A:item_salve": 4, "B:item_tango": 3, "A:item_tango": 3, "A:item_slip_boots": 15, "A:repel": 3, "A:item_magic_wand": 3, "A:item_clarity": 3, "A:magnet_field": 3, "B:master_of_shadows": 5, "B:item_clarity": 1, "B:snarl": 2, "B:stomp": 5, "B:smash": 3 }
+seed 7 at 12:00: A(kragg) 2/1/0 lvl 8 LH 29 DN 10 nw 2240 | B(caziel) 1/2/0 lvl 8 LH 37 DN 12 nw 2206 | towers lost A 0 B 0
+    casts: { "B:swift_dagger": 19, "A:iron_grip": 11, "B:item_salve": 8, "A:item_salve": 10, "A:item_tango": 3, "B:item_tango": 3, "A:repel": 6, "B:master_of_shadows": 9, "A:item_magic_stick": 4, "B:item_magic_stick": 3, "B:item_clarity": 1, "A:item_clarity": 2, "A:magnet_field": 1, "B:snarl": 2 }
+seed 11 at 12:00: A(kragg) 1/3/0 lvl 7 LH 15 DN 12 nw 1498 | B(caziel) 3/1/0 lvl 9 LH 37 DN 19 nw 3122 | towers lost A 0 B 0
+    casts: { "B:swift_dagger": 17, "A:iron_grip": 10, "B:item_salve": 8, "A:item_salve": 7, "A:item_tango": 3, "B:item_tango": 3, "A:repel": 7, "B:master_of_shadows": 12, "B:item_magic_stick": 1, "A:item_magic_stick": 4, "B:item_clarity": 1, "A:item_clarity": 1, "B:item_magic_wand": 2, "B:snarl": 4, "A:magnet_field": 1 }
+== kragg vs azrin
+seed 3 at 12:00: A(kragg) 0/3/0 lvl 6 LH 15 DN 9 nw 1097 | B(azrin) 3/0/0 lvl 9 LH 49 DN 19 nw 4215 | towers lost A 0 B 0
+seed 7 at 12:00: A(kragg) 1/2/0 lvl 7 LH 23 DN 19 nw 1969 | B(azrin) 2/1/0 lvl 9 LH 44 DN 16 nw 3730 | towers lost A 0 B 0
+    casts: { "B:touch_of_ember": 15, "B:fiery_javelin": 17, "A:iron_grip": 13, "A:item_salve": 8, "A:item_tango": 3, "A:repel": 4, "B:item_clarity": 1, "B:spirit_of_fire": 7, "A:item_magic_stick": 5, "B:item_magic_wand": 2, "B:divine_smite": 2, "A:magnet_field": 1, "B:snarl": 4, "B:stomp": 6, "B:smash": 2, "B:item_salve": 1 }
+seed 11 at 12:00: A(kragg) 0/4/0 lvl 7 LH 29 DN 16 nw 1497 | B(azrin) 4/0/0 lvl 10 LH 51 DN 15 nw 4262 | towers lost A 0 B 0
+    casts: { "B:touch_of_ember": 19, "B:fiery_javelin": 14, "A:iron_grip": 12, "A:item_tango": 3, "B:item_salve": 4, "A:item_salve": 8, "B:spirit_of_fire": 9, "B:item_tango": 1, "A:item_magic_stick": 5, "A:repel": 2, "B:item_clarity": 5, "B:item_magic_wand": 2, "A:item_clarity": 1, "B:divine_smite": 2, "A:magnet_field": 1, "B:snarl": 7, "B:stomp": 4 }

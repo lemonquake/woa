@@ -233,3 +233,45 @@ blind review.
 | F1 Fortify | 1-2 | working tree | tests (splash, marks, speed, bots), probe (tooltip 60/60 frames), captures, bot game | n/a | REJECT then PASS | shells too big and opaque | blind review UNVERIFIED |
 | C1 Courier | 1 | working tree | test | n/a | PASS (gate) | none | none |
 | K1 Fast Forward | 1 | working tree | test | n/a | PASS (gate) | none | none |
+
+## Session 2026-10-15 g (Kragg rework, varied picks, smarter bots, title and Main Menu, hero animations) — run `work/lemondev/2026-10-15g-kragg-bots-menu/` (contract.md)
+
+No critic subagent was run (none asked for, no Dota menu frames on disk): the menu and title are builder self-checks,
+UNVERIFIED for blind review. The owner rejected the hero animations mid-run ("body parts rotating and twisting");
+A1 was added then.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| K1 Kragg rework | 1 | working tree | gate: tests, kragg_probe 11/11 1080p, 8/8 4K, duels | n/a | PASS (gate) | none | none |
+| P1 Varied picks | 1 | working tree | gate: test (300 seeds) | n/a | PASS (gate) | none | none |
+| I1 Magic defence items | 1 | working tree | gate: test (costs, icons, fade, barrier) | n/a | PASS (gate) | none | none |
+| B1 Bot items | 1-2 | working tree | gate: test + 2 bot games | n/a | REJECT then PASS (gate) | counters cycled every 30 s (Froster) | one counter at a time |
+| B2 Counter-ganks | 1-2 | working tree | gate: test + bot games | n/a | REJECT then PASS (gate) | Town Portal saves for lane skirmishes at 1:00 | none before 10:00 |
+| B3 Jukes | 1-2 | working tree | gate: tests + bot games | n/a | REJECT then PASS (gate) | juke teleport home at 0:51 | badly hurt only before 8:00 |
+| M1 Title card | 1-2 | working tree | self-check captures 1080p / 4K | n/a | REJECT then PASS (self-check) | blocky hills (shader hash), seam beside the suns | blind review UNVERIFIED |
+| M2 Main Menu | 1-2 | working tree | self-check captures, hover, 4K | n/a | REJECT then PASS (self-check) | Quit plate over the banner emblem; line through Play | blind review UNVERIFIED |
+| A1 Hero animations | 1-6 | working tree | gate: anim_audit (352 -> 86 findings), frame sheets | n/a | PARTIAL | in order: elbow flips and forearm spins; snaps; reference degenerate on backswings; shield on the fist; Sludge's belly | lane creep clips; staff and shield edge frames; dual_4 spin |
+
+## Session 2026-10-15 h (lane creep and unit animations) — run `work/lemondev/2026-10-15h-unit-anims/`
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| A2 Unit animations | 1-3 | working tree | gate: anim_audit --units (188 -> 44), frame sheets before / after | n/a | PARTIAL | in order: golem / ogre hands pushed out of a torso sized by their far-out shoulders; slams cut through the chest (straight-line hand path) | staff and shield edge frames; elbows at the top of overhead slams |
+| C1 Missing attack clips | 1 | working tree | gate: audit MISSING lines gone | n/a | PASS (gate) | the hill troll had no attack clip at all | none |
+
+## Session 2026-10-16 (two new heroes, Roydo and Blau) — run `work/lemondev/2026-10-16-roydo-blau/` (contract.md, sources.md)
+
+No critic subagent was run (none asked for, no Dota frames on disk): the look of both heroes and their effects is a
+builder self-check, UNVERIFIED for blind review. The session was interrupted before integration; a later session
+ran the integration gate (tests, check.sh, duels, bot game, export, cold start).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| M1 Models | 1-n | working tree | gate: anim_pops16 (0 flips > 90 deg, 0 backward joints, 85 turns 45-60 deg), frame sheets in `preview/` | n/a | PASS (gate; self-check look) | none recorded | blind review UNVERIFIED |
+| S1 Roydo kit | 1 | working tree | gate: tests (Grip, Rush, Skin, Anomaly) | n/a | PASS (gate) | none | none |
+| S2 Blau kit | 1 | working tree | gate: tests (Bounce Shot x2, boulders, trap, turret, pilot) | n/a | PASS (gate) | none | none |
+| V1 Visuals | 1 | working tree | self-check captures `shots/` (every skill, Anomaly swap) | n/a | PASS (self-check) | none | blind review UNVERIFIED |
+| U1 UI | 1 | working tree | self-check `hud_blau.png`, `hud_roydo.png`, `portraits.png`, `icons16.png`; Names OK | n/a | PASS (self-check) | none | none |
+| B1 Bots | 1-2 | working tree | gate: 6 bot tests, duels (`duels.txt`, `duels_final.txt`), 5 v 5 bot game (`bot_game.txt`) | n/a | REJECT (integration hang, see I1) then PASS (gate) | Blau loses lane to Azrin (0-12 kills over 3 seeds) | lane trading vs strong laners |
+| I1 Integration | 1 | working tree | gate: tests 224/224, check.sh, export, cold start; Roydo duels and 5 v 5 bot game | n/a | REJECT | every game froze in one sim step once Roydo's bot used Anomaly in a lane (last-hit forecast divided by his zero projectile speed: infinite loop) | form projectile speed + guard; regression test |
+| I1 Integration | 2 | working tree | gate: tests 225/225, check.sh, duels, bot game, export, cold start | n/a | PASS (gate) | none | Blau vs Roydo duels unfinished at commit |

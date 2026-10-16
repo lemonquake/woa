@@ -5,9 +5,9 @@ extends RefCounted
 ## {slot: {cloth, trim, leather, metal, gold}}. Saved to user://hero.json and read by the match.
 
 const PATH := "user://hero.json"
-const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg"]
+const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg", "roydo", "blau"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
-const OWN_BODY := ["sludge"]
+const OWN_BODY := ["sludge", "roydo", "blau"]
 
 static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id
@@ -334,11 +334,14 @@ static func your_slot() -> Array:
 				return [t, i]
 	return [0, 0]
 
-## Every filled slot with Random resolved: [{team, kind, hero, skill, name, lane}].
+## Every filled slot with Random resolved: [{team, kind, hero, skill, name, lane}]. Random slots are filled after the
+## chosen ones, each with varied_pick(), so a team gets a mix of heroes instead of three of one.
 static func match_slots(rng: RandomNumberGenerator) -> Array:
 	load_setup()
 	var out := []
 	var used_names := {}
+	var picked := [[], []]                 # heroes per team so far
+	var later: Array = []                  # [index in out, team] of Random slots
 	for t in 2:
 		for s in setup.teams[t]:
 			if s.kind == "empty":
@@ -347,7 +350,7 @@ static func match_slots(rng: RandomNumberGenerator) -> Array:
 			if s.kind == "you":
 				hero_id = selected
 			elif hero_id == "random" or not (hero_id in HEROES):
-				hero_id = HEROES[rng.randi_range(0, HEROES.size() - 1)]
+				hero_id = ""
 			var nm := String(s.name)
 			if s.kind == "bot" and (nm == "" or used_names.has(nm)):
 				for b in BOT_NAMES:
@@ -355,6 +358,40 @@ static func match_slots(rng: RandomNumberGenerator) -> Array:
 						nm = b
 						break
 			used_names[nm] = true
+			if hero_id == "":
+				later.append([out.size(), t])
+			else:
+				(picked[t] as Array).append(hero_id)
 			out.append({"team": t, "kind": s.kind, "hero": hero_id, "skill": s.skill, "name": nm, "lane": s.lane,
 				"role": String(s.get("role", ""))})
+	for l in later:
+		var t := int(l[1])
+		var hid := varied_pick(rng, picked[t], (picked[0] as Array) + (picked[1] as Array))
+		(picked[t] as Array).append(hid)
+		out[int(l[0])].hero = hid
 	return out
+
+## A random hero that keeps a team varied: never one the team already has (while another is free), rather one nobody
+## in the match plays yet, and rather one whose main roles fill a role (1 carry .. 5 support) the team still lacks.
+static func varied_pick(rng: RandomNumberGenerator, team_heroes: Array, match_heroes: Array) -> String:
+	var open := {1: true, 2: true, 3: true, 4: true, 5: true}
+	for th in team_heroes:
+		for r in SimBotKits.roles(String(th)):
+			if open.has(int(r)):
+				open.erase(int(r))
+				break
+	var best := HEROES[0]
+	var best_score := -INF
+	for id in HEROES:
+		var score := rng.randf() * 2.0
+		if id in team_heroes:
+			score -= 100.0
+		if id in match_heroes:
+			score -= 2.5
+		var main_roles: Array = SimBotKits.roles(id).slice(0, 2)
+		if main_roles.any(func(r): return open.has(int(r))):
+			score += 1.5
+		if score > best_score:
+			best_score = score
+			best = id
+	return best

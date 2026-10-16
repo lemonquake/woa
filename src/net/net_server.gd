@@ -426,15 +426,24 @@ func start(peer: int) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(r.seed)
 	var slots := []
+	var picked := [[], []]
 	for i in NetSession.MAX_SLOTS:
 		var s: Dictionary = (r.slots[i] as Dictionary).duplicate(true)
 		if not (String(s.kind) in ["human", "bot"]):
 			continue
 		if String(s.hero) == "random" or not (String(s.hero) in GameSettings.HEROES):
-			s.hero = GameSettings.HEROES[rng.randi_range(0, GameSettings.HEROES.size() - 1)]
+			s.hero = ""
+		else:
+			(picked[NetSession.slot_team(i)] as Array).append(String(s.hero))
 		s["slot"] = i
 		s["team"] = NetSession.slot_team(i)
 		slots.append(s)
+	# Random slots last, each keeping its team varied
+	for s in slots:
+		if String(s.hero) == "":
+			var t := int(s.team)
+			s.hero = GameSettings.varied_pick(rng, picked[t], (picked[0] as Array) + (picked[1] as Array))
+			(picked[t] as Array).append(String(s.hero))
 	var cfg := {"seed": int(r.seed), "slots": slots, "room": r.id, "room_name": r.name}
 	r.state = "loading"
 	r.started_ms = Time.get_ticks_msec()

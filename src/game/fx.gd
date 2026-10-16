@@ -529,6 +529,18 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 	var h0 := 1.4
 	var arc := 0.0
 	var trail: Trail3D = null
+	var start := Vector3.INF
+	# Roydo's Anomaly throws gravity orbs whatever his base model says
+	if src.is_hero() and not src.get_modifier("anomaly").is_empty() and String(e.get("kind", "")) == "attack":
+		style = "gravity_orb"
+	if style in Hero16Fx.PROJ and game.get("hero16_fx") != null:
+		var made: Dictionary = game.hero16_fx.make_projectile(style, src)
+		node.free()
+		node = made.node
+		trail = made.trail
+		h0 = float(made.h0)
+		start = made.start
+		style = "h16:" + style
 	match style:
 		"arrow", "burst_arrow", "blood_arrow":
 			var a := _arrow_scene.instantiate() as Node3D
@@ -616,6 +628,9 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 	if trail:
 		add_child(trail)
 	var p0 := View.to3(src.pos, game.terrain.height_at(src.pos)) + Vector3(0, h0, 0)
+	if start != Vector3.INF:
+		p0 = start
+		h0 = start.y - game.terrain.height_at(src.pos)
 	node.global_position = p0
 	_proj[e.id] = {"node": node, "start": p0, "h0": h0, "arc": arc, "t": 0.0, "target": e.target, "style": style,
 		"trail": trail, "last": p0, "src_team": src.team, "big": bool(e.get("fortify", false))}
@@ -661,6 +676,10 @@ func projectile_end(e: Dictionary) -> void:
 		return
 	if p.trail:
 		(p.trail as Trail3D).stop()
+	if style.begins_with("h16:") and game.get("hero16_fx") != null:
+		game.hero16_fx.projectile_end(style.substr(4), at, hit)
+		node.queue_free()
+		return
 	match style:
 		"tower_dawn":
 			# a spike of light where the lance strikes, gold sparks, a small ring on the ground

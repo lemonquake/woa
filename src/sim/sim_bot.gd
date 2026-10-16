@@ -57,6 +57,7 @@ var desires := {}                          # the last scores (debugging, tests)
 var lane_foe := ""                         # the enemy hero it laned against (learning)
 var lane_kills := 0
 var lane_deaths := 0
+var poke_at := C.LONG_AGO                  # Blau: when the bot next looks for a Bounce Shot poke (SimBot16)
 var _next_think := C.LONG_AGO
 var _last_order := {}
 var _was_alive := true
@@ -146,6 +147,8 @@ func think() -> void:
 		_items(h)
 	if w.profiling: pt = w._prof("  bot:shop_items", pt)
 	_scan(h)
+	if w.vision.sees(1 - h.team, h):
+		_seen_by_enemy_at = w.time
 	if w.profiling: pt = w._prof("  bot:scan", pt)
 	_track_fight(h)
 	_track_retreat(h)
@@ -165,6 +168,9 @@ func think() -> void:
 		return
 	_choose_mode(h)
 	if w.profiling: pt = w._prof("  bot:choose", pt)
+	# Blau's turrets (his own piloting and turret drops, and every bot knocking enemy turrets down)
+	if SimBot16.tick(self, h):
+		return
 	if mode != "retreat" and mode != "fight" and _grab_orb(h):
 		return
 	_run_mode(h)
@@ -316,8 +322,12 @@ func _choose_mode(h: SimUnit) -> void:
 				near_e = e
 		_fight_target = near_e.id
 		d["fight"] = 1.0
-	if not task.is_empty() and String(task.kind) != "retreat":
-		d["task"] = {"fight": 0.88, "defend": 0.8, "gank": 0.78, "push": 0.62, "group": 0.6}.get(String(task.kind), 0.5)
+	if not task.is_empty() and String(task.kind) == "save" and int(task.get("victim", -1)) == h.id:
+		# the one being saved: it runs toward the helpers (retreat) until they are close, then turns on the gankers
+		if _save_turn(h, task):
+			d["task"] = 0.97
+	elif not task.is_empty() and String(task.kind) != "retreat":
+		d["task"] = {"save": 0.9, "fight": 0.88, "defend": 0.8, "gank": 0.78, "push": 0.62, "group": 0.6}.get(String(task.kind), 0.5)
 	if _laning_phase(h):
 		d["lane"] = 0.45
 	else:
@@ -416,7 +426,7 @@ func _retreat_desire(h: SimUnit, task: Dictionary) -> float:
 		return 0.95
 	if hpf < bar * 0.7:
 		return 0.9
-	var team_fight := not task.is_empty() and String(task.kind) == "fight"
+	var team_fight := not task.is_empty() and (String(task.kind) == "fight" or String(task.kind) == "save" 		and int(task.get("victim", -1)) != h.id)
 	if _threat > 1.7 and not team_fight and not _foes.is_empty() and _nearest(h, _foes).distance_to(h.pos) < 1000.0:
 		return clampf(0.6 + (_threat - 1.7) * 0.3, 0.6, 0.9)
 	if BotMemory.danger(h.team, h.pos) > 0.6 and hpf < bar + 0.2 and not _known.is_empty() and not team_fight:
@@ -473,10 +483,91 @@ func _safe_point(h: SimUnit) -> Vector2:
 			best = u.pos + (home - u.pos).normalized() * 250.0
 	return best
 
+## Enemy heroes chasing it: where they are or were last seen (no peeking into the fog), within 1500 and 4 s.
+func _chasers(h: SimUnit) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	var b := brain()
+	for e in _known:
+		var ls := b.last_seen(e)
+		if float(ls[1]) < 4.0 and (ls[0] as Vector2).distance_to(h.pos) < 1500.0:
+			out.append(ls[0])
+	return out
+
+var _seen_by_enemy_at := C.LONG_AGO          # when the enemy team last had sight of it
+var _chased_at := C.LONG_AGO                 # when it last ran from enemy heroes
+var _juke := Vector2.INF
+var _juke_until := C.LONG_AGO
+var jukes := 0                               # report counters (bot games, tests): teleports home after a juke
+var counter_saves := 0                      # counter-ganks this bot joined as a helper and fought in
+var _save_counted := -1
+
+## The helper of a counter-gank called for this bot (the one to run to), or null: none called, or the way to it
+## leads through the gankers.
+func _save_helper(h: SimUnit) -> SimUnit:
+	var task := brain().task_for(h.id)
+	if task.is_empty() or String(task.kind) != "save" or int(task.get("victim", -1)) != h.id:
+		return null
+	var foe := _nearest(h, _foes)
+	var best: SimUnit = null
+	for hid in task.members:
+		var a := w.get_unit(int(hid))
+		if a == null or a == h or not a.alive:
+			continue
+		if foe != Vector2.INF and a.pos.distance_to(h.pos) > 500.0 				and absf((a.pos - h.pos).angle_to(foe - h.pos)) < deg_to_rad(60.0):
+			continue                       # the gankers stand between
+		if best == null or a.pos.distance_to(h.pos) < best.pos.distance_to(h.pos):
+			best = a
+	return best
+
+## Whether the victim of a counter-gank turns and fights now: a helper is beside it (or on the gankers), and it has
+## health left to fight with.
+func _save_turn(h: SimUnit, task: Dictionary) -> bool:
+	if h.hp < h.max_hp * 0.18:
+		return false
+	var t := w.get_unit(int(task.target))
+	for hid in task.members:
+		var a := w.get_unit(int(hid))
+		if a == null or a == h or not a.alive:
+			continue
+		if a.pos.distance_to(h.pos) < 650.0 or (t != null and a.edge_distance(t) < a.attack_range + 250.0):
+			return true
+	return false
+
+## Juked: it ran from enemy heroes in the last 12 s, the enemy has not seen it for 2 s and none of them is in sight
+## near: teleport home from the fog (hurt or short of mana; healthy, it just goes back to work).
+func _juke_tp(h: SimUnit) -> bool:
+	if w.time - _chased_at > 12.0 or w.time - _seen_by_enemy_at < 2.0 or not bool(sk.advanced):
+		return false
+	# early on a scratch is not worth the trip: before 8:00 only when badly hurt
+	var hurt := 0.35 if w.time < 480.0 else 0.65
+	if h.hp > h.max_hp * hurt and (h.mana > h.max_mana * 0.3 or w.time < 480.0):
+		return false
+	for f in _foes:
+		if f.pos.distance_to(h.pos) < 1200.0:
+			return false
+	var home: Vector2 = w.map.fountains[h.team]
+	if h.pos.distance_to(home) < 3500.0 or w.abilities.cast_error(h, "tp", -1, null, home) != "":
+		return false
+	_order(h, {"type": O.CAST_POINT, "ability": "tp", "point": home}, true)
+	_cast_deadline = w.time + 3.5
+	_chased_at = C.LONG_AGO
+	jukes += 1
+	say("Lost them in the trees, going home.", "juke_%d" % h.id, 45.0)
+	return true
+
 func _run_retreat(h: SimUnit) -> void:
 	var safe := _safe_point(h)
 	var near_foe := _nearest(h, _foes)
 	var fd := near_foe.distance_to(h.pos) if near_foe != Vector2.INF else INF
+	var chasers := _chasers(h)
+	if not chasers.is_empty() and fd < 1300.0:
+		_chased_at = w.time
+	if _juke_tp(h):
+		return
+	# a counter-gank on its way: run toward the helpers (the gankers follow into them) instead of to a tower
+	var helper := _save_helper(h)
+	if helper != null:
+		safe = helper.pos
 	# out of reach: heal up with what we carry instead of walking home
 	if fd > 900.0 and not _tower_on_me and bool(sk.spells):
 		if h.hp < h.max_hp * 0.6 and not _has_mod(h, "salve") and _use_item(h, "salve"):
@@ -492,6 +583,11 @@ func _run_retreat(h: SimUnit) -> void:
 			var slip := _ready_slot(h, "slip_boots")
 			if slip >= 0:
 				w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slip})
+		# Spell Shield against a disabler on its heels (a stun now is the end)
+		if fd < 600.0 and _foes.any(func(f): return KITS.disable_power(String(f.def.id)) >= 0.6 and f.pos.distance_to(h.pos) < 600.0):
+			var bk := _ready_slot(h, "spell_shield")
+			if bk >= 0:
+				w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": bk})
 		if fd < 700.0:
 			var jk := _jump_slot(h, h.pos + (safe - h.pos).normalized() * 950.0)
 			if jk >= 0:
@@ -512,6 +608,13 @@ func _run_retreat(h: SimUnit) -> void:
 		_cast_deadline = w.time + 3.5
 		say("Going home to heal.", "tp_home_%d" % h.id, 60.0)
 		return
+	# chased: through the trees and out of their sight rather than down the open road
+	if not chasers.is_empty() and helper == null and bool(sk.advanced) and fd > 200.0:
+		if w.time >= _juke_until or _juke == Vector2.INF or h.pos.distance_to(_juke) < 120.0:
+			_juke = SimBotTactics.juke_point(w, h, chasers, safe)
+			_juke_until = w.time + 0.6
+		_go(h, _juke)
+		return
 	_go(h, safe)
 
 ## The kit's ways out: Blubber or Stench off for Sludge, Dark Stomp to throw chasers back for Ezee, Gale Impact into
@@ -519,6 +622,8 @@ func _run_retreat(h: SimUnit) -> void:
 func _escape_spells(h: SimUnit, fd: float) -> bool:
 	if not _spells_ok():
 		return false
+	if SimBot16.handles(kit):
+		return SimBot16.escape(self, h, fd)
 	var ab := w.abilities
 	match kit:
 		"tock":
@@ -727,6 +832,12 @@ func _track_fight(h: SimUnit) -> void:
 
 func _on_death(h: SimUnit) -> void:
 	BotMemory.note_death(h.team, h.pos)
+	# what killed it (its last 20 s of damage by type), older deaths fading; a death with no ally near counts as
+	# caught alone (calls for a way out)
+	death_dmg = death_dmg * 0.6 + SimBotItems.death_damage(h)
+	if _allies.filter(func(a): return a.alive and a.pos.distance_to(h.pos) < 1300.0).is_empty():
+		alone_deaths += 1
+	_counter_next = minf(_counter_next, w.time + 1.0)
 	if not _fight.is_empty():
 		BotMemory.learn_fight(_fight.x, 0.0, h.team)
 		_fight = {}
@@ -871,6 +982,21 @@ func _run_task(h: SimUnit, task: Dictionary) -> void:
 		"push":
 			if not _run_push(h, t, String(task.lane)):
 				_give_up(task)
+		"save":
+			# a counter-gank: to the ally in trouble, then on the ganker hurting it (or whichever is in reach)
+			var v := w.get_unit(int(task.get("victim", -1)))
+			var sf: SimUnit = t if t != null and t.alive and w.vision.sees(h.team, t) else null
+			if v != null and v != h and h.pos.distance_to(v.pos) > 1400.0 and (sf == null or h.pos.distance_to(sf.pos) > 1300.0):
+				_go(h, v.pos)
+			elif sf != null:
+				if h.id != int(task.get("victim", -1)) and _save_counted != int(task.id):
+					_save_counted = int(task.id)
+					counter_saves += 1
+				_run_fight(h, sf)
+			elif not _foes.is_empty():
+				_run_fight(h, _foes[0])
+			else:
+				_go(h, where)
 		"fight":
 			# the team's focus; an enemy already in reach is hit rather than walked past on the way
 			var focus: SimUnit = t if t != null and t.alive and w.vision.sees(h.team, t) else null
@@ -1209,6 +1335,8 @@ func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 	for n in ns:
 		if n.pos.distance_to(h.pos) < 350.0:
 			close += 1
+	if _spells_ok() and SimBot16.handles(kit):
+		return SimBot16.aoe_farm(self, h, ns, centre)
 	if _spells_ok():
 		var ab := w.abilities
 		match kit:
@@ -1491,13 +1619,13 @@ func _wants(h: SimUnit, aid: String) -> bool:
 			want += 1
 	return h.ability_level_of(aid) < want
 
-var _situational_at := 480.0
-
 func _shop(h: SimUnit) -> void:
-	# at 8, 15 and 25 minutes: move an item the game calls for to the front of the list
-	if w.time >= _situational_at:
-		_situational_at = {480.0: 900.0, 900.0: 1500.0}.get(_situational_at, INF)
-		_situational(h)
+	# every 30 s from 5:00 (and right after a death): read the enemy team and move the item the game calls for to the
+	# front of the list (SimBotItems)
+	if w.time >= _counter_next and w.time >= 300.0 and bool(sk.advanced):
+		_counter_next = w.time + 30.0
+		_counter_items(h)
+	_sell_spare(h)
 	var guard := 0
 	while _build_i < build.size() and guard < 6:
 		guard += 1
@@ -1546,32 +1674,67 @@ func _shop(h: SimUnit) -> void:
 var _last_ward_buy := C.LONG_AGO
 var _last_salve_buy := C.LONG_AGO
 var _last_clarity_buy := C.LONG_AGO
+var death_dmg := Vector3.ZERO              # damage by type that killed it lately: physical, magic, pure (fading)
+var alone_deaths := 0                      # deaths with no ally near (caught alone)
+var _counter_next := 300.0
+var counters_bought: Array = []            # counter items it moved up (report, tests)
+var _last_dust_buy := C.LONG_AGO
 
-## Items the game calls for: a Spell Shield early against two or more disablers, Spike Armor for a strength hero
-## against a fed right-clicker, a Push Staff for a support whose cores keep dying.
-func _situational(h: SimUnit) -> void:
-	var disablers := 0
-	var fed: SimUnit = null
-	for e in w.heroes:
-		if e.team == h.team:
-			continue
-		if KITS.disable_power(String(e.def.id)) >= 0.6:
-			disablers += 1
-		if KITS.backliner(String(e.def.id)) and (fed == null or e.networth() > fed.networth()):
-			fed = e
-	var want := ""
-	if disablers >= 2 and role <= 3 and not w.shop.owns(h, "spell_shield"):
-		want = "spell_shield"
-	elif fed != null and fed.networth() > h.networth() * 1.3 and String(h.def.primary) == "str" and not w.shop.owns(h, "spike_armor"):
-		want = "spike_armor"
-	if want == "" or _build_i >= build.size():
+## The counter item the game calls for now (SimBotItems.next_counter): put first in the build, or bought at once when
+## it is a consumable (Reveal Dust, a Reveal Ward). Says why in team chat once per item.
+func _counter_items(h: SimUnit) -> void:
+	var prof := SimBotItems.profile(w, h.team)
+	# true sight against invisible enemies, bought at once (cheap)
+	var sight := SimBotItems.wants_sight(w, h, role, prof)
+	if sight != "" and w.time - _last_dust_buy > 60.0 and h.gold() >= int(SimData.item(sight).cost) + 100 			and w.shop.buy(h, sight) == "":
+		_last_dust_buy = w.time
+		say("Bought %s, they have invisible heroes." % String(SimData.item(sight).name), "dust_%d" % h.id, 300.0)
+	# one counter at a time: the last one planned is bought first (no re-ordering every half minute)
+	for c in counters_bought:
+		if not w.shop.owns(h, String(c)) and build.find(c) >= _build_i:
+			return
+	var want := SimBotItems.next_counter(w, h, role, build, _build_i, prof, death_dmg, alone_deaths)
+	if want == "":
 		return
+	var d := SimData.item(want)
 	var i := build.find(want)
+	if i >= 0 and i < _build_i:
+		return
 	if i > _build_i:
 		build.remove_at(i)
-		build.insert(_build_i, want)
-	elif i < 0:
-		build.insert(_build_i, want)
+	build.insert(mini(_build_i, build.size()), want)
+	counters_bought.append(want)
+	var why := {"magic": "their magic damage", "physical": "their right clicks", "disable": "their stuns",
+		"invis": "their invisible heroes", "evasion": "their evasion", "escape": "getting caught"}
+	var kind := String((SimBotItems.ANSWERS.get(want, ["physical"]) as Array)[0])
+	if prof.disablers >= 2 and want == "spell_shield":
+		kind = "disable"
+	say("Getting %s against %s." % [String(d.name), String(why.get(kind, "them"))], "counter_%d_%s" % [h.id, want], 9999.0)
+
+## In the base with every slot full and something waiting in the stash: sell the cheapest early item (twigs, sticks,
+## bands, the Mini-Axe late), as players do, so the new item fits.
+const SPARE := ["branch", "tango", "faerie_fire", "clarity", "magic_stick", "circlet", "slippers", "gauntlets", "mantle",
+	"wraith_band", "tough_band", "smart_band", "magic_wand", "quelling_blade", "ring_protection", "small_shield"]
+func _sell_spare(h: SimUnit) -> void:
+	if w.time < 900.0 or not w.shop.in_shop(h) or not h.stash.any(func(x): return x != null):
+		return
+	for i in h.inventory.size():
+		if h.inventory[i] == null:
+			return
+	var worst := -1
+	var worst_v := INF
+	for i in h.inventory.size():
+		var it = h.inventory[i]
+		if it == null or not (String(it.id) in SPARE):
+			continue
+		if String(it.id) == "quelling_blade" and w.time < 1500.0:
+			continue
+		var v := float(SimData.item(String(it.id)).get("cost", 0))
+		if v < worst_v:
+			worst_v = v
+			worst = i
+	if worst >= 0:
+		w.shop.sell(h, worst)
 
 func _has_item(h: SimUnit, id: String) -> bool:
 	for i in 6:
@@ -1610,6 +1773,7 @@ func _items(h: SimUnit) -> void:
 	var gb := _ready_slot(h, "guard_boots")
 	if gb >= 0 and (h.hp < h.max_hp * 0.45 or _ally_hurt_near(h, 900.0) or h.max_mana - h.mana >= 250.0):
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": gb})
+	_save_items(h)
 	for i in 6:
 		var it = h.inventory[i]
 		if it == null or it.id != "gold_glove" or int(it.get("charges", 0)) <= 0:
@@ -1622,6 +1786,56 @@ func _items(h: SimUnit) -> void:
 		if best != null and w.abilities.cast_error(h, "", i, best, best.pos) == "":
 			_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": i, "target": best.id}, true)
 			_cast_deadline = w.time + 1.0
+
+## Items that keep someone alive or find someone hidden: Fade Cape on an ally (or itself) that enemy heroes are
+## bringing down, Push Staff to shove a caught ally away from its chaser, Reveal Dust when an enemy hero it saw a
+## moment ago fades out of sight near it.
+func _save_items(h: SimUnit) -> void:
+	if _foes.is_empty() and _known.is_empty():
+		return
+	var gc := _ready_slot(h, "glimmer_cape", h)
+	var ps := _ready_slot(h, "push_staff", h, h.pos)
+	if gc >= 0 or ps >= 0:
+		var cands: Array = [h]
+		cands.append_array(_allies)
+		for a: SimUnit in cands:
+			if not a.alive or a.pos.distance_to(h.pos) > 600.0 or a.hp > a.max_hp * 0.4 or not _hit_by_heroes(a, 1.5):
+				continue
+			var chaser: SimUnit = null
+			for f in _foes:
+				if f.pos.distance_to(a.pos) < 700.0 and (chaser == null or f.pos.distance_to(a.pos) < chaser.pos.distance_to(a.pos)):
+					chaser = f
+			if chaser == null:
+				continue
+			if gc >= 0 and not w.vision.true_sighted(1 - h.team, a):
+				_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": gc, "target": a.id}, true)
+				_cast_deadline = w.time + 0.3
+				if a != h:
+					say("Fade Cape on you, %s, run!" % SimTeamAI.hero_label(a), "glimmer_%d" % a.id, 30.0)
+				return
+			# Push Staff pushes where the ally faces: only when it is already running away from the chaser
+			if ps >= 0 and a != h and a.moving and absf(angle_difference(a.facing, (a.pos - chaser.pos).angle())) < 0.6 					and w.abilities.cast_error(h, "", ps, a, a.pos) == "":
+				_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": ps, "target": a.id}, true)
+				_cast_deadline = w.time + 0.3
+				return
+	# Reveal Dust: an enemy hero seen in the last 3 s within 800 is now invisible
+	var b := brain()
+	for e in w.heroes:
+		if e.team == h.team or not e.alive or w.vision.sees(h.team, e) or not e.has_flag("invisible"):
+			continue
+		var ls := b.last_seen(e)
+		if float(ls[1]) < 3.0 and (ls[0] as Vector2).distance_to(h.pos) < 800.0 and _use_item(h, "reveal_dust"):
+			say("Dusting their %s." % SimTeamAI.hero_label(e), "dust_use_%d" % e.id, 20.0)
+			return
+
+## Whether enemy heroes hurt `a` within the last `secs` seconds.
+func _hit_by_heroes(a: SimUnit, secs: float) -> bool:
+	for sid in a.hero_damage_log:
+		if w.time - float(a.hero_damage_log[sid]) < secs:
+			var src := w.get_unit(int(sid))
+			if src != null and src.team != a.team:
+				return true
+	return false
 
 func _ally_hurt_near(h: SimUnit, r: float) -> bool:
 	for a in _allies:
@@ -1988,7 +2202,7 @@ func _last_hit_target(h: SimUnit, foes: Array[SimUnit], allies: Array[SimUnit]) 
 			var turn := absf(angle_difference(h.facing, (c.pos - h.pos).angle())) / maxf(0.1, h.turn_speed())
 			var land := wait + turn + walk + h.attack_point_time() + 0.05
 			if h.is_ranged():
-				land += maxf(0.0, c.pos.distance_to(h.pos) - h.hull) / float(h.def.projectile_speed)
+				land += maxf(0.0, c.pos.distance_to(h.pos) - h.hull) / maxf(1.0, h.projectile_speed())
 			var hp_then := _hp_when(c, maxf(0.0, land + err + lh_lead))
 			if hp_then <= 0.0:
 				continue
@@ -2014,6 +2228,9 @@ var lh_bias := 0.5                         # where in their damage range the oth
 ## A creep's health `t` seconds from now, counting the hits already on their way and the next ones its attackers will
 ## land in that time.
 func _hp_when(c: SimUnit, t: float) -> float:
+	# a guard: an infinite time (a division by a zero projectile speed) once hung the game in the loop below
+	if not is_finite(t):
+		t = 30.0
 	var hp := c.hp
 	for o: SimUnit in w.query(c.pos, 1200.0):
 		if not o.alive or o.atk_target != c.id or o == hero():
@@ -2025,8 +2242,9 @@ func _hp_when(c: SimUnit, t: float) -> float:
 		var snap := {"hero": o.is_hero(), "class": o.weapon, "element": o.element}
 		var hit := avg * w.combat.attack_class_multiplier(snap, c) * C.armor_multiplier(c.armor)
 		var fly := 0.0
-		if o.is_ranged() and float(o.def.get("projectile_speed", 0.0)) > 0.0:
-			fly = maxf(0.0, o.pos.distance_to(c.pos) - o.hull) / float(o.def.projectile_speed)
+		# a melee hero in a ranged form (Anomaly) has no projectile speed of his own: the form's counts
+		if o.is_ranged() and o.projectile_speed() > 0.0:
+			fly = maxf(0.0, o.pos.distance_to(c.pos) - o.hull) / o.projectile_speed()
 		var first := 0.0
 		if o.atk_phase == SimUnit.AtkPhase.WINDUP:
 			first = o.atk_timer + fly
@@ -2065,6 +2283,8 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		_tock_spells(h, e)
 	elif kit == "kragg":
 		_kragg_spells(h, e)
+	elif SimBot16.handles(kit):
+		SimBot16.spells(self, h, e)
 	else:
 		_ranger_spells(h, e)
 
@@ -2146,11 +2366,10 @@ func _tock_spells(h: SimUnit, e: SimUnit) -> void:
 			_cast_deadline = w.time + 0.5
 			_spent()
 
-## Kragg: Iron Grip onto the target, Magnet Field when two or more enemies are near (or the grip landed), Overload once
-## the target carries 3 or more Charges (or would die), Repel when hurt or crowded.
+## Kragg: Iron Grip onto the target, Magnet Field when two or more enemies are near (or the grip landed), Repel when
+## hurt or crowded. Overload is passive (every few attacks) and Magnetize innate.
 func _kragg_spells(h: SimUnit, e: SimUnit) -> void:
 	var ab := w.abilities
-	var k2 := ab.kits2
 	var d := h.edge_distance(e)
 	var near := 0
 	for f in _foes:
@@ -2165,13 +2384,6 @@ func _kragg_spells(h: SimUnit, e: SimUnit) -> void:
 	if ab.cast_error(h, "iron_grip", -1, e, e.pos) == "" and d > 200.0 and d < ab.cast_range(h, "iron_grip", -1, e) + 20.0:
 		_order(h, {"type": O.CAST_UNIT, "ability": "iron_grip", "target": e.id}, true)
 		_cast_deadline = w.time + 0.6
-		_spent()
-		return
-	var ch := k2.charges(e)
-	var od := ab.val(h, "overload", "per_charge") * ch * (1.0 - e.magic_resist)
-	if ab.cast_error(h, "overload", -1, null, h.pos) == "" and d < 760.0 and (ch >= 3 or (ch > 0 and e.hp < od)):
-		_order(h, {"type": O.CAST_NO_TARGET, "ability": "overload"}, true)
-		_cast_deadline = w.time + 0.4
 		_spent()
 		return
 	if ab.cast_error(h, "repel", -1, null, h.pos) == "" and d < 300.0 and (near >= 2 or h.hp < h.max_hp * 0.5):

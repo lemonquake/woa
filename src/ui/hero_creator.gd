@@ -192,6 +192,7 @@ func _rebuild_model() -> void:
 	if model:
 		model.queue_free()
 	model = (load(HeroLook.MODEL) as PackedScene).instantiate()
+	RepairedClips.patch(model)
 	stage.add_child(model)
 	model.rotation.y = _yaw
 	var anims := model.find_children("*", "AnimationPlayer", true, false)
@@ -207,6 +208,7 @@ func _rebuild_model() -> void:
 			sk.add_child(at)
 			var wpn := ps.instantiate() as Node3D
 			at.add_child(wpn)
+			wpn.transform = ModelCatalog.prop_transform(cfg, side)
 			if cfg.has("weapon_tint"):
 				for mi: MeshInstance3D in wpn.find_children("*", "MeshInstance3D", true, false):
 					for i in mi.mesh.get_surface_count():

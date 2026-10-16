@@ -42,6 +42,7 @@ static func _ensure() -> void:
 	_build_abilities()
 	_build_neutral_abilities()
 	_build_abilities_15b()
+	_build_abilities_16()
 	_build_talents()
 
 static func unit(id: String) -> Dictionary:
@@ -283,6 +284,7 @@ static func _build_units() -> void:
 			["caziel_poison_damage", "caziel_dagger_armor"], ["caziel_order_threshold", "caziel_shadows_evasion"]],
 		"model": "hero_caziel"})
 	_add_heroes_15b()
+	_add_heroes_16()
 
 static func _add_heroes_15b() -> void:
 	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
@@ -299,7 +301,7 @@ static func _add_heroes_15b() -> void:
 			["tock_rewind_cooldown", "tock_hands"], ["tock_stop_duration", "tock_bolt_delay"]],
 		"model": "hero_tock"})
 	# Kragg, the Magnet Knight (run 2026-10-15 b; ours, numbers chosen beside Dota's melee strength initiators): a
-	# knight in iron plate who is a living magnet. Five skills.
+	# knight in iron plate who is a living magnet. Four skills and Magnetize as his innate (owner's rework 2026-10-15 g).
 	_add("kragg", {"name": "Kragg", "title": "the Magnet Knight", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
 		"hp_regen": 1.0, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 2.0,
 		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 31.0, "dmg_max": 37.0, "bat": 1.7,
@@ -307,10 +309,45 @@ static func _add_heroes_15b() -> void:
 		"projectile_speed": 0.0, "move_speed": 300.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
 		"xp": 0.0, "primary": "str", "str": 25.0, "str_gain": 3.1, "agi": 14.0, "agi_gain": 1.6, "int": 17.0,
 		"int_gain": 1.8, "element": EL.LIGHTNING,
-		"abilities": ["iron_grip", "repel", "magnetize", "overload", "magnet_field"],
+		"abilities": ["iron_grip", "repel", "overload", "magnet_field"], "innate": "magnetize",
 		"talents": [["kragg_grip_damage", "kragg_armor"], ["kragg_repel_cooldown", "kragg_charge_max"],
 			["kragg_overload_damage", "kragg_field_pull"], ["kragg_field_stun", "kragg_grip_charges"]],
 		"model": "hero_kragg"})
+
+static func _add_heroes_16() -> void:
+	# Roydo, the Anomaly (the owner's hero, 2026-10-16): a melee intelligence hero of no element (Neutral), a space
+	# alien who bends gravity. The owner gave the abilities; the stats follow the melee intelligence template (chosen).
+	_add("roydo", {"name": "Roydo", "title": "the Anomaly", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 0.75, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 2.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 28.0, "dmg_max": 34.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.4, "backswing": 0.5, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "int", "str": 21.0, "str_gain": 2.6, "agi": 18.0, "agi_gain": 1.8, "int": 24.0,
+		"int_gain": 3.2, "element": EL.NONE,
+		"abilities": ["grip_of_the_ruler", "void_rush", "dark_matter_skin", "anomaly"],
+		"talents": [["roydo_grip_damage", "roydo_health"], ["roydo_rush_cooldown", "roydo_skin_chance"],
+			["roydo_grip_stun", "roydo_rush_cut"], ["roydo_anomaly_bat", "roydo_skin_reflect"]],
+		"model": "hero_roydo"})
+	# Blau, the Master Tactician (the owner's hero, 2026-10-16): a ranged agility gunner (600) of no element, a mage
+	# with a scout sniper rifle. The owner gave the abilities and range; the rest follows the ranged agility template.
+	_add("blau", {"name": "Blau", "title": "the Master Tactician", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 0.25, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 0.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 22.0, "dmg_max": 28.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.35, "backswing": 0.55, "acquire": 800.0, "range": 600.0,
+		"projectile_speed": 3000.0, "move_speed": 295.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "agi", "str": 18.0, "str_gain": 2.0, "agi": 23.0, "agi_gain": 3.1, "int": 18.0,
+		"int_gain": 1.8, "element": EL.NONE,
+		"abilities": ["bounce_shot", "summon_boulders", "lay_trap", "place_turret"],
+		"talents": [["blau_shot_damage", "blau_attack_speed"], ["blau_boulders", "blau_trap_root"],
+			["blau_bounces", "blau_turret_damage"], ["blau_shot_hits", "blau_turret_health"]],
+		"model": "hero_blau"})
+	# Blau's turret: shoots every 1.5 s at 650 with a share of his attack (SimKits3.turret_snapshot); no regeneration, no
+	# mana, 35 s. Armor and bounty are chosen.
+	_add("blau_turret", {"name": "Turret", "kind": K.SUMMON, "hull": 34.0, "hp": 900.0, "hp_regen": 0.0, "mana": 0.0,
+		"armor": 4.0, "dmg_min": 10.0, "dmg_max": 12.0, "bat": 1.5, "attack_speed": 100.0, "attack_point": 0.15,
+		"backswing": 0.25, "acquire": 650.0, "range": 650.0, "projectile_speed": 2200.0, "move_speed": 0.0,
+		"can_move": false, "turn_rate": 2.5, "vision_day": 900.0, "vision_night": 700.0, "xp": 40.0, "gold_min": 40,
+		"gold_max": 50, "element": EL.NONE, "model": "blau_turret"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -535,7 +572,7 @@ static func _build_abilities_15b() -> void:
 		"cast_point": 0.3, "range": 800, "anim": "cast_ultimate", "element": "light",
 		"values": {"radius": [400, 400, 400], "duration": [2.5, 3.0, 3.5]},
 		"desc": "Time stops in a 400 area: every enemy there is frozen (stunned) and its cooldowns stand still for 2.5 / 3 / 3.5 seconds. Tock's allies keep moving."}
-	# Kragg, the Magnet Knight. Charges sit on enemies (up to 5, 10 s); his spells pull, throw and burst by them.
+	# Kragg, the Magnet Knight. Charges sit on enemies (up to 4, 8 s); his spells pull and throw by them.
 	_abilities["iron_grip"] = {"id": "iron_grip", "name": "Iron Grip", "behavior": "unit", "key": "Q",
 		"target_team": "enemy", "max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [14, 13, 12, 11],
 		"cast_point": 0.25, "range": 650, "anim": "shield_bash", "damage_type": "magical", "element": "lightning",
@@ -549,21 +586,87 @@ static func _build_abilities_15b() -> void:
 		"per_charge": [0.25, 0.25, 0.25, 0.25], "slow": [0.3, 0.3, 0.3, 0.3], "slow_duration": [2, 2, 2, 2],
 		"impact_damage": [40, 70, 100, 130], "impact_stun": [0.8, 0.8, 0.8, 0.8]},
 		"desc": "A magnetic blast throws enemies near Kragg away, 25% further for each Charge they carry, and slows them. One that crashes into a tree, wall or unit takes more damage and is stunned. Adds a Charge."}
-	_abilities["magnetize"] = {"id": "magnetize", "name": "Magnetize", "behavior": "passive", "key": "E",
+	# owner's numbers (2026-10-15 g): Magnetize is innate, 0.10% spell amp per Charge (+0.05% per hero level), up to 4
+	# Charges for 8 s; Overload is a passive burst every 6 / 5 / 4 / 3 attacks
+	_abilities["magnetize"] = {"id": "magnetize", "name": "Magnetize", "behavior": "innate", "key": "",
+		"max_level": 1, "mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0,
+		"values": {"spell_amp": [0.001], "spell_amp_per_level": [0.0005], "max_charges": [4], "duration": [8]},
+		"desc": "Kragg's attacks give enemies a Charge (up to 4, for 8 seconds). Each Charge makes the enemy take 0.10% more damage from his spells, +0.05% per hero level."}
+	_abilities["overload"] = {"id": "overload", "name": "Overload", "behavior": "passive", "key": "E",
 		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
-		"values": {"spell_amp": [0.03, 0.04, 0.05, 0.06], "max_charges": [5, 5, 5, 5], "duration": [10, 10, 10, 10]},
-		"desc": "Kragg's attacks give enemies a Charge (up to 5, for 10 seconds). Each Charge makes the enemy take 3 / 4 / 5 / 6% more damage from his spells."}
-	_abilities["overload"] = {"id": "overload", "name": "Overload", "behavior": "no_target", "key": "D",
-		"max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [16, 14, 12, 10], "cast_point": 0.2, "range": 0,
-		"anim": "cast_weapon", "damage_type": "magical", "element": "lightning",
-		"values": {"radius": [800, 800, 800, 800], "per_charge": [45, 65, 85, 105], "heal_pct": [0.35, 0.35, 0.35, 0.35]},
-		"desc": "Every charged enemy within 800 is struck by lightning for magic damage per Charge it carries; the Charges are used up. Kragg heals for 35% of the damage."}
+		"damage_type": "magical", "element": "lightning",
+		"values": {"every": [6, 5, 4, 3], "radius": [200, 200, 200, 200], "damage": [60, 75, 90, 105],
+		"slow": [0.80, 0.80, 0.80, 0.80], "slow_duration": [0.8, 0.8, 0.8, 0.8]},
+		"desc": "Every 6th / 5th / 4th / 3rd attack, Kragg overloads and bursts electric charge around him: enemies within 200 are slowed by 80% for 0.8 seconds and take 60 / 75 / 90 / 105 electric magic damage (Lightning element)."}
 	_abilities["magnet_field"] = {"id": "magnet_field", "name": "Magnet Field", "behavior": "no_target", "key": "R",
 		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [100, 90, 80],
 		"cast_point": 0.3, "range": 0, "anim": "boss_roar", "damage_type": "magical", "element": "lightning",
 		"values": {"duration": [6, 6, 6], "radius": [700, 700, 700], "pull": [60, 80, 100], "pull_per_charge": [15, 15, 15],
 		"end_radius": [300, 300, 300], "end_stun": [1.0, 1.5, 2.0], "end_damage": [100, 175, 250]},
 		"desc": "For 6 seconds Kragg is a giant magnet: enemies within 700 are dragged toward him (harder with each Charge) and gain a Charge every second. When it ends, enemies within 300 take magic damage and are stunned."}
+
+# ---- Roydo and Blau (run 2026-10-16; the owner's kits, his numbers; chosen fill-ins listed in docs/HANDOFF.md) ------
+
+static func _build_abilities_16() -> void:
+	# Roydo, the Anomaly
+	_abilities["grip_of_the_ruler"] = {"id": "grip_of_the_ruler", "name": "Grip of the Ruler", "behavior": "point",
+		"key": "Q", "max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [18, 17, 16, 15], "cast_point": 0.35,
+		"range": 650, "anim": "roydo_cast_shoot", "damage_type": "magical", "aoe": true,
+		"values": {"damage": [100, 140, 180, 220], "radius": [400, 400, 400, 400], "stun": [1.0, 1.0, 1.0, 1.0],
+		"toss_time": [0.8, 0.8, 0.8, 0.8]}, "hidden_values": ["toss_time"],
+		"desc": "Roydo's gravity seizes one unit in a 400 area, enemy heroes first, and throws it to the middle over 0.8 seconds. Then every enemy there takes magic damage and is stunned for 1 second. With no enemy in the area, an ally is thrown instead and comes to no harm."}
+	_abilities["void_rush"] = {"id": "void_rush", "name": "Void Rush", "behavior": "no_target", "key": "W",
+		"max_level": 4, "mana": [80, 90, 100, 110], "cooldown": [15, 14, 13, 12], "cast_point": 0.25, "range": 0,
+		"anim": "roydo_cast_throw",
+		"values": {"radius": [650, 650, 650, 650], "duration": [7, 7, 7, 7], "status_cut": [0.2, 0.3, 0.4, 0.5],
+		"damage_cut": [0.10, 0.15, 0.20, 0.25], "armor": [7, 9, 11, 13], "move_pct": [0.07, 0.09, 0.11, 0.13]},
+		"desc": "A wave of gravity rolls out 650 around Roydo for 7 seconds. Enemies lose 20 / 30 / 40 / 50% status resistance and deal 10 / 15 / 20 / 25% less damage. Allies gain 7 / 9 / 11 / 13 armor and move 7 / 9 / 11 / 13% faster."}
+	_abilities["dark_matter_skin"] = {"id": "dark_matter_skin", "name": "Dark Matter Skin", "behavior": "passive",
+		"key": "E", "max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"damage_type": "magical",
+		"values": {"chance": [0.09, 0.13, 0.17, 0.21], "reflect": [0.25, 0.28, 0.31, 0.34], "radius": [650, 650, 650, 650],
+		"slow": [0.8, 0.8, 0.8, 0.8], "attack_slow": [0.8, 0.8, 0.8, 0.8], "slow_duration": [0.3, 0.3, 0.3, 0.3]},
+		"desc": "Damage Roydo takes has a 9 / 13 / 17 / 21% chance to burst back out: 25 / 28 / 31 / 34% of it hits every enemy within 650 as magic damage and slows their movement and attacks by 80% for 0.3 seconds."}
+	_abilities["anomaly"] = {"id": "anomaly", "name": "Anomaly", "behavior": "no_target", "key": "R", "max_level": 3,
+		"required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [65, 65, 65], "cast_point": 0.35,
+		"range": 0, "anim": "roydo_cast_enter",
+		"values": {"duration": [30, 30, 30], "damage": [60, 120, 180], "bat_cut": [0.25, 0.25, 0.25],
+		"attack_range": [650, 650, 650], "projectile_speed": [1200, 1200, 1200]}, "hidden_values": ["projectile_speed"],
+		"desc": "Roydo becomes the Anomaly, a hulking monster, for 30 seconds: his base attack time is 0.25 seconds shorter, he deals 60 / 120 / 180 more attack damage and he attacks from range (650)."}
+	# Blau, the Master Tactician
+	_abilities["bounce_shot"] = {"id": "bounce_shot", "name": "Bounce Shot", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [12, 11, 10, 9], "cast_point": 0.25, "range": 800,
+		"anim": "blau_shoot", "damage_type": "magical", "bounce_path": true,
+		"values": {"damage": [70, 110, 150, 190], "bounces": [3, 5, 7, 9], "max_hits": [2, 2, 2, 2],
+		"distance": [1800, 1800, 1800, 1800], "speed": [2400, 2400, 2400, 2400]}, "hidden_values": ["speed"],
+		"desc": "Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times. Each enemy it passes takes magic damage, at most twice."}
+	_abilities["summon_boulders"] = {"id": "summon_boulders", "name": "Summon Boulders", "behavior": "point",
+		"key": "W", "max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [20, 19, 18, 17], "cast_point": 0.3,
+		"range": 600, "anim": "blau_cast_throw", "damage_type": "magical", "direction": true,
+		"values": {"count": [3, 4, 5, 6], "damage": [80, 100, 120, 140], "push": [200, 200, 200, 200],
+		"duration": [10, 10, 10, 10], "roll_min": [1.0, 1.0, 1.0, 1.0], "roll_max": [2.0, 2.0, 2.0, 2.0],
+		"speed_min": [520, 520, 520, 520], "speed_max": [760, 760, 760, 760], "spread": [0.6, 0.6, 0.6, 0.6]},
+		"hidden_values": ["roll_min", "roll_max", "speed_min", "speed_max", "spread"],
+		"desc": "3 / 4 / 5 / 6 boulders roll out ahead of Blau at random angles for 1 to 2 seconds, bouncing off each other, walls and units. An enemy they hit takes magic damage once and is knocked 200 back. They stay for 10 seconds and block every unit, even phased ones. Bounce Shot ricochets off them."}
+	_abilities["lay_trap"] = {"id": "lay_trap", "name": "Lay Trap", "behavior": "no_target", "key": "E",
+		"max_level": 4, "mana": [50, 55, 60, 65], "cooldown": [10, 9, 8, 7], "cast_point": 0.1, "range": 0,
+		"anim": "blau_jump_start",
+		"values": {"leap": [400, 400, 400, 400], "leap_time": [0.5, 0.5, 0.5, 0.5], "root": [1.2, 1.6, 2.0, 2.4],
+		"trap_duration": [25, 25, 25, 25], "trigger_radius": [110, 110, 110, 110], "arm_time": [0.6, 0.6, 0.6, 0.6]},
+		"hidden_values": ["leap_time", "arm_time"],
+		"desc": "Blau leaps 400 backwards and leaves a hidden trap where he stood. The first enemy to step on it is caught and cannot move for 1.2 / 1.6 / 2 / 2.4 seconds. The trap lasts 25 seconds."}
+	_abilities["place_turret"] = {"id": "place_turret", "name": "Place Turret", "behavior": "point", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [10, 10, 10],
+		"cast_point": 0.5, "range": 600, "anim": "blau_kneel_fix",
+		"values": {"hp": [900, 1500, 2100], "damage_pct": [0.25, 0.30, 0.35], "duration": [35, 35, 35],
+		"attack_range": [650, 650, 650], "interval": [1.5, 1.5, 1.5]},
+		"scepter": {"damage_pct": 0.05},
+		"desc": "Blau builds a turret that shoots enemies within 650 every 1.5 seconds for 25 / 30 / 35% of his attack damage (40% at level 3 with the Upgrade Staff); his attack effects work with its shots. It has 900 / 1500 / 2100 health, no regeneration and lasts 35 seconds."}
+	_abilities["pilot_turret"] = {"id": "pilot_turret", "name": "Pilot Turret", "behavior": "unit", "key": "D",
+		"target_team": "ally", "granted": "scepter", "max_level": 3, "mana": [0, 0, 0], "cooldown": [5, 5, 5],
+		"cast_point": 0.1, "range": 250, "anim": "blau_interact",
+		"values": {"hp": [300, 600, 900]},
+		"desc": "Upgrade Staff: Blau climbs into one of his turrets and pilots it. The turret gains 300 / 600 / 900 health and shoots what Blau attacks; Blau cannot be hurt inside and still attacks and casts from it. Cast again or move to get out. 5 second cooldown to get in."}
 
 # ---- Neutral creep abilities (Dota 7.41d npc_abilities.txt; our names) -------------------------------------------------
 ## Cast by the neutral AI (SimAI) while the camp fights. Snarl: Giant Wolf's Intimidate; Stomp: Centaur Conqueror's War
@@ -626,6 +729,24 @@ static func _build_talents() -> void:
 	_talent("caziel_dagger_armor", "+3 Swift Dagger armor cut", [{"ability": "swift_dagger", "add": {"armor_cut": 3.0}}])
 	_talent("caziel_order_threshold", "+4% Death Order threshold", [{"ability": "death_order", "add": {"threshold": 0.04}}])
 	_talent("caziel_shadows_evasion", "+15% Master of Shadows evasion", [{"ability": "master_of_shadows", "add": {"evasion": 0.15}}])
+	# Roydo (chosen)
+	_talent("roydo_grip_damage", "+80 Grip of the Ruler damage", [{"ability": "grip_of_the_ruler", "add": {"damage": 80.0}}])
+	_talent("roydo_health", "+250 Health", [], {"hp": 250.0})
+	_talent("roydo_rush_cooldown", "-3s Void Rush cooldown", [{"ability": "void_rush", "add": {"cooldown": -3.0}}])
+	_talent("roydo_skin_chance", "+6% Dark Matter Skin chance", [{"ability": "dark_matter_skin", "add": {"chance": 0.06}}])
+	_talent("roydo_grip_stun", "+0.6s Grip of the Ruler stun", [{"ability": "grip_of_the_ruler", "add": {"stun": 0.6}}])
+	_talent("roydo_rush_cut", "+10% Void Rush damage cut", [{"ability": "void_rush", "add": {"damage_cut": 0.10}}])
+	_talent("roydo_anomaly_bat", "-0.15s Anomaly attack time", [{"ability": "anomaly", "add": {"bat_cut": 0.15}}])
+	_talent("roydo_skin_reflect", "+12% Dark Matter Skin reflect", [{"ability": "dark_matter_skin", "add": {"reflect": 0.12}}])
+	# Blau (chosen)
+	_talent("blau_shot_damage", "+50 Bounce Shot damage", [{"ability": "bounce_shot", "add": {"damage": 50.0}}])
+	_talent("blau_attack_speed", "+25 Attack Speed", [], {"attack_speed": 25.0})
+	_talent("blau_boulders", "+2 Boulders", [{"ability": "summon_boulders", "add": {"count": 2.0}}])
+	_talent("blau_trap_root", "+0.8s Lay Trap root", [{"ability": "lay_trap", "add": {"root": 0.8}}])
+	_talent("blau_bounces", "+4 Bounce Shot bounces", [{"ability": "bounce_shot", "add": {"bounces": 4.0}}])
+	_talent("blau_turret_damage", "+10% Turret damage", [{"ability": "place_turret", "add": {"damage_pct": 0.10}}])
+	_talent("blau_shot_hits", "+1 Bounce Shot hit per enemy", [{"ability": "bounce_shot", "add": {"max_hits": 1.0}}])
+	_talent("blau_turret_health", "+700 Turret health", [{"ability": "place_turret", "add": {"hp": 700.0}}])
 	# Tock (chosen)
 	_talent("tock_bolt_damage", "+70 Time Bolt damage", [{"ability": "time_bolt", "add": {"damage": 70.0}}])
 	_talent("tock_mana_regen", "+2 Mana Regen", [], {"mana_regen": 2.0})
@@ -640,7 +761,7 @@ static func _build_talents() -> void:
 	_talent("kragg_armor", "+6 Armor", [], {"armor": 6.0})
 	_talent("kragg_repel_cooldown", "-3s Repel cooldown", [{"ability": "repel", "add": {"cooldown": -3.0}}])
 	_talent("kragg_charge_max", "+2 max Charges", [{"ability": "magnetize", "add": {"max_charges": 2.0}}])
-	_talent("kragg_overload_damage", "+25 Overload damage per Charge", [{"ability": "overload", "add": {"per_charge": 25.0}}])
+	_talent("kragg_overload_damage", "+40 Overload damage", [{"ability": "overload", "add": {"damage": 40.0}}])
 	_talent("kragg_field_pull", "+40 Magnet Field pull", [{"ability": "magnet_field", "add": {"pull": 40.0}}])
 	_talent("kragg_field_stun", "+1s Magnet Field stun", [{"ability": "magnet_field", "add": {"end_stun": 1.0}}])
 	_talent("kragg_grip_charges", "+2 Iron Grip Charges", [{"ability": "iron_grip", "add": {"charges": 2.0}}])
@@ -722,6 +843,9 @@ static func _build_items() -> void:
 	_it("pointy_hat", "Pointy Hat", 250, {"stats": {"mana": 125.0}, "category": "misc"})
 	_it("fur_hat", "Fur Hat", 250, {"stats": {"hp": 125.0}, "category": "misc"})
 	_it("sneak_charm", "Sneak Charm", 900, {"category": "misc"})
+	# magic defence (Dota 7.41d items.txt: Shawl, Cloak; our names, run 2026-10-15 g)
+	_it("shawl", "Scarf", 450, {"stats": {"magic_resist": 0.10}, "category": "armaments"})
+	_it("cloak", "Spell Cloak", 900, {"stats": {"magic_resist": 0.18}, "category": "armaments"})
 	_it("jump_knife", "Jump Knife", 2250, {"use": "jump", "cooldown": 15.0, "category": "misc",
 		"values": {"range": 1200.0, "clamp": 960.0, "hero_damage_lockout": 3.0}})
 	# Upgrades
@@ -787,6 +911,11 @@ static func _build_items() -> void:
 		"components": ["steady_ring", "broadsword", "broadsword", "quelling_blade"], "recipe_cost": 400,
 		"values": {"creep_damage_melee": 10.0, "creep_damage_ranged": 5.0, "chop_range": 350.0, "cleave_pct": 0.6, "cleave_pct_creep": 0.4,
 		"start_width": 150.0, "end_width": 360.0, "distance": 650.0}})
+	# Glimmer Cape (Dota 7.41d): on an ally (or itself) within 600: after 0.5 s it is invisible for 5 s, 20% faster, and
+	# a barrier takes the next 375 magic damage; attacking or casting ends the invisibility (not the barrier)
+	_it("glimmer_cape", "Fade Cape", 2150, {"use": "fade", "target_team": "ally", "cooldown": 15.0, "mana": 125.0,
+		"stats": {"magic_resist": 0.20}, "components": ["sneak_charm", "shawl"], "recipe_cost": 800, "category": "upgrades",
+		"values": {"range": 600.0, "fade": 0.5, "duration": 5.0, "move_speed_pct": 0.20, "barrier": 375.0}})
 	_it("sneak_blade", "Sneak Blade", 3250, {"use": "sneak", "cooldown": 25.0, "mana": 75.0,
 		"stats": {"damage": 25.0, "attack_speed": 35.0}, "category": "upgrades",
 		"components": ["greatsword", "brass_knuckles", "sneak_charm"], "recipe_cost": 0,

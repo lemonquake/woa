@@ -29,7 +29,12 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 		snap["burst"] = w.abilities.masterful_bonus(u, t)
 		if w.abilities.frost_heart_spend(u, t):
 			snap["frost"] = true
-	var speed := float(u.def.projectile_speed)
+	var speed := u.projectile_speed()
+	if u.kind == K.SUMMON and w.abilities.kits3.is_turret(u):
+		# Blau's turret: the shot is his attack at the turret's share (procs and lifesteal his)
+		var ts := w.abilities.kits3.turret_snapshot(u, t)
+		if not ts.is_empty():
+			snap = ts
 	if fortified_tower(u):
 		# Fortify (owner's rule 2026-10-15): tier 2+ towers shoot 50% faster, splash and mark what they hit
 		snap["fortify"] = true
@@ -385,6 +390,9 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		var amp := src0.spell_amp + (src0.magic_amp if dtype == C.DamageType.MAGICAL else 0.0)
 		if amp != 0.0:
 			amount *= 1.0 + amp
+	# all damage dealt lowered or raised (Void Rush), attacks and spells alike
+	if src0 != null and src0.damage_out_pct != 0.0 and not reflected:
+		amount *= maxf(0.0, 1.0 + src0.damage_out_pct)
 	# the element: x1.25 when it beats the target's, x0.75 when it is beaten (an attack applied it already)
 	var elem := damage_element(src0, key, is_attack, opts)
 	var emult := element_mult(elem, t.element)
@@ -441,7 +449,7 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		amount = maxf(0.0, amount - blk)
 	# Stealth Orb resistance and the Shield Orb's barrier
 	if t.is_hero():
-		amount = w.orbs.absorb(t, amount, src_hero)
+		amount = w.orbs.absorb(t, amount, src_hero, dtype == C.DamageType.MAGICAL)
 	if opts.get("non_lethal", false):
 		amount = clampf(amount, 0.0, maxf(0.0, t.hp - 1.0))
 	amount = minf(amount, t.hp)
@@ -470,6 +478,9 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		"key": key, "reflected": reflected, "halved": reflect_amt, "element": elem, "emult": emult})
 	if not reflected and (t.is_hero() or not t.get_modifier("static_charge").is_empty()):
 		w.items.on_damaged(t, src, raw, dtype, is_attack, elem)
+	# Dark Matter Skin: part of the blow goes back out to every enemy near Roydo
+	if not reflected and src_team != t.team and amount > 0.0 and t.is_hero() and t.ability_level.has("dark_matter_skin"):
+		w.abilities.kits3.on_damaged(t, amount)
 	if t.hp <= 0.001:
 		t.hp = 0.0
 		kill(t, src)
@@ -554,6 +565,9 @@ func process_deaths() -> void:
 					if eh.team == killer.team:
 						give_gold(eh, C.COURIER_BOUNTY_BASE + C.COURIER_BOUNTY_PER_LEVEL * lvl, false, t.pos)
 		elif t.is_creep():
+			_creep_death(t, killer, deny)
+		elif t.kind == K.SUMMON and killer != null:
+			# a summon (Blau's turret) pays its bounty like a creep; one that ran out of time pays nothing
 			_creep_death(t, killer, deny)
 		elif t.is_building():
 			_building_death(t, killer, deny)

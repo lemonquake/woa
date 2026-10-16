@@ -16,7 +16,7 @@ const NEUTRAL := 2
 const TEAM_NAMES := ["Ancient Light", "Black Sun", "Neutral"]
 
 # ---- Unit kinds -----------------------------------------------------------------------------------------------------
-enum Kind { HERO, CREEP_MELEE, CREEP_RANGED, CREEP_SIEGE, CREEP_FLAG, NEUTRAL_CREEP, TOWER, BARRACKS, ANCIENT, FILLER, FOUNTAIN, WARD, COURIER }
+enum Kind { HERO, CREEP_MELEE, CREEP_RANGED, CREEP_SIEGE, CREEP_FLAG, NEUTRAL_CREEP, TOWER, BARRACKS, ANCIENT, FILLER, FOUNTAIN, WARD, COURIER, SUMMON }
 
 ## Damage types (owner's request 2026-10-14, Warcraft III style on top of Dota's attack classes): what a unit's attacks
 ## are, and what a spell's damage counts as. Hero, Slash, Piercing and Siege are Dota's Default (hero), Runty (melee
@@ -47,7 +47,7 @@ const DAMAGE_TABLE := [
 ## Elements (owner's request 2026-10-14). Every unit has one, and so does every damage source: an attack carries its
 ## attacker's element, a spell its ability's (the hero's unless the ability names another), an item its own.
 enum Element { NONE, FIRE, WATER, ICE, EARTH, LIGHTNING, NATURE, DARK, LIGHT }
-const ELEMENT_NAMES := ["None", "Fire", "Water", "Ice", "Earth", "Lightning", "Nature", "Dark", "Light"]
+const ELEMENT_NAMES := ["Neutral", "Fire", "Water", "Ice", "Earth", "Lightning", "Nature", "Dark", "Light"]
 const ELEMENT_COLORS := [Color(0.72, 0.72, 0.74), Color(1.0, 0.45, 0.12), Color(0.25, 0.6, 1.0), Color(0.6, 0.9, 1.0),
 	Color(0.72, 0.52, 0.3), Color(0.85, 0.75, 1.0), Color(0.4, 0.85, 0.3), Color(0.6, 0.3, 0.9), Color(1.0, 0.9, 0.5)]
 const ELEMENT_STRONG := 1.25

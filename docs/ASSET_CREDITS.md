@@ -14,6 +14,10 @@
 | Buildings (towers, barracks, Ancients, fountains, effigies, shop) | `assets/buildings/` | Warriors of Aether (procedural, Blender 5.2) | `tools/blender/buildings.py` | Project-owned |
 | Sludge's body (obese MakeHuman base mesh and targets, game-engine rig) | `assets/characters/hero/sludge.glb` | MakeHuman team, via MPFB 2 for Blender; shaped, rigged to the hero skeleton and dressed by `tools/blender/sludge.py` | makehuman.org, static.makehumancommunity.org/mpfb.html | CC0 1.0 (MakeHuman base mesh, targets and system assets) |
 | Sludge's cleaver, shuriken hook, shuriken and chain link | `assets/weapons/cleaver.glb`, `shuriken_hook.glb`, `shuriken.glb`, `chain_link.glb` | Warriors of Aether (procedural, Blender 5.2) | `tools/blender/sludge_gear.py` | Project-owned |
+| Roydo's, the Anomaly form's and Blau's bodies, Blau's coat, hood, bracers and boots, Roydo's armour pieces (recoloured and reshaped by `tools/blender/heroes16.py`) | `assets/characters/heroes16/` | Quaternius: Universal Base Characters (Superhero_Male), Modular Character Outfits - Fantasy (Male_Ranger) | quaternius.itch.io/universal-base-characters, quaternius.itch.io/modular-character-outfits-fantasy | CC0 1.0 |
+| Their 86 animation clips (renamed, Blau's gun clips re-solved for a two-handed rifle grip) | same | Quaternius: Universal Animation Library 1 and 2 (Standard) | quaternius.itch.io/universal-animation-library, quaternius.itch.io/universal-animation-library-2 | CC0 1.0 |
+| Blau's rifle (Gun_Sniper) and his turret (Enemy_QuadShell, recoloured in game) | same | Quaternius: Sci-Fi Essentials Kit (Standard) | quaternius.itch.io/sci-fi-essentials-kit | CC0 1.0 |
+| Blau's boulders (Rock_Medium 1-3 with a glowing vein shader) | `assets/nature/` | Quaternius, Stylized Nature MegaKit (already in the game) | as above | CC0 1.0 |
 | Fonts: Cinzel, Lato | `assets/ui/fonts/` | Natanael Gama (Cinzel); Łukasz Dziedzic (Lato) | Google Fonts | SIL Open Font License 1.1 (licence files included) |
 
 Game mechanics and numbers follow Dota 2. Rules and numbers are not copyrightable. Every name, model, icon and

@@ -920,6 +920,126 @@ def hero_card(name, w=150, h=196):
     return save_rgba(name, rgb, alpha, None, kind="image")
 
 
+# ---- v3: the Main Menu (run 2026-10-15 g) ---------------------------------------------------------------------------
+
+
+def menu_plate(name, w, h, *, face, glow=0.0, pressed=False, metal=None):
+    """A menu entry: a long blade-shaped plate. A round socket on the left holds the entry's icon, the right end comes
+    to a chevron point like a sword tip; a gold rim runs round it, the face is brushed metal. Nine-slice in x."""
+    metal = GOLD if metal is None else metal
+    W, H = w * S, h * S
+    tip = H * 0.42
+    cut = 7 * S
+    poly = [(cut, 2 * S), (W - tip, 2 * S), (W - 2 * S, H / 2), (W - tip, H - 2 * S), (cut, H - 2 * S), (2 * S, H - cut),
+            (2 * S, cut)]
+    m = O.mask_from_poly(W, H, [poly])
+    d = O.inside_distance(m)
+    rim_h, rim_m = frame_profile(d, [(0.0, 0.9 * S, "flat"), (0.9 * S, 3.2 * S, "ridge"), (3.2 * S, 4.0 * S, "groove"),
+                                     (4.0 * S, 4.8 * S, "ridge")])
+    inner = smoothstep(4.6 * S, 5.4 * S, d)
+    pillow = smoothstep(5.0 * S, H * 0.38, d)
+    if pressed:
+        pillow = 1 - pillow * 0.5
+    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
+    brushed = ndimage.gaussian_filter1d(value_noise(W, H, 3, 91), 16, axis=1) * 0.14
+    cap = make_matcap(face, spec_pow=24, spec=0.55)
+    # the icon socket: a dark well with a gold ring, at the left
+    sc = (H * 0.5 + 3 * S, H / 2)
+    sr = H * 0.34
+    well = dome(W, H, sc[0], sc[1], sr)
+    outer = dome(W, H, sc[0], sc[1], sr + 3.4 * S)
+    ring = np.clip(outer - well * 1.05, 0, 1)
+    ring_m = (outer > 0).astype(np.float32) * (1 - (well > 0.02))
+    base = np.zeros((H, W, 3), np.float32)
+    face_h = pillow + brushed - well * 0.9
+    rgb, alpha = shade_layers(base, [(face_h, inner, cap, 1.6 * S, 0.0), (rim_h, rim_m, metal, 4.4 * S, 0.0),
+                                     (ring * 0.9, ring_m * inner, metal, 3.0 * S, 0.25)])
+    sock = (well > 0.0).astype(np.float32)
+    rgb = rgb * (1 - sock[..., None] * 0.72) + sock[..., None] * np.array([0.02, 0.025, 0.04]) * (1 - well[..., None] * 0.3)
+    # light along the top, shade along the bottom
+    top = (1 - smoothstep(5 * S, H * 0.5, y)) * inner
+    rgb = rgb + top[..., None] * 0.07
+    bot = smoothstep(H * 0.55, H - 5 * S, y) * inner
+    rgb = rgb * (1 - bot[..., None] * 0.28)
+    if glow > 0:
+        g = np.exp(-((d - 6.0 * S) ** 2) / (2 * (2.8 * S) ** 2)) * inner
+        rgb = rgb + g[..., None] * np.array([1.0, 0.8, 0.42]) * 0.6 * glow
+        rgb = rgb + (inner * (1 - sock))[..., None] * np.array([0.06, 0.045, 0.02]) * glow
+    left = int(math.ceil((sc[0] + sr + 6 * S) / S))
+    right = int(math.ceil(tip / S)) + 4
+    return save_rgba(name, np.clip(rgb, 0, 1), alpha, [left, 14, right, 14], extra={"content": [left + 6, 8, right, 8]})
+
+
+def menu_banner(name, w=440, h=1000, cloth=(16, 22, 40)):
+    """The hanging banner behind the Main Menu: woven cloth in deep blue-black with soft vertical folds, gold trim
+    down both sides, an embroidered border, a gold rod at the top, a swallow-tail bottom, and the two suns of the
+    game at its foot (the gold sun of Ancient Light and the black sun of Black Sun) in one emblem."""
+    W, H = w * S, h * S
+    tail = 90 * S
+    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
+    notch_depth = (1 - np.abs(x - W / 2) / (W / 2)) * tail
+    inside = (y < H - 2 * S - notch_depth) & (x > 14 * S) & (x < W - 14 * S) & (y > 30 * S)
+    m = blur(inside.astype(np.float32), 0.7 * S)
+    weave = (np.sin(x / (1.4 * S)) * np.sin(y / (1.4 * S))) * 0.5 + 0.5
+    folds = np.sin(x / W * math.pi * 3.0 + fbm(W, H, cell=200 * S, octaves=2, seed=5) * 2.0) * 0.5 + 0.5
+    n = fbm(W, H, cell=60 * S, octaves=4, seed=7)
+    c = np.array(cloth, np.float32) / 255.0
+    rgb = c[None, None, :] * (0.65 + 0.55 * folds[..., None] + 0.25 * (n[..., None] - 0.5)) + (weave[..., None] - 0.5) * 0.018
+    rgb = rgb * (1.15 - 0.45 * (y / H))[..., None]
+    d = O.inside_distance(m > 0.5)
+    thread = np.exp(-((d - 26 * S) ** 2) / (2 * (1.0 * S) ** 2)) + np.exp(-((d - 31 * S) ** 2) / (2 * (0.6 * S) ** 2)) * 0.6
+    rgb = rgb + (thread * m)[..., None] * np.array([0.55, 0.40, 0.16]) * 0.8
+    trim_h, trim_m = frame_profile(d, [(0.0, 1.0 * S, "flat"), (1.0 * S, 7.0 * S, "ridge"), (7.0 * S, 8.5 * S, "groove"),
+                                       (8.5 * S, 11.0 * S, "ridge")])
+    braid = (np.sin((y + x * 0.5) / (2.2 * S)) * 0.5 + 0.5) * 0.25
+    trim_h = trim_h + braid * trim_m
+    rod = O.mask_from_rects(W, H, [(0, 12 * S, W, 34 * S)], chamfer=4 * S)
+    rod_h = np.sin(np.clip((y - 12 * S) / (22 * S), 0, 1) * math.pi)
+    fin_h = np.maximum(dome(W, H, 10 * S, 23 * S, 16 * S), dome(W, H, W - 10 * S, 23 * S, 16 * S))
+    fin_m = (fin_h > 0).astype(np.float32)
+    # the emblem: a gold sun on the left half, a black sun with a crimson corona on the right, in a gold ring
+    cx, cy = W / 2, H - tail - 118 * S
+    R = 92 * S
+    rr = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
+    ang = np.arctan2(y - cy, x - cx)
+    disc = (rr < R).astype(np.float32)
+    rays = (np.cos(ang * 16) * 0.5 + 0.5) ** 6
+    band = (rr > R * 0.46) & (rr < R * 0.9)
+    sun_gold = ((rr < R * 0.42) & (x < cx)).astype(np.float32)
+    corona = np.exp(-((rr - R * 0.44) ** 2) / (2 * (5 * S) ** 2)) * (x >= cx)
+    em_rgb = np.zeros_like(rgb)
+    em_rgb += (rays * band * (x < cx))[..., None] * np.array([0.9, 0.62, 0.2]) * 0.55
+    em_rgb += (rays * band * (x >= cx))[..., None] * np.array([0.6, 0.06, 0.08]) * 0.45
+    sun_shade = np.clip(1.15 - rr / (R * 0.42) * 0.55 - (y - cy) / R * 0.25, 0.4, 1.2)
+    em_rgb += sun_gold[..., None] * np.array([1.0, 0.8, 0.35]) * sun_shade[..., None]
+    em_rgb += (np.exp(-((rr - R * 0.42) ** 2) / (2 * (4 * S) ** 2)) * (x < cx))[..., None] * np.array([1.0, 0.7, 0.25]) * 0.6
+    em_rgb += corona[..., None] * np.array([1.0, 0.18, 0.12]) * 1.2
+    rgb = rgb * (1 - disc[..., None] * 0.5) + em_rgb * disc[..., None]
+    rd = np.clip(6 * S - np.abs(rr - R), 0, None)
+    ring_h, ring_m = frame_profile(rd, [(0.0, 1.0 * S, "flat"), (1.0 * S, 6.0 * S, "ridge")])
+    split = O.mask_from_rects(W, H, [(cx - 2 * S, cy - R, cx + 2 * S, cy + R)]) * disc
+    rgb, alpha = shade_layers(rgb, [(trim_h, trim_m * m, GOLD, 4.0 * S, 0.0),
+                                    (ring_h, ring_m, GOLD, 4.0 * S, 0.5),
+                                    (np.ones_like(split) * 0.6, split, GOLD, 1.0 * S, 0.0),
+                                    (rod_h, rod, GOLD, 5.0 * S, 0.6), (fin_h, fin_m, GOLD, 5.0 * S, 0.4)])
+    alpha = np.maximum(alpha, m)
+    return save_rgba(name, np.clip(rgb, 0, 1), alpha, None, kind="image")
+
+
+def menu_footer(name, w=256, h=44):
+    """The bar along the bottom of the Main Menu: dark enamel fading upward, a gold rule along its top edge
+    (nine-slice in x)."""
+    W, H = w * S, h * S
+    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
+    rgb = enamel(W, H, (9, 11, 17), seed=19, pattern=False)
+    a = 0.55 + 0.4 * smoothstep(0, H * 0.6, y)
+    rule = ((y > 3 * S) & (y < 6.5 * S)).astype(np.float32)
+    rule_h = np.sin(np.clip((y - 3 * S) / (3.5 * S), 0, 1) * math.pi)
+    rgb, a2 = shade_layers(rgb, [(rule_h, rule, GOLD, 3.0 * S, 0.0)])
+    alpha = np.maximum(a, a2)
+    return save_rgba(name, np.clip(rgb, 0, 1), alpha, [8, 10, 8, 2])
+
+
 def build():
     # panels
     ornate_panel("panel_main", 140, 140, 34, gem=(90, 150, 255), corner=24)
@@ -979,6 +1099,16 @@ def build():
     glow_dot("glow_red", 64, (255, 90, 70))
     backdrop("backdrop", 1024, 1024)
     hero_card("hero_card")
+    # the Main Menu (run 2026-10-15 g)
+    steel_plate = [(0.0, (6, 8, 12)), (0.45, (20, 25, 36)), (0.8, (46, 54, 72)), (1.0, (90, 100, 124))]
+    gold_plate = [(0.0, (50, 28, 6)), (0.42, (132, 86, 24)), (0.75, (206, 156, 66)), (1.0, (255, 226, 150))]
+    for nm, face in (("menu_plate", steel_plate), ("menu_plate_gold", gold_plate)):
+        menu_plate(nm + "_normal", 200, 64, face=face)
+        menu_plate(nm + "_hover", 200, 64, face=face, glow=1.0)
+        menu_plate(nm + "_pressed", 200, 64, face=face, pressed=True, glow=0.5)
+    menu_banner("menu_banner")
+    menu_footer("menu_footer")
+    ornate_panel("menu_nameplate", 160, 120, 30, gem=(255, 190, 80), corner=22, radius=10, alpha_inside=0.88)
     # bespoke HUD
     console()
     for n in range(5, 11):

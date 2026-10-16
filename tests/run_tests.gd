@@ -4838,7 +4838,8 @@ func test_tock_and_kragg_data() -> void:
 			check(not SimData.ability(String(aid)).is_empty(), "%s exists" % aid)
 		check(id in GameSettings.HEROES, "%s can be picked" % id)
 	check(SimData.unit("tock").abilities.size() == 6, "Tock has six skills")
-	check(SimData.unit("kragg").abilities.size() == 5, "Kragg has five skills")
+	check(SimData.unit("kragg").abilities.size() == 4, "Kragg has four skills")
+	check(String(SimData.unit("kragg").innate) == "magnetize", "and Magnetize as his innate")
 	check(SimData.ultimate_of(SimData.unit("tock").abilities) == "stop_time", "Stop Time is Tock's ultimate")
 	check(Keybinds.ability_slot("ability_4", 6) == 5 and Keybinds.ability_slot("ability_5", 6) == 3, "six skills: Q W E D F R")
 
@@ -4933,20 +4934,61 @@ func test_kragg_grip_charges_overload() -> void:
 		"Iron Grip: they meet halfway")
 	check(e.is_stunned(), "the enemy is stunned")
 	check(w.abilities.kits2.charges(e) == 2, "and has 2 Charges")
-	# attacks add Charges (Magnetize)
+	# attacks add Charges (Magnetize, innate: up to 4, 8 s)
 	var snap := w.combat.attack_snapshot(k, "")
 	w.combat.land_attack(snap, e)
 	check(w.abilities.kits2.charges(e) == 3, "an attack adds a Charge")
-	near(w.abilities.kits2.spell_mult(k, e), 1.18, 0.001, "3 Charges: +18% spell damage")
-	var hp0 := e.hp
-	var khp := k.hp
-	k.hp = k.max_hp * 0.5
-	khp = k.hp
-	w.command(k.id, {"type": O.CAST_NO_TARGET, "ability": "overload"})
-	run(w, 0.4)
-	check(w.abilities.kits2.charges(e) == 0, "Overload uses the Charges")
-	check(hp0 - e.hp >= 3.0 * 105.0 * (1.0 - e.magic_resist) * 0.95, "for 105 per Charge")
-	check(k.hp > khp, "and heals Kragg")
+	# level 18: 0.10% + 0.05% x 18 = 1.0% per Charge
+	near(w.abilities.kits2.spell_mult(k, e), 1.03, 0.0001, "3 Charges at level 18: +3% spell damage")
+	w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	check(w.abilities.kits2.charges(e) == 4, "at most 4 Charges")
+	var m := e.get_modifier("magnet_charge")
+	near(float(m.expires) - w.time, 8.0, 0.05, "lasting 8 seconds")
+
+func test_kragg_magnetize_innate() -> void:
+	var w := empty_world()
+	var k := w.spawn("kragg", C.DAWN, Vector2(-2000, -4000))
+	check(k.ability_level_of("magnetize") == 1, "Magnetize is learned at level 1")
+	check(not ("magnetize" in k.abilities), "and has no skill slot")
+	check(not w.abilities.can_learn(k, "magnetize"), "and takes no points")
+	near(w.abilities.kits2.amp_per_charge(k), 0.0015, 0.00001, "level 1: 0.10% + 0.05% per Charge")
+	k.level = 25
+	near(w.abilities.kits2.amp_per_charge(k), 0.001 + 0.0005 * 25.0, 0.00001, "grows with hero level")
+
+func test_kragg_overload_every_nth_attack() -> void:
+	var w := empty_world()
+	var k := _hero15(w, "kragg", Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1880, -4000))
+	var e2 := _dummy(w, "sludge", C.DUSK, Vector2(-2000, -3880))
+	var far := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	check(SimData.ability("overload").behavior == "passive", "Overload is passive")
+	run(w, 0.1)
+	var hp2 := e2.hp
+	var hpf := far.hp
+	# level 4: every 3rd attack
+	w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	check(e2.hp == hp2, "no burst before the 3rd attack")
+	check(w.abilities.kits2.overload_count(k) == Vector2i(2, 3), "two of three attacks counted")
+	w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	var mult := w.abilities.kits2.spell_mult(k, e2)
+	near(hp2 - e2.hp, 105.0 * mult * (1.0 - e2.magic_resist), 2.0, "the 3rd attack bursts: 105 magic damage nearby")
+	check(far.hp == hpf, "not beyond 200")
+	var sl := e2.get_modifier("overload_slow")
+	check(not sl.is_empty() and is_equal_approx(float(sl.slow), 0.8), "and slows by 80%")
+	near(float(sl.dur), 0.8 * (1.0 - e2.status_resist), 0.01, "for 0.8 seconds")
+	check(w.abilities.kits2.overload_count(k).x == 0, "the count starts again")
+	# level 1: every 6th attack
+	k.ability_level["overload"] = 1
+	k.refresh_stats()
+	k.stacks["overload"] = 0
+	var hp3 := e2.hp
+	for i in 5:
+		w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	check(e2.hp == hp3, "level 1: nothing on the 5th attack")
+	w.combat.land_attack(w.combat.attack_snapshot(k, ""), e)
+	check(e2.hp < hp3, "a burst on the 6th")
 
 func test_kragg_repel_and_magnet_field() -> void:
 	var w := empty_world()
@@ -5315,3 +5357,751 @@ func test_bots_fortify_tower_in_danger() -> void:
 			check(used, "a bot team Fortifies a tower at 25% under attack")
 			var ge: Array = w.events.filter(func(e): return e.t == "glyph")
 			check(ge.size() == 1 and int(ge[0].by) == bot.id, "and the allies are told which bot did")
+
+# ---- Run 2026-10-15 g: varied picks, bot items, counter-ganks, jukes, magic defence items ---------------------------
+
+## Random heroes keep a team varied: no hero twice in one team, and with ten slots and eight heroes no hero three
+## times in a match.
+func test_varied_hero_picks() -> void:
+	var dup_team := 0
+	var triple := 0
+	for sd in 300:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = sd
+		var picked := [[], []]
+		for i in 10:
+			var t := i % 2
+			var hid := GameSettings.varied_pick(rng, picked[t], (picked[0] as Array) + (picked[1] as Array))
+			if hid in picked[t]:
+				dup_team += 1
+			picked[t].append(hid)
+		var all: Array = (picked[0] as Array) + (picked[1] as Array)
+		for hid in GameSettings.HEROES:
+			if all.count(hid) >= 3:
+				triple += 1
+	check(dup_team == 0, "no hero twice in a team (%d)" % dup_team)
+	check(triple == 0, "no hero three times in a match (%d)" % triple)
+	var rng2 := RandomNumberGenerator.new()
+	rng2.seed = 5
+	var h := GameSettings.varied_pick(rng2, ["kragg", "sludge"], ["kragg", "sludge"])
+	check(h != "kragg" and h != "sludge", "Random avoids what the team has")
+
+## The new magic defence items cost what Dota's do and have icons; Fade Cape hides an ally after 0.5 s and its barrier
+## takes 375 magic damage (not physical).
+func test_magic_defence_items() -> void:
+	var expect := {"shawl": 450, "cloak": 900, "glimmer_cape": 2150}
+	for id in expect:
+		var d := SimData.item(id)
+		check(int(d.cost) == int(expect[id]), "%s costs %d" % [id, int(expect[id])])
+		check(UiKit.item_icon_path(id).begins_with("items/gen/"), "%s has a generated icon" % id)
+	var gc := SimData.item("glimmer_cape")
+	var parts := 0
+	for c in gc.components:
+		parts += int(SimData.item(c).cost)
+	check(parts + int(gc.recipe_cost) == 2150, "Fade Cape: parts + recipe = cost")
+	var w := empty_world()
+	var a := _sludge(w, Vector2(-2000, -4000))
+	var b := _sludge(w, Vector2(-1800, -4000))
+	var mr0 := b.magic_resist
+	_give(w, a, "glimmer_cape", 0)
+	check(a.magic_resist > mr0 + 0.1, "Fade Cape: +20% magic resistance")
+	a.mana = a.max_mana
+	w.command(a.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": 0, "target": b.id})
+	run(w, 0.2)
+	check(not b.get_modifier("glimmer_cape").is_empty(), "the ally gets it")
+	check(not b.has_flag("invisible"), "not invisible at once")
+	run(w, 0.6)
+	check(b.has_flag("invisible"), "invisible after 0.5 s")
+	var hp0 := b.hp
+	w.combat.deal_damage(a.id + 999, C.DUSK, true, b, 300.0, C.DamageType.MAGICAL)
+	near(hp0 - b.hp, 0.0, 0.5, "the barrier takes magic damage")
+	w.combat.deal_damage(a.id + 999, C.DUSK, true, b, 100.0, C.DamageType.PHYSICAL)
+	check(hp0 - b.hp > 10.0, "but not physical")
+
+func _bot_game_world(lineup_a: Array, lineup_b: Array) -> Array:
+	var w := world(600.0)
+	w.setup_match()
+	var ours: Array = []
+	for id in lineup_a:
+		var h := w.spawn_hero(String(id), C.DAWN)
+		w.bots.append(SimBot.new(w, h.id, "mid", "A%d" % ours.size()))
+		ours.append(h)
+	var theirs: Array = []
+	for id in lineup_b:
+		theirs.append(w.spawn_hero(String(id), C.DUSK))
+	return [w, ours, theirs]
+
+## Bots read the enemy team: against fed magic nukers that keep killing it, a core moves magic resistance to the
+## front; against fed right-clickers, a strength core moves armor; a support against invisible heroes buys Reveal Dust.
+func test_bot_counter_items() -> void:
+	var g := _bot_game_world(["ezee"], ["azrin", "froster", "tock"])
+	var w: SimWorld = g[0]
+	var h: SimUnit = g[1][0]
+	var b: SimBot = w.bots[0]
+	b.role = 3
+	for e in g[2]:
+		SimDebug.level_up(w, e, 12)
+		e.refresh_stats()
+		e.hp = e.max_hp
+		e.mana = e.max_mana
+	b.death_dmg = Vector3(200, 1400, 0)
+	var prof := SimBotItems.profile(w, h.team)
+	check(float(prof.magic) > float(prof.physical), "magic heroes read as magic damage (%.2f vs %.2f)" % [prof.magic, prof.physical])
+	b._counter_items(h)
+	var first := String(b.build[b._build_i])
+	check("magic" in (SimBotItems.ANSWERS.get(first, []) as Array), "a magic answer comes first (%s)" % first)
+	# right-clickers far ahead: armor
+	var g2 := _bot_game_world(["kragg"], ["blood_ranger", "caziel"])
+	var w2: SimWorld = g2[0]
+	var h2: SimUnit = g2[1][0]
+	var b2: SimBot = w2.bots[0]
+	b2.role = 3
+	for e in g2[2]:
+		SimDebug.level_up(w2, e, 14)
+		e.gold_reliable = 12000
+		_give(w2, e, "crit_bow", 0)
+		e.refresh_stats()
+	b2.death_dmg = Vector3(1500, 100, 0)
+	b2._counter_items(h2)
+	var first2 := String(b2.build[b2._build_i])
+	check("physical" in (SimBotItems.ANSWERS.get(first2, []) as Array), "armor against fed hitters (%s)" % first2)
+	# an invisible enemy: a support buys Reveal Dust
+	var g3 := _bot_game_world(["tock"], ["caziel"])
+	var w3: SimWorld = g3[0]
+	var h3: SimUnit = g3[1][0]
+	var b3: SimBot = w3.bots[0]
+	b3.role = 5
+	_give(w3, g3[2][0], "sneak_blade", 0)
+	h3.gold_unreliable = 2000
+	for i in h3.inventory.size():
+		h3.inventory[i] = null
+	h3.pos = w3.map.fountains[h3.team] + Vector2(200, 200)
+	b3._counter_items(h3)
+	check(_ids(h3.stash).has("reveal_dust") or _ids(h3.inventory).has("reveal_dust"), "Reveal Dust against a Sneak Blade")
+
+## Escape spots: running from a chaser, the bot prefers spots the trees (or higher ground) hide from it much more
+## often than the straight run toward safety does.
+func test_bot_juke_point_uses_cover() -> void:
+	var w := world(600.0)
+	w.setup_match()
+	var h := w.spawn_hero("tock", C.DAWN)
+	var tries := 0
+	var juke_hidden := 0
+	var road_hidden := 0
+	var m := w.map
+	for i in range(0, m.trees.size(), 37):
+		var t: Dictionary = m.trees[i]
+		if not t.alive or m.tree_cover(t.pos) < 4:
+			continue
+		var dir := Vector2.from_angle(float(i))
+		var me: Vector2 = (t.pos as Vector2) - dir * 260.0
+		var chaser := me - dir * 550.0
+		if not m.is_walkable(me) or not m.is_walkable(chaser) or m.sight_blocked(chaser, me):
+			continue
+		h.pos = me
+		var safe := me - dir.orthogonal() * 2000.0
+		var q := SimBotTactics.juke_point(w, h, PackedVector2Array([chaser]), safe)
+		tries += 1
+		if m.sight_blocked(chaser, q):
+			juke_hidden += 1
+		if m.sight_blocked(chaser, me + (safe - me).normalized() * 600.0):
+			road_hidden += 1
+		if tries >= 40:
+			break
+	check(tries >= 15, "enough wooded spots tried (%d)" % tries)
+	check(juke_hidden > road_hidden + tries * 0.25, "juke spots hidden %d / %d, the straight run %d" % [juke_hidden, tries, road_hidden])
+
+## Juked: chased a moment ago, the enemy has not seen it for 2 s and nobody is in sight: it teleports home (hurt);
+## still seen, or healthy, it does not.
+func test_bot_juke_teleport() -> void:
+	var g := _bot_game_world(["azrin"], ["sludge"])
+	var w: SimWorld = g[0]
+	var h: SimUnit = g[1][0]
+	var b: SimBot = w.bots[0]
+	h.pos = Vector2(0, 0)
+	h.hp = h.max_hp * 0.4
+	h.mana = h.max_mana
+	h.ability_ready["tp"] = C.LONG_AGO
+	b._chased_at = w.time - 1.0
+	b._seen_by_enemy_at = w.time - 0.5
+	check(not b._juke_tp(h), "still in their sight: no teleport")
+	b._seen_by_enemy_at = w.time - 2.5
+	h.hp = h.max_hp
+	check(not b._juke_tp(h), "healthy: back to work instead")
+	h.hp = h.max_hp * 0.4
+	check(b._juke_tp(h), "lost them for 2 s: teleport home")
+	check(h.order == O.CAST_POINT and String(h.order_ability) == "tp", "a Town Portal home is ordered")
+	check(b.jukes == 1, "counted")
+
+## Counter-ganks: an ally hit by an enemy hero with two bots close enough to help gets a save called (helpers and the
+## victim in it); alone and far from help it does not.
+func test_counter_gank_called() -> void:
+	var g := _bot_game_world(["tock", "kragg", "ezee"], ["caziel"])
+	var w: SimWorld = g[0]
+	var v: SimUnit = g[1][0]
+	var ganker: SimUnit = g[2][0]
+	var p0 := Vector2(-3000, 1000)
+	v.pos = p0
+	v.hp = v.max_hp * 0.7
+	(g[1][1] as SimUnit).pos = p0 + Vector2(700, 300)
+	(g[1][2] as SimUnit).pos = p0 + Vector2(-600, 500)
+	ganker.pos = p0 + Vector2(150, 0)
+	var br := w.brain(C.DAWN)
+	w.vision.update()
+	br._update_seen()
+	v.hero_damage_log[ganker.id] = w.time
+	br._call_saves()
+	var save := {}
+	for p in br.plans:
+		if String(p.kind) == "save":
+			save = p
+	check(not save.is_empty(), "a save is called")
+	if not save.is_empty():
+		check((save.members as Dictionary).has((g[1][1] as SimUnit).id) and (save.members as Dictionary).has((g[1][2] as SimUnit).id),
+			"both helpers come")
+		check(int(save.target) == ganker.id, "on the ganker")
+		var bv: SimBot = w.bots[0]
+		bv._scan(v)
+		check(bv._save_helper(v) != null, "the victim runs to a helper")
+	# far from help: nothing
+	br.plans.clear()
+	(g[1][1] as SimUnit).pos = Vector2(6000, -6000)
+	(g[1][2] as SimUnit).pos = Vector2(6000, -6200)
+	for x in [g[1][1], g[1][2]]:
+		(x as SimUnit).tp_charges = 0
+	br._call_saves()
+	check(br.plans.filter(func(p): return String(p.kind) == "save").is_empty(), "no help near: no save")
+
+# ---- Roydo and Blau (run 2026-10-16) --------------------------------------------------------------------------------
+
+## A level 18 hero with every skill maxed that does not swing at the test dummies on its own.
+func _hero16(w: SimWorld, id: String, p: Vector2, team := C.DAWN) -> SimUnit:
+	var h := _hero15(w, id, p, team)
+	h.auto_attack = false
+	return h
+
+func test_roydo_blau_data() -> void:
+	for id in ["roydo", "blau"]:
+		var d := SimData.unit(id)
+		check(not d.is_empty() and d.kind == K.HERO, "%s is a hero" % id)
+		check(int(d.element) == C.Element.NONE, "%s has no element (Neutral)" % id)
+		check((d.talents as Array).size() == 4, "%s has 4 talent tiers" % id)
+		for tier in d.talents:
+			for tid in tier:
+				check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+		for aid in d.abilities:
+			check(not SimData.ability(String(aid)).is_empty(), "%s exists" % aid)
+		check(id in GameSettings.HEROES, "%s can be picked" % id)
+		check((d.abilities as Array).size() == 4, "%s has four skills" % id)
+	check(String(SimData.unit("roydo").primary) == "int" and float(SimData.unit("roydo").range) == 150.0, "Roydo: intelligence, melee")
+	check(String(SimData.unit("blau").primary) == "agi" and float(SimData.unit("blau").range) == 600.0, "Blau: agility, range 600")
+	check(SimData.ultimate_of(SimData.unit("roydo").abilities) == "anomaly", "Anomaly is Roydo's ultimate")
+	check(SimData.ultimate_of(SimData.unit("blau").abilities) == "place_turret", "Place Turret is Blau's ultimate")
+	check(not ("pilot_turret" in SimData.unit("blau").abilities), "Pilot Turret only comes with the Upgrade Staff")
+	var t := SimData.unit("blau_turret")
+	check(t.kind == K.SUMMON and float(t.hp_regen) == 0.0 and float(t.mana) == 0.0, "the turret: no regeneration, no mana")
+	near(float(t.range), 650.0, 0.01, "turret range 650")
+	near(float(t.bat) / (float(t.attack_speed) / 100.0), 1.5, 0.001, "a shot every 1.5 s")
+
+func test_roydo_grip_of_the_ruler() -> void:
+	var w := empty_world()
+	var r := _hero16(w, "roydo", Vector2(-2000, -4000))
+	var center := Vector2(-1500, -4000)
+	var e := _dummy(w, "ezee", C.DUSK, center + Vector2(300, 120))
+	var c := _dummy(w, "dusk_melee", C.DUSK, center + Vector2(-250, -100))
+	var far := _dummy(w, "ezee", C.DUSK, center + Vector2(700, 0))
+	run(w, 0.2)
+	var hp_e := e.hp
+	var hp_c := c.hp
+	var c_pos := c.pos
+	w.command(r.id, {"type": O.CAST_POINT, "ability": "grip_of_the_ruler", "point": center})
+	run(w, 0.35 + 0.1)
+	check(not e.knock.is_empty() and bool(e.knock.get("air", false)), "the enemy hero is picked over the creep and thrown")
+	check(c.pos.distance_to(c_pos) < 1.0, "the creep stays where it is")
+	run(w, 0.35)
+	check(e.knock.is_empty() or float(e.knock.get("z", 0.0)) > 40.0, "mid-flight it is in the air")
+	check(e.hp == hp_e, "no damage before it lands")
+	run(w, 0.6)
+	check(e.pos.distance_to(center) < 80.0, "it lands in the middle (%d)" % int(e.pos.distance_to(center)))
+	near(hp_e - e.hp, 220.0 * (1.0 + r.magic_amp + r.spell_amp) * (1.0 - e.magic_resist), 2.0, "220 magic damage at level 4")
+	check(c.hp < hp_c, "the area is hit: the creep too")
+	check(e.is_stunned() and c.is_stunned(), "and stunned")
+	near(float(e.get_modifier("stunned").get("dur", 0.0)), 1.0 * (1.0 - e.status_resist), 0.01, "for 1 second")
+	check(far.hp == far.max_hp, "not outside 400")
+	# no enemy in the area: an ally is thrown, unharmed
+	var w2 := empty_world()
+	var r2 := _hero16(w2, "roydo", Vector2(-2000, -4000))
+	var ally := _dummy(w2, "ezee", C.DAWN, center + Vector2(250, 0))
+	run(w2, 0.2)
+	w2.command(r2.id, {"type": O.CAST_POINT, "ability": "grip_of_the_ruler", "point": center})
+	run(w2, 1.4)
+	check(ally.pos.distance_to(center) < 80.0, "an ally is thrown when no enemy is there")
+	check(ally.hp == ally.max_hp and not ally.is_stunned(), "and is neither hurt nor stunned")
+
+func test_roydo_void_rush() -> void:
+	var w := empty_world()
+	var r := _hero16(w, "roydo", Vector2(-2000, -4000))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	var ally := _dummy(w, "ezee", C.DAWN, Vector2(-2000, -3600))
+	var out := _dummy(w, "ezee", C.DUSK, Vector2(-1200, -4000))
+	run(w, 0.2)
+	var arm0 := ally.armor
+	var ms0 := ally.move_speed
+	var my_arm0 := r.armor
+	w.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "void_rush"})
+	run(w, 0.4)
+	near(e.status_resist, -0.5, 0.001, "enemies: -50% status resistance at level 4")
+	near(e.damage_out_pct, -0.25, 0.001, "and deal 25% less damage")
+	near(ally.armor - arm0, 13.0, 0.01, "allies: +13 armor")
+	near(ally.move_speed / ms0, 1.13, 0.005, "and 13% faster")
+	near(r.armor - my_arm0, 13.0, 0.01, "Roydo too")
+	check(out.get_modifier("void_rush").is_empty(), "not beyond 650")
+	near(float(e.get_modifier("void_rush").get("dur", 0.0)), 7.0, 0.01, "7 seconds")
+	# lower status resistance: a 1 s stun lasts 1.5 s
+	w.status.apply(e, r.id, r.team, {"id": "stunned", "stun": true, "dur": 1.0})
+	near(float(e.get_modifier("stunned").dur), 1.5, 0.001, "a 1 s stun lasts 1.5 s on them")
+	# less damage dealt, by attacks and by spells
+	e.def["can_attack"] = true
+	var dummy := _dummy(w, "ezee", C.DAWN, Vector2(-1400, -4000))
+	var snap := w.combat.attack_snapshot(e, "")
+	snap.dmg_min = 100.0
+	snap.dmg_max = 100.0
+	snap.bonus = 0.0
+	var hp0 := dummy.hp
+	w.combat.land_attack(snap, dummy)
+	near(hp0 - dummy.hp, 75.0 * C.armor_multiplier(dummy.armor), 0.5, "an attack deals 25% less")
+	var hp1 := dummy.hp
+	w.combat.deal_damage(e.id, e.team, true, dummy, 100.0, C.DamageType.PURE, false, "test")
+	near(hp1 - dummy.hp, 75.0, 0.5, "a spell too")
+	run(w, 7.0)
+	check(e.get_modifier("void_rush").is_empty() and is_equal_approx(e.damage_out_pct, 0.0), "it wears off")
+
+func test_roydo_dark_matter_skin() -> void:
+	var w := empty_world()
+	var r := _hero16(w, "roydo", Vector2(-2000, -4000))
+	var near_e := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	var far_e := _dummy(w, "ezee", C.DUSK, Vector2(-1250, -4000))
+	r.def = r.def.duplicate()
+	r.def.hp = 1e7
+	r.refresh_stats()
+	r.hp = r.max_hp
+	run(w, 0.1)
+	w.events.clear()
+	var procs := 0
+	var n := 400
+	for i in n:
+		var before := near_e.hp
+		var taken := w.combat.deal_damage(near_e.id, near_e.team, true, r, 200.0, C.DamageType.PURE, false, "test")
+		if near_e.hp < before:
+			procs += 1
+			near(before - near_e.hp, taken * 0.34 * (1.0 - near_e.magic_resist), 0.5, "returns 34% of the damage taken")
+	check(absf(float(procs) / n - 0.21) < 0.05, "procs about 21%% of the time (%.3f)" % (float(procs) / n))
+	check(far_e.hp == far_e.max_hp, "only within 650")
+	var sl := near_e.get_modifier("dark_matter_slow")
+	check(not sl.is_empty() and is_equal_approx(float(sl.slow), 0.8), "slows 80%")
+	near(float(sl.stats.attack_speed_pct), -0.8, 0.001, "and attack speed 80%")
+	near(float(sl.dur), 0.3, 0.001, "for 0.3 s")
+	# allies' damage never triggers it
+	var hp_e := near_e.hp
+	for i in 50:
+		w.combat.deal_damage(r.id, r.team, true, r, 50.0, C.DamageType.PURE, false, "test")
+	check(near_e.hp == hp_e, "self or ally damage is not returned")
+
+func test_roydo_anomaly() -> void:
+	var w := empty_world()
+	var r := _hero16(w, "roydo", Vector2(-2000, -4000))
+	run(w, 0.1)
+	check(not r.is_ranged() and is_equal_approx(r.attack_range, 150.0), "melee before")
+	near(r.bat, 1.7, 0.001, "base attack time 1.7")
+	var dmg0 := r.bonus_damage
+	var interval0 := r.attack_interval()
+	w.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "anomaly"})
+	run(w, 0.5)
+	check(r.is_ranged(), "Anomaly: ranged")
+	near(r.attack_range, 650.0, 0.01, "range 650")
+	near(r.bat, 1.45, 0.001, "base attack time 1.7 - 0.25")
+	near(r.bonus_damage - dmg0, 180.0, 0.01, "+180 damage at level 3")
+	check(r.attack_interval() < interval0 * 0.86, "attacks come faster")
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1500, -4000))
+	w.events.clear()
+	r.auto_attack = true
+	w.command(r.id, {"type": O.ATTACK_UNIT, "target": e.id})
+	run(w, 1.5)
+	check(not _events_of(w, "projectile").filter(func(x): return int(x.src) == r.id).is_empty(), "his attacks fly as projectiles")
+	check(e.hp < e.max_hp, "and hit from 500 away")
+	run(w, 29.0)
+	check(not r.is_ranged() and is_equal_approx(r.attack_range, 150.0) and is_equal_approx(r.bat, 1.7), "back to melee after 30 s")
+
+## A spot with open ground of at least `clear` along +x before something the bullet bounces off.
+func _bounce_spot(w: SimWorld, what: String) -> Vector2:
+	var m := w.map
+	if what == "tree":
+		for t in m.trees:
+			if not t.alive:
+				continue
+			var ok := true
+			for k in range(3, 9):
+				var q: Vector2 = (t.pos as Vector2) - Vector2(64.0 * k, 0)
+				if not m.is_walkable(q) or m.tree_at(q, 90.0) >= 0:
+					ok = false
+					break
+			if ok:
+				return t.pos
+	else:
+		for cy in range(40, 216, 3):
+			for cx in range(40, 216, 3):
+				var p := m.cell_center(cx, cy)
+				if m.is_walkable(p) or m.tree_at(p, 150.0) >= 0 or not m.is_cliff_cell(cx, cy):
+					continue
+				var ok2 := true
+				for k in range(1, 9):
+					var q2 := p - Vector2(64.0 * k, 0)
+					if not m.is_walkable(q2) or m.tree_at(q2, 150.0) >= 0:
+						ok2 = false
+						break
+				if ok2 and m.is_walkable_cell(Vector2i(cx - 1, cy)):
+					return p
+	return Vector2.INF
+
+func test_blau_bounce_shot_ricochets() -> void:
+	for what in ["tree", "wall"]:
+		var w := empty_world()
+		var spot := _bounce_spot(w, what)
+		check(spot != Vector2.INF, "found a %s to shoot at" % what)
+		if spot == Vector2.INF:
+			continue
+		var b := _hero16(w, "blau", spot - Vector2(420, 0))
+		run(w, 0.1)
+		w.events.clear()
+		w.command(b.id, {"type": O.CAST_POINT, "ability": "bounce_shot", "point": spot})
+		run(w, 0.8)
+		var bounces := _events_of(w, "bounce_shot_bounce")
+		check(not bounces.is_empty() and String(bounces[0].what) == what, "the bullet bounces off the %s (%s)" % [what, str(bounces.map(func(x): return x.what))])
+		if not bounces.is_empty():
+			check((bounces[0].pos as Vector2).distance_to(spot) < 100.0, "at the %s it was fired at" % what)
+		if what == "wall" and not bounces.is_empty() and bounces[0].has("dir"):
+			check((bounces[0].dir as Vector2).x < -0.2, "and comes back off the wall (%s)" % str(bounces[0].dir))
+	# enemies are passed through, an allied unit is bounced off
+	var w2 := empty_world()
+	var b2 := _hero16(w2, "blau", Vector2(5200, -5700))
+	var e1 := _dummy(w2, "dusk_melee", C.DUSK, Vector2(5500, -5700))
+	var e2 := _dummy(w2, "dusk_melee", C.DUSK, Vector2(5700, -5700))
+	var ally := _dummy(w2, "dawn_melee", C.DAWN, Vector2(5950, -5700))
+	var behind := _dummy(w2, "dusk_melee", C.DUSK, Vector2(6200, -5700))
+	run(w2, 0.1)
+	w2.events.clear()
+	w2.command(b2.id, {"type": O.CAST_POINT, "ability": "bounce_shot", "point": Vector2(5900, -5700)})
+	run(w2, 1.0)
+	check(e1.hp < e1.max_hp and e2.hp < e2.max_hp, "both enemies in a line are hit")
+	var bb := _events_of(w2, "bounce_shot_bounce")
+	check(not bb.is_empty() and String(bb[0].what) == "unit", "the allied creep makes it bounce")
+	check(behind.hp == behind.max_hp, "the enemy behind the ally is not reached")
+	near(e1.max_hp - e1.hp, (190.0 * 2.0) * (1.0 + b2.magic_amp + b2.spell_amp) * (1.0 - e1.magic_resist), 2.0, "the first enemy is hit twice (out and back), never more")
+
+func test_blau_bounce_shot_limits() -> void:
+	# a corridor of boulders: the bullet bounces between them, through an enemy, until its bounces run out
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var b := _hero16(w, "blau", o - Vector2(300, 0))
+	var k3 := w.abilities.kits3
+	for dx in [0.0, 300.0]:
+		var bd := {"id": 900 + int(dx), "pos": o + Vector2(dx, 0), "vel": Vector2.ZERO, "r": SimKits3.BOULDER_R,
+			"decel": 0.0, "rest_at": 0.0, "until": w.time + 30.0, "team": C.DAWN, "src": b.id, "cast": 0,
+			"resting": false, "cells": [], "damage": 0.0, "push": 0.0, "spin": 0.0}
+		k3.boulders.append(bd)
+		k3._rest(bd)
+	var e := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(200, 0))
+	b.pos = o + Vector2(100, 0)
+	run(w, 0.1)
+	w.events.clear()
+	w.command(b.id, {"type": O.CAST_POINT, "ability": "bounce_shot", "point": o + Vector2(800, 0)})
+	run(w, 2.0)
+	var bounces := _events_of(w, "bounce_shot_bounce")
+	var real := bounces.filter(func(x): return not bool(x.last))
+	check(real.size() == 9, "9 bounces at level 4 (%d)" % real.size())
+	check(not bounces.is_empty() and String(bounces[0].what) == "boulder", "off the boulders")
+	var hits := _events_of(w, "bounce_shot_hit").filter(func(x): return int(x.u) == e.id)
+	check(hits.size() == 2, "an enemy is damaged at most twice (%d)" % hits.size())
+	for bd in k3.boulders:
+		k3._unrest(bd)                         # the tests share one map: give the cells back
+
+func test_blau_boulders() -> void:
+	var w := empty_world()
+	var b := _hero16(w, "blau", Vector2(5600, -5700))
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(5850, -5700))
+	run(w, 0.1)
+	var e_pos := e.pos
+	w.events.clear()
+	w.command(b.id, {"type": O.CAST_POINT, "ability": "summon_boulders", "point": Vector2(6600, -5700)})
+	run(w, 0.4)
+	var k3 := w.abilities.kits3
+	check(k3.boulders.size() == 6, "6 boulders at level 4 (%d)" % k3.boulders.size())
+	run(w, 2.2)
+	check(k3.boulders.all(func(x): return bool(x.resting)), "they roll for at most 2 s, then rest")
+	var dealt := _dmg_events(w.events, e.id, "summon_boulders")
+	near(dealt, 140.0 * (1.0 + b.magic_amp + b.spell_amp) * (1.0 - e.magic_resist), 2.0, "an enemy is hurt once, whichever boulders hit it")
+	check(e.pos.distance_to(e_pos) > 120.0, "and knocked back (%d)" % int(e.pos.distance_to(e_pos)))
+	# resting boulders block walking, phased units too, and paths
+	var bd: Dictionary = k3.boulders[0]
+	var cell := w.map.world_to_cell(bd.pos)
+	check(not w.map.is_walkable_cell(cell) and w.map.rock_at(cell) > 0, "a resting boulder's cell is blocked")
+	var walker := _dummy(w, "dawn_melee", C.DAWN, (bd.pos as Vector2) - Vector2(220, 0))
+	walker.add_modifier({"id": "phase_test", "source": -1, "expires": INF, "phased": true})
+	walker.refresh_stats()
+	walker.order = O.NONE
+	w.orders.issue(walker, {"type": O.MOVE, "point": (bd.pos as Vector2) + Vector2(220, 0)}, false)
+	var through := false
+	for i in 90:
+		w.step()
+		if walker.pos.distance_to(bd.pos) < SimKits3.BOULDER_R + walker.hull - 6.0:
+			through = true
+	check(not through, "a phased unit cannot walk through a boulder")
+	run(w, 8.0)
+	check(k3.boulders.is_empty(), "after 10 s they are gone")
+	check(w.map.rock_at(cell) == 0 and w.map.is_walkable_cell(cell), "and the ground is open again")
+
+func test_blau_lay_trap() -> void:
+	var w := empty_world()
+	var b := _hero16(w, "blau", Vector2(5600, -5700))
+	b.facing = 0.0
+	run(w, 0.1)
+	var start := b.pos
+	w.command(b.id, {"type": O.CAST_NO_TARGET, "ability": "lay_trap"})
+	run(w, 0.8)
+	check(b.pos.distance_to(start - Vector2(400, 0)) < 40.0, "Blau leaps 400 back (%s)" % str(b.pos))
+	var traps := w.effects.filter(func(x): return String(x.kind) == "blau_trap")
+	check(traps.size() == 1 and (traps[0].pos as Vector2).distance_to(start) < 5.0, "the trap is where he stood")
+	if traps.is_empty():
+		return
+	check(not w.abilities.kits3.trap_visible(C.DUSK, traps[0]), "armed, it is hidden from enemies")
+	var e := w.spawn("dusk_melee", C.DUSK, start + Vector2(300, 0))
+	var e2 := w.spawn("dusk_melee", C.DUSK, start + Vector2(400, 60))
+	e.def = e.def.duplicate()
+	e.def["can_attack"] = false
+	e2.def = e2.def.duplicate()
+	e2.def["can_attack"] = false
+	w.orders.issue(e, {"type": O.MOVE, "point": start - Vector2(300, 0)}, false)
+	w.orders.issue(e2, {"type": O.MOVE, "point": start - Vector2(300, 60)}, false)
+	run(w, 1.5)
+	var m := e.get_modifier("ensnared")
+	check(not m.is_empty() and bool(m.root), "the first enemy on it is caught")
+	if not m.is_empty():
+		near(float(m.dur), 2.4 * (1.0 - e.status_resist), 0.01, "and rooted 2.4 s at level 4")
+	check(e2.get_modifier("ensnared").is_empty(), "only one unit")
+	check(w.effects.filter(func(x): return String(x.kind) == "blau_trap").is_empty(), "the trap is used up")
+
+func test_blau_turret() -> void:
+	var w := empty_world()
+	var b := _hero16(w, "blau", Vector2(-2000, -4000))
+	b.auto_attack = false
+	run(w, 0.1)
+	w.command(b.id, {"type": O.CAST_POINT, "ability": "place_turret", "point": Vector2(-1800, -4000)})
+	run(w, 0.8)
+	var turrets := w.units.filter(func(u): return u.kind == K.SUMMON and u.alive)
+	check(turrets.size() == 1, "a turret is built")
+	if turrets.is_empty():
+		return
+	var t: SimUnit = turrets[0]
+	near(t.max_hp, 2100.0, 0.5, "2100 health at level 3")
+	check(t.owner_id == b.id, "it is Blau's")
+	t.hp = 1000.0
+	run(w, 2.0)
+	near(t.hp, 1000.0, 0.01, "no regeneration")
+	var e := _dummy(w, "ezee", C.DUSK, Vector2(-1200, -4000))
+	var far := _dummy(w, "ezee", C.DUSK, Vector2(-1000, -4000))
+	w.events.clear()
+	var hp0 := e.hp
+	run(w, 6.05)
+	var shots := _events_of(w, "projectile").filter(func(x): return int(x.src) == t.id)
+	check(shots.size() >= 4 and shots.size() <= 5, "a shot every 1.5 s (%d in 6 s)" % shots.size())
+	check(e.hp < hp0, "it shoots enemies within 650")
+	check(far.hp == far.max_hp, "not beyond 650")
+	var per := (hp0 - e.hp) / maxf(1.0, float(_events_of(w, "projectile_end").filter(func(x): return int(x.get("target", -1)) == e.id).size()))
+	var avg := ((b.dmg_min + b.dmg_max) * 0.5 + b.bonus_damage) * 0.35 * C.armor_multiplier(e.armor)
+	near(per, avg, avg * 0.15, "each shot: 35% of Blau's attack")
+	# his attack effects ride on its shots: lifesteal heals Blau
+	_give(w, b, "lifesteal")
+	b.hp = b.max_hp * 0.5
+	var bh := b.hp
+	run(w, 3.1)
+	check(b.hp > bh + 1.0, "Blau's lifesteal works through the turret")
+	# credited to Blau; it lasts 35 s
+	run(w, 35.0)
+	check(not t.alive, "the turret is gone after 35 s")
+
+func test_blau_pilot_turret() -> void:
+	var w := empty_world()
+	var b := _hero16(w, "blau", Vector2(-2000, -4000))
+	b.auto_attack = false
+	run(w, 0.1)
+	check(not ("pilot_turret" in b.abilities), "no Pilot Turret without the Upgrade Staff")
+	b.scepter = true
+	run(w, 0.1)
+	check("pilot_turret" in b.abilities and b.ability_level_of("pilot_turret") == 3, "the Upgrade Staff adds it at Place Turret's level")
+	check(not w.abilities.can_learn(b, "pilot_turret"), "it takes no points")
+	w.command(b.id, {"type": O.CAST_POINT, "ability": "place_turret", "point": Vector2(-1800, -4000)})
+	run(w, 0.8)
+	var t: SimUnit = w.units.filter(func(u): return u.kind == K.SUMMON and u.alive)[0]
+	var hp0 := t.hp
+	b.mana = b.max_mana
+	w.command(b.id, {"type": O.CAST_UNIT, "ability": "pilot_turret", "target": t.id})
+	run(w, 1.0)
+	check(w.abilities.kits3.is_piloting(b), "Blau climbs in")
+	check(b.pos.distance_to(t.pos) < 1.0 and b.is_invulnerable(), "he is inside and cannot be hurt")
+	near(t.hp - hp0, 900.0, 1.0, "the turret gains 900 health at level 3")
+	near(w.abilities.cooldown_left(b, "pilot_turret"), 5.0 - 0.9, 0.2, "5 s cooldown to get in")
+	check(w.abilities.is_instant(b, "pilot_turret", -1), "while inside, the button gets him out at once")
+	w.command(b.id, {"type": O.MOVE, "point": Vector2(-2400, -4000)})
+	run(w, 0.2)
+	check(not w.abilities.kits3.is_piloting(b) and not b.is_invulnerable(), "a move order gets him out")
+	near(t.hp, hp0, 1.0, "the extra health goes with him")
+	# the turret dies with him inside: he is thrown out unharmed
+	b.ability_ready["pilot_turret"] = C.LONG_AGO
+	w.command(b.id, {"type": O.CAST_UNIT, "ability": "pilot_turret", "target": t.id})
+	run(w, 1.0)
+	check(w.abilities.kits3.is_piloting(b), "back in")
+	w.combat.kill(t, null)
+	run(w, 0.2)
+	check(not w.abilities.kits3.is_piloting(b) and b.alive, "the turret's death puts him out")
+	b.scepter = false
+	run(w, 0.1)
+	check(not ("pilot_turret" in b.abilities), "without the staff the skill goes away")
+
+# ---- Bots playing Roydo and Blau (run 2026-10-16) -------------------------------------------------------------------
+
+func _bot16(w: SimWorld, h: SimUnit, foes: Array) -> SimBot:
+	var b := SimBot.new(w, h.id, "mid", "Bot Test")
+	b._foes.clear()
+	for f in foes:
+		b._foes.append(f)
+	return b
+
+## Steps the world, letting `b` think its kit every 0.2 s through `fn` (spells, escape or tick).
+func _think16(w: SimWorld, b: SimBot, secs: float, fn: Callable) -> void:
+	var steps := int(round(secs * C.TICK_RATE))
+	for i in steps:
+		if i % 6 == 0 and w.time >= b._cast_deadline:
+			fn.call()
+		w.step()
+
+func test_bot_blau_banks_bounce_shot() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "blau", o)
+	var e := _dummy(w, "ezee", C.DUSK, o + Vector2(620, 0))
+	# a wall of his own creeps on the straight line: only a ricochet off the boulder above can reach the enemy
+	for k in 5:
+		_dummy(w, "dawn_melee", C.DAWN, o + Vector2(310, -110 + 55 * k))
+	var k3 := w.abilities.kits3
+	var bd := {"id": 77, "pos": o + Vector2(310, 330), "vel": Vector2.ZERO, "r": SimKits3.BOULDER_R, "decel": 0.0,
+		"rest_at": 0.0, "until": w.time + 30.0, "team": C.DAWN, "src": h.id, "cast": 0, "resting": false, "cells": [],
+		"damage": 0.0, "push": 0.0, "spin": 0.0}
+	k3.boulders.append(bd)
+	k3._rest(bd)
+	h.ability_level["place_turret"] = 0             # the shot alone (no turret, no boulders first)
+	h.ability_level["summon_boulders"] = 0
+	run(w, 0.1)
+	var b := _bot16(w, h, [e])
+	var aim := SimBot16.best_bounce(b, h, e, false)
+	check(not aim.is_empty() and float(aim.score) >= 3.0, "the bot finds a path to the enemy (%s)" % str(aim))
+	w.events.clear()
+	SimBot16.spells(b, h, e)
+	run(w, 1.2)
+	var hits := _events_of(w, "bounce_shot_hit").filter(func(x): return int(x.u) == e.id)
+	var bounces := _events_of(w, "bounce_shot_bounce")
+	check(not hits.is_empty(), "its Bounce Shot reaches the enemy behind the creeps")
+	check(not bounces.is_empty(), "by a ricochet (first off the %s)" % (String(bounces[0].what) if not bounces.is_empty() else "-"))
+	for x in k3.boulders:
+		k3._unrest(x)
+
+func test_bot_blau_trap_escape() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "blau", o)
+	h.hp = h.max_hp * 0.3
+	h.facing = 0.0                                # running away (east), the chaser behind him (west)
+	var e := _dummy(w, "ezee", C.DUSK, o - Vector2(330, 0))
+	run(w, 0.1)
+	var b := _bot16(w, h, [e])
+	w.events.clear()
+	_think16(w, b, 1.6, func(): SimBot16.escape(b, h, h.pos.distance_to(e.pos)))
+	var traps := w.effects.filter(func(x): return String(x.kind) == "blau_trap")
+	var leaps := _events_of(w, "lay_trap")
+	check(traps.size() == 1 and leaps.size() == 1, "the bot lays its trap")
+	if leaps.is_empty():
+		return
+	var land: Vector2 = leaps[0].to
+	check(land.distance_to(e.pos) > o.distance_to(e.pos) + 300.0, "it turned and leapt away from the chaser (%d)" % int(land.distance_to(e.pos)))
+	var tp: Vector2 = leaps[0].pos
+	check(tp.distance_to(e.pos) < tp.distance_to(land), "the trap is left in the chaser's way (trap %s, landing %s, chaser %s)" % [str(tp), str(land), str(e.pos)])
+
+func test_bot_blau_turret_and_pilot() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "blau", o)
+	h.scepter = true
+	var e := _dummy(w, "ezee", C.DUSK, o + Vector2(700, 60))
+	run(w, 0.2)
+	var b := _bot16(w, h, [e])
+	_think16(w, b, 1.2, func(): SimBot16.spells(b, h, e))
+	var turrets := w.units.filter(func(u): return u.kind == K.SUMMON and u.alive and u.owner_id == h.id)
+	check(turrets.size() >= 1, "in a fight the bot builds a turret")
+	if turrets.is_empty():
+		return
+	check((turrets[0] as SimUnit).pos.distance_to(e.pos) <= 650.0 + e.hull, "within the turret's reach of the target")
+	h.hp = h.max_hp * 0.3
+	b.mode = "fight"
+	_think16(w, b, 2.0, func(): SimBot16.tick(b, h))
+	check(w.abilities.kits3.is_piloting(h), "hurt, it climbs into its turret")
+	(turrets[0] as SimUnit).hp = (turrets[0] as SimUnit).max_hp * 0.15
+	_think16(w, b, 0.5, func(): SimBot16.tick(b, h))
+	check(not w.abilities.kits3.is_piloting(h), "and gets out before it falls")
+
+func test_bot_roydo_rush_then_grip() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "roydo", o)
+	h.ability_level["anomaly"] = 0                  # one thing at a time
+	var e := _dummy(w, "ezee", C.DUSK, o + Vector2(480, 0))
+	run(w, 0.2)
+	var b := _bot16(w, h, [e])
+	w.events.clear()
+	_think16(w, b, 2.0, func(): SimBot16.spells(b, h, e))
+	var casts := _events_of(w, "cast").filter(func(x): return int(x.u) == h.id).map(func(x): return String(x.ability))
+	check(casts.size() >= 2 and casts[0] == "void_rush" and casts.has("grip_of_the_ruler"), "Void Rush, then the grip (%s)" % str(casts))
+	var stun := _events_of(w, "debuff").filter(func(x): return int(x.u) == e.id and String(x.id) == "stunned")
+	check(not stun.is_empty() and float(stun[0].dur) > 1.4, "the stun lasts longer on the weakened enemy (%s)" % (str(stun[0].dur) if not stun.is_empty() else "none"))
+
+## Regression (2026-10-16): in Anomaly Roydo attacks at range with no projectile speed of his own; the bot's last-hit
+## forecast divided by it and looped for ever, freezing every game his bot reached level 6 in a lane.
+func test_bot_roydo_anomaly_last_hit_forecast() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var h := _hero16(w, "roydo", o)
+	w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "anomaly"})
+	run(w, 0.5)
+	check(h.is_ranged() and h.projectile_speed() > 0.0, "Anomaly: ranged with the form's projectile speed")
+	var c := w.spawn("dusk_melee", C.DUSK, o + Vector2(500, 0))
+	c.hp = 40.0
+	var hitter := w.spawn("dawn_melee", C.DAWN, c.pos + Vector2(60, 0))
+	hitter.atk_target = c.id
+	var b := _bot16(w, h, [])
+	var foes: Array[SimUnit] = [c]
+	var allies: Array[SimUnit] = []
+	var t0 := Time.get_ticks_msec()
+	var pick := b._last_hit_target(h, foes, allies)
+	check(Time.get_ticks_msec() - t0 < 1000, "the forecast returns")
+	check(pick == c, "and picks the low creep in his 650 range (%s)" % str(pick))
+	check(is_finite(b._hp_when(c, INF)), "an infinite forecast time is capped")
+
+func test_bots_knock_down_enemy_turrets() -> void:
+	var w := empty_world()
+	var o := Vector2(5600, -5700)
+	var h := _hero16(w, "ezee", o)
+	var t := w.spawn("blau_turret", C.DUSK, o + Vector2(450, 0))
+	t.ward_expires = w.time + 30.0
+	run(w, 0.1)
+	var b := _bot16(w, h, [])
+	b.mode = "lane"
+	check(SimBot16.tick(b, h), "the bot takes it on")
+	check(h.order == O.ATTACK_UNIT and h.order_target == t.id, "it attacks the enemy turret")

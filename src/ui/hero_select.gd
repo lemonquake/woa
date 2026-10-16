@@ -25,6 +25,10 @@ const INFO := {
 		"story": "Tock built clocks for kings until he built one that ran backwards. Now he carries a few spare seconds in his pocket: he hands them to his friends, takes them from his enemies, and keeps one to step back in time when a fight goes wrong."},
 	"kragg": {"title": "the Magnet Knight", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
 		"story": "Lightning struck Kragg's shield on the day he swore to hold the bridge, and it never let go. Iron leaps to him, foes stumble toward him, and the more they fight him the harder they are pulled in."},
+	"roydo": {"title": "the Anomaly", "role": "Melee  ·  Intelligence  ·  Initiator, Disabler, Durable",
+		"story": "Roydo fell out of the night sky in a burning stone and stood up unhurt. He bends this world's gravity like clay: he throws his enemies where he wants them, turns their blows back on them, and when a fight goes their way he stops looking like a man at all."},
+	"blau": {"title": "the Master Tactician", "role": "Ranged  ·  Agility  ·  Carry, Pusher, Escape",
+		"story": "Blau never fights on ground he has not chosen. A rifle, a bag of snares, a few rolling stones and a turret he can build in seconds: by the time his enemies see the trap, every shot he fires is already bouncing toward them."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }
@@ -312,6 +316,9 @@ func _fill_right(id: String) -> void:
 	_right.add_child(_label("Abilities", 22, U.GOLD, "title"))
 	for aid in d.abilities:
 		_right.add_child(_ability_row(String(aid)))
+	# the innate skill (always learned, from level 1)
+	if String(d.get("innate", "")) != "":
+		_right.add_child(_ability_row(String(d.innate)))
 
 func _divider() -> Control:
 	var c := Control.new()

@@ -12,10 +12,12 @@ var w: SimWorld
 var hook_hits := {}                        # caster id -> [game time, caught unit id] of its last hook catch (bots learn aim)
 
 var kits2: SimKits2                         # Tock's and Kragg's kits (run 2026-10-15 b)
+var kits3: SimKits3                         # Roydo's and Blau's kits (run 2026-10-16)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
 	kits2 = SimKits2.new(world, self)
+	kits3 = SimKits3.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -23,7 +25,7 @@ func can_learn(u: SimUnit, aid: String) -> bool:
 	if u.ability_points <= 0 or not u.ability_level.has(aid):
 		return false
 	var a := SimData.ability(aid)
-	if String(a.get("behavior", "")) == "innate":
+	if String(a.get("behavior", "")) == "innate" or a.has("granted"):
 		return false
 	var lv := u.ability_level_of(aid)
 	if lv >= int(a.max_level):
@@ -169,6 +171,12 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		return "Ability on cooldown"
 	if u.mana < ability_mana(u, aid):
 		return "Not enough mana"
+	if kits3.handles(aid):
+		var ke := kits3.cast_error(u, aid, target, point, check_target)
+		if ke != "":
+			return ke
+		if aid == "pilot_turret" and kits3.is_piloting(u):
+			return ""
 	if a.behavior == "unit" and check_target:
 		var te := _target_error(u, a, target)
 		if te != "":
@@ -251,6 +259,8 @@ func is_instant(u: SimUnit, aid: String, slot: int) -> bool:
 	if aid == "" or aid == "tp":
 		return false
 	var a := SimData.ability(aid)
+	if aid == "pilot_turret" and kits3.is_piloting(u):
+		return true                              # Leave Turret: at once, no target
 	return String(a.get("behavior", "")) == "toggle" or bool(a.get("immediate", false))
 
 ## "none", "point" (ground / tree) or "unit".
@@ -308,6 +318,9 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	if String(a.behavior) == "toggle":
 		set_toggle(u, aid, not bool(u.toggles.get(aid, false)))
 		return
+	if aid == "pilot_turret" and kits3.is_piloting(u):
+		kits3.leave_turret(u)                    # getting out is free and has no cooldown
+		return
 	u.mana -= ability_mana(u, aid)
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
@@ -321,6 +334,9 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		_add_spirit(u)
 	if kits2.handles(aid):
 		kits2.cast(u, aid, lv, t, p)
+		return
+	if kits3.handles(aid):
+		kits3.cast(u, aid, lv, t, p)
 		return
 	match aid:
 		"fiery_javelin":
@@ -536,7 +552,10 @@ func update_effects() -> void:
 			"ice_pulse":
 				done = _update_ice_pulse(e)
 			_:
-				done = kits2.update_effect(e) if kits2.owns_effect(String(e.kind)) else false
+				if kits2.owns_effect(String(e.kind)):
+					done = kits2.update_effect(e)
+				elif kits3.owns_effect(String(e.kind)):
+					done = kits3.update_effect(e)
 		if done:
 			w.effects.remove_at(i)
 
@@ -693,11 +712,20 @@ func update_motion(u: SimUnit) -> void:
 		k.t += C.DT
 		var f := clampf(k.t / k.dur, 0.0, 1.0)
 		var np: Vector2 = (k.from as Vector2).lerp(k.to, f)
-		if w.map.is_walkable(np):
+		if k.get("air", false):
+			# thrown through the air (Grip of the Ruler): over trees and cliffs on an arc, landing on open ground
+			u.pos = np
+			k["z"] = sin(f * PI) * float(k.get("height", 200.0))
+			if f >= 1.0 and not w.map.is_walkable(u.pos):
+				var lc := w.map.nearest_walkable(w.map.world_to_cell(u.pos))
+				u.pos = w.map.cell_center(lc.x, lc.y)
+		elif w.map.is_walkable(np):
 			u.pos = np
 		if f >= 1.0:
 			u.knock = {}
 			u.path = PackedVector2Array()
+			if k.get("air", false):
+				w.events.append({"t": "push_land", "u": u.id, "speed": 600.0})
 		return
 	k.t += C.DT
 	var v: Vector2 = k.vel
@@ -1017,7 +1045,7 @@ func _update_hop(u: SimUnit) -> void:
 	var f := clampf(float(H.t) / maxf(0.05, float(H.dur)), 0.0, 1.0)
 	var e := 1.0 - (1.0 - f) * (1.0 - f)
 	u.pos = (H.from as Vector2).lerp(H.to, e)
-	H.z = sin(f * PI) * 70.0
+	H.z = sin(f * PI) * float(H.get("height", 70.0))
 	if f >= 1.0:
 		u.hop = {}
 		w.events.append({"t": "back_leap_land", "u": u.id, "pos": u.pos})

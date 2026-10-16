@@ -1,0 +1,82 @@
+== roydo (24 clips, 67 bones)
+  death                     2.40 s  largest joint turn in one frame  29.1 deg (calf_r)
+  getup                     1.53 s  largest joint turn in one frame  53.2 deg (lowerarm_r)   <-- pops 1, flips 0
+  hit_heavy                 0.33 s  largest joint turn in one frame  15.8 deg (pinky_01_l)
+  knockback                 0.83 s  largest joint turn in one frame  55.0 deg (upperarm_r)   <-- pops 2, flips 0
+  roydo_cast_enter          0.53 s  largest joint turn in one frame  17.1 deg (thumb_03_l)
+  roydo_cast_exit           0.43 s  largest joint turn in one frame  21.3 deg (thumb_03_l)
+  roydo_cast_hold           2.07 s  largest joint turn in one frame   1.0 deg (lowerarm_l)
+  roydo_cast_shoot          0.50 s  largest joint turn in one frame  17.8 deg (pinky_01_l)
+  roydo_cast_slam           0.83 s  largest joint turn in one frame  32.9 deg (upperarm_l)
+  roydo_cast_throw          1.33 s  largest joint turn in one frame  53.0 deg (lowerarm_r)   <-- pops 1, flips 0
+  roydo_hit_head            0.43 s  largest joint turn in one frame  11.3 deg (pinky_01_l)
+  roydo_idle                2.50 s  largest joint turn in one frame   0.7 deg (calf_r)
+  roydo_idle_fold           2.50 s  largest joint turn in one frame   3.7 deg (foot_l)
+  roydo_idle_talk           2.93 s  largest joint turn in one frame  11.4 deg (middle_03_l)
+  roydo_jump_land           1.27 s  largest joint turn in one frame  38.8 deg (foot_r)
+  roydo_jump_start          0.97 s  largest joint turn in one frame  77.0 deg (thigh_l)   <-- pops 4, flips 0
+  roydo_punch_cross         1.00 s  largest joint turn in one frame  64.2 deg (lowerarm_r)   <-- pops 3, flips 0
+  roydo_punch_hook          0.47 s  largest joint turn in one frame  67.5 deg (upperarm_l)   <-- pops 9, flips 0
+  roydo_punch_jab           0.87 s  largest joint turn in one frame  63.6 deg (lowerarm_l)   <-- pops 2, flips 0
+  roydo_roll                1.47 s  largest joint turn in one frame  73.8 deg (calf_l)   <-- pops 7, flips 0
+  roydo_run                 0.93 s  largest joint turn in one frame  60.9 deg (calf_l)   <-- pops 2, flips 0
+  roydo_sprint              0.67 s  largest joint turn in one frame  67.9 deg (calf_r)   <-- pops 5, flips 0
+  roydo_victory             1.00 s  largest joint turn in one frame  10.6 deg (calf_l)
+  roydo_walk                1.33 s  largest joint turn in one frame  19.1 deg (calf_r)
+== anomaly (19 clips, 67 bones)
+  anomaly_blast             0.50 s  largest joint turn in one frame  17.8 deg (pinky_01_l)
+  anomaly_blast_throw       1.33 s  largest joint turn in one frame  53.0 deg (lowerarm_r)   <-- pops 1, flips 0
+  anomaly_cast_shoot        0.50 s  largest joint turn in one frame  17.8 deg (pinky_01_l)
+  anomaly_cast_slam         0.83 s  largest joint turn in one frame  32.9 deg (upperarm_l)
+  anomaly_hit_head          0.43 s  largest joint turn in one frame  11.3 deg (pinky_01_l)
+  anomaly_idle              1.33 s  largest joint turn in one frame  10.5 deg (ring_03_l)
+  anomaly_idle_talk         2.93 s  largest joint turn in one frame  11.4 deg (middle_03_l)
+  anomaly_idle_tall         2.50 s  largest joint turn in one frame   0.7 deg (calf_r)
+  anomaly_punch_hook        0.47 s  largest joint turn in one frame  67.5 deg (upperarm_l)   <-- pops 9, flips 0
+  anomaly_roar              1.07 s  largest joint turn in one frame  24.2 deg (Head)
+  anomaly_roll              1.47 s  largest joint turn in one frame  73.8 deg (calf_l)   <-- pops 7, flips 0
+  anomaly_run               0.67 s  largest joint turn in one frame  67.9 deg (calf_r)   <-- pops 5, flips 0
+  anomaly_smash             1.80 s  largest joint turn in one frame  43.4 deg (upperarm_r)
+  anomaly_victory           1.00 s  largest joint turn in one frame  10.6 deg (calf_l)
+  anomaly_walk              1.33 s  largest joint turn in one frame  22.3 deg (calf_r)
+  death                     2.40 s  largest joint turn in one frame  29.1 deg (calf_r)
+  getup                     1.53 s  largest joint turn in one frame  53.2 deg (lowerarm_r)   <-- pops 1, flips 0
+  hit_heavy                 0.33 s  largest joint turn in one frame  15.8 deg (pinky_01_l)
+  knockback                 0.83 s  largest joint turn in one frame  55.0 deg (upperarm_r)   <-- pops 2, flips 0
+== blau (26 clips, 70 bones)
+  blau_aim                  0.17 s  largest joint turn in one frame   0.1 deg (thumb_01_l)
+  blau_aim_down             0.17 s  largest joint turn in one frame   0.0 deg (root)
+  blau_aim_up               0.17 s  largest joint turn in one frame   0.1 deg (index_01_l)
+  blau_cast_shoot           0.50 s  largest joint turn in one frame  17.8 deg (pinky_01_l)
+  blau_cast_throw           1.33 s  largest joint turn in one frame  53.0 deg (lowerarm_r)   <-- pops 1, flips 0
+  blau_drive                1.67 s  largest joint turn in one frame   0.3 deg (hand_l)
+  blau_hit_head             0.43 s  largest joint turn in one frame  11.3 deg (pinky_01_l)
+  blau_idle                 1.67 s  largest joint turn in one frame   0.6 deg (lowerarm_r)
+  blau_idle_fold            2.50 s  largest joint turn in one frame   3.7 deg (foot_l)
+  blau_idle_plain           2.50 s  largest joint turn in one frame   0.7 deg (calf_r)
+  blau_idle_talk            2.93 s  largest joint turn in one frame  11.4 deg (middle_03_l)
+  blau_interact             2.00 s  largest joint turn in one frame  10.2 deg (lowerarm_l)
+  blau_jump_air             2.00 s  largest joint turn in one frame   1.0 deg (calf_l)
+  blau_jump_land            1.27 s  largest joint turn in one frame  38.8 deg (foot_r)
+  blau_jump_start           0.97 s  largest joint turn in one frame  77.0 deg (thigh_l)   <-- pops 4, flips 0
+  blau_kneel_fix            5.20 s  largest joint turn in one frame  18.2 deg (foot_r)
+  blau_reload               1.67 s  largest joint turn in one frame  16.7 deg (upperarm_l)
+  blau_roll                 1.47 s  largest joint turn in one frame  73.8 deg (calf_l)   <-- pops 7, flips 0
+  blau_run_rifle            0.93 s  largest joint turn in one frame  62.2 deg (hand_l)   <-- pops 4, flips 0
+  blau_shoot                0.63 s  largest joint turn in one frame  24.3 deg (lowerarm_r)
+  blau_sprint               0.67 s  largest joint turn in one frame  67.9 deg (calf_r)   <-- pops 5, flips 0
+  blau_victory              1.00 s  largest joint turn in one frame  10.6 deg (calf_l)
+  death                     2.40 s  largest joint turn in one frame  29.1 deg (calf_r)
+  getup                     1.53 s  largest joint turn in one frame  53.2 deg (lowerarm_r)   <-- pops 1, flips 0
+  hit_heavy                 0.33 s  largest joint turn in one frame  15.8 deg (pinky_01_l)
+  knockback                 0.83 s  largest joint turn in one frame  55.0 deg (upperarm_r)   <-- pops 2, flips 0
+== blau_turret (7 clips, 28 bones)
+  death                     0.47 s  largest joint turn in one frame  40.0 deg (Back_Leg1.L)
+  turret_attack             0.33 s  largest joint turn in one frame  41.8 deg (Back_Leg3.R)
+  turret_charge             0.33 s  largest joint turn in one frame   8.3 deg (Front_Leg3.L)
+  turret_hit                0.23 s  largest joint turn in one frame  41.4 deg (Front_Leg1.R)
+  turret_idle               2.67 s  largest joint turn in one frame   0.4 deg (Back_Leg3.R)
+  turret_look               2.67 s  largest joint turn in one frame  18.9 deg (Front_Leg1.L)
+  turret_walk               1.00 s  largest joint turn in one frame  10.6 deg (Back_Leg3.R)
+
+TOTAL pops (>45 deg / frame) 85, flips (>90) 0, frames with an elbow or knee bent backwards 0

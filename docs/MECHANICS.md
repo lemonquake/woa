@@ -442,7 +442,17 @@ attack point 0.6, projectile 1000, speed 290. Owner's numbers below; mana, cast 
 | Wide Stone | Chasm Stone | Relic | Sacred Relic |
 | War Axe | Reaver | Troll Ring | Ring of Tarrasque |
 | Feather | Eaglesong | Iron Helm | Helm of Iron Will |
-| Speed Ribbon | Wind Lace | | |
+| Speed Ribbon | Wind Lace | Scarf | Shawl |
+| Spell Cloak | Cloak | Fade Cape | Glimmer Cape |
+
+### Magic defence items (run 2026-10-15 g; Dota 7.41d items.txt)
+
+* **Scarf** (Shawl, 450): +10% magic resistance. **Spell Cloak** (Cloak, 900): +18% magic resistance. Magic
+  resistance from items stacks multiplicatively with the hero's own.
+* **Fade Cape** (Glimmer Cape, 2150 = Sneak Charm 900 + Scarf 450 + recipe 800): +20% magic resistance. Use (15 s,
+  125 mana) on an ally or itself within 600: after 0.5 s it is invisible for 5 s and moves 20% faster; at once it gets a
+  barrier that takes the next 375 magic damage (physical and pure go through) for 5 s. Attacking or casting ends the
+  invisibility, not the barrier. Turning invisible dodges projectiles in flight unless the enemy has true sight there.
 
 ### Cooldowns, spell area, cast range (run 2026-10-15 b)
 
@@ -487,9 +497,69 @@ Every number below is *chosen* (no Dota hero is copied); the owner may tune them
   cuts his other cooldowns by 1/1.5/2/2.5 s), Stop Time (R, 400 area: enemies stunned and their cooldowns frozen for
   2.5/3/3.5 s, through Spell Shield; 110/95/80 s).
 * **Kragg** (melee strength, Lightning; Str 25 +3.1, Agi 14 +1.6, Int 17 +1.8, damage 31-37, armor 2, speed 300):
-  Charges on enemies (one counter per unit, up to 5, 10 s). Iron Grip (Q, enemy 650: both slide to meet halfway in
-  0.3 s, 80-200 magic, stun 0.8-1.4 s, +2 Charges; 14-11 s), Repel (W, 375: 60-180 magic, a physics push 25% stronger
-  per Charge, 30% slow 2 s, crashes 40-130 and 0.8 s stun, +1 Charge; 13-10 s), Magnetize (E, passive: attacks add a
-  Charge; each Charge +3/4/5/6% damage from his spells), Overload (D, 800: 45/65/85/105 magic per Charge, Charges used,
-  heals 35%; 16-10 s), Magnet Field (R, 6 s: enemies within 700 dragged toward him at 60/80/100 + 15 per Charge, +1
-  Charge a second; at the end 100/175/250 and a 1/1.5/2 s stun within 300; 100/90/80 s).
+  four skills and an innate (owner's rework, run 2026-10-15 g). Charges on enemies (one counter per unit, up to 4,
+  8 s). **Magnetize** (innate: learned at level 1, no point, no slot; shown in the bottom panel's small slot, in the
+  talent button's tooltip and at the head of the talent tree): his attacks add a Charge; each Charge makes the enemy
+  take 0.10% + 0.05% per hero level more damage from his spells (level 1: 0.15%, level 30: 1.6%, so 6.4% at 4
+  Charges); Break stops it. Iron Grip (Q, enemy 650: both slide to meet halfway in 0.3 s, 80-200 magic, stun
+  0.8-1.4 s, +2 Charges; 14-11 s), Repel (W, 375: 60-180 magic, a physics push 25% stronger per Charge, 30% slow 2 s,
+  crashes 40-130 and 0.8 s stun, +1 Charge; 13-10 s), **Overload** (E, passive: every 6th / 5th / 4th / 3rd attack he
+  lands on an enemy unit (not buildings or wards) bursts electric charge round him: enemies within 200 take
+  60/75/90/105 magic damage of the Lightning element (raised by their Charges) and are slowed 80% for 0.8 s (status
+  resistance shortens it); the count shows in his buff bar; Break stops it), Magnet Field (R, 6 s: enemies within
+  700 dragged toward him at 60/80/100 + 15 per Charge, +1 Charge a second; at the end 100/175/250 and a 1/1.5/2 s
+  stun within 300; 100/90/80 s). Talent "+40 Overload damage" replaces "+25 Overload damage per Charge"; "+2 max
+  Charges" now makes 6. Interpretation of "0.10% (+0.05 per hero level)": the per-level part is multiplied by his
+  current level (say if you meant it to start at level 1 with 0.10%).
+
+## Roydo, the Anomaly and Blau, the Master Tactician (`sim_kits3.gd`; the owner's heroes, run 2026-10-16)
+
+The owner gave the kits and their numbers; *chosen* marks what he left open (tune in `sim_data.gd`).
+* **Roydo** (melee intelligence, no element ("Neutral"); *chosen*: Str 21 +2.6, Agi 18 +1.8, Int 24 +3.2, damage
+  28-34, armor 2, base attack time 1.7, attack point 0.4, speed 305).
+  * **Grip of the Ruler** (Q, point 650, area 400): one unit in the area is picked at random among the enemy heroes
+    Roydo's team sees; with none, among the other enemies (creeps, summons; not buildings, wards, couriers, debuff
+    immune or invulnerable units); with no enemy at all, among allies (Roydo himself excluded). It is thrown to the
+    area's middle (open ground nearest it) on an arc over 0.8 s, over trees and cliffs, disabled in the air (it plays
+    its knockback clip). When it lands, every enemy in the area takes 100/140/180/220 magic damage and is stunned 1 s
+    (status resistance applies). A thrown ally is neither hurt nor stunned. 18-15 s, 100-130 mana.
+  * **Void Rush** (W, no target, 650 round him, 7 s): enemies get -20/30/40/50% status resistance (their debuffs
+    last longer: 1 / (1 - (-0.5)) = 1.5 times at level 4) and deal 10/15/20/25% less damage of every kind (a
+    "damage dealt" modifier on the source, applied before the target's reductions; reflected damage is not
+    changed). Allies, Roydo too, get +7/9/11/13 armor and +7/9/11/13% move speed. Basic dispel removes either.
+    15-12 s, *chosen* 80/90/100/110 mana.
+  * **Dark Matter Skin** (E, passive): each instance of damage he takes from an enemy has a 9/13/17/21% chance
+    (pseudo-random, like Dota's chance passives) to send 25/28/31/34% of the damage he actually took (after his
+    reductions) to every enemy within 650 as magic damage, with an 80% move speed and 80% attack speed slow for
+    0.3 s. Break stops it; the returned damage is never returned again.
+  * **Anomaly** (R, 30 s, 65 s, *chosen* 100/125/150 mana): base attack time -0.25 s (1.7 -> 1.45; Dota's
+    Chemical Rage and Metamorphosis also lower the base attack time rather than raise attack speed), +60/120/180
+    attack damage, ranged attacks at 650 (*chosen* projectile speed 1200). His items count as a ranged hero's while
+    it lasts.
+* **Blau** (ranged agility 600, no element; *chosen*: Str 18 +2.0, Agi 23 +3.1, Int 18 +1.8, damage 22-28, attack
+  point 0.35, projectile speed 3000, speed 295).
+  * **Bounce Shot** (Q, point 800): a bullet (*chosen* speed 2400, path 1800 in all) flies toward the point and
+    passes through enemies, hurting each *chosen* 70/110/150/190 magic damage at most twice (once per pass). It
+    ricochets like a mirror off trees, cliff walls, buildings, boulders and units of Blau's team (not Blau himself),
+    3/5/7/9 times; the next thing it meets after the last bounce stops it. *Chosen* 12-9 s, 90-120 mana.
+  * **Summon Boulders** (W, aimed by direction): 3/4/5/6 boulders (radius 58) roll out within 0.6 rad either side of
+    the aim for a random 1-2 s each (*chosen* starting speed 520-760, slowing evenly to a stop), bouncing off walls,
+    trees, buildings, each other and units. An enemy they run into takes 80/100/120/140 magic damage once per cast
+    and is knocked 200 back (a 0.3 s disabling slide; not debuff immune enemies). Resting boulders block every
+    walking unit, phased ones too (exact circles for movement, their cells closed for paths), and Bounce Shot
+    bounces off them. 10 s, 20-17 s, *chosen* 100-130 mana.
+  * **Lay Trap** (E, no target): Blau leaps 400 straight back (over trees and units, 0.5 s, landing on open ground)
+    and leaves a trap where he stood. *Chosen*: it arms after 0.6 s, is then hidden from enemies (True Sight shows
+    it), lasts 25 s and catches the first enemy unit within 110: rooted 1.2/1.6/2/2.4 s (status resistance applies).
+    10-7 s, *chosen* 50-65 mana.
+  * **Place Turret** (R, point 600, 3 levels at 6/12/18): a turret (a summon) with 900/1500/2100 health, no
+    regeneration, no mana, *chosen* 4 armor, shoots enemies within 650 every 1.5 s (base attack time 1.5, attack
+    speed fixed) for 25/30/35% of Blau's attack damage (+5% with the Upgrade Staff, so 40% at level 3: the owner's
+    four numbers). Each shot is a copy of Blau's attack at that share: his critical strike, lifesteal and item
+    attack effects apply, and kills are his. Its target: the enemy hero Blau is fighting, else the weakest enemy
+    hero, another turret, a creep it can finish, the weakest enemy, then buildings. 35 s; 10 s cooldown, *chosen*
+    100/125/150 mana; *chosen* bounty 40-50 gold, 40 experience (none when it runs out of time).
+  * **Pilot Turret** (Upgrade Staff, D, one of his turrets within 250): Blau climbs in: hidden, invulnerable, he
+    stays on the turret and still attacks and casts from it; the turret gains 300/600/900 health (Place Turret's
+    level) and shoots what he attacks. He gets out by casting it again (free, no cooldown), by any move order, or
+    when the turret falls or runs out. 5 s cooldown to get in. The skill sits before the ultimate (key D).

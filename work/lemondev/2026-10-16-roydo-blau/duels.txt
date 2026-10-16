@@ -1,0 +1,59 @@
+== blau vs ezee
+seed 3 at 12:00: A(blau) 0/1/0 lvl 9 LH 39 DN 12 nw 2626 | B(ezee) 1/0/0 lvl 8 LH 37 DN 7 nw 2749 | towers lost A 0 B 0
+    casts: { "A:bounce_shot": 11, "B:dark_stomp": 7, "B:item_salve": 2, "B:tainted_touch": 8, "B:item_tango": 3, "A:item_clarity": 2, "A:lay_trap": 6, "A:item_salve": 2, "B:leap_strike": 4, "B:item_clarity": 4, "B:snarl": 6, "A:summon_boulders": 1, "A:item_magic_stick": 3, "B:item_magic_wand": 2, "A:place_turret": 5, "B:unholy_might": 1, "B:smash": 3, "B:stomp": 1, "A:item_tango": 1 }
+    blau items: ["tango", "magic_stick", "wraith_band", "quelling_blade", "power_treads", "clarity"]
+    ezee items: ["cloak", "quelling_blade", "tough_band", "magic_wand", "salve"]
+seed 7 at 12:00: A(blau) 1/0/0 lvl 9 LH 37 DN 17 nw 3073 | B(ezee) 0/1/0 lvl 7 LH 33 DN 14 nw 2069 | towers lost A 0 B 0
+    casts: { "A:bounce_shot": 14, "B:item_salve": 6, "B:item_tango": 3, "B:tainted_touch": 7, "A:lay_trap": 4, "A:item_clarity": 5, "B:dark_stomp": 9, "A:item_salve": 2, "A:item_tango": 3, "B:leap_strike": 5, "B:item_magic_wand": 3, "A:place_turret": 5, "A:item_magic_stick": 2, "B:item_clarity": 2, "B:snarl": 7, "B:stomp": 3, "B:unholy_might": 1 }
+    blau items: ["magic_wand", "wraith_band", "quelling_blade", "power_treads", "clarity"]
+    ezee items: ["quelling_blade", "tough_band", "magic_wand"]
+seed 11 at 12:00: A(blau) 0/0/0 lvl 8 LH 38 DN 14 nw 2787 | B(ezee) 0/0/0 lvl 7 LH 32 DN 7 nw 2313 | towers lost A 0 B 0
+    casts: { "A:bounce_shot": 15, "B:item_salve": 4, "B:item_tango": 3, "B:tainted_touch": 9, "B:dark_stomp": 8, "A:item_clarity": 3, "B:leap_strike": 1, "A:summon_boulders": 1, "A:place_turret": 4, "A:item_magic_stick": 2, "B:item_magic_stick": 2, "B:snarl": 3 }
+    blau items: ["tango", "salve", "magic_stick", "wraith_band", "quelling_blade", "power_treads", "clarity", "branch", "branch"]
+    ezee items: ["magic_wand", "quelling_blade", "tough_band", "cloak", "clarity"]
+== blau vs azrin
+seed 3 at 12:00: A(blau) 0/5/0 lvl 7 LH 22 DN 14 nw 1265 | B(azrin) 5/0/0 lvl 10 LH 48 DN 13 nw 5085 | towers lost A 1 B 0
+    casts: { "B:touch_of_ember": 15, "A:bounce_shot": 18, "B:fiery_javelin": 12, "A:item_salve": 7, "A:item_tango": 3, "B:spirit_of_fire": 7, "B:item_salve": 1, "A:summon_boulders": 2, "B:item_magic_wand": 2, "B:item_tango": 1, "A:item_magic_stick": 3, "A:place_turret": 2, "B:divine_smite": 2, "B:snarl": 4, "B:stomp": 1 }
+    blau items: ["salve", "magic_stick", "wraith_band", "quelling_blade"]
+    azrin items: ["tango", "cloak", "smart_band", "magic_wand", "clarity", "mana_boots"]
+seed 7 at 12:00: A(blau) 0/6/0 lvl 7 LH 25 DN 12 nw 1617 | B(azrin) 6/0/0 lvl 10 LH 46 DN 15 nw 4974 | towers lost A 0 B 0
+    casts: { "B:touch_of_ember": 15, "A:bounce_shot": 16, "A:item_salve": 7, "A:item_tango": 3, "B:fiery_javelin": 8, "B:spirit_of_fire": 7, "B:item_salve": 2, "B:item_tango": 2, "A:summon_boulders": 1, "B:item_magic_stick": 1, "B:divine_smite": 3, "A:item_magic_stick": 3, "A:item_clarity": 1, "B:item_magic_wand": 2, "A:place_turret": 2, "B:stomp": 3, "B:snarl": 2 }
+    blau items: ["wraith_band", "quelling_blade", "magic_stick"]
+    azrin items: ["tango", "cloak", "smart_band", "magic_wand", "clarity", "mana_boots"]
+seed 11 at 12:00: A(blau) 0/1/0 lvl 8 LH 27 DN 10 nw 1897 | B(azrin) 1/0/0 lvl 10 LH 59 DN 17 nw 4730 | towers lost A 1 B 0
+    casts: { "B:touch_of_ember": 11, "A:bounce_shot": 17, "A:item_salve": 6, "A:item_tango": 3, "B:fiery_javelin": 13, "B:spirit_of_fire": 4, "A:item_magic_stick": 2, "A:lay_trap": 1, "B:item_salve": 1 }
+    blau items: ["magic_stick", "cloak", "wraith_band", "quelling_blade"]
+    azrin items: ["tango", "cloak", "smart_band", "magic_wand", "mana_boots", "clarity"]
+== blau vs kragg
+seed 3 at 12:00: A(blau) 0/1/0 lvl 6 LH 18 DN 13 nw 1248 | B(kragg) 1/0/0 lvl 8 LH 38 DN 17 nw 3090 | towers lost A 0 B 0
+    casts: { "A:bounce_shot": 15, "B:iron_grip": 15, "A:item_tango": 3, "B:item_salve": 4, "A:item_salve": 6, "B:item_tango": 3, "A:lay_trap": 8, "A:summon_boulders": 5, "A:item_magic_stick": 3, "B:repel": 1, "B:item_magic_stick": 1, "A:item_clarity": 4, "B:magnet_field": 3, "B:item_clarity": 6, "B:item_magic_wand": 3, "A:place_turret": 2, "B:snarl": 3 }
+    blau items: ["magic_stick", "clarity", "wraith_band", "quelling_blade"]
+    kragg items: ["cloak", "magic_wand", "boots", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(blau) 0/0/0 lvl 8 LH 28 DN 8 nw 1571 | B(kragg) 0/0/0 lvl 8 LH 38 DN 16 nw 2074 | towers lost A 0 B 0
+    casts: { "A:bounce_shot": 12, "B:iron_grip": 15, "A:item_tango": 3, "B:item_salve": 8, "A:item_salve": 7, "B:item_tango": 3, "A:lay_trap": 8, "B:repel": 3, "A:item_clarity": 7, "A:item_magic_stick": 3, "A:summon_boulders": 4, "B:item_clarity": 5, "B:item_magic_stick": 3, "A:place_turret": 4, "B:magnet_field": 1, "B:snarl": 3 }
+    blau items: ["magic_stick", "wraith_band", "quelling_blade"]
+    kragg items: ["cloak", "magic_stick", "quelling_blade", "tough_band"]
+seed 11 at 12:00: A(blau) 0/1/0 lvl 7 LH 36 DN 14 nw 1943 | B(kragg) 1/0/0 lvl 8 LH 29 DN 7 nw 2406 | towers lost A 0 B 0
+    casts: { "A:bounce_shot": 14, "B:iron_grip": 15, "A:item_tango": 3, "A:item_salve": 6, "B:item_salve": 7, "B:item_tango": 3, "A:item_clarity": 7, "A:lay_trap": 6, "A:summon_boulders": 4, "B:smash": 5, "B:item_clarity": 5, "A:place_turret": 4, "B:repel": 2, "A:item_magic_stick": 3, "B:item_magic_stick": 3, "B:magnet_field": 1, "B:snarl": 3, "B:stomp": 5 }
+    blau items: ["magic_stick", "clarity", "wraith_band", "quelling_blade", "cloak"]
+    kragg items: ["cloak", "magic_stick", "quelling_blade", "tough_band"]
+== roydo vs ezee
+ERROR: BUG: Unreferenced static string to 0: Variant
+WARNING: A Thread object is being destroyed without its completion having been realized.
+Please call wait_to_finish() on it to ensure correct cleanup.
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketLargeE
+== roydo vs sludge
+ERROR: BUG: Unreferenced static string to 0: Variant
+WARNING: A Thread object is being destroyed without its completion having been realized.
+Please call wait_to_finish() on it to ensure correct cleanup.
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketLargeE
+== roydo vs blood_ranger
+ERROR: BUG: Unreferenced static string to 0: Variant
+WARNING: A Thread object is being destroyed without its completion having been realized.
+Please call wait_to_finish() on it to ensure correct cleanup.
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketLargeE
+== blau vs roydo
+ERROR: BUG: Unreferenced static string to 0: Variant
+WARNING: A Thread object is being destroyed without its completion having been realized.
+Please call wait_to_finish() on it to ensure correct cleanup.
+ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketLargeE

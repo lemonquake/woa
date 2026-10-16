@@ -4,6 +4,151 @@
 
 ## Status (keep this section current)
 
+**2026-10-16: two new heroes, Roydo and Blau (your kits and numbers).** Run `work/lemondev/2026-10-16-roydo-blau/`
+(contract.md, sources.md; captures in `shots/`, frame sheets in `preview/`).
+* **Models**: free CC0 Quaternius packs (Universal Base Characters, Universal Animation Library 1 and 2, Modular
+  Character Outfits - Fantasy, Sci-Fi Essentials Kit; list and upload ids in `sources.md`), built by
+  `tools/blender/heroes16.py` into `assets/characters/heroes16/`. Roydo: an obsidian-skinned alien with a star-field
+  skin shader (`src/game/roydo_skin.gdshader`) and a second, hulking monster body for the Anomaly (swapped in and
+  out). Blau: a hooded gunner in a recoloured ranger coat with a scout sniper rifle held in both hands; his turret is
+  the kit's four-legged Quad Shell walker. Animations come from the library clips (motion-captured style), not the
+  procedural set: audit `anim_pops16.txt`: no joint flips (> 90 degrees in one frame) and no elbow or knee bent
+  backwards in any clip used; 85 fast turns of 45-60 degrees remain in the quickest swings, get-ups and knockbacks.
+* **Roydo, the Anomaly** (melee, intelligence): Grip of the Ruler, Void Rush, Dark Matter Skin, Anomaly as you gave
+  them. **Blau, the Master Tactician** (ranged 600, agility): Bounce Shot, Summon Boulders, Lay Trap, Place Turret;
+  the turret's shots carry his attack effects. Pilot Turret comes with the Upgrade Staff (Dota's Aghanim's Scepter).
+* **Bots** (`src/sim/sim_bot16.gd`): Blau traces two dozen Bounce Shot angles through the trees, walls, boulders and
+  units round him and fires the one that passes enemy heroes most; boulders roll ahead of a fleeing target to wall it
+  in, or into a melee hero on top of him; when chased he faces the chaser so Lay Trap's leap leaves the snare in its
+  path; turrets go down in every fight and in front of towers he pushes; with the Upgrade Staff he climbs into a turret
+  when hurt. Roydo opens with Void Rush (lower status resistance makes the stun last longer), then Grip of the Ruler
+  centred between the target and him, Anomaly once a real fight is on, Void Rush's speed to run. Every bot knocks down
+  enemy turrets.
+* **Chosen fill-ins (veto any)**: base stats: Roydo str 21 (+2.6) / agi 18 (+1.8) / int 24 (+3.2), 28-34 damage,
+  armor 2, 305 speed; Blau 18 (+2.0) / 23 (+3.1) / 18 (+1.8), 22-28 damage, 295 speed, 3000 projectile. Mana: Void
+  Rush 80-110, Anomaly 100/125/150, Bounce Shot 90-120 (12/11/10/9 s), Summon Boulders 100-130, Lay Trap 50-65,
+  Place Turret 100/125/150. Bounce Shot damage 70/110/150/190, travel 1800 at 2400. Boulder cast range 600, roll
+  speed 520-760. Trap: lasts 25 s, 110 trigger radius, arms after 0.6 s. Place Turret a 3-level ultimate, damage
+  25/30/35% (+5% with the Upgrade Staff, so 40% at level 3). Pilot Turret 250 range. Anomaly projectile 1200.
+  Talents as listed below.
+Evidence: headless tests 225 passed, 0 failed (new: Grip target order, toss and stun, ally unharmed; Void Rush both
+sides; Dark Matter Skin; Anomaly attack time, damage, range and the return to melee; Bounce Shot reflections off a
+tree, wall, boulder and ally, passing enemies, bounce cap, two hits per enemy; boulders count, roll, blocking phased
+units, one hit and push; trap leap, root and durations; turret range, interval, share of the attack with procs,
+health, no regen, life; Pilot Turret needs the staff, health, safety, exit, cooldown; bots banking Bounce Shot,
+trapping on escape, turret and pilot, Rush then Grip, bots knocking down turrets).
+* **Found and fixed at integration: games froze once a Roydo bot used Anomaly in a lane.** In Anomaly he attacks at
+  range, but as a melee hero he has no projectile speed of his own; the bots' last-hit forecast divided by it, got an
+  infinite time and looped for ever (`sim_bot.gd` `_last_hit_target` / `_hp_when`). It now uses the form's projectile
+  speed (`SimUnit.projectile_speed()`), and `_hp_when` caps an infinite time. Found with the new
+  `tests/tools/stall_probe.gd` (prints slow steps and can trace each step); regression test
+  `test_bot_roydo_anomaly_last_hit_forecast` (fails on the old line, passes now). This is why the interrupted
+  session's Roydo duels and bot game never printed a result.
+Bot duels, 12 min, 3 seeds each, after the fix (`duels_final.txt`; kills summed, last hits per seed): Roydo vs Ezee
+1-0 (LH 42-48 against 11-30), vs Sludge 0-1 (27-34 against 18-32), vs Blood Ranger 2-3 (33-43 against 22-37), vs
+Kragg 1-2 (Roydo far ahead in one seed, behind in the other two). Blau before the fix (`duels.txt`): vs Ezee 1-1, vs Kragg 0-2, vs Azrin 0-12. A 20-minute
+5 v 5 bot game with two Roydos and two Blaus (`bot_game.txt`): ran to time in 178 s, no script errors, 39-24 kills;
+one bot stuck (Roydo, from 11:19, a known issue). `sh tools/check.sh`: no parse errors, "Names OK".
+Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-16 20:03 with the fix; cold start into a Blau match 12.6 s and a
+Roydo match 12.5 s, no script errors (`shots/export_blau.png`, `export_roydo.png`). Blau vs Roydo duels were still
+running at commit time.
+Not verified: no blind critic review (none asked for, no Dota frames on disk); the look of both heroes and every
+effect is a builder self-check (`shots/`). Left: in the trap capture a rooted creep's timer reads "Rooted 0.0" on its
+last frame; Blau loses his lane against Azrin in bot duels.
+
+**2026-10-15 h: lane creep and unit animations repaired (follow-up to g).** Run `work/lemondev/2026-10-15h-unit-anims/`.
+* The 16 humanoid unit models (lane knights and mages, Black Sun's ghouls, necromancers and chieftains, both siege
+  golems, goblins, orcs, the troll, the ogre, the imp and the magma golem) played the same broken library clips as the
+  heroes. `tests/tools/anim_repair.gd -- --units` now repairs each model's clips on its own rig, keeping hands and
+  blades out of a body measured from that rig (shoulder width and height) and using the weapon the unit holds; one
+  library per model in `assets/characters/units/anim_fixed/`. `RepairedClips` (was HeroAnims, now
+  `src/game/repaired_clips.gd`) loads the right set for every model in matches, menus and the Hero Creator. The
+  hand's speed limit now moves it on an arc round the shoulder (a too-fast slam swings forward and down instead of
+  cutting through the chest); the hero clips were rebuilt with it too.
+* Audit (`anim_audit.gd -- --units`): 188 findings on the original unit clips (bones flipping up to 180 degrees in one
+  frame) -> 44 after; the largest turn left in one frame is 68 degrees. Heroes: 85 (was 86 in g), largest 73.
+  Before/after sheets: `units_before_after.png`, `big_units.png` (golem and ogre slams).
+* The lane knight's shield is strapped along its forearm at 80%, as Kragg's.
+* Fixed an older bug the audit found: four units named attack clips their models do not have, so the hill troll
+  attacked with no animation at all. Now: hill troll `axe_1` / `axe_2` (an overhead throw), ogre `boss_slam` /
+  `gs_1`, goblin foreman and necromancer `staff_1` / `cast_quick`.
+Evidence: headless tests 208 passed, 0 failed; `sh tools/check.sh` no parse errors, "Names OK"; a live match with
+the repaired unit clips loaded, no script errors; `build/WarriorsOfAether.exe` rebuilt 2026-10-15 22:13 (the 16 unit
+sets inside), cold start into a match in 24 s, no script errors.
+Left: the knight's shield edge still touches its thigh in some sword frames (as Kragg's), staffs of the lane mage and
+orc shaman pass the body in 12-28% of frames of their staff swings, golem and ogre slams show the elbows pointing
+up in a few frames at the top of the swing (arms straight overhead, where "natural" is ill defined); no blind review.
+
+**2026-10-15 g: Kragg rework, varied bot picks, smarter bots, animated title and new Main Menu, hero animations
+repaired (your list and your report on the twisting limbs).** Run `work/lemondev/2026-10-15g-kragg-bots-menu/`
+(contract.md; captures in `shots/`, `anim_before/`, `anim_after/`, `compare/before_after.png`).
+* **Kragg** (your numbers): **Magnetize is his innate**: learned at level 1, no point, no slot; it shows in the small
+  innate slot, in the Talents button's tooltip and at the head of the open talent tree. Attacks give a Charge (up to
+  4, 8 s); each Charge makes the enemy take 0.10% + 0.05% per hero level more damage from his spells (level 30: 1.6%
+  a Charge). I read "+0.05 per hero level" as times his level (level 1 = 0.15%); say if it should start at 0.10% at
+  level 1. **Overload is passive**: every 6th / 5th / 4th / 3rd attack bursts round him: enemies within 200 take
+  60 / 75 / 90 / 105 magic damage of the Lightning element and are slowed 80% for 0.8 s; his buff bar counts the
+  attacks. Kragg now has four skills (Q W E R). Talent "+25 Overload damage per Charge" became "+40 Overload damage".
+  Bot duels after the change (12 min, 3 seeds each, kills summed): Kragg vs Ezee 6-0, vs Caziel 8-4, vs Blood Ranger
+  5-6, vs Sludge 1-4, vs Azrin 1-9 (`duels.txt`): no longer the strongest laner.
+* **Varied picks**: Random slots are filled after the chosen ones; a team never gets a hero twice while another is
+  free, prefers heroes nobody in the match has, and prefers ones that fill a missing role (single player and
+  lobbies). Test: 300 seeds, no team duplicates, no hero three times in a match.
+* **Smarter bots**:
+  * Items (`sim_bot_items.gd`): every 30 s from 5:00 and after each death a bot reads the enemy team (magic, physical
+    and pure damage weighted by how far ahead each enemy is, stunners, invisible heroes, evasion) and what killed it
+    (damage by type in its last deaths, fading), and moves one counter item to the front of its build: magic
+    resistance or Spell Shield against magic and stuns, armor or evasion against fed right-clickers, Sure Hit Staff
+    against evasion, Jump Knife / Push Staff / Slip Boots after dying caught alone; supports get Fade Cape, Medic Kit,
+    Guard Boots. Reveal Dust and Reveal Ward against invisible heroes. One counter at a time until bought. In the base
+    late with every slot full it sells its cheapest early item. New uses: Fade Cape and Push Staff to save an ally
+    being brought down, Reveal Dust on an enemy that just faded, Spell Shield when a stunner chases it.
+  * **New items** (Dota 7.41d): Scarf (Shawl, 450, 10% magic resistance), Spell Cloak (Cloak, 900, 18%), Fade Cape
+    (Glimmer Cape, 2150: 20%; on an ally or itself: invisible after 0.5 s for 5 s, 20% faster, a 375 magic-damage
+    barrier). In the shop (Armaments / Upgrades) with icons.
+  * **Counter-ganks** (`sim_team_ai.gd` `_call_saves`): an ally caught by enemy heroes is not left to run: the brain
+    weighs the gankers against the victim plus every bot that can arrive before the victim would die (walking, or a
+    Town Portal after 10:00), and when that fight is in our favour calls a save: helpers come, the victim runs toward
+    them (pulling the gankers in), then everyone turns on the same ganker. Chat: "Hold on, <name>! Coming." / "TP
+    coming", "Running to you, help me turn on them."
+  * **Jukes** (`sim_bot_tactics.gd`): a bot on the run picks spots 350-800 away that a tree line or high ground hides
+    from its chasers (where they were last seen; no peeking into the fog), among trees, out of the enemy's sight; once
+    the enemy has not seen it for 2 s and nobody is in sight, it teleports home from the fog (hurt, or short of mana;
+    before 8:00 only when badly hurt). "Lost them in the trees, going home."
+  * Two 45-minute 5 v 5 bot games (`bot_game.txt`; the counters below were measured before three fixes from these
+    games: no juke teleport before 8:00 unless badly hurt, no Town Portal saves before 10:00, one counter item at a
+    time): no script errors; per game and team 33-58 counter-ganks called, helpers fought in 32-72 of them, 4-9 juke
+    teleports home; counter items bought as above. No winner at 45:00 in either game (kills 92-33 and 93-31 for the
+    same side, a lopsided lineup). Old issue still there: a few bots stuck (1-3 per game).
+* **Title and Main Menu** (your request): an animated title the first time the menu opens: the gold sun of Ancient
+  Light and the black sun of Black Sun rise either side, sparks drift up, the title burns in and a light sweeps across
+  it, "by Aljay Leodones" is written out between gold rules, then "Press any key". The menu is remade with new art
+  from `tools/ui_skin.py`: a hanging banner with the title and an emblem of the two suns, the menu as blade-shaped
+  plates (gold for Play) that slide in one by one and light up on hover, a framed nameplate for the hero on the stage
+  with Choose Hero, and a footer with the credit and rotating tips. Up / Down and Enter work too. Captures at 1080p
+  and a real 3840 x 2160 window (`shots/title_*.png`, `menu_after.png`, `menu_4k.png`, `menu_hover.png`).
+* **Hero animations (your report)**: measured, not guessed. `tests/tools/anim_audit.gd` checks every clip each hero
+  plays, frame by frame. On the clips as built (they come from the beyond-heroes procedural library, and the lane
+  knight has the same faults, so they are in the library, not the hero body) it found elbows flipping to the other side
+  of the arm and forearms spinning up to 177 degrees between two frames 1/30 s apart, wrists bent up to 154 degrees,
+  forearms twisted 130, and Kragg's shield and sword through his body: 352 findings over the eight heroes.
+  `tests/tools/anim_repair.gd` solves every arm again (hand path kept, elbow continuous and within a natural range,
+  forearm twist where a real arm turns, wrist clamped, snaps speed-limited, hands and blades kept out of the body;
+  Sludge gets his own set solved round his belly) into `assets/characters/hero/hero_anims_fixed*.res`, which
+  `HeroAnims` lays over the built-in clips in matches, menus and the Hero Creator. After: 86 findings, no flips (the
+  largest turn left is 76 degrees in one frame, most leftovers 45-66 in the fastest swings), Blood Ranger 1, Sludge 3.
+  Kragg's shield is strapped along his forearm at 80% (it sat on his fist and covered his face) and his stage idle is
+  `idle_shield` (the hands-on-a-planted-sword idle put the blade through his chest). Your beyond-heroes repo was not
+  touched (it had your uncommitted work).
+Evidence: headless tests 208 passed, 0 failed (new: Kragg innate and Overload, varied picks, magic defence items,
+bot counter items, juke spots and juke teleport, counter-gank calls); `sh tools/check.sh` no parse errors, "Names
+OK"; `tests/tools/kragg_probe.gd` 11/11 at 1080p, 8/8 at 4K (3 hover checks skipped there: frame larger than the
+monitor); audit files `anim_audit_before.txt` / `anim_audit_raw.txt` (352) and `anim_audit_final.txt` (86).
+Not verified: no blind critic review (none asked for); the bot game counters predate the three fixes above;
+animations still left: the lane creeps' clips (same library faults) are not repaired yet, Froster's staff passes
+through his body in about 6-22% of frames in three casts, Kragg's shield edge touches his thigh in some attack
+frames, Caziel's spin attack (`dual_4`) turns his whole body 61 degrees in one frame.
+
 **2026-10-15 f: regen readout, Rejuvenation Orb, tower shots, Fortify, courier, Fast Forward (your list).**
 * **Regen readout**: each bar shows the total per second, large, at its right end (+43.5); at its left end, how it adds
   up: own + bonus (3.5 + 40.0), and a healing cut as its own red term (3.5 - 2.1). Nothing to add: the total alone.
@@ -284,6 +429,16 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
     (or `attack`) issues it at capture frame 4. `--board` shows the scoreboard, `--endscreen` the end screen,
     `--drag=x,y,w,h` a selection box, `--marker=x,y` a move marker.
 * Bot duels: `godot --headless --path . -s tests/tools/bot_duel.gd -- --a=blood_ranger --b=ezee --min=12`.
+* A game that stops advancing: `godot --headless --path . -s tests/tools/stall_probe.gd -- --a=roydo --b=ezee --min=10
+  [--trace=348] [--seed=3]` prints a line per game minute with the real time, every step over 50 ms, and with
+  `--trace` the heroes' state before each step from that second (the last line printed is the step that hangs).
+* Animations (runs 2026-10-15 g, h): audit every hero clip `godot --headless --path . -s tests/tools/anim_audit.gd --
+  [--heroes=kragg] [--units] [--raw] [--out=x.txt]`; rebuild the repaired arms after any change to the clips or the
+  models: `godot --headless --path . -s tests/tools/anim_repair.gd`, `... -- --body=sludge` and `... -- --units`;
+  frame sheets `godot --path . -s tests/tools/anim_sheet.gd -- --heroes=kragg,unit:dawn_melee --clips=sword_1
+  --yaws=30,-70 [--fov=14] [--raw]`.
+* Title and menu captures: `godot --path . res://src/ui/main_menu.tscn -- --capture=x.png [--title --title-at=5]
+  [--focus=1] [--4k]`.
 * 5 v 5 bot games (headless): `godot --headless --path . -s tests/tools/bot_game.gd -- --seeds=3,7 --min=40 [--chat]
   [--skill=hard] [--learn=work/mem.json --learn_teams=1,0] [--out=file]` prints the result, each hero's line, LH and net
   worth at 10:00 and 20:00, time per bot mode, stuck heroes and the team chat. `tests/tools/trace_game.gd` prints each
@@ -708,6 +863,36 @@ Run `work/lemondev/2026-10-14-elements-azrin/` (contract in `contract.md`). Rule
   "Not enough room", "Cannot be disassembled".
 * Elements chosen for existing units (veto freely): Blood Ranger Nature, Ezee Dark, Sludge Earth; creeps by team (Light,
   Dark); towers Earth; neutrals as listed in MECHANICS.md.
+
+## Names added 2026-10-16 (veto any you dislike)
+
+* Yours: Roydo, the Anomaly, Grip of the Ruler, Void Rush, Dark Matter Skin, Anomaly; Blau, the Master Tactician,
+  Bounce Shot, Summon Boulders, Lay Trap, Place Turret.
+* Ours: **Pilot Turret** (the Upgrade Staff skill), **Turret** (the unit), **Leave Turret** (the skill's tooltip while
+  inside), buff bar "In a Turret", "Piloted", "Caught" (the trap's root).
+* Talents (chosen): Roydo "+80 Grip of the Ruler damage" / "+250 Health", "-3s Void Rush cooldown" / "+6% Dark Matter
+  Skin chance", "+0.6s Grip of the Ruler stun", "+10% Void Rush damage cut", "+12% Dark Matter Skin reflect", "-0.15s
+  Anomaly attack time"; Blau "+50 Bounce Shot damage" / "+25 Attack Speed", "+2 Boulders" / "+0.8s Lay Trap root",
+  "+4 Bounce Shot bounces", "+1 Bounce Shot hit per enemy", "+10% Turret damage", "+700 Turret health".
+* Errors and tooltips: "Cannot build there", "Must target one of your turrets", "Needs the Upgrade Staff", "Blau
+  climbs out of the turret. Moving does the same." Bot chat: "Into the turret."
+* Code: SimKits3, SimBot16, Hero16Fx, roydo_skin shader, tools/blender/heroes16.py, tests/tools hero16_probe,
+  anim_pops16, _cost16, stall_probe.
+
+## Names added 2026-10-15 g (veto any you dislike)
+
+* Items: **Scarf** (Dota's Shawl), **Spell Cloak** (Cloak), **Fade Cape** (Glimmer Cape). Talent: "+40 Overload
+  damage".
+* Menu and title: "Press any key", "Choose Hero" (was "Choose hero"), "Tip: ..." (eight tips in `main_menu.gd`).
+* Tooltips: "Innate: always learned, from level 1", "Innate: <name>", "Grows with hero level", "Always on",
+  "<Value> at level N", "N of M attacks: attack M bursts in an Overload.", "Takes N% more damage from Kragg's
+  spells.", Overload's and Magnetize's new descriptions.
+* Bot chat: "Getting <item> against their magic damage / their right clicks / their stuns / their invisible heroes /
+  their evasion / getting caught.", "Bought <item>, they have invisible heroes.", "Dusting their <hero>.", "Fade Cape
+  on you, <name>, run!", "Hold on, <name>! Coming." / "TP coming.", "Running to you, help me turn on them.", "Lost
+  them in the trees, going home."
+* Code: SimBotItems, SimBotTactics, RepairedClips (was HeroAnims, run h), TitleCard, MenuPlate; skin pieces menu_plate, menu_plate_gold,
+  menu_banner, menu_footer, menu_nameplate; tools anim_audit, anim_repair, anim_sheet, kragg_probe.
 
 ## Names added 2026-10-15 f (veto any you dislike)
 

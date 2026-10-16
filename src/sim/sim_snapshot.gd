@@ -21,7 +21,7 @@ static func capture(w: SimWorld) -> PackedByteArray:
 	var m := w.map
 	var out := {"format": FORMAT, "root": root, "objs": wr.objs, "dicts": wr.dicts,
 		"map": {"seed": m.seed_value, "trees": m.trees.duplicate(true), "walkable": m.walkable, "tree_cell": m.tree_cell,
-			"vision_block": m.vision_block, "vision_rev": m.vision_rev}}
+			"vision_block": m.vision_block, "vision_rev": m.vision_rev, "rock": m.rock}}
 	wr.cleanup()
 	var raw := var_to_bytes(out)
 	var packed := raw.compress(FileAccess.COMPRESSION_ZSTD)
@@ -77,6 +77,7 @@ static func _restore_map(m: SimMap, d: Dictionary) -> void:
 			if walk[i] != m.walkable[i]:
 				m.astar.set_point_solid(Vector2i(x, y), walk[i] == 0)
 	m.walkable = walk
+	m.rock = d.get("rock", PackedByteArray())
 
 class _Writer:
 	var objs: Array = []                   # [script path, {field: encoded value}]

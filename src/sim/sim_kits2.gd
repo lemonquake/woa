@@ -7,14 +7,14 @@ extends RefCounted
 ## Tock bends time through the cooldown rate (SimWorld._shift_cooldowns): Time Bolt makes enemies' cooldowns run
 ## slower, Fast Forward makes an ally's run faster, Stop Time freezes enemies and their cooldowns; Quick Hands winds his
 ## own cooldowns forward on every spell; Rewind takes him back 3 seconds.
-## Kragg puts Charges on enemies (one modifier per unit, up to 5, 10 s): Iron Grip snaps him and a target together,
-## Repel throws enemies further per Charge, Overload cashes every Charge in for damage and healing, Magnet Field drags
-## enemies in (harder per Charge) and stuns them at the end. Each Charge makes the unit take more of his spell damage.
+## Kragg puts Charges on enemies (one modifier per unit, up to 4, 8 s; his innate Magnetize): Iron Grip snaps him and
+## a target together, Repel throws enemies further per Charge, Overload bursts around him every few attacks, Magnet
+## Field drags enemies in (harder per Charge) and stuns them at the end. Each Charge makes the unit take more of his
+## spell damage, more as he levels.
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
-const CASTS := ["time_bolt", "fast_forward", "rewind", "slow_field", "stop_time", "iron_grip", "repel", "overload",
-	"magnet_field"]
+const CASTS := ["time_bolt", "fast_forward", "rewind", "slow_field", "stop_time", "iron_grip", "repel", "magnet_field"]
 const CHARGE_SRC := -61                     # one Charge counter per unit, whichever Kragg put it there
 const HISTORY_EVERY := 3                    # Rewind samples where Tock is every 3 ticks (0.1 s)
 
@@ -65,8 +65,6 @@ func cast(u: SimUnit, aid: String, lv: int, t: SimUnit, p: Vector2) -> void:
 			_iron_grip(u, aid, t)
 		"repel":
 			_repel(u, aid, lv)
-		"overload":
-			_overload(u, aid)
 		"magnet_field":
 			var dur3 := ab.val(u, aid, "duration")
 			w.effects.append({"kind": "magnet_field", "ability": aid, "src": u.id, "team": u.team,
@@ -231,28 +229,46 @@ func charges(t: SimUnit) -> int:
 		return 0
 	return int(m.charges)
 
-## Adds Charges from Kragg (up to his maximum), refreshing their 10 s. Not on debuff-immune enemies.
+## Adds Charges from Kragg (up to his maximum), refreshing their 8 s. Not on debuff-immune enemies.
 func add_charges(t: SimUnit, src: SimUnit, n: int) -> void:
 	if n <= 0 or not _can_hit(src.team, t) or not ab.can_debuff(t, src.team):
 		return
-	var mx := int(ab.val(src, "magnetize", "max_charges")) if src.ability_level_of("magnetize") > 0 else 5
+	var mx := int(ab.val(src, "magnetize", "max_charges")) if src.ability_level_of("magnetize") > 0 else 4
+	var dur := ab.val(src, "magnetize", "duration") if src.ability_level_of("magnetize") > 0 else 8.0
 	var c := mini(mx, charges(t) + n)
-	t.add_modifier({"id": "magnet_charge", "source": CHARGE_SRC, "expires": w.time + 10.0, "charges": c, "by": src.id,
+	t.add_modifier({"id": "magnet_charge", "source": CHARGE_SRC, "expires": w.time + dur, "charges": c, "by": src.id,
 		"fx": "magnet", "debuff": true})
 	w.events.append({"t": "magnet_charge", "u": t.id, "charges": c})
+
+## Magnetize's spell amplification per Charge for this Kragg now: 0.10% + 0.05% per hero level (it grows as he levels).
+func amp_per_charge(src: SimUnit) -> float:
+	return ab.val(src, "magnetize", "spell_amp") + ab.val(src, "magnetize", "spell_amp_per_level") * float(src.level)
 
 ## Kragg's spell damage on a charged enemy: Magnetize adds a share per Charge.
 func spell_mult(src: SimUnit, t: SimUnit) -> float:
 	if src.ability_level_of("magnetize") <= 0 or src.is_broken():
 		return 1.0
-	return 1.0 + ab.val(src, "magnetize", "spell_amp") * charges(t)
+	return 1.0 + amp_per_charge(src) * charges(t)
 
-## Magnetize: Kragg's attacks give a Charge.
+## Kragg's attacks: Magnetize gives a Charge; Overload counts the attack and bursts on every Nth one.
 func on_attack_landed(s: Dictionary, t: SimUnit) -> void:
 	var src := w.get_unit(int(s.src))
-	if src == null or src.ability_level_of("magnetize") <= 0 or src.is_broken() or not t.alive:
+	if src == null or src.is_broken():
 		return
-	add_charges(t, src, 1)
+	if src.ability_level_of("magnetize") > 0 and t.alive:
+		add_charges(t, src, 1)
+	if src.ability_level_of("overload") > 0 and src.alive:
+		var n := int(src.stacks.get("overload", 0)) + 1
+		if n >= int(ab.val(src, "overload", "every")):
+			n = 0
+			_overload(src, "overload")
+		src.stacks["overload"] = n
+
+## Attacks Kragg has landed toward his next Overload, and how many it takes.
+func overload_count(u: SimUnit) -> Vector2i:
+	if u.ability_level_of("overload") <= 0:
+		return Vector2i(0, 0)
+	return Vector2i(int(u.stacks.get("overload", 0)), int(ab.val(u, "overload", "every")))
 
 func _land_spot(p: Vector2) -> Vector2:
 	if w.map.is_walkable(p):
@@ -314,26 +330,23 @@ func _repel(u: SimUnit, aid: String, lv: int) -> void:
 		if o.kind == K.NEUTRAL_CREEP:
 			w.ai.neutral_provoked(o, u)
 
-## Overload: every charged enemy within 800 is struck for damage per Charge; Charges are used up; Kragg heals.
+## Overload: a burst of electric charge around Kragg; enemies within 200 take magic damage (more with Charges) and
+## are slowed by 80% for 0.8 s.
 func _overload(u: SimUnit, aid: String) -> void:
 	var r := ab.val(u, aid, "radius")
-	var dealt := 0.0
 	var hits: Array = []
-	for o: SimUnit in w.query(u.pos, r + 40.0):
-		if not _can_hit(u.team, o) or u.pos.distance_to(o.pos) > r + o.hull:
+	for o: SimUnit in w.query(u.pos, r + 40.0, true):
+		if not _can_hit(u.team, o) or u.edge_distance(o) > r:
 			continue
-		var ch := charges(o)
-		if ch <= 0:
-			continue
-		o.remove_modifier("magnet_charge")
-		dealt += w.combat.deal_damage(u.id, u.team, true, o, ab.val(u, aid, "per_charge") * ch, C.DamageType.MAGICAL,
+		w.combat.deal_damage(u.id, u.team, true, o, ab.val(u, aid, "damage") * spell_mult(u, o), C.DamageType.MAGICAL,
 			false, "overload", false, {"element": C.Element.LIGHTNING})
-		hits.append([o.id, ch])
+		if o.alive:
+			w.status.apply(o, u.id, u.team, {"id": "overload_slow", "dur": ab.val(u, aid, "slow_duration"),
+				"slow": ab.val(u, aid, "slow"), "fx": "slow"})
+		hits.append(o.id)
 		if o.kind == K.NEUTRAL_CREEP:
 			w.ai.neutral_provoked(o, u)
-	if dealt > 0.0:
-		w.combat.heal(u, dealt * ab.val(u, aid, "heal_pct"))
-	w.events.append({"t": "overload", "u": u.id, "hits": hits, "radius": r})
+	w.events.append({"t": "overload", "u": u.id, "pos": u.pos, "hits": hits, "radius": r})
 
 ## Magnet Field, each tick: enemies within the radius slide toward Kragg (not closer than 100 to him), faster with
 ## Charges; once a second each one gains a Charge. At the end, enemies within 300 take damage and are stunned.

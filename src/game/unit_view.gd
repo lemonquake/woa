@@ -51,6 +51,11 @@ var fog_ok := true                        # seen by the player's team (set by Ma
 var offscreen := false                    # outside the camera's view this frame (Main skips its frame update)
 var _ring_col := Color.WHITE
 var _anim_acc := 0.0
+var _base_key := ""                        # the unit's own model key (a form such as the Anomaly swaps `key` for a while)
+var _form := ""
+var _pop_t := 1.0                          # a model swap grows into place
+var _delayed_clip := ""                    # Blau: the shot clip starts at the moment of firing, the aim is held till then
+var _delayed_at := 0.0
 
 func _now() -> float:
 	return Time.get_ticks_msec() / 1000.0
@@ -59,6 +64,7 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	uid = u.id
 	terrain = p_terrain
 	key = String(u.def.model)
+	_base_key = key
 	cfg = ModelCatalog.info(key)
 	team = u.team
 	is_hero = u.is_hero()
@@ -76,6 +82,7 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		model = (load(String(cfg.scene_dusk)) as PackedScene).instantiate() as Node3D
 	else:
 		model = ModelCatalog.scene(key).instantiate() as Node3D
+	RepairedClips.patch(model)
 	pivot.add_child(model)
 	_model_scale = float(cfg.scale)
 	model.scale = Vector3.ONE * _model_scale
@@ -95,7 +102,7 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		appearance.apply(u.look.get("look", {}))
 		appearance.dress(u.look.get("outfit", {}), u.look.get("dyes", {}))
 	if cfg.has("skin_shader"):
-		_skin(model, String(cfg.skin_shader))
+		_skin(model, String(cfg.skin_shader), String(cfg.get("skin_material", "SludgeSkin")), cfg.get("skin_params", {}))
 	_weapons()
 	if cfg.has("tint"):
 		_tint(cfg.tint)
@@ -118,25 +125,70 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 ## A hero with its own body (Sludge) outside a match (Hero Select): skin shader and textured gear.
 static func dress_own_body(m: Node3D, c: Dictionary) -> void:
 	if c.has("skin_shader"):
-		_skin(m, String(c.skin_shader))
+		_skin(m, String(c.skin_shader), String(c.get("skin_material", "SludgeSkin")), c.get("skin_params", {}))
 	if c.get("gear_materials", false):
 		for mi in m.find_children("*", "MeshInstance3D", true, false):
 			GearMaterials.apply(mi)
 
-## A hero with its own body (Sludge): its skin surfaces get the hero's skin shader.
-static func _skin(model: Node3D, path: String) -> void:
+## A hero with its own body (Sludge, Roydo): its skin surfaces (materials named `prefix`...) get the hero's skin
+## shader, with `params` as shader parameters.
+static func _skin(model: Node3D, path: String, prefix := "SludgeSkin", params := {}) -> void:
 	var sh := load(path) as Shader
 	if sh == null:
 		return
 	var m := ShaderMaterial.new()
 	m.shader = sh
+	for k in params:
+		m.set_shader_parameter(k, params[k])
 	for mi: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
 		if mi.mesh == null:
 			continue
 		for i in mi.mesh.get_surface_count():
 			var src := mi.mesh.surface_get_material(i)
-			if src and src.resource_name.begins_with("SludgeSkin"):
+			if src and src.resource_name.begins_with(prefix):
 				mi.set_surface_override_material(i, m)
+
+## A form (Roydo's Anomaly): the model is replaced by the form's own while its modifier lasts, and back after.
+func _check_form(u: SimUnit) -> void:
+	var forms: Dictionary = ModelCatalog.info(_base_key).get("forms", {})
+	var want := ""
+	for f in forms:
+		if not u.get_modifier(String(f)).is_empty():
+			want = String(f)
+	if want == _form:
+		return
+	_form = want
+	_swap_model(String(forms[want]) if want != "" else _base_key)
+
+func _swap_model(k: String) -> void:
+	key = k
+	cfg = ModelCatalog.info(k)
+	var old := model
+	model = ModelCatalog.scene(k).instantiate() as Node3D
+	pivot.add_child(model)
+	_model_scale = float(cfg.scale)
+	model.scale = Vector3.ONE * _model_scale * 0.7
+	model.rotation.y = PI
+	_pop_t = 0.0
+	var anims := model.find_children("*", "AnimationPlayer", true, false)
+	anim = anims[0] if not anims.is_empty() else null
+	if anim:
+		anim.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
+	var sks := model.find_children("*", "Skeleton3D", true, false)
+	skeleton = sks[0] if not sks.is_empty() else null
+	if cfg.has("skin_shader"):
+		_skin(model, String(cfg.skin_shader), String(cfg.get("skin_material", "SludgeSkin")), cfg.get("skin_params", {}))
+	for mi in model.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	bar_height = float(cfg.get("bar", bar_height))
+	weapons.clear()
+	weapon_nodes.clear()
+	if is_instance_valid(old):
+		old.queue_free()
+	_clip = ""
+	_state = ""
+	_lock_until = 0.0
+	_play(String(cfg.idle), true)
 
 func _weapons() -> void:
 	if skeleton == null:
@@ -154,6 +206,7 @@ func _weapons() -> void:
 		skeleton.add_child(at)
 		var w := ps.instantiate() as Node3D
 		at.add_child(w)
+		w.transform = ModelCatalog.prop_transform(cfg, side)
 		weapons.append(w)
 		weapon_nodes[side] = w
 		if cfg.has("weapon_tint"):
@@ -327,12 +380,22 @@ func tick(u: SimUnit) -> void:
 	cur_lift = 0.0
 	if not u.knock.is_empty() and u.knock.get("phys", false):
 		cur_lift = float(u.knock.z) * View.S
+	elif not u.knock.is_empty() and u.knock.has("z"):
+		cur_lift = float(u.knock.z) * View.S       # thrown on an arc (Grip of the Ruler)
 	elif not u.leap.is_empty():
 		cur_lift = float(u.leap.z) * View.S
 	elif not u.hop.is_empty():
 		cur_lift = float(u.hop.z) * View.S
 	if model == null:
 		return                              # a ward: just its glowing eye, nothing to animate
+	if pivot and ModelCatalog.info(_base_key).has("forms") and u.alive:
+		_check_form(u)
+	# inside something (Blau piloting his turret): not drawn
+	model.visible = not u.has_flag("hidden")
+	if _delayed_clip != "" and _now() >= _delayed_at:
+		if _state == "":
+			_play(_delayed_clip, false, 1.0, 0.03, true)
+		_delayed_clip = ""
 	if not u.alive:
 		if _knock_t >= 0.0:
 			return
@@ -462,6 +525,14 @@ func on_attack_start(point_time: float) -> void:
 				clip = c
 				break
 	var strike := ModelCatalog.strike_time(clip)
+	if cfg.has("attack_aim") and strike < point_time * 0.6:
+		# a gun: hold the aim through the wind-up, fire at the attack point (the shot clip's recoil is at its start)
+		_play(String(cfg.attack_aim), true, 1.0, 0.08)
+		_delayed_clip = clip
+		_delayed_at = _now() + point_time - strike
+		_lock_until = _delayed_at + float(ModelCatalog.clip(clip).get("length", 0.6))
+		_swing_until = _delayed_at + 0.1
+		return
 	var spd := clampf(strike / maxf(point_time, 0.05), 0.35, 3.0)
 	_play(clip, false, spd, 0.06, true)
 	var length := float(ModelCatalog.clip(clip).get("length", 0.6))
@@ -470,6 +541,7 @@ func on_attack_start(point_time: float) -> void:
 
 func on_attack_cancel() -> void:
 	_lock_until = 0.0
+	_delayed_clip = ""
 
 ## Burst Shot began: draw and hold.
 func on_channel_start(aid: String) -> void:
@@ -680,6 +752,11 @@ func frame(alpha: float, delta: float, cam: Camera3D = null, frame_no := 0) -> v
 	var h := terrain.height_at(p)
 	position = View.to3(p, h) + Vector3(0, lift, 0)
 	rotation.y = View.yaw(lerp_angle(prev_facing, cur_facing, alpha))
+	if _pop_t < 1.0 and model:
+		# a new form grows into place with a little overshoot
+		_pop_t = minf(1.0, _pop_t + delta / 0.35)
+		var e := 1.0 + 0.12 * sin(_pop_t * PI) - 0.3 * (1.0 - _pop_t) * (1.0 - _pop_t)
+		model.scale = Vector3.ONE * _model_scale * e
 	# hit flinch: snap away from the blow, spring back
 	if pivot:
 		if _flinch_t < 1.0:

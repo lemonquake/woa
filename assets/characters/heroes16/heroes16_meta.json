@@ -1,0 +1,341 @@
+{
+ "animations": {
+  "anomaly_blast": {
+   "length": 0.5,
+   "loop": false,
+   "release": 0.12
+  },
+  "anomaly_blast_throw": {
+   "length": 1.333,
+   "loop": false,
+   "release": 0.367
+  },
+  "anomaly_cast_shoot": {
+   "length": 0.5,
+   "loop": false,
+   "release": 0.12
+  },
+  "anomaly_cast_slam": {
+   "length": 0.833,
+   "loop": false,
+   "release": 0.1
+  },
+  "anomaly_hit_head": {
+   "length": 0.433,
+   "loop": false,
+   "release": 0.2
+  },
+  "anomaly_idle": {
+   "length": 1.333,
+   "loop": true,
+   "release": 0.467
+  },
+  "anomaly_idle_talk": {
+   "length": 2.933,
+   "loop": true,
+   "release": 0.5
+  },
+  "anomaly_idle_tall": {
+   "length": 2.5,
+   "loop": true,
+   "release": 0.967
+  },
+  "anomaly_punch_hook": {
+   "length": 0.467,
+   "loop": false,
+   "release": 0.267
+  },
+  "anomaly_roar": {
+   "length": 1.067,
+   "loop": false,
+   "release": 0.1
+  },
+  "anomaly_roll": {
+   "length": 1.467,
+   "loop": false,
+   "release": 0.067
+  },
+  "anomaly_run": {
+   "ground_speed": 6.2,
+   "length": 0.667,
+   "loop": true,
+   "release": 0.4
+  },
+  "anomaly_smash": {
+   "length": 1.8,
+   "loop": false,
+   "release": 0.567
+  },
+  "anomaly_victory": {
+   "length": 1.0,
+   "loop": false,
+   "release": 0.7
+  },
+  "anomaly_walk": {
+   "ground_speed": 1.2,
+   "length": 1.333,
+   "loop": true,
+   "release": 0.233
+  },
+  "blau_aim": {
+   "length": 0.167,
+   "loop": false,
+   "release": 0.133
+  },
+  "blau_aim_down": {
+   "length": 0.167,
+   "loop": false,
+   "release": 0.083
+  },
+  "blau_aim_up": {
+   "length": 0.167,
+   "loop": false,
+   "release": 0.133
+  },
+  "blau_cast_shoot": {
+   "length": 0.5,
+   "loop": false,
+   "release": 0.2
+  },
+  "blau_cast_throw": {
+   "length": 1.333,
+   "loop": false,
+   "release": 0.367
+  },
+  "blau_drive": {
+   "length": 1.667,
+   "loop": true,
+   "release": 0.4
+  },
+  "blau_hit_head": {
+   "length": 0.433,
+   "loop": false,
+   "release": 0.2
+  },
+  "blau_idle": {
+   "length": 1.667,
+   "loop": true,
+   "release": 0.433
+  },
+  "blau_idle_fold": {
+   "length": 2.5,
+   "loop": true,
+   "release": 0.5
+  },
+  "blau_idle_plain": {
+   "length": 2.5,
+   "loop": true,
+   "release": 0.967
+  },
+  "blau_idle_talk": {
+   "length": 2.933,
+   "loop": true,
+   "release": 0.5
+  },
+  "blau_interact": {
+   "length": 2.0,
+   "loop": false,
+   "release": 0.433
+  },
+  "blau_jump_air": {
+   "length": 2.0,
+   "loop": true,
+   "release": 0.433
+  },
+  "blau_jump_land": {
+   "length": 1.267,
+   "loop": false,
+   "release": 0.067
+  },
+  "blau_jump_start": {
+   "length": 0.967,
+   "loop": false,
+   "release": 0.033
+  },
+  "blau_kneel_fix": {
+   "length": 1.5,
+   "loop": false,
+   "release": 0.6
+  },
+  "blau_reload": {
+   "length": 1.667,
+   "loop": false,
+   "release": 0.633
+  },
+  "blau_roll": {
+   "length": 1.467,
+   "loop": false,
+   "release": 0.067
+  },
+  "blau_run_rifle": {
+   "ground_speed": 3.6,
+   "length": 0.933,
+   "loop": true,
+   "release": 0.567
+  },
+  "blau_shoot": {
+   "length": 0.633,
+   "loop": false,
+   "release": 0.04
+  },
+  "blau_sprint": {
+   "ground_speed": 6.2,
+   "length": 0.667,
+   "loop": true,
+   "release": 0.4
+  },
+  "blau_victory": {
+   "length": 1.0,
+   "loop": false,
+   "release": 0.7
+  },
+  "death": {
+   "length": 2.4,
+   "loop": false,
+   "release": 1.0
+  },
+  "getup": {
+   "length": 1.533,
+   "loop": false,
+   "release": 0.633
+  },
+  "hit_heavy": {
+   "length": 0.333,
+   "loop": false,
+   "release": 0.067
+  },
+  "knockback": {
+   "length": 0.833,
+   "loop": false,
+   "release": 0.233
+  },
+  "roydo_cast_enter": {
+   "length": 0.533,
+   "loop": false,
+   "release": 0.267
+  },
+  "roydo_cast_exit": {
+   "length": 0.433,
+   "loop": false,
+   "release": 0.267
+  },
+  "roydo_cast_hold": {
+   "length": 2.1,
+   "loop": true,
+   "release": 0.533
+  },
+  "roydo_cast_shoot": {
+   "length": 0.5,
+   "loop": false,
+   "release": 0.25
+  },
+  "roydo_cast_slam": {
+   "length": 0.833,
+   "loop": false,
+   "release": 0.1
+  },
+  "roydo_cast_throw": {
+   "length": 1.333,
+   "loop": false,
+   "release": 0.367
+  },
+  "roydo_hit_head": {
+   "length": 0.433,
+   "loop": false,
+   "release": 0.2
+  },
+  "roydo_idle": {
+   "length": 2.5,
+   "loop": true,
+   "release": 0.967
+  },
+  "roydo_idle_fold": {
+   "length": 2.5,
+   "loop": true,
+   "release": 0.5
+  },
+  "roydo_idle_talk": {
+   "length": 2.933,
+   "loop": true,
+   "release": 0.5
+  },
+  "roydo_jump_land": {
+   "length": 1.267,
+   "loop": false,
+   "release": 0.067
+  },
+  "roydo_jump_start": {
+   "length": 0.967,
+   "loop": false,
+   "release": 0.033
+  },
+  "roydo_punch_cross": {
+   "length": 1.0,
+   "loop": false,
+   "release": 0.2
+  },
+  "roydo_punch_hook": {
+   "length": 0.467,
+   "loop": false,
+   "release": 0.267
+  },
+  "roydo_punch_jab": {
+   "length": 0.867,
+   "loop": false,
+   "release": 0.167
+  },
+  "roydo_roll": {
+   "length": 1.467,
+   "loop": false,
+   "release": 0.067
+  },
+  "roydo_run": {
+   "ground_speed": 3.6,
+   "length": 0.933,
+   "loop": true,
+   "release": 0.133
+  },
+  "roydo_sprint": {
+   "ground_speed": 6.2,
+   "length": 0.667,
+   "loop": true,
+   "release": 0.4
+  },
+  "roydo_victory": {
+   "length": 1.0,
+   "loop": false,
+   "release": 0.7
+  },
+  "roydo_walk": {
+   "ground_speed": 1.45,
+   "length": 1.333,
+   "loop": true,
+   "release": 1.167
+  },
+  "turret_attack": {
+   "length": 0.333,
+   "loop": false,
+   "release": 0.08
+  },
+  "turret_charge": {
+   "length": 0.333,
+   "loop": false
+  },
+  "turret_hit": {
+   "length": 0.233,
+   "loop": false
+  },
+  "turret_idle": {
+   "length": 2.667,
+   "loop": true
+  },
+  "turret_look": {
+   "length": 2.667,
+   "loop": true
+  },
+  "turret_walk": {
+   "length": 1.0,
+   "loop": true
+  }
+ }
+}

@@ -18,6 +18,8 @@ const ROLES := {
 	"caziel": [1, 2, 3],
 	"tock": [5, 4, 2],
 	"kragg": [3, 4, 2, 1],
+	"roydo": [3, 2, 4, 1],
+	"blau": [1, 2, 3],
 }
 ## Lane by role, from the team's side: "safe" (long lane with the tier 1 far out), "mid", "off".
 const ROLE_LANE := {1: "safe", 2: "mid", 3: "off", 4: "off", 5: "safe"}
@@ -48,10 +50,17 @@ const SKILLS := {
 	"tock": ["time_bolt", "fast_forward", "time_bolt", "rewind", "time_bolt", "stop_time", "time_bolt", "slow_field",
 		"slow_field", "quick_hands", "stop_time", "slow_field", "slow_field", "quick_hands", "quick_hands",
 		"quick_hands", "stop_time", "fast_forward", "fast_forward", "fast_forward", "rewind", "rewind", "rewind"],
-	# the grip to level 4 with a point in Magnetize, Overload next, Repel last
-	"kragg": ["iron_grip", "magnetize", "repel", "iron_grip", "iron_grip", "magnet_field", "iron_grip", "overload",
-		"overload", "overload", "magnet_field", "overload", "repel", "repel", "repel", "magnetize", "magnet_field",
-		"magnetize", "magnetize"],
+	# the grip to level 4 with a point in Overload, Overload next, Repel last (Magnetize is innate)
+	"kragg": ["iron_grip", "overload", "repel", "iron_grip", "iron_grip", "magnet_field", "iron_grip", "overload",
+		"overload", "overload", "magnet_field", "repel", "repel", "repel", "magnet_field"],
+	# the grip first (it throws and stuns), Void Rush for fights and escapes, the skin late
+	"roydo": ["grip_of_the_ruler", "void_rush", "grip_of_the_ruler", "dark_matter_skin", "grip_of_the_ruler", "anomaly",
+		"grip_of_the_ruler", "void_rush", "void_rush", "void_rush", "anomaly", "dark_matter_skin", "dark_matter_skin",
+		"dark_matter_skin", "anomaly"],
+	# Bounce Shot first (harass and farm), the trap for safety, boulders after; turrets at 6 / 12 / 18
+	"blau": ["bounce_shot", "lay_trap", "bounce_shot", "summon_boulders", "bounce_shot", "place_turret", "bounce_shot",
+		"lay_trap", "lay_trap", "lay_trap", "place_turret", "summon_boulders", "summon_boulders", "summon_boulders",
+		"place_turret"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -63,7 +72,7 @@ const SUPPORT_SKILLS := {
 }
 ## Talent side per tier (0 left, 1 right), for heroes with a talent tree.
 const TALENTS := {"sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
-	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0]}
+	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -157,6 +166,29 @@ const BUILDS := {
 				"small_shield", "jump_knife", "team_shield", "spell_shield", "crash_knife"],
 		],
 	},
+	# Roydo: an initiator who wants to be hit (Dark Matter Skin): health, a way in, Spike Armor, Spell Shield
+	"roydo": {
+		"core": [
+			["tango", "salve", "mantle", "circlet", "smart_band", "gauntlets", "magic_stick", "boots", "magic_wand",
+				"slip_boots", "jump_knife", "spike_armor", "spell_shield", "giant_heart", "refresh_stone"],
+			["tango", "salve", "mantle", "circlet", "smart_band", "magic_stick", "boots", "magic_wand", "mana_boots",
+				"jump_knife", "block_shield", "spike_armor", "spell_shield", "hex_staff"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
+				"jump_knife", "team_shield", "spike_armor", "spell_shield"],
+		],
+	},
+	# Blau: attack speed and range first, the Upgrade Staff for Pilot Turret, then crits
+	"blau": {
+		"core": [
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots", "gloves",
+				"boots_elves", "magic_wand", "dragon_lance", "mask_of_madness", "upgrade_staff", "crit_sword",
+				"spell_shield", "crit_bow", "armor_breaker"],
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots", "gloves",
+				"boots_elves", "dragon_lance", "yasha", "upgrade_staff", "sure_hit_staff", "spell_shield", "crit_bow"],
+		],
+	},
 	"sludge": {
 		"core": [
 			["tango", "salve", "gauntlets", "branch", "branch", "magic_stick", "circlet", "tough_band", "magic_wand",
@@ -173,9 +205,6 @@ const BUILDS := {
 	},
 }
 
-## Items a bot buys first if the game calls for them (checked at 8, 15 and 25 minutes).
-## spell_shield: the enemy has two or more disablers; spike_armor: a fed enemy right-clicker hits us (strength heroes).
-const SITUATIONAL := ["spell_shield", "spike_armor", "push_staff"]
 
 static func roles(hero: String) -> Array:
 	return ROLES.get(hero, [1, 2, 3, 4, 5])
@@ -221,11 +250,15 @@ static func disable_power(hero: String) -> float:
 			return 0.8
 		"kragg":
 			return 0.85
+		"roydo":
+			return 0.75
+		"blau":
+			return 0.45
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
 static func backliner(hero: String) -> bool:
-	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock"
+	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock" or hero == "blau"
 
 ## The hero's ultimate.
 static func ultimate(h: SimUnit) -> String:
@@ -317,10 +350,28 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 				ch += 2
 			if ready.call("repel"):
 				total += ab.val(h, "repel", "damage") * mr
-			if ready.call("overload"):
-				total += ab.val(h, "overload", "per_charge") * maxi(ch, 2) * mr
+			if h.ability_level_of("overload") > 0:
+				# about one burst in a few seconds of hitting
+				total += ab.val(h, "overload", "damage") * mr * 4.0 / maxf(3.0, ab.val(h, "overload", "every"))
 			if ready.call("magnet_field"):
 				total += ab.val(h, "magnet_field", "end_damage") * mr
+			total *= (1.0 + h.magic_amp) * (1.0 + ab.kits2.amp_per_charge(h) * mini(ch, 4))
+		"roydo":
+			if ready.call("grip_of_the_ruler"):
+				total += ab.val(h, "grip_of_the_ruler", "damage") * mr
+				total += dps(w, h, t) * ab.val(h, "grip_of_the_ruler", "stun")
+			if h.ability_level_of("dark_matter_skin") > 0:
+				total += 200.0 * ab.val(h, "dark_matter_skin", "chance") * ab.val(h, "dark_matter_skin", "reflect") * 4.0 * mr
+			if ready.call("anomaly"):
+				total += ab.val(h, "anomaly", "damage") * 4.0 * arm
+			total *= 1.0 + h.magic_amp
+		"blau":
+			if ready.call("bounce_shot"):
+				total += ab.val(h, "bounce_shot", "damage") * mr * 1.3
+			if ready.call("summon_boulders"):
+				total += ab.val(h, "summon_boulders", "damage") * mr * 0.6
+			if ready.call("place_turret"):
+				total += dps(w, h, t) * ab.val(h, "place_turret", "damage_pct") * 1.13 * 6.0
 			total *= 1.0 + h.magic_amp
 		"sludge":
 			if ready.call("shuriken_hook"):
