@@ -4,7 +4,7 @@ extends RefCounted
 ##
 ## Sound: four buses (Master, Effects, Interface, Ambience). Sliders are 0-100%; loudness follows the ear, so every
 ## halving of a slider halves how loud it sounds (about -10 dB): db = 10 * log2(p). Master starts at 50%.
-## Video: window mode, resolution, V-Sync, frame limit, render scale, quality preset, FPS counter.
+## Video: monitor, window mode, resolution, V-Sync, frame limit, render scale, quality preset, FPS counter.
 ## Game: edge pan, camera speed, centre the camera on the hero at respawn, screen shake, damage numbers.
 ## Cursor: Borderless and Fullscreen always keep the cursor inside the game window (so edge panning cannot lose it on
 ## a second screen); Windowed does so when "Lock cursor to window" is on.
@@ -20,7 +20,7 @@ const QUALITIES := ["Low", "Medium", "High", "Ultra"]
 
 const DEFAULTS := {
 	"master": 0.5, "effects": 1.0, "interface": 1.0, "ambience": 1.0, "mute_unfocused": true,
-	"window_mode": 0, "resolution": 0, "vsync": true, "frame_limit": 5, "render_scale": 1.0, "quality": 2,
+	"monitor": 0, "window_mode": 0, "resolution": 0, "vsync": true, "frame_limit": 5, "render_scale": 1.0, "quality": 2,
 	"show_fps": false,
 	"edge_pan": true, "lock_cursor": false, "camera_speed": 32.0, "screen_shake": true, "damage_numbers": true, "center_on_respawn": true,
 	"bots_learn": true, "bot_chat": true, "quick_cast": false,
@@ -29,6 +29,7 @@ const DEFAULTS := {
 static var data := {}
 static var _loaded := false
 static var _agent: Node
+static var _placed_monitor := -1
 
 static func _ensure() -> void:
 	if _loaded:
@@ -47,6 +48,7 @@ static func _ensure() -> void:
 static func _sanitize() -> void:
 	for k in ["master", "effects", "interface", "ambience"]:
 		data[k] = clampf(float(data[k]), 0.0, 1.0)
+	data.monitor = clampi(int(data.monitor), 0, 16)
 	data.window_mode = clampi(int(data.window_mode), 0, WINDOW_MODES.size() - 1)
 	data.resolution = clampi(int(data.resolution), 0, RESOLUTIONS.size() - 1)
 	data.frame_limit = clampi(int(data.frame_limit), 0, FRAME_LIMITS.size() - 1)
@@ -107,11 +109,32 @@ static func apply_audio() -> void:
 		AudioServer.set_bus_volume_db(i, to_db(p))
 		AudioServer.set_bus_mute(i, p <= 0.001)
 
+## Monitor choices: "Main monitor" (the one Windows calls main), then every monitor by number and size.
+static func monitor_names() -> Array:
+	var names := ["Main monitor"]
+	for i in DisplayServer.get_screen_count():
+		var sz := DisplayServer.screen_get_size(i)
+		names.append("Monitor %d (%d x %d)" % [i + 1, sz.x, sz.y])
+	return names
+
+## The screen the game window belongs on: the main one, or the chosen one while it is plugged in.
+static func monitor_screen() -> int:
+	_ensure()
+	var m := int(data.monitor) - 1
+	return m if m >= 0 and m < DisplayServer.get_screen_count() else DisplayServer.get_primary_screen()
+
 static func apply_video(tree: SceneTree) -> void:
 	_ensure()
 	if automated():
 		return
 	var win := tree.root
+	var screen := monitor_screen()
+	# only at boot and when the Monitor choice changes, so a window dragged to another screen stays there
+	if int(data.monitor) != _placed_monitor and DisplayServer.window_get_current_screen() != screen:
+		# move as a plain window first: Windows keeps a fullscreen or maximized window on its old monitor
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		DisplayServer.window_set_current_screen(screen)
+	_placed_monitor = int(data.monitor)
 	match int(data.window_mode):
 		0:
 			if int(data.resolution) == 0:

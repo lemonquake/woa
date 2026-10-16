@@ -4,6 +4,17 @@
 
 ## Status (keep this section current)
 
+**2026-10-17: Monitor option.** Options > Video has a new first row, **Monitor**: "Main monitor" (the one Windows
+calls main, the default) or "Monitor 1 (1920 x 1080)", "Monitor 2 ..." for each plugged-in screen. The game opens on
+that screen at boot and moves there at once when you change it, in every window mode; if the chosen monitor is
+unplugged it falls back to the main one. A window you drag to another screen stays there until you change the choice.
+Saved as `monitor` in `user://options.json` (`src/core/options.gd`, `src/ui/options_panel.gd`).
+Evidence: on this PC (two 1920 x 1080 screens) a live probe moved the Fullscreen window to screen 2 and back (window
+reported on the wanted screen each time); capture of the Video tab (`work/shots/monitor/options_video.png`);
+parse check clean, "Names OK". `build/WarriorsOfAether.exe` rebuilt 2026-10-17 00:32; cold start to the menu, no
+script errors. Not verified: Borderless and Windowed moves (same code path), no headless test (needs real screens).
+Names added (veto any): Monitor, Main monitor, "Monitor N (W x H)".
+
 **2026-10-16 b: your mechanics list.** Run `work/lemondev/2026-10-16b-mechanics/`.
 * **Grip of the Ruler** needs someone to throw: on an area with no unit it does not go off, says "No valid target",
   keeps the targeting cursor and spends no mana or cooldown (also checked again when the cast point ends). It now

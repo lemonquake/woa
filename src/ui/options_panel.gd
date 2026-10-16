@@ -96,6 +96,10 @@ func _audio_tab() -> void:
 func _video_tab() -> void:
 	var v := _page("Video")
 	var apply := func(): Options.apply_video(get_tree())
+	var monitors := Options.monitor_names()
+	if int(Options.get_value("monitor")) >= monitors.size():
+		Options.set_value("monitor", 0)    # that monitor is unplugged: back to the main one
+	_choice(v, "Monitor", "monitor", monitors, apply)
 	_choice(v, "Window mode", "window_mode", Options.WINDOW_MODES, apply)
 	_choice(v, "Window size", "resolution", Options.RESOLUTIONS, apply)
 	_check(v, "V-Sync", "vsync", apply)
@@ -109,7 +113,7 @@ func _video_tab() -> void:
 			Options.apply_environment(game.atmosphere.env, game.atmosphere.sun))
 	_slider(v, "Render scale", "render_scale", 0.5, 1.0, 0.05, func(x): return "%d%%" % roundi(x * 100.0), apply)
 	_check(v, "Show FPS", "show_fps", Callable())
-	_note(v, "Window size applies in Windowed mode. Borderless and Fullscreen keep the cursor inside the game. Quality sets shadows, anti-aliasing, ambient occlusion and glow.")
+	_note(v, "Monitor picks the screen the game opens on. Window size applies in Windowed mode. Borderless and Fullscreen keep the cursor inside the game. Quality sets shadows, anti-aliasing, ambient occlusion and glow.")
 
 func _game_tab() -> void:
 	var v := _page("Game")
