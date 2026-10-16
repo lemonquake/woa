@@ -50,11 +50,11 @@ Kragg 1-2 (Roydo far ahead in one seed, behind in the other two). Blau before th
 5 v 5 bot game with two Roydos and two Blaus (`bot_game.txt`): ran to time in 178 s, no script errors, 39-24 kills;
 one bot stuck (Roydo, from 11:19, a known issue). `sh tools/check.sh`: no parse errors, "Names OK".
 Export: `build/WarriorsOfAether.exe` rebuilt 2026-10-16 20:03 with the fix; cold start into a Blau match 12.6 s and a
-Roydo match 12.5 s, no script errors (`shots/export_blau.png`, `export_roydo.png`). Blau vs Roydo duels were still
-running at commit time.
+Roydo match 12.5 s, no script errors (`shots/export_blau.png`, `export_roydo.png`). Blau vs Roydo (after the fix):
+1-1 in kills, but Roydo out-farms him (LH 34-53 against 17-24).
 Not verified: no blind critic review (none asked for, no Dota frames on disk); the look of both heroes and every
 effect is a builder self-check (`shots/`). Left: in the trap capture a rooted creep's timer reads "Rooted 0.0" on its
-last frame; Blau loses his lane against Azrin in bot duels.
+last frame; Blau's bot loses his lane against Azrin and is out-farmed by Roydo in bot duels.
 
 **2026-10-15 h: lane creep and unit animations repaired (follow-up to g).** Run `work/lemondev/2026-10-15h-unit-anims/`.
 * The 16 humanoid unit models (lane knights and mages, Black Sun's ghouls, necromancers and chieftains, both siege

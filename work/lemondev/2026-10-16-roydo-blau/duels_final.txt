@@ -55,3 +55,16 @@ seed 11 at 12:00: A(roydo) 1/1/0 lvl 8 LH 23 DN 7 nw 2777 | B(kragg) 1/1/0 lvl 8
     roydo items: ["magic_wand", "gauntlets", "salve", "smart_band", "cloak", "boots"]
     kragg items: ["boots", "magic_wand", "cloak", "quelling_blade", "tough_band"]
 == blau vs roydo
+exit 0
+seed 3 at 12:00: A(blau) 0/1/0 lvl 6 LH 17 DN 4 nw 1445 | B(roydo) 1/0/0 lvl 9 LH 53 DN 32 nw 4026 | towers lost A 0 B 0
+    casts: { "B:grip_of_the_ruler": 16, "A:bounce_shot": 16, "B:item_salve": 4, "B:void_rush": 3, "B:item_tango": 3, "A:lay_trap": 8, "A:item_salve": 3, "A:item_tango": 3, "A:item_clarity": 6, "A:summon_boulders": 2, "B:anomaly": 3, "B:item_slip_boots": 5, "B:item_clarity": 1, "B:snarl": 6, "B:item_magic_wand": 1, "B:stomp": 1 }
+    blau items: ["wraith_band", "quelling_blade"]
+    roydo items: ["slip_boots", "gauntlets", "magic_wand", "smart_band", "cloak"]
+seed 7 at 12:00: A(blau) 1/0/0 lvl 8 LH 24 DN 12 nw 2054 | B(roydo) 0/1/0 lvl 8 LH 34 DN 19 nw 2072 | towers lost A 0 B 0
+    casts: { "B:grip_of_the_ruler": 15, "A:bounce_shot": 15, "B:void_rush": 7, "A:item_salve": 6, "A:item_tango": 3, "A:lay_trap": 9, "A:item_clarity": 7, "B:item_tango": 3, "B:item_salve": 7, "B:item_clarity": 1, "A:summon_boulders": 3, "B:item_magic_stick": 3, "B:anomaly": 2, "A:item_magic_stick": 2, "A:place_turret": 3, "B:snarl": 3, "B:stomp": 4, "B:smash": 4 }
+    blau items: ["cloak", "magic_stick", "salve", "wraith_band", "quelling_blade"]
+    roydo items: ["gauntlets", "boots", "smart_band", "magic_stick"]
+seed 11 at 12:00: A(blau) 0/0/0 lvl 7 LH 17 DN 11 nw 1328 | B(roydo) 0/0/0 lvl 9 LH 41 DN 18 nw 2969 | towers lost A 0 B 0
+    casts: { "B:grip_of_the_ruler": 18, "A:bounce_shot": 17, "B:void_rush": 3, "B:item_salve": 5, "B:item_tango": 3, "A:item_clarity": 6, "A:item_salve": 6, "A:item_tango": 3, "B:stomp": 4, "A:lay_trap": 7, "A:item_magic_stick": 3, "A:summon_boulders": 3, "B:anomaly": 2, "A:place_turret": 2, "B:item_magic_stick": 1, "B:snarl": 4, "B:smash": 3 }
+    blau items: ["magic_stick", "wraith_band", "quelling_blade"]
+    roydo items: ["cloak", "gauntlets", "magic_wand", "smart_band", "boots"]
