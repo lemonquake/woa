@@ -4,6 +4,39 @@
 
 ## Status (keep this section current)
 
+**2026-10-17 c: Double-click self-cast and Azrael skill rework (your list).**
+* **Double-click / double-tap self-cast** (`src/game/input_controller.gd`, `src/sim/sim_orders.gd`): double-clicking or
+  double-tapping any targeted skill (`point`, `unit`, `autocast_attack`) or active item (`unit` or `point`) within 0.5 s
+  while its targeting cursor is up casts it on the hero at once (`h` for unit targets, `h.pos` for point targets,
+  `own_turret` for Pilot Turret), without requiring a turn for point self-casts. Town Portal (`tp`) keeps its
+  double-click / double-tap teleport to the fountain.
+* **Azrael's 1st skill (`soul_tap` - Soul Tap) rework** (`src/sim/sim_data.gd`, `src/sim/sim_kits4.gd`,
+  `src/sim/sim_combat.gd`, `src/sim/sim_abilities.gd`, `src/sim/sim_bot17.gd`): changed to a **Toggle** skill. While
+  toggled on, every 4.5 s Azrael scans a 600 area around her for souls (all living units including allies and enemies,
+  excluding herself, buildings, wards, couriers and units inside a door). If there are no valid targets in range, no
+  mana is spent and it continues scanning every 4.5 s; if there is at least one valid target (and she has 80 mana), it
+  consumes 80 mana and grants +20/25/30/35 bonus attack damage per unit scanned plus +40 more per hero scanned for her
+  next strike. That next attack deals **Pure** damage in a **100% cleave over a 400 area**, slowing the primary target
+  and all cleaved enemies by **80% for 0.80 s**.
+* **Azrael's 2nd skill (`door_of_the_end` - Door of the End)** (`src/sim/sim_data.gd`, `src/sim/sim_kits4.gd`,
+  `src/sim/sim_orders.gd`, `src/sim/sim_unit.gd`, `src/sim/sim_combat.gd`, `src/ui/buff_bar.gd`, `src/ui/hud.gd`):
+  units inside the door can **prematurely step out** by issuing a move, attack or pickup order while inside (bringing
+  that unit out at the exit, or entrance if no exit was set, without triggering the explosion). When the door explodes
+  at the end of its duration, in addition to its 150/250/350/450 magic damage in a 450 area, it **heals nearby allies
+  for 100/150/200/250**, **stuns all affected enemies for 1 s**, and **strips 10/16/22/28% of their Elemental
+  resistances for 4 s** (`element_resist_loss`).
+* **Azrael's 3rd skill (`death_scythe` - Death Scythe)** (`src/sim/sim_data.gd`, `src/sim/sim_kits4.gd`,
+  `src/sim/sim_combat.gd`): also **lifesteals 50%** of the damage done when it strikes; cooldown lowered to **1 s**
+  (was 1.5 s).
+* **Azrael's Ultimate (`divine_darkness` - Divine Darkness)** (`src/sim/sim_data.gd`, `src/sim/sim_kits4.gd`): she
+  moves **15% faster** at all levels while Divine Darkness is active.
+Evidence: headless tests 244 passed, 0 failed (updated `test_azrael_data`, `test_azrael_soul_tap_charge_and_cleave`,
+`test_azrael_door_of_the_end`, `test_azrael_death_scythe`, `test_azrael_divine_darkness`); live `input_probe.gd --
+--hero=azrael --lvl=18 --nobot` 19 passed, 0 failed (including Soul Tap toggle on/off, quick cast, double-click skill
+self-cast, double-click Push Staff self-cast, and Town Portal double-tap to fountain); `modifier_census.gd` 0 unnamed;
+`python tools/check_names.py` "Names OK"; `build/WarriorsOfAether.exe` rebuilt 2026-10-17.
+Names added (veto any): "Elemental resistance -N%" (buff tooltip / stat sheet line).
+
 **2026-10-17 b: Azrael, talent trees, tree-felling spells, player labels, kill card, Bot Log, Blau's bot, Dota gap
 report (your list).** Run `work/lemondev/2026-10-17-azrael/` (captures in `shots/`, Blender previews in `preview/`).
 * **Talent trees for Blood Ranger and Ezee** (the two heroes without one). Their spells read the old way and ignored

@@ -70,6 +70,8 @@ func cast_error(u: SimUnit, aid: String, _t: SimUnit, p: Vector2, check_target: 
 
 # ---- Soul Tap ---------------------------------------------------------------------------------------------------------
 
+var _scan_at := {}                             # Azrael id -> next scan time
+
 ## The units whose souls Soul Tap gathers at `p`: every living unit in the area but her, enemies and allies alike (not
 ## buildings, wards, couriers or units hidden in a door).
 func souls_at(u: SimUnit, p: Vector2, r: float) -> Array:
@@ -81,14 +83,31 @@ func souls_at(u: SimUnit, p: Vector2, r: float) -> Array:
 			out.append(o)
 	return out
 
-func _soul_tap(u: SimUnit, aid: String, p: Vector2) -> void:
+func on_soul_tap_toggle(u: SimUnit) -> void:
+	if not _scan_at.has(u.id):
+		_scan_at[u.id] = w.time + ab.val(u, "soul_tap", "scan_interval") - 1e-6
+
+func _soul_tap(u: SimUnit, aid: String, _p: Vector2) -> void:
+	ab.set_toggle(u, aid, not bool(u.toggles.get(aid, false)))
+
+func _try_soul_scan(u: SimUnit) -> void:
+	var aid := "soul_tap"
+	var interval := ab.val(u, aid, "scan_interval")
+	_scan_at[u.id] = w.time + interval
 	var r := ab.val(u, aid, "radius")
+	var found := souls_at(u, u.pos, r)
+	if found.is_empty():
+		return
+	var cost := ab.ability_mana(u, aid)
+	if u.mana < cost:
+		return
+	u.mana -= cost
 	var per := ab.val(u, aid, "per_unit")
 	var extra := ab.val(u, aid, "per_hero")
 	var bonus := 0.0
 	var ids: Array = []
 	var heroes := 0
-	for o: SimUnit in souls_at(u, p, r):
+	for o: SimUnit in found:
 		bonus += per + (extra if o.is_hero() else 0.0)
 		if o.is_hero():
 			heroes += 1
@@ -99,15 +118,15 @@ func _soul_tap(u: SimUnit, aid: String, p: Vector2) -> void:
 		u.add_modifier({"id": "soul_tap", "source": u.id, "expires": w.time + dur, "stats": {"damage": bonus},
 			"souls": ids.size(), "fx": "soul_charge", "dispel": "basic"})
 	u.refresh_stats()
-	w.events.append({"t": "soul_tap", "u": u.id, "pos": p, "radius": r, "souls": ids, "heroes": heroes,
+	w.events.append({"t": "soul_tap", "u": u.id, "pos": u.pos, "radius": r, "souls": ids, "heroes": heroes,
 		"bonus": bonus, "dur": dur})
 
 ## Whether her next attack carries Soul Tap's charge (set on the attack's snapshot when it is released).
 func soul_charged(u: SimUnit) -> bool:
 	return u.ability_level_of("soul_tap") > 0 and not u.get_modifier("soul_tap").is_empty()
 
-## A charged attack landed: the charge is spent and the blow cleaves its full damage round the target (Dota's cleave
-## cone: 150 wide at her, 360 wide 650 away), ignoring armor.
+## A charged attack landed: the charge is spent, the blow deals pure damage in a 100% cleave over a 400 area, and all
+## affected enemies are slowed by 80% for 0.80 seconds.
 func on_attack_landed(s: Dictionary, t: SimUnit, base_dmg: float) -> void:
 	if not bool(s.get("soul", false)):
 		return
@@ -123,19 +142,26 @@ func on_attack_landed(s: Dictionary, t: SimUnit, base_dmg: float) -> void:
 	var w0 := ab.val(u, "soul_tap", "cleave_start")
 	var w1 := ab.val(u, "soul_tap", "cleave_end")
 	var pct := ab.val(u, "soul_tap", "cleave_pct")
+	var slow := ab.val(u, "soul_tap", "slow")
+	var sdur := ab.val(u, "soul_tap", "slow_duration")
+	if t.alive and _enemy(u.team, t):
+		w.status.apply(t, u.id, u.team, {"id": "soul_tap_slow", "slow": slow, "dur": sdur, "fx": "slow"})
 	var hits: Array = []
 	if not t.is_building():
-		for o: SimUnit in w.query(u.pos + dir * dist * 0.5, dist * 0.5 + w1):
+		for o: SimUnit in w.query(t.pos, dist + 80.0, true):
 			if o == t or not _enemy(u.team, o):
 				continue
 			var rel := o.pos - u.pos
 			var along := rel.dot(dir)
-			if along < 0.0 or along > dist:
+			var in_cone := along >= 0.0 and along <= dist + o.hull \
+				and absf(rel.dot(dir.orthogonal())) <= lerpf(w0, w1, clampf(along / maxf(1.0, dist), 0.0, 1.0)) * 0.5 + o.hull
+			var in_rad := along >= -o.hull and o.pos.distance_to(t.pos) <= dist + o.hull
+			if not in_cone and not in_rad:
 				continue
-			if absf(rel.dot(dir.orthogonal())) > lerpf(w0, w1, along / dist) * 0.5 + o.hull:
-				continue
-			w.combat.deal_damage(u.id, u.team, true, o, base_dmg * pct, C.DamageType.PHYSICAL, false, "soul_tap", false,
-				{"ignore_armor": true, "no_spell_lifesteal": true})
+			w.combat.deal_damage(u.id, u.team, true, o, base_dmg * pct, C.DamageType.PURE, false, "soul_tap", false,
+				{"no_amp": true, "no_spell_lifesteal": true})
+			if o.alive:
+				w.status.apply(o, u.id, u.team, {"id": "soul_tap_slow", "slow": slow, "dur": sdur, "fx": "slow"})
 			hits.append(o.id)
 	w.events.append({"t": "soul_slash", "u": u.id, "target": t.id, "dir": dir, "dist": dist, "hits": hits,
 		"souls": int(m.get("souls", 0))})
@@ -173,8 +199,10 @@ func _open_door(u: SimUnit, aid: String, p: Vector2) -> void:
 	_seq += 1
 	var at := _land_spot(p)
 	var e := {"kind": "azrael_door", "ability": aid, "src": u.id, "team": u.team, "pos": at, "exit": at,
-		"has_exit": false, "until": w.time + dur, "start": w.time, "inside": [], "seq": _seq,
-		"damage": ab.val(u, aid, "damage"), "radius": ab.val(u, aid, "radius"), "allies": int(ab.val(u, aid, "allies")),
+		"has_exit": false, "until": w.time + dur, "start": w.time, "inside": [], "left_early": {}, "seq": _seq,
+		"damage": ab.val(u, aid, "damage"), "heal": ab.val(u, aid, "heal"), "stun": ab.val(u, aid, "stun"),
+		"resist_loss": ab.val(u, aid, "element_resist_loss"), "debuff_dur": ab.val(u, aid, "debuff_duration"),
+		"radius": ab.val(u, aid, "radius"), "allies": int(ab.val(u, aid, "allies")),
 		"enter": ab.val(u, aid, "enter_radius")}
 	w.effects.append(e)
 	w.events.append({"t": "door_open", "u": u.id, "pos": at, "dur": dur, "seq": _seq, "team": u.team})
@@ -193,9 +221,34 @@ func try_exit_cast(u: SimUnit, p: Vector2) -> bool:
 	_set_exit(u, d, p)
 	return true
 
+## Prematurely come out of the door without triggering its explosion.
+func leave_door(u: SimUnit, goal := Vector2.INF) -> bool:
+	if not in_door(u):
+		return false
+	var m := u.get_modifier("in_door")
+	for e in w.effects:
+		if String(e.kind) != "azrael_door" or not (u.id in (e.inside as Array)):
+			continue
+		if goal != Vector2.INF and goal.distance_to(e.pos) <= float(e.enter) + 40.0 and w.time - float(m.get("entered_at", 0.0)) < 0.25:
+			return false
+		(e.inside as Array).erase(u.id)
+		(e.get("left_early", {}) as Dictionary)[u.id] = true
+		u.remove_modifier("in_door")
+		u.refresh_stats()
+		var out_p: Vector2 = e.exit if bool(e.get("has_exit", false)) else e.pos
+		u.pos = _land_spot(out_p)
+		u.path = PackedVector2Array()
+		w.events.append({"t": "door_out", "u": u.id, "pos": u.pos, "seq": int(e.seq), "early": true})
+		return true
+	u.remove_modifier("in_door")
+	u.refresh_stats()
+	return true
+
 ## Who may step in: Azrael herself, and allied heroes (two at most) that were told to go to the door.
 func _wants_in(o: SimUnit, e: Dictionary) -> bool:
 	if not o.alive or o.team != int(e.team) or not o.is_hero() or in_door(o) or o.is_stunned():
+		return false
+	if (e.get("left_early", {}) as Dictionary).has(o.id):
 		return false
 	if o.pos.distance_to(e.pos) > float(e.enter) + o.hull:
 		return false
@@ -239,12 +292,28 @@ func _update_door(e: Dictionary) -> bool:
 		o.facing = (exit_p - (e.pos as Vector2)).angle() if exit_p.distance_to(e.pos) > 1.0 else o.facing
 		k += 1
 		w.events.append({"t": "door_out", "u": o.id, "pos": o.pos, "seq": int(e.seq)})
+	var heal_amt := float(e.get("heal", 0.0))
+	if heal_amt > 0.0:
+		for ally: SimUnit in w.query(exit_p, float(e.radius) + 40.0, true):
+			if not ally.alive or ally.team != int(e.team) or ally.is_building() or ally.is_ward() or ally.kind == K.COURIER or ally.is_invulnerable():
+				continue
+			if ally.pos.distance_to(exit_p) <= float(e.radius) + ally.hull:
+				w.combat.heal(ally, heal_amt)
 	var hits: Array = []
+	var stun_dur := float(e.get("stun", 1.0))
+	var rloss := float(e.get("resist_loss", 0.0))
+	var ddur := float(e.get("debuff_dur", 4.0))
 	for o: SimUnit in w.query(exit_p, float(e.radius) + 40.0, true):
 		if not _enemy(int(e.team), o) or o.pos.distance_to(exit_p) > float(e.radius) + o.hull:
 			continue
 		w.combat.deal_damage(int(e.src), int(e.team), true, o, float(e.damage), C.DamageType.MAGICAL, false,
 			"door_of_the_end")
+		if o.alive:
+			if stun_dur > 0.0:
+				w.status.apply(o, int(e.src), int(e.team), {"id": "stunned", "stun": true, "dur": stun_dur, "fx": "stun"})
+			if rloss > 0.0 and ddur > 0.0:
+				w.status.apply(o, int(e.src), int(e.team), {"id": "door_of_the_end_curse", "dur": ddur,
+					"element_resist_loss": rloss, "fx": "curse"})
 		hits.append(o.id)
 		if o.kind == K.NEUTRAL_CREEP and src != null:
 			w.ai.neutral_provoked(o, src)
@@ -257,7 +326,8 @@ func _enter(o: SimUnit, e: Dictionary) -> void:
 	w.orders.cancel_channel(o)
 	w.orders.clear(o)
 	o.add_modifier({"id": "in_door", "source": int(e.src), "expires": float(e.until) + 1.0, "invulnerable": true,
-		"hidden": true, "phased": true, "root": true, "disarm": true, "mute": true, "in_door": true, "fx": "in_door"})
+		"hidden": true, "phased": true, "root": true, "disarm": true, "mute": true, "in_door": true,
+		"entered_at": w.time, "fx": "in_door"})
 	o.pos = e.pos
 	o.path = PackedVector2Array()
 	o.refresh_stats()
@@ -268,7 +338,7 @@ func _enter(o: SimUnit, e: Dictionary) -> void:
 # ---- Death Scythe -----------------------------------------------------------------------------------------------------
 
 ## Death Scythe on a blow from Azrael (her attacks and her spells): -1 when it does not strike, else the bonus pure
-## damage to add (the blow itself turns pure). Pseudo-random like every chance passive, 1.5 s apart.
+## damage to add (the blow itself turns pure). Pseudo-random like every chance passive, 1.0 s apart.
 func death_scythe(src: SimUnit, t: SimUnit, key: String) -> float:
 	if src == null or not (key in HER_KEYS) or src.ability_level_of("death_scythe") <= 0 or src.is_broken():
 		return -1.0
@@ -289,7 +359,8 @@ func _divine_darkness(u: SimUnit, aid: String) -> void:
 	var dur := ab.val(u, aid, "duration")
 	u.remove_modifier("divine_darkness")
 	u.add_modifier({"id": "divine_darkness", "source": u.id, "expires": w.time + dur, "fx": "divine_darkness",
-		"stats": {"attack_speed": ab.val(u, aid, "attack_speed"), "vision_pct": ab.val(u, aid, "vision_bonus")},
+		"stats": {"attack_speed": ab.val(u, aid, "attack_speed"), "move_speed_pct": ab.val(u, aid, "move_speed_pct"),
+			"vision_pct": ab.val(u, aid, "vision_bonus")},
 		"day_vision": true, "flying": true, "free_flight": true, "radius": ab.val(u, aid, "radius"),
 		"vision_cut": ab.val(u, aid, "vision_cut")})
 	u.refresh_stats()
@@ -300,6 +371,14 @@ func flies(u: SimUnit) -> bool:
 	return u.has_flag("free_flight")
 
 func tick() -> void:
+	for h in w.heroes:
+		if String(h.def.id) != "azrael":
+			continue
+		if h.alive and bool(h.toggles.get("soul_tap", false)) and h.ability_level_of("soul_tap") > 0 and not in_door(h):
+			if not _scan_at.has(h.id):
+				_scan_at[h.id] = w.time + ab.val(h, "soul_tap", "scan_interval") - 1e-6
+			if w.time + 1e-6 >= float(_scan_at.get(h.id, C.LONG_AGO)):
+				_try_soul_scan(h)
 	if w.tick % 6 != 0:
 		return
 	for h in w.heroes:

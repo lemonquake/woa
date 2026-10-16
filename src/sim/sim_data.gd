@@ -719,30 +719,37 @@ static func _build_neutral_abilities() -> void:
 ## within 700 -30/40/50% sight, +30/40/50 attack speed, 60 s. Chosen: the mana of Door of the End and Divine
 ## Darkness, cast points, the cleave cone (Dota's), the door's entry reach.
 static func _build_abilities_17() -> void:
-	_abilities["soul_tap"] = {"id": "soul_tap", "name": "Soul Tap", "behavior": "point", "key": "Q",
-		"max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [18, 18, 18, 18], "cast_point": 0.3, "range": 700,
-		"anim": "cast_area", "damage_type": "physical", "aoe": true,
-		"values": {"radius": [300, 300, 300, 300], "per_unit": [15, 20, 25, 30], "per_hero": [20, 20, 20, 20],
-		"duration": [15, 15, 15, 15], "cleave_pct": [1.0, 1.0, 1.0, 1.0], "cleave_start": [150, 150, 150, 150],
-		"cleave_end": [360, 360, 360, 360], "cleave_distance": [650, 650, 650, 650]},
-		"desc": "Azrael draws the souls out of every unit in the area, enemies and allies alike: each gives her bonus damage, heroes more. Her next attack spends it all in one great slash that cleaves its full damage. Lasts 15 seconds."}
+	_abilities["soul_tap"] = {"id": "soul_tap", "name": "Soul Tap", "behavior": "toggle", "key": "Q",
+		"max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"damage_type": "pure", "aoe": true,
+		"values": {"scan_interval": [4.5, 4.5, 4.5, 4.5], "radius": [600, 600, 600, 600],
+		"per_unit": [20, 25, 30, 35], "per_hero": [40, 40, 40, 40], "duration": [15, 15, 15, 15],
+		"cleave_pct": [1.0, 1.0, 1.0, 1.0], "cleave_start": [150, 150, 150, 150],
+		"cleave_end": [400, 400, 400, 400], "cleave_distance": [400, 400, 400, 400],
+		"slow": [0.80, 0.80, 0.80, 0.80], "slow_duration": [0.80, 0.80, 0.80, 0.80]},
+		"hidden_values": ["cleave_start", "cleave_end"],
+		"desc": "Toggle. Every 4.5 seconds Azrael scans 600 around her for souls (every unit but herself, allies and enemies alike). If at least one unit is found, it spends 80 mana and grants bonus attack damage on her next strike for each unit and each hero scanned. Her next attack deals pure damage in a 100% cleave over a 400 area, slowing hit enemies by 80% for 0.8 seconds."}
 	_abilities["door_of_the_end"] = {"id": "door_of_the_end", "name": "Door of the End", "behavior": "point", "key": "W",
 		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.3, "range": 400,
 		"anim": "cast_heavy", "damage_type": "magical", "aoe": true,
 		"values": {"duration": [3, 4, 5, 6], "exit_range": [800, 800, 800, 800], "damage": [150, 250, 350, 450],
+		"heal": [100, 150, 200, 250], "stun": [1.0, 1.0, 1.0, 1.0],
+		"element_resist_loss": [0.10, 0.16, 0.22, 0.28], "debuff_duration": [4.0, 4.0, 4.0, 4.0],
 		"radius": [450, 450, 450, 450], "allies": [2, 2, 2, 2], "enter_radius": [110, 110, 110, 110]},
-		"desc": "Azrael opens a door to the spirit world. She and up to two allied heroes can walk into it, hidden and unharmed. Cast again to place the exit, up to 800 away. When the door closes, everyone inside steps out of the exit in a spirit blast that deals magic damage around it (out of the entrance if no exit was placed)."}
+		"hidden_values": ["enter_radius"],
+		"desc": "Azrael opens a door to the spirit world. She and up to two allied heroes can walk into it, hidden and unharmed, and may move to step out early without setting off the blast. Cast again to place the exit, up to 800 away. When the door closes, everyone inside steps out in a spirit blast that heals nearby allies, deals magic damage to enemies, stuns them for 1 second, and strips their elemental resistances for 4 seconds."}
 	_abilities["death_scythe"] = {"id": "death_scythe", "name": "Death Scythe", "behavior": "passive", "key": "E",
-		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [1.5, 1.5, 1.5, 1.5], "cast_point": 0.0, "range": 0,
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [1.0, 1.0, 1.0, 1.0], "cast_point": 0.0, "range": 0,
 		"damage_type": "pure",
-		"values": {"chance": [0.15, 0.18, 0.21, 0.24], "bonus": [30, 40, 50, 60], "proc_cooldown": [1.5, 1.5, 1.5, 1.5]},
-		"desc": "Azrael's attacks and spells have a chance to strike as pure damage, with bonus pure damage on top. Cooldown after each strike."}
+		"values": {"chance": [0.15, 0.18, 0.21, 0.24], "bonus": [30, 40, 50, 60],
+		"lifesteal": [0.50, 0.50, 0.50, 0.50], "proc_cooldown": [1.0, 1.0, 1.0, 1.0]},
+		"desc": "Azrael's attacks and spells have a chance to strike as pure damage, adding bonus pure damage and healing her for 50% of the damage done. 1 second cooldown after each strike."}
 	_abilities["divine_darkness"] = {"id": "divine_darkness", "name": "Divine Darkness", "behavior": "no_target", "key": "R",
 		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 150, 200], "cooldown": [60, 60, 60],
 		"cast_point": 0.4, "range": 0, "anim": "cast_ultimate",
-		"values": {"duration": [25, 25, 25], "vision_bonus": [0.3, 0.5, 0.7], "vision_cut": [0.3, 0.4, 0.5],
-		"radius": [700, 700, 700], "attack_speed": [30, 40, 50]},
-		"desc": "Azrael spreads her white wings for 25 seconds: she flies over cliffs and trees, sees further day and night and attacks faster. Enemies within 700 of her lose part of their sight."}
+		"values": {"duration": [25, 25, 25], "move_speed_pct": [0.15, 0.15, 0.15], "vision_bonus": [0.3, 0.5, 0.7],
+		"vision_cut": [0.3, 0.4, 0.5], "radius": [700, 700, 700], "attack_speed": [30, 40, 50]},
+		"desc": "Azrael spreads her white wings for 25 seconds: she flies over cliffs and trees, moves 15% faster, sees further day and night and attacks faster. Enemies within 700 of her lose part of their sight."}
 
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
 	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}

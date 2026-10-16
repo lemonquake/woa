@@ -6331,9 +6331,12 @@ func test_azrael_data() -> void:
 	for tier in d.talents:
 		for tid in tier:
 			check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+	check(String(SimData.ability("soul_tap").behavior) == "toggle", "Soul Tap is a toggle")
 	near(float(SimData.ability("soul_tap").mana[0]), 80.0, 0.01, "Soul Tap costs 80")
-	near(float(SimData.ability("soul_tap").cooldown[0]), 18.0, 0.01, "Soul Tap 18 s")
+	near(float(SimData.ability("soul_tap").values.scan_interval[0]), 4.5, 0.01, "Soul Tap scans every 4.5 s")
+	near(float(SimData.ability("soul_tap").values.radius[0]), 600.0, 0.01, "Soul Tap 600 scan radius")
 	near(float(SimData.ability("door_of_the_end").cooldown[0]), 12.0, 0.01, "Door of the End 12 s")
+	near(float(SimData.ability("death_scythe").cooldown[0]), 1.0, 0.01, "Death Scythe 1 s cooldown")
 	near(float(SimData.ability("divine_darkness").cooldown[0]), 60.0, 0.01, "Divine Darkness 60 s")
 	check(SimBotKits.ROLES.has("azrael") and SimBotKits.SKILLS.has("azrael"), "bots know her")
 	check("azrael" in GameSettings.HEROES, "she can be picked")
@@ -6342,24 +6345,40 @@ func test_azrael_soul_tap_charge_and_cleave() -> void:
 	var w := empty_world()
 	var o := Vector2(-2000, -4000)
 	var a := _hero16(w, "azrael", o)
-	var target := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(140, 0), 5000.0)
-	var beside := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(260, 60), 5000.0)
-	var foe := _dummy(w, "ezee", C.DUSK, o + Vector2(250, -70), 5000.0)
-	var friend := _dummy(w, "dawn_melee", C.DAWN, o + Vector2(200, 130), 5000.0)
+	a.ability_level["death_scythe"] = 0
+	# first: toggle on with no units within 600 -> scans after 4.5 s, spends 0 mana, continues scanning
 	var far := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(1600, 0), 5000.0)
 	run(w, 0.1)
+	var mana0 := a.mana
+	w.command(a.id, {"type": O.CAST_NO_TARGET, "ability": "soul_tap"})
+	run(w, 4.6)
+	check(bool(a.toggles.get("soul_tap", false)), "Soul Tap stays toggled on")
+	check(_events_of(w, "soul_tap").is_empty(), "no valid targets in 600: no soul_tap proc")
+	near(a.mana, mana0, 0.5, "no valid targets: no mana spent")
+	# now units enter the 600 radius around her: next scan 4.5 s later consumes 80 mana and charges her strike
+	var target := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(140, 0), 5000.0)
+	target.def = target.def.duplicate()
+	target.def.armor = 25.0
+	target.refresh_stats()
+	var beside := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(260, 60), 5000.0)
+	beside.def = beside.def.duplicate()
+	beside.def.armor = 25.0
+	beside.refresh_stats()
+	var foe := _dummy(w, "ezee", C.DUSK, o + Vector2(250, -70), 5000.0)
+	foe.status_resist = 0.0
+	var friend := _dummy(w, "dawn_melee", C.DAWN, o + Vector2(200, 130), 5000.0)
 	var dmg0 := a.bonus_damage
-	# area centred so that the four near units are in it, Azrael herself is not counted
-	w.command(a.id, {"type": O.CAST_POINT, "ability": "soul_tap", "point": o + Vector2(210, 30)})
-	run(w, 0.6)
+	a.mana = a.max_mana
+	run(w, 4.6)
 	var ev := _events_of(w, "soul_tap")
-	check(not ev.is_empty(), "Soul Tap goes off")
+	check(not ev.is_empty(), "Soul Tap scans and charges")
 	if not ev.is_empty():
 		check((ev[0].souls as Array).size() == 4 and not (a.id in ev[0].souls) and not (far.id in ev[0].souls),
-			"four souls: enemies and the ally in the area, not her, not the far one (%s)" % str(ev[0].souls))
-	near(a.bonus_damage - dmg0, 4.0 * 30.0 + 20.0, 0.01, "+30 a unit, +20 more for the hero")
-	near(a.mana, a.max_mana - 80.0, 1.0, "80 mana")
-	# one attack spends it and cleaves its full damage
+			"four souls in 600: enemies and ally, not her, not the far one (%s)" % str(ev[0].souls))
+	near(a.bonus_damage - dmg0, 4.0 * 35.0 + 40.0, 0.01, "+35 a unit at level 4, +40 more for the hero")
+	near(a.mana, a.max_mana - 80.0, 2.0, "80 mana consumed when targets are scanned")
+	# one attack spends it, deals pure damage in a 100% cleave over 400 area, and slows all hit enemies by 80% for 0.80 s
+	var hp_t := target.hp
 	var hp_b := beside.hp
 	w.events.clear()
 	a.auto_attack = true
@@ -6371,23 +6390,22 @@ func test_azrael_soul_tap_charge_and_cleave() -> void:
 	check(not _events_of(w, "soul_slash").is_empty(), "the charged slash lands")
 	check(a.get_modifier("soul_tap").is_empty(), "the charge is spent by one attack")
 	near(a.bonus_damage, dmg0, 0.01, "the bonus damage is gone")
-	check(beside.hp < hp_b - 150.0, "the slash cleaves into the creep beside the target (%d)" % int(hp_b - beside.hp))
+	var dealt_t := hp_t - target.hp
+	var dealt_b := hp_b - beside.hp
+	check(dealt_t > 240.0 and absf(dealt_t - dealt_b) < 1.0,
+		"pure damage on target and 100%% pure cleave on creep beside (%.1f vs %.1f, ignoring 25 armor)" % [dealt_t, dealt_b])
+	var st_t := target.get_modifier("soul_tap_slow")
+	var st_b := beside.get_modifier("soul_tap_slow")
+	check(not st_t.is_empty() and not st_b.is_empty(), "both primary target and cleaved enemy are slowed")
+	near(float(st_t.get("slow", 0.0)), 0.80, 0.01, "slowed by 80%")
+	near(float(st_t.get("dur", 0.0)), 0.80, 0.01, "slow lasts 0.80 s")
 	check(friend.hp == friend.max_hp, "allies are not cleaved")
-	# unused, it fades after 15 s
-	var w2 := empty_world()
-	var a2 := _hero16(w2, "azrael", o)
-	_dummy(w2, "dusk_melee", C.DUSK, o + Vector2(300, 0), 5000.0)
-	run(w2, 0.1)
-	w2.command(a2.id, {"type": O.CAST_POINT, "ability": "soul_tap", "point": o + Vector2(300, 0)})
-	run(w2, 1.0)
-	check(not a2.get_modifier("soul_tap").is_empty(), "charged")
-	run(w2, 15.0)
-	check(a2.get_modifier("soul_tap").is_empty(), "the charge fades after 15 s")
 
 func test_azrael_door_of_the_end() -> void:
 	var w := empty_world()
 	var o := Vector2(-2000, -4000)
 	var a := _hero16(w, "azrael", o)
+	a.ability_level["death_scythe"] = 0
 	var allies: Array = []
 	for k in 3:
 		allies.append(_hero16(w, ["ezee", "froster", "caziel"][k], o + Vector2(-150, -120 + 120 * k)))
@@ -6412,20 +6430,44 @@ func test_azrael_door_of_the_end() -> void:
 	check(w.abilities.kits4.in_door(a), "Azrael is inside")
 	check(inside.size() == 2, "two allies inside, not three (%d)" % inside.size())
 	check(a.is_invulnerable() and a.has_flag("hidden"), "hidden and invulnerable inside")
-	check(w.abilities.cast_error(a, "soul_tap", -1, null, a.pos) != "", "no other spells from inside")
+	check(w.abilities.cast_error(a, "divine_darkness", -1, null, a.pos) != "", "no other spells from inside")
 	# the exit, from inside: free
 	w.command(a.id, {"type": O.CAST_POINT, "ability": "door_of_the_end", "point": exit_p})
 	run(w, 0.5)
 	check(not w.abilities.kits4.exit_pending(a), "the exit is set")
 	check(a.mana >= mana_after - 0.5, "the exit costs no mana (%.1f, was %.1f)" % [a.mana, mana_after])
-	run(w, 6.0)
+	# one ally prematurely leaves the door by moving: comes out without triggering the explosion
+	var early_ally: SimUnit = inside[0]
+	var stay_ally: SimUnit = inside[1]
+	w.command(early_ally.id, {"type": O.MOVE, "point": exit_p + Vector2(120, 0)})
+	run(w, 0.2)
+	check(not w.abilities.kits4.in_door(early_ally), "ally prematurely came out of the door")
+	check(_events_of(w, "door_blast").is_empty(), "premature exit does not trigger the explosion")
+	check(w.abilities.kits4.in_door(a) and w.abilities.kits4.in_door(stay_ally), "others remain inside until the door finishes")
+	# damage Azrael and the allies right before the door closes so we can verify the 250 heal and 1 s stun on explosion
+	run(w, 3.4)
+	a.hp = a.max_hp - 400.0
+	stay_ally.hp = stay_ally.max_hp - 400.0
+	var hp_a_before := a.hp
+	var hp_ally_before := stay_ally.hp
+	run(w, 0.4)
 	check(not w.abilities.kits4.in_door(a) and a.pos.distance_to(exit_p) < 160.0, "she steps out of the exit (%s)" % str(a.pos))
-	for h in inside:
-		check(h.pos.distance_to(exit_p) < 200.0 and not h.is_invulnerable(), "an ally steps out with her")
+	check(stay_ally.pos.distance_to(exit_p) < 200.0 and not stay_ally.is_invulnerable(), "staying ally steps out with her")
 	var blast := _events_of(w, "door_blast")
 	check(not blast.is_empty(), "a spirit blast at the exit")
+	near(a.hp - hp_a_before, 250.0, 5.0, "Door of the End heals Azrael by 250 at level 4")
+	near(stay_ally.hp - hp_ally_before, 250.0, 5.0, "Door of the End heals nearby allies by 250 at level 4")
 	near(foe.max_hp - foe.hp, 450.0 * (1.0 + a.magic_amp + a.spell_amp) * (1.0 - foe.magic_resist), 70.0, "450 magic damage near the exit")
+	check(foe.is_stunned(), "enemies hit by the explosion are stunned for 1 s")
+	near(foe.element_resist_loss(), 0.28, 0.001, "strips 28% elemental resistance at level 4 for 4 s")
+	var hp_before_elem := foe.hp
+	w.combat.deal_damage(a.id, a.team, true, foe, 100.0, C.DamageType.PURE, false, "test", false,
+		{"no_amp": true, "element": C.Element.DARK})
+	near(hp_before_elem - foe.hp, 128.0, 0.5, "stripped elemental resistance increases elemental damage taken by 28%")
 	check(far_foe.hp == far_foe.max_hp, "not beyond 450")
+	# after 4 s the elemental resistance strip expires
+	run(w, 4.2)
+	near(foe.element_resist_loss(), 0.0, 0.001, "elemental resistance strip expires after 4 s")
 	# no exit placed: out of the entrance
 	var w2 := empty_world()
 	var a2 := _hero16(w2, "azrael", o)
@@ -6445,6 +6487,8 @@ func test_azrael_death_scythe() -> void:
 	t.def.armor = 20.0
 	t.refresh_stats()
 	run(w, 0.1)
+	a.hp = a.max_hp - 500.0
+	var hp_start := a.hp
 	a.auto_attack = true
 	w.command(a.id, {"type": O.ATTACK_UNIT, "target": t.id})
 	var procs: Array = []
@@ -6459,22 +6503,22 @@ func test_azrael_death_scythe() -> void:
 		w.events.clear()
 	check(procs.size() >= 3, "Death Scythe strikes over 40 s of attacks (%d)" % procs.size())
 	check(pure_hits >= procs.size(), "each strike is pure damage")
+	check(a.hp > hp_start + 150.0, "Death Scythe lifesteals 50%% of the damage done (hp %.0f -> %.0f)" % [hp_start, a.hp])
 	var ok := true
 	for k in range(1, procs.size()):
-		if float(procs[k]) - float(procs[k - 1]) < 1.49:
+		if float(procs[k]) - float(procs[k - 1]) < 0.99:
 			ok = false
-	check(ok, "never twice within 1.5 s")
-	# the bonus: a forced strike adds 60 pure
+	check(ok, "never twice within 1.0 s")
+	# the bonus and 50% lifesteal on a single forced strike
 	var w2 := empty_world()
 	var a2 := _hero16(w2, "azrael", o)
 	var t2 := _dummy(w2, "dusk_melee", C.DUSK, o + Vector2(140, 0), 1e6)
-	var got := -1.0
-	for k in 200:
-		got = w2.abilities.kits4.death_scythe(a2, t2, "attack")
-		if got >= 0.0:
-			break
-		w2.time += 0.1
-	near(got, 60.0, 0.01, "+60 pure at level 4")
+	a2.hp = a2.max_hp - 300.0
+	a2.prd["death_scythe"] = 100
+	var hp_b := a2.hp
+	var dealt := w2.combat.deal_damage(a2.id, a2.team, true, t2, 100.0, C.DamageType.PHYSICAL, true, "attack")
+	near(dealt, 160.0, 0.01, "100 base + 60 bonus pure damage at level 4")
+	near(a2.hp - hp_b, 80.0, 0.01, "heals 50% of the 160 damage done (80 hp)")
 	check(w2.abilities.kits4.death_scythe(a2, t2, "item_x") < 0.0, "not on item damage")
 
 func test_azrael_divine_darkness() -> void:
@@ -6486,11 +6530,13 @@ func test_azrael_divine_darkness() -> void:
 	var e_far := _dummy(w, "ezee", C.DUSK, o + Vector2(1500, 0), 5000.0)
 	run(w, 0.1)
 	var as0 := a.attack_speed
+	var ms0 := a.move_speed
 	var ev0 := e.vision_night
 	w.command(a.id, {"type": O.CAST_NO_TARGET, "ability": "divine_darkness"})
 	run(w, 0.8)
 	check(not a.get_modifier("divine_darkness").is_empty(), "the wings open")
 	near(a.attack_speed - as0, 50.0, 0.5, "+50 attack speed")
+	near(a.move_speed, ms0 * 1.15, 0.5, "+15% movement speed")
 	near(a.vision_night, 1800.0 * 1.7, 1.0, "+70% sight, the day range at night too")
 	near(e.vision_night, ev0 * 0.5, 1.0, "an enemy within 700 loses half its sight")
 	near(e_far.vision_night, ev0, 1.0, "not one further away")

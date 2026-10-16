@@ -28,6 +28,10 @@ var drag_rect := Rect2()                    # the green selection box while drag
 var _last_f1 := 0.0
 var _last_f2 := 0.0
 var _last_tp := -10.0                       # when the Teleport key or slot was last pressed (a double tap goes home)
+var _last_ability := ""                     # last targeted ability pressed/clicked (a double tap/click self-casts)
+var _last_ability_at := -10.0
+var _last_item := -1                        # last targeted item slot pressed/clicked (a double tap/click self-casts)
+var _last_item_at := -10.0
 var _press_at := Vector2.ZERO
 var _pressing := false
 var _dragging := false
@@ -448,14 +452,46 @@ func begin_ability(aid: String, queue := false) -> void:
 	if err != "":
 		_error(err)
 		return
+	var now := Time.get_ticks_msec() / 1000.0
 	match String(a.behavior):
 		"no_target", "toggle":
 			targeting = ""
+			_last_ability = ""
 			game.order(h.id, {"type": O.CAST_NO_TARGET, "ability": aid, "queue": queue})
 		"point", "unit", "autocast_attack":
+			if targeting == aid and _last_ability == aid and now - _last_ability_at < 0.5:
+				_last_ability = ""
+				_last_ability_at = -10.0
+				_self_cast_ability(h, aid, queue or _target_queue)
+				return
+			_last_ability = aid
+			_last_ability_at = now
 			targeting = aid
 			_target_queue = queue
 			_quick_cast()
+
+func _self_cast_ability(h: SimUnit, aid: String, shift: bool) -> void:
+	var w: SimWorld = game.world
+	var a := SimData.ability(aid)
+	if String(a.behavior) == "autocast_attack" or String(a.behavior) == "unit":
+		var tgt: SimUnit = h
+		if aid == "pilot_turret":
+			var tur: SimUnit = w.abilities.kits3.own_turret(h)
+			if tur != null:
+				tgt = tur
+		var uerr: String = w.abilities.cast_error(h, aid, -1, tgt, tgt.pos)
+		if uerr != "" and not uerr.ends_with("on cooldown") and uerr != "Not enough mana":
+			_error(uerr)
+			return
+		targeting = ""
+		game.order(h.id, {"type": O.CAST_UNIT, "ability": aid, "target": tgt.id, "queue": shift})
+	else:
+		var perr: String = w.abilities.cast_error(h, aid, -1, null, h.pos)
+		if perr == "No valid target":
+			_error(perr)
+			return
+		targeting = ""
+		game.order(h.id, {"type": O.CAST_POINT, "ability": aid, "point": h.pos, "queue": shift})
 
 ## Quick cast (Options > Game): the targeted spell or item goes off at once at the mouse, as if the target were
 ## clicked; a key pressed with the mouse over the interface, or with no valid unit under the cursor for a unit spell,
@@ -582,13 +618,42 @@ func use_item(slot: int, queue := false) -> void:
 		_error(err)
 		return
 	var kind: String = game.world.abilities.item_target(it.id)
+	var now := Time.get_ticks_msec() / 1000.0
 	if kind == "none":
 		targeting = ""
+		_last_item = -1
 		game.order(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": slot, "queue": queue})
 	else:
+		if targeting == ("item:%d" % slot) and _last_item == slot and now - _last_item_at < 0.5:
+			_last_item = -1
+			_last_item_at = -10.0
+			_self_cast_item(h, slot, queue or _target_queue)
+			return
+		_last_item = slot
+		_last_item_at = now
 		targeting = "item:%d" % slot
 		_target_queue = queue
 		_quick_cast()
+
+func _self_cast_item(h: SimUnit, slot: int, shift: bool) -> void:
+	var w: SimWorld = game.world
+	var it = h.inventory[slot]
+	if it == null:
+		return
+	if w.abilities.item_target(it.id) == "unit":
+		var ierr: String = w.abilities.cast_error(h, "", slot, h, h.pos)
+		if ierr != "" and not ierr.ends_with("on cooldown"):
+			_error(ierr)
+			return
+		targeting = ""
+		game.order(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": h.id, "queue": shift})
+	else:
+		var perr: String = w.abilities.cast_error(h, "", slot, null, h.pos)
+		if perr != "" and not perr.ends_with("on cooldown"):
+			_error(perr)
+			return
+		targeting = ""
+		game.order(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": h.pos, "queue": shift})
 
 ## A courier command for your courier (see SimWorld.courier_command).
 func courier_cmd(cmd: String) -> void:

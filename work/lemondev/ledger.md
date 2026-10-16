@@ -307,3 +307,10 @@ a research subagent (read-only on the code).
 | A4 Azrael bot | 1-3 | working tree | gate: duels, 5 v 5 bot game | n/a | PASS (gate) | exit re-ordered every think (cast cancelled); early dives | out-farmed by Ezee / Caziel |
 | X1 Integration | 1 | working tree | gate: tests 244/244, check.sh, bot game, export, cold start | n/a | PASS (gate) | none | none |
 
+## Session 2026-10-17 c (Double-click self-cast and Azrael skill rework)
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| U1 Double-click self-cast | 1-2 | working tree | gate: input_probe (skill and item self-cast, TP fountain) | n/a | PASS (gate) | point self-cast required turning to angle 0; open door from earlier probe stage intercepted second door cast | none |
+| A1 Azrael kit rework | 1 | working tree | gate: 5 updated Azrael tests, full suite 244/244, modifier_census 0 unnamed | n/a | PASS (gate) | none | none |
+| X1 Integration | 1 | working tree | gate: tests 244/244, input_probe 19/19, check_names, export | n/a | PASS (gate) | none | none |

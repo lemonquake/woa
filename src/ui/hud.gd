@@ -619,6 +619,8 @@ func unit_sheet(u: SimUnit) -> Array:
 		var df := element_defense_text(u.element)
 		lines.append(["Takes 125%% from %s" % _join(df[0]), 14, Color(1.0, 0.55, 0.45), "body"])
 		lines.append(["Takes 75%% from %s" % _join(df[1]), 14, Color(0.55, 0.9, 0.6), "body"])
+	if u.element_resist_loss() > 0.0:
+		lines.append(["Elemental resistance -%s" % pct(u.element_resist_loss()), 14, Color(1.0, 0.45, 0.4), "body"])
 	var defs: Array = []
 	if u.evasion > 0.0:
 		defs.append("Evasion " + pct(u.evasion))
@@ -1334,7 +1336,7 @@ class BottomPanel extends Control:
 			var parts := []
 			for v in vals:
 				var fv := float(v)
-				parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (k.contains("slow") or k.ends_with("pct") or k.contains("chance") or k == "lifesteal") else str(v))
+				parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (k.contains("slow") or k.ends_with("pct") or k.contains("chance") or k == "lifesteal" or k.contains("resist") or k.contains("vision")) else str(v))
 			lines.append(["%s: %s" % [k.replace("_", " ").capitalize(), " / ".join(parts)], 13, Color(0.8, 0.85, 0.75), "body"])
 		if String(a.behavior) in ["point", "unit"] or (String(a.behavior) == "no_target" and float(a.get("range", 0.0)) > 0.0):
 			# the range the hero casts from now (talents, upgrades, Long Lens and other cast range bonuses included)

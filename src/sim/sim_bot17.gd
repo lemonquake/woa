@@ -79,41 +79,22 @@ static func spells(b: SimBot, h: SimUnit, e: SimUnit) -> void:
 		b.say("Opening the door.", "door_%d" % h.id, 30.0)
 		return
 
-## The best Soul Tap centre near `focus` (in cast range): the most souls (heroes count double for the score), the
-## focus inside when given. True when it was cast.
+## Toggle Soul Tap on when enough souls are within 600 of Azrael.
 static func _soul_tap(b: SimBot, h: SimUnit, focus: SimUnit, farm: bool) -> bool:
 	var w := b.w
 	var ab := w.abilities
-	if ab.cast_error(h, "soul_tap", -1, null, h.pos) != "":
+	if h.ability_level_of("soul_tap") <= 0 or bool(h.toggles.get("soul_tap", false)):
+		return false
+	if h.mana < ab.ability_mana(h, "soul_tap") or ab.cast_error(h, "soul_tap", -1, null, h.pos) != "":
 		return false
 	var r := ab.val(h, "soul_tap", "radius")
-	var rng := ab.cast_range(h, "soul_tap", -1)
-	var cands: Array = []
-	var anchor: Vector2 = focus.pos if focus != null else h.pos
-	cands.append(anchor)
-	for o: SimUnit in w.query(anchor, r * 1.6, true):
-		if o.alive and not o.is_building() and o != h:
-			cands.append(anchor.lerp(o.pos, 0.5))
-	var best := Vector2.INF
-	var best_s := 0.0
-	var best_n := 0
-	for c: Vector2 in cands:
-		if h.pos.distance_to(c) > rng + 150.0:
-			continue
-		var souls := ab.kits4.souls_at(h, c, r)
-		if focus != null and not (focus in souls):
-			continue
-		var s := 0.0
-		for o in souls:
-			s += 2.0 if o.is_hero() else 1.0
-		if s > best_s:
-			best_s = s
-			best = c
-			best_n = souls.size()
-	var need := 4 if farm else 2
-	if best == Vector2.INF or best_n < need:
+	var souls := ab.kits4.souls_at(h, h.pos, r)
+	if focus != null and not (focus in souls):
 		return false
-	return _cast_point(b, h, "soul_tap", best, 0.4)
+	var need := 3 if farm else 1
+	if souls.size() < need:
+		return false
+	return _cast_none(b, h, "soul_tap", 0.2)
 
 # ---- Running -------------------------------------------------------------------------------------------------------------
 
@@ -166,11 +147,14 @@ static func tick(b: SimBot, h: SimUnit) -> bool:
 			if w.time < float(door.until) - 0.4 and h.pos.distance_to(door.pos) < 700.0:
 				b._order(h, {"type": O.MOVE, "point": door.pos})
 				return true
-		# laning: Soul Tap on the enemy laner standing among creeps (three souls or more), keeping mana for the door
+		if bool(h.toggles.get("soul_tap", false)) and b.mode != "fight" \
+				and (b.mode == "retreat" or h.mana < w.abilities.ability_mana(h, "soul_tap") + w.abilities.ability_mana(h, "door_of_the_end") * 0.6):
+			_cast_none(b, h, "soul_tap", 0.1)
+		# laning: Soul Tap on the enemy laner standing among creeps, keeping mana for the door
 		if b.mode == "lane" and b._spells_ok() and not k4.soul_charged(h) and h.hp > h.max_hp * 0.5 \
 				and h.mana >= w.abilities.ability_mana(h, "soul_tap") + w.abilities.ability_mana(h, "door_of_the_end") * 0.6:
 			for f in b._foes:
-				if f.alive and f.pos.distance_to(h.pos) < 650.0 and w.vision.sees(h.team, f):
+				if f.alive and f.pos.distance_to(h.pos) < 600.0 and w.vision.sees(h.team, f):
 					var under := false
 					for t in b._etowers:
 						if t.alive and f.pos.distance_to(t.pos) < t.attack_range + 150.0:

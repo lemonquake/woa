@@ -244,6 +244,8 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if executes:
 		dtype = C.DamageType.PURE
 		w.events.append({"t": "death_order", "u": s.src, "target": t.id})
+	elif bool(s.get("soul", false)):
+		dtype = C.DamageType.PURE
 	var dealt := deal_damage(s.src, s.team, bool(s.hero), t, dmg, dtype, true, "attack", false,
 		{"element": int(s.get("element", 0)), "element_done": true})
 	# lifesteal heals from the blow after armor (not after other damage manipulation, and in full even when the blow
@@ -333,11 +335,17 @@ func crit_sources(u: SimUnit) -> Array:
 ## An attack's multiplier against `t`: its weapon against the target's armor type (SimConst.DAMAGE_TABLE), times its
 ## element against the target's element. s: an attack snapshot, or {class: weapon, element} (bots' estimates).
 func attack_class_multiplier(s: Dictionary, t: SimUnit) -> float:
-	return C.damage_mult(int(s.get("class", 0)), t.armor_type) * element_mult(int(s.get("element", 0)), t.element)
+	return C.damage_mult(int(s.get("class", 0)), t.armor_type) * element_mult(int(s.get("element", 0)), t.element, t)
 
-## SimConst.element_mult, or 1 when the world plays without elements (some mechanics tests).
-func element_mult(atk: int, def: int) -> float:
-	return C.element_mult(atk, def) if w.elements else 1.0
+## SimConst.element_mult, or 1 when the world plays without elements (some mechanics tests), plus any stripped
+## elemental resistance on `t` (Door of the End) when hit by an element.
+func element_mult(atk: int, def: int, t: SimUnit = null) -> float:
+	var m := C.element_mult(atk, def) if w.elements else 1.0
+	if t != null and atk != C.Element.NONE:
+		var loss := t.element_resist_loss()
+		if loss > 0.0:
+			m += loss
+	return m
 
 ## Attacks with the Magic weapon (Fire Imp, Lava Golem) deal magic damage; every other attack is physical.
 func _attack_dtype(s: Dictionary) -> int:
@@ -387,12 +395,14 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	if key == "":
 		key = "attack" if is_attack else "spell"
 	var src0 := w.get_unit(src_id)
-	# Death Scythe (Azrael): the blow may strike as pure damage, with bonus pure damage on top
+	# Death Scythe (Azrael): the blow may strike as pure damage, with bonus pure damage on top and 50% lifesteal
+	var scythe_ls := 0.0
 	if src0 != null and not reflected and src0.team != t.team and String(src0.def.id) == "azrael":
 		var scythe := w.abilities.kits4.death_scythe(src0, t, key)
 		if scythe >= 0.0:
 			dtype = C.DamageType.PURE
 			amount += scythe
+			scythe_ls = w.abilities.val(src0, "death_scythe", "lifesteal")
 	# spell amplification raises every non-attack damage its source deals (not returned or attack-derived damage);
 	# magic amp (intelligence and items) adds to it for magic damage
 	if not is_attack and not reflected and not opts.get("no_amp", false) and src0 != null:
@@ -404,7 +414,7 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		amount *= maxf(0.0, 1.0 + src0.damage_out_pct)
 	# the element: x1.25 when it beats the target's, x0.75 when it is beaten (an attack applied it already)
 	var elem := damage_element(src0, key, is_attack, opts)
-	var emult := element_mult(elem, t.element)
+	var emult := element_mult(elem, t.element, t)
 	if not opts.get("element_done", false):
 		amount *= emult
 	# armor type against the damage type (magic and pure rows; attacks applied their weapon row already)
@@ -465,6 +475,12 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	t.hp -= amount
 	w.status.on_damage(t, amount)
 	var src := w.get_unit(src_id)
+	# Death Scythe: 50% lifesteal from the damage dealt when it triggers
+	if scythe_ls > 0.0 and src != null and src.alive and src != t and amount > 0.0 and not t.is_building() and not t.is_ward():
+		var before_sc := src.hp
+		heal(src, amount * scythe_ls)
+		if src.hp - before_sc >= 1.0:
+			w.events.append({"t": "lifesteal", "u": src.id, "target": t.id, "amount": src.hp - before_sc})
 	# spell lifesteal: heals from spell damage dealt to enemies (100% from heroes, 20% from creeps)
 	if src != null and src.alive and src != t and not is_attack and not reflected and src.spell_lifesteal > 0.0 \
 			and src_team != t.team and amount > 0.0 and not opts.get("no_spell_lifesteal", false) \

@@ -57,6 +57,9 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 	# Blau inside his turret: a move order (or one to walk to a unit or item) gets him out first
 	if u.is_hero() and (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB) 			and w.abilities.kits3.is_piloting(u):
 		w.abilities.kits3.leave_turret(u)
+	# A unit inside Azrael's door: a move or attack order brings it out early without setting off the explosion
+	if (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB or type == O.ATTACK_UNIT or type == O.ATTACK_MOVE) 			and w.abilities.kits4.in_door(u):
+		w.abilities.kits4.leave_door(u, o.get("point", u.pos))
 	# a hard stop (S held) keeps the unit from acquiring targets until it gets another order
 	u.no_acquire = type == O.STOP and bool(o.get("hard", false))
 	var tgt: SimUnit = w.get_unit(int(o.get("target", -1)))
@@ -550,8 +553,8 @@ func _order_cast(u: SimUnit) -> void:
 				return
 			_move_to(u, target_pos, 0.0)
 			return
-		# a spell or item on oneself (Push Staff) needs no turn: it keeps the way the hero faces
-		if t != u and not _turn_towards(u, (target_pos - u.pos).angle()):
+		# a spell or item on oneself (Push Staff, self-cast point spell) needs no turn: it keeps the way the hero faces
+		if t != u and target_pos.distance_to(u.pos) > 1.0 and not _turn_towards(u, (target_pos - u.pos).angle()):
 			return
 	u.cast_phase = CP.WINDUP
 	u.cast_ability = aid

@@ -396,6 +396,13 @@ func defense_loss() -> float:
 		r = maxf(r, float(m.get("defense_loss", 0.0)))
 	return r
 
+## Stripped elemental resistance (Door of the End), 0..1: elemental damage it takes is raised by it.
+func element_resist_loss() -> float:
+	var r := 0.0
+	for m in modifiers:
+		r = maxf(r, float(m.get("element_resist_loss", 0.0)))
+	return r
+
 ## The strongest healing reduction on this unit (Stench with the Upgrade Staff), 0..1.
 func heal_reduction() -> float:
 	var r := 0.0

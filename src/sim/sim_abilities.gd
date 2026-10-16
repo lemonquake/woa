@@ -177,7 +177,7 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 			return ""                              # the exit: no mana, no cooldown
 	if cooldown_left(u, aid) > 0.0:
 		return "Ability on cooldown"
-	if u.mana < ability_mana(u, aid):
+	if String(a.behavior) != "toggle" and u.mana < ability_mana(u, aid):
 		return "Not enough mana"
 	if kits3.handles(aid):
 		var ke := kits3.cast_error(u, aid, target, point, check_target)
@@ -1435,12 +1435,15 @@ func _hook_release(t: SimUnit, at: Vector2) -> void:
 func set_toggle(u: SimUnit, aid: String, on: bool) -> void:
 	u.toggles[aid] = on
 	if on:
-		var exists := false
-		for e in w.effects:
-			if e.kind == "pulse" and int(e.src) == u.id and String(e.ability) == aid:
-				exists = true
-		if not exists:
-			w.effects.append({"kind": "pulse", "ability": aid, "src": u.id, "next_tick": w.tick})
+		if aid == "soul_tap":
+			kits4.on_soul_tap_toggle(u)
+		else:
+			var exists := false
+			for e in w.effects:
+				if e.kind == "pulse" and int(e.src) == u.id and String(e.ability) == aid:
+					exists = true
+			if not exists:
+				w.effects.append({"kind": "pulse", "ability": aid, "src": u.id, "next_tick": w.tick})
 	w.events.append({"t": "toggle", "u": u.id, "ability": aid, "on": on})
 
 ## Stench, every 0.2 s while on: magic damage and a lingering slow to enemies around Sludge (a debuff-immune enemy

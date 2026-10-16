@@ -108,6 +108,13 @@ func _run() -> void:
 				await frames(3)
 				check(not bool(h.toggles.get("stench", false)), "stench: W again turns it off")
 				continue
+			"soul_tap":
+				fired = bool(h.toggles.get("soul_tap", false))
+				check(fired, "soul_tap: Q turns it on")
+				inp._action(Keybinds.slot_action(i, h.abilities.size()), h)
+				await frames(3)
+				check(not bool(h.toggles.get("soul_tap", false)), "soul_tap: Q again turns it off")
+				continue
 			"blubber":
 				fired = not h.get_modifier("blubber").is_empty()
 				check(fired, "blubber: E puts the modifier on")
@@ -125,6 +132,7 @@ func _run() -> void:
 			print("  errors: ", errs)
 	await _quick_cast_check(h, foe)
 	await _grip_empty_check(h, foe)
+	await _self_cast_check(h)
 	await _tp_double_tap_check(h)
 	print("\n%d passed, %d failed" % [_passes, _fails])
 	quit(1 if _fails > 0 else 0)
@@ -146,6 +154,9 @@ func _quick_cast_check(h: SimUnit, foe: SimUnit) -> void:
 	var aid: String = h.abilities[slot]
 	var was = Options.get_value("quick_cast")
 	Options.set_value("quick_cast", true)
+	w.effects.clear()
+	h.modifiers.clear()
+	h.refresh_stats()
 	h.mana = h.max_mana
 	h.ability_ready[aid] = C.LONG_AGO
 	h.channel = {}
@@ -155,11 +166,18 @@ func _quick_cast_check(h: SimUnit, foe: SimUnit) -> void:
 	foe.pos = h.pos + Vector2(250, 0)
 	foe.hp = foe.max_hp
 	w.orders.clear(foe)
+	game.camera.focus(View.to3(h.pos, game.terrain.height_at(h.pos)))
 	await frames(3)
 	var sp: Vector2 = game.camera.cam.unproject_position(View.to3(foe.pos, game.terrain.height_at(foe.pos)) + Vector3(0, 0.9, 0))
 	game.get_viewport().warp_mouse(sp)
 	await process_frame
 	await process_frame
+	var m: Vector2 = game.get_viewport().get_mouse_position()
+	if m.distance_to(sp) > 20.0:
+		var gp: Vector2 = game.camera.ground_at(m)
+		foe.pos = Vector2(clampf(gp.x, -6000.0, 6000.0), clampf(gp.y, -6000.0, 6000.0))
+		h.pos = foe.pos - Vector2(200, 0)
+		await frames(2)
 	var mana0 := h.mana
 	inp._action(Keybinds.slot_action(slot, h.abilities.size()), h)
 	check(inp.targeting == "", "quick cast: %s needs no click (targeting=%s)" % [aid, inp.targeting])
@@ -190,10 +208,51 @@ func _grip_empty_check(h: SimUnit, foe: SimUnit) -> void:
 	check(h.mana == mana0 and w.abilities.cooldown_left(h, "grip_of_the_ruler") == 0.0, "grip on empty ground spends nothing")
 	inp.targeting = ""
 
+## Double-clicking / double-tapping a point skill or a targeted item self-casts it at the hero.
+func _self_cast_check(h: SimUnit) -> void:
+	var w: SimWorld = game.world
+	var inp: InputController = game.input
+	for i in h.abilities.size():
+		var aid: String = h.abilities[i]
+		var a := SimData.ability(aid)
+		if String(a.behavior) == "point" and aid != "grip_of_the_ruler" and h.ability_level_of(aid) > 0:
+			w.effects.clear()
+			h.modifiers.clear()
+			h.refresh_stats()
+			h.mana = h.max_mana
+			h.ability_ready[aid] = C.LONG_AGO
+			w.orders.clear(h)
+			inp.targeting = ""
+			inp.begin_ability(aid)
+			check(inp.targeting == aid, "self-cast skill: first click starts targeting (%s)" % aid)
+			inp.begin_ability(aid)
+			check(inp.targeting == "", "self-cast skill: second click within 0.5 s self-casts (%s)" % aid)
+			await frames(30)
+			check(w.abilities.cooldown_left(h, aid) > 0.0 or h.mana < h.max_mana, "self-cast skill: %s went off on self" % aid)
+			break
+	w.effects.clear()
+	h.modifiers.clear()
+	h.refresh_stats()
+	h.inventory[0] = {"id": "push_staff", "ready": C.LONG_AGO, "owner": h.id}
+	h.mana = h.max_mana
+	w.orders.clear(h)
+	inp.targeting = ""
+	var pos0 := h.pos
+	inp.use_item(0)
+	check(inp.targeting == "item:0", "self-cast item: first click starts targeting")
+	inp.use_item(0)
+	check(inp.targeting == "", "self-cast item: second click within 0.5 s self-casts Push Staff")
+	await frames(25)
+	check(h.pos.distance_to(pos0) > 200.0, "self-cast item: Push Staff pushed the hero (%d moved)" % int(h.pos.distance_to(pos0)))
+	h.inventory[0] = null
+
 ## The Teleport key pressed twice quickly teleports to the fountain; pressed twice slowly it just stays targeting.
 func _tp_double_tap_check(h: SimUnit) -> void:
 	var w: SimWorld = game.world
 	var inp: InputController = game.input
+	w.effects.clear()
+	h.modifiers.clear()
+	h.refresh_stats()
 	w.orders.clear(h)
 	h.channel = {}
 	h.tp_charges = maxi(h.tp_charges, 2)

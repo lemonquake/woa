@@ -65,7 +65,8 @@ const PCT := ["move_speed_pct", "base_damage_pct", "magic_resist", "spell_amp", 
 
 ## Effects named after something else: Blood Ranger's ultimate is the ability "blood_ranger_ult".
 const ALIAS := {"blood_ranger": "blood_ranger_ult", "void_rush_buff": "void_rush", "dark_matter_slow": "dark_matter_skin",
-	"ensnared": "lay_trap", "piloting": "pilot_turret", "piloted": "pilot_turret"}
+	"ensnared": "lay_trap", "piloting": "pilot_turret", "piloted": "pilot_turret", "in_door": "door_of_the_end",
+	"darkness_blind": "divine_darkness"}
 
 static var _index := {}                    # effect id -> {name, item | icon}: auras, creep attack effects, item uses
 
@@ -152,9 +153,11 @@ static func icon_of(id: String, m: Dictionary) -> Texture2D:
 ## always count as debuffs whoever put them there; otherwise the effect's own flag (set for enemy debuffs and enemy
 ## auras).
 static func is_debuff(_u: SimUnit, m: Dictionary) -> bool:
+	if bool(m.get("in_door", false)):
+		return false
 	if SimStatus.disable_kind(m) != "" or float(m.get("slow", 0.0)) > 0.0:
 		return true
-	if float(m.get("defense_loss", 0.0)) > 0.0 or float(m.get("heal_reduction", 0.0)) > 0.0 or m.has("truesight_by"):
+	if float(m.get("defense_loss", 0.0)) > 0.0 or float(m.get("element_resist_loss", 0.0)) > 0.0 or float(m.get("heal_reduction", 0.0)) > 0.0 or m.has("truesight_by"):
 		return true
 	if bool(m.get("debuff", false)):
 		return true
@@ -312,6 +315,8 @@ static func effects(e: Dictionary, u: SimUnit) -> Array:
 		out.append("Blocks %d damage from every hit." % roundi(float(m.block_all)))
 	if float(m.get("defense_loss", 0.0)) > 0.0:
 		out.append("Takes %d%% more damage." % roundi(float(m.defense_loss) * 100.0))
+	if float(m.get("element_resist_loss", 0.0)) > 0.0:
+		out.append("Elemental resistances reduced by %d%%." % roundi(float(m.element_resist_loss) * 100.0))
 	if float(m.get("heal_reduction", 0.0)) > 0.0:
 		out.append("Healing and regen %d%% weaker." % roundi(float(m.heal_reduction) * 100.0))
 	if float(m.get("barrier", 0.0)) > 0.0:
