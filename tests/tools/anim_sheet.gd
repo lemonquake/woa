@@ -52,18 +52,18 @@ func _clips(id: String) -> Array:
 		return _clips_only
 	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
 	var out: Array = [String(cfg.get("idle", "idle"))]
-	var st := String(HeroStage.IDLE.get(id, ""))
+	var st := ModelCatalog.anim(cfg, String(HeroStage.IDLE.get(id, "")))
 	if st != "" and not (st in out):
 		out.append(st)
-	var fl := String(HeroStage.FLOURISH.get(id, ""))       # the Hero Select flourish
+	var fl := ModelCatalog.anim(cfg, String(HeroStage.FLOURISH.get(id, "")))       # the Hero Select flourish
 	if fl != "" and not (fl in out):
 		out.append(fl)
 	for c in cfg.get("attack", []):
 		out.append(String(c))
-	if String(cfg.get("cast", "")) != "":
+	if String(cfg.get("cast", "")) != "" and not (String(cfg.cast) in out):
 		out.append(String(cfg.cast))
 	for aid in SimData.unit(id).abilities:
-		var an := String(SimData.ability(String(aid)).get("anim", ""))
+		var an := ModelCatalog.anim(cfg, String(SimData.ability(String(aid)).get("anim", "")))
 		if an != "" and not (an in out):
 			out.append(an)
 	out.append(String(cfg.get("run", "run")))

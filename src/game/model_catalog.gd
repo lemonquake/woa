@@ -152,11 +152,78 @@ const MODELS := {
 		"idle": "idle", "run": "run", "death": "death", "R": "", "L": "", "proj": "fire_big", "bar": 3.2},
 }
 
+## The motion-capture clips each hero plays (run 2026-10-18 d; MocapClips, tools/blender/mocap_clips.json), laid over
+## its MODELS entry when the library is present: idle, attack, cast and deaths are replaced, and "anims" turns the old
+## clip names the game asks for (ability clips, hit reactions, stun, the stage's idle and flourish) into mocap ones.
+## Clips not named keep the old ones (runs, glides, Leap Strike's timed leap, knockbacks). Azrael keeps her staff idle
+## and glide, and swings only the slashes whose blade head moves the way her scythe's blade faces (swing_dir.gd).
+const MOCAP := {
+	"hero": {"idle": "bow_idle", "attack": ["bow_shoot"], "death": "bow_death_1", "deaths": ["bow_death_1", "bow_death_2"],
+		"anims": {"idle_bow": "bow_idle", "bow_1": "bow_shoot", "bow_draw_hold": "bow_hold", "bow_release": "bow_loose",
+			"dodge_step": "bow_dodge", "hit_heavy": "hit_big", "hit_light": "bow_hit", "hit_front": "bow_hit",
+			"idle_hurt": "dizzy"}},
+	"hero_ezee": {"idle": "greatsword_idle", "cast": "greatsword_cast", "death": "greatsword_death_1",
+		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_3", "greatsword_slash_4"],
+		"deaths": ["greatsword_death_1", "greatsword_death_2"],
+		"anims": {"idle_2h": "greatsword_idle", "cast_quick": "greatsword_cast", "cast_weapon": "greatsword_cast",
+			"boss_slam": "greatsword_slam", "boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit",
+			"hit_light": "greatsword_hit_small", "hit_front": "greatsword_hit_small", "idle_hurt": "dizzy"}},
+	"hero_sludge": {"idle": "axe_idle", "attack": ["axe_chop", "axe_sweep", "axe_backhand"], "cast": "hook_throw",
+		"death": "death_from_front", "deaths": ["death_from_front", "death_fall_back"],
+		"anims": {"idle_1h": "axe_idle", "cast_quick": "hook_throw", "cast_channel": "neck_bite", "devour": "neck_bite",
+			"hero_axe_smash": "axe_chest_thump", "hit_heavy": "axe_hit", "hit_light": "hit_small", "hit_front": "hit_small",
+			"idle_hurt": "dizzy"}},
+	"hero_azrin": {"attack": ["spell_strike_1", "spell_strike_2"], "cast": "spell_quick", "death": "spell_death_1",
+		"deaths": ["spell_death_1", "spell_death_2"],
+		"anims": {"cast_heavy": "javelin_throw", "cast_area": "spell_area", "cast_quick": "spell_quick",
+			"cast_ultimate": "spell_big", "hit_heavy": "hit_big", "hit_light": "hit_small", "hit_front": "hit_small",
+			"idle_hurt": "dizzy"}},
+	"hero_froster": {"idle": "spell_idle", "attack": ["spell_strike_1", "spell_strike_2"], "cast": "spell_quick",
+		"death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
+		"anims": {"idle_staff": "spell_idle", "cast_heavy": "spell_heavy", "cast_quick": "spell_quick",
+			"cast_channel": "spell_channel", "cast_area": "spell_area", "hit_heavy": "hit_big", "hit_light": "hit_small",
+			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_caziel": {"idle": "knife_idle", "attack": ["dagger_stab_1", "dagger_stab_2", "dagger_stab_3"],
+		"death": "death_from_front", "deaths": ["death_from_front", "death_from_back"],
+		"anims": {"idle_shadowblade": "knife_idle", "hit_heavy": "hit_big", "hit_light": "hit_small",
+			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_tock": {"idle": "spell_idle_2", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
+		"cast": "spell_quick", "death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
+		"anims": {"idle_wand": "spell_idle_2", "cast_quick": "spell_quick", "cast_area": "spell_area",
+			"cast_ultimate": "spell_big", "wand_heavy": "spell_wave", "hit_heavy": "hit_big", "hit_light": "hit_small",
+			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_kragg": {"idle": "shield_idle", "attack": ["shield_slash_1", "shield_slash_2", "shield_slash_3"],
+		"cast": "shield_push", "death": "shield_death_1", "deaths": ["shield_death_1", "shield_death_2"],
+		"anims": {"idle_shield": "shield_idle", "shield_bash": "shield_push", "war_cry": "shield_power",
+			"boss_roar": "shield_slam", "hit_heavy": "shield_hit", "hit_light": "shield_hit", "hit_front": "shield_hit",
+			"idle_hurt": "dizzy"}},
+	"hero_azrael": {"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_3"], "cast": "greatsword_cast",
+		"death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
+		"anims": {"cast_quick": "greatsword_cast", "cast_heavy": "spell_heavy", "cast_ultimate": "spell_big",
+			"gs_heavy": "greatsword_power",
+			"hit_heavy": "hit_big", "hit_light": "hit_small", "hit_front": "hit_small", "idle_hurt": "dizzy"}},
+}
+
 static var _meta := {}
 static var _scenes := {}
+static var _merged := {}
 
+## A model's entry, with its MOCAP part laid over it when the motion-capture library is present (MocapClips).
 static func info(model_key: String) -> Dictionary:
-	return MODELS.get(model_key, {})
+	var cfg: Dictionary = MODELS.get(model_key, {})
+	if not MOCAP.has(model_key) or not MocapClips.available():
+		return cfg
+	if not _merged.has(model_key):
+		var m := cfg.duplicate()
+		var mc: Dictionary = MOCAP[model_key]
+		for k in mc:
+			m[k] = mc[k]
+		_merged[model_key] = m
+	return _merged[model_key]
+
+## The clip a model plays for `clip` (its mocap stand-in, when it has one; see MOCAP).
+static func anim(cfg: Dictionary, clip: String) -> String:
+	return String(cfg.get("anims", {}).get(clip, clip))
 
 static func scene(model_key: String) -> PackedScene:
 	var path: String = MODELS[model_key].scene
@@ -168,7 +235,9 @@ static func scene(model_key: String) -> PackedScene:
 static func clip(name: String) -> Dictionary:
 	if _meta.is_empty():
 		for f in [UNITS + "anim_meta.json", UNITS + "creature_meta.json", "res://assets/characters/hero/hero_meta.json",
-				H16 + "heroes16_meta.json"]:
+				H16 + "heroes16_meta.json", MocapClips.META]:
+			if not FileAccess.file_exists(f):
+				continue
 			var d = JSON.parse_string(FileAccess.get_file_as_string(f))
 			if d is Dictionary and d.has("animations"):
 				for k in d.animations:

@@ -24,7 +24,7 @@ Run: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-
        --src=<file> --name=<out name> [--height=1.85] [--faces=30000] [--tex=2048] [--yaw=0] [--drop=<regex>]
        [--joints=<json>] [--preview=<dir>] [--bake] [--cut=x0,x1,y0,y1,z0,z1;...] [--bind=native|t]
        [--rigid=bone:cap:x1,y1,z1,x2,y2,z2,r;bone:ball:x,y,z,r] [--cloth=<material regex>] [--hue=from:to:width[:sat[:val]]] [--gray=1.0]
-       [--glide=<idle clip>] [--reach=0] [--smooth=4] [--norig] [--move=regex:dx,dy,dz;...] [--body_piece=<regex>] [--capture] [--keep=<regex>] [--posture] [--fist] [--unmix=1]
+       [--glide=<idle clip>] [--reach=0] [--smooth=4] [--norig] [--move=regex:dx,dy,dz;...] [--body_piece=<regex>] [--capture] [--keep=<regex>] [--posture] [--fist] [--unmix=1] [--split=1] [--sleeve=r,reach]
 """
 import bpy
 import bmesh
@@ -84,6 +84,10 @@ REACH_K = arg("reach", 0.0)                   # limb reach limit (x the default 
 # a coat skirt hanging beside the arm is not (run 2026-10-17 f: the coats webbed up with the arms in big swings)
 REACH = {"upper_arm": 0.15, "forearm": 0.105, "hand": 0.10}
 UNMIX = arg("unmix", True)                     # no vertex mixes a forearm or hand with the hips or legs (split there)
+SPLIT = arg("split", True)                     # arm and body split by surfaces and whole pieces (arm_split.py, run
+                                               # 2026-10-18 d: hand remnants), after the unmix
+SLEEVE = arg("sleeve", "")                     # "radius,reach" (m, 1.8 m body): wide sleeves hanging past the hand go
+                                               # with the arm (Azrin)
 FIST = arg("fist", False)                      # curl the source rig's fingers into a fist round the weapon (open hands)
 GLIDE = arg("glide", "")                       # "<idle clip>": also make "glide_fwd", a floating move pose
 RIGID = arg("rigid", "")                       # "bone:cap:x1,y1,z1,x2,y2,z2,r;bone:ball:x,y,z,r" (model space) ride
@@ -1671,6 +1675,24 @@ def finish_mesh(meshes, J):
     bpy.ops.object.vertex_group_limit_total(group_select_mode='ALL', limit=4)
     bpy.ops.object.vertex_group_normalize_all(group_select_mode='ALL', lock_active=False)
     bpy.ops.object.mode_set(mode='OBJECT')
+    if SPLIT:
+        # on the finished weights (after the unmix), as tested on the built bodies (run 2026-10-18 d)
+        import arm_split
+        # the bones as the game has them (the native rig), as tested on the built bodies; else the joints
+        nat = bpy.data.objects.get("HeroRigNative")
+        if nat is not None:
+            mw = nat.matrix_world
+            jj = {b.name: (np.array((mw @ b.head_local)[:]), np.array((mw @ b.tail_local)[:])) for b in nat.data.bones}
+        else:
+            jj = {b: (np.array(h[:], dtype=np.float64), np.array(t[:], dtype=np.float64)) for b, (h, t) in J.items()
+                  if b in HERO_BONES}
+        sl = tuple(float(x) for x in SLEEVE.split(",")) if SLEEVE else None
+        arm_split.split_arms(body, jj, HEIGHT, log=log, sleeve=sl)
+        select_only(body)
+        bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
+        bpy.ops.object.vertex_group_limit_total(group_select_mode='ALL', limit=4)
+        bpy.ops.object.vertex_group_normalize_all(group_select_mode='ALL', lock_active=False)
+        bpy.ops.object.mode_set(mode='OBJECT')
     return body
 
 

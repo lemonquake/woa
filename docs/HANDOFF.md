@@ -4,6 +4,77 @@
 
 ## Status (keep this section current)
 
+**2026-10-18 d: motion-capture animations from Mixamo for nine heroes, the hand remnants, new build (your request).**
+Run `work/lemondev/2026-10-18d-mocap/` (contract.md, handoff.md; clip survey `survey_sheets/`, in-game sheets
+`game1/`, close-ups `after/` against `work/lemondev/2026-10-18b-hands/before/`, remnant renders `remnants_before/` and
+`rebuild2/*_cmp.png`, Hero Select `select/select_grid.png`).
+* **Mixamo** (you signed in in the app's browser): 181 motion-capture clips on Mixamo's "Y Bot" (Great Sword, Pro Sword
+  and Shield, Pro Melee Axe, Pro Longbow and Pro Magic packs, plus daggers, throws, bites, roars, hits, deaths and a
+  stun), downloaded into `work/downloads/mixamo/raw/`. `tools/blender/mocap_retarget.py` puts them on the hero skeleton
+  (our rig and Mixamo's both rest in a T-pose facing the same way with almost the same proportions, so every bone takes
+  its Mixamo bone's turn; palms and two-handed grips carry over). I rendered every clip on the hero body
+  (`--survey`, `tools/mocap_sheet.py`) and picked 64 (`tools/blender/mocap_clips.json`), trimmed so each blow lands
+  0.4-0.8 s in (the game speeds a clip so the blow meets the attack point); the hit frame is where the weapon's tip
+  moves fastest, set by hand where that was wrong.
+* **Who plays what** (`ModelCatalog.MOCAP`; the old clip names the game asks for are turned into these by
+  `ModelCatalog.anim`):
+  * Ezee: great sword idle, four great sword slashes, a one-hand cast (Tainted Touch, casts), the sword raised and
+    slammed down to one knee (Dark Stomp), the sword raised in a power-up (Unholy Might and his Hero Select flourish),
+    two great sword deaths, great sword hit reactions.
+  * Azrael: three great sword slashes, the ones whose head moves the way her scythe's blade faces
+    (`tests/tools/swing_dir.gd`); spells for Door of the End and Divine Darkness; her staff idle and glide stay.
+  * Kragg: sword and shield idle, three slashes, a shield thrust (Iron Grip), a power-up (Repel), the sword raised and
+    slammed down (Magnet Field), two deaths, a guarded hit.
+  * Sludge: a one-handed axe idle and chop, sweep and backhand, a left-hand overhand throw (Shuriken Hook), a grab and neck
+    bite (Chomp), a chest thump (Hero Select).
+  * Caziel: a knife idle, two double-dagger stabs and a stab.
+  * Blood Ranger: a bow idle, draw and loose (attacks, Gale Impact), the overdraw hold (Burst Shot) and its loose, a
+    backward dodge (her back leap), bow deaths.
+  * Froster, Tock, Azrin: one-hand spell strikes (attacks), one-hand cast, two-hand cast, a two-hand area slam, a wide
+    two-hand wave, a big two-hand cast; Azrin throws her Fiery Javelin overhand; Froster channels Endless Winter with
+    both hands. Azrin keeps her staff idle and glide.
+  * Everyone: small and big hit reactions, a dizzy stun loop, deaths falling forward or back.
+  * Kept: runs (your own mocap), Azrin's and Azrael's glide, Leap Strike's timed leap, Caziel's dash, knockbacks.
+* **Mixamo's terms**: the clips may ship inside the game but not as loose files, and this repository is public, so the
+  clip library and its collision fixes (`assets/characters/hero/mocap/`) and the downloads are left out of git. They
+  are in the exported game. Without that folder every hero plays the old clips (tested). Rebuild: "Run it".
+* **Hand remnants (your report).** Measured with a new check, `tools/blender/remnant_check.py` (both arms lifted out,
+  the elbows bent; it counts mesh at a hand or forearm that does not follow it, and faces torn over 3x). The cause: the
+  generated meshes are one fused surface where the hanging hands touch the hips and coats, and each vertex was given to
+  the arm or the body on its own, so chips of gauntlet stayed at the hip (Ezee: 160 vertices), coat strips went with
+  the hands as long shards (Caziel), and Azrin's sleeves tore off at the hips. `tools/blender/arm_split.py` now decides
+  arm or body by which limb's surface a vertex is nearest (each bone's thickness measured from the mesh), switches a
+  vertex only when it is clearly nearer the other side, gives every small cut-off piece to the side it is attached to,
+  keeps sleeves with the arm (`--sleeve`, Azrin) and blends the weights it adds across elbow and wrist. It runs in
+  `tools/blender/hero_body.py` after the old unmix step (`--split`, on by default). Ezee, Azrin and Caziel are rebuilt
+  with it (`work/rebuild_qa.sh`). Arms lifted: Ezee 160+2 vertices left behind -> 10+2; Azrin 53+7 -> 1+0, and her
+  sleeves now lift whole; Caziel's dagger-like shards and torn coat strips are gone. Azrael keeps her weights (her own
+  rig's; the split broke her dress, so `--split=0`). Left: Azrin's sleeve hems are ragged and stretch at the armpit
+  when her arms go very high; one plate inside Ezee's left elbow stretches in a deep bend.
+* **Nothing passes through the body** (`tests/tools/body_collide.gd -- --fix`, now also for the mocap clips, their
+  fixes beside the library): with every fix applied, every mocap clip on every body is 0.9 cm or less. The old clips,
+  kept for a game without the library, got worse on the three rebuilt bodies (Ezee's old ground slam 42 cm, Azrin's
+  old casts up to 21 cm); none of them plays while the library is present.
+* New names (veto any): clips `greatsword_idle`, `greatsword_slash_1`-`4`, `greatsword_spin`, `greatsword_cast`,
+  `greatsword_slam`, `greatsword_power`, `greatsword_death_1`/`2`, `greatsword_hit`, `greatsword_hit_small`,
+  `shield_idle`, `shield_slash_1`-`3`, `shield_push`, `shield_power`, `shield_slam`, `shield_death_1`/`2`, `shield_hit`,
+  `axe_idle`, `axe_chop`, `axe_sweep`, `axe_backhand`, `axe_chest_thump`, `axe_battle_cry`, `axe_hit`, `hook_throw`,
+  `neck_bite`, `knife_idle`, `dagger_stab_1`-`3`, `bow_idle`, `bow_shoot`, `bow_hold`, `bow_loose`, `bow_dodge`,
+  `bow_death_1`/`2`, `bow_hit`, `spell_idle`, `spell_idle_2`, `spell_strike_1`-`3`, `spell_quick`, `spell_heavy`,
+  `spell_area`, `spell_wave`, `spell_big`, `spell_channel`, `javelin_throw`, `spell_death_1`/`2`, `hit_small`, `hit_big`,
+  `dizzy`, `death_from_front`, `death_from_back`, `death_fall_back`; code `MocapClips`, `ModelCatalog.MOCAP` and
+  `anim()`, body-tool options `--split`, `--sleeve`; files `src/game/mocap_clips.gd`, `tests/tools/mocap_import.gd`,
+  `tools/blender/mocap_retarget.py`, `tools/blender/mocap_clips.json`, `tools/blender/arm_split.py`,
+  `tools/blender/remnant_check.py`, `tools/mocap_sheet.py`, test `test_mocap_clips`.
+Evidence: headless tests **250 passed, 0 failed** (new `test_mocap_clips`; `test_body_collision_sets` covers the mocap
+sets); `sh tools/check.sh` no parse errors, "Names OK"; body_collide `--applied` (`collide_applied.txt`); contact
+sheets of every hero in the game with its weapons; Hero Select captures of nine heroes; **`build/WarriorsOfAether.exe`
+rebuilt 2026-10-18 04:22** (previous pair in `build/previous-2026-10-18d/`), the mocap library inside its package,
+cold start into a match as Ezee and to the menu without script errors (the usual shutdown leak warnings).
+Not verified: no blind critic review; the look is judged from contact sheets and captures (no video); Leap Strike,
+runs and knockbacks are the old clips; the catalog-only bodies (Emelrich, Feran, Burak, Airah, Ghorman) were not
+rebuilt and have no mocap mapping.
+
 **2026-10-18 c: release rebuild and main push (owner's request).** Source revision `5f73062` rebuilt with
 Godot `4.7.2.stable.official.ed1daf0bf`, Windows Desktop release, x86_64. Runnable output:
 `build/WarriorsOfAether.exe` with its adjacent `.pck`; the previous pair is saved under
@@ -833,6 +904,14 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   --autoplay --nolearn --min=6`.
 * Rebuild Azrin's body from your female_generic model (about a minute; `-- --preview=dir` renders checks):
   `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/azrin_body.py`
+* Motion-capture clips (2026-10-18 d; B = the Blender command below, G = the Godot console): survey every downloaded
+  clip `B -b --factory-startup --python tools/blender/mocap_retarget.py -- --survey --src=work/downloads/mixamo/raw
+  --cells=<dir>` then `python tools/mocap_sheet.py <dir> <sheets>`; build the clips in `tools/blender/mocap_clips.json`
+  with `B ... mocap_retarget.py -- --spec=tools/blender/mocap_clips.json --src=work/downloads/mixamo/raw
+  --out=work/mocap/hero_mocap.glb`, then `G --headless --path . -s tests/tools/mocap_import.gd` (writes
+  `assets/characters/hero/mocap/`), then the body collision `--fix`. How the Mixamo download works:
+  `work/lemondev/2026-10-18d-mocap/handoff.md`. Hand remnants of a body: `B ... --python tools/blender/remnant_check.py
+  -- --glb=<body.glb> --png=x.png --weights=w.png`.
 * Strict animation check (2026-10-18): `godot --headless --path . -s tests/tools/pose_compare.gd [-- --models=hero_ezee]
   [--limit=25] [--all] [--raw]`; contact sheets `godot --path . -s tests/tools/anim_sheet.gd -- --heroes=ezee,unit:hero_ghorman`.
 * Rebuild Azrael's body (B = the Blender command above): `B --python tools/blender/azrael_prep.py --

@@ -6806,5 +6806,50 @@ func test_body_collision_sets() -> void:
 		if not ResourceLoader.exists(path):
 			continue
 		var lib := load(path) as AnimationLibrary
+		# the motion-capture clips' fixes are kept beside the mocap library (MocapClips.collide_path)
+		var mpath := MocapClips.collide_path(scene)
+		var mlib := load(mpath) as AnimationLibrary if MocapClips.available() and ResourceLoader.exists(mpath) else null
 		for c in cfg.get("attack", []):
-			check(lib.has_animation(String(c)), "%s: %s in its collision set" % [id, c])
+			check(lib.has_animation(String(c)) or (mlib != null and mlib.has_animation(String(c))),
+				"%s: %s in its collision set" % [id, c])
+
+## Motion-capture clips (run 2026-10-18 d): with the library present, every clip a hero's MOCAP entry names is in it
+## with its timings (attacks land 0.2-1.0 s in, the clip ends after the blow), and a model gets them with its hips on
+## its own resting height. Without the library (a fresh clone: git leaves it out) the heroes keep the old clips.
+func test_mocap_clips() -> void:
+	if not MocapClips.available():
+		check(ModelCatalog.info("hero_ezee").get("attack", []) == ModelCatalog.MODELS.hero_ezee.attack,
+			"no mocap library: the old clips")
+		return
+	var lib := MocapClips.library()
+	for key in ModelCatalog.MOCAP:
+		var mc: Dictionary = ModelCatalog.MOCAP[key]
+		var names: Array = []
+		for k in ["idle", "cast", "death"]:
+			if mc.has(k):
+				names.append(String(mc[k]))
+		names.append_array(mc.get("attack", []))
+		names.append_array(mc.get("deaths", []))
+		names.append_array((mc.get("anims", {}) as Dictionary).values())
+		for n in names:
+			check(lib.has_animation(String(n)), "%s: %s in the mocap library" % [key, n])
+		for a in mc.get("attack", []):
+			var meta := ModelCatalog.clip(String(a))
+			var st := ModelCatalog.strike_time(String(a))
+			check(meta.has("length") and st >= 0.2 and st <= 1.0 and st < float(meta.get("length", 0.0)),
+				"%s: %s lands at %.2f s of %.2f s" % [key, a, st, float(meta.get("length", 0.0))])
+		check(ModelCatalog.info(key).get("attack", []) == mc.get("attack", ModelCatalog.MODELS[key].attack),
+			"%s: the catalog plays its mocap attacks" % key)
+	var m := (load("res://assets/characters/heroes17/ezee.glb") as PackedScene).instantiate()
+	RepairedClips.patch(m)
+	var ap: AnimationPlayer = m.find_children("*", "AnimationPlayer", true, false)[0]
+	var sk: Skeleton3D = m.find_children("*", "Skeleton3D", true, false)[0]
+	check(ap.has_animation("greatsword_slash_1"), "Ezee's body has the mocap slashes")
+	var a := ap.get_animation("greatsword_idle")
+	var hips_y := -1.0
+	for t in a.get_track_count():
+		if a.track_get_type(t) == Animation.TYPE_POSITION_3D:
+			hips_y = (a.track_get_key_value(t, 0) as Vector3).y
+	var rest_y := sk.get_bone_rest(sk.find_bone("hips")).origin.y
+	check(absf(hips_y - rest_y) < 0.15, "the hips stand on the body's own height (%.2f, rest %.2f)" % [hips_y, rest_y])
+	m.free()

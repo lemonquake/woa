@@ -377,3 +377,20 @@ penetration of arms, hands and weapons into the body, other arm and floor, every
 | Q5 Cut remnants | 1 | working tree | bind-pose renders | n/a | PASS (self-check) | slivers and chips the capsule cut left loose | none |
 | C1 Body collision | 1-7 | working tree | gate: body_collide before/after, --applied | n/a | PASS (gate) for 7 of 8 hero bodies under 6.8 cm; units 12/16 at 0 | in order: shapes centred on the bone not the skin; two-hand grips colliding with each other; elbow across the chest unsolvable by swing alone; single frames left after smoothing (rounds); Unreal rigs' tracks unnamed | golems' and ogre's fist slam; legs and cloth |
 | X1 Integration | 1 | working tree | gate: tests 249/249, check.sh, export, cold start | n/a | PASS (gate) | none | none |
+
+
+## Session 2026-10-18 d (Mixamo motion capture, hand remnants, build) — run `work/lemondev/2026-10-18d-mocap/`
+
+No critic subagent was run (none asked for). Measured gates: `tools/blender/remnant_check.py` (arms lifted: vertices
+left at a hand, torn faces), `tests/tools/body_collide.gd -- --applied`, tests, export and cold start. Looks are builder
+self-checks (survey sheets, in-game contact sheets, Hero Select captures).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| M1 Mixamo download | 1-4 | working tree | 181 files, names checked by content hash | n/a | PASS (gate) | in order: pack export refused ("Invalid Pose option"); export race returned the previous job; per-link credentials (no compact pass-through); the pane cannot reach localhost (saved via its own download folder) | none |
+| M2 Retarget | 1-3 | working tree | survey sheets of every clip; in-game sheets | n/a | PASS (self-check) | in order: hit frames found in wind-ups (set by hand); blows landing over 1 s in (trimmed to 0.4-0.8 s); a clip name clashing with an old clip | blind review UNVERIFIED |
+| M3 Game integration | 1-2 | working tree | test_mocap_clips; fallback without the library | n/a | PASS (gate) | new class not registered until an import pass | none |
+| M4 Hand remnants | 1-9 | working tree | remnant_check before/after, renders | n/a | PASS (self-check) Ezee, Caziel; Azrin improved with ragged sleeve hems left | in order: torso patches taken by the arm (ratio rule); hard elbow seams on added weights (blend); coat strip past the fingertips; whole dress flipped on Azrael's many-piece mesh (piece cap, Azrael `--split=0`); split run before the unmix inside hero_body (moved after) | Azrin's sleeve hems |
+| M5 Body collision | 1-2 | working tree | `--applied` | n/a | PASS (gate) for every mocap clip (0.9 cm or less) | Froster's channel clip planted the staff 14 cm into the floor (clip swapped) | old fallback clips on rebuilt bodies (Ezee 42 cm, Azrin 21 cm) |
+| X1 Integration | 1 | working tree | tests 250/250, check.sh, export, cold start | n/a | PASS (gate) | none | none |
+

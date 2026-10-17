@@ -569,7 +569,8 @@ func _stun_clip() -> String:
 func _death_clip() -> String:
 	var base := String(cfg.get("death", "death"))
 	if is_hero and anim:
-		var opts := [base, "death_back", "death_fwd", "death_crumple"].filter(func(c): return anim.has_animation(c))
+		var opts := (cfg.get("deaths", [base, "death_back", "death_fwd", "death_crumple"]) as Array).filter(
+			func(c): return anim.has_animation(ModelCatalog.anim(cfg, String(c))))
 		if not opts.is_empty():
 			return opts[randi() % opts.size()]
 	return base
@@ -633,6 +634,7 @@ func on_channel_end() -> void:
 ## Blood Ranger's back leap: a quick crouch-and-spring clip stretched over the leap.
 func on_back_leap(dur: float) -> void:
 	var clip := "dodge_step" if anim and anim.has_animation("dodge_step") else "blink"
+	clip = ModelCatalog.anim(cfg, clip)
 	var length := float(ModelCatalog.clip(clip).get("length", 0.47))
 	_play(clip, false, clampf(length / maxf(0.12, dur + 0.12), 0.8, 3.0), 0.04, true)
 	_state = "hop"
@@ -642,6 +644,7 @@ func on_back_leap(dur: float) -> void:
 func on_cast_start(aid: String, cast_point: float) -> void:
 	var a := SimData.ability(aid)
 	var clip := String(a.get("anim", cfg.get("cast", "cast_quick"))) if aid != "" else String(cfg.get("cast", "cast_quick"))
+	clip = ModelCatalog.anim(cfg, clip)
 	if anim == null or not anim.has_animation(clip):
 		clip = String(cfg.get("cast", "cast_quick"))
 	var meta := ModelCatalog.clip(clip)
@@ -744,6 +747,7 @@ func death_knock(from: Vector2, damage: float) -> void:
 func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := false) -> void:
 	if anim == null:
 		return
+	clip = ModelCatalog.anim(cfg, clip)
 	if not anim.has_animation(clip):
 		if clip == String(cfg.idle) and anim.has_animation("idle"):
 			clip = "idle"

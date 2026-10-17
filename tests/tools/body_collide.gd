@@ -76,6 +76,17 @@ func _plan() -> Dictionary:
 			clips.append(c)
 		for aid in SimData.unit(id).abilities:
 			clips.append(String(SimData.ability(String(aid)).get("anim", "")))
+		# the motion-capture stand-ins (ModelCatalog.MOCAP), and the old clips they stand in for (kept fixed for a game
+		# without the mocap library)
+		var base := ModelCatalog.MODELS.get(String(SimData.unit(id).model), {}) as Dictionary
+		for c in clips.duplicate():
+			clips.append(ModelCatalog.anim(cfg, String(c)))
+		for c in [String(base.get("idle", "")), String(base.get("death", "")), String(base.get("cast", ""))]:
+			clips.append(c)
+		for c in base.get("attack", []):
+			clips.append(String(c))
+		for c in cfg.get("deaths", []):
+			clips.append(String(c))
 		for c in clips:
 			if c == "" or (not _clips_only.is_empty() and not (c in _clips_only)):
 				continue
@@ -177,10 +188,23 @@ func _model(scene: String, info: Dictionary) -> void:
 			line += " | after: worst %4.1f cm (%s), %d frames" % [float(after.worst) * 100.0, after.where, int(after.bad)]
 		_say(line)
 	if _fix:
+		# the motion-capture clips' fixes go beside the mocap library (git leaves that folder out), the rest as before
+		var mlib := AnimationLibrary.new()
+		var mo := MocapClips.library()
+		for clip in lib.get_animation_list():
+			if mo and mo.has_animation(clip):
+				mlib.add_animation(clip, lib.get_animation(clip))
+		for clip in mlib.get_animation_list():
+			lib.remove_animation(clip)
 		var out := RepairedClips.collide_path(scene)
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(out.get_base_dir()))
 		var err := ResourceSaver.save(lib, out)
 		_say("  wrote %s (%s); worst %.1f cm -> %.1f cm" % [out, error_string(err), worst_before * 100.0, worst_after * 100.0])
+		if not mlib.get_animation_list().is_empty():
+			var mout := MocapClips.collide_path(scene)
+			DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(mout.get_base_dir()))
+			err = ResourceSaver.save(mlib, mout)
+			_say("  wrote %s (%s): %d mocap clips" % [mout, error_string(err), mlib.get_animation_list().size()])
 	else:
 		_say("  worst %.1f cm" % (worst_before * 100.0))
 	m.queue_free()

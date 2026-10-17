@@ -407,9 +407,11 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 	_stage_aura(id, cfg)
 	framing(mode)
 	if anim:
-		var idle := String(IDLE.get(id, "idle"))
-		if flourish and anim.has_animation(String(FLOURISH.get(id, ""))):
-			_play(String(FLOURISH[id]), false)
+		# the motion-capture stand-ins of the stage clips, when the model has them (ModelCatalog.anim)
+		var idle := ModelCatalog.anim(cfg, String(IDLE.get(id, "idle")))
+		var fl := ModelCatalog.anim(cfg, String(FLOURISH.get(id, "")))
+		if flourish and anim.has_animation(fl):
+			_play(fl, false)
 			anim.queue(idle)
 		else:
 			_play(idle, true)

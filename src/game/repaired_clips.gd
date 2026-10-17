@@ -9,6 +9,8 @@ extends RefCounted
 ##   Sludge's body (a far wider belly)            FIXED_SLUDGE
 ##   each humanoid unit model                     res://assets/characters/units/anim_fixed/<model>.res
 ##   each 2026-10-17 hero body (heroes17)         FIXED as well (same bone tracks as the hero body)
+## The motion-capture clips (MocapClips, run 2026-10-18 d) are added first; the arm repair has none of them, and
+## their collision fixes come from MocapClips.collide_path.
 
 const FIXED := "res://assets/characters/hero/hero_anims_fixed.res"
 const FIXED_SLUDGE := "res://assets/characters/hero/hero_anims_fixed_sludge.res"
@@ -51,7 +53,10 @@ static func unit_models() -> Array:
 
 ## Lay the repaired arm tracks over every clip of `model` (the instanced model scene).
 static func patch(model: Node) -> void:
-	if model == null or disabled:
+	if model == null:
+		return
+	MocapClips.add(model)                    # the motion-capture clips first: their collision fixes are laid over below
+	if disabled:
 		return
 	var path := path_for(String(model.scene_file_path))
 	if not _sets.has(path):
@@ -61,7 +66,11 @@ static func patch(model: Node) -> void:
 	if not _sets.has(cpath):
 		_sets[cpath] = load(cpath) as AnimationLibrary if ResourceLoader.exists(cpath) else null
 	var clear: AnimationLibrary = null if collide_disabled else _sets[cpath]
-	if fixed == null and clear == null:
+	var mpath := MocapClips.collide_path(String(model.scene_file_path))
+	if not _sets.has(mpath):
+		_sets[mpath] = load(mpath) as AnimationLibrary if MocapClips.available() and ResourceLoader.exists(mpath) else null
+	var mclear: AnimationLibrary = null if collide_disabled else _sets[mpath]
+	if fixed == null and clear == null and mclear == null:
 		return
 	for ap: AnimationPlayer in model.find_children("*", "AnimationPlayer", true, false):
 		for ln in ap.get_animation_library_list():
@@ -73,10 +82,11 @@ static func patch(model: Node) -> void:
 				for clip in fixed.get_animation_list():
 					if lib.has_animation(clip):
 						_copy_arms(fixed.get_animation(clip), lib.get_animation(clip))
-			if clear:
-				for clip in clear.get_animation_list():
-					if lib.has_animation(clip):
-						_copy_arms(clear.get_animation(clip), lib.get_animation(clip))
+			for set_ in [clear, mclear]:
+				if set_:
+					for clip in set_.get_animation_list():
+						if lib.has_animation(clip):
+							_copy_arms(set_.get_animation(clip), lib.get_animation(clip))
 
 ## Replace the keys of each bone track in `dst` that `src` has (matched by bone name).
 static func _copy_arms(src: Animation, dst: Animation) -> void:
