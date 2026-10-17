@@ -254,7 +254,7 @@ func _select(id: String, flourish: bool) -> void:
 	_fill_right(id)
 	if _cust:
 		_cust.disabled = id in GameSettings.OWN_BODY
-		_cust.tooltip_text = "%s has his own body and cannot be customized" % String(SimData.unit(id).name) if _cust.disabled else ""
+		_cust.tooltip_text = "%s has a fixed look and cannot be customized" % String(SimData.unit(id).name) if _cust.disabled else ""
 
 func _fill_right(id: String) -> void:
 	for c in _right.get_children():

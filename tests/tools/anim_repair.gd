@@ -5,6 +5,7 @@ extends SceneTree
 ##   godot --headless --path . -s tests/tools/anim_repair.gd -- --body=sludge     Sludge's own set
 ##   godot --headless --path . -s tests/tools/anim_repair.gd -- --units           every humanoid unit model
 ##   godot --headless --path . -s tests/tools/anim_repair.gd -- --model=res://assets/characters/units/knight.glb
+##   godot --headless --path . -s tests/tools/anim_repair.gd -- --model=res://assets/characters/heroes17/ezee.glb
 ## The body kept clear of hands and blades is measured from each rig (its shoulder width and height), and a unit's
 ## blade is the weapon it holds in the game (ModelCatalog), for all of its clips.
 ##
@@ -105,6 +106,12 @@ func _repair_model(path: String, out_path: String) -> void:
 		return
 	if path.contains("/units/"):
 		_measure(sk, path)
+	elif path.contains("/heroes17/"):
+		# a hero body of its own build: its torso from its rig, its blades by clip family as on the hero body
+		_measure(sk, path)
+		blade_all = null
+		wrist_twist = WRIST_TWIST
+		wrist_bend = WRIST_BEND
 	var lib := AnimationLibrary.new()
 	var n_clips := 0
 	for clip in ap.get_animation_list():

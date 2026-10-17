@@ -167,6 +167,7 @@ func _build_ui() -> void:
 			["Multiplayer", "ui/talk", false, func(): _go(NET_MENU), 62.0],
 			["Hero Creator", "ui/repair", false, _on_creator, 62.0],
 			["Options", "ui/settings", false, func(): add_child(OptionsPanel.new()), 62.0],
+			["Credits", "ui/info", false, func(): add_child(CreditsPanel.new()), 56.0],
 			["Quit", "ui/close", false, func(): get_tree().quit(), 56.0]]:
 		var p := MenuPlate.new()
 		p.text = String(e[0])

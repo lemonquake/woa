@@ -4,6 +4,47 @@
 
 ## Status (keep this section current)
 
+**2026-10-17 e: new hero models (your picks, CC BY approved), Ezee, Azrin and Caziel on their new bodies.** Run
+`work/lemondev/2026-10-17e-hero-models/` (contract.md: who gets which download; captures in `shots/`).
+* **In the game now**: Ezee (the black-plate fallen paladin), Azrin (the hooded sorceress, recoloured red and black,
+  her crystal staff cut out of the model as her weapon) and Caziel (the hooded priest-assassin, greys lifted so he
+  reads from the game camera). Each is its own model (`assets/characters/heroes17/<hero>.glb`), so Customize Look is
+  off for them (the tooltip now says "<name> has a fixed look and cannot be customized"). Ser Emelrich (the Bulky
+  Knight, whiter steel and cream cloth) and Feran Mock (the assassin body, hood off) are built and in ModelCatalog
+  (`hero_emelrich`, `hero_feran`) for when their kits land.
+* **How a body is made** (`tools/blender/hero_body.py`, one command per hero, listed in the run's contract): the model
+  is bound to the hero skeleton **in its own pose**, and all 132 hero clips are retargeted onto that pose (every bone
+  keeps the clip's orientation each frame), so rigid armour barely deforms when the arms hang. Joints come from the
+  model's own rig, from a joints file read off grid renders (`tools/blender/grid_render.py` + `tools/grid_overlay.py`,
+  files in `tools/blender/joints/`), or from the mesh. Weights come from bone heat on a watertight stand-in when the
+  real mesh is made of loose pieces; small rigid pieces follow only the limb they sit on; hanging cloth follows the
+  hips more than the legs; split seam vertices share weights. Dense generated meshes (2 million faces) are baked onto
+  a clean 40k-triangle copy (colour, roughness, metal, normal; GPU). `--cut` removes weapons fused into hands,
+  `--rigid` locks a held prop to one bone, `--hue` / `--gray` recolour. `tools/blender/extract_prop.py` cuts a held
+  prop out as a game weapon (Azrin's staff). Each body has its own repaired arm clips
+  (`assets/characters/heroes17/anim_fixed/`, `tests/tools/anim_repair.gd -- --model=...`).
+* **Azrin's float** (your request): she holds her staff upright (staff idle), glides on a new clip `glide_fwd` (chest
+  leaning in, head up, legs trailing with bent knees), and the game leans her 7-13 degrees forward with her speed and
+  banks her into turns. Attacks swing the staff (staff_1 / staff_2); her ability clips are as before.
+* **Own-made gear** (`tools/blender/heroes17_gear.py`): Ser Emelrich's greatsword (white blade, gold sun guard, gold
+  blade plates, long leather grip), Feran's throwing knife (also his new tumbling "knife" projectile) and the Joke Box.
+* **Credits**: a **Credits** button on the main menu lists every outside asset and its licence
+  (`assets/ui/credits.txt`, written by `python tools/build_credits.py` from `docs/ASSET_CREDITS.md`; run it after
+  editing the credits table).
+* **About the picks**: the fallen paladin, the sorceress and the priest (and the two unassigned ones, Blackfire and
+  Thyrandael) are generated meshes (their archives are named `tripo_convert_...`) by Sketchfab user s8819296 under CC BY;
+  they are credited as such.
+* **Not done yet**: Burak's and Airah's models (not downloaded yet); Ghorman (the Northern Outsider GLB from Sketchfab
+  is broken: three of its pieces come out tens of metres away; the "Original format" download is needed); Feran's
+  jester restyle (red and black patched coat, three-point bell hat, half-smile mask); the Ancient Light sun on Ser
+  Emelrich's tabard; Ghorman's Beast Form; the five kits (proposed as their own session).
+* New names (veto any): the "Credits" menu button and screen; ids `hero_emelrich`, `hero_feran`, `heavy_greatsword`,
+  `throwing_knife`, `azrin_staff`, `joke_box`, clip `glide_fwd`.
+Evidence: headless tests 248 passed, 0 failed; changed scripts parse; `python tools/check_names.py` "Names OK";
+live captures of Ezee, Azrin and Caziel idle, moving and attacking in a match and on Hero Select (`shots/`); Blender
+previews of every body in idle, run and a greatsword swing. Not verified: no blind critic review; Feran and Emelrich
+not seen in a match (no kits yet); the exported build not rebuilt.
+
 **2026-10-17 d: QA pass (performance, gameplay, bots, map), the outer ground with map sites, and a 3D sound world
 (your list).** Run `work/lemondev/2026-10-17d-qa-map/` (contract.md: baseline and conditions; captures in `shots/`).
 * **Performance** (teamfight bench, ten level-16 heroes at 10:00, 1080p, RTX 4060, V-Sync off; same command as the

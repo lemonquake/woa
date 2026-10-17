@@ -542,6 +542,20 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		start = made.start
 		style = "h16:" + style
 	match style:
+		"knife":
+			# Feran Mock's thrown knife: tumbling end over end, a thin pale streak behind it
+			var kscene := ModelCatalog.weapon("throwing_knife")
+			if kscene:
+				var pivot := Node3D.new()
+				node.add_child(pivot)
+				var kn := kscene.instantiate() as Node3D
+				kn.rotation.x = -PI * 0.5
+				kn.scale = Vector3.ONE * 1.6
+				pivot.add_child(kn)
+				var tw := pivot.create_tween().set_loops()
+				tw.tween_property(pivot, "rotation:x", -TAU, 0.16).from(0.0)
+			trail = Trail3D.make(node, Color(1.0, 0.9, 0.85, 0.55), 0.035, 0.16)
+			arc = 0.12
 		"arrow", "burst_arrow", "blood_arrow":
 			var a := _arrow_scene.instantiate() as Node3D
 			a.rotation.x = -PI * 0.5

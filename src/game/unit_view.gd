@@ -37,6 +37,8 @@ var bar_height := 2.0
 var hidden_by_fog := false
 var _flash := 0.0
 var _gliding := false                     # a floating hero moving (leans forward)
+var _glide_speed := 0.0                    # her move speed while gliding (the lean grows with it)
+var _last_yaw := 0.0                       # facing last frame, for banking into turns while gliding
 var _lock_until := 0.0                    # an attack / cast / reaction clip plays to here before idle/run take over
 var _state := ""                          # "", "stun", "air", "slide", "knock", "leap", "channel", "hop"
 var _redraw_at := 0.0                     # Burst Shot: when the bow is drawn again after a wave's release
@@ -538,11 +540,15 @@ func tick(u: SimUnit) -> void:
 	if now < _lock_until and u.moving == false:
 		return
 	_gliding = u.moving and bool(cfg.get("glide", false))
+	_glide_speed = u.move_speed if _gliding else 0.0
 	if u.moving:
 		_lock_until = 0.0
 		if bool(cfg.get("glide", false)):
-			# a floating caster glides: her idle pose, leaning into the move (UnitView.frame)
-			_play(String(cfg.idle), true, 1.0, 0.25)
+			# a floating caster glides: her glide pose (or her idle), leaning into the move (UnitView.frame)
+			var gc := String(cfg.get("glide_clip", cfg.idle))
+			if anim == null or not anim.has_animation(gc):
+				gc = String(cfg.idle)
+			_play(gc, true, 1.0, 0.25)
 			return
 		var run := String(cfg.get("run", "run"))
 		if cfg.has("run_female") and float(u.look.get("look", {}).get("female", 0.0)) >= 0.5:
@@ -850,5 +856,14 @@ func frame(alpha: float, delta: float, cam: Camera3D = null, frame_no := 0) -> v
 		model.position.y = hover
 		if _ring and _ring.visible:
 			_ring.position.y = 0.04 - lift
-		var lean := -0.16 if _gliding else 0.0
+		# leaning into the move: more the faster she goes; banking into turns like a glider
+		var lean := 0.0
+		var bank := 0.0
+		if _gliding:
+			lean = -(0.13 + 0.09 * clampf((_glide_speed - 250.0) / 200.0, 0.0, 1.0))
+			if delta > 0.0:
+				var turn := angle_difference(_last_yaw, rotation.y) / delta
+				bank = clampf(turn * 0.07, -0.28, 0.28)
+		_last_yaw = rotation.y
 		model.rotation.x = lerpf(model.rotation.x, lean, clampf(delta * 6.0, 0.0, 1.0))
+		model.rotation.z = lerpf(model.rotation.z, bank, clampf(delta * 5.0, 0.0, 1.0))

@@ -16,7 +16,7 @@ const ACCENTS := {
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
 	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
 	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy"}
-const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_mage", "sludge": "idle_1h",
+const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_staff", "sludge": "idle_1h",
 	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
 	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff"}
 

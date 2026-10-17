@@ -6,6 +6,7 @@ extends RefCounted
 const UNITS := "res://assets/characters/units/"
 const WEAPONS := "res://assets/weapons/"
 const H16 := "res://assets/characters/heroes16/"
+const H17 := "res://assets/characters/heroes17/"
 
 ## scale: model scale (1.0 = the 1.8 m rig). attack: clip names tried in order (cycled per swing); every one must be in
 ## the model (tests/tools/anim_audit.gd --units reports MISSING clips).
@@ -14,20 +15,24 @@ const MODELS := {
 	"hero": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["bow_1"], "cast": "cast_quick",
 		"idle": "idle_bow", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72, "death": "death", "R": "", "L": "bow",
 		"proj": "arrow", "bar": 2.25, "hero": true},
-	"hero_ezee": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["gs_1", "gs_2", "gs_3", "gs_4"],
-		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
-		"death": "death", "R": "greatsword", "L": "", "bar": 2.4, "hero": true, "weapon_tint": Color(0.5, 0.44, 0.62),
+	# Ezee (2026-10-17): his own body, the owner's fallen paladin in black plate (tools/blender/hero_body.py: baked,
+	# bound in its own pose, every hero clip retargeted); his violet-glowing greatsword in the right hand
+	"hero_ezee": {"scene": H17 + "ezee.glb", "scale": 1.0, "attack": ["gs_1", "gs_2", "gs_3", "gs_4"],
+		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72,
+		"death": "death", "R": "greatsword", "L": "", "bar": 2.45, "weapon_tint": Color(0.5, 0.44, 0.62),
 		"weapon_glow": Color(0.55, 0.2, 1.0), "swing_trail": true},
 	# Sludge: his own body (tools/blender/sludge.py) on the hero skeleton; cleaver right, shuriken hook left
 	"hero_sludge": {"scene": "res://assets/characters/hero/sludge.glb", "scale": 1.22, "attack": ["axe_1", "axe_2", "axe_3"],
 		"cast": "cast_quick", "idle": "idle_1h", "run": "hero_run", "run_female": "hero_run", "run_min": 0.72,
 		"death": "death", "R": "cleaver", "L": "shuriken_hook", "bar": 2.95, "skin_shader": "res://src/game/sludge_skin.gdshader",
 		"gear_materials": true, "swing_trail": true},
-	# Azrin: the hero body hovering over her fire (float, in metres); she glides instead of running and throws fire
-	# from her hands
-	"hero_azrin": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["cast_quick"],
-		"cast": "cast_quick", "idle": "idle_mage", "run": "idle_mage", "run_female": "idle_mage", "glide": true,
-		"float": 0.75, "bob": 0.08, "death": "death", "R": "", "L": "", "proj": "fireball", "bar": 2.85, "hero": true},
+	# Azrin (2026-10-17): her own body, the owner's hooded sorceress recoloured red and black, with her staff (cut out
+	# of the model as a weapon) in the right hand; she hovers over her fire (float, in metres) and glides instead of
+	# running: glide_fwd is her staff idle with the chest leaning in and the legs trailing (UnitView leans and banks
+	# her further as she moves)
+	"hero_azrin": {"scene": H17 + "azrin.glb", "scale": 1.0, "attack": ["staff_1", "staff_2"],
+		"cast": "cast_quick", "idle": "idle_staff", "run": "glide_fwd", "glide": true, "glide_clip": "glide_fwd",
+		"float": 0.75, "bob": 0.08, "death": "death", "R": "azrin_staff", "L": "", "proj": "fireball", "bar": 2.85},
 	# Azrael (2026-10-17): the sculpted body as a soul of white flame (body shader spirit mode), floating, a great
 	# scythe in both hands (tools/blender/azrael.py); her charged slash and wings are AzraelFx. The blade points to the
 	# weapon's +X, the way the head moves in gs_1 / gs_3 / gs_4 (tests/tools/swing_dir.gd), so its tip leads every
@@ -40,11 +45,19 @@ const MODELS := {
 		"cast": "cast_quick", "idle": "idle_staff", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
 		"death": "death", "R": "staff_aether", "L": "", "proj": "frost_bolt", "bar": 2.45, "hero": true,
 		"weapon_tint": Color(0.62, 0.82, 1.0)},
-	# Caziel: the hero body with two daggers
-	"hero_caziel": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["dual_1", "dual_2", "dual_3", "dual_4"],
-		"cast": "cast_quick", "idle": "idle_shadowblade", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
-		"death": "death", "R": "dagger", "L": "dagger", "bar": 2.3, "hero": true, "weapon_tint": Color(0.55, 0.45, 0.7),
+	# Caziel (2026-10-17): his own body, the owner's hooded assassin in a long coat, two daggers
+	"hero_caziel": {"scene": H17 + "caziel.glb", "scale": 1.0, "attack": ["dual_1", "dual_2", "dual_3", "dual_4"],
+		"cast": "cast_quick", "idle": "idle_shadowblade", "run": "hero_run", "run_min": 0.72,
+		"death": "death", "R": "dagger", "L": "dagger", "bar": 2.35, "weapon_tint": Color(0.55, 0.45, 0.7),
 		"swing_trail": true, "trail_color": Color(0.7, 0.4, 1.0, 0.6)},
+	# Ser Emelrich and Feran Mock (2026-10-17, bodies only until their kits land): the white knight with his heavy
+	# greatsword; the jester (assassin body, restyle pending) with throwing knives
+	"hero_emelrich": {"scene": H17 + "emelrich.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
+		"cast": "cast_weapon", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "heavy_greatsword", "L": "", "bar": 2.6, "swing_trail": true, "trail_color": Color(1.0, 0.9, 0.6, 0.6)},
+	"hero_feran": {"scene": H17 + "feran.glb", "scale": 1.0, "attack": ["dagger_1", "dagger_2"],
+		"cast": "cast_quick", "idle": "idle_dagger", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "throwing_knife", "L": "", "proj": "knife", "bar": 2.4},
 	# Tock: the hero body with a brass wand; his bolts are golden orbs
 	"hero_tock": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["wand_1", "wand_2", "wand_3"],
 		"cast": "cast_quick", "idle": "idle_wand", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,

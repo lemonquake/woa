@@ -328,3 +328,17 @@ No critic subagent was run (none asked for); looks are builder self-checks again
 | M2 Map sites | 1-2 | working tree | gate: 4 new tests, captures | n/a | PASS (gate; self-check look) | gate ring unreadable from the top-down camera; black rock material | blind review UNVERIFIED |
 | B1 Bots and sites | 1-2 | working tree | gate: bot games | n/a | see handoff | sites unused in the first game (reach too short) | more games |
 | S1 Sound world | 1 | working tree | gate: audio_probe (sounds load, every model has a material, Effects bus at 60%), day and night live runs without errors | n/a | PASS (gate) | none | listening test by the owner (not audible to the builder) |
+
+## Session 2026-10-17 e (hero models from the owner's downloads) — run `work/lemondev/2026-10-17e-hero-models/` (contract.md)
+
+No critic subagent was run (none asked for); looks are builder self-checks (Blender previews, live captures).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| T1 Body tool | 1-9 | working tree | gate: previews of every body in idle, run, swing | n/a | PASS (self-check) | in order: stale bone references; bone heat failing on loose pieces and tiny models; T-posing crushed rigid plates (fixed by binding in the model's own pose and retargeting); hip plates riding the hand; cloth ballooning; seam cracks; reach limit tearing big gauntlets (made opt-in); fused staff stretching into needles (split off, then cut out as a weapon); recolour lost on save | blind review UNVERIFIED |
+| H1 Ezee body | 1-4 | working tree | gate: captures in match and Hero Select | n/a | PASS (self-check) | sword guard left in the fist | none |
+| H2 Azrin body | 1-6 | working tree | gate: captures in match and Hero Select | n/a | PASS (self-check) | staff turned backward in empty-hand clips (now a weapon on staff clips); magenta instead of red | owner look |
+| H3 Caziel body | 1-3 | working tree | gate: captures | n/a | PASS (self-check) | too dark at game distance (greys lifted) | violet accents if wanted |
+| H4 Emelrich, Feran bodies | 1-4 | working tree | Blender previews only | n/a | IMPLEMENTED — UNVERIFIED | not in a match (no kits) | sun emblem; jester restyle |
+| X1 Integration | 1 | working tree | gate: tests 248/248, parse, check_names | n/a | PASS (gate) | none | export rebuild |
+
