@@ -14,7 +14,7 @@ import bmesh
 import math
 import os
 import sys
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 from bl_ext.user_default.mpfb.services.humanservice import HumanService
 from bl_ext.user_default.mpfb.services.targetservice import TargetService
@@ -112,7 +112,55 @@ def make_body():
     RigService.set_pose_from_dict(rig, tpose)
     bpy.ops.object.mode_set(mode='OBJECT')
     RigService.apply_pose_as_rest_pose(rig)
+    curl_fingers(rig)
+    RigService.apply_pose_as_rest_pose(rig)
     return mh, rig
+
+
+# his hands close into fists round the cleaver and the hook (run 2026-10-18: they were open, the cleaver floated over
+# an open palm); degrees per joint from the knuckle out, the thumb folds less
+FIST_CURL = (70.0, 85.0, 60.0)
+FIST_THUMB = (20.0, 35.0, 35.0)
+
+
+def curl_fingers(rig):
+    """Curl the finger bones of the T-posed rig toward the palms (palms face down in the T-pose)."""
+    bpy.context.view_layer.objects.active = rig
+    bpy.ops.object.mode_set(mode='POSE')
+    for side in ("l", "r"):
+        hand = rig.pose.bones.get("hand_" + side)
+        if hand is None:
+            continue
+        for f in ("thumb", "index", "middle", "ring", "pinky"):
+            chain = [rig.pose.bones.get("%s_%02d_%s" % (f, i, side)) for i in (1, 2, 3)]
+            chain = [b for b in chain if b is not None]
+            if not chain:
+                continue
+            curl = FIST_THUMB if f == "thumb" else FIST_CURL
+            d = (chain[-1].tail - chain[0].head).normalized()
+            palm = Vector((0.0, 0.0, -1.0))
+            axis = d.cross(palm).normalized()
+            for j, pb in enumerate(chain):
+                h = pb.head.copy()
+                R = Matrix.Translation(h) @ Matrix.Rotation(math.radians(curl[j]), 4, axis) @ Matrix.Translation(-h)
+                pb.matrix = R @ pb.matrix
+                bpy.context.view_layer.update()
+    bpy.ops.object.mode_set(mode='OBJECT')
+    log("fingers curled into fists")
+
+
+def fist_centres(mh):
+    """Where each fist's curled fingers meet (the weapon bones go there)."""
+    out = {}
+    for s, side in (("L", "l"), ("R", "r")):
+        ids = {g.index for g in mh.vertex_groups
+               if any(g.name.startswith(f + "_") and g.name.endswith("_" + side)
+                      for f in ("index", "middle", "ring", "pinky"))}
+        pts = [mh.matrix_world @ v.co for v in mh.data.vertices
+               if any(g.group in ids and g.weight > 0.5 for g in v.groups)]
+        if pts:
+            out[s] = sum(pts, Vector()) / len(pts)
+    return out
 
 
 def barrel(mh, J):
@@ -186,6 +234,7 @@ def main():
     mh.select_set(True)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     J = joints(rig)
+    grips = fist_centres(mh)
     barrel(mh, J)
     # keep the mesh: unparent with its current shape, drop the MakeHuman rig
     bpy.ops.object.select_all(action='DESELECT')
@@ -220,7 +269,7 @@ def main():
         if o.type == 'MESH' and o != mh:
             bpy.data.objects.remove(o, do_unlink=True)
     log("hero bones", [b.name for b in arm.data.bones])
-    refit(arm, J)
+    refit(arm, J, grips)
     remap_weights(mh)
     eye_groups = [mh.vertex_groups.get(n) for n in ("helper-l-eye", "helper-r-eye")]
     finish_mesh(mh, arm, eye_groups)
@@ -231,7 +280,7 @@ def main():
     export(arm, [mh] + gear)
 
 
-def refit(arm, J):
+def refit(arm, J, grips=None):
     """Move the hero bones onto the fat body's joints, keeping every bone's direction and roll."""
     bpy.context.view_layer.objects.active = arm
     bpy.ops.object.mode_set(mode='EDIT')
@@ -284,6 +333,8 @@ def refit(arm, J):
         for b in eb:
             if b.parent and b.parent.name == "hand." + s:
                 off = hand_new - hand_old
+                if grips and s in grips and b.name == "weapon." + s:
+                    off = grips[s] - old[b.name][0]          # into the fist
                 b.head = old[b.name][0] + off
                 b.tail = old[b.name][1] + off
     for b in eb:

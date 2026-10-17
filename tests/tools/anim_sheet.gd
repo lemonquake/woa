@@ -4,9 +4,13 @@ extends SceneTree
 ## twist too far and parts that pass through the body or the weapons.
 ##   godot --path . -s tests/tools/anim_sheet.gd -- --heroes=kragg,ezee --out=work/lemondev/x/anim [--frames=8]
 ##   [--clips=idle_shield,sword_1] [--yaws=30,-70] [--fov=14] [--raw: the clips before the repair]
+##   [--cell=420x560] [--page=4: at most this many rows per image, <hero>_p0.png, _p1.png ...] [--aim=1.2: the
+##   height the close camera looks at, with --fov]
 
 const COLS := 8
-const CELL := Vector2i(300, 420)
+var CELL := Vector2i(300, 420)
+var _page := 0
+var _aim := 1.2
 
 var _out := "work/anim"
 var _frames := 8
@@ -25,6 +29,13 @@ func _init() -> void:
 			_frames = int(a.substr(9))
 		elif a.begins_with("--yaws="):
 			_yaws = Array(a.substr(7).split(",", false)).map(func(x): return deg_to_rad(float(x)))
+		elif a.begins_with("--cell="):
+			var wh := a.substr(7).split("x")
+			CELL = Vector2i(int(wh[0]), int(wh[1]))
+		elif a.begins_with("--page="):
+			_page = int(a.substr(7))
+		elif a.begins_with("--aim="):
+			_aim = float(a.substr(6))
 		elif a.begins_with("--fov="):
 			_fov = float(a.substr(6))
 		elif a == "--raw":
@@ -106,8 +117,8 @@ func _run() -> void:
 			await process_frame
 		if _fov > 0.0:
 			stage.cam.fov = _fov
-			stage.cam.position = Vector3(0.0, 1.35, 5.6)
-			stage.cam.look_at(Vector3(0.0, 1.2, 0))
+			stage.cam.position = Vector3(0.0, _aim + 0.15, 5.6)
+			stage.cam.look_at(Vector3(0.0, _aim, 0))
 		var rows: Array = []
 		for clip in clips:
 			if stage.anim == null or not stage.anim.has_animation(clip):
@@ -115,9 +126,13 @@ func _run() -> void:
 				continue
 			for yaw in _yaws:
 				rows.append([clip, yaw])
-		var sheet := Image.create(COLS * CELL.x, rows.size() * CELL.y + 4, false, Image.FORMAT_RGBA8)
-		sheet.fill(Color(0.05, 0.05, 0.06))
+		var per := rows.size() if _page <= 0 else _page
+		var ncols := mini(COLS, _frames)
+		var sheet: Image
 		for r in rows.size():
+			if r % per == 0:
+				sheet = Image.create(ncols * CELL.x, mini(per, rows.size() - r) * CELL.y + 4, false, Image.FORMAT_RGBA8)
+				sheet.fill(Color(0.05, 0.05, 0.06))
 			var clip := String(rows[r][0])
 			var a := stage.anim.get_animation(clip)
 			stage.yaw = float(rows[r][1])
@@ -137,12 +152,15 @@ func _run() -> void:
 				var crop := img.get_region(Rect2i((vs.x - cw) / 2, int(vs.y * 0.06), cw, mini(ch, int(vs.y * 0.94))))
 				crop.resize(CELL.x, CELL.y, Image.INTERPOLATE_BILINEAR)
 				crop.convert(Image.FORMAT_RGBA8)
-				sheet.blit_rect(crop, Rect2i(Vector2i.ZERO, CELL), Vector2i(f * CELL.x, r * CELL.y))
+				sheet.blit_rect(crop, Rect2i(Vector2i.ZERO, CELL), Vector2i(f * CELL.x, (r % per) * CELL.y))
 			print("%s %s yaw %d" % [id, clip, roundi(rad_to_deg(float(rows[r][1])))])
-		var path := ProjectSettings.globalize_path("res://%s/%s.png" % [_out, String(id).replace("unit:", "")])
-		DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-		sheet.save_png(path)
-		print("saved ", path, " rows: ", ", ".join(rows.map(func(x): return "%s@%d" % [x[0], roundi(rad_to_deg(float(x[1])))])))
+			if r % per == per - 1 or r == rows.size() - 1:
+				var nm := String(id).replace("unit:", "") + ("" if _page <= 0 else "_p%d" % (r / per))
+				var path := ProjectSettings.globalize_path("res://%s/%s.png" % [_out, nm])
+				DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+				sheet.save_png(path)
+				var part := rows.slice(r - r % per, r + 1)
+				print("saved ", path, " rows: ", ", ".join(part.map(func(x): return "%s@%d" % [x[0], roundi(rad_to_deg(float(x[1])))])))
 		stage.queue_free()
 		await process_frame
 	quit()

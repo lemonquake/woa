@@ -355,3 +355,16 @@ against the hero body, per bone, 25 degree limit); looks are builder self-checks
 | Q1 Arm repair on own bodies | 1-2 | working tree | gate: pose_compare before 239 deg worst, after 8.6 deg | n/a | PASS (gate) | the per-body arm repair measured twist and swivel from the own bodies' hanging-arm rest and flipped arms (Ezee 150-170 deg, Caziel 100, staff hands 55-60) | none |
 | Q2 Coat webbing | 1-2 | working tree | sheets before / after (Ezee roar, Caziel heavy strike) | n/a | PASS (self-check), one flap left | the coats took arm weights; `--reach` (now defined) frees cloth beyond each arm bone's reach | Ezee's left forearm flap |
 | X1 Integration | 1 | working tree | gate: tests 248/248, parse, check_names, export, cold start as Azrael and Ezee | n/a | PASS (gate) | none | none |
+
+## Session 2026-10-18 b (hero model QA after the owner's Azrael screenshot; body collision system) — run `work/lemondev/2026-10-18-model-qa/`
+
+No critic subagent was run (none asked for). New measured gate: `tests/tools/body_collide.gd -- --applied` (worst
+penetration of arms, hands and weapons into the body, other arm and floor, every frame of every clip in use).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Q3 Azrael hands | 1-5 | working tree | gate: close-up sheets, Hero Select, in-match capture | n/a | PASS (self-check) | in order: hand bone tail from the conversion (94 deg off); open claw hands; thumb claw straight out; claw tips glued to the hip by the cloth and reach rules | none |
+| Q4 Coat webbing | 1-3 | working tree | sheets before / after (Caziel dual_heavy, Ezee roar, Azrin staff) | n/a | PASS (self-check), one plate left | arm and trunk weights mixed on cloth the hand touched; upper arm too | Ezee's left-hand plate |
+| Q5 Cut remnants | 1 | working tree | bind-pose renders | n/a | PASS (self-check) | slivers and chips the capsule cut left loose | none |
+| C1 Body collision | 1-7 | working tree | gate: body_collide before/after, --applied | n/a | PASS (gate) for 7 of 8 hero bodies under 6.8 cm; units 12/16 at 0 | in order: shapes centred on the bone not the skin; two-hand grips colliding with each other; elbow across the chest unsolvable by swing alone; single frames left after smoothing (rounds); Unreal rigs' tracks unnamed | golems' and ogre's fist slam; legs and cloth |
+| X1 Integration | 1 | working tree | gate: tests 249/249, check.sh, export, cold start | n/a | PASS (gate) | none | none |

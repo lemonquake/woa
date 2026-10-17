@@ -6794,3 +6794,17 @@ func test_lookout_lamp() -> void:
 	w.time += 421.0
 	run(w, 0.1)
 	check(not w.sites.lamp_lit(s, C.DUSK), "dark again after 7:00")
+
+## Body collision (run 2026-10-18): every hero's body has its collision set (tests/tools/body_collide.gd --fix), and it
+## covers that hero's attacks, so RepairedClips keeps arms and weapons out of the body in them.
+func test_body_collision_sets() -> void:
+	for id in GameSettings.HEROES:
+		var cfg := ModelCatalog.info(String(SimData.unit(id).model))
+		var scene := String(cfg.scene) if String(id) in GameSettings.OWN_BODY else HeroLook.MODEL
+		var path := RepairedClips.collide_path(scene)
+		check(ResourceLoader.exists(path), "%s: collision set %s" % [id, path])
+		if not ResourceLoader.exists(path):
+			continue
+		var lib := load(path) as AnimationLibrary
+		for c in cfg.get("attack", []):
+			check(lib.has_animation(String(c)), "%s: %s in its collision set" % [id, c])

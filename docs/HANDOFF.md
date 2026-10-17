@@ -4,6 +4,53 @@
 
 ## Status (keep this section current)
 
+**2026-10-18 b: hero model and animation QA (your Azrael screenshot), and body collision for every clip (your list).**
+Run `work/lemondev/2026-10-18-model-qa/` (close-up sheets `before/`, `after*/`, `final*/`, `collide1/`; reports
+`collide_*.txt`; in-match capture `shots/export_azrael.png`).
+* **Azrael's hands (your screenshot: scythe floating, arms like claws).** The download's hand bones point back into
+  the wrist (a 3ds Max Biped converted by Sketchfab: the hand bone's tail is a guess), so every clip folded her hands
+  94 degrees and nothing reached the scythe. `hero_body.py` now reads hands from the rig's fingers: the hand points
+  from the wrist to the finger roots, rolls so the weapon's axis runs across the palm, and with `--fist` the fingers
+  curl into a fist round the weapon and the weapon bone sits inside it. She now holds the scythe in both hands on
+  Hero Select and in every swing. Claw tips no longer stick to her hip (they stretched into 25 cm needles): hand and
+  finger skin stays on the arm (`hand_lock`).
+* **Coats and sleeves webbing up with the arms** (Caziel's heavy strike, Ezee's roar, Azrin's sleeves tearing open):
+  no vertex may mix an arm with the hips, spine or legs any more; each goes wholly to one side and the mesh is split
+  where they meet (`--unmix`, on by default), so the arm leaves the coat instead of dragging it into sheets.
+  Left: one plate by Ezee's left hand still rides his forearm in the roar (it is weighted wholly to the arm).
+* **Leftovers of cut-out weapons**: Azrin's model kept a sliver of her old staff's shaft and a chip of its head beside
+  her hand, Ezee a floating gold sword knob; a cut now also removes the small loose pieces it breaks off.
+* **Sludge** closes his fists round the cleaver and the hook (they were open hands; `sludge.py` curls MakeHuman's
+  finger bones before the bind).
+* **Portraits** of Ezee, Azrin, Caziel and Azrael re-baked (they showed the old bodies).
+* **Body collision (your request: nothing passes through anything).** `tests/tools/body_collide.gd` fits collision
+  shapes to each body's own mesh (a solid capsule per bone, centred on its skin; the held weapons as clouds of small
+  spheres from their meshes), plays every clip each hero and unit uses at 30 frames a second and finds every arm,
+  hand and weapon inside the torso, head, legs, the other arm or the floor. `--fix` re-solves the arms where they
+  are (wrist moved out, wrist turned to swing a blade clear, elbow swung away, two hands on one weapon moved
+  together), spreads the corrections over the neighbouring frames so nothing pops, checks again, and bakes the
+  result to `<model dir>/anim_fixed/<model>_collide.res`, which `RepairedClips` lays over the clips (no cost in a
+  match). Worst depth in any frame, before -> after, measured on the clips as the game plays them (`--applied`):
+  shared hero body 36.7 -> 0.0 cm, Caziel 23.6 -> 0.0, Roydo 5.2 -> 0.0, Blau 42.5 -> 0.0, Sludge 21.6 -> 2.8,
+  Azrin 60.3 -> 3.1, Azrael 65.7 -> 5.3, Ezee 83.4 -> 6.8 (his ground slam: the sword tip in the floor for 3 frames).
+  Units: 12 of 16 models 0.0 cm; the three golems and the ogre keep 8-26 cm in a double-fist slam (the fists meet
+  with the arms at full stretch). Not covered: cloth, capes and hair against the body (they are skinned, not
+  simulated), the legs against each other, two weapons against each other.
+* **Also seen, not changed**: Froster's pink spiked crest and Blood Ranger's look are your saved Hero Creator looks
+  (`custom` in `user://hero.json`); the capes of the shared outfit pieces are flat panels by design of those pieces;
+  Tock's white hair glows bright from behind on the stage; Azrael's Hero Select text still describes her old spirit
+  look ("a black robe, a soul of white flame").
+* New names (veto any): body-tool options `--fist`, `--unmix`; files `tests/tools/body_collide.gd`,
+  `tests/tools/body_shapes.gd`, `work/rebuild_qa.sh`, `anim_fixed/<model>_collide.res`; `RepairedClips.collide_path`.
+* Commands: rebuild the own bodies `sh work/rebuild_qa.sh [out_dir] [azrael ezee azrin caziel]`; after any body or
+  clip change run `godot --headless --path . -s tests/tools/body_collide.gd -- --fix` (heroes) and `-- --units --fix`,
+  then `godot --headless --path . --import`; check with `-- --applied`. Close-up sheets:
+  `godot --path . -s tests/tools/anim_sheet.gd -- --heroes=azrael --frames=4 --yaws=0,150 --cell=400x540 --page=4 --fov=20 --aim=1.4`.
+Evidence: headless tests 249 passed, 0 failed (new `test_body_collision_sets`); `sh tools/check.sh` "Names OK";
+body_collide reports above; close-up sheets of every hero checked by eye; `build/WarriorsOfAether.exe` rebuilt
+2026-10-18, cold start into a match as Azrael without script errors. Not verified: no blind critic review; the
+catalog-only bodies (Emelrich, Feran, Burak, Airah, Ghorman) were not rebuilt with the new hand and unmix steps.
+
 **2026-10-18: Ghorman's human body, Azrael's new body, and a strict check of every hero animation (your list).** Run
 `work/lemondev/2026-10-17f-ghorman-azrael/` (contact sheets in `qa/`, captures in `shots*/`).
 * **Your report: Ezee, Azrin and Caziel looked broken. Found and fixed:**

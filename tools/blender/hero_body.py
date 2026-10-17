@@ -24,7 +24,7 @@ Run: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-
        --src=<file> --name=<out name> [--height=1.85] [--faces=30000] [--tex=2048] [--yaw=0] [--drop=<regex>]
        [--joints=<json>] [--preview=<dir>] [--bake] [--cut=x0,x1,y0,y1,z0,z1;...] [--bind=native|t]
        [--rigid=bone:cap:x1,y1,z1,x2,y2,z2,r;bone:ball:x,y,z,r] [--cloth=<material regex>] [--hue=from:to:width[:sat[:val]]] [--gray=1.0]
-       [--glide=<idle clip>] [--reach=0] [--smooth=4] [--norig] [--move=regex:dx,dy,dz;...] [--body_piece=<regex>] [--capture] [--keep=<regex>] [--posture]
+       [--glide=<idle clip>] [--reach=0] [--smooth=4] [--norig] [--move=regex:dx,dy,dz;...] [--body_piece=<regex>] [--capture] [--keep=<regex>] [--posture] [--fist] [--unmix=1]
 """
 import bpy
 import bmesh
@@ -83,6 +83,8 @@ REACH_K = arg("reach", 0.0)                   # limb reach limit (x the default 
 # how far (m, for a 1.8 m hero) an arm bone's skin reaches from the bone: pauldrons and sleeves are within it, a cape or
 # a coat skirt hanging beside the arm is not (run 2026-10-17 f: the coats webbed up with the arms in big swings)
 REACH = {"upper_arm": 0.15, "forearm": 0.105, "hand": 0.10}
+UNMIX = arg("unmix", True)                     # no vertex mixes a forearm or hand with the hips or legs (split there)
+FIST = arg("fist", False)                      # curl the source rig's fingers into a fist round the weapon (open hands)
 GLIDE = arg("glide", "")                       # "<idle clip>": also make "glide_fwd", a floating move pose
 RIGID = arg("rigid", "")                       # "bone:cap:x1,y1,z1,x2,y2,z2,r;bone:ball:x,y,z,r" (model space) ride
                                                # one bone only: a staff in a fist, a buckle, a held lantern
@@ -310,6 +312,60 @@ def tidy(objs):
 
 
 
+def islands(co, edges, keep=None):
+    """Connected pieces of a mesh (vertices at the same place count as joined: UV seams split them): a label per
+    vertex (-1 where keep is False)."""
+    n = len(co)
+    span = float(np.ptp(co, axis=0).max()) if n else 1.0
+    _u, weld = np.unique(np.round(co / max(span * 1e-6, 1e-12)).astype(np.int64), axis=0, return_inverse=True)
+    weld = weld.ravel()
+    lab = np.arange(weld.max() + 1 if n else 0)
+    e = weld[edges]
+    if keep is not None:
+        e = e[keep[edges[:, 0]] & keep[edges[:, 1]]]
+    while True:
+        m_ = np.minimum(lab[e[:, 0]], lab[e[:, 1]])
+        new = lab.copy()
+        np.minimum.at(new, e[:, 0], m_)
+        np.minimum.at(new, e[:, 1], m_)
+        new = new[new]
+        new = new[new]
+        if np.array_equal(new, lab):
+            break
+        lab = new
+    out = lab[weld]
+    if keep is not None:
+        out = np.where(keep, out, -1)
+    return out
+
+
+def cut_remnants(m, co, kill):
+    """Vertices of small pieces the cut broke off a bigger piece (a sliver of a fused staff's shaft left beside the
+    fist, a chip of its head, a sword pommel floating by the hand: Azrin and Ezee, run 2026-10-18)."""
+    ed = np.empty(len(m.data.edges) * 2, dtype=np.int64)
+    m.data.edges.foreach_get("vertices", ed)
+    ed = ed.reshape(-1, 2)
+    if not len(ed):
+        return np.zeros(len(co), dtype=bool)
+    keep = ~kill
+    before = islands(co, ed)
+    after = islands(co, ed, keep)
+    total = int(keep.sum())
+    out = np.zeros(len(co), dtype=bool)
+    ids, counts = np.unique(after[keep], return_counts=True)
+    kept_before = {}
+    b_ids, b_counts = np.unique(before[keep], return_counts=True)
+    kept_before = dict(zip(b_ids.tolist(), b_counts.tolist()))
+    for i, c in zip(ids.tolist(), counts.tolist()):
+        if c >= 0.02 * total:
+            continue
+        vs = np.where(after == i)[0]
+        b = int(before[vs[0]])
+        if c < kept_before.get(b, 0):                # split off a bigger piece by the cut
+            out[vs] = True
+    return out
+
+
 def cut_boxes(meshes):
     """Delete the vertices inside the --cut boxes (a weapon fused into a hand, a staff through a sleeve)."""
     if not CUT:
@@ -330,6 +386,10 @@ def cut_boxes(meshes):
                 kill |= ((co[:, 0] >= x0) & (co[:, 0] <= x1) & (co[:, 1] >= y0) & (co[:, 1] <= y1)
                          & (co[:, 2] >= z0) & (co[:, 2] <= z1))
         if kill.any():
+            extra = cut_remnants(m, co, kill)
+            if extra.any():
+                log("  cut %d more vertices: loose remnants of the cut prop (%s)" % (int(extra.sum()), m.name))
+                kill |= extra
             bm = bmesh.new()
             bm.from_mesh(m.data)
             bm.verts.ensure_lookup_table()
@@ -574,6 +634,28 @@ def a_rig(t_arm, J):
         R = Matrix.Translation(pb.head) @ q.to_matrix().to_4x4() @ Matrix.Translation(-pb.head)
         pb.matrix = R @ pb.matrix
         bpy.context.view_layer.update()
+    for s in ("L", "R"):
+        if "grip." + s not in J:
+            continue
+        # the hand turns about its own axis until the weapon bone's axis lies along the fist's grip axis, and the
+        # weapon bone moves into the fist (fit_hands)
+        pb = a.pose.bones["hand." + s]
+        wb = a.pose.bones["weapon." + s]
+        hy = (pb.tail - pb.head).normalized()
+        wy = (wb.tail - wb.head).normalized()
+        g0, g1 = J["grip." + s]
+        k = (g1 - g0).normalized()
+        wy = (wy - hy * wy.dot(hy)).normalized()
+        k = (k - hy * k.dot(hy)).normalized()
+        ang = math.atan2(hy.dot(wy.cross(k)), wy.dot(k))
+        R = Matrix.Translation(pb.head) @ Matrix.Rotation(ang, 4, hy) @ Matrix.Translation(-pb.head)
+        pb.matrix = R @ pb.matrix
+        bpy.context.view_layer.update()
+        m = wb.matrix.copy()
+        m.translation = g0
+        wb.matrix = m
+        bpy.context.view_layer.update()
+        log("  hand.%s rolled %.0f deg to the grip; weapon bone in the fist" % (s, math.degrees(ang)))
     bpy.ops.pose.armature_apply(selected=False)
     bpy.ops.object.mode_set(mode='OBJECT')
     for n in ("upper_arm.L", "forearm.L", "hand.L", "thigh.L"):
@@ -962,6 +1044,215 @@ def joints_from_rig(arm, defining):
         J["foot." + s] = (H("foot." + s), toe)
         J["toe." + s] = (toe, toe + Vector((0.0, -0.12, 0.0)))
     return J
+
+
+FINGER_RX = re.compile(r"finger|thumb|index|middle|ring|pinky|little", re.I)
+# fist (--fist): how far each finger joint bends toward the palm (degrees, from the knuckle out); the thumb folds less
+FIST_CURL = (72.0, 88.0, 70.0)
+FIST_THUMB = (25.0, 45.0, 40.0)
+FIST_THUMB_SWING = 40.0                         # the thumb first swings across the palm (about the hand's axis)
+
+
+def bake_pose(arm, meshes):
+    """The meshes take the skeleton's current pose as their own shape (their weights stay)."""
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    for m in meshes:
+        e = m.evaluated_get(dg)
+        me = e.to_mesh()
+        if len(me.vertices) == len(m.data.vertices):
+            co = np.empty(len(me.vertices) * 3)
+            me.vertices.foreach_get("co", co)
+            old = np.empty(len(me.vertices) * 3)
+            m.data.vertices.foreach_get("co", old)
+            co, old = co.reshape(-1, 3), old.reshape(-1, 3)
+            ed = np.empty(len(m.data.edges) * 2, dtype=np.int64)
+            m.data.edges.foreach_get("vertices", ed)
+            ed = ed.reshape(-1, 2)
+            l0 = np.linalg.norm(old[ed[:, 0]] - old[ed[:, 1]], axis=1)
+            l1 = np.linalg.norm(co[ed[:, 0]] - co[ed[:, 1]], axis=1)
+            ratio = l1 / np.maximum(l0, 1e-9)
+            bad = ed[ratio > 1.6].ravel()
+            if len(bad):
+                names = {g.index: g.name for g in m.vertex_groups}
+                hit = {}
+                for vi in set(bad.tolist()):
+                    for g in m.data.vertices[vi].groups:
+                        if g.weight > 0.05:
+                            hit[names[g.group]] = hit.get(names[g.group], 0) + 1
+                log("  %s: %d edges stretched over 1.6x by the pose (worst %.1fx); bones: %s" % (
+                    m.name, int((ratio > 1.6).sum()), ratio.max(), sorted(hit.items(), key=lambda x: -x[1])[:8]))
+                if os.environ.get("HB_DEBUG"):
+                    for ei in np.argsort(-ratio)[:6]:
+                        a_, b_ = ed[ei]
+                        for vi in (a_, b_):
+                            log("    v%d %s -> %s %s" % (vi, old[vi].round(2), co[vi].round(2),
+                                [(names[g.group], round(g.weight, 2)) for g in m.data.vertices[vi].groups]))
+            m.data.vertices.foreach_set("co", co.ravel())
+            m.data.update()
+        e.to_mesh_clear()
+
+
+def fit_hands(arm, defining, meshes, J):
+    """Hands from the source rig's fingers, not its hand bone's tail (a conversion guesses tails: Azrael's pointed back
+    into her wrist, so every clip folded her hands 94 degrees and nothing reached the weapon; run 2026-10-18):
+      * the hand points from the wrist to the middle of the finger roots;
+      * the grip axis runs from the last finger's root to the index finger's root, across the palm (the weapon bone's
+        axis: a held weapon leaves the fist on the index side), stored as J["grip.<side>"] for a_rig;
+      * --fist: the fingers curl round that axis into a fist (baked into the mesh before the bind) and the weapon bone
+        goes to the middle of the curled fingers, so the shaft runs through the closed hand."""
+    mw = arm.matrix_world
+    bones = arm.data.bones
+    groups = []                                  # per mesh: world coords, {group name: (vertex ids, weights)}
+    for m in meshes:
+        co = world_coords(m)
+        names = {g.index: g.name for g in m.vertex_groups}
+        per = {}
+        for v in m.data.vertices:
+            for g in v.groups:
+                if g.weight > 0.5:
+                    per.setdefault(names[g.group], []).append(v.index)
+        groups.append((m, co, per))
+
+    def verts_of(bnames):
+        pts = []
+        for _m, co, per in groups:
+            for bn in bnames:
+                if bn in per:
+                    pts.append(co[per[bn]])
+        return np.vstack(pts) if pts else np.zeros((0, 3))
+
+    sides = {}
+    for s in ("L", "R"):
+        hb = bones[defining["hand." + s]]
+        chains = []
+        for c in hb.children:
+            if not FINGER_RX.search(c.name):
+                continue
+            ch = [c]
+            while True:
+                nxt = [x for x in ch[-1].children if FINGER_RX.search(x.name)]
+                if not nxt:
+                    break
+                ch.append(nxt[0])
+            chains.append(ch)
+        if len(chains) < 3:
+            log("hand %s: %d finger chains in the rig, hand left as converted" % (s, len(chains)))
+            continue
+        wrist = mw @ hb.head_local
+        roots = [mw @ ch[0].head_local for ch in chains]
+        named = [i for i, ch in enumerate(chains) if re.search(r"thumb|finger0($|_|\.)", norm(ch[0].name), re.I)]
+        thumb = named[0] if named else min(range(len(chains)), key=lambda i: (roots[i] - wrist).length)
+        fingers = [i for i in range(len(chains)) if i != thumb]
+        knuck = sum((roots[i] for i in fingers), Vector()) / len(fingers)
+        d = (knuck - wrist).normalized()
+        index = min(fingers, key=lambda i: (roots[i] - roots[thumb]).length)
+        last = max(fingers, key=lambda i: (roots[i] - roots[thumb]).length)
+        k = roots[index] - roots[last]
+        k = (k - d * k.dot(d)).normalized()
+        # the palm side: where the fingertips already curl (a relaxed hand), else toward the body
+        side = Vector()
+        for i in fingers:
+            tip_pts = verts_of([chains[i][-1].name])
+            if not len(tip_pts):
+                continue
+            r = np.array(roots[i][:])
+            tip = Vector(tip_pts[np.argmax(np.sum((tip_pts - r) ** 2, axis=1))])
+            off = tip - roots[i]
+            side += off - d * off.dot(d) - k * off.dot(k)
+        if side.length < 1e-6 * HEIGHT:
+            side = Vector((-wrist.x, 0.0, 0.0))
+            side -= d * side.dot(d) + k * side.dot(k)
+        p = side.normalized()
+        log("hand %s: %d fingers, hand turned %.0f deg from the converted bone, palm side %s" % (
+            s, len(fingers), math.degrees((mw.to_3x3() @ (hb.tail_local - hb.head_local)).angle(d, 0.0)),
+            tuple(round(x, 2) for x in p)))
+        reach = (knuck - wrist).length
+        J["hand." + s] = (wrist.copy(), wrist + d * reach * 1.8)
+        sides[s] = (chains, thumb, fingers, d, k, p, wrist)
+    if not FIST or not sides:
+        for s, (chains, thumb, fingers, d, k, p, wrist) in sides.items():
+            c = sum((mw @ chains[i][0].head_local for i in fingers), Vector()) / len(fingers)
+            J["grip." + s] = (c, c + k * 0.1 * HEIGHT)
+        return
+    # palm skin carrying a finger's weight behind its knuckle would swing out with the finger (Azrael's last finger
+    # pulled the palm into a 4.8x spike): fade finger weight to the hand from the knuckle back (for the curl only;
+    # finger weights go to the hand afterwards anyway)
+    moved = 0
+    for s, (chains, thumb, fingers, d, k, p, wrist) in sides.items():
+        hname = defining["hand." + s]
+        for i in fingers:
+            ch = chains[i]
+            root = mw @ ch[0].head_local
+            seg = ((mw @ ch[1].head_local) - root).length if len(ch) > 1 else (root - wrist).length * 0.4
+            dn = np.array(d[:])
+            for m, co, _per in groups:
+                g = m.vertex_groups.get(ch[0].name)
+                if g is None:
+                    continue
+                hg = m.vertex_groups.get(hname) or m.vertex_groups.new(name=hname)
+                along = (co - np.array(root[:])) @ dn
+                f = np.clip((along + 0.15 * seg) / (0.5 * seg), 0.0, 1.0)
+                for vi in np.where(f < 1.0)[0]:
+                    try:
+                        w = g.weight(int(vi))
+                    except RuntimeError:
+                        continue
+                    if w <= 0.0:
+                        continue
+                    keep = w * float(f[vi])
+                    try:
+                        hw = hg.weight(int(vi))
+                    except RuntimeError:
+                        hw = 0.0
+                    g.add([int(vi)], keep, 'REPLACE')
+                    hg.add([int(vi)], hw + (w - keep), 'REPLACE')
+                    moved += 1
+    log("hands: %d palm vertices keep the hand for the curl" % moved)
+    select_only(arm)
+    bpy.ops.object.mode_set(mode='POSE')
+    inv = mw.inverted()
+    for s, (chains, thumb, fingers, d, k, p, wrist) in sides.items():
+        axis = (inv.to_3x3() @ d.cross(p)).normalized()       # turning d toward p
+        for i, ch in enumerate(chains):
+            curl = FIST_THUMB if i == thumb else FIST_CURL
+            ax = axis
+            if i == thumb:
+                # swing the thumb over the palm about the hand's axis, then bend it toward the palm about its own
+                pb = arm.pose.bones[ch[0].name]
+                t = (arm.pose.bones[ch[1].name].head - pb.head) if len(ch) > 1 else (pb.tail - pb.head)
+                da = (inv.to_3x3() @ d).normalized()
+                pa = (inv.to_3x3() @ p).normalized()
+                tp = t - da * t.dot(da)
+                sw = da if da.dot(tp.cross(pa)) >= 0.0 else -da
+                h = pb.head.copy()
+                pb.matrix = (Matrix.Translation(h) @ Matrix.Rotation(math.radians(FIST_THUMB_SWING), 4, sw) @
+                             Matrix.Translation(-h)) @ pb.matrix
+                bpy.context.view_layer.update()
+                t = (arm.pose.bones[ch[1].name].head - pb.head) if len(ch) > 1 else (pb.tail - pb.head)
+                ax = t.normalized().cross(pa).normalized()
+            for j, b in enumerate(ch):
+                pb = arm.pose.bones[b.name]
+                ang = math.radians(curl[min(j, len(curl) - 1)])
+                h = pb.head.copy()
+                R = Matrix.Translation(h) @ Matrix.Rotation(ang, 4, ax) @ Matrix.Translation(-h)
+                pb.matrix = R @ pb.matrix
+                bpy.context.view_layer.update()
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bake_pose(arm, meshes)
+    for s, (chains, thumb, fingers, d, k, p, wrist) in sides.items():
+        pts = []
+        for m, _co, per in groups:
+            co = world_coords(m)                                 # the curled shape
+            for i in fingers:
+                for b in chains[i]:
+                    if b.name in per:
+                        pts.append(co[per[b.name]])
+        pts = np.vstack(pts)
+        c = Vector(pts.mean(0))
+        J["grip." + s] = (c, c + k * 0.1 * HEIGHT)
+        log("hand %s: fist closed, grip %.3f from the wrist" % (s, (c - wrist).length))
+    rest_pose(arm)
 
 
 def remap_weights(meshes, to_hero):
@@ -1369,8 +1660,11 @@ def finish_mesh(meshes, J):
                     done.add(n.image.name)
                     hue_remap(n.image)
                     n.image.pack()
+    hand_lock(body)
     unify_coincident(body)
-    apply_rigid(body)                            # last: its split copies must keep different weights
+    apply_rigid(body)                            # its split copies must keep different weights
+    if UNMIX:
+        unmix_arms(body)
     # weights: at most 4 bones per vertex, normalised (what the game's skinning uses)
     select_only(body)
     bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
@@ -1572,6 +1866,134 @@ def unify_coincident(body):
                 if w > 0.0:
                     groups[nm].add([vi], w, 'REPLACE')
     log("seams: %d split vertices share their weights" % len(multi))
+
+
+def unmix_arms(body):
+    """A hanging arm that touched a coat, a skirt or a thigh in the model's pose leaves vertices weighted partly to the
+    arm and partly to the hips, spine or legs; no joint links those, so when the arm lifts they stretch into
+    sheets from the hem to the fist (Caziel's coat in his heavy strike, Ezee's roar; run 2026-10-18). Each such vertex
+    now goes wholly to the side holding most of it, and the mesh is split where faces of the two sides meet, so the
+    arm leaves the coat instead of dragging it."""
+    names = {g.index: g.name for g in body.vertex_groups}
+    idx = {g.name: g.index for g in body.vertex_groups}
+    # the whole arm: an upper arm hanging against a coat's side panel webs it up as badly as a hand does (the
+    # shoulder joins the arm to the chest, which is not in `trunk`)
+    low = {s_: {idx[n] for n in ("upper_arm." + s_, "forearm." + s_, "hand." + s_) if n in idx} for s_ in ("L", "R")}
+    trunk = {idx[n] for n in ("hips", "spine", "thigh.L", "thigh.R", "shin.L", "shin.R", "foot.L", "foot.R",
+                              "toe.L", "toe.R") if n in idx}
+    bm = bmesh.new()
+    bm.from_mesh(body.data)
+    dl = bm.verts.layers.deform.active
+    if dl is None:
+        bm.free()
+        return
+
+    def cls(v):
+        dv = v[dl]
+        b = sum(w for g, w in dv.items() if g in trunk)
+        best, aw = "", 0.0
+        for s_ in ("L", "R"):
+            a = sum(w for g, w in dv.items() if g in low[s_])
+            if a > aw:
+                best, aw = s_, a
+        if aw <= 0.02 or b <= 0.02:
+            return best if aw > 0.02 else ""                    # unmixed: arm side or "" (the rest)
+        return best if aw >= b else ""
+
+    vc = {v: cls(v) for v in bm.verts}
+    fc = {}
+    for f in bm.faces:
+        votes = {}
+        for v in f.verts:
+            votes[vc[v]] = votes.get(vc[v], 0) + 1
+        fc[f] = max(votes, key=lambda k: (votes[k], k == ""))
+    cut = [e for e in bm.edges if len(e.link_faces) == 2 and fc[e.link_faces[0]] != fc[e.link_faces[1]]
+           and "" in (fc[e.link_faces[0]], fc[e.link_faces[1]])
+           and any(vc[v] == "" and any(g in trunk for g in v[dl].keys()) for v in e.verts)]
+    n_before = len(bm.verts)
+    if cut:
+        bmesh.ops.split_edges(bm, edges=cut)
+    fixed = 0
+    for v in bm.verts:
+        sides = {fc.get(f, "?") for f in v.link_faces}
+        if len(sides) != 1 or "?" in sides:
+            continue
+        side = sides.pop()
+        dv = v[dl]
+        if side == "":
+            drop = [g for g in dv.keys() if g in low["L"] or g in low["R"]]
+            if not drop or not any(g in trunk for g in dv.keys()):
+                continue
+        else:
+            drop = [g for g in dv.keys() if g in trunk]
+            if not drop:
+                continue
+        for g in drop:
+            del dv[g]
+        tot = sum(dv.values())
+        if tot <= 1e-6:
+            dv[idx["hips"] if side == "" else idx["hand." + side]] = 1.0
+        else:
+            for g in list(dv.keys()):
+                dv[g] = dv[g] / tot
+        fixed += 1
+    bm.to_mesh(body.data)
+    bm.free()
+    log("unmix: %d vertices made wholly arm or body, %d edges split (%d new vertices)" % (
+        fixed, len(cut), len(body.data.vertices) - n_before))
+
+
+def mark_hands(meshes):
+    """Remember the vertices the source rig gave to a hand or its fingers (group lock.hand.<side>), for hand_lock."""
+    for m in meshes:
+        for side in ("L", "R"):
+            g = m.vertex_groups.get("hand." + side)
+            if g is None:
+                continue
+            ids = []
+            for v in m.data.vertices:
+                for gg in v.groups:
+                    if gg.group == g.index and gg.weight >= 0.5:
+                        ids.append(v.index)
+            if ids:
+                lk = m.vertex_groups.new(name="lock.hand." + side)
+                lk.add(ids, 1.0, 'REPLACE')
+
+
+def hand_lock(body):
+    """The source rig's hand and finger vertices move with their arm only. A closed fist hanging beside the thigh
+    (--fist) put Azrael's claw tips within reach of the hip, cloth and smoothing rules; they kept a share of the hips
+    and stretched into needles 25 cm long whenever the arm moved (run 2026-10-18)."""
+    names = {g.index: g.name for g in body.vertex_groups}
+    groups = {g.name: g for g in body.vertex_groups}
+    fixed = 0
+    for side in ("L", "R"):
+        lk = groups.get("lock.hand." + side)
+        if lk is None:
+            continue
+        arm_ = ("upper_arm." + side, "forearm." + side, "hand." + side)
+        for v in body.data.vertices:
+            if not any(g.group == lk.index and g.weight >= 0.5 for g in v.groups):
+                continue
+            keep, drop = [], []
+            for g in v.groups:
+                nm = names[g.group]
+                if nm.startswith("lock."):
+                    continue
+                (keep if nm in arm_ else drop).append((nm, g.weight))
+            if not drop:
+                continue
+            fixed += 1
+            for nm, _w in drop:
+                groups[nm].remove([v.index])
+            tot = sum(w for _n, w in keep)
+            if tot <= 1e-6:
+                groups["hand." + side].add([v.index], 1.0, 'REPLACE')
+            else:
+                for nm, w in keep:
+                    groups[nm].add([v.index], w / tot, 'REPLACE')
+        body.vertex_groups.remove(lk)
+    log("hands: %d hand and finger vertices given back to their arm only" % fixed)
 
 
 def arm_capture(body, J):
@@ -1907,7 +2329,10 @@ def main():
         else:
             rest_pose(src_arm)
         J = joints_from_rig(src_arm, defining)
+        if BIND != "t":
+            fit_hands(src_arm, defining, skinned, J)
         remap_weights(skinned, to_hero)
+        mark_hands(skinned)
         for m in skinned:
             for mod in [x for x in m.modifiers if x.type == 'ARMATURE']:
                 m.modifiers.remove(mod)

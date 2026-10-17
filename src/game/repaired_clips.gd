@@ -16,6 +16,7 @@ const UNIT_DIR := "res://assets/characters/units/anim_fixed/"
 
 static var _sets := {}                      # library path -> AnimationLibrary (or null when missing)
 static var disabled := false                # tools only (--raw): leave the clips as built
+static var collide_disabled := false        # tools only: the arm repair without the body collision set
 
 ## The repaired library for a model scene.
 static func path_for(scene_path: String) -> String:
@@ -31,6 +32,12 @@ static func path_for(scene_path: String) -> String:
 		# tests/tools/pose_compare.gd.)
 		return FIXED
 	return FIXED
+
+## The body collision set of a model scene (tests/tools/body_collide.gd, run 2026-10-18): the arm tracks of every clip
+## the model's heroes use, re-solved so arms, hands and held weapons stay out of its own body, legs, other arm and the
+## floor. It is laid over the arm repair. Fitted to each model's own mesh, so every body has its own.
+static func collide_path(scene_path: String) -> String:
+	return scene_path.get_base_dir() + "/anim_fixed/" + scene_path.get_file().get_basename() + "_collide.res"
 
 ## Every unit model scene the game uses (the repair tool skips those without arms: wolves, couriers).
 static func unit_models() -> Array:
@@ -50,7 +57,11 @@ static func patch(model: Node) -> void:
 	if not _sets.has(path):
 		_sets[path] = load(path) as AnimationLibrary if ResourceLoader.exists(path) else null
 	var fixed: AnimationLibrary = _sets[path]
-	if fixed == null:
+	var cpath := collide_path(String(model.scene_file_path))
+	if not _sets.has(cpath):
+		_sets[cpath] = load(cpath) as AnimationLibrary if ResourceLoader.exists(cpath) else null
+	var clear: AnimationLibrary = null if collide_disabled else _sets[cpath]
+	if fixed == null and clear == null:
 		return
 	for ap: AnimationPlayer in model.find_children("*", "AnimationPlayer", true, false):
 		for ln in ap.get_animation_library_list():
@@ -58,9 +69,14 @@ static func patch(model: Node) -> void:
 			if lib == null or lib.has_meta("arms_fixed"):
 				continue
 			lib.set_meta("arms_fixed", true)
-			for clip in fixed.get_animation_list():
-				if lib.has_animation(clip):
-					_copy_arms(fixed.get_animation(clip), lib.get_animation(clip))
+			if fixed:
+				for clip in fixed.get_animation_list():
+					if lib.has_animation(clip):
+						_copy_arms(fixed.get_animation(clip), lib.get_animation(clip))
+			if clear:
+				for clip in clear.get_animation_list():
+					if lib.has_animation(clip):
+						_copy_arms(clear.get_animation(clip), lib.get_animation(clip))
 
 ## Replace the keys of each bone track in `dst` that `src` has (matched by bone name).
 static func _copy_arms(src: Animation, dst: Animation) -> void:
