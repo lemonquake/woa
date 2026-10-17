@@ -34,12 +34,20 @@
 * **About the picks**: the fallen paladin, the sorceress and the priest (and the two unassigned ones, Blackfire and
   Thyrandael) are generated meshes (their archives are named `tripo_convert_...`) by Sketchfab user s8819296 under CC BY;
   they are credited as such.
-* **Not done yet**: Burak's and Airah's models (not downloaded yet); Ghorman (the Northern Outsider GLB from Sketchfab
-  is broken: three of its pieces come out tens of metres away; the "Original format" download is needed); Feran's
+* **Later the same day**: Burak (the viking berserker with your two axes: "Viking battle axe" right, "Axe" left),
+  Airah (Nara the dancer, scarves and tail kept, sparkle rings left out) and Ghorman's Beast Form (the troll with its
+  mace, its hunch kept under the hero clips with `--posture`) are built and in ModelCatalog (`hero_burak`,
+  `hero_airah`, `hero_ghorman_beast`) for their kits. Burak's and the troll's Sketchfab conversions break their own
+  skeletons (3ds Max rigs), so both are rigged from hand-placed joints instead; Burak's eyes and beard were 8 cm too
+  high in the download and are moved back. New body-tool options: `--norig`, `--move`, `--keep`, `--capture`,
+  `--posture`, `--body_piece`; `tools/blender/prep_weapon.py` turns a downloaded weapon into a game weapon.
+* **Not done yet**: Ghorman's human body (the Northern Outsider GLB from Sketchfab is broken: its legs, feet, pelvis
+  and axe come out tens of metres away even on its own clips; the "Original format" download is needed); Feran's
   jester restyle (red and black patched coat, three-point bell hat, half-smile mask); the Ancient Light sun on Ser
   Emelrich's tabard; Ghorman's Beast Form; the five kits (proposed as their own session).
-* New names (veto any): the "Credits" menu button and screen; ids `hero_emelrich`, `hero_feran`, `heavy_greatsword`,
-  `throwing_knife`, `azrin_staff`, `joke_box`, clip `glide_fwd`.
+* New names (veto any): the "Credits" menu button and screen; ids `hero_emelrich`, `hero_feran`, `hero_burak`,
+  `hero_airah`, `hero_ghorman_beast`, `heavy_greatsword`, `throwing_knife`, `azrin_staff`, `burak_axe`,
+  `burak_axe_long`, `joke_box`, clip `glide_fwd`, Beast Form clips use the hero library's boss clips.
 Evidence: headless tests 248 passed, 0 failed; changed scripts parse; `python tools/check_names.py` "Names OK";
 live captures of Ezee, Azrin and Caziel idle, moving and attacking in a match and on Hero Select (`shots/`); Blender
 previews of every body in idle, run and a greatsword swing. Not verified: no blind critic review; Feran and Emelrich

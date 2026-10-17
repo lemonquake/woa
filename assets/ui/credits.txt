@@ -92,6 +92,18 @@ By OptiCube (Arthur Krut). sketchfab.com/3d-models/002a90cbf12941b792f9685546a75
 [b]Feran Mock's body (2026-10-17): "Assassin Character Model", the inner hood left out[/b]
 By glenfernandes66. sketchfab.com/3d-models/20e2bf078ed242cd9edba4e07db6d0f1. Licence: CC BY 4.0.
 
+[b]Burak's body (2026-10-17): "Viking berserker - Game Ready (Rigged)", the back axes left out, eyes and beard put back in place[/b]
+By Blue Spirit. sketchfab.com/3d-models/43b83664595a49ccbbf2b3f9cd1d7f84. Licence: CC BY 4.0.
+
+[b]Burak's axes: "Viking battle axe" (right hand) and "Axe" (left hand)[/b]
+By Mikhail Antonov (xeofox); Taylor (r.taylor). sketchfab.com/3d-models/b7123192adbf40f68043c57dd8ddcd15, sketchfab.com/3d-models/ae71823d5dc8451c96c7ca0f56d83a07. Licence: CC BY 4.0.
+
+[b]Airah's body (2026-10-17): "Nara The Desert Dancer", the sparkle rings left out[/b]
+By Adipriatna. sketchfab.com/3d-models/b1a27cb7a04f4a96a895e3565095765f. Licence: CC BY 4.0.
+
+[b]Ghorman's Beast Form (2026-10-17): "Troll", with its mace[/b]
+By SJunior3d. sketchfab.com/3d-models/bceb1cb47186457c8571a23e6aff1b8e. Licence: CC BY 4.0.
+
 [b]Ser Emelrich's greatsword, Feran Mock's throwing knife and Joke Box[/b]
 By Warriors of Aether (procedural, Blender 5.2). tools/blender/heroes17_gear.py. Licence: Project-owned.
 

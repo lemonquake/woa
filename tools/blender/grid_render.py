@@ -35,6 +35,11 @@ for o in scn.objects:
     if o.parent is None:
         o.matrix_world = R @ o.matrix_world
 bpy.context.view_layer.update()
+import re
+drop = re.compile(opt["drop"], re.I) if "drop" in opt else None
+for o in [o for o in scn.objects if o.type == 'MESH']:
+    if (drop and drop.search(o.name)) or (o.name.startswith("Icosphere") and not o.modifiers):
+        bpy.data.objects.remove(o, do_unlink=True)
 meshes = [o for o in scn.objects if o.type == 'MESH']
 for m in meshes:
     if len(m.data.polygons) > 300000:

@@ -2,7 +2,7 @@
 
 Run: blender -b --factory-startup --python tools/blender/pose_render.py -- <body.glb> <out.png>
        --clips=idle_staff:10,staff_1:12 [--angles=0,60,150] [--size=420] [--R=<weapon.glb>] [--L=<weapon.glb>]
-       [--float=0.0] [--lean=0] [--hide=<bone prefix to hide, e.g. none>]
+       [--float=0.0] [--lean=0] [--dist=5.2] [--aim=1.0]   (camera distance and the height it looks at)
 Weapons sit on weapon.R / weapon.L with the game's convention (grip at the bone, +Y along the bone's -Y? no: the
 weapon's +Y follows the bone's own +Y), as ModelCatalog attaches them.
 """
@@ -75,8 +75,10 @@ for clip, frame in clips:
     sc.frame_set(frame)
     for a in angles:
         r = math.radians(a)
-        cam.location = Vector((math.sin(r) * 5.2, -math.cos(r) * 5.2, 1.4 + lift))
-        cam.rotation_euler = (Vector((0, 0, 1.0 + lift)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
+        dist = float(opt.get("dist", "5.2"))
+        aim_z = float(opt.get("aim", "1.0"))
+        cam.location = Vector((math.sin(r) * dist, -math.cos(r) * dist, aim_z + 0.4 * dist / 5.2 + lift))
+        cam.rotation_euler = (Vector((0, 0, aim_z + lift)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
         f = os.path.splitext(out)[0] + "_%s_%d.png" % (clip, int(a))
         sc.render.filepath = f
         bpy.ops.render.render(write_still=True)

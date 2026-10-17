@@ -55,6 +55,18 @@ const MODELS := {
 	"hero_emelrich": {"scene": H17 + "emelrich.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
 		"cast": "cast_weapon", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72, "death": "death",
 		"R": "heavy_greatsword", "L": "", "bar": 2.6, "swing_trail": true, "trail_color": Color(1.0, 0.9, 0.6, 0.6)},
+	# Burak, Airah and Ghorman's Beast Form (2026-10-17, bodies only until their kits land): the berserker with two
+	# bearded axes; the dancer in flowing scarves (a hand-placed rig on a posed model); the troll with its mace, its
+	# hunch kept under the hero clips
+	"hero_burak": {"scene": H17 + "burak.glb", "scale": 1.0, "attack": ["dual_1", "dual_2", "dual_3", "dual_4"],
+		"cast": "war_cry", "idle": "idle_dual", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "burak_axe", "L": "burak_axe_long", "bar": 2.45, "swing_trail": true, "trail_color": Color(1.0, 0.3, 0.2, 0.6)},
+	"hero_airah": {"scene": H17 + "airah.glb", "scale": 1.0, "attack": ["cast_quick"], "cast": "cast_area",
+		"idle": "idle_mage", "run": "fem_run", "run_min": 0.72, "death": "death", "R": "", "L": "", "proj": "sun_orb",
+		"bar": 2.35},
+	"hero_ghorman_beast": {"scene": H17 + "ghorman_beast.glb", "scale": 1.0, "attack": ["boss_slam", "hero_axe_smash"],
+		"cast": "boss_roar", "idle": "idle", "run": "run_combat", "run_min": 0.6, "death": "death", "R": "", "L": "",
+		"bar": 3.1},
 	"hero_feran": {"scene": H17 + "feran.glb", "scale": 1.0, "attack": ["dagger_1", "dagger_2"],
 		"cast": "cast_quick", "idle": "idle_dagger", "run": "hero_run", "run_min": 0.72, "death": "death",
 		"R": "throwing_knife", "L": "", "proj": "knife", "bar": 2.4},

@@ -24,7 +24,7 @@ Run: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-
        --src=<file> --name=<out name> [--height=1.85] [--faces=30000] [--tex=2048] [--yaw=0] [--drop=<regex>]
        [--joints=<json>] [--preview=<dir>] [--bake] [--cut=x0,x1,y0,y1,z0,z1;...] [--bind=native|t]
        [--rigid=bone:cap:x1,y1,z1,x2,y2,z2,r;bone:ball:x,y,z,r] [--cloth=<material regex>] [--hue=from:to:width[:sat[:val]]] [--gray=1.0]
-       [--glide=<idle clip>] [--reach=0] [--smooth=4]
+       [--glide=<idle clip>] [--reach=0] [--smooth=4] [--norig] [--move=regex:dx,dy,dz;...] [--body_piece=<regex>] [--capture] [--keep=<regex>] [--posture]
 """
 import bpy
 import bmesh
@@ -61,9 +61,17 @@ FACES = arg("faces", 30000)
 TEX = arg("tex", 2048)
 YAW = arg("yaw", 0.0)
 DROP = arg("drop", "")
+KEEP = arg("keep", "")                         # regex of pieces never dropped as helpers (a bone-parented weapon)
 JOINTS = arg("joints", "")
 PREVIEW = arg("preview", "")
 OUT = arg("out", OUT_DIR + "/" + NAME + ".glb")
+POSTURE = arg("posture", False)                # keep the model's own spine, neck and head lean under every clip (hunched beasts)
+CAPTURE = arg("capture", False)                # every vertex keeps only its nearest bone, its parent and children (posed
+                                               # models whose hand rests on a cheek or arm against the chest)
+BODY_PIECE = arg("body_piece", "")             # regex of the skin pieces: weights are worked out on them alone, and
+                                               # clothes, hair and gear take the weights of the skin under them
+MOVE = arg("move", "")                         # "regex:dx,dy,dz;..." shift pieces a bad conversion displaced (model space)
+NORIG = arg("norig", False)                    # ignore the model's own skeleton (a broken conversion): take its posed mesh
 BAKE = arg("bake", False)                      # dense generated or scanned meshes: bake onto a clean low-poly copy
 CUT = arg("cut", "")                           # "x0,x1,y0,y1,z0,z1;cap:x1,y1,z1,x2,y2,z2,r;ball:x,y,z,r" to delete
 BIND = arg("bind", "native")
@@ -132,6 +140,7 @@ def side_of(n):
 def norm(name):
     n = name.lower()
     n = re.sub(r"^(mixamorig\d*[:_]|def[-_]|bip\d*[ _]|bone_|b_|cc_base_|rig[:_]|armature[:_])", "", n)
+    n = re.sub(r"_\d+$", "", n)                 # Sketchfab's converter numbers every node: upperarm_l_012
     return n
 
 
@@ -258,7 +267,9 @@ def tidy(objs):
             log("  dropped piece", m.name, "(", mats, ")")
             bpy.data.objects.remove(m, do_unlink=True)
             continue
-        if len(m.data.vertices) == 0:
+        if len(m.data.vertices) == 0 or (m.name.startswith("Icosphere") and not any(x.type == 'ARMATURE' for x in m.modifiers)
+                                         and not (KEEP and re.search(KEEP, m.name, re.I))):
+            log("  dropped helper", m.name) if len(m.data.vertices) else None
             bpy.data.objects.remove(m, do_unlink=True)
             continue
         keep.append(m)
@@ -279,7 +290,7 @@ def tidy(objs):
             co = np.vstack([world_coords(m) for m in skinned])
             lo_, hi_ = co.min(0), co.max(0)
             pad = (hi_ - lo_) * 0.15
-            for m in [m for m in keep if m not in skinned]:
+            for m in [m for m in keep if m not in skinned and not (KEEP and re.search(KEEP, m.name, re.I))]:
                 c = world_coords(m)
                 if (c.min(0) < lo_ - pad).any() or (c.max(0) > hi_ + pad).any():
                     log("  dropped loose piece outside the body", m.name)
@@ -624,6 +635,13 @@ def retarget(t_arm, a_arm):
     parent = {n: (a_arm.data.bones[n].parent.name if a_arm.data.bones[n].parent else None) for n in order}
     relA = {n: (restA[parent[n]].inverted() @ restA[n]) if parent[n] else restA[n] for n in order}
     relA_inv = {n: relA[n].inverted() for n in order}
+    # --posture: the trunk keeps its own lean (its rest turn away from the hero's rest) on top of the clip
+    lean = {}
+    if POSTURE:
+        for n in ("spine", "chest", "neck", "head"):
+            rt = t_arm.data.bones[n].matrix_local.to_3x3()
+            ra = a_arm.data.bones[n].matrix_local.to_3x3()
+            lean[n] = (rt.inverted() @ ra).to_4x4()
     t_arm.animation_data_create()
     a_arm.animation_data_create()
     for pb in a_arm.pose.bones:
@@ -641,6 +659,10 @@ def retarget(t_arm, a_arm):
         for f in frames:
             sc.frame_set(f)
             P = {n: t_arm.pose.bones[n].matrix.copy() for n in order}
+            for n, L_ in lean.items():
+                tr = P[n].translation.copy()
+                P[n] = P[n] @ L_
+                P[n].translation = tr
             for n in order:
                 if parent[n]:
                     basis = relA_inv[n] @ P[parent[n]].inverted() @ P[n]
@@ -750,6 +772,69 @@ def island_gating(m, J):
                     groups[nm].add([int(vi)], w / tot, 'REPLACE')
         gated += changed
     log("  island gating: %d pieces, %d kept to their nearest limb" % (n, gated))
+
+
+
+def transfer_by_bone(dst, src, J):
+    """Clothes, hair and gear take the weights of the skin under them, but only from skin that belongs to the same
+    part of the body (the bone nearest the piece's vertex, its parent or its children): where a posed model rests a
+    hand on its cheek or an arm across its belly, the nearest skin can be the wrong limb."""
+    from mathutils import kdtree
+    sco = world_coords(src)
+    kd = kdtree.KDTree(len(sco))
+    for i, c in enumerate(sco):
+        kd.insert(c, i)
+    kd.balance()
+    sn = {g.index: g.name for g in src.vertex_groups}
+    sw = []
+    dom = []
+    for v in src.data.vertices:
+        ws = [(sn[g.group], g.weight) for g in v.groups if g.weight > 0.0]
+        sw.append(ws)
+        dom.append(max(ws, key=lambda x: x[1])[0] if ws else "")
+    bones = [b for b in J if b in CHAIN_OF]
+    near_of = {}
+    dco = world_coords(dst)
+    d = np.stack([seg_dist(dco, *J[b]) for b in bones], axis=1)
+    nearest = np.array(bones)[np.argmin(d, axis=1)]
+    family = {}
+    hero = {b.name: b for b in bpy.data.objects["HeroRigNative"].data.bones} if "HeroRigNative" in bpy.data.objects else {}
+    for b in bones:
+        fam = {b}
+        hb = hero.get(b)
+        if hb is not None:
+            if hb.parent:
+                fam.add(hb.parent.name)
+            fam.update(c.name for c in hb.children)
+        family[b] = fam
+    for g in list(dst.vertex_groups):
+        dst.vertex_groups.remove(g)
+    groups = {g.name: dst.vertex_groups.new(name=g.name) for g in src.vertex_groups}
+    adds = {name: {} for name in groups}
+    loose = 0
+    for vi, c in enumerate(dco):
+        fam = family.get(str(nearest[vi]), set())
+        hits = kd.find_n(c, 24)
+        good = [(si, dist) for _co, si, dist in hits if dom[si] in fam][:4]
+        if not good:
+            good = [(si, dist) for _co, si, dist in hits[:4]]
+            loose += 1
+        tot = {}
+        wsum = 0.0
+        for si, dist in good:
+            f = 1.0 / max(dist, 1e-4) ** 2
+            wsum += f
+            for name, w in sw[si]:
+                tot[name] = tot.get(name, 0.0) + w * f
+        for name, w in tot.items():
+            if w > 0.0:
+                adds[name][vi] = w / wsum
+    for name, dd in adds.items():
+        g = groups[name]
+        for vi, w in dd.items():
+            g.add([vi], w, 'REPLACE')
+    log("  %s: weights from the skin under it (%d of %d vertices had no skin of their own part nearby)"
+        % (dst.name, loose, len(dco)))
 
 
 def native_weights(meshes, a_arm, J=None):
@@ -1262,6 +1347,9 @@ def finish_mesh(meshes, J):
                     n.image.pack()
     reach_gating(body, J)
     cloth_weights(body, J)
+    arm_capture(body, J)
+    if CAPTURE:
+        segment_capture(body, J)
     smooth_all(body)
     smooth_joints(body, J)
     if (HUE or GRAY != 1.0) and not BAKE:
@@ -1309,6 +1397,11 @@ def cloth_weights(body, J):
     dR = np.minimum(seg_dist(co, *J["thigh.R"]), seg_dist(co, *J["shin.R"]))
     leg_r = np.where(co[:, 2] > knee_z, 0.12 * k, 0.09 * k)
     cloth = (co[:, 2] < hip_z - 0.02 * k) & (co[:, 2] > ankle_z + 0.06 * k) & (np.minimum(dL, dR) > leg_r)
+    # hands and forearms hanging beside the hips are not cloth
+    for s_ in ("L", "R"):
+        for b_ in ("forearm.", "hand."):
+            if b_ + s_ in J:
+                cloth &= seg_dist(co, *J[b_ + s_]) > 0.11 * k
     if CLOTH:
         rx = re.compile(CLOTH, re.I)
         ok_mat = np.array([bool(s_.material and rx.search(s_.material.name)) for s_ in body.material_slots] or [True])
@@ -1477,6 +1570,81 @@ def unify_coincident(body):
     log("seams: %d split vertices share their weights" % len(multi))
 
 
+def arm_capture(body, J):
+    """A vertex whose nearest bone is a forearm or a hand (fingers, a gauntlet) moves with that arm only: a hand
+    hanging beside the hips must not keep a share of the hips or a thigh, or it stretches into a plank."""
+    co = world_coords(body)
+    bones = [b for b in J if b in CHAIN_OF and b not in ("root",)]
+    d = np.stack([seg_dist(co, *J[b]) for b in bones], axis=1)
+    near = np.array(bones)[np.argmin(d, axis=1)]
+    names = {g.index: g.name for g in body.vertex_groups}
+    groups = {g.name: g for g in body.vertex_groups}
+    fixed = 0
+    for vi in np.where(np.isin(near, ["forearm.L", "hand.L", "forearm.R", "hand.R"]))[0]:
+        side = str(near[vi])[-1]
+        v = body.data.vertices[int(vi)]
+        keep, drop = [], []
+        for g in v.groups:
+            nm = names[g.group]
+            (keep if nm in ("upper_arm." + side, "forearm." + side, "hand." + side) else drop).append((nm, g.weight))
+        if not drop:
+            continue
+        fixed += 1
+        for nm, _w in drop:
+            groups[nm].remove([int(vi)])
+        tot = sum(w for _n, w in keep)
+        if tot <= 1e-6:
+            groups[str(near[vi])].add([int(vi)], 1.0, 'REPLACE')
+        else:
+            for nm, w in keep:
+                groups[nm].add([int(vi)], w / tot, 'REPLACE')
+    log("arms: %d hand and forearm vertices freed from the trunk and legs" % fixed)
+
+
+def segment_capture(body, J):
+    """--capture: each vertex keeps only the weights of the bone nearest it, that bone's parent and its children
+    (renormalised); the smoothing passes after blend the seams. For posed models, where bone heat gives a cheek to
+    the hand resting on it or a chest to the arm pressed against it."""
+    arm = bpy.data.objects.get("HeroRigNative")
+    bones = [b for b in J if b in CHAIN_OF]
+    family = {}
+    for b in bones:
+        fam = {b}
+        if arm is not None and b in arm.data.bones:
+            hb = arm.data.bones[b]
+            if hb.parent:
+                fam.add(hb.parent.name)
+            fam.update(c.name for c in hb.children)
+        family[b] = fam
+    co = world_coords(body)
+    d = np.stack([seg_dist(co, *J[b]) for b in bones], axis=1)
+    nearest = np.array(bones)[np.argmin(d, axis=1)]
+    names = {g.index: g.name for g in body.vertex_groups}
+    groups = {g.name: g for g in body.vertex_groups}
+    changed = 0
+    for v in body.data.vertices:
+        fam = family[str(nearest[v.index])]
+        keep, drop = [], []
+        for g in v.groups:
+            nm = names[g.group]
+            (keep if nm in fam else drop).append((nm, g.weight))
+        if not drop:
+            continue
+        changed += 1
+        for nm, _w in drop:
+            groups[nm].remove([v.index])
+        tot = sum(w for _n, w in keep)
+        if tot <= 1e-6:
+            nb = str(nearest[v.index])
+            g = groups.get(nb) or body.vertex_groups.new(name=nb)
+            groups[nb] = g
+            g.add([v.index], 1.0, 'REPLACE')
+        else:
+            for nm, w in keep:
+                groups[nm].add([v.index], w / tot, 'REPLACE')
+    log("capture: %d vertices kept to their nearest bone and its neighbours" % changed)
+
+
 def smooth_all(body):
     """The reach and cloth rules leave hard seams between neighbouring vertices; a low-poly mesh's long triangles
     tear along them into slabs. A few gentle smoothing passes over every bone group blend them out."""
@@ -1636,9 +1804,10 @@ def preview(arm, body, folder):
             arm.animation_data.action = act
             a, b = act.frame_range
             sc.frame_set(int(a + (b - a) * fr))
-        for nm, loc in (("front", (0.0, -4.2, 1.1)), ("side", (4.2, 0.0, 1.1))):
+        kk = HEIGHT / 1.8
+        for nm, loc in (("front", (0.0, -4.2 * kk, 1.1 * kk)), ("side", (4.2 * kk, 0.0, 1.1 * kk))):
             cam.location = loc
-            cam.rotation_euler = (Vector((0, 0, 0.95)) - Vector(loc)).to_track_quat('-Z', 'Y').to_euler()
+            cam.rotation_euler = (Vector((0, 0, 0.95 * kk)) - Vector(loc)).to_track_quat('-Z', 'Y').to_euler()
             cam.data.lens = 50
             sc.render.filepath = os.path.join(folder, "%s_%s_%s.png" % (NAME, clip or "rest", nm))
             bpy.ops.render.render(write_still=True)
@@ -1665,22 +1834,46 @@ def main():
         raise SystemExit("--src is required")
     bpy.ops.wm.read_factory_settings(use_empty=True)
     hero_arm = load_hero()
+    hero_acts = set(bpy.data.actions)
     objs = import_src(SRC)
+    for act in [a_ for a_ in bpy.data.actions if a_ not in hero_acts]:
+        bpy.data.actions.remove(act)                 # the download's own clips: the body plays the hero clips
     face_front([o for o in objs if o.name in bpy.data.objects], YAW)
     src_arm, meshes = tidy(objs)
     if not meshes:
         raise RuntimeError("no mesh left after --drop")
+    def move_pieces():
+        for spec in [x for x in MOVE.split(";") if x.strip()]:
+            rx, nums = spec.rsplit(":", 1)
+            d = Vector([float(x) for x in nums.split(",")])
+            for m in meshes:
+                if re.search(rx, m.name, re.I):
+                    m.matrix_world = Matrix.Translation(d) @ m.matrix_world
+                    log("  moved %s by %s" % (m.name, tuple(d)))
+    if not src_arm:
+        move_pieces()
     cut_boxes(meshes)
     to_hero = None
-    if JOINTS or not src_arm:
+    if JOINTS or NORIG or not src_arm:
         if src_arm:
             for m in meshes:
                 for mod in [x for x in m.modifiers if x.type == 'ARMATURE']:
                     select_only(m)
                     bpy.ops.object.modifier_apply(modifier=mod.name)
+                mw = m.matrix_world.copy()           # keep the place the skeleton gave it
+                m.parent = None
+                m.matrix_world = mw
             bpy.data.objects.remove(src_arm, do_unlink=True)
             src_arm = None
-        meshes = [join_all(meshes)]
+            move_pieces()                            # a skinned piece ignores its own offset until the skin is applied
+        if BODY_PIECE:
+            skin = [m for m in meshes if re.search(BODY_PIECE, m.name, re.I)]
+            rest = [m for m in meshes if m not in skin]
+            if not skin:
+                raise RuntimeError("--body_piece matched no piece")
+            meshes = [join_all(skin)] + ([join_all(rest)] if rest else [])
+        else:
+            meshes = [join_all(meshes)]
         if BAKE:
             hi = meshes[0]
             lo = bake_low(hi)
@@ -1732,7 +1925,12 @@ def main():
             make_glide(hero_arm)
         rig = a_rig(hero_arm, J)
         if to_hero is None:
-            native_weights(meshes, rig, J)
+            if BODY_PIECE and len(meshes) > 1:
+                native_weights(meshes[:1], rig, J)
+                for m in meshes[1:]:
+                    transfer_by_bone(m, meshes[0], J)
+            else:
+                native_weights(meshes, rig, J)
         body = finish_mesh(meshes, J)
         retarget(hero_arm, rig)
         bpy.data.objects.remove(hero_arm, do_unlink=True)
