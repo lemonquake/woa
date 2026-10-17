@@ -1,0 +1,86 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+match ready in 11415 ms
+SCRIPT ERROR: Cannot call method 'seek' on a null value.
+   at: UnitView.on_leap (res://src/game/unit_view.gd:600)
+   GDScript backtrace (most recent call first):
+       [0] on_leap (res://src/game/unit_view.gd:600)
+       [1] _drain_events (res://src/game/main.gd:697)
+       [2] _start_bench (res://src/game/main.gd:1148)
+       [3] _ready (res://src/game/main.gd:247)
+SCRIPT ERROR: Cannot call method 'seek' on a null value.
+   at: UnitView.on_leap (res://src/game/unit_view.gd:600)
+   GDScript backtrace (most recent call first):
+       [0] on_leap (res://src/game/unit_view.gd:600)
+       [1] _drain_events (res://src/game/main.gd:697)
+       [2] _start_bench (res://src/game/main.gd:1148)
+       [3] _ready (res://src/game/main.gd:247)
+SCRIPT ERROR: Cannot call method 'seek' on a null value.
+   at: UnitView.on_leap (res://src/game/unit_view.gd:600)
+   GDScript backtrace (most recent call first):
+       [0] on_leap (res://src/game/unit_view.gd:600)
+       [1] _drain_events (res://src/game/main.gd:697)
+       [2] _start_bench (res://src/game/main.gd:1148)
+       [3] _ready (res://src/game/main.gd:247)
+SCRIPT ERROR: Cannot call method 'seek' on a null value.
+   at: UnitView.on_leap (res://src/game/unit_view.gd:600)
+   GDScript backtrace (most recent call first):
+       [0] on_leap (res://src/game/unit_view.gd:600)
+       [1] _drain_events (res://src/game/main.gd:697)
+       [2] _step (res://src/game/main.gd:496)
+       [3] _physics_process (res://src/game/main.gd:490)
+BENCH frames 1601 avg 18.74 ms (53 fps) p50 18.52 p95 26.71 p99 33.33 max 106.40 over16.7 949 units 238
+  frames with a tick 897 avg 19.66 ms, without 704 avg 17.57 ms
+  per-frame means: views 0.65, fx 0.42, fx_azrin 0.17, fx_froster 0.15, fx_other 0.68, status 0.27, target 0.01, fog 0.06, sim 3.54, events 0.74, sync 1.09, script_proc 3.24, script_phys 5.43, n_tick_frames 0.56, gpu 7.00, rcpu 2.99, setup 0.20, other 10.08, flush 5.02, draw 5.49, gap 0.15, draws 2458.93, prims 2135202.83, trails 0.17, bars 1.07, ui_hud 0.02, ui_BottomPanel 0.67, ui_Minimap 0.44, ui_TopBar 0.14, ui_Tip 0.00, ui_feed 0.36, ui_chat 0.10, ui_PortraitOverlay 0.06, ui_fro_call 0.14
+ERROR: Pages in use exist at exit in PagedAllocator: N33RendererSceneRenderImplementation22RenderForwardClustered32GeometryInstanceSurfaceDataCacheE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: Pages in use exist at exit in PagedAllocator: N33RendererSceneRenderImplementation22RenderForwardClustered32GeometryInstanceForwardClusteredE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+ERROR: 1 shaders of type SceneForwardClusteredShaderRD were never freed
+   at: ~ShaderRD (servers/rendering/renderer_rd/shader_rd.cpp:1236)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: Leaked instance dependency: Bug - did not cal

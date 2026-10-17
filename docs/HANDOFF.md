@@ -4,6 +4,58 @@
 
 ## Status (keep this section current)
 
+**2026-10-17 d: QA pass (performance, gameplay, bots, map), the outer ground with map sites, and a 3D sound world
+(your list).** Run `work/lemondev/2026-10-17d-qa-map/` (contract.md: baseline and conditions; captures in `shots/`).
+* **Performance** (teamfight bench, ten level-16 heroes at 10:00, 1080p, RTX 4060, V-Sync off; same command as the
+  baseline, `bench_fight_before*.txt` / `bench_fight_final*.txt`): average **22.1 -> 16.7-17.3 ms (45 -> 58-60 fps)**,
+  p95 33.3 -> 28.3-28.8 ms, draw calls ~2290 -> ~1630. Lane bench (5 v 5 bots at 4:00): **15.1 -> 12.8 ms (66 -> 78
+  fps)**, p95 20.0 -> 16.7, p99 30.2 -> 22.2. What did it:
+  * Unit clips are shared by every unit of a model, and setting their loop mode every tick told every animation
+    player to drop its track caches: now set only when it changes (`unit_view.gd _play`).
+  * **MeshMerge** (`src/game/mesh_merge.gd`, `gear_merged.gdshader`): a unit's skinned pieces become one mesh with one
+    skin, the look's shape keys baked, and every flat or gear surface joined into one surface (colour and material
+    numbers per vertex, detail sets in texture arrays); creeps' weapons ride their hand bones inside it. Heroes went
+    from ~35 surfaces and ~14 skins each to 3-12 surfaces and one skin; creeps from 7-16 surfaces to one. Creeps of a
+    kind and team share one merged mesh, built while loading ("unit meshes prebuilt: 37 models"). `--nomerge` turns
+    it off for comparisons; merged and unmerged captures look the same (`shots/hero_*`, `mage_compare.png`).
+  * Small worn pieces cast no shadow (the body and anything 0.6 m long still do); Low quality turns unit shadows off.
+  * Buildings re-set their damage shader parameter only when their health changes.
+  * Not fixed: p99 is still ~50 ms in that bench: Blau's bot spends 40-60 ms in one think when it casts a point spell
+    in a fight (seen with `sim_profile.gd`, the new `bot:*` labels); the next thing to fix.
+* **Crash on quit fixed** (every benchmark quit with a segmentation fault): the bench probe's lambdas stayed on the
+  rendering server's signals, and Azrin's javelin left an orphan mesh each throw (`azrin_fx.gd`). Also fixed: Roydo's
+  and Blau's projectiles carried an extra white ball (`fx.gd`), and the Bot Log never counted toggles (Stench showed
+  "0 of 57").
+* **Map: the outer ground** (`sim_map.gd`). The map is 18432 across (was 16384); lanes, bases and jungle are unchanged.
+  Beyond the bottom lane (Black Sun: the top lane) and in both river corners the giant rock massifs and the edge band
+  gave way to open ground with forest, walkways and sites; beside the bases the old edge stays rock. The classic
+  forest is placed exactly as before (only the 225 trees in the way of the new walkways went).
+* **Map sites** (`sim_sites.gd`, `site_view.gd`; Dota's Twin Gates, Lotus Pools and Watchers with their numbers,
+  MECHANICS "Map sites"): two linked **Warp Gates** (right click: 4 s channel, 30 mana back if broken, out at the
+  other corner), two **Lily Ponds** (a **Healing Lily** every 3:00, up to 6; stand in the pond: 125 health and 125
+  mana each, faster in a row, an enemy hero pauses it), four **Lookout Lamps** (1 s channel: your team's 800 / 450
+  sight for 7:00; the other team can put one out for 2:00). Tooltips on hover, minimap marks, kill-feed lines. Bots
+  light and contest lamps (5-7 lit a side per 25-minute game), gather lilies when hurt nearby, and take a gate when it
+  shortens a long walk (seldom happens).
+* **Sound world** (`src/game/audio_world.gd`): hits sound by what hits and what is hit (blade, blunt, claw, arrow,
+  magic, siege, tower bolt on plate, metal, flesh, leather, cloth, stone, wood, spirit), louder for bigger hits, lower
+  for big attackers, muffled and quieter from the fog; tower bolts land with a blast; footsteps of heroes near the
+  camera; birds in the trees by day, crickets and frogs at night, the river and the ponds, all placed in 3D around the
+  camera; reverb follows the area (forest, river, base walls, mountains). **Effects top out at 60%**: the slider's 100%
+  plays effects at 60% of their level (`Options.EFFECTS_CEILING`). New sounds are CC0 (Kenney Impact Sounds and RPG
+  Audio; OpenGameArt: isaiah658, syncopika, Wolfgang_, EZduzziteh, rubberduck, Eldritch Grim; `docs/ASSET_CREDITS.md`).
+  I cannot listen: the mix and levels need your ears.
+* Bots: Stench no longer flips every few seconds (it held 188 toggles in 25 minutes).
+Evidence: headless tests 247 of 248 in the full run (the snapshot test failed once while I edited scripts during the run;
+it passes on its own on the final code), bot tests 24/24, 4 new tests (outer ground, gate, pond, lamp);
+`tests/tools/camp_layout.gd` all camps and sites reachable; `tests/tools/audio_probe.gd` 0 problems; day and night live
+runs without script errors; two 25-minute bot games (`bot_game2.txt`); `build/WarriorsOfAether.exe` rebuilt, cold
+start into a match without script errors (`shots/export_start.png`).
+Not verified: no blind critic review (none asked for); the sites' look and the sound mix are self-checks. Known: two
+bots stood idle by the small camp beyond the bottom lane for a minute in one game; bots rarely use Warp Gates.
+Names added (veto any): Warp Gate, Lily Pond, Healing Lily, Lookout Lamp, "Use site" (Bot Log), "Lit by ...", "The
+lamp is out for N s", "Your team already holds this lamp", "Only heroes can use that", "lit a / put out a Lookout Lamp".
+
 **2026-10-17 c: Double-click self-cast and Azrael skill rework (your list).**
 * **Double-click / double-tap self-cast** (`src/game/input_controller.gd`, `src/sim/sim_orders.gd`): double-clicking or
   double-tapping any targeted skill (`point`, `unit`, `autocast_attack`) or active item (`unit` or `point`) within 0.5 s

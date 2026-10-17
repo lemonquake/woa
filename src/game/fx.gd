@@ -620,7 +620,9 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 			node.add_child(sp)
 			arc = 0.6
 		_:
-			node.add_child(_sphere(0.1, _glow(Color(0.9, 0.9, 0.8), 3.0)))
+			# Roydo's and Blau's shots (h16:...) come fully made; anything else unknown gets a plain glowing ball
+			if not style.begins_with("h16:"):
+				node.add_child(_sphere(0.1, _glow(Color(0.9, 0.9, 0.8), 3.0)))
 	add_child(node)
 	if trail and game.args.has("notrails"):
 		trail.free()

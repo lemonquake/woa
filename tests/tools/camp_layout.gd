@@ -31,6 +31,24 @@ func _init() -> void:
 				bad += 1
 				print("UNREACHABLE camp %d from %s" % [c.id, str(f)])
 	print("camps with problems: ", bad)
+	# map sites (Warp Gates, Lily Ponds, Lookout Lamps): on walkable ground, reachable from both fountains, a gate's
+	# exit walkable too
+	var sbad := 0
+	for st in m.sites:
+		var spots: Array = [st.pos]
+		if String(st.kind) == "gate":
+			spots.append(st.exit)
+		for sp: Vector2 in spots:
+			if not m.is_walkable(sp):
+				sbad += 1
+				print("SITE %s at %s: not walkable" % [st.kind, str(sp)])
+			for f in m.fountains:
+				var path := m.find_path(f, sp)
+				if path.is_empty() or path[-1].distance_to(sp) > 200.0:
+					sbad += 1
+					print("SITE %s at %s: unreachable from %s" % [st.kind, str(sp), str(f)])
+		print("site %-5s %s pair %d" % [st.kind, str(st.pos), int(st.pair)])
+	print("sites with problems: ", sbad)
 	_plot(m)
 	quit()
 
@@ -63,6 +81,13 @@ func _plot(m: SimMap) -> void:
 			for x in [a.x, b.x]:
 				if x >= 0 and y >= 0 and x < n * 3 and y < n * 3:
 					img.set_pixel(x, y, col)
+	for st in m.sites:
+		var c2: Vector2i = w2p.call(st.pos)
+		var scol: Color = {"gate": Color(0.75, 0.45, 1.0), "pond": Color(1.0, 0.55, 0.8), "lamp": Color(1.0, 1.0, 1.0)}[st.kind]
+		for oy in range(-5, 6):
+			for ox in range(-5, 6):
+				if ox * ox + oy * oy <= 25 and c2.x + ox >= 0 and c2.y + oy >= 0 and c2.x + ox < n * 3 and c2.y + oy < n * 3:
+					img.set_pixel(c2.x + ox, c2.y + oy, scol)
 	img.save_png("work/shots/camp_layout.png")
 
 func _check(m: SimMap, c: Dictionary, p: Vector2) -> Dictionary:

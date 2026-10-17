@@ -6,7 +6,7 @@ extends Node3D
 ## big fights from turning into noise.
 
 const SFX := "res://assets/audio/sfx/%s.wav"
-const POOL := 28
+const POOL := 40
 
 var game: Node
 var listener: AudioListener3D
@@ -16,6 +16,7 @@ var _streams := {}
 var _last := {}
 var _i := 0
 var _rng := RandomNumberGenerator.new()
+var world_audio: AudioWorld                 # hits by material, ambience in 3D, the room's reverb
 
 func _ready() -> void:
 	name = "Audio"
@@ -30,6 +31,9 @@ func _ready() -> void:
 		p.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 		p.panning_strength = 0.8
 		p.bus = "Effects"
+		# air takes the edge off distant sounds; muffled ones (in the fog) are set lower per play
+		p.attenuation_filter_cutoff_hz = 9000.0
+		p.attenuation_filter_db = -18.0
 		add_child(p)
 		_pool.append(p)
 	for i in 6:
@@ -37,6 +41,18 @@ func _ready() -> void:
 		u.bus = "Interface"
 		add_child(u)
 		_ui.append(u)
+	# the effect sounds are read now, not on first use mid-fight
+	var dir := DirAccess.open("res://assets/audio/sfx")
+	if dir:
+		for f in dir.get_files():
+			var base := f.trim_suffix(".import")
+			if base.ends_with(".wav"):
+				_stream(base.get_basename())
+	if not OS.get_cmdline_user_args().has("--noaudioworld"):
+		world_audio = AudioWorld.new()
+		world_audio.game = game
+		world_audio.audio = self
+		add_child(world_audio)
 	var amb := AudioStreamPlayer.new()
 	var st := load("res://assets/audio/amb/amb_forest.wav") as AudioStreamWAV
 	if st:
@@ -71,7 +87,25 @@ func at(n: String, pos: Vector3, vol := 0.0, variants := 0, cooldown := 0.06, pi
 	_i = (_i + 1) % POOL
 	p.stream = s
 	p.volume_db = vol
+	p.attenuation_filter_cutoff_hz = 9000.0
 	p.pitch_scale = 1.0 + _rng.randf_range(-pitch_jitter, pitch_jitter)
+	p.global_position = pos
+	p.play()
+
+## Play a stream at a point (AudioWorld's sounds): `key` limits repeats to one per `cooldown`; muffled: heard
+## through the fog (quieter, high frequencies cut).
+func play_stream(s: AudioStream, pos: Vector3, vol: float, key: String, cooldown := 0.06, pitch_jitter := 0.08,
+		pitch := 1.0, muffled := false) -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - float(_last.get(key, -9.0)) < cooldown or pos.distance_to(listener.global_position) > 48.0:
+		return
+	_last[key] = now
+	var p := _pool[_i]
+	_i = (_i + 1) % POOL
+	p.stream = s
+	p.volume_db = vol - (6.0 if muffled else 0.0)
+	p.attenuation_filter_cutoff_hz = 1400.0 if muffled else 9000.0
+	p.pitch_scale = pitch * (1.0 + _rng.randf_range(-pitch_jitter, pitch_jitter))
 	p.global_position = pos
 	p.play()
 
@@ -127,6 +161,9 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			var p2 := _pos(w, e.u)
 			if src2 == null:
 				return
+			# what hit what: the weapon on the target's material (AudioWorld), under the attacker's own sound below
+			if world_audio and not bool(e.get("blocked", false)):
+				world_audio.hit(src2, w.get_unit(e.u), float(e.get("amount", 0.0)), p2)
 			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "ezee":
 				at("greatsword_hit", p2, -5.0, 3, 0.05)
 				return
@@ -261,8 +298,12 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			match String(e.what):
 				"tree":
 					at("break_wood", pi, -2.0, 2, 0.08)
+					if world_audio:
+						world_audio.strike("wood", pi, -4.0)
 				"cliff", "building":
 					at("wall_impact", pi, -2.0, 2, 0.08)
+					if world_audio:
+						world_audio.strike("stone", pi, -4.0)
 				_:
 					at("hit_heavy", pi, -3.0, 2, 0.06)
 		"stunned":
@@ -323,6 +364,8 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			if not bool(e.get("hit", false)) and e.has("pos"):
 				var pg: Vector2 = e.pos
 				at("arrow_impact", View.to3(pg, game.terrain.height_at(pg)), -16.0, 2, 0.12, 0.2)
+				if world_audio:
+					world_audio.strike("ground", View.to3(pg, game.terrain.height_at(pg)), -14.0)
 		"volley":
 			at("arrow_impact", View.to3(e.pos, game.terrain.height_at(e.pos)), -4.0, 2, 0.05)
 		"knockback":

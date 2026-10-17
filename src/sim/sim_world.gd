@@ -43,6 +43,7 @@ var abilities: SimAbilities
 var items: SimItems
 var status: SimStatus
 var orbs: SimOrbs
+var sites: SimSites
 var bots: Array = []                       # SimBot instances
 
 ## The bot playing a hero (null for a human's hero).
@@ -71,6 +72,7 @@ func _init(p_seed := 1, p_map: SimMap = null) -> void:
 	items = SimItems.new(self)
 	status = SimStatus.new(self)
 	orbs = SimOrbs.new(self)
+	sites = SimSites.new(self)
 
 func dispose() -> void:
 	for b in bots:
@@ -80,7 +82,7 @@ func dispose() -> void:
 		if tb != null:
 			tb.w = null
 	brains = [null, null]
-	for h in [orders, combat, ai, vision, shop, abilities, items, status, orbs]:
+	for h in [orders, combat, ai, vision, shop, abilities, items, status, orbs, sites]:
 		h.w = null
 	units.clear()
 	by_id.clear()
@@ -329,6 +331,7 @@ func step() -> void:
 	items.update()
 	status.update()
 	orbs.update()
+	sites.update()
 	if profiling: t = _prof("effects", t)
 	combat.process_deaths()
 	_respawns()

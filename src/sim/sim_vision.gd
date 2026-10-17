@@ -7,7 +7,7 @@ extends RefCounted
 ## Dota. Neutral creeps see everything near them.
 
 const C = preload("res://src/sim/sim_const.gd")
-const VN := 128
+const VN := SimMap.VN
 
 var w: SimWorld
 var visible: Array[PackedByteArray] = []   # per team (0, 1): VN*VN, 1 = in sight
@@ -59,6 +59,10 @@ func update() -> void:
 		for s in sources:
 			if int(s.team) == team and w.time < float(s.until):
 				_blit(img, w.map.world_to_vcell(s.pos), float(s.r), true)
+		# lit Lookout Lamps (ground sight: trees and higher ground block it)
+		if w.sites != null:
+			for ls in w.sites.sight(team, night):
+				_blit(img, w.map.world_to_vcell(ls[0]), float(ls[1]), false)
 		# cursed enemies (Tainted Touch) grant sight around themselves
 		for u in w.units:
 			if not u.alive or u.team == team:

@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+match ready in 15178 ms
+BENCH frames 1698 avg 17.67 ms (57 fps) p50 16.26 p95 30.30 p99 33.43 max 275.93 over16.7 732 units 208
+  frames with a tick 889 avg 19.80 ms, without 809 avg 15.32 ms
+  per-frame means: views 1.51, fx 0.48, fx_azrin 0.18, fx_froster 0.13, fx_other 0.69, status 0.37, target 0.01, fog 0.07, sim 3.33, events 0.77, sync 0.99, script_proc 4.19, script_phys 5.17, n_tick_frames 0.52, gpu 7.36, rcpu 2.30, setup 0.15, other 8.31, flush 4.55, draw 4.41, gap 0.13, draws 1706.86, prims 1886532.19, trails 0.16, bars 0.97, ui_hud 0.01, ui_Tip 0.00, ui_feed 0.26, ui_fro_call 0.12, ui_BottomPanel 0.64, ui_Minimap 0.44, ui_TopBar 0.14, ui_chat 0.08, ui_PortraitOverlay 0.06
+UNITCOST hero_ezee              x  1  parts   3  surf   7  tris   38476  low    5901  shadow   2  blend  1  bones  24
+UNITCOST courier                x 10  parts   2  surf   2  tris     599  low      23  shadow   2  blend  0  bones   0
+UNITCOST hero                   x  1  parts   0  surf   0  tris       0  low       0  shadow   0  blend  0  bones  24
+UNITCOST hero_azrin             x  1  parts   2  surf   3  tris   44332  low    7632  shadow   2  blend  1  bones  24
+UNITCOST hero_caziel            x  1  parts   3  surf   8  tris   33969  low    4391  shadow   1  blend  0  bones  24
+UNITCOST hero_froster           x  1  parts   4  surf   9  tris   42531  low    5450  shadow   3  blend  2  bones  24
+UNITCOST hero_kragg             x  1  parts   3  surf  11  tris   36649  low    4593  shadow   3  blend  0  bones  24
+UNITCOST hero_sludge            x  1  parts   3  surf  12  tris   32544  low     462  shadow   3  blend  0  bones  24
+UNITCOST hero_azrael            x  1  parts   3  surf   9  tris   48769  low    4049  shadow   3  blend  1  bones  24
+UNITCOST hero_tock              x  1  parts   4  surf   8  tris   35441  low    4336  shadow   1  blend  2  bones  24
+UNITCOST hero_blau              x  1  parts   0  surf   0  tris       0  low       0  shadow   0  blend  0  bones  70
+UNITCOST mudling                x 12  parts   1  surf   3  tris    3741  low     398  shadow   0  blend  0  bones  24
+UNITCOST mudling_digger         x  4  parts   0  surf   2  tris    3422  low     472  shadow   0  blend  0  bones  24
+UNITCOST mudling_foreman        x  6  parts   0  surf   0  tris    1660  low     214  shadow   0  blend  0  bones  24
+UNITCOST strider                x  8  parts   0  surf   1  tris    1171  low     125  shadow   0  blend  0  bones  24
+UNITCOST strider_warlord        x 10  parts   0  surf   0  tris    1497  low      90  shadow   0  blend  0  bones  24
+UNITCOST ashfang                x 12  parts   0  surf   0  tris    1086  low      34  shadow   0  blend  0  bones  31
+UNITCOST ashfang_alpha          x  6  parts   0  surf   0  tris    1086  low      34  shadow   0  blend  0  bones  31
+UNITCOST ogre_brute             x 13  parts   0  surf   0  tris       0  low       0  shadow   0  blend  0  bones  24
+UNITCOST hill_troll             x 14  parts   0  surf   0  tris       0  low       0  shadow   0  blend  0  bones  24
+UNITCOST cinder_wyrmling        x  4  parts   0  surf   0  tris       0  low       0  shadow   0  blend  0  bones  24
+UNITCOST elder_cinder_wyrm      x  2  parts   0  surf   0  tris       0  low       0  shadow   0  blend  0  bones  24
+UNITCOST dusk_melee             x 16  parts   0  surf   2  tris    3800  low     208  shadow   0  blend  0  bones  24
+UNITCOST dusk_ranged            x  7  parts   0  surf   3  tris    7331  low     514  shadow   0  blend  0  bones  24
+UNITCOST dawn_flag              x  2  parts   3  surf  13  tris   23272  low    1086  shadow   3  blend  0  bones  26
+UNITCOST dawn_melee             x 13  parts   3  surf  12  tris   23068  low    1060  shadow   3  blend  0  bones  26
+UNITCOST dawn_siege             x  3  parts   1  surf   3  tris   12692  low      66  shadow   1  blend  0  bones  24
+UNITCOST dawn_ranged            x  5  parts   2  surf  10  tris   18478  low    1052  shadow   2  blend  0  bones  26
+UNITCOST dusk_flag              x  2  parts   1  surf   5  tris    8492  low     924  shadow   1  blend  0  bones  24
+UNITCOST dusk_siege             x  3  parts   0  surf   1  tris    2214  low      70  shadow   0  blend  0  bones  24
+WARNING: 5557 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 19 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

@@ -7,10 +7,14 @@ extends RefCounted
 ## river running north-west to south-east through the middle. Dusk's half is Dawn's rotated 180 degrees (p -> -p).
 
 const C = preload("res://src/sim/sim_const.gd")
-const N := 256                             # pathing cells per side (64 units each)
+const N := 288                             # pathing cells per side (64 units each)
 const CELL := 64.0
-const HALF := 8192.0
-const VN := 128                            # vision cells per side (128 units each)
+const HALF := 9216.0
+const VN := 144                            # vision cells per side (128 units each)
+## The classic map's half size. Lanes, bases and the jungle lie inside it; the map reaches 1024 further on every side,
+## open beyond the top and bottom lanes and in the two river corners, rock beside the bases (see is_mountain).
+const OLD_HALF := 8192.0
+const EDGE := HALF - 292.0                 # units never stand farther out than this
 
 # Terrain levels
 const RIVER := 0
@@ -61,7 +65,9 @@ const CAMP_GROUPS := {
 var fountains := [Vector2(-7050, -6650), Vector2(7050, 6650)]
 var shops := [Vector2(-6700, -6200), Vector2(6700, 6200)]
 var paths: Array = []                      # jungle walkways (PackedVector2Array), kept clear of trees
+var classic_paths: Array = []              # the walkways of the classic map (they shaped its forest)
 var plateau_ramps: Array = []              # the ramps made where walkways cross plateau edges (also in ramps)
+var sites: Array = []                      # [{kind: "gate" | "pond" | "lamp", pos, exit, pair}] (SimSites)
 
 # ---- Construction ---------------------------------------------------------------------------------------------------
 
@@ -175,13 +181,50 @@ func _layout() -> void:
 		[Vector2(-5200, -2250), Vector2(-5600, -2600)],
 		[Vector2(1500, -7150), Vector2(1500, -6400)],
 	]
-	paths.clear()
+	# the outer ground (added 2026-10-17 with the larger map)
+	var outer_paths := [
+		# beyond the bottom lane: from the lane by the tier 2 tower, past the edge camp and the lamp, to
+		# the Warp Gate in the river corner and back up to the lane's bend
+		[Vector2(-450, -6450), Vector2(-150, -7550), Vector2(1500, -8000), Vector2(2600, -8250), Vector2(4700, -8350),
+			Vector2(6350, -8000)],
+		[Vector2(1500, -7150), Vector2(1500, -8000)],
+		[Vector2(6350, -8000), Vector2(5600, -6950), Vector2(5150, -6300)],
+		[Vector2(6350, -8000), Vector2(7300, -7650)],
+		# west of the top lane's north end: from the lane by the tier 1 tower, past the lamp, to the Lily Pond on the
+		# river bank and on to the lane's bend
+		[Vector2(-6350, 2450), Vector2(-7500, 3200), Vector2(-8250, 4300), Vector2(-8150, 5800), Vector2(-8100, 6700)],
+		[Vector2(-8100, 6700), Vector2(-7200, 6700), Vector2(-6250, 5600)],
+	]
+	# Map sites (SimSites) in the outer ground, Dawn's half; Dusk's are the same rotated 180 degrees. Each river corner
+	# holds a Warp Gate on one bank and a Lily Pond on the other; the two gates are linked. [kind, spot, exit offset].
+	var dawn_sites := [
+		["gate", Vector2(6700, -8350), Vector2(-260, 250)],
+		["pond", Vector2(-8350, 6900), Vector2.ZERO],
+		["lamp", Vector2(2700, -8550), Vector2.ZERO],
+		["lamp", Vector2(-8600, 4250), Vector2.ZERO],
+	]
+	sites.clear()
 	for side in [1.0, -1.0]:
-		for pth in dawn_paths:
+		for st in dawn_sites:
+			var sp: Vector2 = st[1] * side
+			sites.append({"kind": st[0], "pos": sp, "exit": sp + st[2] * side, "pair": -1})
+	var gates: Array = []
+	for si in sites.size():
+		if String(sites[si].kind) == "gate":
+			gates.append(si)
+	if gates.size() == 2:
+		sites[gates[0]].pair = gates[1]
+		sites[gates[1]].pair = gates[0]
+	paths.clear()
+	classic_paths.clear()
+	for side in [1.0, -1.0]:
+		for pth in dawn_paths + outer_paths:
 			var arr := PackedVector2Array()
 			for p: Vector2 in pth:
 				arr.append(p * side)
 			paths.append(arr)
+			if pth in dawn_paths:
+				classic_paths.append(arr)
 
 # ---- Terrain ----------------------------------------------------------------------------------------------------------
 
@@ -200,27 +243,46 @@ func level_at_raw(p: Vector2) -> int:
 		return HIGH
 	return GROUND
 
-## Mountains: massifs in the four corners (the river cuts a gorge through the north-west and south-east ones, the
-## bases sit under the other two) and a ragged band along the map edge. Kept clear of lanes, the river and the
-## fountains. Symmetric under p -> -p.
+## Mountains (symmetric under p -> -p; stated for Dawn's half, x + y < 0):
+##   * the massif behind Dawn's fountain, in the classic map's south-west corner;
+##   * a ragged band along the edge. Beside the bases the band stays at the classic edge (everything past it is rock);
+##     beyond the bottom lane (Dawn's half; the top lane on Dusk's) and west of the top lane's north end (Dusk's: east
+##     of the bottom lane's south end) it moves out to the map's edge, opening the outer ground (outer_open);
+##   * small massifs right in the two river corners, where the river leaves the map through a gorge.
+## Kept clear of lanes, the river and the fountains.
 func is_mountain(p: Vector2) -> bool:
 	var q := p if (p.x + p.y) < 0.0 or ((p.x + p.y) == 0.0 and p.x < 0.0) else -p
 	var river_d := absf(q.x + q.y) / sqrt(2.0)
 	if river_d < 900.0:
 		return false
 	var wob := 160.0 * sin(q.x * 0.0021 + 1.3) + 120.0 * sin(q.y * 0.0017 + 0.4) + 70.0 * sin((q.x - q.y) * 0.0043)
-	# corner behind Dawn's fountain (south-west) and the river corners (north-west / south-east, mirrored)
-	var corner := HALF * Vector2(-1, -1)
-	if q.distance_to(corner) < 1450.0 + wob:
+	# corner behind Dawn's fountain (south-west)
+	if q.distance_to(OLD_HALF * Vector2(-1, -1)) < 1450.0 + wob:
 		return true
+	# the river corners (north-west / south-east, mirrored): small massifs beside the river's gorge
 	for c in [Vector2(-HALF, HALF), Vector2(HALF, -HALF)]:
-		if q.distance_to(c) < 3100.0 + wob * 1.5 and river_d > 1050.0 + wob * 0.5:
-			return _lane_clear(q, 800.0)
-	# a ragged band along the edge (wider where the forest is deep)
-	var edge := HALF - maxf(absf(q.x), absf(q.y))
+		if q.distance_to(c) < 1500.0 + wob and river_d > 1050.0 + wob * 0.5:
+			return true
+	var edge := edge_distance(q, wob)
+	if edge < 0.0:
+		return true                        # past the classic edge beside the bases
 	if edge < 260.0 + maxf(0.0, wob) * 0.8:
 		return _lane_clear(q, 900.0) and q.distance_to(fountains[0]) > 1300.0
 	return false
+
+## Whether a point of Dawn's half (x + y < 0) lies in the outer ground: south of the bottom lane east of Dawn's base, or
+## west of the top lane north of its tier 1 tower. `wob` ragged-edges the border with the rock beside the bases.
+static func outer_open(q: Vector2, wob := 0.0) -> bool:
+	if q.y < -5200.0 and q.x > -3900.0 + wob * 2.0:
+		return true
+	return q.x < -5200.0 and q.y > 1700.0 + wob * 2.0
+
+## Distance from a point to the map's working edge: the map's own edge in the outer ground, the classic edge elsewhere
+## (negative past it). Symmetric under p -> -p.
+func edge_distance(p: Vector2, wob := 0.0) -> float:
+	var q := p if (p.x + p.y) < 0.0 or ((p.x + p.y) == 0.0 and p.x < 0.0) else -p
+	var bound := HALF if outer_open(q, wob) else OLD_HALF
+	return bound - maxf(absf(q.x), absf(q.y))
 
 func _lane_clear(p: Vector2, r: float) -> bool:
 	for k in lanes:
@@ -393,9 +455,11 @@ func is_cliff_cell(cx: int, cy: int) -> bool:
 
 # ---- Trees ------------------------------------------------------------------------------------------------------------
 
+## The forest. The classic map's forest is placed first exactly as it was (the same random numbers under the classic
+## rules, so every tree a test or a habit relies on stands where it stood), less the trees the new walkways and sites
+## need gone; then the new ground (beyond the classic edge and where the classic map had rock) is planted with its own
+## random numbers.
 func _place_trees() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed_value * 7919 + 17
 	var noise := FastNoiseLite.new()
 	noise.seed = seed_value
 	noise.frequency = 0.00042
@@ -404,15 +468,21 @@ func _place_trees() -> void:
 	tree_cell.resize(N * N)
 	tree_cell.fill(-1)
 	var step := 112.0
-	var y := -HALF + 60.0
-	while y < HALF - 60.0:
-		var x := -HALF + 60.0
-		while x < HALF - 60.0:
+	# 1) the classic forest
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value * 7919 + 17
+	var taken := {}
+	var classic: Array = []
+	_classic = true
+	var y := -OLD_HALF + 60.0
+	while y < OLD_HALF - 60.0:
+		var x := -OLD_HALF + 60.0
+		while x < OLD_HALF - 60.0:
 			var p := Vector2(x + rng.randf_range(-40, 40), y + rng.randf_range(-40, 40))
 			x += step
 			if not _tree_allowed(p):
 				continue
-			var edge := maxf(absf(p.x), absf(p.y)) > HALF - 700.0
+			var edge := maxf(absf(p.x), absf(p.y)) > OLD_HALF - 700.0
 			var dens := noise.get_noise_2dv(p) * 0.5 + 0.5
 			var clear := _clearance(p)
 			# thick forest close to the map edge, clumps elsewhere, thinning towards lanes and paths
@@ -420,12 +490,77 @@ func _place_trees() -> void:
 			if rng.randf() > chance:
 				continue
 			var c := world_to_cell(p)
-			if tree_cell[c.y * N + c.x] >= 0:
+			if taken.has(c):
 				continue
-			tree_cell[c.y * N + c.x] = trees.size()
-			trees.append({"pos": p, "alive": true, "kind": rng.randi_range(0, 3), "scale": rng.randf_range(0.85, 1.25),
+			taken[c] = true
+			classic.append({"pos": p, "alive": true, "kind": rng.randi_range(0, 3), "scale": rng.randf_range(0.85, 1.25),
 				"regrow": 0.0, "rot": rng.randf() * TAU})
 		y += step
+	_classic = false
+	for t in classic:
+		if _tree_allowed(t.pos):
+			_add_tree(t)
+	# 2) the new ground
+	var rng2 := RandomNumberGenerator.new()
+	rng2.seed = seed_value * 104729 + 31
+	y = -HALF + 60.0
+	while y < HALF - 60.0:
+		var x := -HALF + 60.0
+		while x < HALF - 60.0:
+			var p := Vector2(x + rng2.randf_range(-40, 40), y + rng2.randf_range(-40, 40))
+			x += step
+			var roll := rng2.randf()
+			var kind := rng2.randi_range(0, 3)
+			var sc := rng2.randf_range(0.85, 1.25)
+			var rot := rng2.randf() * TAU
+			if _classic_ground(p) or not _tree_allowed(p):
+				continue
+			var edge := edge_distance(p) < 700.0
+			var dens := noise.get_noise_2dv(p) * 0.5 + 0.5
+			var chance := 0.92 if edge else clampf((dens - 0.3) * 2.6, 0.0, 0.95) * clampf((_clearance(p) - 220.0) / 500.0, 0.25, 1.0)
+			if roll > chance:
+				continue
+			_add_tree({"pos": p, "alive": true, "kind": kind, "scale": sc, "regrow": 0.0, "rot": rot})
+		y += step
+
+func _add_tree(t: Dictionary) -> void:
+	var c := world_to_cell(t.pos)
+	if tree_cell[c.y * N + c.x] >= 0:
+		return
+	tree_cell[c.y * N + c.x] = trees.size()
+	trees.append(t)
+
+## While true, the map answers tree placement questions with the classic map's rules (its edge, its rock, its walkways).
+var _classic := false
+
+## Whether the classic map could have grown a tree at p (it decided there, and the new planting leaves p alone).
+func _classic_ground(p: Vector2) -> bool:
+	_classic = true
+	var ok := maxf(absf(p.x), absf(p.y)) <= OLD_HALF - 80.0 and _tree_allowed(p)
+	_classic = false
+	return ok
+
+## The classic map's rock (its corner massifs and edge band) at a terrain cell's centre, as its level grid had it.
+func _classic_rock(p: Vector2) -> bool:
+	var cc := world_to_cell(p)
+	var q := cell_center(cc.x, cc.y)
+	var river_d0 := absf(q.x + q.y) / sqrt(2.0)
+	if river_d0 < 500.0 + 120.0 * cos(q.x * 0.0011) + 60.0 * cos(q.y * 0.0023):
+		return false
+	q = q if (q.x + q.y) < 0.0 or ((q.x + q.y) == 0.0 and q.x < 0.0) else -q
+	var river_d := absf(q.x + q.y) / sqrt(2.0)
+	if river_d < 900.0:
+		return false
+	var wob := 160.0 * sin(q.x * 0.0021 + 1.3) + 120.0 * sin(q.y * 0.0017 + 0.4) + 70.0 * sin((q.x - q.y) * 0.0043)
+	if q.distance_to(OLD_HALF * Vector2(-1, -1)) < 1450.0 + wob:
+		return true
+	for c in [Vector2(-OLD_HALF, OLD_HALF), Vector2(OLD_HALF, -OLD_HALF)]:
+		if q.distance_to(c) < 3100.0 + wob * 1.5 and river_d > 1050.0 + wob * 0.5:
+			return _lane_clear(q, 800.0)
+	var edge := OLD_HALF - maxf(absf(q.x), absf(q.y))
+	if edge < 260.0 + maxf(0.0, wob) * 0.8:
+		return _lane_clear(q, 900.0) and q.distance_to(fountains[0]) > 1300.0
+	return false
 
 ## Distance from p to the nearest lane, path, or open area (camp, building, ramp).
 func _clearance(p: Vector2) -> float:
@@ -433,17 +568,17 @@ func _clearance(p: Vector2) -> float:
 	for k in lanes:
 		d = minf(d, _polyline_distance(p, lanes[k]))
 		d = minf(d, _polyline_distance(-p, lanes[k]))
-	for pth in paths:
+	for pth in (classic_paths if _classic else paths):
 		d = minf(d, _polyline_distance(p, pth) + 120.0)
 	return d
 
 func _tree_allowed(p: Vector2) -> bool:
-	if maxf(absf(p.x), absf(p.y)) > HALF - 80.0:
+	if maxf(absf(p.x), absf(p.y)) > (OLD_HALF if _classic else HALF) - 80.0:
 		return false
 	var river_d := absf(p.x + p.y) / sqrt(2.0)
 	if river_d < 780.0:
 		return false
-	if level_at(p) == MOUNTAIN:
+	if _classic_rock(p) if _classic else level_at(p) == MOUNTAIN:
 		return false
 	if _in_base(p) or _in_base(-p):
 		# groves inside the bases: only well away from lanes, buildings and the fountain
@@ -456,7 +591,7 @@ func _tree_allowed(p: Vector2) -> bool:
 	for k in lanes:
 		if _polyline_distance(p, lanes[k]) < 430.0:
 			return false
-	for pth in paths:
+	for pth in (classic_paths if _classic else paths):
 		if _polyline_distance(p, pth) < 210.0:
 			return false
 	for c in camps:
@@ -471,6 +606,10 @@ func _tree_allowed(p: Vector2) -> bool:
 	for f in fountains:
 		if p.distance_to(f) < 1400.0:
 			return false
+	if not _classic:
+		for st in sites:
+			if p.distance_to(st.pos) < 520.0:
+				return false
 	return true
 
 static func _polyline_distance(p: Vector2, line: PackedVector2Array) -> float:

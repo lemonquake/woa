@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+map built in 2742 ms: 3938 trees
+PASS test_armor_formula (0 ms)
+PASS test_xp_levels (0 ms)
+PASS test_day_night (0 ms)
+PASS test_map_lanes_walkable (3 ms)
+PASS test_map_symmetry (0 ms)
+PASS test_map_elevation_and_mountains (111 ms)
+PASS test_turn_rate (4 ms)
+ERROR: [test_attack_interval_and_point] hero attacked repeatedly (0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/run_tests.gd:39)
+       [1] test_attack_interval_and_point (res://tests/run_tests.gd:184)
+       [2] _init (res://tests/run_tests.gd:29)
+    x hero attacked repeatedly (0)
+FAIL test_attack_interval_and_point (40 ms)
+ERROR: [test_cancel_windup_keeps_cooldown] windup started
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/run_tests.gd:39)
+       [1] test_cancel_windup_keeps_cooldown (res://tests/run_tests.gd:205)
+       [2] _init (res://tests/run_tests.gd:29)
+    x windup started
+ERROR: [test_cancel_windup_keeps_cooldown] attacking again right away lands
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/run_tests.gd:39)
+       [1] test_cancel_windup_keeps_cooldown (res://tests/run_tests.gd:212)
+       [2] _init (res://tests/run_tests.gd:29)
+    x attacking again right away lands
+FAIL test_cancel_windup_keeps_cooldown (14 ms)

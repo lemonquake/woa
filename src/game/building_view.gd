@@ -233,10 +233,16 @@ static func _tex(file: String) -> Texture2D:
 		_mats[file] = load(TEX + file)
 	return _mats[file]
 
+var _shown_damage := -1.0
+
 func update_state(u: SimUnit) -> void:
 	var frac := u.hp / maxf(1.0, u.max_hp)
-	for m in _shaders:
-		m.set_shader_parameter("damage", 1.0 - frac)
+	# only when it changed: a material parameter set re-uploads the material (44 buildings, every tick)
+	var dmg := snappedf(1.0 - frac, 0.005)
+	if dmg != _shown_damage:
+		_shown_damage = dmg
+		for m in _shaders:
+			m.set_shader_parameter("damage", dmg)
 	if not u.alive and not _dead:
 		_dead = true
 		_destroy()

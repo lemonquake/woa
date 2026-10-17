@@ -21,7 +21,9 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
 ## Time and space
 
 * Fixed 30 Hz tick, the same rate as Dota's server (`SimConst.TICK_RATE`). It is deterministic: given the same seed and the same order stream, a match plays out identically.
-* Distances are Dota units; 1 unit renders as 1 cm. The map spans -8192..8192 on both axes.
+* Distances are Dota units; 1 unit renders as 1 cm. The map spans -9216..9216 on both axes (2026-10-17 d; it was
+  -8192..8192). Lanes, bases and the jungle are unchanged; the extra ground is open beyond the top and bottom lanes and in
+  the two river corners (see "Map sites"), rock beside the bases.
 * The clock starts at -1:30 (pre-horn). It is night before the horn. Waves spawn at 0:00, then day and night alternate every 5 minutes.
 
 ## Units and stats
@@ -307,6 +309,29 @@ Regeneration, Arcane and Shield Rune (cached in `research/fandom2.json`, `fandom
   refilled to 3 at the fountain. An orb taken while carrying it is stored (gold and rejuvenation orbs refill it to 2 charges, the
   others to 3) and let out by drinking, or by itself after 90 s (lost if the hero is dead then).
 * Not yet: the Illusion rune (the game has no illusions), destroying orbs by attacking them.
+
+## Map sites (`sim_sites.gd`; Dota's Twin Gates, Lotus Pools and Watchers with plain names, 2026-10-17 d)
+
+Sources: Liquipedia "Twin Gate", "Lotus Pool", "Healing Lotus", "Watcher", "Channel"; Dota 2 patch notes 7.38, 7.40,
+7.41e (read through search summaries: Liquipedia and the Fandom wiki refused direct fetches that day).
+* Where: the outer ground. Each river corner (north-west, south-east) holds a Warp Gate on one bank and a Lily Pond on
+  the other; two Lookout Lamps a side, one beyond the bottom lane (Dusk: top) and one west of the top lane's north end
+  (Dusk: east of the bottom lane's south end). Right click a gate or lamp to walk to it and channel; walk into a pond.
+* Warp Gate (Twin Gate): a hero within 200 channels 4 s for 30 mana (given back when the channel breaks) and steps out
+  beside the other gate. No cooldown, no disjoint beyond the teleport's own (projectiles in flight miss). Stuns,
+  silences, roots (7.41e) and any new order break it; damage does not. Units without mana pay nothing.
+* Lily Pond (Lotus Pool): a Healing Lily grows every 3:00 (the first at 3:00 here; APPROX), at most 6. Heroes of one
+  team within 350 of the pond gather: the first lily after 1.5 s, each next one in a row 30% faster (1.05, 0.74 s...).
+  An enemy hero in the area pauses it (7.38; 7.41 makes it run backwards: not done). Each lily goes to a random hero of
+  the gathering team there: 125 health and 125 mana at once (Dota's lotus is an item usable on an ally within 400: here
+  it is taken at once).
+* Lookout Lamp (Watcher): a hero within 300 channels 1 s (7.40) to light it for its team for 7:00: ground sight 800 by
+  day, 450 by night (7.40). Channelling a lamp the other team holds puts it out for 2:00, during which nobody can light
+  it. Lamps give no true sight.
+* Bots: gather lilies when hurt (or low on mana) near a pond with lilies and no enemy hero near; light a dark lamp they
+  pass within 1100 when nothing threatens; take a Warp Gate when it shortens a walk of 5000+ by 30% or more (the 4 s
+  channel counted as walking), never while fighting or running.
+* Not yet: Tormentors (they need Upgrade Gem effects for every hero first), Wisdom Shrines, streams with currents.
 
 ## Regeneration and the fountain (`sim_world.gd`)
 

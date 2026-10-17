@@ -78,6 +78,9 @@ static func reset() -> void:
 	data = DEFAULTS.duplicate()
 	_loaded = true
 
+## The Effects slider's 100% plays effects at 60% of their level (owner's request 2026-10-17): 10 * log2(0.6) = -7.4 dB.
+const EFFECTS_CEILING := 0.6
+
 ## Slider fraction (0..1) to decibels: each halving is -10 dB (half as loud to the ear); 0 is silence.
 static func to_db(p: float) -> float:
 	return -80.0 if p <= 0.001 else 10.0 * log(p) / log(2.0)
@@ -106,7 +109,9 @@ static func apply_audio() -> void:
 	for b in BUSES:
 		var i := AudioServer.get_bus_index(b)
 		var p := float(data[String(b).to_lower()])
-		AudioServer.set_bus_volume_db(i, to_db(p))
+		# sound effects top out at 60% of their real level: the slider's 100% is 60% (owner's request 2026-10-17)
+		var real := p * EFFECTS_CEILING if String(b) == "Effects" else p
+		AudioServer.set_bus_volume_db(i, to_db(real))
 		AudioServer.set_bus_mute(i, p <= 0.001)
 
 ## Monitor choices: "Main monitor" (the one Windows calls main), then every monitor by number and size.

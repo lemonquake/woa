@@ -6682,3 +6682,115 @@ func test_switch_boots_icon_follows_attribute() -> void:
 		run(w, 0.1)
 	check(seen.size() == 3, "three different icons as it switches (%d)" % seen.size())
 	check(UiKit.held_item_icon({"id": "boots"}) == UiKit.item_icon("boots"), "other items keep their icon")
+
+# ---- Map sites (Warp Gates, Lily Ponds, Lookout Lamps) -----------------------------------------------------------------
+
+func _site(w: SimWorld, kind: String, n := 0) -> Dictionary:
+	return w.sites.of_kind(kind)[n]
+
+func test_map_outer_ground() -> void:
+	# the map grew 1024 a side; the outer ground beyond the top and bottom lanes is open, the classic edge beside the bases
+	# stays rock, and the map is still the same rotated 180 degrees
+	check(SimMap.HALF == 9216.0 and SimMap.N * SimMap.CELL == 2.0 * SimMap.HALF, "map is 18432 across")
+	check(SimMap.VN * C.VISION_CELL == 2.0 * SimMap.HALF, "vision grid covers the map")
+	check(_map.is_walkable(Vector2(2600, -8250)), "open ground south of the bottom lane (lamp walkway)")
+	check(_map.is_walkable(Vector2(-8250, 4300)), "open ground west of the top lane's north end")
+	check(_map.level_at(Vector2(-8600, -7000)) == SimMap.MOUNTAIN, "past the classic edge beside Dawn's base: rock")
+	check(_map.level_at(Vector2(8600, 7000)) == SimMap.MOUNTAIN, "past the classic edge beside Dusk's base: rock")
+	for p: Vector2 in [Vector2(2600, -8250), Vector2(-8250, 4300), Vector2(-7000, 7500), Vector2(5000, -8700)]:
+		check(_map.is_mountain(p) == _map.is_mountain(-p), "mountains symmetric at %s" % str(p))
+	check(_map.sites.size() == 8, "8 sites: 2 gates, 2 ponds, 4 lamps (%d)" % _map.sites.size())
+	for st in _map.sites:
+		var path := _map.find_path(_map.fountains[0], st.pos)
+		check(not path.is_empty() and path[-1].distance_to(st.pos) < 200.0, "%s at %s reachable" % [st.kind, str(st.pos)])
+
+func test_warp_gate() -> void:
+	var w := empty_world()
+	var g := _site(w, "gate", 0)
+	var other := w.sites.get_site(int(g.pair))
+	check(not other.is_empty() and int(other.pair) == int(g.id), "the two gates are linked")
+	var h := _sludge(w, (g.pos as Vector2) + Vector2(450, 0))
+	h.mana = 200.0
+	w.command(h.id, {"type": O.USE_SITE, "site": int(g.id)})
+	run(w, 2.0)
+	check(not h.channel.is_empty() and String(h.channel.ability) == "site_gate", "walks into reach (200) and channels")
+	near(h.mana, 200.0 - SimSites.GATE_MANA, 6.0, "30 mana spent")
+	run(w, 4.1)
+	check(h.pos.distance_to(other.exit) < 80.0, "after 4 s it stands by the other gate (%s)" % str(h.pos))
+	# broken by an order: mana back, no warp
+	h.pos = (other.pos as Vector2) + Vector2(100, 0)
+	h.mana = 200.0
+	w.command(h.id, {"type": O.USE_SITE, "site": int(other.id)})
+	run(w, 1.0)
+	check(not h.channel.is_empty(), "second channel started")
+	var m0 := h.mana
+	w.command(h.id, {"type": O.MOVE, "point": h.pos + Vector2(200, 0)})
+	check(h.channel.is_empty(), "a move order breaks it")
+	near(h.mana - m0, SimSites.GATE_MANA, 0.01, "and gives the 30 mana back")
+	run(w, 4.0)
+	check(h.pos.distance_to(other.pos) < 600.0, "no warp after a broken channel")
+	# a stun breaks it too; not enough mana: refused
+	h.mana = 10.0
+	w.command(h.id, {"type": O.USE_SITE, "site": int(other.id)})
+	run(w, 1.0)
+	check(h.channel.is_empty(), "10 mana: refused")
+
+func test_lily_pond() -> void:
+	var w := empty_world()
+	var s := _site(w, "pond", 0)
+	w.time = 179.0
+	run(w, 1.1)
+	check(int(s.lilies) == 1, "a lily at 3:00 (%d)" % int(s.lilies))
+	w.time = 179.0 + 180.0 * 6
+	s.next = w.time - 0.1
+	s.lilies = 5
+	run(w, 0.2)
+	run(w, 0.2)
+	check(int(s.lilies) == 6, "at most 6 (%d)" % int(s.lilies))
+	var h := _sludge(w, (s.pos as Vector2) + Vector2(100, 0))
+	h.hp = h.max_hp - 400.0
+	h.mana = 0.0
+	run(w, 1.4)
+	check(int(s.lilies) == 6, "not before 1.5 s")
+	run(w, 0.2)
+	check(int(s.lilies) == 5, "the first after 1.5 s (%d)" % int(s.lilies))
+	near(h.max_hp - h.hp, 400.0 - 125.0, 30.0, "125 health (and 1.6 s of regeneration)")
+	check(h.mana >= 124.0, "125 mana")
+	run(w, 1.05)
+	check(int(s.lilies) == 4, "the next one 30% faster (1.05 s) (%d)" % int(s.lilies))
+	# an enemy hero in the area pauses it
+	var e := _sludge(w, (s.pos as Vector2) + Vector2(-100, 0), {}, C.DUSK)
+	run(w, 3.0)
+	check(int(s.lilies) == 4, "paused while an enemy hero is in the pond (%d)" % int(s.lilies))
+	e.pos = Vector2(0, 0)
+	run(w, 0.8)
+	check(int(s.lilies) == 3, "goes on when it leaves (the third in a row: 0.74 s) (%d)" % int(s.lilies))
+
+func test_lookout_lamp() -> void:
+	var w := empty_world()
+	var s := _site(w, "lamp", 0)
+	var h := _sludge(w, (s.pos as Vector2) + Vector2(500, 0))
+	w.command(h.id, {"type": O.USE_SITE, "site": int(s.id)})
+	run(w, 1.0)
+	check(String(h.channel.get("ability", "")) == "site_lamp", "walks into reach (300) and channels")
+	run(w, 1.1)
+	check(w.sites.lamp_lit(s, C.DAWN), "lit for Dawn after 1 s")
+	# its sight: 800 by day around the lamp, even with no unit there
+	h.pos = Vector2(0, 0)
+	w.vision.update()
+	check(w.vision.cell_visible(C.DAWN, (s.pos as Vector2) + Vector2(0, 600)), "Dawn sees 600 from the lamp by day")
+	check(not w.vision.cell_visible(C.DUSK, s.pos), "Dusk does not")
+	# an enemy puts it out for 2:00
+	var e := _sludge(w, (s.pos as Vector2) + Vector2(150, 0), {}, C.DUSK)
+	w.command(e.id, {"type": O.USE_SITE, "site": int(s.id)})
+	run(w, 1.2)
+	check(not w.sites.lamp_lit(s, C.DAWN) and not w.sites.lamp_lit(s, C.DUSK), "put out by the other team")
+	check(w.sites.use_error(e, s) != "", "nobody can light it for 2:00")
+	w.time += 121.0
+	check(w.sites.use_error(e, s) == "", "after 2:00 it can be lit again")
+	w.command(e.id, {"type": O.USE_SITE, "site": int(s.id)})
+	run(w, 1.2)
+	check(w.sites.lamp_lit(s, C.DUSK), "lit for Dusk")
+	w.time += 421.0
+	run(w, 0.1)
+	check(not w.sites.lamp_lit(s, C.DUSK), "dark again after 7:00")

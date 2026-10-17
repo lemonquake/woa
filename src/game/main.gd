@@ -28,6 +28,9 @@ var azrael_fx: AzraelFx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
+var site_view: SiteView
+var _hide_heroes := false                   # --off=heroes / --off=creeps (benchmark ablations)
+var _hide_creeps := false
 var targeting_fx: TargetingFx
 var bars: UnitBars
 var input: InputController
@@ -94,6 +97,7 @@ func _ready() -> void:
 	add_child(camps)
 	camps.build(map, terrain)
 	await _stage(0.84, "Loading heroes")
+	_prebuild_unit_meshes()
 	fx = Fx.new()
 	fx.game = self
 	fire_fx = FireFx.new()
@@ -152,6 +156,11 @@ func _ready() -> void:
 	orb_view.game = self
 	orb_view.fx = fx
 	add_child(orb_view)
+	site_view = SiteView.new()
+	site_view.game = self
+	site_view.fx = fx
+	add_child(site_view)
+	site_view.build(world)
 	targeting_fx = TargetingFx.new()
 	targeting_fx.game = self
 	add_child(targeting_fx)
@@ -223,6 +232,10 @@ func _ready() -> void:
 			"terrain": get_node("Terrain").visible = false
 			"units":
 				_units_off = true
+			"heroes":
+				_hide_heroes = true
+			"creeps":
+				_hide_creeps = true
 	for part in String(args.get("hide", "")).split(",", false):
 		var hn = hud.get(part)
 		if hn is CanvasItem:
@@ -623,6 +636,26 @@ func _make_view(u: SimUnit) -> void:
 		views[u.id] = v
 		v.place()                                  # where it stands from the start, before its first frame()
 
+## Every creep and neutral model is built once while loading (both teams' colours), so the merged meshes
+## (MeshMerge) are ready before the first of each kind walks on: building one costs ~65 ms, a hitch mid-match.
+func _prebuild_unit_meshes() -> void:
+	var kinds := [K.CREEP_MELEE, K.CREEP_RANGED, K.CREEP_SIEGE, K.CREEP_FLAG, K.NEUTRAL_CREEP, K.SUMMON]
+	var t0 := Time.get_ticks_msec()
+	var n := 0
+	for id in SimData.units():
+		var def := SimData.unit(id)
+		if not (int(def.get("kind", -1)) in kinds) or ModelCatalog.info(String(def.get("model", ""))).is_empty():
+			continue
+		for team in ([C.DAWN, C.DUSK] if int(def.kind) != K.NEUTRAL_CREEP else [C.NEUTRAL]):
+			var u := SimUnit.new()
+			u.setup(-1000 - n, def, team, Vector2.ZERO, 0.0)
+			var v := UnitView.new()
+			add_child(v)
+			v.setup(u, terrain)
+			v.queue_free()
+			n += 1
+	print("unit meshes prebuilt: %d models in %d ms" % [n, Time.get_ticks_msec() - t0])
+
 ## Events the item effects draw (a lookup, not a list built for every event).
 const ITEM_EVENTS := {"jump": 1, "chain": 1, "spell_shield": 1, "gold_glove": 1, "mana_burst": 1, "mend": 1, "knockback": 1,
 	"sneak_end": 1, "combine": 1, "spikes_return": 1, "blocked": 1, "cleave": 1, "item_use": 1, "blast_rod": 1, "net_staff": 1,
@@ -669,6 +702,8 @@ func _drain_events() -> void:
 				fx.dust(e)
 			"orb_taken":
 				_on_orb(e)
+			"site":
+				_on_site(e)
 			"glyph":
 				_on_glyph(e)
 			"fortify_splash":
@@ -781,6 +816,8 @@ func _drain_events() -> void:
 			"lifesteal":
 				fx.lifesteal(int(e.u))
 			"channel_start":
+				if e.has("site"):
+					site_view.on_channel(int(e.site), float(e.until), int(e.u))
 				var chv = views.get(e.u)
 				if chv is UnitView:
 					chv.on_channel_start(String(e.ability))
@@ -792,6 +829,8 @@ func _drain_events() -> void:
 					bwv.on_burst_wave()
 				fx.burst_wave(e)
 			"channel_end":
+				if String(e.get("ability", "")).begins_with("site_"):
+					site_view.on_channel_end(int(e.u))
 				var cev = views.get(e.u)
 				if cev is UnitView:
 					cev.on_channel_end()
@@ -946,6 +985,39 @@ func _on_orb(e: Dictionary) -> void:
 		if other and other.alive:
 			bars.popup("+%d XP" % int(e.xp), _head(other.pos, hh), Color(0.75, 0.55, 1.0), 22, 1.4, 1.6)
 
+## Map sites (SimSites): a Warp Gate's flash at both ends, a lily's heal, a lamp lit or put out (a line in the kill feed
+## when it is your team's or in sight).
+func _on_site(e: Dictionary) -> void:
+	var s := world.sites.get_site(int(e.id))
+	if s.is_empty():
+		return
+	var h := world.get_unit(int(e.get("u", -1)))
+	var seen := world.vision.cell_visible(player_team, s.pos)
+	match String(e.what):
+		"warp":
+			var hv = views.get(int(e.u))
+			if hv is UnitView:
+				hv.prev_pos = e.to
+				hv.cur_pos = e.to
+			var col := Color(0.62, 0.42, 1.0)
+			if seen:
+				fx.shockwave(fx.ground3(e.from, 0.1), 2.2, col, 0.6)
+			if world.vision.cell_visible(player_team, e.to) or (h and h.team == player_team):
+				fx.shockwave(fx.ground3(e.to, 0.1), 2.2, col, 0.6)
+			site_view.on_channel(int(e.id), -1.0)
+		"lily_taken":
+			if h and (h.team == player_team or seen):
+				var hv2 = views.get(h.id)
+				var hh: float = (hv2.bar_height + 0.9) if hv2 is UnitView else 2.6
+				bars.popup("+%d" % int(e.hp), _head(h.pos, hh), Color(0.45, 1.0, 0.45), 22, 1.2, 1.4)
+				fx.shockwave(fx.ground3(h.pos, 0.1), 1.0, Color(1.0, 0.65, 0.85), 0.45)
+		"lamp_lit", "lamp_out":
+			if h and hud and hud.get("kill_feed") != null and (h.team == player_team or seen):
+				var who := String(h.bot_name) if h.bot_name != "" else String(h.look.get("display_name", h.name))
+				var col2 := UiKit.DAWN if h.team == 0 else UiKit.DUSK
+				var what := " lit a Lookout Lamp" if String(e.what) == "lamp_lit" else " put out a Lookout Lamp"
+				hud.kill_feed.add_line([[who, col2], [what, UiKit.TEXT]], "status/keen")
+
 var _crit_hit := {}                          # target id -> attacker id: the next attack damage is a shown crit
 
 func _on_damage(e: Dictionary) -> void:
@@ -1017,7 +1089,7 @@ func _process(dt: float) -> void:
 	_frame_no += 1
 	for v in views.values():
 		if v is UnitView:
-			v.visible = v.fog_ok and not _units_off
+			v.visible = v.fog_ok and not _units_off and not (v.is_hero and _hide_heroes) and not (not v.is_hero and _hide_creeps)
 			if not v.visible or (not v.is_hero and not vr.has_point(v.cur_pos)):
 				v.offscreen = true
 				if v.anim and v.anim.active:
@@ -1045,6 +1117,7 @@ func _process(dt: float) -> void:
 	status_fx.frame(dt)
 	fortify_fx.frame(dt)
 	orb_view.frame(dt)
+	site_view.frame(dt)
 	_t = _tm("status", _t)
 	targeting_fx.frame()
 	_t = _tm("target", _t)
@@ -1248,9 +1321,66 @@ func _bench_frame(dt: float) -> void:
 		line += "\n  frames with a tick %d avg %.2f ms, without %d avg %.2f ms" % [nw, with_t / maxf(1, nw), nwo, without_t / maxf(1, nwo)]
 		line += "\n  per-frame means: " + ", ".join(parts)
 		print(line)
+		if args.has("bench_units"):
+			_bench_unit_costs()
 		var f := FileAccess.open("res://work/bench.txt", FileAccess.WRITE)
 		f.store_line(line)
+		f = null
+		if args.has("nullmats"):
+			for vv in views.values():
+				if vv is UnitView and vv.model:
+					for mi: MeshInstance3D in vv.model.find_children("*", "MeshInstance3D", true, false):
+						for si in (mi.mesh.get_surface_count() if mi.mesh else 0):
+							if mi.get_active_material(si) == null:
+								print("NULLMAT %s %s surface %d of %d" % [vv.key, mi.name, si, mi.mesh.get_surface_count()])
+		if args.has("orphans"):
+			for oid in Node.get_orphan_node_ids():
+				var on = instance_from_id(oid)
+				if on is MeshInstance3D:
+					var mm: Mesh = on.mesh
+					print("ORPHAN mesh %s aabb %s mat %s children %d" % [mm.get_class() if mm else "-", str(mm.get_aabb().size) if mm else "",
+						str(on.material_override.get("shader").resource_path if on.material_override is ShaderMaterial and on.material_override.shader else on.material_override), on.get_child_count()])
 		get_tree().quit()
+
+## --bench_units: what each kind of unit costs to draw (mesh parts, surfaces, triangles at full detail and at the
+## coarsest level of detail, shadow casters, bones), summed per model key.
+func _bench_unit_costs() -> void:
+	var per := {}
+	for v in views.values():
+		if not (v is UnitView) or (v as UnitView).model == null:
+			continue
+		var k := String(v.key)
+		var e: Dictionary = per.get(k, {"n": 0, "parts": 0, "surf": 0, "tris": 0, "tris_low": 0, "shadow": 0, "bones": 0,
+			"blend": 0})
+		e.n += 1
+		for mi: MeshInstance3D in (v as UnitView).model.find_children("*", "MeshInstance3D", true, false):
+			if not mi.is_visible_in_tree() or mi.mesh == null:
+				continue
+			e.parts += 1
+			if mi.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+				e.shadow += 1
+			if mi.mesh is ArrayMesh and (mi.mesh as ArrayMesh).get_blend_shape_count() > 0:
+				e.blend += 1
+			for s in mi.mesh.get_surface_count():
+				e.surf += 1
+				var sd := RenderingServer.mesh_get_surface(mi.mesh.get_rid(), s)
+				var idx: PackedByteArray = sd.get("index_data", PackedByteArray())
+				var stride := 2 if (int(sd.get("vertex_count", 0)) <= 65535) else 4
+				var tri := (idx.size() / stride) / 3 if idx.size() > 0 else int(sd.get("vertex_count", 0)) / 3
+				e.tris += tri
+				var lods: Array = sd.get("lods", [])
+				if lods.is_empty():
+					e.tris_low += tri
+				else:
+					var last: PackedByteArray = lods[lods.size() - 1].get("index_data", PackedByteArray())
+					e.tris_low += (last.size() / stride) / 3
+		if v.skeleton:
+			e.bones += (v.skeleton as Skeleton3D).get_bone_count()
+		per[k] = e
+	for k in per:
+		var e: Dictionary = per[k]
+		print("UNITCOST %-22s x%3d  parts %3d  surf %3d  tris %7d  low %7d  shadow %3d  blend %2d  bones %3d" % [k, e.n,
+			e.parts / e.n, e.surf / e.n, e.tris / e.n, e.tris_low / e.n, e.shadow / e.n, e.blend / e.n, e.bones / e.n])
 
 # ---- Capture ---------------------------------------------------------------------------------------------------------
 

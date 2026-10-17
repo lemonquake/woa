@@ -327,6 +327,10 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	w.items.break_sneak(u)
 	if String(a.behavior) == "toggle":
 		set_toggle(u, aid, not bool(u.toggles.get(aid, false)))
+		if u.bot:
+			var tb = w.bot_for(u.id)
+			if tb != null:
+				tb.botlog.on_cast(w.time, aid)       # a toggle flipped as ordered (the Bot Log counted 0 of N)
 		return
 	if aid == "pilot_turret" and kits3.is_piloting(u):
 		kits3.leave_turret(u)                    # getting out is free and has no cooldown
@@ -1092,6 +1096,8 @@ func _update_hop(u: SimUnit) -> void:
 ## One tick of an ability channel (Burst Shot's waves, Chomp's bites).
 func channel_tick(u: SimUnit) -> void:
 	match String(u.channel.ability):
+		"site_gate", "site_lamp":
+			pass
 		"burst_shot":
 			update_burst(u)
 		"chomp":
@@ -1102,6 +1108,8 @@ func channel_tick(u: SimUnit) -> void:
 ## A channel ended (finished, or cancelled by an order, stun, silence, push or death): undo what it holds.
 func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
 	match String(ch.ability):
+		"site_gate", "site_lamp":
+			w.sites.channel_end(u, ch, _cancelled)
 		"chomp":
 			var t := w.get_unit(int(ch.get("target", -1)))
 			if t != null:

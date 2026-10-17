@@ -110,10 +110,13 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		_tint(cfg.tint)
 	if not is_hero and u.team < 2:
 		_faction_colors(u.team)
-	for mi in model.find_children("*", "MeshInstance3D", true, false):
-		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	var parts := model.find_children("*", "MeshInstance3D", true, false)
+	for mi in parts:
 		if not is_hero or cfg.get("gear_materials", false):
 			GearMaterials.apply(mi)
+	if _merge_meshes():
+		parts = model.find_children("*", "MeshInstance3D", true, false)
+	_shadow_casters(parts)
 	_make_ring(u)
 	var shade := MeshInstance3D.new()
 	shade.mesh = Dressing.blob_mesh()
@@ -123,6 +126,58 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	shade.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(shade)
 	_play(String(cfg.idle), true)
+
+## The model's skinned pieces as one mesh (MeshMerge): one skin to update and one draw for every flat or gear
+## surface. Creeps of a kind and team share theirs. --nomerge keeps the pieces (benchmarks, comparisons).
+func _merge_meshes() -> bool:
+	if skeleton == null or OS.get_cmdline_user_args().has("--nomerge"):
+		return false
+	var ck := "%s|%d|" % [key, team]
+	# a creep's weapons never come off: they join its mesh on their hand bones (a hero's stay apart: hidden, glowing,
+	# swapped by effects)
+	var rigid: Array = []
+	if not is_hero:
+		for side in weapon_nodes:
+			var w: Node3D = weapon_nodes[side]
+			var bi := skeleton.find_bone("weapon." + String(side))
+			if bi < 0 or not is_instance_valid(w):
+				continue
+			for wm: MeshInstance3D in w.find_children("*", "MeshInstance3D", true, false):
+				if wm.mesh == null or not wm.visible:
+					continue
+				var xf := w.transform
+				var chain: Array = []
+				var n: Node = wm
+				while n != w:
+					chain.push_front(n)
+					n = n.get_parent()
+				for c in chain:
+					xf = xf * (c as Node3D).transform
+				rigid.append([wm, bi, xf])
+	return MeshMerge.merge(skeleton, ck, rigid) != null
+
+## Shadows come only from the parts that shape the silhouette: the largest part (the body) and anything at least
+## 0.6 m long (robes, capes, leggings, long weapons). Small worn pieces (gloves, boots, belts, jewellery, small
+## weapons) cast none: their shadows hide inside the body's, and each one cost a draw in every shadow pass (~600 draws,
+## ~2 ms a frame in a ten-hero fight). Options > Video: Low turns unit shadows off.
+func _shadow_casters(parts: Array) -> void:
+	var on := not OS.get_cmdline_user_args().has("--unit_noshadow") and int(Options.get_value("quality")) > 0
+	var biggest: MeshInstance3D = null
+	var bs := 0.0
+	for mi: MeshInstance3D in parts:
+		if mi.mesh == null:
+			continue
+		var sz := mi.mesh.get_aabb().size * mi.scale
+		var longest := maxf(sz.x, maxf(sz.y, sz.z))
+		if longest > bs:
+			bs = longest
+			biggest = mi
+	for mi: MeshInstance3D in parts:
+		var cast := false
+		if on and mi.mesh != null:
+			var sz2 := mi.mesh.get_aabb().size * mi.scale
+			cast = mi == biggest or maxf(sz2.x, maxf(sz2.y, sz2.z)) * _model_scale >= 0.6
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if cast else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 ## A hero with its own body (Sludge) outside a match (Hero Select): skin shader and textured gear.
 static func dress_own_body(m: Node3D, c: Dictionary) -> void:
@@ -180,8 +235,9 @@ func _swap_model(k: String) -> void:
 	skeleton = sks[0] if not sks.is_empty() else null
 	if cfg.has("skin_shader"):
 		_skin(model, String(cfg.skin_shader), String(cfg.get("skin_material", "SludgeSkin")), cfg.get("skin_params", {}))
-	for mi in model.find_children("*", "MeshInstance3D", true, false):
-		(mi as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	if k == _base_key:
+		_merge_meshes()                        # a form (it lasts seconds) stays unmerged: building it would hitch
+	_shadow_casters(model.find_children("*", "MeshInstance3D", true, false))
 	bar_height = float(cfg.get("bar", bar_height))
 	weapons.clear()
 	weapon_nodes.clear()
@@ -692,9 +748,16 @@ func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := fal
 				return
 		else:
 			return
+	if clip == _clip and not restart and anim.is_playing():
+		if anim.speed_scale != speed:
+			anim.speed_scale = speed
+		return
+	# clips are shared by every unit of a model: setting the loop mode tells every player using it that the clip
+	# changed (they drop their track caches), so set it only when it really differs
 	var a := anim.get_animation(clip)
-	if a:
-		a.loop_mode = Animation.LOOP_LINEAR if loop else Animation.LOOP_NONE
+	var lm := Animation.LOOP_LINEAR if loop else Animation.LOOP_NONE
+	if a and a.loop_mode != lm:
+		a.loop_mode = lm
 	if clip == _clip and not restart and anim.is_playing():
 		anim.speed_scale = speed
 		return

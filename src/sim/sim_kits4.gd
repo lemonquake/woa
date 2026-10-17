@@ -39,7 +39,7 @@ func _enemy(team: int, o: SimUnit) -> bool:
 		and not o.is_invulnerable()
 
 func _land_spot(p: Vector2) -> Vector2:
-	p = Vector2(clampf(p.x, -7900.0, 7900.0), clampf(p.y, -7900.0, 7900.0))
+	p = Vector2(clampf(p.x, -SimMap.EDGE, SimMap.EDGE), clampf(p.y, -SimMap.EDGE, SimMap.EDGE))
 	if w.map.is_walkable(p):
 		return p
 	var c := w.map.nearest_walkable(w.map.world_to_cell(p))
@@ -64,7 +64,7 @@ func cast_error(u: SimUnit, aid: String, _t: SimUnit, p: Vector2, check_target: 
 	if in_door(u) and not (aid == "door_of_the_end" and exit_pending(u)):
 		return "Inside the door"
 	if aid == "door_of_the_end" and check_target and p != Vector2.INF:
-		if p.x < -7900.0 or p.x > 7900.0 or p.y < -7900.0 or p.y > 7900.0:
+		if absf(p.x) > SimMap.EDGE or absf(p.y) > SimMap.EDGE:
 			return "Cannot place a door there"
 	return ""
 

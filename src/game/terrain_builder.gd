@@ -11,7 +11,7 @@ const TERRAIN_SHADER := preload("res://src/game/terrain.gdshader")
 const WATER_SHADER := preload("res://src/game/water.gdshader")
 const STEP := 32.0                         # game units between vertices
 const CHUNKS := 8
-const SPLAT := 512
+const SPLAT := 576                         # splat texels across the map (32 units each)
 const WATER_LEVEL := 70.0                  # game units above the river bed
 const EXT := 7680.0                        # how far the outer mountain ring reaches past the map edge
 const DSTEP := 64.0                        # mountain distance field spacing
@@ -407,6 +407,9 @@ func _splat() -> Image:
 		stamp.call(road, c.pos, cb.length() * 1.25, 0.8)
 		for k in 5:
 			stamp.call(road, (c.pos as Vector2) + Vector2.from_angle(k * TAU / 5.0 + float(c.id)) * cb.length() * 0.7, cb.length() * 0.55, 0.6)
+	# map sites stand in trampled clearings
+	for st in map.sites:
+		stamp.call(road, st.pos, 420.0, 0.7)
 	for t in map.trees:
 		stamp.call(forest, t.pos, 230.0, 1.0)
 	# paved plazas only around base buildings; open grass (Dawn) or ash (Dusk) between them

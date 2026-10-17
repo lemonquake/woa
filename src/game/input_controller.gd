@@ -86,9 +86,46 @@ func _process(_dt: float) -> void:
 		return
 	var m := game.get_viewport().get_mouse_position()
 	hover_id = pick(m)
+	_site_tip(m)
 	_cursor()
 	_rmb_repeat()
 	_hold_stop()
+
+## A map site under the mouse (and no unit): its name, what it does and how it stands now, in the tooltip.
+func _site_tip(m: Vector2) -> void:
+	if hover_id >= 0 or game.get("site_view") == null or game.hud == null or (game.hud.has_method("over_hud") and game.hud.over_hud(m)):
+		return
+	var sid: int = game.site_view.pick(game.camera.cam, m)
+	if sid < 0:
+		return
+	var w: SimWorld = game.world
+	var s := w.sites.get_site(sid)
+	var lines: Array = [[w.sites.site_name(s), 18, UiKit.GOLD, "title"]]
+	var seen: bool = w.vision.cell_visible(game.player_team, s.pos)
+	var say: Array = []
+	match String(s.kind):
+		"gate":
+			say = ["Right click: walk in and channel for 4 s to step out at the other Warp Gate.",
+				"Costs 30 mana, given back if the channel is broken (stuns, roots, a new order)."]
+		"pond":
+			say = ["A Healing Lily grows here every 3 minutes, up to 6.",
+				"Stand in the pond to gather them: each gives 125 health and 125 mana. An enemy hero there stops it."]
+			if seen:
+				say.append("Lilies now: %d" % int(s.lilies))
+		"lamp":
+			say = ["Right click: channel for 1 s to light it for your team for 7 minutes (sight 800 by day, 450 by night).",
+				"Channel an enemy lamp to put it out for 2 minutes."]
+			if seen:
+				if w.time < float(s.out_until):
+					say.append("Out for %d s" % int(ceil(float(s.out_until) - w.time)))
+				elif int(s.team) >= 0 and w.time < float(s.until):
+					say.append("Lit by %s for %d s" % ["Ancient Light" if int(s.team) == 0 else "Black Sun", int(float(s.until) - w.time)])
+				else:
+					say.append("Dark")
+	for l in say:
+		for wl in UiKit.wrap(String(l), 320, 14):
+			lines.append([wl, 14, UiKit.TEXT, "body"])
+	game.hud.show_tip(m, lines)
 
 ## Stop held down: the hero is stopped again every frame and new orders are refused until the key is released, like
 ## a stop pressed over and over; it does not auto-attack meanwhile. Held past HARD_STOP_HOLD it stays a hard stop
@@ -765,6 +802,13 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 	if oid >= 0:
 		game.order(h.id, {"type": O.PICKUP_ORB, "orb": oid, "queue": shift})
 		game.fx.marker(View.to3(w.orbs.get_orb(oid).pos, game.terrain.height_at(w.orbs.get_orb(oid).pos)), false)
+		return
+	# a map site under the cursor (Warp Gate, Lookout Lamp: walk there and channel; Lily Pond: walk in)
+	var sid: int = game.site_view.pick(game.camera.cam, pos) if game.get("site_view") != null and not repeat and tgt == null else -1
+	if sid >= 0:
+		game.order(h.id, {"type": O.USE_SITE, "site": sid, "queue": shift})
+		var sp: Vector2 = w.sites.get_site(sid).pos
+		game.fx.marker(View.to3(sp, game.terrain.height_at(sp)), false)
 		return
 	var gid := pick_ground_item(pos) if not repeat else -1
 	if gid >= 0 and (tgt == null or tgt.team == h.team):

@@ -7,6 +7,15 @@
 | Unit and creature models with animations (knight, mage, necromancer, ghoul brute, golems, goblins, dire wolf, orcs, mire troll, ogre, cinder imp, magma golem and more) | `assets/characters/units/` | beyond-heroes project (procedural, Blender) | `A:\Python\beyond-heroes\game\assets\characters` | Owned by the author |
 | Weapons and bows | `assets/weapons/` | beyond-heroes project | same | Owned by the author |
 | Sound effects and ambience (synthesised) | `assets/audio/` | beyond-heroes project | same | Owned by the author |
+| Impact sounds (metal, plate, wood, plank, punch, soft, mining, generic) and grass footsteps (`kenney_impact*`, `kenney_footstep_grass_*`) | `assets/audio/cc0/` | Kenney | kenney.nl/assets/impact-sounds | CC0 1.0 |
+| Blade and cloth sounds (`kenney_knifeSlice*`, `kenney_chop`, `kenney_drawKnife*`, `kenney_cloth*`, `kenney_metalPot*`) | `assets/audio/cc0/` | Kenney | kenney.nl/assets/rpg-audio | CC0 1.0 |
+| Bird song ambience (`amb_birds.ogg`) | `assets/audio/cc0/` | isaiah658 | opengameart.org/content/ambient-bird-sounds | CC0 1.0 |
+| Bird chirps (`bird_chirps.wav`) | `assets/audio/cc0/` | syncopika | opengameart.org/content/bird-chirping-sounds | CC0 1.0 |
+| Crickets loop (`amb_crickets.mp3`) | `assets/audio/cc0/` | Wolfgang_ | opengameart.org/content/crickets-ambient-noise-loopable | CC0 1.0 |
+| Frog croaks and ribbits (`frog_croak_*`, `frog_ribbit_*`) | `assets/audio/cc0/` | EZduzziteh | opengameart.org/content/frog-croaks, opengameart.org/content/ribbit-frog-sounds | CC0 1.0 |
+| Flowing water and rain loops (`loop_water_flowing.ogg`, `loop_rain.ogg`) | `assets/audio/cc0/` | rubberduck | opengameart.org/content/30-cc0-sfx-loops | CC0 1.0 |
+| Metal, slam, hit, gong and explosion sounds (`sfx100_*`) | `assets/audio/cc0/` | rubberduck | opengameart.org/content/100-cc0-sfx | CC0 1.0 |
+| Heavy impacts for tower bolts (`impact_01`..`impact_15.wav`) | `assets/audio/cc0/` | Eldritch Grim | opengameart.org/content/impactsgunsfx | CC0 1.0 |
 | UI icons (items, skills, attributes, status, ui), SVG | `assets/ui/` | beyond-heroes project | same | Owned by the author |
 | Trees, plants, grass, rocks | `assets/nature/` | Quaternius, Stylized Nature MegaKit (Standard) | quaternius.itch.io/stylized-nature-megakit | CC0 1.0 |
 | Terrain textures (leafy grass, aerial grass rock, rocky trail, forest ground 04, cliff side, cobblestone floor 08, burned ground 01, coast sand rocks 02, stone pathway 02) | `assets/textures/terrain/` | Poly Haven authors | polyhaven.com (URLs and MD5s in `work/downloads/polyhaven/terrain_sources.json`) | CC0 1.0 |

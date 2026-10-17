@@ -94,7 +94,7 @@ enum DamageType { PHYSICAL, MAGICAL, PURE }
 
 # ---- Orders ---------------------------------------------------------------------------------------------------------
 enum Order { NONE, MOVE, ATTACK_UNIT, ATTACK_MOVE, HOLD, STOP, CAST_NO_TARGET, CAST_POINT, CAST_UNIT, MOVE_TO_UNIT,
-	DROP_ITEM, PICKUP_ITEM, GIVE_ITEM, PICKUP_ORB }
+	DROP_ITEM, PICKUP_ITEM, GIVE_ITEM, PICKUP_ORB, USE_SITE }
 
 # ---- Movement & attack ---------------------------------------------------------------------------------------------
 ## A unit only starts walking, attacking or casting when its target is within this angle of its facing (11.5 deg).
@@ -294,7 +294,7 @@ const PLANT_RANGE := 400.0                  # items.txt item_branches AbilityCas
 const ITEM_LIFESTEAL_CREEP_FACTOR := 0.4    # game constant "item lifesteal creep factor"
 
 # ---- Map ------------------------------------------------------------------------------------------------------------
-const MAP_HALF := 8192.0
+const MAP_HALF := 9216.0
 const PATH_CELL := 64.0
 const LEVEL_HEIGHT := 200.0                  # rendered height per terrain level (visual only; the sim uses levels)
 

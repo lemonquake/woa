@@ -146,6 +146,14 @@ func _init() -> void:
 					unstuck += b.unstuck_count
 			out("  %s calls: teamfights %d, ganks %d, pushes %d (chained on %d), towers lost %d, bots unstuck %d" % [
 				C.TEAM_NAMES[bt], br.fights_called, br.ganks_called, br.pushes_called, br.pushes_chained, _towers_lost(w, bt), unstuck])
+			# map sites (2026-10-17 d): how often the team's bots went for lilies, lamps and gates
+			var su := {}
+			for b in w.bots:
+				if b.hero() != null and b.hero().team == bt:
+					for k in b.site_uses:
+						su[k] = int(su.get(k, 0)) + int(b.site_uses[k])
+			out("  %s sites: bot goals %s; done: warps %d, lilies %d, lamps lit %d, lamps put out %d" % [C.TEAM_NAMES[bt], str(su),
+				w.sites.stats.warp[bt], w.sites.stats.lily[bt], w.sites.stats.lamp_lit[bt], w.sites.stats.lamp_out[bt]])
 		out("seed %d: %s at %s (%.1f s real)" % [seed, ("%s won" % C.TEAM_NAMES[w.winner]) if w.winner >= 0 else "no winner", w.clock_text(),
 			(Time.get_ticks_msec() - t0) / 1000.0])
 		for team in [C.DAWN, C.DUSK]:

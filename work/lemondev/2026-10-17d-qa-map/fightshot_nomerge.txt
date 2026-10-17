@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+match ready in 13245 ms
+BENCH frames 593 avg 20.24 ms (49 fps) p50 16.67 p95 33.33 p99 38.10 max 268.55 over16.7 281 units 205
+  frames with a tick 349 avg 23.00 ms, without 244 avg 16.31 ms
+  per-frame means: views 1.80, fx 0.62, fx_azrin 0.18, fx_froster 0.12, fx_other 0.86, status 0.45, target 0.01, fog 1.01, sim 4.42, events 1.34, sync 1.01, script_proc 5.06, script_phys 6.88, n_tick_frames 0.59, gpu 7.57, rcpu 2.75, setup 0.18, other 8.31, flush 5.49, draw 5.33, gap 0.12, draws 2063.04, prims 1765969.15, trails 0.15, bars 0.97, ui_hud 0.01, ui_BottomPanel 0.73, ui_Minimap 0.50, ui_TopBar 0.15, ui_Tip 0.00, ui_feed 0.41, ui_chat 0.15, ui_PortraitOverlay 0.07, ui_fro_call 0.10
+WARNING: 5108 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 19 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

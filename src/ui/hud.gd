@@ -2358,6 +2358,28 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 			var op := _to_mm(o.pos)
 			draw_circle(op, 5.0, Color(0, 0, 0, 0.9))
 			draw_circle(op, 3.6, OrbView.COLORS.get(String(o.kind), Color(1, 1, 1)))
+		# map sites: Warp Gates (violet rings), Lily Ponds (pink, with the lilies there when in sight), Lookout Lamps
+		# (a diamond in the holding team's colour, grey when dark or not in sight)
+		for s in w.sites.sites:
+			var sp := _to_mm(s.pos)
+			var seen: bool = w.vision.cell_visible(team, s.pos)
+			match String(s.kind):
+				"gate":
+					draw_circle(sp, 6.0, Color(0, 0, 0, 0.85))
+					draw_arc(sp, 4.6, 0.0, TAU, 16, Color(0.72, 0.5, 1.0), 2.2)
+				"pond":
+					draw_circle(sp, 5.5, Color(0, 0, 0, 0.85))
+					draw_circle(sp, 4.0, Color(1.0, 0.6, 0.8))
+					if seen and int(s.lilies) > 0:
+						U.text_c(self, str(int(s.lilies)), sp + Vector2(0, -9), 12, Color(1.0, 0.85, 0.92), "bold")
+				"lamp":
+					var lc := Color(0.6, 0.6, 0.6)
+					if seen and int(s.team) >= 0 and w.time < float(s.until):
+						lc = UiKit.team_color(int(s.team))
+					var dia := PackedVector2Array([sp + Vector2(0, -5), sp + Vector2(5, 0), sp + Vector2(0, 5), sp + Vector2(-5, 0)])
+					draw_colored_polygon(PackedVector2Array([sp + Vector2(0, -6.5), sp + Vector2(6.5, 0), sp + Vector2(0, 6.5),
+						sp + Vector2(-6.5, 0)]), Color(0, 0, 0, 0.85))
+					draw_colored_polygon(dia, lc)
 		# pings from the whole team: pulsing rings for three seconds (gold: here, red: attack or danger, green: defend)
 		for pg in w.pings:
 			var age: float = w.time - float(pg.t)

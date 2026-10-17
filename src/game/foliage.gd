@@ -217,6 +217,12 @@ func _build_decor() -> void:
 				road = minf(road, SimMap._polyline_distance(-p, map.lanes[k]))
 			if road < 330.0:
 				continue
+			var on_site := false
+			for st in map.sites:
+				if p.distance_to(st.pos) < 330.0:
+					on_site = true
+			if on_site:
+				continue
 			var near_tree := map.tree_at(p, 260.0) >= 0
 			if not near_tree and rng.randf() < 0.55:
 				continue

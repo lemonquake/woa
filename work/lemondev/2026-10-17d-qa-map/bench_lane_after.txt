@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 37 models in 2433 ms
+match ready in 16315 ms
+ERROR: Parameter "material" is null.
+   at: material_casts_shadows (servers/rendering/renderer_rd/storage_rd/material_storage.cpp:2610)
+ERROR: Parameter "material" is null.
+   at: material_is_animated (servers/rendering/renderer_rd/storage_rd/material_storage.cpp:2597)
+ERROR: Parameter "material" is null.
+   at: material_get_instance_shader_parameters (servers/rendering/renderer_rd/storage_rd/material_storage.cpp:2641)
+ERROR: Parameter "material" is null.
+   at: material_update_dependency (servers/rendering/renderer_rd/storage_rd/material_storage.cpp:2653)
+BENCH frames 4022 avg 12.43 ms (80 fps) p50 12.12 p95 15.15 p99 20.57 max 58.06 over16.7 80 units 195
+  frames with a tick 1501 avg 12.54 ms, without 2521 avg 12.37 ms
+  per-frame means: views 0.79, fx 0.27, fx_azrin 0.19, fx_froster 0.09, fx_other 0.36, status 0.34, target 0.01, fog 0.06, sim 2.14, events 0.20, sync 0.46, script_proc 3.18, script_phys 2.82, n_tick_frames 0.37, gpu 8.17, rcpu 1.87, setup 0.19, other 6.43, flush 2.62, draw 3.80, gap 0.11, draws 1312.42, prims 2236949.87, trails 0.18, bars 0.61, ui_hud 0.02, ui_Tip 0.00, ui_feed 0.15, ui_fro_call 0.08, ui_BottomPanel 0.27, ui_Minimap 0.34, ui_TopBar 0.08, ui_chat 0.04, ui_PortraitOverlay 0.04
+WARNING: 4651 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 19 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

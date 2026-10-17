@@ -314,3 +314,17 @@ a research subagent (read-only on the code).
 | U1 Double-click self-cast | 1-2 | working tree | gate: input_probe (skill and item self-cast, TP fountain) | n/a | PASS (gate) | point self-cast required turning to angle 0; open door from earlier probe stage intercepted second door cast | none |
 | A1 Azrael kit rework | 1 | working tree | gate: 5 updated Azrael tests, full suite 244/244, modifier_census 0 unnamed | n/a | PASS (gate) | none | none |
 | X1 Integration | 1 | working tree | gate: tests 244/244, input_probe 19/19, check_names, export | n/a | PASS (gate) | none | none |
+
+## Session 2026-10-17 d (QA: performance, gameplay, bots, map; outer ground and map sites; 3D sound world) — run `work/lemondev/2026-10-17d-qa-map/` (contract.md)
+
+No critic subagent was run (none asked for); looks are builder self-checks against the game's own captures
+(merged vs unmerged units side by side, site captures).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| P1 Frame time | 1-6 | working tree | gate: teamfight and lane benches against baseline (`bench_fight_before*.txt`, `bench_fight_after*.txt`) | n/a | PASS (gate) | in order: shared clips re-flagged every tick (track caches dropped); per-surface draws and skins of heroes; merge cache missing on per-unit materials (65 ms hitch per creep); retired pieces freed with materials on them ("material is null") | the 30 Hz sim tick (~5 ms) still makes p95 ~29 ms in a ten-hero fight |
+| P2 Quit crash | 1-2 | working tree | gate: bench exits 0 | n/a | PASS (gate) | bench probe lambdas left on the rendering server's signals; orphan core node from Azrin's javelin | none |
+| M1 Outer map | 1-2 | working tree | gate: tests, camp_layout (sites reachable), captures | n/a | PASS (gate) | new map size reshuffled the whole forest (tests broke): classic forest now placed first with the classic rules | none |
+| M2 Map sites | 1-2 | working tree | gate: 4 new tests, captures | n/a | PASS (gate; self-check look) | gate ring unreadable from the top-down camera; black rock material | blind review UNVERIFIED |
+| B1 Bots and sites | 1-2 | working tree | gate: bot games | n/a | see handoff | sites unused in the first game (reach too short) | more games |
+| S1 Sound world | 1 | working tree | gate: audio_probe (sounds load, every model has a material, Effects bus at 60%), day and night live runs without errors | n/a | PASS (gate) | none | listening test by the owner (not audible to the builder) |

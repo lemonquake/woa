@@ -55,10 +55,10 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 		if not instant:
 			cancel_channel(u)
 	# Blau inside his turret: a move order (or one to walk to a unit or item) gets him out first
-	if u.is_hero() and (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB) 			and w.abilities.kits3.is_piloting(u):
+	if u.is_hero() and (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB or type == O.USE_SITE) 			and w.abilities.kits3.is_piloting(u):
 		w.abilities.kits3.leave_turret(u)
 	# A unit inside Azrael's door: a move or attack order brings it out early without setting off the explosion
-	if (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB or type == O.ATTACK_UNIT or type == O.ATTACK_MOVE) 			and w.abilities.kits4.in_door(u):
+	if (type == O.MOVE or type == O.MOVE_TO_UNIT or type == O.PICKUP_ITEM or type == O.PICKUP_ORB or type == O.USE_SITE or type == O.ATTACK_UNIT or type == O.ATTACK_MOVE) 			and w.abilities.kits4.in_door(u):
 		w.abilities.kits4.leave_door(u, o.get("point", u.pos))
 	# a hard stop (S held) keeps the unit from acquiring targets until it gets another order
 	u.no_acquire = type == O.STOP and bool(o.get("hard", false))
@@ -125,6 +125,18 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 			u.order = type
 			u.order_gid = int(ob.id)
 			u.order_point = ob.pos
+		O.USE_SITE:
+			var st := w.sites.get_site(int(o.get("site", -1)))
+			if st.is_empty() or not u.is_hero():
+				return
+			var serr := w.sites.use_error(u, st)
+			if serr != "" and String(st.kind) != "pond":
+				w.events.append({"t": "error", "u": u.id, "msg": serr})
+				return
+			_interrupt(u)
+			u.order = type
+			u.order_gid = int(st.id)
+			u.order_point = st.pos
 		O.STOP:
 			clear(u)
 			return
@@ -228,7 +240,7 @@ func update(u: SimUnit) -> void:
 		# an ability channel (Burst Shot, Chomp): stuns, pushes and silence end it (roots too, for abilities that say
 		# so); the hero keeps facing the target
 		var ch := u.channel
-		var breaks_on_root := bool(SimData.ability(String(ch.ability)).get("channel_breaks_on_root", false))
+		var breaks_on_root := ch.has("site") or bool(SimData.ability(String(ch.ability)).get("channel_breaks_on_root", false))
 		if u.is_stunned() or u.is_silenced() or (breaks_on_root and u.has_flag("root")):
 			cancel_channel(u)
 		else:
@@ -316,6 +328,20 @@ func update(u: SimUnit) -> void:
 			else:
 				w.orbs.take(u, int(ob.id))
 				_finish_order(u)
+		O.USE_SITE:
+			# walk into reach, then channel (gate, lamp); at a pond the walk is all (heroes there gather lilies)
+			var st := w.sites.get_site(u.order_gid)
+			var reach := SimSites.reach(st) if not st.is_empty() else 0.0
+			if st.is_empty():
+				_finish_order(u)
+			elif u.pos.distance_to(st.pos) > reach:
+				_move_to(u, st.pos, reach * 0.6)
+			elif String(st.kind) == "pond":
+				_finish_order(u)
+			else:
+				u.order = O.NONE
+				if not w.sites.begin(u, st):
+					_finish_order(u)
 
 ## Who may receive an item: an allied hero or the giver's own courier, alive, with a free slot.
 func give_error(u: SimUnit, t: SimUnit) -> String:
@@ -679,7 +705,7 @@ func _fly_to(u: SimUnit, goal: Vector2, stop_dist: float) -> bool:
 		return false
 	var step := minf(u.move_speed * C.DT, maxf(0.0, dir.length() - stop_dist * 0.5))
 	var np := u.pos + Vector2.from_angle(u.facing) * step
-	u.pos = Vector2(clampf(np.x, -7900.0, 7900.0), clampf(np.y, -7900.0, 7900.0))
+	u.pos = Vector2(clampf(np.x, -SimMap.EDGE, SimMap.EDGE), clampf(np.y, -SimMap.EDGE, SimMap.EDGE))
 	u.moving = step > 0.01
 	return u.pos.distance_to(goal) <= maxf(stop_dist, 4.0)
 

@@ -372,7 +372,11 @@ func _javelin_node() -> Node3D:
 	cone.bottom_radius = 0.13
 	cone.height = 0.55
 	head.mesh = cone
-	head.material_override = FireFx.core(0.1).material_override
+	# only the core's material is wanted: free the node it came on (a node never added to the scene leaks, and at quit
+	# the leaked meshes crashed the renderer's teardown)
+	var tmp := FireFx.core(0.1)
+	head.material_override = tmp.material_override
+	tmp.free()
 	head.rotation.x = -PI * 0.5
 	head.position.z = -1.4
 	n.add_child(head)

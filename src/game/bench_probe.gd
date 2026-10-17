@@ -20,11 +20,24 @@ var first := false
 
 func _ready() -> void:
 	if first:
-		RenderingServer.frame_pre_draw.connect(func(): pre_draw = Time.get_ticks_usec())
-		RenderingServer.frame_post_draw.connect(func():
-			post_draw = Time.get_ticks_usec()
-			flush_us = pre_draw - proc_end
-			draw_us = post_draw - pre_draw)
+		RenderingServer.frame_pre_draw.connect(_on_pre_draw)
+		RenderingServer.frame_post_draw.connect(_on_post_draw)
+
+## The rendering server outlives this node: let go of its signals when leaving (a lambda left connected crashed the
+## game on quit after every benchmark).
+func _exit_tree() -> void:
+	if RenderingServer.frame_pre_draw.is_connected(_on_pre_draw):
+		RenderingServer.frame_pre_draw.disconnect(_on_pre_draw)
+	if RenderingServer.frame_post_draw.is_connected(_on_post_draw):
+		RenderingServer.frame_post_draw.disconnect(_on_post_draw)
+
+static func _on_pre_draw() -> void:
+	pre_draw = Time.get_ticks_usec()
+
+static func _on_post_draw() -> void:
+	post_draw = Time.get_ticks_usec()
+	flush_us = pre_draw - proc_end
+	draw_us = post_draw - pre_draw
 
 func _mark_start() -> void:
 	var now := Time.get_ticks_usec()

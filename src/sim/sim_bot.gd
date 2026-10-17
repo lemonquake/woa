@@ -142,7 +142,7 @@ func brain() -> SimTeamAI:
 	return w.brain(h.team) if h != null else null
 
 const ORDER_NAMES := ["None", "Move", "Attack", "Attack move", "Hold", "Stop", "Cast", "Cast", "Cast", "Follow",
-	"Drop item", "Pick up item", "Give item", "Take orb"]
+	"Drop item", "Pick up item", "Give item", "Take orb", "Use site"]
 
 func say(text: String, key := "", every := 30.0, urgent := false) -> void:
 	var b := brain()
@@ -177,6 +177,7 @@ func think() -> void:
 	_was_alive = true
 	var pt := Time.get_ticks_usec() if w.profiling else 0
 	_learn(h)
+	if w.profiling: pt = w._prof("  bot:learn", pt)
 	_shop(h)
 	if bool(sk.spells):
 		_items(h)
@@ -210,11 +211,16 @@ func think() -> void:
 	# Azrael's door (hers, and every bot stepping into an allied one when hurt)
 	if SimBot17.tick(self, h):
 		return
+	if w.profiling: pt = w._prof("  bot:door", pt)
 	# Blau's turrets (his own piloting and turret drops, and every bot knocking enemy turrets down)
 	if SimBot16.tick(self, h):
 		return
+	if w.profiling: pt = w._prof("  bot:turret", pt)
 	if mode != "retreat" and mode != "fight" and _grab_orb(h):
 		return
+	if _use_site(h):
+		return
+	if w.profiling: pt = w._prof("  bot:orb_site", pt)
 	_run_mode(h)
 	if w.profiling: w._prof("  bot:run_" + mode, pt)
 
@@ -244,6 +250,81 @@ func _grab_orb(h: SimUnit) -> bool:
 		_order(h, {"type": O.PICKUP_ORB, "orb": int(best.id)}, true)
 	state = "orb"
 	return true
+
+## Map sites (SimSites) on the way: a Lily Pond with lilies when hurt or low on mana and no enemy hero near it; a dark
+## Lookout Lamp close by when nothing threatens. Warp Gates are used by _go for long walks.
+var site_uses := {}                         # report counters (bot games): "lily", "lamp", "gate" -> times
+var _site_goal := -1                        # the site it is walking to (-1 none)
+
+func _use_site(h: SimUnit) -> bool:
+	if w.sites == null or mode == "fight" or w.time < 0.0:
+		_site_goal = -1
+		return false
+	var chased := not _chasers(h).is_empty()
+	var hurt := h.max_hp - h.hp >= 110.0 or (h.max_mana > 0.0 and h.max_mana - h.mana >= 110.0 and role != 1)
+	for s in w.sites.sites:
+		var p: Vector2 = s.pos
+		var d := h.pos.distance_to(p)
+		match String(s.kind):
+			"pond":
+				if not hurt or int(s.lilies) <= 0 or chased:
+					continue
+				if not w.vision.cell_visible(h.team, p) and d > 1600.0:
+					continue
+				# going home to heal: a pond with two lilies or more on the way (nearer than the fountain) will do
+				var reach := 1500.0
+				if mode in ["heal", "retreat"]:
+					reach = 4500.0 if int(s.lilies) >= 2 and d < h.pos.distance_to(w.map.fountains[h.team]) else 2600.0
+				if d > reach or _enemy_near_spot(p, 1000.0):
+					continue
+				if d > SimSites.POND_RANGE * 0.5:
+					_go_direct(h, p)
+				state = "lily"
+				if _site_goal != int(s.id):
+					_site_goal = int(s.id)
+					site_uses["lily"] = int(site_uses.get("lily", 0)) + 1
+				return true
+			"lamp":
+				# supports go out of their way to light lamps (Dota's supports take the Watchers); others on the way
+				var lamp_reach := 3500.0 if role >= 4 and mode in ["lane", "farm", "ward", "stack"] and w.time > 60.0 else 1100.0
+				if mode in ["retreat", "heal", "fight"] or chased or d > lamp_reach:
+					continue
+				if w.sites.lamp_lit(s, h.team) or w.time < float(s.out_until) or _enemy_near_spot(h.pos, 1100.0):
+					continue
+				if h.order != O.USE_SITE or h.order_gid != int(s.id):
+					_order(h, {"type": O.USE_SITE, "site": int(s.id)}, true)
+					site_uses["lamp"] = int(site_uses.get("lamp", 0)) + 1
+				_site_goal = int(s.id)
+				state = "lamp"
+				return true
+	_site_goal = -1
+	return false
+
+## Whether an enemy hero its team knows of stands within `r` of a spot.
+func _enemy_near_spot(p: Vector2, r: float) -> bool:
+	for e in _known:
+		if e.pos.distance_to(p) < r:
+			return true
+	return false
+
+## A Warp Gate that shortens a long walk to `p` a lot (the 4 s channel counted as walking), or {}.
+func _gate_for(h: SimUnit, p: Vector2) -> Dictionary:
+	if w.sites == null or mode in ["fight", "retreat"] or w.time < 0.0:
+		return {}
+	var direct := h.pos.distance_to(p)
+	if direct < 5000.0 or (h.max_mana > 0.0 and h.mana < SimSites.GATE_MANA + 40.0):
+		return {}
+	var best: Dictionary = {}
+	var bc := direct * 0.7
+	for g in w.sites.of_kind("gate"):
+		var to := w.sites.get_site(int(g.pair))
+		if to.is_empty():
+			continue
+		var cost := h.pos.distance_to(g.pos) + (to.exit as Vector2).distance_to(p) + SimSites.GATE_CHANNEL * h.move_speed + 300.0
+		if cost < bc and not _enemy_near_spot(g.pos, 1200.0):
+			bc = cost
+			best = g
+	return best
 
 func _pregame(h: SimUnit) -> void:
 	mode = "lane"
@@ -2642,20 +2723,25 @@ func _sludge_stench(h: SimUnit, enemy_heroes: Array[SimUnit], foes: Array[SimUni
 	if h.ability_level_of("stench") <= 0:
 		return
 	var r := w.abilities.val(h, "stench", "radius")
+	# once on it stays on while targets are a little farther or fewer (it flipped 188 times in a 25-minute game)
+	var on := bool(h.toggles.get("stench", false))
 	var want := false
 	for e in enemy_heroes:
-		if h.edge_distance(e) < r + 60.0:
+		if h.edge_distance(e) < r + (220.0 if on else 60.0):
 			want = true
 	var crowd := 0
 	for f in foes:
-		if h.edge_distance(f) < r:
+		if h.edge_distance(f) < r + (150.0 if on else 0.0):
 			crowd += 1
-	if crowd >= 3 and h.hp > h.max_hp * 0.5:
+	if crowd >= (2 if on else 3) and h.hp > h.max_hp * 0.5:
 		want = true
 	if h.hp < h.max_hp * 0.25 and enemy_heroes.is_empty():
 		want = false
-	if want != bool(h.toggles.get("stench", false)):
+	if want != on and (w.time >= _stench_flip_at or h.hp < h.max_hp * 0.25):
+		_stench_flip_at = w.time + 2.0
 		_order(h, {"type": O.CAST_NO_TARGET, "ability": "stench"}, true)
+
+var _stench_flip_at := 0.0
 
 ## Blood Ranger: the ultimate when a fight is on, Gale Impact through the enemy (leading a running target), and
 ## Burst Shot into the enemy hero when few creeps stand around it to soak the arrows.
@@ -2705,6 +2791,16 @@ func _has_mod(h: SimUnit, mid: String) -> bool:
 	return false
 
 func _go(h: SimUnit, p: Vector2) -> void:
+	var g := _gate_for(h, p)
+	if not g.is_empty():
+		if h.order != O.USE_SITE or h.order_gid != int(g.id):
+			_order(h, {"type": O.USE_SITE, "site": int(g.id)}, true)
+			site_uses["gate"] = int(site_uses.get("gate", 0)) + 1
+		return
+	_order(h, {"type": O.MOVE, "point": p})
+
+## A move order without the Warp Gate detour.
+func _go_direct(h: SimUnit, p: Vector2) -> void:
 	_order(h, {"type": O.MOVE, "point": p})
 
 ## Re-issue an order only when it differs from the last one (players do not spam either).
