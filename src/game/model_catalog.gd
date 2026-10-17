@@ -155,20 +155,22 @@ const MODELS := {
 ## The motion-capture clips each hero plays (run 2026-10-18 d; MocapClips, tools/blender/mocap_clips.json), laid over
 ## its MODELS entry when the library is present: idle, attack, cast and deaths are replaced, and "anims" turns the old
 ## clip names the game asks for (ability clips, hit reactions, stun, the stage's idle and flourish) into mocap ones.
-## Clips not named keep the old ones (runs, glides, Leap Strike's timed leap, knockbacks). Azrael keeps her staff idle
-## and glide, and swings only the slashes whose blade head moves the way her scythe's blade faces (swing_dir.gd).
+## Run 2026-10-18 e added the runs (one per weapon: great sword, sword and shield, axe, bow, spell), Leap Strike's leap,
+## Caziel's dash-stab (his double stab) and the push clips (MOCAP_ALL). The spinning third great sword slash is left out:
+## its body turns half round while it fades in, and no crossfade from a stance gets there without a flip. Azrin and Azrael keep their staff idle and glide; Azrael swings only
+## the slashes whose blade head moves the way her scythe's blade faces (swing_dir.gd).
 const MOCAP := {
-	"hero": {"idle": "bow_idle", "attack": ["bow_shoot"], "death": "bow_death_1", "deaths": ["bow_death_1", "bow_death_2"],
+	"hero": {"run": "bow_run", "run_female": "bow_run", "idle": "bow_idle", "attack": ["bow_shoot"], "death": "bow_death_1", "deaths": ["bow_death_1", "bow_death_2"],
 		"anims": {"idle_bow": "bow_idle", "bow_1": "bow_shoot", "bow_draw_hold": "bow_hold", "bow_release": "bow_loose",
 			"dodge_step": "bow_dodge", "hit_heavy": "hit_big", "hit_light": "bow_hit", "hit_front": "bow_hit",
 			"idle_hurt": "dizzy"}},
-	"hero_ezee": {"idle": "greatsword_idle", "cast": "greatsword_cast", "death": "greatsword_death_1",
-		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_3", "greatsword_slash_4"],
+	"hero_ezee": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_idle", "cast": "greatsword_cast", "death": "greatsword_death_1",
+		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"],
 		"deaths": ["greatsword_death_1", "greatsword_death_2"],
 		"anims": {"idle_2h": "greatsword_idle", "cast_quick": "greatsword_cast", "cast_weapon": "greatsword_cast",
-			"boss_slam": "greatsword_slam", "boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit",
+			"boss_slam": "greatsword_slam", "leap_slam": "greatsword_leap", "boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit",
 			"hit_light": "greatsword_hit_small", "hit_front": "greatsword_hit_small", "idle_hurt": "dizzy"}},
-	"hero_sludge": {"idle": "axe_idle", "attack": ["axe_chop", "axe_sweep", "axe_backhand"], "cast": "hook_throw",
+	"hero_sludge": {"run": "axe_run", "run_female": "axe_run", "idle": "axe_idle", "attack": ["axe_chop", "axe_sweep", "axe_backhand"], "cast": "hook_throw",
 		"death": "death_from_front", "deaths": ["death_from_front", "death_fall_back"],
 		"anims": {"idle_1h": "axe_idle", "cast_quick": "hook_throw", "cast_channel": "neck_bite", "devour": "neck_bite",
 			"hero_axe_smash": "axe_chest_thump", "hit_heavy": "axe_hit", "hit_light": "hit_small", "hit_front": "hit_small",
@@ -178,31 +180,62 @@ const MOCAP := {
 		"anims": {"cast_heavy": "javelin_throw", "cast_area": "spell_area", "cast_quick": "spell_quick",
 			"cast_ultimate": "spell_big", "hit_heavy": "hit_big", "hit_light": "hit_small", "hit_front": "hit_small",
 			"idle_hurt": "dizzy"}},
-	"hero_froster": {"idle": "spell_idle", "attack": ["spell_strike_1", "spell_strike_2"], "cast": "spell_quick",
+	"hero_froster": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle", "attack": ["spell_strike_1", "spell_strike_2"], "cast": "spell_quick",
 		"death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
 		"anims": {"idle_staff": "spell_idle", "cast_heavy": "spell_heavy", "cast_quick": "spell_quick",
 			"cast_channel": "spell_channel", "cast_area": "spell_area", "hit_heavy": "hit_big", "hit_light": "hit_small",
 			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
-	"hero_caziel": {"idle": "knife_idle", "attack": ["dagger_stab_1", "dagger_stab_2", "dagger_stab_3"],
+	"hero_caziel": {"run": "spell_run", "run_female": "spell_run", "idle": "knife_idle", "attack": ["dagger_stab_1", "dagger_stab_2", "dagger_stab_3"],
 		"death": "death_from_front", "deaths": ["death_from_front", "death_from_back"],
-		"anims": {"idle_shadowblade": "knife_idle", "hit_heavy": "hit_big", "hit_light": "hit_small",
+		"anims": {"idle_shadowblade": "knife_idle", "blink": "dagger_stab_1", "hit_heavy": "hit_big", "hit_light": "hit_small",
 			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
-	"hero_tock": {"idle": "spell_idle_2", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
+	"hero_tock": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle_2", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
 		"cast": "spell_quick", "death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
 		"anims": {"idle_wand": "spell_idle_2", "cast_quick": "spell_quick", "cast_area": "spell_area",
 			"cast_ultimate": "spell_big", "wand_heavy": "spell_wave", "hit_heavy": "hit_big", "hit_light": "hit_small",
 			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
-	"hero_kragg": {"idle": "shield_idle", "attack": ["shield_slash_1", "shield_slash_2", "shield_slash_3"],
+	"hero_kragg": {"run": "shield_run", "run_female": "shield_run", "idle": "shield_idle", "attack": ["shield_slash_1", "shield_slash_2", "shield_slash_3"],
 		"cast": "shield_push", "death": "shield_death_1", "deaths": ["shield_death_1", "shield_death_2"],
 		"anims": {"idle_shield": "shield_idle", "shield_bash": "shield_push", "war_cry": "shield_power",
 			"boss_roar": "shield_slam", "hit_heavy": "shield_hit", "hit_light": "shield_hit", "hit_front": "shield_hit",
 			"idle_hurt": "dizzy"}},
-	"hero_azrael": {"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_3"], "cast": "greatsword_cast",
+	# the five heroes of hero_ideas.txt (run 2026-10-18 e): Emelrich swings the great sword set, Burak swings both axes
+	# (the two-weapon slashes; the axe set's one-handed swings left his second axe flopping) and keeps the axe idle,
+	# Ghorman the axe set (he thumps his chest on the stage), Feran throws his knives overhand, Airah the spell set
+	"hero_emelrich": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_idle", "cast": "greatsword_cast", "death": "greatsword_death_1",
+		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"],
+		"deaths": ["greatsword_death_1", "greatsword_death_2"],
+		"anims": {"idle_2h": "greatsword_idle", "cast_weapon": "greatsword_cast", "cast_quick": "greatsword_cast",
+			"boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit", "hit_light": "greatsword_hit_small",
+			"hit_front": "greatsword_hit_small", "idle_hurt": "dizzy"}},
+	"hero_burak": {"run": "axe_run", "run_female": "axe_run", "idle": "axe_idle", "attack": ["dual_slash_1", "dual_slash_2"], "cast": "axe_battle_cry",
+		"death": "death_from_front", "deaths": ["death_from_front", "death_from_back"],
+		"anims": {"idle_dual": "axe_idle", "war_cry": "axe_battle_cry", "hit_heavy": "axe_hit", "hit_light": "hit_small",
+			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_ghorman": {"run": "axe_run", "run_female": "axe_run", "idle": "axe_idle", "attack": ["axe_chop", "axe_sweep", "axe_backhand"], "cast": "axe_battle_cry",
+		"death": "death_from_front", "deaths": ["death_from_front", "death_fall_back"],
+		"anims": {"idle_1h": "axe_idle", "war_cry": "axe_chest_thump", "hit_heavy": "axe_hit", "hit_light": "hit_small",
+			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_feran": {"run": "spell_run", "run_female": "spell_run", "idle": "knife_idle", "attack": ["javelin_throw"], "cast": "spell_quick", "death": "death_from_front",
+		"deaths": ["death_from_front", "death_from_back"],
+		"anims": {"idle_dagger": "knife_idle", "cast_quick": "spell_quick", "hit_heavy": "hit_big", "hit_light": "hit_small",
+			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_airah": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle_2", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
+		"cast": "spell_area", "death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
+		"anims": {"idle_mage": "spell_idle_2", "cast_area": "spell_area", "cast_quick": "spell_quick",
+			"hit_heavy": "hit_big", "hit_light": "hit_small", "hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	"hero_azrael": {"attack": ["greatsword_slash_1", "greatsword_slash_2"], "cast": "greatsword_cast",
 		"death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
 		"anims": {"cast_quick": "greatsword_cast", "cast_heavy": "spell_heavy", "cast_ultimate": "spell_big",
 			"gs_heavy": "greatsword_power",
 			"hit_heavy": "hit_big", "hit_light": "hit_small", "hit_front": "hit_small", "idle_hurt": "dizzy"}},
 }
+
+## The clips every motion-capture hero plays for being pushed (run 2026-10-18 e): a stagger back that stays on its
+## feet (a push in Dota does not knock a hero down), its recovery, the stagger's peak held while thrown through the air,
+## and a big hit from behind for slamming into a wall. A model's own "anims" win.
+const MOCAP_ALL := {"knockback": "stagger_back", "getup": "stagger_recover", "launch": "stagger_air",
+	"wall_impact": "hit_from_back"}
 
 static var _meta := {}
 static var _scenes := {}
@@ -218,6 +251,9 @@ static func info(model_key: String) -> Dictionary:
 		var mc: Dictionary = MOCAP[model_key]
 		for k in mc:
 			m[k] = mc[k]
+		var an: Dictionary = MOCAP_ALL.duplicate()
+		an.merge(mc.get("anims", {}), true)
+		m["anims"] = an
 		_merged[model_key] = m
 	return _merged[model_key]
 

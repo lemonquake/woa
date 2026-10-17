@@ -487,7 +487,7 @@ func tick(u: SimUnit) -> void:
 			# caught by a Shuriken Hook: hauled along, limbs trailing
 			if _state != "drag":
 				_state = "drag"
-				_play("knockback", false, 0.5, 0.06, true)
+				_play("knockback", false, 0.5, 0.06, true, 0.25)
 			return
 		if u.knock.get("phys", false):
 			var airborne: bool = float(u.knock.z) > 0.0 or float(u.knock.vz) > 0.0
@@ -495,13 +495,13 @@ func tick(u: SimUnit) -> void:
 				return
 			if airborne and _state != "air":
 				_state = "air"
-				_play("launch", true, 1.2, 0.06)
+				_play("launch", true, 1.2, 0.06, false, 0.25)
 			elif not airborne and _state == "air":
 				_state = "slide"
-				_play("knockback", false, 1.6, 0.08, true)
+				_play("knockback", false, 1.6, 0.08, true, 0.25)
 		elif _state != "knock":
 			_state = "knock"
-			_play("knockback", false, 1.2 / maxf(0.2, float(u.knock.dur)) * 0.55, 0.06, true)
+			_play("knockback", false, 1.2 / maxf(0.2, float(u.knock.dur)) * 0.55, 0.06, true, 0.25)
 		return
 	# Burst Shot: the bow stays drawn while the channel lasts; each wave is a snap release, then a fresh draw
 	if not u.channel.is_empty() and String(u.channel.ability) == "chomp":
@@ -529,7 +529,7 @@ func tick(u: SimUnit) -> void:
 	if u.has_flag("stun"):
 		if _state != "stun":
 			_state = "stun"
-			_play("hit_heavy", false, 1.3, 0.06, true)
+			_play("hit_heavy", false, 1.3, 0.06, true, 0.3)
 			_stun_loop_at = now + 0.4
 		elif now >= _stun_loop_at and _clip != _stun_clip():
 			_play(_stun_clip(), true, 0.75, 0.2)
@@ -539,6 +539,7 @@ func tick(u: SimUnit) -> void:
 		_lock_until = 0.0
 	if now < _lock_until and u.moving == false:
 		return
+	_moving = u.moving
 	_gliding = u.moving and bool(cfg.get("glide", false))
 	_glide_speed = u.move_speed if _gliding else 0.0
 	if u.moving:
@@ -553,13 +554,15 @@ func tick(u: SimUnit) -> void:
 		var run := String(cfg.get("run", "run"))
 		if cfg.has("run_female") and float(u.look.get("look", {}).get("female", 0.0)) >= 0.5:
 			run = String(cfg.run_female)
-		var gs := float(ModelCatalog.clip(run).get("ground_speed", 5.0)) * _model_scale
+		# the clip's ground speed scales with the model's size and its legs (a short-legged body strides shorter)
+		var gs := float(ModelCatalog.clip(run).get("ground_speed", 5.0)) * _model_scale * MocapClips.leg_scale(skeleton)
 		var spd := clampf(u.move_speed * View.S / maxf(gs, 0.1), float(cfg.get("run_min", 0.4)), 2.5)
 		_play(run, true, spd, 0.12)
 	elif now >= _lock_until:
 		_play(String(cfg.idle), true, 1.0, 0.25)
 
 var _stun_loop_at := 0.0
+var _moving := false
 
 func _stun_clip() -> String:
 	if anim and anim.has_animation("idle_hurt"):
@@ -599,7 +602,7 @@ func on_attack_start(point_time: float) -> void:
 		_swing_until = _delayed_at + 0.1
 		return
 	var spd := clampf(strike / maxf(point_time, 0.05), 0.35, 3.0)
-	_play(clip, false, spd, 0.06, true)
+	_play(clip, false, spd, 0.06, true, maxf(0.22, 0.9 * strike / spd))
 	var length := float(ModelCatalog.clip(clip).get("length", 0.6))
 	_lock_until = _now() + length / spd
 	_swing_until = _now() + (strike / spd) * 1.35
@@ -652,35 +655,39 @@ func on_cast_start(aid: String, cast_point: float) -> void:
 	if aid == "leap_strike":
 		release = float((meta.get("airborne", [0.333, 0.7]) as Array)[0])
 	var spd := clampf(release / maxf(cast_point, 0.05), 0.5, 3.0) if cast_point > 0.0 else 1.6
-	_play(clip, false, spd, 0.06, true)
+	_play(clip, false, spd, 0.06, true, maxf(0.22, 0.9 * release / spd))
 	var length := float(meta.get("length", 0.6))
 	# after the release the clip finishes at a natural pace
 	_lock_until = _now() + cast_point + maxf(0.0, length - release) / maxf(1.0, spd * 0.8)
 	_swing_until = _now() + cast_point + 0.25
 
 ## Leap Strike took off: stretch the airborne part of the clip so its strike frame lands with the simulation.
+## The clip's "airborne" [take-off, landing] and its blow come from its timings (the old leap or its mocap stand-in).
 func on_leap(dur: float) -> void:
-	if anim == null or _clip != "leap_slam":
+	if anim == null:
+		return
+	var ls := ModelCatalog.anim(cfg, "leap_slam")
+	if _clip != ls:
 		_play("leap_slam", false, 1.0, 0.05, true)
-		anim.seek(0.333, true)
+		anim.seek(float((ModelCatalog.clip(ls).get("airborne", [0.333, 0.7]) as Array)[0]), true)
 	var pos := anim.current_animation_position
-	var hit := 0.62
+	var hit := ModelCatalog.strike_time(ls)
 	anim.speed_scale = clampf((hit - pos) / maxf(0.1, dur), 0.25, 2.0)
 	_lock_until = _now() + dur + 0.6
 
 func on_leap_land() -> void:
-	if anim and _clip == "leap_slam":
+	if anim and _clip == ModelCatalog.anim(cfg, "leap_slam"):
 		anim.speed_scale = 1.1
 	_lock_until = _now() + 0.42
 
 ## A pushed unit slammed into a wall, tree, building or another unit.
 func on_impact(what: String) -> void:
 	if what == "unit":
-		_play("hit_heavy", false, 1.6, 0.04, true)
+		_play("hit_heavy", false, 1.6, 0.04, true, 0.2)
 		_lock_until = _now() + 0.25
 		return
 	_state = "wall"
-	_play("wall_impact", false, 1.5, 0.04, true)
+	_play("wall_impact", false, 1.5, 0.04, true, 0.2)
 	_lock_until = _now() + 0.45
 
 static var _flash_mat: StandardMaterial3D
@@ -702,10 +709,12 @@ func on_hit(from: Vector2, amount: float, max_hp: float, attack: bool) -> void:
 	var strength := clampf(0.05 + frac * 1.2, 0.05, 0.22)
 	_flinch = Vector2(-local.y, -local.x) * strength
 	_flinch_t = 0.0
-	if _state == "" and _dead_at < 0.0 and _now() >= _lock_until and heavy:
+	# a hit reaction only when standing: running, the lean above is the reaction (a clip there yanked the legs out of
+	# the stride and back)
+	if _state == "" and _dead_at < 0.0 and _now() >= _lock_until and heavy and not _moving:
 		var clip := "hit_heavy" if frac > 0.2 else ("hit_front" if local.x < 0.0 else "hit_light")
 		if anim and anim.has_animation(clip):
-			_play(clip, false, 1.25, 0.05, true)
+			_play(clip, false, 1.25, 0.05, true, 0.3)
 			_lock_until = _now() + 0.32
 
 ## A brief white flash when hit.
@@ -744,7 +753,9 @@ func death_knock(from: Vector2, damage: float) -> void:
 	_knock_h = dist / 200.0 * 0.5
 	_knock_t = 0.0
 
-func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := false) -> void:
+## blend: the shortest crossfade; AnimBlend stretches it so a big pose gap is not squeezed into a snap, up to `cap`
+## (seconds; an attack or cast passes the time to its blow so the blend ends before it).
+func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := false, cap := AnimBlend.MAX) -> void:
 	if anim == null:
 		return
 	clip = ModelCatalog.anim(cfg, clip)
@@ -772,6 +783,8 @@ func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := fal
 		anim.speed_scale = speed
 		return
 	_clip = clip
+	if skeleton and a:
+		blend = AnimBlend.time(skeleton, a, 0.0, blend, cap, speed, is_hero)
 	anim.play(clip, blend, 1.0)
 	anim.speed_scale = speed
 	if restart:

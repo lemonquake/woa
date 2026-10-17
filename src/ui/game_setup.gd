@@ -251,7 +251,8 @@ func _set_hero(t: int, i: int, id: String) -> void:
 	var s: Dictionary = GameSettings.setup.teams[t][i]
 	if s.kind == "you":
 		if id == "random":
-			id = GameSettings.HEROES[randi() % GameSettings.HEROES.size()]
+			var pool := GameSettings.random_pool()
+			id = pool[randi() % pool.size()]
 		GameSettings.select(id)
 		GameSettings.save()
 	s.hero = id

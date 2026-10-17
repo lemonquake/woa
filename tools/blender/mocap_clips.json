@@ -63,5 +63,17 @@
  "dizzy": {"src": "x_dizzy_idle", "place": "loop", "loop": true},
  "death_from_front": {"src": "x_death_from_the_front", "place": "keep"},
  "death_from_back": {"src": "x_death_from_the_back", "place": "keep"},
- "death_fall_back": {"src": "x_falling_back_death", "place": "keep"}
+ "death_fall_back": {"src": "x_falling_back_death", "place": "keep"},
+ "greatsword_run": {"src": "gs_08_great_sword_run", "place": "loop", "loop": true, "run": true},
+ "shield_run": {"src": "ss_01_sword_and_shield_run", "place": "loop", "loop": true, "run": true},
+ "axe_run": {"src": "axe_24_standing_run_forward", "place": "loop", "loop": true, "run": true},
+ "bow_run": {"src": "bow_25_standing_run_forward", "place": "loop", "loop": true, "run": true},
+ "spell_run": {"src": "mag_46_Standing_Run_Forward", "place": "loop", "loop": true, "run": true},
+ "greatsword_leap": {"src": "gs_33_great_sword_jump_attack", "end": 50, "place": "zero", "flat": true, "airborne": "auto", "reach": 1.1},
+ "stagger_back": {"src": "x_receiving_a_big_uppercut", "end": 34, "place": "zero"},
+ "stagger_recover": {"src": "x_receiving_a_big_uppercut", "start": 34, "place": "zero"},
+ "stagger_air": {"src": "x_receiving_a_big_uppercut", "start": 6, "end": 24, "place": "zero", "loop": true},
+ "hit_from_back": {"src": "mag_37_Standing_React_Large_From_Back", "end": 40, "place": "zero"},
+ "dual_slash_1": {"src": "x_dual_weapon_combo", "start": 0, "end": 26, "place": "zero", "hand": "both"},
+ "dual_slash_2": {"src": "x_dual_weapon_combo", "start": 24, "end": 50, "place": "zero", "hand": "both"}
 }

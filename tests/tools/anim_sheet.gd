@@ -67,6 +67,11 @@ func _clips(id: String) -> Array:
 		if an != "" and not (an in out):
 			out.append(an)
 	out.append(String(cfg.get("run", "run")))
+	# pushes, the stun, hit reactions and deaths, as the game plays them (their motion-capture stand-ins)
+	for c in ["knockback", "getup", "launch", "wall_impact", "hit_heavy", "hit_light", "idle_hurt"] + Array(cfg.get("deaths", [cfg.get("death", "death")])):
+		var mc := ModelCatalog.anim(cfg, String(c))
+		if not (mc in out):
+			out.append(mc)
 	return out
 
 func _run() -> void:

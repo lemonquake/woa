@@ -12,13 +12,17 @@ const ACCENTS := {
 	"blood_ranger": Color(0.95, 0.22, 0.25), "ezee": Color(0.66, 0.3, 1.0), "azrin": Color(1.0, 0.5, 0.15),
 	"sludge": Color(0.55, 0.78, 0.3), "froster": Color(0.45, 0.82, 1.0), "caziel": Color(0.66, 0.36, 1.0),
 	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0), "roydo": Color(0.62, 0.42, 1.0),
-	"blau": Color(0.35, 0.82, 1.0), "azrael": Color(0.92, 0.12, 0.16)}
+	"blau": Color(0.35, 0.82, 1.0), "azrael": Color(0.92, 0.12, 0.16), "airah": Color(0.55, 0.92, 0.85),
+	"burak": Color(1.0, 0.32, 0.18), "emelrich": Color(1.0, 0.88, 0.55), "feran": Color(0.95, 0.25, 0.45),
+	"ghorman": Color(0.55, 0.85, 0.35)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
 	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
-	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy"}
+	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy", "airah": "cast_area",
+	"burak": "war_cry", "emelrich": "boss_roar", "feran": "cast_quick", "ghorman": "war_cry"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_staff", "sludge": "idle_1h",
 	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
-	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff"}
+	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff", "airah": "idle_mage",
+	"burak": "idle_dual", "emelrich": "idle_2h", "feran": "idle_dagger", "ghorman": "idle_1h"}
 
 var hero_id := ""
 var model: Node3D
@@ -413,6 +417,12 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 		if flourish and anim.has_animation(fl):
 			_play(fl, false)
 			anim.queue(idle)
+			if anim.has_animation(idle) and skeleton:
+				# the flourish eases back into the idle (the queue's default blend is a cut)
+				var fa := anim.get_animation(fl)
+				var ia0 := anim.get_animation(idle)
+				anim.set_blend_time(fl, idle, AnimBlend.time_from(skeleton, AnimBlend.clip_pose(skeleton, fa, fa.length),
+					ia0, 0.0, 0.25))
 		else:
 			_play(idle, true)
 		var ia := anim.get_animation(idle)
@@ -424,7 +434,7 @@ func _play(clip: String, loop: bool) -> void:
 		return
 	var a := anim.get_animation(clip)
 	a.loop_mode = Animation.LOOP_LINEAR if loop else Animation.LOOP_NONE
-	anim.play(clip, 0.2)
+	anim.play(clip, AnimBlend.time(skeleton, a, 0.0, 0.2) if skeleton else 0.2)
 
 ## The element round the hero on the stage.
 func _stage_aura(id: String, cfg: Dictionary) -> void:

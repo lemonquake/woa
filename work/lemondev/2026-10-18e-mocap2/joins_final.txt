@@ -1,0 +1,86 @@
+== blood_ranger (hero.glb; idle bow_idle, run bow_run)
+  FAIL join bow_idle               -> stagger_back           blend 0.25s: snap 12.3 deg (hand.R at +0.23s), gap 170 deg (from 3.82s)
+  ok   slide bow_run: planted foot at 0.94x the ground speed (3.42 m/s)
+  -> 49 joins and 4 loops checked, worst snap 12.3 deg (bow_idle -> stagger_back), 1 failures
+== ezee (ezee.glb; idle greatsword_idle, run greatsword_run)
+  ok   slide greatsword_run: planted foot at 1.15x the ground speed (2.48 m/s)
+  -> 56 joins and 4 loops checked, worst snap 10.9 deg (stagger_back -> hit_from_back), 0 failures
+== sludge (sludge.glb; idle axe_idle, run axe_run)
+  ok   slide axe_run: planted foot at 0.86x the ground speed (2.40 m/s)
+  -> 48 joins and 5 loops checked, worst snap 11.7 deg (axe_chop -> axe_hit), 0 failures
+== azrin (azrin.glb; idle idle_staff, run glide_fwd)
+  -> 51 joins and 4 loops checked, worst snap 10.3 deg (glide_fwd -> spell_quick), 0 failures
+== froster (hero.glb; idle spell_idle, run spell_run)
+  ok   slide spell_run: planted foot at 0.88x the ground speed (3.70 m/s)
+  -> 47 joins and 4 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== caziel (caziel.glb; idle knife_idle, run spell_run)
+  ok   slide spell_run: planted foot at 1.00x the ground speed (3.70 m/s)
+  -> 48 joins and 4 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== tock (hero.glb; idle spell_idle_2, run spell_run)
+  ok   slide spell_run: planted foot at 0.88x the ground speed (3.70 m/s)
+  -> 52 joins and 4 loops checked, worst snap 11.7 deg (spell_idle_2 -> spell_quick), 0 failures
+== kragg (hero.glb; idle shield_idle, run shield_run)
+  FAIL join shield_run             -> shield_push            blend 0.16s: snap 14.5 deg (foot.R at +0.08s), gap 112 deg (from 0.17s)
+  FAIL join shield_run             -> shield_power           blend 0.25s: snap 12.3 deg (weapon.L at +0.17s), gap 109 deg (from 0.00s)
+  ok   slide shield_run: planted foot at 0.96x the ground speed (3.90 m/s)
+  -> 50 joins and 4 loops checked, worst snap 14.5 deg (shield_run -> shield_push), 2 failures
+== roydo (roydo.glb; idle roydo_idle, run roydo_run)
+  FAIL join roydo_run              -> roydo_cast_throw       blend 0.20s: snap 12.6 deg (upperarm_l at +0.17s), gap 161 deg (from 0.70s)
+  FAIL join roydo_idle             -> knockback              blend 0.25s: snap 13.9 deg (weapon.R at +0.22s), gap 114 deg (from 0.00s)
+  FAIL join roydo_run              -> knockback              blend 0.16s: snap 14.6 deg (calf_l at +0.15s), gap 152 deg (from 0.00s)
+  -> 39 joins and 4 loops checked, worst snap 14.6 deg (roydo_run -> knockback), 3 failures
+== blau (blau.glb; idle blau_idle, run blau_run_rifle)
+  FAIL join blau_run_rifle         -> blau_cast_shoot        blend 0.25s: snap 15.2 deg (upperarm_r at +0.23s), gap 176 deg (from 0.70s)
+  FAIL join blau_run_rifle         -> blau_cast_throw        blend 0.25s: snap 12.7 deg (upperarm_r at +0.20s), gap 178 deg (from 0.70s)
+  FAIL join blau_idle              -> blau_jump_start        blend 0.20s: snap 12.7 deg (index_03_l at +0.02s), gap 175 deg (from 0.00s)
+  FAIL join blau_run_rifle         -> blau_jump_start        blend 0.20s: snap 15.0 deg (upperarm_r at +0.13s), gap 177 deg (from 0.70s)
+  FAIL join blau_run_rifle         -> knockback              blend 0.16s: snap 14.6 deg (calf_l at +0.15s), gap 170 deg (from 0.00s)
+  -> 42 joins and 3 loops checked, worst snap 15.2 deg (blau_run_rifle -> blau_cast_shoot), 5 failures
+== azrael (azrael.glb; idle idle_staff, run glide_fwd)
+  FAIL join idle_staff             -> greatsword_slash_2     blend 0.30s: snap 13.0 deg (weapon.R at +0.18s), gap 138 deg (from 2.25s)
+  FAIL join glide_fwd              -> greatsword_slash_2     blend 0.30s: snap 12.9 deg (forearm.R at +0.18s), gap 144 deg (from 1.50s)
+  -> 47 joins and 4 loops checked, worst snap 13.0 deg (idle_staff -> greatsword_slash_2), 2 failures
+== airah (airah.glb; idle spell_idle_2, run spell_run)
+  ok   slide spell_run: planted foot at 0.89x the ground speed (3.70 m/s)
+  -> 44 joins and 4 loops checked, worst snap 11.4 deg (spell_idle_2 -> stagger_back), 0 failures
+== burak (burak.glb; idle axe_idle, run axe_run)
+  FAIL join axe_run                -> dual_slash_2           blend 0.30s: snap 13.8 deg (weapon.L at +0.30s), gap 158 deg (from 0.18s)
+  FAIL join axe_run                -> axe_battle_cry         blend 0.20s: snap 14.1 deg (forearm.L at +0.20s), gap 78 deg (from 0.00s)
+  ok   slide axe_run: planted foot at 0.89x the ground speed (2.40 m/s)
+  -> 39 joins and 4 loops checked, worst snap 14.1 deg (axe_run -> axe_battle_cry), 2 failures
+== emelrich (emelrich.glb; idle greatsword_idle, run greatsword_run)
+  ok   slide greatsword_run: planted foot at 1.22x the ground speed (2.48 m/s)
+  -> 44 joins and 4 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== feran (feran.glb; idle knife_idle, run spell_run)
+  ok   slide spell_run: planted foot at 0.89x the ground speed (3.70 m/s)
+  -> 34 joins and 4 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== ghorman (ghorman.glb; idle axe_idle, run axe_run)
+  FAIL join axe_run                -> axe_battle_cry         blend 0.20s: snap 16.0 deg (forearm.L at +0.20s), gap 61 deg (from 0.37s)
+  ok   slide axe_run: planted foot at 0.90x the ground speed (2.40 m/s)
+  -> 44 joins and 4 loops checked, worst snap 16.0 deg (axe_run -> axe_battle_cry), 1 failures
+== hero_emelrich (emelrich.glb; idle greatsword_idle, run greatsword_run)
+  ok   slide greatsword_run: planted foot at 1.22x the ground speed (2.48 m/s)
+  -> 42 joins and 3 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== hero_feran (feran.glb; idle knife_idle, run spell_run)
+  ok   slide spell_run: planted foot at 0.89x the ground speed (3.70 m/s)
+  -> 32 joins and 3 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== hero_burak (burak.glb; idle axe_idle, run axe_run)
+  FAIL join axe_run                -> dual_slash_2           blend 0.30s: snap 13.1 deg (hand.L at +0.30s), gap 158 deg (from 0.18s)
+  FAIL join dual_slash_2           -> dual_slash_1           blend 0.30s: snap 12.5 deg (upper_arm.L at +0.27s), gap 168 deg
+  FAIL join axe_run                -> axe_battle_cry         blend 0.20s: snap 14.1 deg (forearm.L at +0.20s), gap 78 deg (from 0.00s)
+  ok   slide axe_run: planted foot at 0.89x the ground speed (2.40 m/s)
+  -> 37 joins and 3 loops checked, worst snap 14.1 deg (axe_run -> axe_battle_cry), 3 failures
+== hero_airah (airah.glb; idle spell_idle_2, run spell_run)
+  ok   slide spell_run: planted foot at 0.89x the ground speed (3.70 m/s)
+  -> 42 joins and 3 loops checked, worst snap 11.4 deg (spell_idle_2 -> stagger_back), 0 failures
+== hero_ghorman (ghorman.glb; idle axe_idle, run axe_run)
+  FAIL join axe_run                -> axe_battle_cry         blend 0.20s: snap 16.0 deg (forearm.L at +0.20s), gap 61 deg (from 0.37s)
+  ok   slide axe_run: planted foot at 0.90x the ground speed (2.40 m/s)
+  -> 42 joins and 3 loops checked, worst snap 16.0 deg (axe_run -> axe_battle_cry), 1 failures
+== hero_ghorman_beast (ghorman_beast.glb; idle idle, run run_combat)
+  FAIL join idle                   -> boss_slam              blend 0.30s: snap 13.2 deg (hand.L at +0.25s), gap 101 deg (from 2.00s)
+  FAIL join run_combat             -> boss_slam              blend 0.12s: snap 12.1 deg (hand.R at +0.12s), gap 42 deg (from 0.50s)
+  FAIL join run_combat             -> knockback              blend 0.08s: snap 15.6 deg (hand.R at +0.08s), gap 90 deg (from 0.17s)
+  ok   slide run_combat: planted foot at 1.02x the ground speed (4.60 m/s)
+  -> 37 joins and 3 loops checked, worst snap 15.6 deg (run_combat -> knockback), 3 failures
+TOTAL failures 23

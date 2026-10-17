@@ -36,6 +36,17 @@ static func fits(scene_path: String) -> bool:
 static func collide_path(scene_path: String) -> String:
 	return DIR + "collide/" + scene_path.get_file().get_basename() + ".res"
 
+## A hero-skeleton body's leg length against the hero rig's (its resting hip height over the hero's): the hips'
+## moves and the run's ground speed scale with it. 1.0 for any other skeleton or without the library.
+static func leg_scale(sk: Skeleton3D) -> float:
+	if sk == null or library() == null or sk.owner == null or not fits(String(sk.owner.scene_file_path)):
+		return 1.0
+	var hips := sk.find_bone("hips")
+	var hero: Variant = library().get_meta("hips_rest", null)
+	if hips < 0 or not (hero is Vector3) or (hero as Vector3).y <= 0.01:
+		return 1.0
+	return clampf(sk.get_bone_rest(hips).origin.y / (hero as Vector3).y, 0.5, 1.6)
+
 ## Add every mocap clip the model does not have yet to its clip library (once per library: the library is shared by
 ## every copy of the model).
 static func add(model: Node) -> void:
@@ -51,6 +62,9 @@ static func add(model: Node) -> void:
 		if hips < 0 or sk.find_bone("hand.R") < 0:
 			return
 		var rest := sk.get_bone_rest(hips).origin
+		# the hips' moves (a crouch, a fall to the floor, a step) scale with the body's leg length: a short-legged
+		# body given the hero's metres sank into the floor in its deaths (Ser Emelrich, 26 cm)
+		var k := leg_scale(sk)
 		var prefix := String(ap.get_node(ap.root_node).get_path_to(sk))
 		for ln in ap.get_animation_library_list():
 			var lib := ap.get_animation_library(ln)
@@ -65,7 +79,7 @@ static func add(model: Node) -> void:
 					var bone := String(a.track_get_path(t)).get_slice(":", 1)
 					a.track_set_path(t, NodePath(prefix + ":" + bone))
 					if a.track_get_type(t) == Animation.TYPE_POSITION_3D:
-						for k in a.track_get_key_count(t):
-							a.track_set_key_value(t, k, rest + (a.track_get_key_value(t, k) as Vector3))
+						for i in a.track_get_key_count(t):
+							a.track_set_key_value(t, i, rest + (a.track_get_key_value(t, i) as Vector3) * k)
 				lib.add_animation(clip, a)
 			return

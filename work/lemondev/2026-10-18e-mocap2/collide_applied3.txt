@@ -1,0 +1,528 @@
+== hero.glb (blood_ranger, froster, tock, kragg): 17 shapes, height 1.80 m
+   hips       -0.05-0.10 m along, 0.072 x 0.111
+   chest      0.00-0.22 m along, 0.156 x 0.096
+   head       0.00-0.18 m along, 0.068 x 0.066
+   forearm.L  0.01-0.26 m along, 0.037 x 0.040
+   thigh.L    0.00-0.41 m along, 0.081 x 0.087
+  bow_idle           before: worst  0.0 cm (-), 0/154 frames over 1 cm
+  bow_run            before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  bow_death_1        before: worst  0.6 cm (weapon.L in foot.L f44), 0/94 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  bow_shoot          before: worst  0.0 cm (-), 0/44 frames over 1 cm
+  idle_bow           before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  bow_1              before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  bow_draw_hold      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  war_cry            before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/33 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  5.7 cm (weapon.L in shin.L f26), 6/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  bow_hold           before: worst  0.0 cm (-), 0/114 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm
+  bow_hit            before: worst  0.0 cm (-), 0/39 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  bow_dodge          before: worst  0.0 cm (-), 0/50 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  bow_death_2        before: worst  0.0 cm (-), 0/96 frames over 1 cm
+  spell_idle         before: worst  0.0 cm (-), 0/57 frames over 1 cm
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  spell_death_1      before: worst  0.0 cm (-), 0/110 frames over 1 cm
+  spell_quick        before: worst  0.0 cm (-), 0/69 frames over 1 cm
+  spell_strike_1     before: worst  0.0 cm (-), 0/62 frames over 1 cm
+  spell_strike_2     before: worst  0.0 cm (-), 0/67 frames over 1 cm
+  idle_staff         before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  cast_area          before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  cast_heavy         before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  spell_area         before: worst  0.0 cm (-), 0/72 frames over 1 cm
+  spell_heavy        before: worst  0.0 cm (-), 0/67 frames over 1 cm
+  spell_channel      before: worst  0.9 cm (weapon.R in thigh.R f36), 0/104 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  staff_1            before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  staff_2            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  spell_death_2      before: worst  0.0 cm (-), 0/111 frames over 1 cm
+  spell_idle_2       before: worst  0.0 cm (-), 0/157 frames over 1 cm
+  spell_strike_3     before: worst  0.0 cm (-), 0/70 frames over 1 cm
+  idle_wand          before: worst  0.0 cm (-), 0/81 frames over 1 cm
+  wand_heavy         before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  cast_ultimate      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  spell_wave         before: worst  0.0 cm (-), 0/69 frames over 1 cm
+  spell_big          before: worst  0.0 cm (-), 0/66 frames over 1 cm
+  wand_1             before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  wand_2             before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  wand_3             before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  shield_idle        before: worst  0.0 cm (-), 0/77 frames over 1 cm
+  shield_run         before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  shield_death_1     before: worst  0.0 cm (-), 0/70 frames over 1 cm
+  shield_push        before: worst  0.0 cm (-), 0/32 frames over 1 cm
+  shield_slash_1     before: worst  0.0 cm (-), 0/46 frames over 1 cm
+  shield_slash_2     before: worst  0.0 cm (-), 0/45 frames over 1 cm
+  shield_slash_3     before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  idle_shield        before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  shield_bash        before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  shield_power       before: worst  0.0 cm (-), 0/72 frames over 1 cm
+  shield_slam        before: worst  0.0 cm (-), 0/54 frames over 1 cm
+  shield_hit         before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  sword_1            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  sword_2            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  sword_3            before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  sword_4            before: worst  0.0 cm (-), 0/28 frames over 1 cm
+  shield_death_2     before: worst  0.0 cm (-), 0/118 frames over 1 cm
+  worst 5.7 cm
+== ezee.glb (ezee): 16 shapes, height 1.90 m
+   hips       -0.24-0.11 m along, 0.251 x 0.162
+   chest      0.00-0.20 m along, 0.333 x 0.167
+   head       0.00-0.24 m along, 0.072 x 0.070
+   forearm.L  0.03-0.17 m along, 0.057 x 0.054
+   thigh.L    0.00-0.47 m along, 0.079 x 0.133
+  greatsword_idle    before: worst  0.0 cm (-), 0/112 frames over 1 cm
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  greatsword_death_1 before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  greatsword_cast    before: worst  0.5 cm (weapon.R in head f15), 0/35 frames over 1 cm
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm
+  greatsword_slash_2 before: worst  0.0 cm (-), 0/48 frames over 1 cm
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  idle_2h            before: worst  0.0 cm (-), 0/81 frames over 1 cm
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  boss_slam          before: worst 42.0 cm (weapon.R in floor f28), 3/43 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  cast_weapon        before: worst  3.0 cm (weapon.R in chest f22), 1/26 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm
+  greatsword_slam    before: worst  0.0 cm (-), 0/77 frames over 1 cm
+  greatsword_leap    before: worst  0.0 cm (-), 0/51 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  greatsword_hit     before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  gs_1               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_2               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_3               before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  gs_4               before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  greatsword_death_2 before: worst  0.0 cm (-), 0/79 frames over 1 cm
+  worst 42.0 cm
+== sludge.glb (sludge): 17 shapes, height 1.79 m
+   hips       -0.22-0.08 m along, 0.241 x 0.165
+   chest      0.00-0.42 m along, 0.221 x 0.224
+   head       0.00-0.10 m along, 0.069 x 0.058
+   forearm.L  0.03-0.31 m along, 0.054 x 0.052
+   thigh.L    0.02-0.42 m along, 0.136 x 0.129
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm
+  axe_run            before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  death_from_front   before: worst  4.2 cm (weapon.L in floor f84), 26/104 frames over 1 cm
+  hook_throw         before: worst  0.7 cm (weapon.L in chest f9), 0/55 frames over 1 cm
+  axe_chop           before: worst  0.0 cm (-), 0/59 frames over 1 cm
+  axe_sweep          before: worst  0.0 cm (-), 0/59 frames over 1 cm
+  axe_backhand       before: worst  0.0 cm (-), 0/82 frames over 1 cm
+  idle_1h            before: worst  0.0 cm (-), 0/72 frames over 1 cm
+  hero_axe_smash     before: worst  2.8 cm (weapon.L in hand.R f34), 2/41 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/36 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/32 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/12 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/36 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  axe_chest_thump    before: worst  0.0 cm (-), 0/86 frames over 1 cm
+  neck_bite          before: worst  0.0 cm (-), 0/126 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  axe_hit            before: worst  0.0 cm (-), 0/49 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/46 frames over 1 cm
+  axe_1              before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  axe_2              before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  axe_3              before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  death_fall_back    before: worst  0.0 cm (-), 0/79 frames over 1 cm
+  worst 4.2 cm
+== azrin.glb (azrin): 16 shapes, height 1.78 m
+   hips       -0.23-0.10 m along, 0.460 x 0.187
+   chest      0.00-0.26 m along, 0.195 x 0.136
+   head       0.00-0.25 m along, 0.116 x 0.081
+   forearm.L  0.00-0.15 m along, 0.086 x 0.114
+   thigh.L    0.00-0.11 m along, 0.112 x 0.116
+  idle_staff         before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  glide_fwd          before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  spell_death_1      before: worst  0.0 cm (-), 0/110 frames over 1 cm
+  spell_quick        before: worst  0.0 cm (-), 0/69 frames over 1 cm
+  spell_strike_1     before: worst  0.0 cm (-), 0/62 frames over 1 cm
+  spell_strike_2     before: worst  0.0 cm (-), 0/67 frames over 1 cm
+  cast_area          before: worst  4.0 cm (hand.L in hips f25), 4/31 frames over 1 cm
+  cast_heavy         before: worst 17.0 cm (elbow.R in hand.L f9), 14/30 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  cast_ultimate      before: worst 21.2 cm (hand.L in chest f24), 23/41 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst 17.0 cm (elbow.R in hand.L f37), 36/61 frames over 1 cm
+  leap_slam          before: worst 12.2 cm (elbow.R in hand.L f14), 3/37 frames over 1 cm
+  blink              before: worst  3.1 cm (hand.L in chest f7), 7/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  spell_area         before: worst  0.0 cm (-), 0/72 frames over 1 cm
+  javelin_throw      before: worst  0.0 cm (-), 0/55 frames over 1 cm
+  spell_big          before: worst  0.0 cm (-), 0/66 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  staff_1            before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  staff_2            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  spell_death_2      before: worst  0.0 cm (-), 0/111 frames over 1 cm
+  worst 21.2 cm
+== caziel.glb (caziel): 17 shapes, height 1.85 m
+   hips       -0.24-0.12 m along, 0.128 x 0.142
+   chest      0.02-0.25 m along, 0.193 x 0.157
+   head       0.00-0.29 m along, 0.090 x 0.105
+   forearm.L  0.01-0.20 m along, 0.042 x 0.031
+   thigh.L    0.00-0.41 m along, 0.073 x 0.102
+  knife_idle         before: worst  0.0 cm (-), 0/135 frames over 1 cm
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  death_from_front   before: worst  0.0 cm (-), 0/104 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dagger_stab_1      before: worst  0.0 cm (-), 0/32 frames over 1 cm
+  dagger_stab_2      before: worst  0.0 cm (-), 0/33 frames over 1 cm
+  dagger_stab_3      before: worst  0.0 cm (-), 0/65 frames over 1 cm
+  idle_shadowblade   before: worst  0.0 cm (-), 0/106 frames over 1 cm
+  dual_heavy         before: worst  0.0 cm (-), 0/36 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  dual_1             before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_2             before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_3             before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  dual_4             before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  death_from_back    before: worst  0.0 cm (-), 0/90 frames over 1 cm
+  worst 0.0 cm
+== roydo.glb (roydo): 17 shapes, height 1.86 m
+   hips       -0.05-0.13 m along, 0.129 x 0.100
+   chest      0.00-0.22 m along, 0.171 x 0.115
+   head       0.00-0.22 m along, 0.056 x 0.078
+   forearm.L  0.00-0.21 m along, 0.044 x 0.051
+   thigh.L    0.00-0.40 m along, 0.079 x 0.082
+  roydo_idle         before: worst  0.0 cm (-), 0/76 frames over 1 cm
+  roydo_run          before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  roydo_cast_shoot   before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  roydo_punch_jab    before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  roydo_punch_cross  before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  roydo_idle_fold    before: worst  0.0 cm (-), 0/76 frames over 1 cm
+  roydo_cast_throw   before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  roydo_cast_enter   before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/11 frames over 1 cm
+  worst 0.0 cm
+== blau.glb (blau): 17 shapes, height 1.87 m
+   hips       -0.06-0.13 m along, 0.093 x 0.133
+   chest      0.00-0.22 m along, 0.140 x 0.095
+   head       0.00-0.24 m along, 0.060 x 0.095
+   forearm.L  0.00-0.21 m along, 0.043 x 0.050
+   thigh.L    0.00-0.40 m along, 0.072 x 0.116
+  blau_idle          before: worst  0.0 cm (-), 0/51 frames over 1 cm
+  blau_run_rifle     before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  blau_cast_shoot    before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  blau_shoot         before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  blau_reload        before: worst  0.0 cm (-), 0/51 frames over 1 cm
+  blau_cast_throw    before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  blau_jump_start    before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  blau_kneel_fix     before: worst  0.0 cm (-), 0/157 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/11 frames over 1 cm
+  worst 0.0 cm
+== azrael.glb (azrael): 17 shapes, height 1.80 m
+   hips       -0.17-0.10 m along, 0.149 x 0.096
+   chest      0.00-0.29 m along, 0.099 x 0.098
+   head       0.00-0.17 m along, 0.057 x 0.065
+   forearm.L  0.01-0.26 m along, 0.039 x 0.035
+   thigh.L    0.07-0.44 m along, 0.064 x 0.073
+  idle_staff         before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  glide_fwd          before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  spell_death_1      before: worst  0.0 cm (-), 0/110 frames over 1 cm
+  greatsword_cast    before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm
+  greatsword_slash_2 before: worst  0.0 cm (-), 0/48 frames over 1 cm
+  gs_heavy           before: worst  0.5 cm (elbow.R in chest f22), 0/41 frames over 1 cm
+  cast_heavy         before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  cast_ultimate      before: worst  3.5 cm (weapon.R in forearm.L f3), 1/41 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  5.1 cm (fore.L in thigh.L f22), 12/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm
+  spell_heavy        before: worst  0.0 cm (-), 0/67 frames over 1 cm
+  spell_big          before: worst  0.0 cm (-), 0/66 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  gs_1               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_3               before: worst  5.3 cm (elbow.L in forearm.R f14), 1/25 frames over 1 cm
+  gs_4               before: worst  0.4 cm (elbow.R in chest f9), 0/30 frames over 1 cm
+  spell_death_2      before: worst  0.0 cm (-), 0/111 frames over 1 cm
+  worst 5.3 cm
+== airah.glb (airah): 15 shapes, height 1.78 m
+   hips       -0.19-0.10 m along, 0.141 x 0.189
+   chest      0.00-0.23 m along, 0.127 x 0.090
+   head       0.03-0.28 m along, 0.086 x 0.083
+   forearm.L  0.13-0.25 m along, 0.047 x 0.028
+   thigh.L    0.00-0.41 m along, 0.081 x 0.093
+  spell_idle_2       before: worst  0.0 cm (-), 0/157 frames over 1 cm
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  spell_death_1      before: worst  0.0 cm (-), 0/110 frames over 1 cm
+  spell_area         before: worst  0.0 cm (-), 0/72 frames over 1 cm
+  spell_strike_1     before: worst  0.0 cm (-), 0/62 frames over 1 cm
+  spell_strike_2     before: worst  0.0 cm (-), 0/67 frames over 1 cm
+  spell_strike_3     before: worst  0.0 cm (-), 0/70 frames over 1 cm
+  idle_mage          before: worst  0.0 cm (-), 0/151 frames over 1 cm
+  cast_area          before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  spell_death_2      before: worst  0.0 cm (-), 0/111 frames over 1 cm
+  worst 0.0 cm
+== burak.glb (burak): 17 shapes, height 1.88 m
+   hips       -0.22-0.06 m along, 0.206 x 0.141
+   chest      0.00-0.23 m along, 0.098 x 0.147
+   head       0.00-0.10 m along, 0.071 x 0.051
+   forearm.L  0.00-0.27 m along, 0.065 x 0.049
+   thigh.L    0.00-0.44 m along, 0.081 x 0.123
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm
+  axe_run            before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  death_from_front   before: worst  0.0 cm (-), 0/104 frames over 1 cm
+  axe_battle_cry     before: worst  0.0 cm (-), 0/86 frames over 1 cm
+  dual_slash_1       before: worst  1.2 cm (weapon.R in chest f10), 1/27 frames over 1 cm
+  dual_slash_2       before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  idle_dual          before: worst  0.0 cm (-), 0/71 frames over 1 cm
+  war_cry            before: worst  0.0 cm (-), 0/36 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  axe_hit            before: worst  0.0 cm (-), 0/49 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  dual_1             before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_2             before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_3             before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  dual_4             before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  death_from_back    before: worst  0.0 cm (-), 0/90 frames over 1 cm
+  worst 1.2 cm
+== emelrich.glb (emelrich): 17 shapes, height 1.95 m
+   hips       -0.25--0.06 m along, 0.158 x 0.138
+   chest      0.05-0.44 m along, 0.269 x 0.141
+   head       0.00-0.25 m along, 0.099 x 0.084
+   forearm.L  0.02-0.32 m along, 0.081 x 0.063
+   thigh.L    0.00-0.29 m along, 0.088 x 0.083
+  greatsword_idle    before: worst  0.0 cm (-), 0/112 frames over 1 cm
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  greatsword_death_1 before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  greatsword_cast    before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm
+  greatsword_slash_2 before: worst  0.0 cm (-), 0/48 frames over 1 cm
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  idle_2h            before: worst  0.0 cm (-), 0/81 frames over 1 cm
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  greatsword_hit     before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_weapon        before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  gs_1               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_3               before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  gs_4               before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  greatsword_death_2 before: worst  0.0 cm (-), 0/79 frames over 1 cm
+  worst 0.0 cm
+== feran.glb (feran): 17 shapes, height 1.82 m
+   hips       -0.15-0.10 m along, 0.081 x 0.122
+   chest      0.00-0.22 m along, 0.133 x 0.116
+   head       0.00-0.19 m along, 0.067 x 0.077
+   forearm.L  0.01-0.28 m along, 0.043 x 0.025
+   thigh.L    0.00-0.43 m along, 0.075 x 0.095
+  knife_idle         before: worst  0.0 cm (-), 0/135 frames over 1 cm
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  death_from_front   before: worst  0.0 cm (-), 0/104 frames over 1 cm
+  spell_quick        before: worst  0.0 cm (-), 0/69 frames over 1 cm
+  javelin_throw      before: worst  0.0 cm (-), 0/55 frames over 1 cm
+  idle_dagger        before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  dagger_1           before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  dagger_2           before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  death_from_back    before: worst  0.0 cm (-), 0/90 frames over 1 cm
+  worst 0.0 cm
+== ghorman.glb (ghorman): 17 shapes, height 2.72 m
+   hips       -0.17-0.12 m along, 0.173 x 0.135
+   chest      0.00-0.25 m along, 0.238 x 0.244
+   head       0.01-0.61 m along, 0.088 x 0.085
+   forearm.L  0.02-0.38 m along, 0.059 x 0.038
+   thigh.L    0.00-0.46 m along, 0.129 x 0.141
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm
+  axe_run            before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  death_from_front   before: worst  1.7 cm (weapon.R in head f61), 1/104 frames over 1 cm
+  axe_battle_cry     before: worst  0.0 cm (-), 0/86 frames over 1 cm
+  axe_chop           before: worst  0.0 cm (-), 0/59 frames over 1 cm
+  axe_sweep          before: worst  0.0 cm (-), 0/59 frames over 1 cm
+  axe_backhand       before: worst  0.0 cm (-), 0/82 frames over 1 cm
+  idle_1h            before: worst  0.0 cm (-), 0/74 frames over 1 cm
+  war_cry            before: worst  0.0 cm (-), 0/36 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  axe_chest_thump    before: worst  0.0 cm (-), 0/86 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  axe_hit            before: worst  0.0 cm (-), 0/49 frames over 1 cm
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  axe_1              before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  axe_2              before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  axe_3              before: worst  0.0 cm (-), 0/21 frames over 1 cm
+  death_fall_back    before: worst  0.0 cm (-), 0/79 frames over 1 cm
+  worst 1.7 cm

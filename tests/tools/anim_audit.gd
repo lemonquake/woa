@@ -85,15 +85,18 @@ func clips_of(id: String) -> Array:
 		return ul
 	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
 	var outc: Array = []
+	# the clips as the game plays them (their motion-capture stand-ins, ModelCatalog.anim), and the push and hit clips
 	for c in [String(cfg.get("idle", "")), String(HeroStage.IDLE.get(id, "")), String(HeroStage.FLOURISH.get(id, "")),
-			String(cfg.get("cast", "")), String(cfg.get("run", "")), "death"]:
+			String(cfg.get("cast", "")), String(cfg.get("run", "")), String(cfg.get("death", "death")), "knockback", "getup",
+			"launch", "wall_impact", "hit_heavy", "hit_light", "idle_hurt"] + Array(cfg.get("deaths", [])):
+		c = ModelCatalog.anim(cfg, c)
 		if c != "" and not (c in outc):
 			outc.append(c)
 	for c in cfg.get("attack", []):
 		if not (String(c) in outc):
 			outc.append(String(c))
 	for aid in SimData.unit(id).abilities + ([String(SimData.unit(id).innate)] if String(SimData.unit(id).get("innate", "")) != "" else []):
-		var an := String(SimData.ability(String(aid)).get("anim", ""))
+		var an := ModelCatalog.anim(cfg, String(SimData.ability(String(aid)).get("anim", "")))
 		if an != "" and not (an in outc):
 			outc.append(an)
 	return outc

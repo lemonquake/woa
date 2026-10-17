@@ -291,6 +291,7 @@ static func _build_units() -> void:
 	_add_heroes_15b()
 	_add_heroes_16()
 	_add_heroes_17()
+	_add_heroes_18()
 
 static func _add_heroes_15b() -> void:
 	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
@@ -370,6 +371,40 @@ static func _add_heroes_17() -> void:
 		"talents": [["azrael_attack_speed", "azrael_soul_damage"], ["azrael_health", "azrael_door_time"],
 			["azrael_scythe_chance", "azrael_scythe_damage"], ["azrael_door_damage", "azrael_darkness_cooldown"]],
 		"model": "hero_azrael"})
+
+static func _add_heroes_18() -> void:
+	# The five heroes from hero_ideas.txt (2026-10-18 e, the owner: "build the game now with all the new 5 heroes
+	# pickable by the player"): their names, titles, attack ranges, base stats and elements as written there (Airah's
+	# element: Lightning, the file's pick for its open question). Their skills are not in yet: they fight with attacks
+	# and items only until their kits land.
+	var base := {"kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP, "mana": SimConst.HERO_BASE_MANA,
+		"mana_regen": 0.0, "magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "attack_speed": 100.0, "backswing": 0.5,
+		"vision_day": 1800.0, "vision_night": 800.0, "xp": 0.0, "abilities": [], "talents": []}
+	_add("airah", _merged(base, {"name": "Airah", "title": "the Wind Goddess", "hp_regen": 0.25, "armor": 0.0,
+		"dmg_min": 21.0, "dmg_max": 29.0, "bat": 1.7, "attack_point": 0.4, "acquire": 800.0, "range": 600.0,
+		"projectile_speed": 1200.0, "move_speed": 300.0, "turn_rate": 0.6, "primary": "int", "str": 18.0,
+		"str_gain": 2.0, "agi": 18.0, "agi_gain": 1.8, "int": 24.0, "int_gain": 3.4, "element": EL.LIGHTNING,
+		"model": "hero_airah"}))
+	_add("burak", _merged(base, {"name": "Burak", "title": "the Berserker", "hp_regen": 0.5, "armor": 2.0,
+		"dmg_min": 30.0, "dmg_max": 36.0, "bat": 1.7, "attack_point": 0.35, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.7, "primary": "str", "str": 25.0,
+		"str_gain": 3.2, "agi": 18.0, "agi_gain": 2.1, "int": 15.0, "int_gain": 1.4, "element": EL.FIRE,
+		"model": "hero_burak"}))
+	_add("emelrich", _merged(base, {"name": "Ser Emelrich", "title": "the Heavy Sword", "hp_regen": 0.5,
+		"armor": 3.0, "dmg_min": 37.0, "dmg_max": 43.0, "bat": 1.8, "attack_point": 0.55, "acquire": 600.0,
+		"range": 150.0, "projectile_speed": 0.0, "move_speed": 290.0, "turn_rate": 0.5, "primary": "str",
+		"str": 26.0, "str_gain": 3.4, "agi": 13.0, "agi_gain": 1.5, "int": 16.0, "int_gain": 1.6, "element": EL.LIGHT,
+		"model": "hero_emelrich"}))
+	_add("feran", _merged(base, {"name": "Feran Mock", "title": "the Jester", "hp_regen": 0.25, "armor": 1.0,
+		"dmg_min": 20.0, "dmg_max": 26.0, "bat": 1.7, "attack_point": 0.35, "acquire": 800.0, "range": 550.0,
+		"projectile_speed": 1100.0, "move_speed": 305.0, "turn_rate": 0.6, "primary": "int", "str": 18.0,
+		"str_gain": 1.9, "agi": 20.0, "agi_gain": 2.2, "int": 23.0, "int_gain": 3.0, "element": EL.NONE,
+		"model": "hero_feran"}))
+	_add("ghorman", _merged(base, {"name": "Ghorman", "title": "the Beast King", "hp_regen": 0.5, "armor": 1.0,
+		"dmg_min": 30.0, "dmg_max": 36.0, "bat": 1.7, "attack_point": 0.4, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.6, "primary": "str", "str": 24.0,
+		"str_gain": 3.0, "agi": 17.0, "agi_gain": 1.9, "int": 18.0, "int_gain": 1.8, "element": EL.NATURE,
+		"model": "hero_ghorman"}))
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()

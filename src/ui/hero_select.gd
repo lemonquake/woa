@@ -31,6 +31,17 @@ const INFO := {
 		"story": "Blau never fights on ground he has not chosen. A rifle, a bag of snares, a few rolling stones and a turret he can build in seconds: by the time his enemies see the trap, every shot he fires is already bouncing toward them."},
 	"azrael": {"title": "the Death Dealer", "role": "Melee  ·  Agility  ·  Carry, Initiator, Escape",
 		"story": "Azrael comes for the dead. She drifts over the battlefield in a black robe, a soul of white flame with eyes like coals, and gathers what is left of the fallen into her scythe. When she opens her wings, the light goes out for everyone near her."},
+	# the five heroes of hero_ideas.txt (2026-10-18 e): pickable, skills not in yet
+	"airah": {"title": "the Wind Goddess", "role": "Ranged  ·  Intelligence  ·  Support, Disabler  ·  Skills coming later",
+		"story": "Airah moves everyone. Her wind throws enemies into walls, carries her friends out of danger and stops arrows in the air. For now she fights with her attacks and items; her skills are still being made."},
+	"burak": {"title": "the Berserker", "role": "Melee  ·  Strength  ·  Carry, Durable  ·  Skills coming later",
+		"story": "Burak gets stronger the more he is hurt. Two axes, no armor, and a temper that burns hotter with every wound. For now he fights with his attacks and items; his skills are still being made."},
+	"emelrich": {"title": "the Heavy Sword", "role": "Melee  ·  Strength  ·  Initiator, Durable  ·  Skills coming later",
+		"story": "Ser Emelrich is slow, and he does not need to be fast. Every swing of his great sword can be seen coming, and every one that lands ends the fight. For now he fights with his attacks and items; his skills are still being made."},
+	"feran": {"title": "the Jester", "role": "Ranged  ·  Intelligence  ·  Support, Disabler  ·  Skills coming later",
+		"story": "Feran Mock belongs to nobody. Thrown knives, a box of nasty jokes and a trick for swapping places: chaos, but chaos he can steer. For now he fights with his attacks and items; his skills are still being made."},
+	"ghorman": {"title": "the Beast King", "role": "Melee  ·  Strength  ·  Initiator, Jungler  ·  Skills coming later",
+		"story": "Ghorman rules the wild. Beasts follow him, and he grows stronger with every one at his side. For now he fights with his club and items; his skills are still being made."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }
@@ -121,12 +132,12 @@ func _build_ui() -> void:
 		U.text(head, "Choose your hero", Vector2(4, 46), 44, U.GOLD, "title")
 		U.art_rect(head, "divider", Rect2(0, 62, 520, 30)))
 	add_child(head)
-	# the hero grid: portrait cards, three a row
+	# the hero grid: portrait cards, four a row
 	var grid := GridContainer.new()
-	grid.columns = 3
-	grid.position = Vector2(60, 150)
+	grid.columns = 4
+	grid.position = Vector2(60, 132)
 	grid.add_theme_constant_override("h_separation", 18)
-	grid.add_theme_constant_override("v_separation", 18)
+	grid.add_theme_constant_override("v_separation", 10)
 	add_child(grid)
 	for id in GameSettings.HEROES:
 		var card := _card(id)

@@ -21,7 +21,15 @@ const ROLES := {
 	"roydo": [3, 2, 4, 1],
 	"blau": [1, 2, 3],
 	"azrael": [1, 2, 3],
+	# the five heroes of hero_ideas.txt (2026-10-18 e; roles from the file, skills not in yet)
+	"airah": [4, 5, 2],
+	"burak": [1, 3],
+	"emelrich": [3, 1, 4],
+	"feran": [4, 2, 5],
+	"ghorman": [3, 4],
 }
+## Heroes without their own item builds yet borrow those of a hero who fights the same way.
+const BUILD_LIKE := {"airah": "froster", "burak": "azrael", "emelrich": "kragg", "feran": "azrin", "ghorman": "ezee"}
 ## Lane by role, from the team's side: "safe" (long lane with the tier 1 far out), "mid", "off".
 const ROLE_LANE := {1: "safe", 2: "mid", 3: "off", 4: "off", 5: "safe"}
 
@@ -239,7 +247,7 @@ static func talent_side(hero: String, tier: int) -> int:
 	return int(t[tier]) if tier < t.size() else 0
 
 static func builds(hero: String, role: int) -> Array:
-	var b: Dictionary = BUILDS.get(hero, {})
+	var b: Dictionary = BUILDS.get(hero, BUILDS.get(String(BUILD_LIKE.get(hero, "")), {}))
 	var grp := "support" if is_support(role) else "core"
 	if not b.has(grp):
 		grp = "core"
@@ -277,7 +285,7 @@ static func disable_power(hero: String) -> float:
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
 static func backliner(hero: String) -> bool:
-	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock" or hero == "blau"
+	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock" or hero == "blau" 		or hero == "airah" or hero == "feran"
 
 ## The hero's ultimate.
 static func ultimate(h: SimUnit) -> String:

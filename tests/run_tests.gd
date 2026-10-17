@@ -6853,3 +6853,43 @@ func test_mocap_clips() -> void:
 	var rest_y := sk.get_bone_rest(sk.find_bone("hips")).origin.y
 	check(absf(hips_y - rest_y) < 0.15, "the hips stand on the body's own height (%.2f, rest %.2f)" % [hips_y, rest_y])
 	m.free()
+
+## Run 2026-10-18 e: the five heroes of hero_ideas.txt are pickable (stats from the file, skills not in yet) but never
+## a random pick; every motion-capture run, push and leap clip a hero is given exists, the runs carry their measured
+## ground speed, and AnimBlend's crossfade stays within the caller's limits.
+func test_new_heroes_and_blends() -> void:
+	for id in ["airah", "burak", "emelrich", "feran", "ghorman"]:
+		check(id in GameSettings.HEROES and id in GameSettings.OWN_BODY, "%s can be picked" % id)
+		var d := SimData.unit(id)
+		check(String(d.get("name", "")) != "" and float(d.get("str", 0.0)) > 0.0 and ModelCatalog.MODELS.has(String(d.model)),
+			"%s has stats and a body" % id)
+		check(not (id in GameSettings.random_pool()), "%s is never a random pick while its kit is missing" % id)
+	check(GameSettings.random_pool().size() == GameSettings.HEROES.size() - 5, "every hero with skills can be a random pick")
+	check(SimData.unit("burak").primary == "str" and float(SimData.unit("airah").range) == 600.0, "stats from the file")
+	if MocapClips.available():
+		var lib := MocapClips.library()
+		for key in ModelCatalog.MOCAP:
+			var cfg := ModelCatalog.info(key)
+			for c in [String(cfg.get("run", "")), ModelCatalog.anim(cfg, "knockback"), ModelCatalog.anim(cfg, "getup"),
+					ModelCatalog.anim(cfg, "launch"), ModelCatalog.anim(cfg, "wall_impact")]:
+				if c != "" and c != "glide_fwd":                        # the gliders keep their own glide clip
+					check(lib.has_animation(c), "%s plays %s" % [key, c])
+			if not bool(cfg.get("glide", false)):
+				check(float(ModelCatalog.clip(String(cfg.run)).get("ground_speed", 0.0)) > 1.0,
+					"%s: %s has its ground speed" % [key, cfg.run])
+		var leap := ModelCatalog.anim(ModelCatalog.info("hero_ezee"), "leap_slam")
+		var air: Array = ModelCatalog.clip(leap).get("airborne", [])
+		check(air.size() == 2 and float(air[0]) < float(air[1]) and float(air[1]) < ModelCatalog.strike_time(leap) + 0.4,
+			"Leap Strike's clip knows when it leaves and meets the ground (%s)" % str(air))
+	var m := (load("res://assets/characters/heroes17/ezee.glb") as PackedScene).instantiate()
+	RepairedClips.patch(m)
+	var ap: AnimationPlayer = m.find_children("*", "AnimationPlayer", true, false)[0]
+	var sk: Skeleton3D = m.find_children("*", "Skeleton3D", true, false)[0]
+	var idle := ModelCatalog.anim(ModelCatalog.info("hero_ezee"), "idle_2h")
+	var atk := String((ModelCatalog.info("hero_ezee").attack as Array)[0])
+	var from := AnimBlend.clip_pose(sk, ap.get_animation(idle), 0.0)
+	for sim in [true, false]:
+		var b := AnimBlend.time_from(sk, from, ap.get_animation(atk), 0.0, 0.06, 0.25, 1.5, sim)
+		check(b >= 0.06 - 1e-4 and b <= 0.25 + 1e-4, "the crossfade stays between its least and its cap (%.2f s)" % b)
+	check(AnimBlend.gap_from(sk, from, ap.get_animation(idle), 0.0) < 1.0, "no gap from a pose to itself")
+	m.free()

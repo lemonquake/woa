@@ -896,12 +896,25 @@ def transfer_by_bone(dst, src, J):
                 fam.add(hb.parent.name)
             fam.update(c.name for c in hb.children)
         family[b] = fam
+    # vertices a prep script pinned (vertex group "pin.<bone>", e.g. airah_prep.py's tail) keep that bone alone
+    pinned = {}
+    for g in dst.vertex_groups:
+        if g.name.startswith("pin."):
+            for v in dst.data.vertices:
+                if any(x.group == g.index and x.weight > 0.5 for x in v.groups):
+                    pinned[v.index] = g.name[4:]
     for g in list(dst.vertex_groups):
         dst.vertex_groups.remove(g)
     groups = {g.name: dst.vertex_groups.new(name=g.name) for g in src.vertex_groups}
+    for bname in set(pinned.values()):
+        if bname not in groups:
+            groups[bname] = dst.vertex_groups.new(name=bname)
     adds = {name: {} for name in groups}
     loose = 0
     for vi, c in enumerate(dco):
+        if vi in pinned:
+            adds.setdefault(pinned[vi], {})[vi] = 1.0
+            continue
         fam = family.get(str(nearest[vi]), set())
         hits = kd.find_n(c, 24)
         good = [(si, dist) for _co, si, dist in hits if dom[si] in fam][:4]
@@ -922,8 +935,8 @@ def transfer_by_bone(dst, src, J):
         g = groups[name]
         for vi, w in dd.items():
             g.add([vi], w, 'REPLACE')
-    log("  %s: weights from the skin under it (%d of %d vertices had no skin of their own part nearby)"
-        % (dst.name, loose, len(dco)))
+    log("  %s: weights from the skin under it (%d of %d vertices had no skin of their own part nearby; %d pinned)"
+        % (dst.name, loose, len(dco), len(pinned)))
 
 
 def native_weights(meshes, a_arm, J=None):
@@ -1517,9 +1530,19 @@ def copy_weights_nearest(src, dst, k=4):
     kd.balance()
     sn = {g.index: g.name for g in src.vertex_groups}
     sw = [[(sn[g.group], g.weight) for g in v.groups] for v in src.data.vertices]
+    # vertices a prep script pinned (vertex group "pin.<bone>", e.g. airah_prep.py's tail) keep that bone alone
+    pinned = {}
+    for g in dst.vertex_groups:
+        if g.name.startswith("pin."):
+            for v in dst.data.vertices:
+                if any(x.group == g.index and x.weight > 0.5 for x in v.groups):
+                    pinned[v.index] = g.name[4:]
     for g in list(dst.vertex_groups):
         dst.vertex_groups.remove(g)
     groups = {g.name: dst.vertex_groups.new(name=g.name) for g in src.vertex_groups}
+    for bname in set(pinned.values()):
+        if bname not in groups:
+            groups[bname] = dst.vertex_groups.new(name=bname)
     dco = world_coords(dst)
     adds = {name: {} for name in groups}
     for vi, c in enumerate(dco):

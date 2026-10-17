@@ -36,7 +36,8 @@ const GROUPS := {
 const MATERIALS := {
 	"hero_ezee": "plate", "hero_kragg": "plate", "hero_tock": "metal", "hero_roydo": "plate", "hero_anomaly": "stone",
 	"hero_sludge": "flesh", "hero_azrael": "spirit", "hero_froster": "cloth", "hero_azrin": "cloth", "hero_caziel": "leather",
-	"hero": "leather", "hero_blau": "leather", "blau_turret": "metal",
+	"hero": "leather", "hero_blau": "leather", "blau_turret": "metal", "hero_emelrich": "plate", "hero_burak": "flesh",
+	"hero_airah": "cloth", "hero_feran": "cloth", "hero_ghorman": "leather", "hero_ghorman_beast": "flesh",
 	"dawn_melee": "plate", "dawn_flag": "plate", "dawn_ranged": "cloth", "dawn_siege": "stone",
 	"dusk_melee": "flesh", "dusk_flag": "leather", "dusk_ranged": "cloth", "dusk_siege": "stone",
 	"courier": "spirit", "elder_cinder_wyrm": "stone", "cinder_wyrmling": "flesh", "ashfang": "flesh",

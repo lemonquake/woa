@@ -394,3 +394,17 @@ self-checks (survey sheets, in-game contact sheets, Hero Select captures).
 | M5 Body collision | 1-2 | working tree | `--applied` | n/a | PASS (gate) for every mocap clip (0.9 cm or less) | Froster's channel clip planted the staff 14 cm into the floor (clip swapped) | old fallback clips on rebuilt bodies (Ezee 42 cm, Azrin 21 cm) |
 | X1 Integration | 1 | working tree | tests 250/250, check.sh, export, cold start | n/a | PASS (gate) | none | none |
 
+
+## Session 2026-10-18 e (mocap for the remaining clips and the five new heroes, pickable heroes, Airah on the base body, joins) — run `work/lemondev/2026-10-18e-mocap2/`
+
+No critic subagent was run (none asked for). New measured gate: `tests/tools/anim_joins.gd` (every crossfade and loop
+seam). Looks are builder self-checks (contact sheets, close-ups, remnant renders, captures).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| B1 New bodies | 1-3 (+4 Airah) | working tree | gate: remnant_check before/after, renders | n/a | PASS (gate) Emelrich, Burak, Airah | in order: arm split scattered many-piece models; reach rule freed big hands; Airah's posed sculpt (rebuilt on base_female: generated top, briefs, collar; pinned tail, belt, hair; tail lifted off the floor) | Beast Form body |
+| C1 Remaining clips | 1-4 | working tree | gate: test_new_heroes_and_blends, sheets | n/a | PASS (self-check) | in order: one-hand axe swings flopped Burak's second axe (two-weapon slashes); spinning slash unjoinable (dropped); dagger lunge 175 degrees off the stance (double stab) | none |
+| Q1 Joins | 1-8 | working tree | gate: anim_joins 563 -> 23 (worst 76 -> 16) | n/a | IMPLEMENTED — 23 over the limit | in order: fixed 0.06 s crossfades; caps too short; hit clips while running; blind stretching flips near-opposite poses (simulated candidates); stale collision sets | 23 residual joins |
+| Q2 Twists | 1-3 | working tree | gate: anim_audit (game-played clips), pops scan, close-ups | n/a | PASS (self-check) | Mixamo toe flips (hinge clamp); hips not scaled to leg length (floor sink, foot slide) | none |
+| Q3 Clipping | 1-2 | working tree | gate: body_collide --applied | n/a | PASS (gate) 1.7 cm or less but Sludge 4.2 cm | push and hit clips never checked | Sludge's hook in the floor |
+| X1 Integration | 1-2 | working tree | gate: tests 251/251, check.sh, exports (05:00 and final), cold start | n/a | PASS (gate) | Hero Select grid overflow at 16 heroes (four a row) | none |

@@ -76,6 +76,9 @@ func _plan() -> Dictionary:
 			clips.append(c)
 		for aid in SimData.unit(id).abilities:
 			clips.append(String(SimData.ability(String(aid)).get("anim", "")))
+		# pushes, stuns and hit reactions (UnitView plays these for every hero; run 2026-10-18 e: they were never checked)
+		clips.append_array(["knockback", "getup", "launch", "wall_impact", "hit_heavy", "hit_light", "hit_front", "idle_hurt",
+			"leap_slam", "blink", "dodge_step"])
 		# the motion-capture stand-ins (ModelCatalog.MOCAP), and the old clips they stand in for (kept fixed for a game
 		# without the mocap library)
 		var base := ModelCatalog.MODELS.get(String(SimData.unit(id).model), {}) as Dictionary

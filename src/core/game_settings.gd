@@ -6,10 +6,11 @@ extends RefCounted
 
 const PATH := "user://hero.json"
 const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg", "roydo", "blau",
-	"azrael"]
+	"azrael", "airah", "burak", "emelrich", "feran", "ghorman"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
 ## heroes with a model of their own (no Hero Creator look); 2026-10-17: Ezee, Azrin and Caziel got theirs, then Azrael
-const OWN_BODY := ["sludge", "roydo", "blau", "ezee", "azrin", "caziel", "azrael"]
+const OWN_BODY := ["sludge", "roydo", "blau", "ezee", "azrin", "caziel", "azrael", "airah", "burak", "emelrich", "feran",
+	"ghorman"]
 
 static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id
@@ -160,12 +161,18 @@ static func select(id: String) -> void:
 		selected = id
 		hero = look_for(id)
 
+## Heroes a random pick may land on: those with their skills in (the five heroes added 2026-10-18 e fight with attacks
+## only until their kits land, so they are picked on purpose, never by chance).
+static func random_pool() -> Array:
+	return HEROES.filter(func(id): return not (SimData.unit(id).get("abilities", []) as Array).is_empty())
+
 ## The bot's hero for the next match: the opponent setting, or a random hero.
 static func opponent_hero(rng: RandomNumberGenerator) -> String:
 	_load()
 	if opponent in HEROES:
 		return opponent
-	return HEROES[rng.randi_range(0, HEROES.size() - 1)]
+	var pool := random_pool()
+	return pool[rng.randi_range(0, pool.size() - 1)]
 
 static func _load() -> void:
 	if _loaded:
@@ -382,9 +389,10 @@ static func varied_pick(rng: RandomNumberGenerator, team_heroes: Array, match_he
 			if open.has(int(r)):
 				open.erase(int(r))
 				break
-	var best := HEROES[0]
+	var pool := random_pool()
+	var best: String = pool[0]
 	var best_score := -INF
-	for id in HEROES:
+	for id in pool:
 		var score := rng.randf() * 2.0
 		if id in team_heroes:
 			score -= 100.0

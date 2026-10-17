@@ -18,7 +18,11 @@ Build (the clips named in the spec, written as one GLB of the hero rig with only
 Spec (tools/blender/mocap_clips.json): {"clip": {"src": "<fbx name without .fbx>" (or a list: played one after the
 other), "start": first frame, "end": last frame (from 0), "place": "zero" | "keep" | "loop" | "sway", "mirror": false
 (left and right swapped), "loop": false, "lean": degrees forward for the trunk, "hand": R | L | both and "reach" (m)
-for finding the blow, "strike": seconds (the blow, given), "kind": "cast" (also writes the release)}}.
+for finding the blow, "strike": seconds (the blow, given), "kind": "cast" (also writes the release), "run": true (writes
+"ground_speed": the capture's own speed across the floor, m/s on the hero, so the game plays it without the feet
+sliding), "seam": frames (a loop's last frames are eased into its first so it joins without a jump; loops default to
+6), "airborne": [take-off, landing] seconds or "auto" (both feet off the floor; written to the timings, for Leap
+Strike), "flat": true (the hips never rise above standing: the game lifts the hero itself)}}.
   place zero: no drift across the floor (the hips keep only their height and sway, measured from the first frame);
   keep: Mixamo's path as it is; loop: the drift from the first to the last frame is taken out evenly (looping idles).
 """
@@ -195,6 +199,8 @@ def retarget_clip(arm, name, frames, seq, rest, opt):
                     # keep the sway round the start, cap it at 12 cm (attacks that step stay near the spot)
                     d.x = max(-0.12, min(0.12, (p.x - s0.x) * k_hip))
                     d.y = max(-0.12, min(0.12, (p.y - s0.y) * k_hip))
+                if opt.get("flat") and d.z > 0.0:
+                    d.z = 0.0                    # the game lifts the hero itself (Leap Strike's arc): no own jump height
                 pos = restH["hips"].translation + Vector((d.x, d.y, d.z))
                 P[h] = Matrix.Translation(pos) @ R.to_4x4()
             elif parent[h] is None:
@@ -206,30 +212,100 @@ def retarget_clip(arm, name, frames, seq, rest, opt):
                 else:
                     P[h] = Matrix.Translation(base.translation) @ R.to_4x4()
         poses.append(P)
+    seam = int(opt.get("seam", 6 if opt.get("loop") else 0))
+    if seam > 0 and n > 3 * seam:
+        # ease the last `seam` frames into the first frame's pose (each bone's armature-space turn and the hips'
+        # place), so the loop's wrap from its last frame to its first is an ordinary step
+        for j in range(seam):
+            i = n - seam + j
+            w = ((j + 1) / seam) ** 2 * (3 - 2 * (j + 1) / seam)        # smoothstep to 1 at the last frame
+            P, F = poses[i], poses[0]
+            for h in P:
+                qa = P[h].to_quaternion()
+                qb = F[h].to_quaternion()
+                if qa.dot(qb) < 0:
+                    qb = -qb
+                q = qa.slerp(qb, w)
+                t = P[h].translation.lerp(F[h].translation, w)
+                P[h] = Matrix.Translation(t) @ q.to_matrix().to_4x4()
     act = bpy.data.actions.new(name)
     act.use_fake_user = True
     arm.animation_data_create()
     arm.animation_data.action = act
     relH_inv = {h: relH[h].inverted() for h in order}
-    prev = {}
+    keys = {}
+    locs = []
     for i, f in enumerate(frames):
         P = poses[i]
         for h in order:
             if h in ("root",) or h.startswith("weapon."):
                 continue
-            pb = arm.pose.bones[h]
             basis = relH_inv[h] @ (P[parent[h]].inverted() @ P[h] if parent[h] else P[h])
             q = basis.to_quaternion()
-            if h in prev and prev[h].dot(q) < 0.0:
+            seq_h = keys.setdefault(h, [])
+            if seq_h and seq_h[-1].dot(q) < 0.0:
                 q = -q
-            prev[h] = q
-            pb.rotation_quaternion = q
-            pb.keyframe_insert("rotation_quaternion", frame=f - frames[0], group=h)
+            seq_h.append(q)
             if h == "hips":
-                pb.location = basis.to_translation()
-                pb.keyframe_insert("location", frame=f - frames[0], group=h)
+                locs.append(basis.to_translation())
+    fixed = clean_turns(keys)
+    if fixed:
+        log("  %s: %s" % (name, ", ".join("%s %d" % (k, v) for k, v in sorted(fixed.items()))))
+    for h, qs in keys.items():
+        pb = arm.pose.bones[h]
+        for i, q in enumerate(qs):
+            pb.rotation_quaternion = q
+            pb.keyframe_insert("rotation_quaternion", frame=frames[i] - frames[0], group=h)
+    pb = arm.pose.bones["hips"]
+    for i, t in enumerate(locs):
+        pb.location = t
+        pb.keyframe_insert("location", frame=frames[i] - frames[0], group="hips")
     arm.animation_data.action = None
     return act, poses
+
+
+TOE_MAX = math.radians(60.0)                 # a toe bends at most this far from its rest, either way
+TOE_MIN = math.radians(-50.0)
+TOE_RATE = math.radians(25.0)                # per frame
+SPIKE = math.radians(35.0)                   # a single frame this far off both neighbours is a capture glitch
+
+
+def clean_turns(keys):
+    """Capture glitches out of each bone's turns (in place); returns {kind: frames fixed}.
+      * toes: a hinge, bent about the bone's X axis only and within TOE_MIN..TOE_MAX (Mixamo's toes curl to 145
+        degrees in some falls, then wrap round and swap the way they bend in one frame);
+      * spikes: a frame that jumps more than SPIKE away from the frame before it and comes back (the frames either
+        side of it are close) is set halfway between them."""
+    fixed = {}
+    for h, qs in keys.items():
+        if h.startswith("toe."):
+            # a toe is a hinge: only its bend about the bone's X axis is kept, within TOE_MIN..TOE_MAX, and it bends
+            # at most TOE_RATE a frame (eased both ways through the clip)
+            bends = []
+            for i, q in enumerate(qs):
+                q = q if q.w >= 0 else -q
+                bend = 2.0 * math.atan2(q.x, q.w)
+                c = max(TOE_MIN, min(TOE_MAX, bend))
+                if abs(c - bend) > 1e-3 or abs(q.y) + abs(q.z) > 0.02:
+                    fixed["toe hinge"] = fixed.get("toe hinge", 0) + 1
+                bends.append(c)
+            for rng in (range(1, len(bends)), range(len(bends) - 2, -1, -1)):
+                for i in rng:
+                    j = i - 1 if rng.step > 0 else i + 1
+                    d = bends[i] - bends[j]
+                    if abs(d) > TOE_RATE:
+                        bends[i] = bends[j] + math.copysign(TOE_RATE, d)
+            for i, c in enumerate(bends):
+                qs[i] = Quaternion((1.0, 0.0, 0.0), c)
+        for i in range(1, len(qs) - 1):
+            a, b, c = qs[i - 1], qs[i], qs[i + 1]
+            if a.rotation_difference(b).angle > SPIKE and a.rotation_difference(c).angle < 0.5 * a.rotation_difference(b).angle:
+                qs[i] = a.slerp(c, 0.5)
+                fixed["spike " + h] = fixed.get("spike " + h, 0) + 1
+        for i in range(1, len(qs)):
+            if qs[i - 1].dot(qs[i]) < 0.0:
+                qs[i] = -qs[i]
+    return fixed
 
 
 def strike_time(poses, opt):
@@ -366,6 +442,29 @@ def main():
         if not SURVEY:
             st = strike_time(poses, opt)
             m = {"length": round((len(frames) - 1) / 30.0, 4), "loop": bool(opt.get("loop", False))}
+            if opt.get("run"):
+                k_hip = arm.data.bones["hips"].matrix_local.translation.z / max(0.1, rest["Hips"].translation.z)
+                d = (seq["Hips"][-1].translation - seq["Hips"][0].translation).xy.length * k_hip
+                m["ground_speed"] = round(d / max(1e-3, (len(frames) - 1) / 30.0), 3)
+                log("  %s: ground speed %.2f m/s" % (name, m["ground_speed"]))
+            if opt.get("airborne") == "auto":
+                # the longest stretch with both feet off the floor (toes 8 cm above their lowest point)
+                lowz = min(min(seq["LeftToeBase"][i].translation.z, seq["RightToeBase"][i].translation.z)
+                           for i in range(len(frames)))
+                up = [min(seq["LeftToeBase"][i].translation.z, seq["RightToeBase"][i].translation.z) > lowz + 0.08
+                      for i in range(len(frames))]
+                best, cur = (0, 0), None
+                for i, u in enumerate(up + [False]):
+                    if u and cur is None:
+                        cur = i
+                    elif not u and cur is not None:
+                        if i - cur > best[1] - best[0]:
+                            best = (cur, i)
+                        cur = None
+                m["airborne"] = [round(best[0] / 30.0, 4), round(best[1] / 30.0, 4)]
+                log("  %s: airborne %.2f-%.2f s" % (name, m["airborne"][0], m["airborne"][1]))
+            elif "airborne" in opt:
+                m["airborne"] = opt["airborne"]
             if not m["loop"]:
                 m["hits"] = [[round(max(0.0, st - 1 / 30.0), 4), round(st + 1 / 30.0, 4)]]
                 if opt.get("kind") == "cast":

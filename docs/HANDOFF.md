@@ -4,6 +4,67 @@
 
 ## Status (keep this section current)
 
+**2026-10-18 e: motion capture for the remaining clips and the five new heroes, the five made pickable, Airah rebuilt
+on the base body, a strict check of every animation join (your requests).** Run `work/lemondev/2026-10-18e-mocap2/`
+(contract.md, handoff.md; joins reports `joins_before.txt` -> `joins_final.txt`, remnant renders `remnants_*`, contact
+sheets `sheets_all/`, close-ups `close1/`, `close2/`, Airah `airah_prep*/`, `sheets_airah4/`, captures `shots/`, `select2/`).
+* **The five new heroes can be picked** (Hero Select, Game Setup, multiplayer): Airah, Burak, Ser Emelrich, Feran Mock and
+  Ghorman with the names, titles, ranges, base stats and elements from `hero_ideas.txt` (Airah's element: Lightning, the
+  file's pick for its open question). **Their skills are not in yet**: they fight with attacks and items, Hero Select says
+  "Skills coming later", and a random pick (yours or a bot's) never lands on them. Bots can play them if picked (roles
+  from the file, item builds borrowed from a hero who fights the same way). Hero Select's grid is four cards a row.
+* **Airah on `base_female.glb` (your request).** `tools/blender/airah_prep.py` dresses the owner's clean base body in
+  Airah's own hair (cat ears, ribbon, clips, head jewel), skirt strips (cut just below the knee), gold belt and tail; her
+  top, briefs, collar and arm bands are made from the base body's own skin (her sculpt's garments left the base body
+  bare). Tail, belt and hair are pinned to their bones (new `pin.<bone>` vertex groups, kept by `hero_body.py`); the tail
+  rides the spine, carried level behind her so it never reaches the floor or her legs. Arms lifted: 0 vertices left
+  behind, 0 torn (her old body: 11+7 left, 623+1340 torn). New portrait.
+* **Remnants on the other new bodies.** Rebuilt with the unmix step (the arm split and the reach rule tore these
+  models apart, so both are off for them; `work/rebuild_new5.sh`): Emelrich 19 vertices left at the hip and 143 torn ->
+  0 and 25; Burak 0 and 4 -> 0 and 0. Feran and Ghorman were already clean. Ghorman's Beast Form keeps its old body (it
+  needs his ultimate, so nobody can see it yet; its rebuild left finger chunks at the hips).
+* **Motion capture for the remaining clips**: runs per weapon (great sword: Ezee, Emelrich; sword and shield: Kragg;
+  axe: Sludge, Burak, Ghorman; bow: Blood Ranger; spell: Froster, Tock, Caziel, Feran, Airah), each with its own measured
+  ground speed (your old "Running" clip slid its feet: at 300 move speed it was clamped to 0.72x and covered 4.0 m/s
+  against the hero's 3.0; it stays the fallback without the library); Leap Strike's leap (the great sword jump attack,
+  its own lift taken out because the game lifts Ezee, take-off and landing read from the feet); every push for every
+  hero (`ModelCatalog.MOCAP_ALL`): a stagger back that stays on its feet, its recovery, the stagger held while thrown, a
+  big hit from behind for wall slams. Caziel's dash-stab is his double stab. Burak swings both axes (Mixamo's two-weapon
+  slashes; the one-handed axe swings left his second axe flopping). Azrin and Azrael keep their glide.
+* **The five new heroes' motion capture**: Emelrich the great sword set, Burak the two-weapon slashes and the axe set,
+  Ghorman the axe set (a chest thump on the stage), Feran an overhand knife throw and the knife idle, Airah the spell set.
+* **Joins (your "if they connect properly").** New check `tests/tools/anim_joins.gd`: every crossfade the game makes
+  (idle, run, attacks, casts, hits, stun, pushes, deaths, the stage flourish), replayed at 60 frames a second, and every
+  loop's seam. The game crossfaded in a fixed 0.06 s however far apart the poses were, so a sword went round 170 degrees
+  in a frame: **563 joins snapped** (over 12 degrees a frame beyond the clips' own motion; worst 76). The new
+  `AnimBlend` (used by UnitView and Hero Select) plays out each candidate crossfade from the hero's real pose and picks
+  the one that adds least to the motion, within the time before the blow lands (creeps use a cheaper gap rule; 0.6 ms a
+  hero clip change). Also: no hit-reaction clip while running (the lean is the reaction; it yanked the legs out of the
+  stride), the Hero Select flourish eases back to the idle (it was a cut), loops are eased shut at their seam, the
+  spinning third great sword slash is left out (no crossfade reaches it without a flip). **Now 23 joins over the limit,
+  worst 16 degrees** (the same clips with the old fixed blends: 584, worst 63). Finger bones count 40% (a hand closes in
+  about 0.15 s; Roydo's and Blau's grips change 140 degrees between clips).
+* **Twists and glitches**: Mixamo's toes curled to 145 degrees and flipped in one frame in falls: toes are now hinges
+  (bend only, -50..60 degrees, at most 25 degrees a frame). Hip moves scale with each body's leg length (short-legged
+  Emelrich sank 26 cm into the floor in his deaths and slid his feet). The animation audit now checks the clips as the
+  game plays them; its remaining "elbow the wrong way" and "forearm twist" findings on the two-handed slashes are raised
+  elbows and pronation in the swing, checked by eye on close-ups.
+* **Nothing passes through the body**: the push and hit clips were never collision-checked; now every clip each hero
+  plays is. With every fix applied, every motion-capture clip on every body is 1.7 cm or less, except Sludge's death
+  falling forward (his hook 4.2 cm into the floor).
+* New names (veto any): clips `greatsword_run`, `shield_run`, `axe_run`, `bow_run`, `spell_run`, `greatsword_leap`,
+  `stagger_back`, `stagger_recover`, `stagger_air`, `hit_from_back`, `dual_slash_1`, `dual_slash_2`; Hero Select text
+  "Skills coming later" and the five heroes' short descriptions; code `AnimBlend`, `ModelCatalog.MOCAP_ALL`,
+  `MocapClips.leg_scale`, `GameSettings.random_pool`, `SimBotKits.BUILD_LIKE`, retarget options `run`, `seam`,
+  `airborne`, `flat`, body-tool vertex groups `pin.<bone>`; Airah's materials `airah_top`, `airah_cloth`, `airah_gold`,
+  `airah_skirt`; files `src/game/anim_blend.gd`, `tests/tools/anim_joins.gd`, `tools/blender/airah_prep.py`,
+  `work/rebuild_new5.sh`; test `test_new_heroes_and_blends`.
+Evidence: headless tests **251 passed, 0 failed**; `sh tools/check.sh` "Names OK"; joins, audit, collision and remnant
+reports above; contact sheets of every hero checked by eye (small cells: the look is judged from stills, no video);
+teamfight benchmark within its run-to-run spread with and without the new blends (17.5-20.6 ms frames).
+Not verified: no blind critic review; 23 joins stay a little over the limit (Burak's run into his battle cry, Blau's run
+into his casts, the Beast Form's old clips); the five heroes' kits; Beast Form's body.
+
 **2026-10-18 d: motion-capture animations from Mixamo for nine heroes, the hand remnants, new build (your request).**
 Run `work/lemondev/2026-10-18d-mocap/` (contract.md, handoff.md; clip survey `survey_sheets/`, in-game sheets
 `game1/`, close-ups `after/` against `work/lemondev/2026-10-18b-hands/before/`, remnant renders `remnants_before/` and
@@ -871,6 +932,11 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
 * A game that stops advancing: `godot --headless --path . -s tests/tools/stall_probe.gd -- --a=roydo --b=ezee --min=10
   [--trace=348] [--seed=3]` prints a line per game minute with the real time, every step over 50 ms, and with
   `--trace` the heroes' state before each step from that second (the last line printed is the step that hangs).
+* Animation joins (run 2026-10-18 e): `godot --headless --path . -s tests/tools/anim_joins.gd -- [--models=ezee,hero_burak]
+  [--all] [--fixed] [--out=x.txt]` (every crossfade and loop seam; `--fixed`: the old fixed blends). Motion capture: the
+  commands in `work/lemondev/2026-10-18d-mocap/handoff.md` (retarget, import, then `body_collide.gd -- --fix`).
+  Airah's body: `blender -b --factory-startup --python tools/blender/airah_prep.py`, then the hero_body command in that
+  file's header. The other new bodies: `sh work/rebuild_new5.sh [out_dir] [names]` (the arm split off by default).
 * Animations (runs 2026-10-15 g, h): audit every hero clip `godot --headless --path . -s tests/tools/anim_audit.gd --
   [--heroes=kragg] [--units] [--raw] [--out=x.txt]`; rebuild the repaired arms after any change to the clips or the
   models: `godot --headless --path . -s tests/tools/anim_repair.gd`, `... -- --body=sludge` and `... -- --units`;
