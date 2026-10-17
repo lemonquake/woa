@@ -459,13 +459,6 @@ static func bot_look(id: String) -> Dictionary:
 			if (az.dyes[slot] as Dictionary).has("cloth"):
 				az.dyes[slot]["cloth"] = "2a0a0a"
 		return az
-	if id == "azrael":
-		# Black Sun's Azrael: the same white soul, her robe in deep crimson-black
-		var ar := GameSettings.default_look("azrael")
-		ar.display_name = "Bot Gerald"
-		ar.dyes["armor"]["cloth"] = "1a0406"
-		ar.dyes["helm"]["cloth"] = "1a0406"
-		return ar
 	if id in GameSettings.OWN_BODY:
 		var o := GameSettings.default_look(id)
 		o.display_name = "Bot Gerald"

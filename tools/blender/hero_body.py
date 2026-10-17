@@ -80,6 +80,9 @@ HUE = arg("hue", "")                           # "from:to:width[:sat[:val]]" hue
 GRAY = arg("gray", 1.0)                        # brightness gain for unsaturated texels (steel, bone, white cloth)
 SMOOTH = arg("smooth", 4)                      # whole-mesh weight smoothing passes after the reach and cloth rules
 REACH_K = arg("reach", 0.0)                   # limb reach limit (x the default reach; 0 = off): frees cloth from a limb it brushes
+# how far (m, for a 1.8 m hero) an arm bone's skin reaches from the bone: pauldrons and sleeves are within it, a cape or
+# a coat skirt hanging beside the arm is not (run 2026-10-17 f: the coats webbed up with the arms in big swings)
+REACH = {"upper_arm": 0.15, "forearm": 0.105, "hand": 0.10}
 GLIDE = arg("glide", "")                       # "<idle clip>": also make "glide_fwd", a floating move pose
 RIGID = arg("rigid", "")                       # "bone:cap:x1,y1,z1,x2,y2,z2,r;bone:ball:x,y,z,r" (model space) ride
                                                # one bone only: a staff in a fist, a buckle, a held lantern
@@ -139,7 +142,7 @@ def side_of(n):
 
 def norm(name):
     n = name.lower()
-    n = re.sub(r"^(mixamorig\d*[:_]|def[-_]|bip\d*[ _]|bone_|b_|cc_base_|rig[:_]|armature[:_])", "", n)
+    n = re.sub(r"^(mixamorig\d*[:_]|def[-_]|bip\d*[ _-]|bone_|b_|cc_base_|rig[:_]|armature[:_])", "", n)
     n = re.sub(r"_\d+$", "", n)                 # Sketchfab's converter numbers every node: upperarm_l_012
     return n
 
@@ -1274,8 +1277,9 @@ def fill_unweighted(m, arm):
 
 # ---- 4. scale, centre, face -----------------------------------------------------------------------------------------
 
-def place(meshes, J, arm=None):
-    co = np.vstack([world_coords(m) for m in meshes])
+def place(meshes, J, arm=None, body=None):
+    # body: the piece that sets the height (--body_piece: antlers or a tall helm on top do not shrink the hero)
+    co = np.vstack([world_coords(m) for m in ([body] if body is not None else meshes)])
     zmin, zmax = co[:, 2].min(), co[:, 2].max()
     hips = J["hips"][0]
     s = HEIGHT / (zmax - zmin)
@@ -1580,8 +1584,11 @@ def arm_capture(body, J):
     names = {g.index: g.name for g in body.vertex_groups}
     groups = {g.name: g for g in body.vertex_groups}
     fixed = 0
+    k = HEIGHT / 1.8
     for vi in np.where(np.isin(near, ["forearm.L", "hand.L", "forearm.R", "hand.R"]))[0]:
         side = str(near[vi])[-1]
+        if REACH_K > 0.0 and d[vi].min() > REACH[str(near[vi]).split(".")[0]] * k * REACH_K:
+            continue                                 # cloth beside the hand, beyond its reach (reach_gating)
         v = body.data.vertices[int(vi)]
         keep, drop = [], []
         for g in v.groups:
@@ -1882,8 +1889,8 @@ def main():
         if JOINTS:
             J = {k: (Vector(v[0]), Vector(v[1])) for k, v in json.load(open(JOINTS)).items()}
         else:
-            J = estimate_joints(meshes)
-        J = place(meshes, J)                     # weights are worked out at game size (bone heat fails on tiny models)
+            J = estimate_joints(meshes[:1] if BODY_PIECE else meshes)
+        J = place(meshes, J, body=meshes[0] if BODY_PIECE else None)                     # weights are worked out at game size (bone heat fails on tiny models)
         if BIND == "t":
             J = fit_unrigged(meshes, J, hero_arm)
     else:

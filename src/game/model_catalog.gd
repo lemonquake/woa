@@ -33,13 +33,14 @@ const MODELS := {
 	"hero_azrin": {"scene": H17 + "azrin.glb", "scale": 1.0, "attack": ["staff_1", "staff_2"],
 		"cast": "cast_quick", "idle": "idle_staff", "run": "glide_fwd", "glide": true, "glide_clip": "glide_fwd",
 		"float": 0.75, "bob": 0.08, "death": "death", "R": "azrin_staff", "L": "", "proj": "fireball", "bar": 2.85},
-	# Azrael (2026-10-17): the sculpted body as a soul of white flame (body shader spirit mode), floating, a great
-	# scythe in both hands (tools/blender/azrael.py); her charged slash and wings are AzraelFx. The blade points to the
+	# Azrael (2026-10-17 f): her own body, the owner's azrael.glb in a black dress and dark steel armour, silver-white
+	# hair (tools/blender/azrael_prep.py, then hero_body.py), floating and gliding like Azrin, the great scythe in both
+	# hands (tools/blender/azrael.py); her charged slash, soul flame and wings are AzraelFx. The blade points to the
 	# weapon's +X, the way the head moves in gs_1 / gs_3 / gs_4 (tests/tools/swing_dir.gd), so its tip leads every
 	# swing; gs_2 is a backhand (the head moves -X) and is left out
-	"hero_azrael": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
-		"cast": "cast_quick", "idle": "idle_staff", "run": "idle_staff", "run_female": "idle_staff", "glide": true,
-		"float": 0.42, "bob": 0.06, "death": "death", "R": "scythe", "L": "", "bar": 2.7, "hero": true, "spirit": {"spirit": 1.0, "fade_z": 1.0, "hair_glow": 0.35, "keep_hair": true, "no_base": true}},
+	"hero_azrael": {"scene": H17 + "azrael.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
+		"cast": "cast_quick", "idle": "idle_staff", "run": "glide_fwd", "glide": true, "glide_clip": "glide_fwd",
+		"float": 0.42, "bob": 0.06, "death": "death", "R": "scythe", "L": "", "bar": 2.7},
 	# Froster: the hero body with a frost staff; his bolts are ice
 	"hero_froster": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["staff_1", "staff_2"],
 		"cast": "cast_quick", "idle": "idle_staff", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
@@ -64,6 +65,13 @@ const MODELS := {
 	"hero_airah": {"scene": H17 + "airah.glb", "scale": 1.0, "attack": ["cast_quick"], "cast": "cast_area",
 		"idle": "idle_mage", "run": "fem_run", "run_min": 0.72, "death": "death", "R": "", "L": "", "proj": "sun_orb",
 		"bar": 2.35},
+	# Ghorman (2026-10-17 f, body only until his kit lands): the owner's bodybuilder dressed as the Beast King
+	# (tools/blender/ghorman_prep.py: the antlered deer skull over a hood, a golden mane, beard, belt, kilt, bracers,
+	# boots), his knotted club with bone teeth in the right hand; Beast Form is his form
+	"hero_ghorman": {"scene": H17 + "ghorman.glb", "scale": 1.0, "attack": ["axe_1", "axe_2", "axe_3"],
+		"cast": "war_cry", "idle": "idle_1h", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "ghorman_club", "L": "", "bar": 2.7, "swing_trail": true, "trail_color": Color(0.9, 0.75, 0.45, 0.5),
+		"forms": {"beast_form": "hero_ghorman_beast"}},
 	"hero_ghorman_beast": {"scene": H17 + "ghorman_beast.glb", "scale": 1.0, "attack": ["boss_slam", "hero_axe_smash"],
 		"cast": "boss_roar", "idle": "idle", "run": "run_combat", "run_min": 0.6, "death": "death", "R": "", "L": "",
 		"bar": 3.1},

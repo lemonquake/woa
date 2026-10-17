@@ -342,3 +342,16 @@ No critic subagent was run (none asked for); looks are builder self-checks (Blen
 | H4 Emelrich, Feran bodies | 1-4 | working tree | Blender previews only | n/a | IMPLEMENTED — UNVERIFIED | not in a match (no kits) | sun emblem; jester restyle |
 | X1 Integration | 1 | working tree | gate: tests 248/248, parse, check_names | n/a | PASS (gate) | none | export rebuild |
 
+
+## Session 2026-10-18 (run 2026-10-17 f: Ghorman's human body, Azrael's new body, strict animation QA) — run `work/lemondev/2026-10-17f-ghorman-azrael/`
+
+No critic subagent was run (none asked for). New measured gate: `tests/tools/pose_compare.gd` (every own-body clip
+against the hero body, per bone, 25 degree limit); looks are builder self-checks (contact sheets in `qa/`).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| A1 Azrael body | 1-4 | working tree | gate: sheets, Hero Select, live glide captures, pose_compare 4.2 deg | n/a | PASS (self-check) | in order: Biped bone names not recognised; hair bones' rest at the origin (hair at her feet); skin recolour bleeding into the shared atlas; skin too pale on the stage | owner look |
+| G1 Ghorman body | 1-9 | working tree | gate: sheets, live captures, pose_compare 7.0 deg, no vertex at the origin | n/a | PASS (self-check) | in order: thighs through the kilt slits (trousers added); fur cards lost their UVs on join (one UV name); fur gone at a distance (thicker alpha); NaN trouser vertices from a negative power (made a plank to the floor); red knife stretched | kit; owner look |
+| Q1 Arm repair on own bodies | 1-2 | working tree | gate: pose_compare before 239 deg worst, after 8.6 deg | n/a | PASS (gate) | the per-body arm repair measured twist and swivel from the own bodies' hanging-arm rest and flipped arms (Ezee 150-170 deg, Caziel 100, staff hands 55-60) | none |
+| Q2 Coat webbing | 1-2 | working tree | sheets before / after (Ezee roar, Caziel heavy strike) | n/a | PASS (self-check), one flap left | the coats took arm weights; `--reach` (now defined) frees cloth beyond each arm bone's reach | Ezee's left forearm flap |
+| X1 Integration | 1 | working tree | gate: tests 248/248, parse, check_names, export, cold start as Azrael and Ezee | n/a | PASS (gate) | none | none |

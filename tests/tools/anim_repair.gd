@@ -5,7 +5,7 @@ extends SceneTree
 ##   godot --headless --path . -s tests/tools/anim_repair.gd -- --body=sludge     Sludge's own set
 ##   godot --headless --path . -s tests/tools/anim_repair.gd -- --units           every humanoid unit model
 ##   godot --headless --path . -s tests/tools/anim_repair.gd -- --model=res://assets/characters/units/knight.glb
-##   godot --headless --path . -s tests/tools/anim_repair.gd -- --model=res://assets/characters/heroes17/ezee.glb
+## The 2026-10-17 hero bodies (heroes17) need no set of their own: they use the hero body's (RepairedClips.path_for).
 ## The body kept clear of hands and blades is measured from each rig (its shoulder width and height), and a unit's
 ## blade is the weapon it holds in the game (ModelCatalog), for all of its clips.
 ##

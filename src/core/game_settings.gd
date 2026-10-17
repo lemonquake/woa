@@ -8,8 +8,8 @@ const PATH := "user://hero.json"
 const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg", "roydo", "blau",
 	"azrael"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
-## heroes with a model of their own (no Hero Creator look); 2026-10-17: Ezee, Azrin and Caziel got theirs
-const OWN_BODY := ["sludge", "roydo", "blau", "ezee", "azrin", "caziel"]
+## heroes with a model of their own (no Hero Creator look); 2026-10-17: Ezee, Azrin and Caziel got theirs, then Azrael
+const OWN_BODY := ["sludge", "roydo", "blau", "ezee", "azrin", "caziel", "azrael"]
 
 static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id
@@ -55,20 +55,6 @@ static func default_look(id: String) -> Dictionary:
 				"boots": {"leather": "24100a", "cloth": "1e0806", "metal": "c89038", "gold": "e0a840"},
 				"helm": {"cloth": "b8401a", "trim": "e0a040", "metal": "e0b048", "gold": "f0c050"},
 				"inner_garment": {"cloth": "a04a18"}},
-		}
-	if id == "azrael":
-		# Azrael, the Death Dealer: the owner's female_generic body as a soul of white flame (the spirit look is the
-		# model's, ModelCatalog "hero_azrael"), long white hair, red eyes, a long black robe and a deep hood
-		var ar := HeroLook.preset("huntress")
-		ar.merge({"body": "female_generic", "hair": "long", "hair_color": "eef2fa", "hair_length": 1.3, "skin": "f2f4fa",
-			"eye": "glowing", "eye_color": "ff1a14", "eye_glow": 1.0, "lip_color": "b8c0d0", "brow": "arched",
-			"marking": "none", "build": -0.5, "height": 1.04, "cheeks": -0.45}, true)
-		return {
-			"display_name": "Azrael",
-			"look": HeroLook.sanitize(ar),
-			"outfit": {"armor": "tc_archmage_robes", "helm": "linen_hood"},
-			"dyes": {"armor": {"cloth": "050408", "trim": "0e0c12", "leather": "050407", "metal": "121016", "gold": "0e0c12"},
-				"helm": {"cloth": "050408", "trim": "0e0c12", "leather": "050407", "metal": "121016", "gold": "0e0c12"}},
 		}
 	if id == "froster":
 		# Froster, the Winter Master: a tall white-bearded frost mage in pale blue plate and deep blue robes, eyes of ice

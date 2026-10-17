@@ -34,7 +34,7 @@ var _rim: SpotLight3D
 var _ring_mat: StandardMaterial3D
 var _backdrop_mat: ShaderMaterial
 var _aura: Node3D
-var _aura_parts := {}                      # bone name -> emitter (fire on Azrin's hands and hair)
+var _aura_parts := {}                      # bone name -> emitter (fire on Azrin's hands)
 var _fire_fx: FireFx
 var _lift := 0.0
 var _t := 0.0
@@ -448,9 +448,7 @@ func _stage_aura(id: String, cfg: Dictionary) -> void:
 				var hf := FireFx.flames(0.05, 0.42, 40.0, 0.4, 1.0, "fire", 1.5)
 				_aura.add_child(hf)
 				_aura_parts[k] = hf
-			var hair := FireFx.flames(0.12, 0.4, 28.0, 0.45, 1.0, "fire", 1.15)
-			_aura.add_child(hair)
-			_aura_parts["head"] = hair
+			# (no flame on her head since 2026-10-17 f: her own body is hooded, and a flame at the head bone sat on her face)
 			var l := FireFx.light(Color(1.0, 0.55, 0.22), 1.6, 4.0)
 			_aura.add_child(l)
 			l.position = Vector3(0, 0.5, 0.4)

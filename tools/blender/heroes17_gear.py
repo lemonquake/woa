@@ -5,6 +5,8 @@
                                         pommel
   assets/weapons/throwing_knife.glb     Feran Mock's throwing knife: a leaf blade with a diamond section, a red and black
                                         cord-wrapped handle and a ring pommel with a small bell
+  assets/weapons/ghorman_club.glb       Ghorman's club (2026-10-17 f): a long knotted log swelling to a heavy head, two iron
+                                        bands, bone teeth driven into the head, a leather-wrapped grip and a round knob
   assets/props/joke_box.glb             his Joke Box: a red and black harlequin-panelled box with brass corners, a crank,
                                         a jester face on the front and a coiled fuse on top (the fuse tip is the child
                                         "fuse_tip" so the game can put a spark there)
@@ -18,12 +20,13 @@ import bpy
 import bmesh
 import math
 import sys
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 ROOT = "A:/Python/woa/"
 SWORD = ROOT + "assets/weapons/heavy_greatsword.glb"
 KNIFE = ROOT + "assets/weapons/throwing_knife.glb"
 JOKE_BOX = ROOT + "assets/props/joke_box.glb"
+CLUB = ROOT + "assets/weapons/ghorman_club.glb"
 ARGS = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 ONLY = next((a.split("=", 1)[1] for a in ARGS if a.startswith("--only=")), "")
 
@@ -471,6 +474,55 @@ def joke_box():
     print("[heroes17_gear] wrote", JOKE_BOX, len(box.data.vertices), "verts", flush=True)
 
 
+# ---- Ghorman's club ---------------------------------------------------------------------------------------------------
+
+def club():
+    wood = mat("CWood", (0.30, 0.19, 0.11), 0.0, 0.82)
+    leather = mat("CLeather", (0.16, 0.09, 0.05), 0.0, 0.7)
+    iron = mat("CIron", (0.30, 0.30, 0.32), 0.85, 0.45)
+    bone = mat("CBone", (0.86, 0.80, 0.66), 0.0, 0.55)
+    parts = []
+    # the log: thin at the grip, swelling to the head; knots bulge it here and there
+    rnd = [(0.62, 0.8, 1.1), (0.80, 3.7, 0.9), (0.95, 5.2, 1.0), (0.48, 2.2, 0.7), (0.72, 0.3, 0.8)]
+    def knots(z, a):
+        f = 1.0
+        for kz, ka, amp in rnd:
+            d = math.hypot((z - kz) / 0.05, ((a - ka + math.pi) % (2 * math.pi) - math.pi) / 0.5)
+            f += 0.16 * amp * math.exp(-d * d)
+        return f * (1.0 + 0.03 * math.sin(a * 3 + z * 9))
+    prof = [(-0.12, 0.022), (0.0, 0.026), (0.25, 0.029), (0.4, 0.04), (0.55, 0.06), (0.7, 0.08), (0.85, 0.095),
+            (0.97, 0.10), (1.04, 0.085), (1.08, 0.05), (1.10, 0.0)]
+    fine = []
+    for (z0, r0), (z1, r1) in zip(prof, prof[1:]):
+        for k in range(4):
+            t = k / 4
+            fine.append((z0 + (z1 - z0) * t, r0 + (r1 - r0) * t))
+    fine.append(prof[-1])
+    parts.append(obj("club_log", lathe(fine, seg=18, twist=knots), [wood]))
+    # leather wraps on the grip and a knob at the end
+    parts.append(obj("club_grip", lathe([(-0.10, 0.0), (-0.10, 0.029), (0.24, 0.032), (0.24, 0.0)], seg=14), [leather]))
+    parts.append(obj("club_knob", lathe([(-0.19, 0.0), (-0.185, 0.025), (-0.16, 0.038), (-0.13, 0.034), (-0.11, 0.024),
+                                         (-0.10, 0.0)], seg=14), [wood]))
+    # two iron bands round the head
+    for z, r in ((0.60, 0.072), (0.92, 0.104)):
+        parts.append(obj("club_band", lathe([(z - 0.018, 0.0), (z - 0.018, r), (z + 0.018, r), (z + 0.018, 0.0)], seg=20),
+                         [iron]))
+    # bone teeth driven into the head, leaning toward the tip
+    i = 0
+    for z, n, r in ((0.70, 5, 0.085), (0.80, 6, 0.095), (0.98, 6, 0.10)):
+        for k in range(n):
+            a = 2 * math.pi * (k + 0.5 * (i % 2)) / n
+            i += 1
+            out = Vector((math.cos(a), math.sin(a), 0.35)).normalized()
+            base = Vector((math.cos(a) * r * 0.85, math.sin(a) * r * 0.85, z))
+            ln = 0.07 + 0.025 * ((k * 7 + i) % 3) / 2
+            bm = lathe([(0.0, 0.0), (0.0, 0.016), (ln * 0.5, 0.011), (ln, 0.0)], seg=8)
+            o = obj("club_tooth", bm, [bone])
+            o.matrix_world = Matrix.Translation(base) @ Vector((0, 0, 1)).rotation_difference(out).to_matrix().to_4x4()
+            parts.append(o)
+    export_one(join(parts, "ghorman_club"), CLUB)
+
+
 def main():
     clean()
     if ONLY in ("", "sword"):
@@ -481,6 +533,9 @@ def main():
     if ONLY in ("", "box"):
         clean()
         joke_box()
+    if ONLY in ("", "club"):
+        clean()
+        club()
 
 
 main()

@@ -44,6 +44,9 @@ func _clips(id: String) -> Array:
 	var st := String(HeroStage.IDLE.get(id, ""))
 	if st != "" and not (st in out):
 		out.append(st)
+	var fl := String(HeroStage.FLOURISH.get(id, ""))       # the Hero Select flourish
+	if fl != "" and not (fl in out):
+		out.append(fl)
 	for c in cfg.get("attack", []):
 		out.append(String(c))
 	if String(cfg.get("cast", "")) != "":

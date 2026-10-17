@@ -2,6 +2,7 @@ extends SceneTree
 ## Run 2026-10-17 e in a real match window: a hero with one of the new bodies (tools/blender/hero_body.py) standing,
 ## moving and attacking in the field, close up and at the game's camera distance, with captures.
 ##   godot --path . -s tests/tools/heroes17_look.gd -- --hero=azrin --out=work/lemondev/2026-10-17e-hero-models/shots
+## --model=hero_ghorman draws the hero with another catalog model (a body whose kit is not in the game yet).
 ## Staged on open ground at (-900, -2900), fog lifted, bots off.
 
 const C = preload("res://src/sim/sim_const.gd")
@@ -11,6 +12,7 @@ const SPOT := Vector2(-900, -2900)
 var game: Node
 var out := "work/lemondev/2026-10-17e-hero-models/shots"
 var hero_id := "azrin"
+var model_key := ""
 
 func _init() -> void:
 	for a in OS.get_cmdline_user_args():
@@ -18,6 +20,8 @@ func _init() -> void:
 			out = a.substr(6)
 		if a.begins_with("--hero="):
 			hero_id = a.substr(7)
+		if a.begins_with("--model="):
+			model_key = a.substr(8)
 	change_scene_to_file.call_deferred("res://src/game/main.tscn")
 	_run.call_deferred()
 
@@ -28,7 +32,8 @@ func frames(n: int) -> void:
 func shot(name: String) -> void:
 	await RenderingServer.frame_post_draw
 	var img := root.get_viewport().get_texture().get_image()
-	var path := ProjectSettings.globalize_path("res://" + out + "/" + hero_id + "_" + name + ".png")
+	var who := model_key.trim_prefix("hero_") if model_key != "" else hero_id
+	var path := ProjectSettings.globalize_path("res://" + out + "/" + who + "_" + name + ".png")
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
 	img.save_png(path)
 	print("saved ", path)
@@ -64,6 +69,12 @@ func _run() -> void:
 			eh.pos = w.map.fountains[eh.team]
 			w.orders.clear(eh)
 	w.vision.reveal_all = true
+	if model_key != "":
+		h.def = h.def.duplicate()
+		h.def["model"] = model_key
+		game.views[h.id].queue_free()
+		game.views.erase(h.id)
+		game._make_view(h)
 	SimDebug.force_start(w)
 	SimDebug.teleport(w, h, SPOT)
 	h.facing = PI * 0.5

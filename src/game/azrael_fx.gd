@@ -20,7 +20,7 @@ const EVENTS := ["soul_tap", "soul_slash", "death_scythe", "door_open", "door_ex
 const RED := Color(0.95, 0.08, 0.1)
 const SOUL := Color(0.85, 0.92, 1.0)
 const WINGS := "res://assets/characters/hero/azrael_wings.glb"
-const EYE_SKEL := Vector3(0.035, 1.672, 0.128)       # her eyes in skeleton space (measured on the sculpted body)
+const EYE_SKEL := Vector3(0.026, 1.674, 0.078)       # her eyes in skeleton space (measured on azrael.glb, 2026-10-17 f)
 const WING_SKEL := Vector3(0.0, 1.40, -0.15)         # between the shoulder blades
 
 var game: Node

@@ -8,12 +8,11 @@ extends RefCounted
 ##   hero body (and Azrin's, the same skeleton)   FIXED
 ##   Sludge's body (a far wider belly)            FIXED_SLUDGE
 ##   each humanoid unit model                     res://assets/characters/units/anim_fixed/<model>.res
-##   each 2026-10-17 hero body (heroes17)         res://assets/characters/heroes17/anim_fixed/<model>.res
+##   each 2026-10-17 hero body (heroes17)         FIXED as well (same bone tracks as the hero body)
 
 const FIXED := "res://assets/characters/hero/hero_anims_fixed.res"
 const FIXED_SLUDGE := "res://assets/characters/hero/hero_anims_fixed_sludge.res"
 const UNIT_DIR := "res://assets/characters/units/anim_fixed/"
-const H17_DIR := "res://assets/characters/heroes17/anim_fixed/"
 
 static var _sets := {}                      # library path -> AnimationLibrary (or null when missing)
 static var disabled := false                # tools only (--raw): leave the clips as built
@@ -25,8 +24,12 @@ static func path_for(scene_path: String) -> String:
 	if scene_path.contains("/units/"):
 		return UNIT_DIR + scene_path.get_file().get_basename() + ".res"
 	if scene_path.contains("/heroes17/"):
-		# the 2026-10-17 hero bodies (tools/blender/hero_body.py): each on its own rest, so each its own set
-		return H17_DIR + scene_path.get_file().get_basename() + ".res"
+		# the 2026-10-17 hero bodies (tools/blender/hero_body.py) are bound in their own pose, and every clip is
+		# retargeted so each bone keeps the hero clip's orientation: their bone tracks are the hero body's, so the hero
+		# body's repaired arms fit them as they are. (Repairing them on their own rest flipped arms and wrists: the
+		# repair measures twist and elbow swivel from the rest, and their rest has the arms hanging; run 2026-10-17 f,
+		# tests/tools/pose_compare.gd.)
+		return FIXED
 	return FIXED
 
 ## Every unit model scene the game uses (the repair tool skips those without arms: wolves, couriers).

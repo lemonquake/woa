@@ -4,6 +4,57 @@
 
 ## Status (keep this section current)
 
+**2026-10-18: Ghorman's human body, Azrael's new body, and a strict check of every hero animation (your list).** Run
+`work/lemondev/2026-10-17f-ghorman-azrael/` (contact sheets in `qa/`, captures in `shots*/`).
+* **Your report: Ezee, Azrin and Caziel looked broken. Found and fixed:**
+  * **Flipped arms** (the big one). Each own body had its own repaired arm clips (`heroes17/anim_fixed/*.res`), made by
+    `anim_repair.gd`, which measures twist and elbow swivel from the rest pose and assumes the hero body's T-pose. The
+    own bodies rest with their arms hanging, so it turned arms and wrists the wrong way: Ezee's right arm 150-170
+    degrees off in `gs_4` and `boss_slam`, Caziel's hand 100 in `dual_3`, the staff hand of Azrin and Azrael 55-60 even
+    in the idle. The own bodies' bone tracks are the hero body's (the retarget keeps every bone's orientation), so they
+    now use the hero body's repaired arms (`RepairedClips.path_for`); the per-body files are deleted.
+  * **Coats webbing up with the arms** (Ezee's roar on Hero Select, Caziel's heavy strike): the cape and coat cloth
+    beside the hanging arms took arm weights. `hero_body.py --reach` now works (its table was missing): skin farther
+    from an arm bone than its reach (upper arm 15 cm, forearm 10.5, hand 10, for a 1.8 m hero) loses that bone. Ezee,
+    Azrin, Caziel, Azrael and Ghorman are rebuilt with `--reach=1`. Left: one cloth flap still hangs from Ezee's left
+    forearm in the roar (tighter reach made it worse).
+  * **Flame over Azrin's face**: the "burning hair" flame of her old bare-headed body sat at the head bone, inside her
+    new hood. The stage no longer draws it; in a match the hair flame streams behind the hood and the crown burns above.
+  * Ezee's greatsword in his idle is the hero body's shouldered two-handed stance; at Hero Select's first angle the blade
+    lines up with his helmet, and it clears as the stage turns. Not changed.
+* **New check, `tests/tools/pose_compare.gd`**: every own body (and Roydo, Blau) plays every clip the game uses for it
+  (idle, run, glide, attacks, casts, skills, Hero Select idle and flourish, death), and each bone's orientation is
+  compared frame by frame with the hero body's; FAIL above 25 degrees (`--raw`: before the arm repair, `--all`: every bone).
+  Now: every own body within 8.6 degrees. Expected differences it reports: Sludge's own wider-belly arm set (his axe
+  clips), the Beast Form's kept hunch (skipped). `anim_sheet.gd` now includes the Hero Select flourish. Contact sheets of
+  all 11 heroes plus Ghorman checked by eye: no other breaks. One look note, not animation: Froster wears a magenta crest.
+* **Azrael** (your new base `azrael.glb`): her own body now (`assets/characters/heroes17/azrael.glb`,
+  `tools/blender/azrael_prep.py` then `hero_body.py`): the two swords dropped, dress, gloves and cape black, the gold
+  armour dark steel with pale edges, hair silver-white, lips dark wine; the great scythe in both hands as before. She
+  floats (0.42 m) and glides on her own `glide_fwd` clip (chest forward, legs trailing) and the game leans her 7-13
+  degrees further into the move with her speed and banks her into turns (your request; `shots_final/azrael_move_*`).
+  The old spirit-flame body look is gone (her soul fire, motes, red eye glints and wings stay, eyes re-measured);
+  Customize Look is off for her like the other own bodies.
+* **Ghorman** (your `ghorman_human.zip`: a bare, bald bodybuilder): dressed as the Beast King by
+  `tools/blender/ghorman_prep.py` from the druid pack: the antlered deer skull over the hood, the fur collar recoloured as
+  a golden lion mane over the leather shoulder cape, belt and pouches, a knee-length leather kilt over trousers,
+  bracers and boots, all fitted to his size; a full dark beard of fur cards and a knotted club with bone teeth and iron
+  bands (`assets/weapons/ghorman_club.glb`) are new. In the catalog as `hero_ghorman` (2.05 m, club in the right hand,
+  Beast Form as his form `beast_form`, the modifier name his kit must use). Not in matches until his kit lands.
+* **Credits**: Azrael's model is "HIT2 Female swordsman" by enzohao, labelled CC BY 4.0 by the uploader. **Check this
+  one**: HIT2 is a commercial game (NEXON), so it may be a game rip that the uploader cannot license. Ghorman's
+  bodybuilder download carries no author or licence: tell me its Sketchfab page and I will fill in the row. The druid
+  pack is ArtLeaving (aptyphawk22), CC BY 4.0.
+* Tools: `hero_body.py` reads 3ds Max Biped bone names (`Bip001-R-UpperArm`), `--body_piece` sizes the hero by the body
+  alone (antlers do not shrink him); `tests/tools/heroes17_look.gd -- --model=hero_ghorman` draws any catalog body in a
+  match; `tests/tools/model_surfaces.gd` lists a model's surfaces as imported.
+* New names (veto any): `hero_ghorman`, `ghorman_club`, the `beast_form` form key; files `azrael_prep.py`,
+  `ghorman_prep.py`, `pose_compare.gd`, `model_surfaces.gd`.
+Evidence: headless tests 248 passed, 0 failed; `sh tools/check.sh` "Names OK"; pose_compare 89 clips, only Sludge's own
+arm set over the limit; contact sheets `qa/sheet3`, `qa/sheet_rest`, `qa/sheet7`; Hero Select `qa/select_after`;
+`build/WarriorsOfAether.exe` rebuilt 2026-10-18, cold start into a match as Azrael and as Ezee without script errors.
+Not verified: no blind critic review; Ghorman not seen with his own kit (none yet).
+
 **2026-10-17 e: new hero models (your picks, CC BY approved), Ezee, Azrin and Caziel on their new bodies.** Run
 `work/lemondev/2026-10-17e-hero-models/` (contract.md: who gets which download; captures in `shots/`).
 * **In the game now**: Ezee (the black-plate fallen paladin), Azrin (the hooded sorceress, recoloured red and black,
@@ -21,8 +72,8 @@
   hips more than the legs; split seam vertices share weights. Dense generated meshes (2 million faces) are baked onto
   a clean 40k-triangle copy (colour, roughness, metal, normal; GPU). `--cut` removes weapons fused into hands,
   `--rigid` locks a held prop to one bone, `--hue` / `--gray` recolour. `tools/blender/extract_prop.py` cuts a held
-  prop out as a game weapon (Azrin's staff). Each body has its own repaired arm clips
-  (`assets/characters/heroes17/anim_fixed/`, `tests/tools/anim_repair.gd -- --model=...`).
+  prop out as a game weapon (Azrin's staff). (Since 2026-10-18 the bodies use the hero body's repaired arm clips; their
+  own sets flipped arms.)
 * **Azrin's float** (your request): she holds her staff upright (staff idle), glides on a new clip `glide_fwd` (chest
   leaning in, head up, legs trailing with bent knees), and the game leans her 7-13 degrees forward with her speed and
   banks her into turns. Attacks swing the staff (staff_1 / staff_2); her ability clips are as before.
@@ -41,8 +92,7 @@
   skeletons (3ds Max rigs), so both are rigged from hand-placed joints instead; Burak's eyes and beard were 8 cm too
   high in the download and are moved back. New body-tool options: `--norig`, `--move`, `--keep`, `--capture`,
   `--posture`, `--body_piece`; `tools/blender/prep_weapon.py` turns a downloaded weapon into a game weapon.
-* **Not done yet**: Ghorman's human body (the Northern Outsider GLB from Sketchfab is broken: its legs, feet, pelvis
-  and axe come out tens of metres away even on its own clips; the "Original format" download is needed); Feran's
+* **Not done yet**: (Ghorman's human body: done 2026-10-18 on your bodybuilder download); Feran's
   jester restyle (red and black patched coat, three-point bell hat, half-smile mask); the Ancient Light sun on Ser
   Emelrich's tabard; Ghorman's Beast Form; the five kits (proposed as their own session).
 * New names (veto any): the "Credits" menu button and screen; ids `hero_emelrich`, `hero_feran`, `hero_burak`,
@@ -722,6 +772,18 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   --autoplay --nolearn --min=6`.
 * Rebuild Azrin's body from your female_generic model (about a minute; `-- --preview=dir` renders checks):
   `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/azrin_body.py`
+* Strict animation check (2026-10-18): `godot --headless --path . -s tests/tools/pose_compare.gd [-- --models=hero_ezee]
+  [--limit=25] [--all] [--raw]`; contact sheets `godot --path . -s tests/tools/anim_sheet.gd -- --heroes=ezee,unit:hero_ghorman`.
+* Rebuild Azrael's body (B = the Blender command above): `B --python tools/blender/azrael_prep.py --
+  --src=A:/Python/woa/work/downloads/sf_heroes/azrael.glb --out=A:/Python/woa/work/azrael_src`, then `B --python
+  tools/blender/hero_body.py -- --src=A:/Python/woa/work/azrael_src/azrael_src.blend --name=azrael --height=1.8
+  --faces=50000 --tex=2048 --glide=idle_staff --reach=1 --out=A:/Python/woa/assets/characters/heroes17/azrael.glb`.
+* Rebuild Ghorman's body: `B --python tools/blender/ghorman_prep.py -- --out=A:/Python/woa/work/ghorman_src [--preview]`,
+  then `B --python tools/blender/hero_body.py -- --src=A:/Python/woa/work/ghorman_src/ghorman_src.blend --name=ghorman
+  --body_piece="^ghorman_body" --height=2.05 --faces=80000 --tex=2048 --reach=1 --cloth="^no_hanging_cloth$"
+  --out=A:/Python/woa/assets/characters/heroes17/ghorman.glb`; his club: `B --python tools/blender/heroes17_gear.py -- --only=club`.
+  Ezee, Azrin and Caziel: the commands in `work/lemondev/2026-10-17e-hero-models/NEXT_AGENT.md` plus `--reach=1`.
+  After any body rebuild: `godot --headless --path . --import` (no arm repair needed for these bodies).
 * Azrael's scythe and wings: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup
   --python tools/blender/azrael.py`; her look variants side by side: `godot --path . -s tests/tools/azrael_look.gd --
   --out=x.png [--close]`; which way a weapon's head moves in a swing: `godot --headless --path . -s

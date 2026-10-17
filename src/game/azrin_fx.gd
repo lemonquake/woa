@@ -312,9 +312,10 @@ func _follow(w: SimWorld, dt: float) -> void:
 		(hs[0] as Node3D).global_position = v.hand_point("L")
 		(hs[1] as Node3D).global_position = v.hand_point("R")
 		var head := _bone(v, "head", base + Vector3(0, FLOAT + 1.65, 0))
-		(a.hair as Node3D).global_position = head + v.global_transform.basis.z * -0.08 + Vector3(0, 0.12, 0)
+		# her own body is hooded (2026-10-17 f): the hair flame streams out behind the hood, the crown burns above it
+		(a.hair as Node3D).global_position = head + v.global_transform.basis.z * -0.2 + Vector3(0, 0.1, 0)
 		(a.hem as Node3D).global_position = _bone(v, "hips", base + Vector3(0, FLOAT + 0.9, 0)) + Vector3(0, -0.75, 0)
-		(a.crown as Node3D).global_position = head + Vector3(0, 0.2, 0)
+		(a.crown as Node3D).global_position = head + Vector3(0, 0.36, 0)
 		(a.light as Node3D).global_position = base + Vector3(0, 0.45, 0)
 		# her spirits circle her chest, bobbing
 		var list: Array = _spirits.get(id, [])
