@@ -356,6 +356,15 @@ against the hero body, per bone, 25 degree limit); looks are builder self-checks
 | Q2 Coat webbing | 1-2 | working tree | sheets before / after (Ezee roar, Caziel heavy strike) | n/a | PASS (self-check), one flap left | the coats took arm weights; `--reach` (now defined) frees cloth beyond each arm bone's reach | Ezee's left forearm flap |
 | X1 Integration | 1 | working tree | gate: tests 248/248, parse, check_names, export, cold start as Azrael and Ezee | n/a | PASS (gate) | none | none |
 
+## Session 2026-10-18 c (release build and push) — run `work/lemondev/2026-10-18-build/`
+
+Build-only scope, source `5f73062`. No gameplay or asset changes, new benchmark, or independent visual review.
+Two test diagnostic messages corrected after the full suite; both affected tests rerun successfully.
+
+| Component | Pass | Revision | Evidence | Verdict | Remaining gap |
+|---|---|---|---|---|---|
+| Release export | 1 | 5f73062 | import/export exit 0; tests 249/249; check.sh Names OK; exported menu and Azrael captures inspected | Build-only checks passed; full Gauntlet UNVERIFIED | Existing shutdown resource leaks; independent comparison and full lifecycle validation not performed |
+
 ## Session 2026-10-18 b (hero model QA after the owner's Azrael screenshot; body collision system) — run `work/lemondev/2026-10-18-model-qa/`
 
 No critic subagent was run (none asked for). New measured gate: `tests/tools/body_collide.gd -- --applied` (worst

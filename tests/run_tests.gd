@@ -1930,7 +1930,7 @@ func test_ranger_ezee_talents() -> void:
 	w.command(r.id, {"type": O.CAST_NO_TARGET, "ability": "blood_ranger_ult"})
 	run(w, 0.6)
 	var m := r.get_modifier("blood_ranger")
-	check(not m.is_empty() and is_equal_approx(float(m.stats.lifesteal_ability), 0.8), "the cast carries +20% lifesteal (%s)" % str(m.get("stats")))
+	check(not m.is_empty() and is_equal_approx(float(m.stats.lifesteal_ability), 0.8), "the cast carries +20%% lifesteal (%s)" % str(m.get("stats")))
 	# Ezee: values read by his spells as they go off
 	var w2 := empty_world()
 	var e := _ezee(w2, Vector2(-2000, -4000))
@@ -6757,7 +6757,7 @@ func test_lily_pond() -> void:
 	near(h.max_hp - h.hp, 400.0 - 125.0, 30.0, "125 health (and 1.6 s of regeneration)")
 	check(h.mana >= 124.0, "125 mana")
 	run(w, 1.05)
-	check(int(s.lilies) == 4, "the next one 30% faster (1.05 s) (%d)" % int(s.lilies))
+	check(int(s.lilies) == 4, "the next one 30%% faster (1.05 s) (%d)" % int(s.lilies))
 	# an enemy hero in the area pauses it
 	var e := _sludge(w, (s.pos as Vector2) + Vector2(-100, 0), {}, C.DUSK)
 	run(w, 3.0)

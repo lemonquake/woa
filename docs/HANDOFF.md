@@ -4,6 +4,20 @@
 
 ## Status (keep this section current)
 
+**2026-10-18 c: release rebuild and main push (owner's request).** Source revision `5f73062` rebuilt with
+Godot `4.7.2.stable.official.ed1daf0bf`, Windows Desktop release, x86_64. Runnable output:
+`build/WarriorsOfAether.exe` with its adjacent `.pck`; the previous pair is saved under
+`build/previous-2026-10-18-build/`. Evidence: `work/lemondev/2026-10-18-build/` (contract, handoff, local logs and captures).
+Full mechanics suite: **249 passed, 0 failed**. Two test diagnostic strings had unescaped percent signs; corrected
+them and reran both affected tests (2 passed, no formatting errors). `sh tools/check.sh`: no script errors, **Names OK**.
+Release export exited 0. Cold exported starts: normal menu and an Azrael match rendered successfully on the RTX 4060;
+match ready in 18.05 s with the regression suite running, capture at game time 1:37, exit 0.
+No script or loading errors. Known shutdown issue: match reports 1439 leaked ObjectDB instances and 19 resources still
+in use; the test suite reports leaks too. Earlier export logs already contain the same class of cleanup warnings.
+No gameplay or assets changed in this run; only test messages and build records changed. Independent visual review and a new performance benchmark were not run
+(build-only scope). New names: none in game or code; evidence folder `2026-10-18-build` and backup folder above.
+Build files remain local under the repository's existing `/build/` ignore rule; source and build records are pushed.
+
 **2026-10-18 b: hero model and animation QA (your Azrael screenshot), and body collision for every clip (your list).**
 Run `work/lemondev/2026-10-18-model-qa/` (close-up sheets `before/`, `after*/`, `final*/`, `collide1/`; reports
 `collide_*.txt`; in-match capture `shots/export_azrael.png`).
