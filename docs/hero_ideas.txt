@@ -1,0 +1,355 @@
+WARRIORS OF AETHER - FIVE HERO IDEAS
+Written 2026-10-17 for the owner. Nothing here is in the game. Every number is my pick; veto or tune any of it.
+
+======================================================================================================================
+PART 1. HOW YOUR HEROES ARE BUILT (what I read before designing)
+======================================================================================================================
+
+Read: docs/HANDOFF.md, docs/MECHANICS.md, src/sim/sim_data.gd (stats, abilities, talents), sim_bot_kits.gd (roles),
+sim_const.gd (elements), sim_status.gd (status effects), the run contracts in work/lemondev/, and the naming rule.
+Your own kits: Blood Ranger, Ezee, Azrin, Froster, Caziel, Roydo, Blau, Azrael (plus your rework of Kragg).
+Sludge is Dota's Pudge copied 1:1; Tock and Kragg were designed by an agent, so I leaned on them less.
+
+The patterns I found:
+
+1. Four skills, Q W E R. Q is the main damage spell (often a skillshot or area: Burst Shot, Fiery Javelin, Breath of
+   Cold, Bounce Shot). W is control or a second tool. E is usually a passive (Masterful Archery, Frost Heart, Dark
+   Matter Skin, Death Scythe; Caziel's passive is on W). R has 3 levels at 6/12/18. Most of your ultimates are a timed
+   self-buff or a change of form (Blood Ranger, Unholy Might, Anomaly, Divine Darkness); Endless Winter is a channel,
+   Divine Smite a nuke, Death Order a passive execute.
+
+2. Each hero has one big idea, and the four skills feed it:
+   * Azrin: everything burns, Spirit of Fire charges from her other spells, Divine Smite makes every Fire burn last
+     longer, Touch of Ember punishes the enemy for casting.
+   * Froster: Ice Pulse lowers defense, everything builds Frost Hearts, Endless Winter freezes.
+   * Caziel: dagger in (armor cut), poison procs, shadows to get close, execute at low health.
+   * Roydo: Void Rush lowers status resistance so Grip of the Ruler's stun lasts longer.
+   * Blau: boulders block paths AND give Bounce Shot more walls to bounce off; the turret copies his attack.
+   * Azrael: Soul Tap counts every unit (allies too), the door carries allies, Death Scythe procs off her spells,
+     the door blast strips elemental resistance (and she is Dark).
+
+3. You love physics and the map: Gale Impact hurls enemies sideways with crash damage, Dark Stomp's push makes units
+   crash into each other, trees and cliffs; Grip throws a unit on an arc; Fiery Javelin drags; Bounce Shot ricochets;
+   boulders roll and bounce. Trees fall to spells. Units crashing into things is a shared rule in this game.
+
+4. Chance procs with a cooldown, on Dota's pseudo-random rolls: Masterful Archery (30%, 0.8 s), Death Scythe (1 s),
+   Dark Matter Skin, Sweet Poison, Unholy Might.
+
+5. Allies get pulled into enemy spells: Grip can throw an ally (unhurt), Soul Tap counts allies, the door takes two
+   allied heroes, Bounce Shot bounces off allies.
+
+6. Some randomness you can still control: Burst Shot's random waves, Grip's random target, the boulders' random angles.
+
+7. Everything has an element (None, Fire, Water, Ice, Earth, Lightning, Nature, Dark, Light), and spells carry it.
+
+8. Counters and stacks you can see: Frost Hearts, spirits, Kragg's Charges, Soul Tap's souls, Overload's attack count.
+
+9. You give the numbers that make the idea work and leave mana, cast ranges, speeds and widths to be "chosen".
+   Numbers grow in clean steps (100/140/180/220, 16/15/14/13 s).
+
+10. You want every hero played well by bots, with its own look, effects and a talent tree (4 tiers of 2). The
+    Upgrade Staff (Dota's Aghanim's Scepter) can grant a new skill (Pilot Turret).
+
+11. Roles in the bot table now: almost everyone is a core (1/2/3). Only Tock is a real support. Elements in use:
+    Fire 1, Ice 1, Dark 3, Lightning 1, Nature 1, Earth 1 (Sludge), Light 1 (Tock), Neutral 2, Water 0.
+
+What I aimed for with these five: fill the gaps (a real save-support, a summoner, a slow heavy hitter), give each one
+big idea in the same style as yours, and make each one combo with heroes you already have.
+
+======================================================================================================================
+PART 2. THE FIVE HEROES
+======================================================================================================================
+
+Base stats follow the templates already in sim_data.gd. Ability names were run through tools/check_names.py
+(hits_in): all pass except "Tailwind" (see Airah). Your hero names and titles are yours and stay as given.
+
+----------------------------------------------------------------------------------------------------------------------
+1) AIRAH, THE WIND GODDESS
+----------------------------------------------------------------------------------------------------------------------
+Ranged intelligence support (roles 4, 5, 2). Range 600, projectile 1200.
+Str 18 +2.0, Agi 18 +1.8, Int 24 +3.4, damage 21-29, armor 0, speed 300 (fastest support), BAT 1.7, attack point 0.4.
+Element: SEE QUESTION A. There is no Wind element. My pick is Lightning (storm sky); the other choice is Neutral.
+
+Big idea: she moves everyone. Enemies get blown into walls, allies get carried out of danger, projectiles get
+stopped by the wind.
+
+Q  Gust (point, line)
+   A blast of wind 900 long, 200 wide, 1600 speed. Enemies hit take 80/140/200/260 magic damage and are pushed
+   300/350/400/450 along the line. An enemy pushed into a tree, cliff, building or unit takes 40/60/80/100 more and is
+   stunned 0.6/0.8/1.0/1.2 s (the same crash rule as Dark Stomp and Gale Impact); trees it hits fall.
+   Allies on the line are pushed forward 300 too, unhurt, and move 20% faster for 2 s (an escape for a friend).
+   12/11/10/9 s, mana 100/110/120/130.
+
+W  Tailwind (unit: ally or self, 800)
+   For 5 s the target moves 16/22/28/34% faster, walks through units, and ranged attacks against it miss
+   25/30/35/40% of the time (blown aside). Removes slows when cast (basic dispel of slows only).
+   16/14/12/10 s, mana 70.
+
+E  Wind Wall (point, 700)
+   A wall of wind 600 wide, across her aim, for 4/4.5/5/5.5 s. Enemy projectiles that touch it stop: ranged attacks,
+   Shuriken Hook, Fiery Javelin, Gale Impact, Burst Shot arrows, Time Bolt, Bounce Shot. An ALLIED Blau's Bounce Shot
+   ricochets off it like a cliff. Enemies walking through it are slowed 30%.
+   22/20/18/16 s, mana 90/100/110/120.
+
+R  Hurricane (point 900, radius 450, 6 s; not a channel, she keeps moving and casting)
+   Trees inside fall when it forms. Enemies inside are dragged toward the middle at 120/160/200 per second and take
+   60/90/120 magic damage per second. When it ends, every enemy still inside is thrown 450 straight out from the
+   middle; anyone who crashes into a tree, cliff, building or unit is stunned 1 s. Allies inside move 25% faster.
+   90/80/70 s, mana 150/200/250.
+
+How the skills work together: Hurricane gathers them and then throws them. A thrown enemy near a cliff or tree line
+crashes and gets stunned, so you place it next to walls. Gust finishes the job (push a flung enemy into a tree for a
+second stun). Tailwind and Wind Wall keep your carry alive.
+With your heroes: Wind Wall hard counters Sludge's hook and Azrin's javelin; Blau's bullets bounce off it; Hurricane
+gathers enemies for Ezee's Dark Stomp (more crashes), Froster's Endless Winter and Kragg's Magnet Field.
+
+Talents: +12% Tailwind speed / +60 Gust damage; -3 s Wind Wall cooldown / +1 s Gust stun; +1.5 s Hurricane /
++20% Tailwind miss chance; Gust hits allies too: +40% speed for them / Hurricane throws 650.
+Upgrade Staff: Tailwind hits every allied hero within 600 of the target.
+Bot: tries Gust angles that push the target into trees or cliffs (like Blau's bot traces Bounce Shot angles); Tailwind
+on an ally who is being chased (the Fade Cape save logic); Wind Wall between an ally and an enemy Sludge, Azrin or
+Blood Ranger; Hurricane on 3+ heroes, best when walls are nearby.
+Look: your female body floating like Azrin, long pale hair and silk ribbons always blowing, wind spirals at her feet,
+leaves and dust caught in her gusts.
+Closest to other games (so you can steer away): Wind Wall is close to Yasuo's Wind Wall (League of Legends); the
+Hurricane pull is close to Enigma's Black Hole; the throw-out at the end is my own twist.
+
+----------------------------------------------------------------------------------------------------------------------
+2) BURAK, THE BERSERKER
+----------------------------------------------------------------------------------------------------------------------
+Melee strength carry (roles 1, 3). Two axes.
+Str 25 +3.2, Agi 18 +2.1, Int 15 +1.4, damage 30-36, armor 2, speed 305, BAT 1.7, attack point 0.35.
+Element: Fire (a temper that burns). Earth would also fit.
+
+Big idea: getting hurt makes him stronger, and he can shrug off disables if he is angry enough. Rage is a stack you
+can see, like Frost Hearts or Charges.
+
+Innate  Rage (no point, small slot, like Kragg's Magnetize)
+   0-100 Rage. +1 per 1% of his max health lost, +5 per attack he lands on a hero. Loses 10 a second after 4 s
+   without hitting or being hit by a hero. Every 10 Rage: +5 attack speed (+50 at full). Shown as a red bar under
+   his health and in the buff bar.
+
+Q  Axe Throw (point, line)
+   Throws one axe 1000 at 1500 speed, 100 wide. The first enemy hit takes 80/140/200/260 physical damage and is
+   slowed 30% for 2 s; the axe sticks in it, or in the first tree or cliff, or drops at the end of its path.
+   For 4 s he can cast it again (free) to leap to the axe (0.35 s); he lands next to the target and his next attack
+   starts at once. Walking over the dropped axe picks it up and halves the remaining cooldown. While the axe is gone
+   he fights with one axe: -20% attack damage. +15 Rage on a hero hit.
+   14/13/12/11 s, mana 70/75/80/85.
+
+W  Reckless Swing (no target)
+   8 s: his attacks cleave 50/60/70/80% in Dota's cleave cone and lifesteal 15/20/25/30%, but he takes 15% more
+   damage (so he builds Rage faster). 16/15/14/13 s, mana 60.
+
+E  Unstoppable (passive)
+   When a stun, root or hex lands on him while he has 40+ Rage, he spends 40 Rage and it lasts 40/50/60/70% less
+   (status resistance against that one effect, so the game's existing rules handle it).
+   12/11/10/9 s cooldown, shown on the E icon. Break stops it.
+
+R  Berserk (no target, 12 s)
+   Rage locked at 100. +40/60/80 attack damage, +10% speed, slows do nothing. Half of all damage he takes is held
+   back (shown as a dark stretch on his health bar) and comes back as pure damage over 6 s after Berserk ends.
+   Every enemy hero he kills or helps kill during Berserk clears the held damage. 70/60/50 s, mana 100/125/150.
+   QUESTION B: can the held damage kill him? I wrote yes (he pays for it); the safer choice stops it at 1 health.
+
+How the skills work together: Axe Throw to stick and leap in, Reckless Swing for cleave and lifesteal while the
+extra damage he takes fills Rage, full Rage lets Unstoppable shrug off the stun meant to stop him, and Berserk lets him
+fight now and pay later unless he gets the kill.
+With your heroes: Airah's Tailwind runs him in; Azrael's door drops him on top of a fight; Ezee's Leap Strike and his
+leap both pick the hurt target. Counters: Froster's Endless Winter (a frost, many short stuns) and Roydo's Void Rush
+(lower status resistance) are the honest answers to Unstoppable.
+
+Talents: +15 attack damage / +150 Axe Throw damage; Rage loses 50% slower / +10% Reckless Swing lifesteal;
+-20 Rage needed for Unstoppable / +6 s Axe recast window; +4 s Berserk / held damage comes back over 10 s.
+Upgrade Staff: Axe Throw throws both axes in a 20-degree fork; the leap goes to either.
+Bot: lanes as a carry; throws an axe at a hero it can follow up on, leaps only when the fight is in its favour
+(the team brain's fight model), Reckless Swing on creep waves and in fights, Berserk when the fight starts, not
+when it is losing.
+Look: a big bare-chested fighter in fur and leather, war paint, two bearded axes, eyes that glow red as Rage fills,
+steam off his skin at full Rage.
+Closest to other games: the axe throw and pickup is close to Olaf's Undertow (League of Legends); Rage making him
+attack faster is near Troll Warlord's Fervor (stacks on one target) and Huskar's Berserker's Blood (scales with
+missing health; I am not certain which bonuses it gives in the current patch). Holding damage back for later is my own twist, as far as I know.
+
+----------------------------------------------------------------------------------------------------------------------
+3) SER EMELRICH, THE HEAVY SWORD
+----------------------------------------------------------------------------------------------------------------------
+Melee strength off-laner and initiator (roles 3, 1, 4). A knight with a huge two-handed sword.
+Str 26 +3.4, Agi 13 +1.5, Int 16 +1.6, damage 37-43, armor 3, speed 290, BAT 1.8, attack point 0.55,
+turn rate 0.5 (slow and heavy on purpose).
+Element: Light (sword of the Ancient Light; Tock is the only other Light hero).
+
+Big idea: slow, readable, crushing. Every big hit has a wind-up the enemy can see, so the skill is landing it. His
+skills line enemies up for the next swing.
+
+Q  Overhead Cut (point, line in front)
+   0.6 s wind-up (a red line on the ground for everyone, like the Ogre's Smash), then a cut 450 long, 160 wide:
+   100/160/220/280 + 60% of his attack damage as physical damage, and a 0.8/1.0/1.2/1.4 s stun. Trees on the line fall.
+   13/12/11/10 s, mana 90/100/110/120.
+
+W  Sweep (no target, half circle in front, 300 radius)
+   A wide swing: his attack damage + 40/70/100/130 physical. Enemies hit are shoved 200 along the swing toward his
+   left, so they pile up. Anyone shoved into a tree, cliff, building or unit takes 40/60/80/100 and is stunned 0.5 s.
+   11 s, mana 80/85/90/95.
+
+E  Steel Stance (toggle, 1 s between toggles, no mana)
+   While on: -20% speed, half turn rate, +4/6/8/10 armor, 25/35/45/55% less damage from attacks and line shots that
+   come from his front 120 degrees, and enemy pushes and pulls do not move him.
+   Turning matters, so how you face is part of how you play him.
+
+R  Giant Swing (point, aims a cone)
+   1.2 s wind-up (a red cone shown to everyone), then a 700-long, 100-degree cut: 250/400/550 physical damage that
+   ignores 50% of armor, and every enemy hit is knocked down (stunned) for 1.2/1.5/1.8 s. Every tree in the cone
+   falls. The wind-up breaks on stun, hex or silence, but with Steel Stance on only hex and silence break it.
+   70/60/50 s, mana 150/200/250.
+
+How the skills work together: Sweep piles them to one side, Overhead Cut pins one, Giant Swing cuts the pile. Steel
+Stance is the price and the protection: he can't be pushed out of the wind-up, but he moves and turns like a wall.
+With your heroes: Airah's Hurricane and Kragg's Magnet Field hand him a pile; Blau's boulders and traps hold
+enemies inside the red cone; Feran's Shuffle (below) scrambles them inside it. Counters: Ezee's Dark Stomp and
+Kragg's Repel push him out of position, unless Steel Stance is on.
+
+Talents: +250 health / +1 s Overhead Cut stun; +60 Sweep damage / Sweep shoves 350; Steel Stance blocks from
+the sides too (180 degrees) / -0.3 s Overhead Cut wind-up; Giant Swing ignores all armor / -20 s Giant Swing.
+Upgrade Staff: Giant Swing also swings back the other way 0.5 s later (a second, smaller cone, half damage).
+Bot: casts the wind-ups only on a target that is stunned, rooted, slowed or out of escape spells (it knows Leap
+Strike, Jump Knife, Door of the End and Lay Trap leaps); Sweep into walls; Steel Stance on when a ranged or line-shot
+hero is in front of him and he is not chasing.
+Look: full plate on the hero body, white and gold, a tabard with the Ancient Light sun, an oversized two-handed sword
+with a long leather grip; sparks and a short ground crack on every heavy hit.
+Note: "Heavy Sword" was once the name of the Sange item (it is Kugmo now), so there is no clash in the shop, but a few
+code comments still say "the Heavy Sword family" (sim_unit.gd, sim_world.gd, MECHANICS.md). Worth renaming those to
+"the Kugmo family" if he goes in.
+Closest to other games: the front block is near Mars's Bulwark (Dota); the telegraphed cuts are like the Ogre's Smash
+already in this game; I know of no Dota hero with Sweep's sideways pile-up.
+
+----------------------------------------------------------------------------------------------------------------------
+4) FERAN MOCK, THE JESTER
+----------------------------------------------------------------------------------------------------------------------
+Ranged intelligence trickster (roles 4, 2, 5). Range 550, projectile 1100 (thrown knives).
+Str 18 +1.9, Agi 20 +2.2, Int 23 +3.0, damage 20-26, armor 1, speed 305, BAT 1.7, attack point 0.35.
+Element: Neutral (a jester belongs to nobody).
+
+Big idea: chaos you can still steer. Random knives, random pranks, swapped places, a shuffled teamfight. Like
+Burst Shot and Grip of the Ruler, the randomness has rules, so a good player still wins with it.
+
+Q  Knife Juggle (point, 700)
+   Throws 4/5/6/7 knives, 0.1 s apart, each at a random angle within 25 degrees of the aim, 800 reach, 1200 speed,
+   60 wide. Each knife deals 45/60/75/90 magic damage; one enemy is hit by at most 3 knives per cast.
+   9 s, mana 80/90/100/110.
+
+W  Joke Box (point, 600)
+   Throws a box that lands and pops after 0.8 s (a visible fuse) in a 275 area: 60/100/140/180 magic damage, and each
+   enemy rolls its own prank:
+     * Pie: its attacks miss 50% of the time for 3 s.
+     * Spring: thrown 350 in a random direction (crash rule applies: trees, cliffs and units stun 0.6 s).
+     * Confetti: silenced 1.5/2/2.5/3 s.
+     * Glue: rooted 1/1.3/1.6/1.9 s.
+   14/13/12/11 s, mana 100/110/120/130.
+
+E  Swap (unit, any hero, ally or enemy, 700/800/900/1000)
+   He and the target trade places at once (projectiles aimed at either miss). A swapped enemy is turned to face away
+   and slowed 40% for 1.5 s; a swapped ally gets a basic dispel. 20/18/16/14 s, mana 70.
+
+R  Shuffle (point 700, area 450, 0.5 s cast)
+   Every enemy hero and creep inside trades places with another random enemy inside (heroes can land in the middle
+   of their creeps or on the front line), each is stunned 0.8/1.0/1.2 s, then dizzy for 3 s (half turn rate, 25%
+   slower). If only one enemy is inside, it trades places with Feran instead. 80/70/60 s, mana 150/200/250.
+
+How the skills work together: Swap pulls an enemy carry into your team; Shuffle breaks the enemy formation (the
+carry in front, the support at the back); Joke Box and Knife Juggle punish the confused pile. Dizzy matters because
+turn rate is real in this game (the turn rates in sim_data.gd).
+With your heroes: Shuffle and Swap set up Emelrich's Giant Swing and Froster's Endless Winter; Swap saves an ally
+from Sludge's Chomp or Caziel's dive; Spring prank near Blau's boulders or a tree line stuns.
+
+Talents: +1 knife / +8% magic amp; Joke Box rolls two pranks on each enemy / -3 s Swap; +200 Swap range /
++60 Joke Box damage; +1 s Shuffle stun / Shuffle radius +150.
+Upgrade Staff: Swap can target an allied hero and an enemy hero together: those two trade places (Feran stays put).
+Bot: Knife Juggle at point blank (more knives hit); Joke Box on a group or a fleeing hero; Swap the enemy hero its
+team is chasing into its allies, or swap out an ally under a stun; Shuffle on 3+ enemies when its team is ready.
+Look: a lean jester in a red and black patched coat, a three-point bell hat, a painted half-smile mask, knives on
+a belt; confetti, bells and a puff of coloured smoke on Swap.
+New systems he needs: a "miss chance" debuff (Pie; Dota calls this blind) and the place swap.
+Closest to other games: Swap is close to Vengeful Spirit's Nether Swap (Dota); I know of no hero with Shuffle or
+the random pranks.
+
+----------------------------------------------------------------------------------------------------------------------
+5) GHORMAN, THE BEAST KING
+----------------------------------------------------------------------------------------------------------------------
+Melee strength off-laner / jungler (roles 3, 4). A huge wild man in furs who rules the animals.
+Str 24 +3.0, Agi 17 +1.9, Int 18 +1.8, damage 30-36, armor 1, speed 305, BAT 1.7, attack point 0.4.
+Element: Nature (beasts). Nature beats Water and Earth.
+
+Big idea: he leads a pack. He takes over the game's own neutral creeps, so the camps you built (Ogre Smash, Orc
+Shaman Stomp, Alpha Wolf aura, Goblin Digger disarm) become his tools, and he gets stronger the more beasts he has.
+
+Q  Tame (unit, 600: a neutral creep (not from the ancient camp) or an enemy lane creep)
+   It becomes his for good, with +20/30/40/50% health and attack damage, and keeps its own ability. He can own 1/2/2/3
+   at once; taming past the cap releases the oldest (it dies). 30/26/22/18 s, mana 70.
+
+W  Roar (no target, 500)
+   Enemies are slowed 35/40/45/50% and deal 15/20/25/30% less attack damage for 3 s. His beasts within 900 get +30
+   attack speed and 20% speed for 6 s. 15 s, mana 90/100/110/120.
+
+E  Pack Leader (passive)
+   Each of his beasts within 900 gives him +3/4/5/6 attack damage and +1/1.5/2/2.5 armor. When one of his beasts
+   dies, he heals 8/10/12/14% of his max health.
+
+R  Beast Form (no target, 25 s; his model swaps, as Roydo's Anomaly does)
+   +250/400/550 health, +40/60/80 attack damage, +40 speed; every 3rd attack is a maul for 100/150/200 extra physical
+   damage and a 0.6 s bash (the bash rule: only one bash source counts). His beasts grow too: +25% health and damage,
+   and their ability cooldowns run 50% faster (the game's cooldown rate system). 80/70/60 s, mana 100/125/150.
+
+How the skills work together: Tame builds the pack, Pack Leader turns the pack into his armor and damage, Roar makes
+the pack and him hit first, Beast Form makes all of them bigger and makes the Ogre Smash or Orc Stomp come back twice
+as fast.
+With your heroes: an Alpha Wolf's aura helps carries like Blood Ranger and Blau; Kragg's Charges and Ezee's Unholy
+Might work well with lots of units hitting at once; Azrael's Soul Tap counts his beasts (more souls).
+Counters: area spells (Burst Shot, Endless Winter, Stench) kill the pack.
+
+Talents: +1 beast / +20 Roar attack speed; +15% tamed health and damage / -6 s Tame; +2 Pack Leader armor per
+beast / Roar radius +200; +10 s Beast Form / maul every 2nd attack.
+Upgrade Staff: Tame works on ancient camp creeps (the Lava Golem and Fire Imps), still 1 at a time for those.
+Bot: tames a large camp creep with a useful ability first (Ogre for Smash, Orc Shaman for Stomp), lanes with it,
+farms jungle camps with the pack, Roar when it engages, Beast Form when the team fights. Needs bot control of extra
+units (Blau's turret aims on its own; tamed creeps would have to follow orders).
+Look: a giant bearded man with a lion-mane cloak, bone and antler armour, a big club; in Beast Form a huge maned beast,
+part bear, part lion; green spirit light on his tamed creeps.
+New systems he needs: owning and ordering extra units (select, move, attack; I have not checked whether the HUD can
+select units besides the hero and courier yet).
+Closest to other games: taking over creeps is close to Chen's Holy Persuasion and Enchantress's Enchant (Dota) and
+the Dominator item; Beast Form growing his units too is close to Lycan's Shapeshift (I am not certain of every detail
+of Lycan's current version, check before using it as a reference).
+
+======================================================================================================================
+PART 3. QUESTIONS FOR YOU, AND WHAT IS NOT CHECKED
+======================================================================================================================
+
+QUESTION A (Airah's element): the game has no Wind element. Options: (1) Lightning (my pick: storm and sky),
+(2) Neutral, like Roydo and Blau, (3) add a Wind element. Option 3 means changing the whole element table in
+sim_const.gd (who Wind beats and who beats Wind), so every other hero's matchups shift.
+
+QUESTION B (Burak's Berserk): can the damage that comes back after Berserk kill him?
+
+QUESTION C (roles): the roster is mostly cores. I made Airah and Feran supports and Emelrich and Ghorman
+off-laners on purpose. Tell me if you meant any of them as carries or mids.
+
+QUESTION D (genders): I wrote Airah as female (Goddess) and Burak, Emelrich ("Ser"), Feran and Ghorman ("King") as
+male because of the titles. Correct me if any is meant differently.
+
+Naming: "Tailwind" is an ordinary English word, but tools/check_names.py flags it (it reads "wind" glued onto
+"tail" as a made-up compound). If you like the name, add "tailwind" to COMPOUND_OK in the checker; if not,
+"Wind Boost" passes. Every other ability name above passes the checker. If any of these go in, they also have to be
+listed in docs/HANDOFF.md for your veto, as the rule says.
+
+New systems these heroes would need, none of which exist yet as far as I can tell from the code: a wall that stops
+projectiles (Wind Wall), damage held back and taken later (Berserk), damage blocked from the front (Steel Stance),
+a miss chance debuff (Pie), place swapping (Swap, Shuffle), and owning and ordering tamed units (Tame).
+Already in the game and reused: crash damage and stuns from pushes, falling trees, Dota's cleave cone, pseudo-random
+procs, status resistance, bash rules, the cooldown rate system, model swaps (Anomaly), toggles, innates, the
+Upgrade Staff granting changes.
+
+Not checked: none of this is built or play-tested. The numbers are my guesses next to your heroes' numbers and the
+stat templates, not balance-tested; bot duels would show whether any of them is too strong. The "closest to other
+games" notes are from memory of Dota 2 and League of Legends, which change with patches; check them against current
+patch notes before you use them to steer away from a copy.
