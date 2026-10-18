@@ -1,0 +1,2860 @@
+{
+ "armor_breaker": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3500,
+  "name": "Armor Breaker",
+  "parts": [
+   "steel_hammer",
+   "steel_hammer",
+   "rust_stone"
+  ],
+  "passive": "corruption",
+  "recipe": 0,
+  "stats": {
+   "damage": 55.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "battle_armor": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5125,
+  "name": "Battle Armor",
+  "parts": [
+   "small_shield",
+   "swift_stone",
+   "plate_armor"
+  ],
+  "passive": "",
+  "recipe": 1300,
+  "stats": {
+   "armor": 10.0,
+   "attack_speed": 30.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "battle_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1625,
+  "name": "Battle Staff",
+  "parts": [
+   "brass_knuckles",
+   "robe",
+   "sobi_mask"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 35.0,
+   "int": 10.0,
+   "mana_regen": 1.25
+  },
+  "text": "",
+  "use": ""
+ },
+ "belt_str": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 450,
+  "name": "Heavy Belt",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "str": 6.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "big_gem": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 1200,
+  "name": "Big Gem",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp": 175.0,
+   "mana": 175.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "big_healing_ring": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 700,
+  "name": "Big Healing Ring",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp_regen": 4.5
+  },
+  "text": "",
+  "use": ""
+ },
+ "blade_alacrity": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Quick Blade",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "blades_attack": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 450,
+  "name": "Fist Blades",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 9.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "block_shield": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1700,
+  "name": "Block Shield",
+  "parts": [
+   "health_crystal",
+   "big_healing_ring"
+  ],
+  "passive": "block",
+  "recipe": 0,
+  "stats": {
+   "hp": 250.0,
+   "hp_regen": 4.5
+  },
+  "text": "",
+  "use": ""
+ },
+ "boots": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 500,
+  "name": "Running Shoes",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "boot_ms": 45.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "boots_elves": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 450,
+  "name": "Elf Band",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 6.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "bottle": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": false,
+  "cost": 675,
+  "name": "Flask",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "bottle"
+ },
+ "branch": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 55,
+  "name": "Tree Twig",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 1.0,
+   "int": 1.0,
+   "str": 1.0
+  },
+  "text": "",
+  "use": "plant"
+ },
+ "brass_knuckles": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Brass Knuckles",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 35.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "break_blade": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5700,
+  "name": "Break Blade",
+  "parts": [
+   "sneak_blade",
+   "huge_sword"
+  ],
+  "passive": "",
+  "recipe": 250,
+  "stats": {
+   "attack_speed": 35.0,
+   "damage": 70.0
+  },
+  "text": "",
+  "use": "sneak"
+ },
+ "broadsword": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Long Sword",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 15.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "burning_cape": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4700,
+  "name": "Burning Cape",
+  "parts": [
+   "relic",
+   "dodge_charm"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 55.0,
+   "evasion": 0.25
+  },
+  "text": "Burns enemies within 650 for 60 magic damage per second (Fire).",
+  "use": ""
+ },
+ "chainmail": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 500,
+  "name": "Chain Shirt",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 4.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "circlet": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 155,
+  "name": "Headband",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 2.0,
+   "int": 2.0,
+   "str": 2.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "clarity": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 60,
+  "name": "Mana Potion",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "clarity"
+ },
+ "cleave_axe": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3900,
+  "name": "Cleave Axe",
+  "parts": [
+   "steady_ring",
+   "broadsword",
+   "broadsword",
+   "quelling_blade"
+  ],
+  "passive": "cleave",
+  "recipe": 400,
+  "stats": {
+   "damage": 50.0,
+   "hp_regen": 7.5,
+   "mana_regen": 2.75
+  },
+  "text": "",
+  "use": "chop"
+ },
+ "cloak": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 900,
+  "name": "Spell Cloak",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "magic_resist": 0.18
+  },
+  "text": "",
+  "use": ""
+ },
+ "crash_knife": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 6800,
+  "name": "Crash Knife",
+  "parts": [
+   "jump_knife",
+   "war_axe"
+  ],
+  "passive": "",
+  "recipe": 1750,
+  "stats": {
+   "str": 25.0
+  },
+  "text": "Jump up to 1200 (as the Jump Knife). Where you land, enemies within 800 take 100 + 50% of your strength as magic damage, then another 100% o",
+  "use": "jump"
+ },
+ "crit_bow": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5200,
+  "name": "Crit Bow",
+  "parts": [
+   "crit_sword",
+   "huge_sword"
+  ],
+  "passive": "crit",
+  "recipe": 1000,
+  "stats": {
+   "damage": 88.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "crit_sword": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2000,
+  "name": "Crit Sword",
+  "parts": [
+   "greatsword",
+   "blades_attack"
+  ],
+  "passive": "crit",
+  "recipe": 200,
+  "stats": {
+   "damage": 32.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "dagon": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3000,
+  "name": "Blast Rod",
+  "parts": [
+   "big_gem",
+   "gold_band",
+   "pointy_hat"
+  ],
+  "passive": "",
+  "recipe": 1100,
+  "stats": {
+   "agi": 6.0,
+   "cast_range_max": 60.0,
+   "hp": 200.0,
+   "int": 6.0,
+   "mana": 350.0,
+   "str": 6.0
+  },
+  "text": "Blast an enemy within 640 with 400 magic damage at once. Buy the recipe again to raise its level (up to 5).",
+  "use": "blast"
+ },
+ "dagon_2": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4100,
+  "name": "Blast Rod 2",
+  "parts": [
+   "dagon"
+  ],
+  "passive": "",
+  "recipe": 1100,
+  "stats": {
+   "agi": 7.0,
+   "cast_range_max": 90.0,
+   "hp": 210.0,
+   "int": 7.0,
+   "mana": 375.0,
+   "str": 7.0
+  },
+  "text": "Blast an enemy within 640 with 500 magic damage at once. Buy the recipe again to raise its level (up to 5).",
+  "use": "blast"
+ },
+ "dagon_3": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5200,
+  "name": "Blast Rod 3",
+  "parts": [
+   "dagon_2"
+  ],
+  "passive": "",
+  "recipe": 1100,
+  "stats": {
+   "agi": 8.0,
+   "cast_range_max": 120.0,
+   "hp": 220.0,
+   "int": 8.0,
+   "mana": 400.0,
+   "str": 8.0
+  },
+  "text": "Blast an enemy within 640 with 600 magic damage at once. Buy the recipe again to raise its level (up to 5).",
+  "use": "blast"
+ },
+ "dagon_4": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 6300,
+  "name": "Blast Rod 4",
+  "parts": [
+   "dagon_3"
+  ],
+  "passive": "",
+  "recipe": 1100,
+  "stats": {
+   "agi": 9.0,
+   "cast_range_max": 150.0,
+   "hp": 230.0,
+   "int": 9.0,
+   "mana": 425.0,
+   "str": 9.0
+  },
+  "text": "Blast an enemy within 640 with 700 magic damage at once. Buy the recipe again to raise its level (up to 5).",
+  "use": "blast"
+ },
+ "dagon_5": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 7400,
+  "name": "Blast Rod 5",
+  "parts": [
+   "dagon_4"
+  ],
+  "passive": "",
+  "recipe": 1100,
+  "stats": {
+   "agi": 10.0,
+   "cast_range_max": 180.0,
+   "hp": 240.0,
+   "int": 10.0,
+   "mana": 450.0,
+   "str": 10.0
+  },
+  "text": "Blast an enemy within 640 with 800 magic damage at once. Buy the recipe again to raise its level (up to 5).",
+  "use": "blast"
+ },
+ "dodge_charm": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 1300,
+  "name": "Dodge Charm",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "evasion": 0.15
+  },
+  "text": "",
+  "use": ""
+ },
+ "dragon_lance": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2000,
+  "name": "Long Spear",
+  "parts": [
+   "blade_alacrity",
+   "belt_str"
+  ],
+  "passive": "",
+  "recipe": 550,
+  "stats": {
+   "agi": 15.0,
+   "range": 130.0,
+   "str": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "faerie_fire": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 65,
+  "name": "Firefly Jar",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 2.0
+  },
+  "text": "",
+  "use": "faerie_fire"
+ },
+ "feather": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 2800,
+  "name": "Feather",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 25.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "frost_plate": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4500,
+  "name": "Frost Plate",
+  "parts": [
+   "plate_armor",
+   "plate_vest",
+   "wide_stone"
+  ],
+  "passive": "",
+  "recipe": 1250,
+  "stats": {
+   "aoe_bonus_max": 75.0,
+   "armor": 17.0
+  },
+  "text": "A ring of frost spreads out to 825: enemies it reaches take 225 magic damage and move 40% slower for 4 seconds. Costs 75 mana, 27 second coo",
+  "use": "frost_blast"
+ },
+ "fur_hat": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 250,
+  "name": "Fur Hat",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp": 125.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "gauntlets": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 140,
+  "name": "Heavy Gloves",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "str": 3.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "giant_axe": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Giant Axe",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "str": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "giant_heart": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5300,
+  "name": "Giant Heart",
+  "parts": [
+   "war_axe",
+   "troll_ring"
+  ],
+  "passive": "",
+  "recipe": 800,
+  "stats": {
+   "hp_regen_pct_max": 0.01,
+   "hp_regen_pct_missing": 0.015,
+   "str": 40.0
+  },
+  "text": "Regenerates 1% of your maximum health and 1.5% of your missing health every second.",
+  "use": ""
+ },
+ "glimmer_cape": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2150,
+  "name": "Fade Cape",
+  "parts": [
+   "sneak_charm",
+   "shawl"
+  ],
+  "passive": "",
+  "recipe": 800,
+  "stats": {
+   "magic_resist": 0.2
+  },
+  "text": "",
+  "use": "fade"
+ },
+ "gloves": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 450,
+  "name": "Fast Gloves",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 20.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "gold_band": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 450,
+  "name": "Gold Band",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 4.0,
+   "int": 4.0,
+   "str": 4.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "gold_glove": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2200,
+  "name": "Gold Glove",
+  "parts": [
+   "gloves"
+  ],
+  "passive": "",
+  "recipe": 1750,
+  "stats": {
+   "attack_speed": 40.0
+  },
+  "text": "",
+  "use": "gold"
+ },
+ "greatsword": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 1350,
+  "name": "Greatsword",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 20.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "guard_boots": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4450,
+  "name": "Guard Boots",
+  "parts": [
+   "mana_boots",
+   "medic_kit"
+  ],
+  "passive": "",
+  "recipe": 1175,
+  "stats": {
+   "armor": 5.0,
+   "boot_ms": 50.0,
+   "mana": 150.0,
+   "mana_regen": 1.0
+  },
+  "text": "Mend: heal yourself and allies within 1200 for 325 health and 200 mana, and remove your own debuffs (a basic dispel). 45 second cooldown. Au",
+  "use": "greaves"
+ },
+ "halberd": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3300,
+  "name": "Halberd",
+  "parts": [
+   "dodge_charm",
+   "plate_vest",
+   "big_healing_ring"
+  ],
+  "passive": "",
+  "recipe": 350,
+  "stats": {
+   "armor": 9.0,
+   "evasion": 0.25,
+   "hp_regen": 6.5
+  },
+  "text": "",
+  "use": "disarm"
+ },
+ "health_crystal": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Health Crystal",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp": 250.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "heavy_sword": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2100,
+  "name": "Kugmo",
+  "parts": [
+   "giant_axe",
+   "belt_str"
+  ],
+  "passive": "",
+  "recipe": 650,
+  "stats": {
+   "heal_amp_max": 0.12,
+   "slow_resist_max": 0.25,
+   "str": 16.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "hex_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5200,
+  "name": "Hex Staff",
+  "parts": [
+   "long_staff",
+   "mana_tiara"
+  ],
+  "passive": "",
+  "recipe": 700,
+  "stats": {
+   "int": 30.0,
+   "mana_regen": 8.5
+  },
+  "text": "",
+  "use": "hex"
+ },
+ "huge_sword": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 2200,
+  "name": "Huge Sword",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 40.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "igit_atuli": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4200,
+  "name": "Igit and Atuli",
+  "parts": [
+   "yasha",
+   "spell_sword"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 16.0,
+   "attack_speed": 20.0,
+   "cast_speed_max": 0.25,
+   "int": 16.0,
+   "magic_amp": 0.12,
+   "mana_regen_amp_max": 0.3,
+   "move_speed_pct": 0.12
+  },
+  "text": "",
+  "use": ""
+ },
+ "iron_helm": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 975,
+  "name": "Iron Helm",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 4.0,
+   "hp_regen": 4.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "jump_knife": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 2250,
+  "name": "Jump Knife",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "jump"
+ },
+ "kugmo_atuli": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4200,
+  "name": "Kugmo and Atuli",
+  "parts": [
+   "heavy_sword",
+   "spell_sword"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "heal_amp_max": 0.16,
+   "int": 16.0,
+   "magic_amp": 0.12,
+   "mana_cost_cut_max": 0.25,
+   "mana_regen_amp_max": 0.3,
+   "slow_resist_max": 0.25,
+   "str": 16.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "leaf_hat": {
+  "aura": "regen",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 425,
+  "name": "Leaf Hat",
+  "parts": [
+   "ring_regen"
+  ],
+  "passive": "",
+  "recipe": 250,
+  "stats": {
+   "hp_regen": 0.5
+  },
+  "text": "",
+  "use": ""
+ },
+ "leech_blade": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5050,
+  "name": "Leech Blade",
+  "parts": [
+   "war_axe",
+   "greatsword",
+   "lifesteal"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 25.0,
+   "lifesteal": 0.25,
+   "str": 25.0
+  },
+  "text": "Blood Rage: +145% lifesteal for 6 seconds. 40 second cooldown.",
+  "use": "rage"
+ },
+ "leech_totem": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2200,
+  "name": "Leech Totem",
+  "parts": [
+   "small_shield",
+   "mana_ring",
+   "lifesteal",
+   "blades_attack"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 1.0,
+   "mana_regen": 0.75
+  },
+  "text": "",
+  "use": ""
+ },
+ "lifesteal": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 900,
+  "name": "Leech Mask",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "lifesteal": 0.18
+  },
+  "text": "",
+  "use": ""
+ },
+ "long_lens": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2275,
+  "name": "Long Lens",
+  "parts": [
+   "mana_gem",
+   "mana_stone"
+  ],
+  "passive": "",
+  "recipe": 775,
+  "stats": {
+   "cast_range_max": 225.0,
+   "mana": 300.0,
+   "mana_regen": 2.5
+  },
+  "text": "+225 cast range for spells and items. A second Long Lens adds half as much, a third a quarter.",
+  "use": ""
+ },
+ "long_staff": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 2800,
+  "name": "Long Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "int": 25.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "magic_stick": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 200,
+  "name": "Zap Stick",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "stick"
+ },
+ "magic_wand": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 460,
+  "name": "Zap Wand",
+  "parts": [
+   "magic_stick",
+   "branch",
+   "branch"
+  ],
+  "passive": "",
+  "recipe": 150,
+  "stats": {
+   "agi": 3.0,
+   "int": 3.0,
+   "str": 3.0
+  },
+  "text": "",
+  "use": "stick"
+ },
+ "mana_boots": {
+  "aura": "mana",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1500,
+  "name": "Mana Boots",
+  "parts": [
+   "boots",
+   "mana_ring",
+   "pointy_hat"
+  ],
+  "passive": "",
+  "recipe": 325,
+  "stats": {
+   "boot_ms": 45.0,
+   "mana": 125.0,
+   "mana_regen": 0.25
+  },
+  "text": "",
+  "use": "restore"
+ },
+ "mana_gem": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 800,
+  "name": "Mana Gem",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "mana": 250.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "mana_ring": {
+  "aura": "mana",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 425,
+  "name": "Mana Ring",
+  "parts": [
+   "sobi_mask"
+  ],
+  "passive": "",
+  "recipe": 250,
+  "stats": {
+   "mana_regen": 0.25
+  },
+  "text": "",
+  "use": ""
+ },
+ "mana_stone": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 700,
+  "name": "Mana Stone",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "mana_regen": 1.75
+  },
+  "text": "",
+  "use": ""
+ },
+ "mana_tiara": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 1700,
+  "name": "Mana Tiara",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "mana_regen": 6.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "mango": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 65,
+  "name": "Ripe Mango",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp_regen": 0.4
+  },
+  "text": "",
+  "use": "mango"
+ },
+ "mantle": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 140,
+  "name": "Thinking Cap",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "int": 3.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "mask_of_madness": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1900,
+  "name": "Frenzy Mask",
+  "parts": [
+   "broadsword",
+   "lifesteal"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 20.0,
+   "lifesteal": 0.22
+  },
+  "text": "",
+  "use": "berserk"
+ },
+ "medic_kit": {
+  "aura": "regen",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1775,
+  "name": "Medic Kit",
+  "parts": [
+   "leaf_hat",
+   "chainmail"
+  ],
+  "passive": "",
+  "recipe": 850,
+  "stats": {
+   "armor": 5.0
+  },
+  "text": "",
+  "use": "mend"
+ },
+ "moth_blade": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5450,
+  "name": "Moth Blade",
+  "parts": [
+   "feather",
+   "greatsword",
+   "dodge_charm"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 30.0,
+   "attack_speed": 20.0,
+   "damage": 30.0,
+   "evasion": 0.35
+  },
+  "text": "",
+  "use": ""
+ },
+ "net_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4650,
+  "name": "Net Staff",
+  "parts": [
+   "root_staff",
+   "big_gem",
+   "wide_stone"
+  ],
+  "passive": "",
+  "recipe": 300,
+  "stats": {
+   "aoe_bonus_max": 75.0,
+   "hp": 450.0,
+   "int": 12.0,
+   "mana": 200.0
+  },
+  "text": "Throw nets at every enemy in a 325 area within 1100: each one hit cannot move for 2 seconds. Costs 150 mana, 18 second cooldown.",
+  "use": "net"
+ },
+ "observer_ward": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 0,
+  "name": "Eye Ward",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "ward"
+ },
+ "plate_armor": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 1400,
+  "name": "Plate Armor",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "plate_vest": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 950,
+  "name": "Plate Vest",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 7.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "pointy_hat": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 250,
+  "name": "Pointy Hat",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "mana": 125.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "power_treads": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1400,
+  "name": "Switch Boots",
+  "parts": [
+   "boots",
+   "gloves",
+   "belt_str"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 25.0
+  },
+  "text": "",
+  "use": "switch"
+ },
+ "push_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2200,
+  "name": "Push Staff",
+  "parts": [
+   "wizard_staff",
+   "fur_hat"
+  ],
+  "passive": "",
+  "recipe": 950,
+  "stats": {
+   "hp": 175.0,
+   "int": 10.0
+  },
+  "text": "",
+  "use": "push"
+ },
+ "quelling_blade": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 100,
+  "name": "Mini-Axe",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "chop"
+ },
+ "recipe_battle_armor": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1300,
+  "name": "Recipe: Battle Armor",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_break_blade": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 250,
+  "name": "Recipe: Break Blade",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_cleave_axe": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 400,
+  "name": "Recipe: Cleave Axe",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_crash_knife": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1750,
+  "name": "Recipe: Crash Knife",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_crit_bow": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Recipe: Crit Bow",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_crit_sword": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 200,
+  "name": "Recipe: Crit Sword",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_dagon": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1100,
+  "name": "Recipe: Blast Rod",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_dagon_2": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1100,
+  "name": "Recipe: Blast Rod 2",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_dagon_3": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1100,
+  "name": "Recipe: Blast Rod 3",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_dagon_4": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1100,
+  "name": "Recipe: Blast Rod 4",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_dagon_5": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1100,
+  "name": "Recipe: Blast Rod 5",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_dragon_lance": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 550,
+  "name": "Recipe: Long Spear",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_frost_plate": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1250,
+  "name": "Recipe: Frost Plate",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_giant_heart": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 800,
+  "name": "Recipe: Giant Heart",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_glimmer_cape": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 800,
+  "name": "Recipe: Fade Cape",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_gold_glove": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1750,
+  "name": "Recipe: Gold Glove",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_guard_boots": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1175,
+  "name": "Recipe: Guard Boots",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_halberd": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 350,
+  "name": "Recipe: Halberd",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_heavy_sword": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 650,
+  "name": "Recipe: Kugmo",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_hex_staff": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 700,
+  "name": "Recipe: Hex Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_leaf_hat": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 250,
+  "name": "Recipe: Leaf Hat",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_long_lens": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 775,
+  "name": "Recipe: Long Lens",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_magic_wand": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 150,
+  "name": "Recipe: Zap Wand",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_mana_boots": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 325,
+  "name": "Recipe: Mana Boots",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_mana_ring": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 250,
+  "name": "Recipe: Mana Ring",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_medic_kit": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 850,
+  "name": "Recipe: Medic Kit",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_net_staff": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 300,
+  "name": "Recipe: Net Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_push_staff": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 950,
+  "name": "Recipe: Push Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_refresh_stone": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1600,
+  "name": "Recipe: Refresh Stone",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_root_staff": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 250,
+  "name": "Recipe: Root Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_silence_staff": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 300,
+  "name": "Recipe: Silence Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_small_shield": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 250,
+  "name": "Recipe: Small Shield",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_smart_band": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 210,
+  "name": "Recipe: Smart Band",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_spell_shield": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1450,
+  "name": "Recipe: Spell Shield",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_spell_sword": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 650,
+  "name": "Recipe: Atuli",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_spike_armor": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 450,
+  "name": "Recipe: Spike Armor",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_storm_hammer": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 550,
+  "name": "Recipe: Storm Hammer",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_stun_blade": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1275,
+  "name": "Recipe: Stun Blade",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_stun_club": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 825,
+  "name": "Recipe: Stun Club",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_sure_hit_staff": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 900,
+  "name": "Recipe: Sure Hit Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_team_shield": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 1050,
+  "name": "Recipe: Team Shield",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_time_crystal": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 400,
+  "name": "Recipe: Time Crystal",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_tough_band": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 210,
+  "name": "Recipe: Tough Band",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_travel_boots": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 2000,
+  "name": "Recipe: Travel Boots",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_war_drum": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 525,
+  "name": "Recipe: War Drum",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_wraith_band": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 210,
+  "name": "Recipe: Swift Band",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "recipe_yasha": {
+  "aura": "",
+  "cat": "recipe",
+  "consumable": false,
+  "cost": 650,
+  "name": "Recipe: Igit",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "refresh_stone": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5000,
+  "name": "Refresh Stone",
+  "parts": [
+   "troll_ring",
+   "mana_tiara"
+  ],
+  "passive": "",
+  "recipe": 1600,
+  "stats": {
+   "hp_regen": 14.0,
+   "mana_regen": 7.0
+  },
+  "text": "Finish the cooldowns of all your spells at once (not items). Costs 325 mana, 180 second cooldown.",
+  "use": "refresh"
+ },
+ "relic": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 3400,
+  "name": "Relic",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 55.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "reveal_dust": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 80,
+  "name": "Reveal Dust",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "dust"
+ },
+ "reveal_ward": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 50,
+  "name": "Reveal Ward",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "ward"
+ },
+ "ring_protection": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 175,
+  "name": "Armor Ring",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 2.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "ring_regen": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 175,
+  "name": "Healing Ring",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp_regen": 1.25
+  },
+  "text": "",
+  "use": ""
+ },
+ "robe": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 450,
+  "name": "Wizard Robe",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "int": 6.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "root_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2250,
+  "name": "Root Staff",
+  "parts": [
+   "wizard_staff",
+   "health_crystal"
+  ],
+  "passive": "",
+  "recipe": 250,
+  "stats": {
+   "hp": 275.0,
+   "int": 12.0
+  },
+  "text": "",
+  "use": "root"
+ },
+ "rust_stone": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 300,
+  "name": "Rust Stone",
+  "parts": [],
+  "passive": "corruption",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "salve": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 100,
+  "name": "Healing Paste",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "salve"
+ },
+ "shawl": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 450,
+  "name": "Scarf",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "magic_resist": 0.1
+  },
+  "text": "",
+  "use": ""
+ },
+ "shock_hammer": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2950,
+  "name": "Shock Hammer",
+  "parts": [
+   "steel_hammer",
+   "spear",
+   "gloves"
+  ],
+  "passive": "chain",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 25.0,
+   "damage": 25.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "silence_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3275,
+  "name": "Silence Staff",
+  "parts": [
+   "battle_staff",
+   "greatsword"
+  ],
+  "passive": "",
+  "recipe": 300,
+  "stats": {
+   "attack_speed": 35.0,
+   "damage": 20.0,
+   "int": 12.0,
+   "mana_regen": 2.5
+  },
+  "text": "",
+  "use": "silence"
+ },
+ "slip_boots": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1450,
+  "name": "Slip Boots",
+  "parts": [
+   "boots",
+   "chainmail",
+   "blades_attack"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "armor": 4.0,
+   "boot_ms": 50.0
+  },
+  "text": "",
+  "use": "slip"
+ },
+ "slippers": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 140,
+  "name": "Slippers",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 3.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "small_shield": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 425,
+  "name": "Small Shield",
+  "parts": [
+   "ring_protection"
+  ],
+  "passive": "",
+  "recipe": 250,
+  "stats": {
+   "armor": 1.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "smart_band": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 505,
+  "name": "Smart Band",
+  "parts": [
+   "circlet",
+   "mantle"
+  ],
+  "passive": "",
+  "recipe": 210,
+  "stats": {
+   "agi": 2.0,
+   "int": 5.0,
+   "mana_regen": 1.0,
+   "max_mana_pct": 0.03,
+   "str": 2.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "sneak_blade": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3250,
+  "name": "Sneak Blade",
+  "parts": [
+   "greatsword",
+   "brass_knuckles",
+   "sneak_charm"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 35.0,
+   "damage": 25.0
+  },
+  "text": "",
+  "use": "sneak"
+ },
+ "sneak_charm": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 900,
+  "name": "Sneak Charm",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "sobi_mask": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 175,
+  "name": "Calm Mask",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "mana_regen": 0.7
+  },
+  "text": "",
+  "use": ""
+ },
+ "soul_gem": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3000,
+  "name": "Soul Gem",
+  "parts": [
+   "big_gem",
+   "health_crystal",
+   "mana_gem"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp": 425.0,
+   "mana": 425.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "spear": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 900,
+  "name": "Spear",
+  "parts": [],
+  "passive": "pierce",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "speed_ribbon": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 225,
+  "name": "Speed Ribbon",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "move_speed": 15.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "spell_shield": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4050,
+  "name": "Spell Shield",
+  "parts": [
+   "steel_hammer",
+   "giant_axe"
+  ],
+  "passive": "",
+  "recipe": 1450,
+  "stats": {
+   "damage": 24.0,
+   "str": 10.0
+  },
+  "text": "",
+  "use": "shield"
+ },
+ "spell_sword": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2100,
+  "name": "Atuli",
+  "parts": [
+   "wizard_staff",
+   "robe"
+  ],
+  "passive": "",
+  "recipe": 650,
+  "stats": {
+   "int": 16.0,
+   "magic_amp": 0.1,
+   "mana_regen_amp_max": 0.2
+  },
+  "text": "",
+  "use": ""
+ },
+ "spike_armor": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2400,
+  "name": "Spike Armor",
+  "parts": [
+   "broadsword",
+   "plate_vest"
+  ],
+  "passive": "spikes",
+  "recipe": 450,
+  "stats": {
+   "armor": 7.0,
+   "damage": 15.0
+  },
+  "text": "",
+  "use": "spikes"
+ },
+ "steady_ring": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1400,
+  "name": "Steady Ring",
+  "parts": [
+   "big_healing_ring",
+   "mana_stone"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp_regen": 5.5,
+   "mana_regen": 2.25
+  },
+  "text": "",
+  "use": ""
+ },
+ "steel_hammer": {
+  "aura": "",
+  "cat": "armaments",
+  "consumable": false,
+  "cost": 1600,
+  "name": "Steel Hammer",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "damage": 24.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "storm_hammer": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5500,
+  "name": "Storm Hammer",
+  "parts": [
+   "shock_hammer",
+   "swift_stone"
+  ],
+  "passive": "chain",
+  "recipe": 550,
+  "stats": {
+   "attack_speed": 90.0,
+   "damage": 25.0
+  },
+  "text": "Static Charge: for 12 seconds an ally (or yourself) has a 20% chance when attacked to strike up to 4 enemies within 900 with lightning for 2",
+  "use": "static"
+ },
+ "stun_blade": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 6250,
+  "name": "Stun Blade",
+  "parts": [
+   "stun_club",
+   "heavy_sword"
+  ],
+  "passive": "bash",
+  "recipe": 1275,
+  "stats": {
+   "damage": 35.0,
+   "heal_amp_max": 0.16,
+   "slow_resist_max": 0.3,
+   "str": 30.0
+  },
+  "text": "",
+  "use": "overwhelm"
+ },
+ "stun_club": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2875,
+  "name": "Stun Club",
+  "parts": [
+   "steel_hammer",
+   "belt_str"
+  ],
+  "passive": "bash",
+  "recipe": 825,
+  "stats": {
+   "damage": 30.0,
+   "str": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "sure_hit_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5000,
+  "name": "Sure Hit Staff",
+  "parts": [
+   "huge_sword",
+   "brass_knuckles",
+   "spear"
+  ],
+  "passive": "pierce",
+  "recipe": 900,
+  "stats": {
+   "attack_speed": 50.0,
+   "damage": 50.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "swift_stone": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 2000,
+  "name": "Swift Stone",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "attack_speed": 60.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "tango": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 90,
+  "name": "Vegan Picker",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "tango"
+ },
+ "team_shield": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 3725,
+  "name": "Team Shield",
+  "parts": [
+   "block_shield",
+   "iron_helm"
+  ],
+  "passive": "block",
+  "recipe": 1050,
+  "stats": {
+   "armor": 6.0,
+   "hp": 250.0,
+   "hp_regen": 12.0
+  },
+  "text": "Guard: for 7 seconds you and allies within 1200 block 70 damage (+2% of your max health) from every attack. Costs 75 mana, 40 second cooldow",
+  "use": "guard"
+ },
+ "time_crystal": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 5100,
+  "name": "Time Crystal",
+  "parts": [
+   "soul_gem",
+   "mana_tiara"
+  ],
+  "passive": "",
+  "recipe": 400,
+  "stats": {
+   "cooldown_reduction_max": 0.25,
+   "hp": 450.0,
+   "mana": 450.0,
+   "mana_regen": 6.0
+  },
+  "text": "Your spells and items cool down 25% faster (several of these do not stack).",
+  "use": ""
+ },
+ "tough_band": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 505,
+  "name": "Tough Band",
+  "parts": [
+   "circlet",
+   "gauntlets"
+  ],
+  "passive": "",
+  "recipe": 210,
+  "stats": {
+   "agi": 2.0,
+   "hp": 50.0,
+   "hp_regen": 0.75,
+   "int": 2.0,
+   "str": 5.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "tp_scroll": {
+  "aura": "",
+  "cat": "consumables",
+  "consumable": true,
+  "cost": 100,
+  "name": "Teleport Scroll",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": "tp"
+ },
+ "travel_boots": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2500,
+  "name": "Travel Boots",
+  "parts": [
+   "boots"
+  ],
+  "passive": "",
+  "recipe": 2000,
+  "stats": {
+   "boot_ms": 90.0
+  },
+  "text": "Teleport without a scroll (Teleport key or the Teleport slot) to any allied building or creep. 40 second cooldown.",
+  "use": ""
+ },
+ "troll_ring": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 1700,
+  "name": "Troll Ring",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "hp_regen": 12.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "twin_swords": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4200,
+  "name": "Kugmo and Igit",
+  "parts": [
+   "heavy_sword",
+   "yasha"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 16.0,
+   "attack_speed": 20.0,
+   "heal_amp_max": 0.16,
+   "move_speed_pct": 0.12,
+   "slow_resist_max": 0.3,
+   "status_resist_max": 0.16,
+   "str": 16.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "upgrade_gem": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1400,
+  "name": "Upgrade Gem",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {},
+  "text": "",
+  "use": ""
+ },
+ "upgrade_staff": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 4200,
+  "name": "Upgrade Staff",
+  "parts": [
+   "big_gem",
+   "wizard_staff",
+   "giant_axe",
+   "blade_alacrity"
+  ],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "agi": 10.0,
+   "hp": 175.0,
+   "int": 10.0,
+   "mana": 175.0,
+   "str": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "war_axe": {
+  "aura": "",
+  "cat": "big_parts",
+  "consumable": false,
+  "cost": 2800,
+  "name": "War Axe",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "str": 25.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "war_drum": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 1625,
+  "name": "War Drum",
+  "parts": [
+   "leaf_hat",
+   "belt_str",
+   "speed_ribbon"
+  ],
+  "passive": "",
+  "recipe": 525,
+  "stats": {
+   "str": 8.0
+  },
+  "text": "Endurance: you and allies within 1200 get +35 attack speed and 13% more speed for 6 seconds. 45 second cooldown. Aura: +15 movement speed an",
+  "use": "drum"
+ },
+ "wide_stone": {
+  "aura": "",
+  "cat": "misc",
+  "consumable": false,
+  "cost": 900,
+  "name": "Wide Stone",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "aoe_bonus_max": 40.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "wizard_staff": {
+  "aura": "",
+  "cat": "attributes",
+  "consumable": false,
+  "cost": 1000,
+  "name": "Wizard Staff",
+  "parts": [],
+  "passive": "",
+  "recipe": 0,
+  "stats": {
+   "int": 10.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "wraith_band": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 505,
+  "name": "Swift Band",
+  "parts": [
+   "circlet",
+   "slippers"
+  ],
+  "passive": "",
+  "recipe": 210,
+  "stats": {
+   "agi": 5.0,
+   "armor": 1.75,
+   "attack_speed": 6.0,
+   "int": 2.0,
+   "str": 2.0
+  },
+  "text": "",
+  "use": ""
+ },
+ "yasha": {
+  "aura": "",
+  "cat": "upgrades",
+  "consumable": false,
+  "cost": 2100,
+  "name": "Igit",
+  "parts": [
+   "blade_alacrity",
+   "boots_elves"
+  ],
+  "passive": "",
+  "recipe": 650,
+  "stats": {
+   "agi": 16.0,
+   "attack_speed": 15.0,
+   "move_speed_pct": 0.1
+  },
+  "text": "",
+  "use": ""
+ }
+}

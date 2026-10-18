@@ -100,8 +100,17 @@ Liquipedia later blocked plain page requests. On 2026-10-12 its MediaWiki API (g
   * +1 ranged at wave 81.
   * Siege creeps on wave 11 and every 10th wave after it: 1 per lane, 2 from wave 61, 3 from wave 121.
   * A flagbearer replaces a melee creep on wave 5 and every 2nd wave after it.
-* Upgrades every 7:30, capped at 30 for HP and damage. Gold and XP bounty upgrades have no cap.
-* Destroyed barracks make the enemy's lane spawn super creeps.
+* Upgrades every 7:30 (a creep keeps the upgrades it spawned with), capped at 30 for HP and damage; gold and XP bounty
+  upgrades have no cap (Liquipedia "Lane Creeps", Stats, read 2026-10-18):
+  * melee +12 HP, +1 damage, +1 gold; ranged +12 HP, +2 damage, +3 gold, +8 XP;
+  * super melee +19 HP, +2 damage, +1.5 gold (base 700 HP, 3 armor, 36-44); super ranged +18 HP, +3 damage, +6 gold
+    (base 475 HP, 1 armor, 41-46);
+  * mega melee 1270 HP, 96-104 and mega ranged 1015 HP, 131-136 (fully upgraded super creeps) gain only bounty: +1.5
+    and +6 gold an upgrade;
+  * flagbearers never upgrade and stay plain in super and mega lanes.
+* A destroyed melee or ranged barracks makes the destroying team's creeps in that lane super (melee or ranged); the
+  lane's siege creeps gain +16 damage (51-62) when its ranged barracks falls. With every enemy barracks down, all three
+  lanes spawn mega creeps (and super siege creeps). Super creeps are drawn 1.05x and mega creeps 1.12x larger.
 * Targeting: the first enemy that enters acquisition range, ranked by unit type, then threat, then distance.
   * Unit type: heroes and units first, then siege creeps, buildings, wards. Siege creeps rank buildings first.
   * Threat: attacking this creep, then attacking one of its allies, then anything else.

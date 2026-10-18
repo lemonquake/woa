@@ -86,7 +86,8 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		model = ModelCatalog.scene(key).instantiate() as Node3D
 	RepairedClips.patch(model)
 	pivot.add_child(model)
-	_model_scale = float(cfg.scale)
+	# super lane creeps stand a little taller, mega creeps taller still (Dota's model scales: about 1.05 and 1.12)
+	_model_scale = float(cfg.scale) * (1.12 if u.is_mega else (1.05 if u.is_super else 1.0))
 	model.scale = Vector3.ONE * _model_scale
 	# models face -Y in Blender, which imports as +Z; turn them to face the sim's facing (applied on this node)
 	model.rotation.y = PI

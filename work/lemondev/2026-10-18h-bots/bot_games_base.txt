@@ -1,0 +1,16 @@
+  Ancient Light standing: ancient 100% inv, tower4 100%, tower4 100%, tower3 top 56%, melee_rax top 100% inv, ranged_rax top 100% inv, melee_rax mid 97%, ranged_rax mid 100%, tower3 bot 100%, melee_rax bot 100% inv, ranged_rax bot 100% inv, filler top 100% inv, filler mid 100%, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100%, tower4 100%, tower3 bot 60%, melee_rax bot 100% inv, ranged_rax bot 100% inv, melee_rax mid 55%, ranged_rax mid 100%, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 58%, filler bot 100% inv, filler mid 100%, filler top 100% inv
+  Ancient Light calls: teamfights 81, ganks 32, pushes 15 (chained on 3), towers lost 7, bots unstuck 4
+  Black Sun calls: teamfights 85, ganks 42, pushes 19 (chained on 5), towers lost 6, bots unstuck 5
+seed 3: no winner at 45:00 (373.7 s real)
+  Ancient Light (towers lost 7):
+  Black Sun (towers lost 6):
+  totals: kills 46 vs 48, net worth 109200 vs 107039
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 63%, melee_rax top 100% inv, ranged_rax top 100% inv, tower3 mid 100%, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower3 bot 69%, melee_rax bot 100% inv, ranged_rax bot 100% inv, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 38%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 64%, tower3 top 49%, melee_rax top 100% inv, ranged_rax top 100% inv, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+  Ancient Light calls: teamfights 71, ganks 39, pushes 14 (chained on 1), towers lost 6, bots unstuck 4
+  Black Sun calls: teamfights 94, ganks 53, pushes 28 (chained on 5), towers lost 4, bots unstuck 2
+seed 7: no winner at 45:00 (398.3 s real)
+  Ancient Light (towers lost 6):
+  Black Sun (towers lost 4):
+  totals: kills 38 vs 61, net worth 93020 vs 106122

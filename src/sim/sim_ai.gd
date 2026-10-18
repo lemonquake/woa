@@ -67,18 +67,22 @@ func spawn_wave(n: int) -> void:
 			var start := path[0]
 			var fwd := (path[1] - path[0]).normalized()
 			var side := fwd.orthogonal()
+			# super creeps where that lane's enemy barracks fell, mega creeps in every lane once all six are down
+			var mega := w.all_rax_dead(1 - team)
 			var super_melee := w.lane_rax_dead(1 - team, lane, "melee")
 			var super_ranged := w.lane_rax_dead(1 - team, lane, "ranged")
+			var melee_id := p + ("melee_mega" if mega else ("melee_super" if super_melee else "melee"))
+			var ranged_id := p + ("ranged_mega" if mega else ("ranged_super" if super_ranged else "ranged"))
 			var list: Array = []
 			for i in melee_n:
-				var id := p + ("melee_super" if super_melee else "melee")
+				var id := melee_id
 				if flag and i == 0:
-					id = p + "flag"
+					id = p + "flag"            # flagbearers stay as they are (Dota spawns only the plain one)
 				list.append([id, start + fwd * 140.0 + side * (i - (melee_n - 1) * 0.5) * 70.0])
 			for i in siege_n:
-				list.append([p + "siege", start + fwd * 20.0 + side * (i - (siege_n - 1) * 0.5) * 90.0])
+				list.append([p + ("siege_super" if super_ranged or mega else "siege"), start + fwd * 20.0 + side * (i - (siege_n - 1) * 0.5) * 90.0])
 			for i in ranged_n:
-				list.append([p + ("ranged_super" if super_ranged else "ranged"), start - fwd * 90.0 + side * (i - (ranged_n - 1) * 0.5) * 70.0])
+				list.append([ranged_id, start - fwd * 90.0 + side * (i - (ranged_n - 1) * 0.5) * 70.0])
 			for e in list:
 				# never inside a building's footprint (the top tier 3 tower stands on the lane line)
 				var sp: Vector2 = e[1]
@@ -90,6 +94,7 @@ func spawn_wave(n: int) -> void:
 				u.lane = lane
 				u.lane_i = 1
 				u.is_super = String(e[0]).ends_with("_super")
+				u.is_mega = String(e[0]).ends_with("_mega")
 				u.upgrade = ups
 				_apply_upgrades(u, ups)
 				u.order = O.ATTACK_MOVE
@@ -104,9 +109,9 @@ func _apply_upgrades(u: SimUnit, ups: int) -> void:
 	var key := ""
 	match u.kind:
 		K.CREEP_MELEE:
-			key = "super_melee" if u.is_super else "melee"
+			key = "mega_melee" if u.is_mega else ("super_melee" if u.is_super else "melee")
 		K.CREEP_RANGED:
-			key = "super_ranged" if u.is_super else "ranged"
+			key = "mega_ranged" if u.is_mega else ("super_ranged" if u.is_super else "ranged")
 	if key == "":
 		return
 	var up: Array = C.CREEP_UPGRADE[key]
@@ -165,12 +170,36 @@ func _lane_creep(u: SimUnit) -> void:
 		return
 	while u.lane_i < path.size() - 1 and u.pos.distance_to(path[u.lane_i]) < 200.0:
 		u.lane_i += 1
-	# past the last waypoint: march on the enemy Ancient
-	var goal := path[u.lane_i]
-	if u.lane_i >= path.size() - 1 and u.pos.distance_to(goal) < 220.0:
-		goal = w._ancient_pos(1 - u.team)
+	# past the last waypoint (the enemy base's gate): into the base and on to the Ancient, for good. lane_i ==
+	# path.size() marks it (run 2026-10-18 h: the goal went back to the gate as soon as a creep stepped 220 past it, so
+	# top and bottom creeps paced at the gate after the tier 3 tower fell; mid's gate is close enough to the Ancient
+	# that its buildings came into reach)
+	if u.lane_i >= path.size() - 1 and (u.lane_i >= path.size() or u.pos.distance_to(path[path.size() - 1]) < 220.0):
+		u.lane_i = path.size()
+		u.order = O.ATTACK_MOVE
+		u.order_point = _base_goal(u)
+		return
 	u.order = O.ATTACK_MOVE
-	u.order_point = goal
+	u.order_point = path[u.lane_i]
+
+## Inside the enemy base: the standing building nearest the creep on its way in (a barracks, a tier 4 tower, the
+## Ancient last), so a wave walks the base as Dota's do instead of standing at an invulnerable Ancient.
+func _base_goal(u: SimUnit) -> Vector2:
+	var anc := w._ancient_pos(1 - u.team)
+	var best := anc
+	var best_d := INF
+	for b in w.units:
+		if not b.alive or b.team != 1 - u.team or not b.is_building() or b.kind == K.FOUNTAIN or b.kind == K.FILLER:
+			continue
+		if b.pos.distance_to(anc) > 2600.0:
+			continue                           # outside the base
+		if b.kind != K.ANCIENT and b.is_invulnerable():
+			continue
+		var d := b.pos.distance_to(u.pos) + (1500.0 if b.kind == K.ANCIENT else 0.0)
+		if d < best_d:
+			best_d = d
+			best = b.pos
+	return best
 
 func _note_leave(u: SimUnit) -> void:
 	if u.lane_return.x == INF:

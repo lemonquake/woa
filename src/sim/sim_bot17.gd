@@ -80,21 +80,95 @@ static func spells(b: SimBot, h: SimUnit, e: SimUnit) -> void:
 		return
 
 ## Toggle Soul Tap on when enough souls are within 600 of Azrael.
-static func _soul_tap(b: SimBot, h: SimUnit, focus: SimUnit, farm: bool) -> bool:
-	var w := b.w
-	var ab := w.abilities
+static func _soul_tap(b: SimBot, h: SimUnit, _focus: SimUnit, _farm: bool) -> bool:
 	if h.ability_level_of("soul_tap") <= 0 or bool(h.toggles.get("soul_tap", false)):
 		return false
-	if h.mana < ab.ability_mana(h, "soul_tap") or ab.cast_error(h, "soul_tap", -1, null, h.pos) != "":
+	if soul_want(b, h) == "":
 		return false
-	var r := ab.val(h, "soul_tap", "radius")
-	var souls := ab.kits4.souls_at(h, h.pos, r)
-	if focus != null and not (focus in souls):
-		return false
-	var need := 3 if farm else 1
-	if souls.size() < need:
-		return false
-	return _cast_none(b, h, "soul_tap", 0.2)
+	return _cast_none(b, h, "soul_tap", 0.0)
+
+# ---- Soul Tap planner (run 2026-10-18 h) ---------------------------------------------------------------------------------
+# The owner: her bot "doesn't know how her 1st skill works", leaving it on to spend 80 mana a scan on one creep or on an
+# ally walking past. The toggle scans every 4.5 s and spends its mana whenever anything (ally or enemy) stands within
+# 600; the charge it gives rides on her next strike (pure damage, 100% cleave over 400, 80% slow). So it is on only
+# while a charge would pay: a hero fight close by, a pack her cleave can sweep (a clumped wave or camp), or a laning
+# hit on the enemy hero among its creeps; off once she holds a charge (another scan only spends more), off when
+# running, short of mana (the door's mana is kept), or with nothing worth the cleave near.
+
+## The enemy unit her cleave would hurt most if she struck it, within `reach`: [unit, enemies the slash would hit].
+static func best_pack(b: SimBot, h: SimUnit, reach: float) -> Array:
+	var w := b.w
+	var cand: Array[SimUnit] = []
+	for o: SimUnit in w.query(h.pos, reach + 450.0, true):
+		if o.alive and o.team != h.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER \
+				and not o.has_flag("hidden") and w.vision.sees(h.team, o):
+			cand.append(o)
+	var best: SimUnit = null
+	var best_n := 0
+	for t in cand:
+		if t.pos.distance_to(h.pos) > reach:
+			continue
+		var n := 0
+		for o in cand:
+			if o.pos.distance_to(t.pos) <= 400.0 + o.hull:
+				n += 1
+		# a hero in the pack is worth two creeps
+		n += 1 if t.is_hero() else 0
+		if n > best_n:
+			best_n = n
+			best = t
+	return [best, best_n]
+
+## Why Soul Tap should be on now ("fight", "pack", "harass"), or "" for off.
+static func soul_want(b: SimBot, h: SimUnit) -> String:
+	var w := b.w
+	var ab := w.abilities
+	if h.ability_level_of("soul_tap") <= 0 or not b._spells_ok():
+		return ""
+	if ab.kits4.soul_charged(h):
+		return ""                              # the charge waits for her next strike
+	if b.mode in ["retreat", "heal"]:
+		return ""
+	var cost := ab.ability_mana(h, "soul_tap")
+	var reserve := ab.ability_mana(h, "door_of_the_end") * 0.6 if h.ability_level_of("door_of_the_end") > 0 else 0.0
+	if h.mana < cost + reserve:
+		return ""
+	# a hero fight close by: the pure slash and its slow on the target
+	if b.mode == "fight" or b.mode == "task":
+		var e := w.get_unit(b._fight_target)
+		for f in b._foes:
+			if f.alive and f.pos.distance_to(h.pos) < 700.0 and (e == null or f == e or not e.alive):
+				return "fight"
+	var pk := best_pack(b, h, 700.0)
+	var n := int(pk[1])
+	# a pack: three enemies in the slash with mana to spare, four when the mana runs lower
+	var need := 3 if h.mana > h.max_mana * 0.5 else 4
+	if n >= need and b.mode in ["lane", "farm", "clear", "task", "fight", "push", "stack"]:
+		return "pack"
+	# laning: the enemy hero within reach, standing among its creeps, out of its tower's reach
+	if b.mode == "lane" and h.hp > h.max_hp * 0.5 and n >= 2 and pk[0] != null:
+		for f in b._foes:
+			if f.alive and f.pos.distance_to(h.pos) < 600.0 and w.vision.sees(h.team, f):
+				var under := false
+				for t in b._etowers:
+					if t.alive and f.pos.distance_to(t.pos) < t.attack_range + 150.0:
+						under = true
+				if not under:
+					return "harass"
+	return ""
+
+## Every think: the toggle follows soul_want (switching it is instant and breaks no order).
+static func soul_plan(b: SimBot, h: SimUnit) -> void:
+	if h.ability_level_of("soul_tap") <= 0 or b.w.abilities.kits4.in_door(h):
+		return
+	var on := bool(h.toggles.get("soul_tap", false))
+	var want := soul_want(b, h) != ""
+	if on != want and b.w.abilities.cast_error(h, "soul_tap", -1, null, h.pos) == "":
+		b.w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "soul_tap"})
+		if want:
+			b.soul_ons += 1
+		else:
+			b.soul_offs += 1
 
 # ---- Running -------------------------------------------------------------------------------------------------------------
 
@@ -147,30 +221,21 @@ static func tick(b: SimBot, h: SimUnit) -> bool:
 			if w.time < float(door.until) - 0.4 and h.pos.distance_to(door.pos) < 700.0:
 				b._order(h, {"type": O.MOVE, "point": door.pos})
 				return true
-		if bool(h.toggles.get("soul_tap", false)) and b.mode != "fight" \
-				and (b.mode == "retreat" or h.mana < w.abilities.ability_mana(h, "soul_tap") + w.abilities.ability_mana(h, "door_of_the_end") * 0.6):
-			_cast_none(b, h, "soul_tap", 0.1)
-		# laning: Soul Tap on the enemy laner standing among creeps, keeping mana for the door
-		if b.mode == "lane" and b._spells_ok() and not k4.soul_charged(h) and h.hp > h.max_hp * 0.5 \
-				and h.mana >= w.abilities.ability_mana(h, "soul_tap") + w.abilities.ability_mana(h, "door_of_the_end") * 0.6:
-			for f in b._foes:
-				if f.alive and f.pos.distance_to(h.pos) < 600.0 and w.vision.sees(h.team, f):
-					var under := false
-					for t in b._etowers:
-						if t.alive and f.pos.distance_to(t.pos) < t.attack_range + 150.0:
-							under = true
-					if not under and _soul_tap(b, h, f, false):
-						return true
-					break
-		# the charged slash: go and spend it on a hero, or on the creeps it was gathered for
-		if k4.soul_charged(h) and not b._foes.is_empty() and b.mode in ["lane", "fight", "task"]:
+		soul_plan(b, h)
+		# the charged slash: on a hero close at hand, else on the pack it was gathered for (the cleave sweeps it)
+		if k4.soul_charged(h) and b.mode in ["lane", "fight", "task", "farm", "clear", "push"] and h.hp > h.max_hp * 0.35 \
+				and h.atk_phase == SimUnit.AtkPhase.NONE:
 			var tgt: SimUnit = null
 			for f in b._foes:
 				# in lane only a hero close at hand is worth walking to; otherwise the charge cleaves the wave
 				var reach := 250.0 + h.attack_range if b.mode == "lane" else 700.0
 				if f.alive and h.edge_distance(f) < reach and (tgt == null or f.hp < tgt.hp):
 					tgt = f
-			if tgt != null and h.hp > h.max_hp * 0.35:
+			if tgt == null:
+				var pk := best_pack(b, h, 600.0)
+				if pk[0] != null and int(pk[1]) >= 3:
+					tgt = pk[0]
+			if tgt != null and h.atk_target != tgt.id:
 				b._order(h, {"type": O.ATTACK_UNIT, "target": tgt.id})
 				return true
 		return false

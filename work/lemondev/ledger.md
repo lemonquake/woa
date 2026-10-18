@@ -438,3 +438,38 @@ match, two ways in), name check, export and cold start. Looks are builder self-c
 | C1 Camera | 1 | working tree | captures | n/a | PASS (self-check) | none | none |
 | D1 Debug Bots | 1 | working tree | gate: watch_probe Bots checks; capture | n/a | PASS (gate) | none | none |
 | X1 Integration | 1 | working tree | gate: tests, check.sh, export, cold start | n/a | see docs/HANDOFF.md status | none | 4K UI check |
+
+## Session 2026-10-19 (shorter bot chat library) — run `work/lemondev/2026-10-19-chat/`
+
+Standalone text edit; user examples and rejected screenshot are the style benchmark. Six research sources are
+recorded in `research.md`. Two fresh critics read only anonymous equal-size excerpts; filesystem isolation was
+instruction-enforced. Neither had builder context. Comparison scope: 80 entries per version, not the full library.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| Chat wording | 1 | JSON `ffa63233` | `review_1.md` | candidate / true | PASS comparison; wording repaired | one unclear farm complaint | fresh review of corrected revision |
+| Chat wording | 2 | JSON `b213452a` | `review_2.md` | candidate / true | PASS sampled comparison | baseline phrase combinations; no decisive candidate gap | owner can review full library |
+| JSON integration | 2 | JSON `b213452a` | `validation.json`, name check | n/a | PASS standalone data gates | none | runtime integration outside request |
+
+Result: 557 entries in unchanged ten category keys; median three words; 554/557 at most six words; metadata matches;
+no case/punctuation-only duplicates. JSON contract OK; Names OK. New game names/identifiers: none. No engine code or
+build changed; the JSON currently has no game loader. Original saved in `before.json`. Full details: run's `handoff.md`.
+
+## Session 2026-10-18 h (bots' items, chat, teleports, creep pressure, Azrael, Ezee; creeps; take control; build) — run `work/lemondev/2026-10-18h-bots/`
+
+No critic subagent was run (none asked for). Measured gates: headless tests, live watch probe, tp/item probes, bot
+games, joins check, name check, export and cold start. Sounds and looks are builder self-checks.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| A1 Attack sounds | 1 | working tree | none (not listened to) | n/a | UNVERIFIED | none known | listen in game |
+| A2 Emelrich run | 1-2 | working tree | sheets, anim_joins | n/a | PASS (self-check) | mocap runs hunched his body | none |
+| M1 Jump Knife lock | 1 | working tree | test_jump_knife | n/a | PASS (gate) | hero units and fountain did not lock it | none |
+| B1 Teleports | 1 | working tree | tp_probe | n/a | PASS (gate) | walk-off break rule | none |
+| B2 Items | 1-6 | working tree | item_probe (3 games) | n/a | PASS (gate) | bought-but-unformed items; room sales of good items | 4K/long games |
+| B3 Creep pressure | 1-2 | working tree | test_bot_creep_gang | n/a | PASS (gate) | none | none |
+| B4 Azrael, Ezee | 1-2 | working tree | two tests | n/a | PASS (gate) | test enemy level | none |
+| C1 Chat | 1-2 | working tree | bot games, names | n/a | PASS (self-check) | a slur and a banned word in drafted lines (removed) | player game |
+| W1 Creeps | 1 | working tree | 2 tests | n/a | PASS (gate) | gate pacing at side lanes | none |
+| S1 Take control | 1 | working tree | watch_probe 32/32 | n/a | PASS (gate) | none | none |
+| X1 Integration | 1 | working tree | tests, check.sh, export, cold start | n/a | see docs/HANDOFF.md | none | blind review |

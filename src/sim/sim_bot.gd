@@ -50,6 +50,7 @@ var skill_order: Array = []
 var build: Array = []
 var build_idx := 0
 var _build_i := 0
+var human := false                         # a player took this hero over while watching (Main.take_control): it sits out
 var rng := RandomNumberGenerator.new()
 var mode := "lane"
 var mode_since := C.LONG_AGO
@@ -104,6 +105,7 @@ func set_role(r: int, p_lane: String) -> void:
 		build_idx = BotMemory.pick_build(KITS.build_key(kit, r), opts.size(), 0, _team())
 		build = (opts[clampi(build_idx, 0, opts.size() - 1)] as Array).duplicate()
 	_plan_knife()
+	_core_len = build.size()
 
 const BOOT_UPGRADES := ["power_treads", "slip_boots", "mana_boots", "guard_boots", "travel_boots"]
 
@@ -147,6 +149,8 @@ func plan_text() -> String:
 	var h := hero()
 	if h == null:
 		return ""
+	if human:
+		return "Played by you"
 	if not h.alive:
 		return "Dead"
 	if passive:
@@ -187,6 +191,8 @@ func plan_text() -> String:
 			return "Pulling a camp"
 		"ward":
 			return "Placing a ward"
+		"clear":
+			return "Clearing creeps"
 	return String(mode).capitalize()
 
 const ORDER_NAMES := ["None", "Move", "Attack", "Attack move", "Hold", "Stop", "Cast", "Cast", "Cast", "Follow",
@@ -201,7 +207,7 @@ func say(text: String, key := "", every := 30.0, urgent := false) -> void:
 # ---- Thinking ---------------------------------------------------------------------------------------------------------
 
 func think() -> void:
-	if w == null or w.time < _next_think or passive:
+	if w == null or w.time < _next_think or passive or human:
 		return
 	# a creep in reach close to dying: look again sooner (the better the bot, the sooner)
 	var quick: bool = _creep_low and mode in ["lane", "farm"] and float(sk.lh_error) <= 0.2
@@ -221,6 +227,9 @@ func think() -> void:
 			_on_death(h)
 		_was_alive = false
 		_dead(h)
+		# dead heroes shop too (into the stash; it comes into the bags at the fountain), as players do
+		if bool(sk.advanced) and w.time >= 600.0:
+			_shop(h)
 		return
 	_was_alive = true
 	var pt := Time.get_ticks_usec() if w.profiling else 0
@@ -246,10 +255,18 @@ func think() -> void:
 		return
 	if w.profiling: pt = w._prof("  bot:track", pt)
 	if _busy(h):
-		# a Town Portal is only broken to save our life
+		# a Town Portal is committed to (run 2026-10-18 h: bots broke nearly every escape teleport to walk off and died
+		# on foot). It is broken only for a ready way out that is surer than the channel: a Jump Knife, with an enemy
+		# hero on top of a badly hurt bot and over a second of the channel left.
 		if not h.channel.is_empty() and String(h.channel.ability) == "tp" and _foes.size() > 0 \
-				and _nearest(h, _foes).distance_to(h.pos) < 500.0 and h.hp < h.max_hp * 0.4:
-			_go(h, _safe_point(h))
+				and _nearest(h, _foes).distance_to(h.pos) < 500.0 and h.hp < h.max_hp * 0.4 \
+				and float(h.channel.until) - w.time > 1.0:
+			var safe := _safe_point(h)
+			var jp := h.pos + (safe - h.pos).normalized() * 950.0
+			var jk := _jump_slot(h, jp)
+			if jk >= 0:
+				_order(h, {"type": O.CAST_POINT, "ability": "", "item_slot": jk, "point": jp}, true)
+				_cast_deadline = w.time + 0.5
 		return
 	if w.time < 0.0:
 		_pregame(h)
@@ -512,6 +529,7 @@ func _choose_mode(h: SimUnit) -> void:
 		d["stack"] = _stack_desire(h)
 		d["pull"] = _pull_desire(h)
 		d["ward"] = _ward_desire(h)
+	_creep_choice(h, d, task)
 	desires = d
 	var best := mode if d.has(mode) else "lane"
 	var bv := float(d.get(best, 0.0)) + 0.08
@@ -563,6 +581,169 @@ func _run_mode(h: SimUnit) -> void:
 			_run_pull(h)
 		"ward":
 			_run_ward(h)
+		"clear":
+			_run_clear(h)
+
+# ---- Creeps on the bot (run 2026-10-18 h) ----------------------------------------------------------------------------------
+# A bot with several creeps hitting it used to switch between lane, fight and retreat every second and stand there. Now
+# it reads how fast they would kill it: with a spell ready that clears them (and time to cast it) it clears the wave;
+# otherwise, low or losing health fast, it backs off and keeps backing off for a few seconds (creeps drop a hero
+# that walks out of their reach), then comes back.
+
+## Each hero's spells that hit a creep pack: [ability, how it is aimed: "self" (around the hero, radius key), "point",
+## "unit", "toggle", "line"]. A plain list so every kit is known in one place.
+const CLEAR_SPELLS := {
+	"sludge": [["stench", "toggle"]], "ezee": [["dark_stomp", "self"]],
+	"azrin": [["touch_of_ember", "point"], ["spirit_of_fire", "point"]],
+	"froster": [["breath_of_cold", "point"], ["ice_pulse", "unit"]],
+	"blood_ranger": [["gale_impact", "line"], ["burst_shot", "point"]], "kragg": [["repel", "self"]],
+	"tock": [["time_bolt", "line"]], "roydo": [["grip_of_the_ruler", "point"]],
+	"blau": [["summon_boulders", "point"], ["bounce_shot", "point"]],
+	"azrael": [["soul_tap", "toggle"], ["door_of_the_end", "point"]], "airah": [["gust", "line"]],
+	"emelrich": [["sweep", "self"]], "feran": [["joke_box", "point"], ["knife_juggle", "line"]],
+	"burak": [["reckless_swing", "self"]], "ghorman": [["roar", "self"]],
+}
+const CLEAR_DAMAGE_KEYS := ["damage", "explode_damage", "blast_damage", "impact_damage", "crash_damage"]
+
+var _creep_back_until := C.LONG_AGO        # backing off from creeps until then
+var _clear_list: Array[SimUnit] = []       # the creeps it means to clear (mode "clear")
+var creep_clears := 0                      # report counters (tests, bot games)
+var soul_ons := 0                          # Azrael's Soul Tap switched on / off by its planner (SimBot17)
+var soul_offs := 0
+var creep_backoffs := 0
+
+## The enemy creeps (lane and neutral) attacking the hero now, their damage a second on it, and the seconds they need
+## to kill it: {list, dps, ttd}.
+func _creep_gang(h: SimUnit) -> Dictionary:
+	var list: Array[SimUnit] = []
+	var dps := 0.0
+	var red := 1.0 - 0.06 * h.armor / (1.0 + 0.06 * absf(h.armor))
+	for u: SimUnit in w.query(h.pos, 900.0):
+		if not u.alive or u.team == h.team or u.atk_target != h.id:
+			continue
+		if not (u.is_lane_creep() or u.kind == K.NEUTRAL_CREEP):
+			continue
+		list.append(u)
+		# creep attacks deal 50-75% to heroes (Slash, Piercing on the Hero armor type)
+		dps += (u.dmg_min + u.dmg_max) * 0.5 / maxf(0.3, u.attack_interval()) * red * (0.5 if u.is_ranged() else 0.75)
+	return {"list": list, "dps": dps, "ttd": h.hp / maxf(1.0, dps)}
+
+## The pack damage its ready clearing spells deal now (0 when none is ready or mana is short).
+func _clear_damage(h: SimUnit) -> float:
+	if not _spells_ok():
+		return 0.0
+	var total := 0.0
+	for sp in CLEAR_SPELLS.get(kit, []):
+		var aid := String(sp[0])
+		if h.ability_level_of(aid) <= 0:
+			continue
+		if String(sp[1]) == "toggle":
+			total += 40.0 * float(h.ability_level_of(aid))       # a burn around it: helps, never clears alone
+			continue
+		if w.abilities.cast_error(h, aid, -1, null, h.pos) in ["Ability on cooldown", "Not enough mana", "Silenced",
+				"Stunned", "Muted", "Ability not learned", "Ability is passive", "No spirits of fire"]:
+			continue
+		if h.mana < w.abilities.ability_mana(h, aid) + h.max_mana * 0.15:
+			continue
+		var best := 0.0
+		for key in CLEAR_DAMAGE_KEYS:
+			var v := w.abilities.val(h, aid, key)
+			best = maxf(best, v)
+		total += best
+	return total
+
+## Sets the "clear" desire or raises "retreat" from the creeps on the bot.
+func _creep_choice(h: SimUnit, d: Dictionary, task: Dictionary) -> void:
+	if mode == "retreat" and w.time < _creep_back_until:
+		d["retreat"] = maxf(float(d.get("retreat", 0.0)), 0.86)
+	var cg := _creep_gang(h)
+	var list: Array[SimUnit] = cg.list
+	if list.size() < 2:
+		return
+	var ttd := float(cg.ttd)
+	var hpf := h.hp / h.max_hp
+	var team_fight := not task.is_empty() and String(task.kind) in ["fight", "save", "defend"]
+	var foe_close := not _foes.is_empty() and _nearest(h, _foes).distance_to(h.pos) < 900.0
+	# can it clear them? its spells against their average health, with time to cast
+	var hp_sum := 0.0
+	for c in list:
+		hp_sum += c.hp
+	var avg := hp_sum / float(list.size())
+	var dmg := _clear_damage(h)
+	if dmg >= avg * 0.75 and ttd > 3.5 and (list.size() >= 3 or dmg >= avg) and not (foe_close and hpf < 0.5):
+		_clear_list = list
+		d["clear"] = 0.9 if not team_fight else 0.7
+		return
+	if team_fight and hpf > 0.35:
+		return                                 # the fight matters more than the creeps on it
+	# losing fast or already low: back off for a while (and keep backing off)
+	if ttd < 7.0 or hpf < _retreat_bar() + 0.15 or (list.size() >= 4 and ttd < 14.0):
+		if mode != "retreat" or w.time >= _creep_back_until:
+			creep_backoffs += 1
+		_creep_back_until = w.time + 2.5
+		d["retreat"] = maxf(float(d.get("retreat", 0.0)), 0.9 if ttd < 7.0 else 0.8)
+
+## Clear the creeps on it: its clearing spells (CLEAR_SPELLS), aimed at the pack, then plain attacks on the weakest.
+func _run_clear(h: SimUnit) -> void:
+	if _busy(h):
+		return
+	var live: Array[SimUnit] = []
+	for c in _clear_list:
+		if c != null and c.alive:
+			live.append(c)
+	if live.is_empty():
+		_lane_or_farm(h)
+		return
+	var mid := Vector2.ZERO
+	for c in live:
+		mid += c.pos
+	mid /= float(live.size())
+	if _spells_ok():
+		for sp in CLEAR_SPELLS.get(kit, []):
+			var aid := String(sp[0])
+			if h.ability_level_of(aid) <= 0:
+				continue
+			var how := String(sp[1])
+			if how == "toggle":
+				if not bool(h.toggles.get(aid, false)) and h.mana > w.abilities.ability_mana(h, aid) + h.max_mana * 0.2:
+					_order(h, {"type": O.CAST_NO_TARGET, "ability": aid}, true)
+					return
+				continue
+			if h.mana < w.abilities.ability_mana(h, aid) + h.max_mana * 0.15:
+				continue
+			match how:
+				"self":
+					var r := maxf(w.abilities.val(h, aid, "radius"), 250.0)
+					var inside := live.filter(func(c): return c.pos.distance_to(h.pos) < r).size()
+					if inside >= mini(2, live.size()) and w.abilities.cast_error(h, aid, -1, null, h.pos) == "":
+						_order(h, {"type": O.CAST_NO_TARGET, "ability": aid}, true)
+						_cast_deadline = w.time + 0.8
+						creep_clears += 1
+						_spent()
+						return
+				"point", "line":
+					if w.abilities.cast_error(h, aid, -1, null, mid) == "":
+						_order(h, {"type": O.CAST_POINT, "ability": aid, "point": mid}, true)
+						_cast_deadline = w.time + (2.6 if aid == "burst_shot" else 0.8)
+						creep_clears += 1
+						_spent()
+						return
+				"unit":
+					var near: SimUnit = live[0]
+					for c in live:
+						if c.pos.distance_to(mid) < near.pos.distance_to(mid):
+							near = c
+					if w.abilities.cast_error(h, aid, -1, near, near.pos) == "":
+						_order(h, {"type": O.CAST_UNIT, "ability": aid, "target": near.id}, true)
+						_cast_deadline = w.time + 0.8
+						creep_clears += 1
+						_spent()
+						return
+	var weakest: SimUnit = live[0]
+	for c in live:
+		if c.hp < weakest.hp:
+			weakest = c
+	_order(h, {"type": O.ATTACK_UNIT, "target": weakest.id})
 
 ## Laning: until 10:00 while the lane's tier 1 tower stands (cores keep farming their lane after that).
 func _laning_phase(h: SimUnit) -> bool:
@@ -724,6 +905,16 @@ func _save_turn(h: SimUnit, task: Dictionary) -> bool:
 			return true
 	return false
 
+## Whether a Town Portal started now would land: no enemy hero the team knows of (seen in the last 3 s) could walk
+## into reach of it during the 3 s channel (run 2026-10-18 h: bots teleported with a hero 200-700 away and died
+## channelling). Their walk is counted short (they need to turn and path) but their reach in full.
+func _tp_safe(h: SimUnit) -> bool:
+	for list in [_known, _foes]:
+		for f: SimUnit in list:
+			if f.alive and f.pos.distance_to(h.pos) < maxf(1200.0, f.move_speed * 2.2 + f.attack_range + 150.0):
+				return false
+	return true
+
 ## Juked: it ran from enemy heroes in the last 12 s, the enemy has not seen it for 2 s and none of them is in sight
 ## near: teleport home from the fog (hurt or short of mana; healthy, it just goes back to work).
 func _juke_tp(h: SimUnit) -> bool:
@@ -733,9 +924,8 @@ func _juke_tp(h: SimUnit) -> bool:
 	var hurt := 0.35 if w.time < 480.0 else 0.65
 	if h.hp > h.max_hp * hurt and (h.mana > h.max_mana * 0.3 or w.time < 480.0):
 		return false
-	for f in _foes:
-		if f.pos.distance_to(h.pos) < 1200.0:
-			return false
+	if not _tp_safe(h):
+		return false
 	var home: Vector2 = w.map.fountains[h.team]
 	if h.pos.distance_to(home) < 3500.0 or w.abilities.cast_error(h, "tp", -1, null, home) != "":
 		return false
@@ -793,7 +983,7 @@ func _run_retreat(h: SimUnit) -> void:
 		if _escape_spells(h, fd):
 			return
 	# a long way home, badly hurt, nothing to heal with and nobody close: teleport to the fountain
-	if fd > 1200.0 and h.pos.distance_to(w.map.fountains[h.team]) > 6000.0 and h.hp < h.max_hp * 0.3 and w.time > 240.0 \
+	if fd > 1200.0 and _tp_safe(h) and h.pos.distance_to(w.map.fountains[h.team]) > 6000.0 and h.hp < h.max_hp * 0.3 and w.time > 240.0 \
 			and not _has_item(h, "salve") and w.abilities.cast_error(h, "tp", -1, null, w.map.fountains[h.team]) == "":
 		_order(h, {"type": O.CAST_POINT, "ability": "tp", "point": w.map.fountains[h.team]}, true)
 		_cast_deadline = w.time + 3.5
@@ -900,7 +1090,7 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 
 func _run_heal(h: SimUnit) -> void:
 	var home: Vector2 = w.map.fountains[h.team]
-	if h.pos.distance_to(home) > 5500.0 and _known.is_empty() and w.abilities.cast_error(h, "tp", -1, null, home) == "":
+	if h.pos.distance_to(home) > 5500.0 and _known.is_empty() and _tp_safe(h) and w.abilities.cast_error(h, "tp", -1, null, home) == "":
 		_order(h, {"type": O.CAST_POINT, "ability": "tp", "point": home}, true)
 		_cast_deadline = w.time + 3.5
 		return
@@ -1824,37 +2014,68 @@ func _shop(h: SimUnit) -> void:
 	if w.time >= _counter_next and w.time >= 300.0 and bool(sk.advanced):
 		_counter_next = w.time + 30.0
 		_counter_items(h)
-	_sell_spare(h)
+	# sell and sort first (SimBotBags): junk out, the best items into the main slots
+	if h.alive and SimBotBags.tidy(self, h):
+		return
+	# past the planned build: what this kind of hero buys late (SimBotBags.LATE)
+	if _build_i >= build.size() and w.time >= 900.0:
+		var more := SimBotBags.next_late(self, h)
+		if more != "":
+			build.append(more)
 	var guard := 0
 	while _build_i < build.size() and guard < 6:
 		guard += 1
 		var id: String = build[_build_i]
 		var d := SimData.item(id)
-		if w.shop.owns(h, id) and (not (d.components as Array).is_empty() or id == "jump_knife"):
+		# owned already (a basic item owned counts too: a second pair of boots is never wanted)
+		if w.shop.owns(h, id) and (not (d.components as Array).is_empty() or id == "jump_knife" or bool(d.get("unique", false))
+				or id in SimBotBags.BOOTS) or _covered_by(h, id):
+			_build_i += 1
+			continue
+		# an early item the game has moved past (a Zap Wand at 35:00) is not worth buying any more
+		if SimBotBags.EARLY.has(id) and w.time > float(SimBotBags.EARLY[id]):
 			_build_i += 1
 			continue
 		if w.shop.buy_error(h, id) != "":
 			break
 		var cost := w.shop.price(h, id)
-		if h.gold() < cost:
+		if cost <= 0 and not (d.components as Array).is_empty():
+			break                          # every piece is bought: it forms when the pieces meet (shop or courier)
+		# late luxury items keep buyback gold back (cores past 30:00)
+		var reserve := w.buyback_cost(h) if _build_i >= _core_len and w.time >= 2100.0 and not KITS.is_support(role) else 0
+		if h.gold() < cost + reserve:
+			# short of the whole item: its biggest part that fits now (its stats work at once)
+			if h.gold() - reserve >= 250:
+				var part := SimBotBags.buy_part(self, h, id)
+				if part != "":
+					parts_bought += 1
 			break
 		var err := w.shop.buy(h, id)
+		if err == "Inventory full":
+			# no room: wait for the shop or the courier to clear the bags (it used to skip the item for good)
+			_room_wanted_at = w.time
+			break
 		if err != "" and err != "Not enough gold":
 			_build_i += 1
 			continue
 		if err == "":
+			# bought away from the shop, its pieces may wait in the stash apart from the parts in the bags: the item
+			# stays next in line (its parts kept, SimBotBags) until it forms
+			if not (d.components as Array).is_empty() and not w.shop.owns(h, id):
+				break
 			_build_i += 1
 			if KITS.power_spike(h, id):
 				say("Got my %s." % String(d.get("name", id)), "item_%d_%s" % [h.id, id], 9999.0)
 	# away from the shop, the courier brings what is waiting in the stash
-	if (h.stash.any(func(x): return x != null) or h.courier_items.any(func(x): return x != null)) and not w.shop.in_shop(h):
+	if h.alive and (h.stash.any(func(x): return x != null) or h.courier_items.any(func(x): return x != null)) and not w.shop.in_shop(h):
 		var c := w.get_unit(h.courier_id)
 		if c and c.alive and c.courier_state == "idle":
 			w.courier_deliver(h)
 	if w.shop.tp_owned(h) == 0 and h.gold() >= 100 and w.time > -60.0:
 		w.shop.buy(h, "tp_scroll")
 	# supports carry an Eye Ward (free) from the start
-	if role >= 4 and bool(sk.advanced) and _ward_slot(h) < 0 and w.time - _last_ward_buy > 150.0 and w.shop.in_shop(h):
+	if role >= 4 and bool(sk.advanced) and _ward_slot(h) < 0 and not w.shop.owns(h, "observer_ward") \
+			and w.time - _last_ward_buy > 150.0 and w.shop.in_shop(h):
 		if w.shop.buy(h, "observer_ward") == "":
 			_last_ward_buy = w.time
 	# out of healing in lane: one more Healing Paste (the courier brings it)
@@ -1867,10 +2088,22 @@ func _shop(h: SimUnit) -> void:
 		if w.shop.buy(h, "clarity") == "":
 			_last_clarity_buy = w.time
 	# drink a salve when hurt and not in the fountain
-	if h.hp < h.max_hp * 0.55 and bool(sk.spells):
+	if h.alive and h.hp < h.max_hp * 0.55 and bool(sk.spells):
 		_use_item(h, "salve")
 
 var _last_ward_buy := C.LONG_AGO
+var items_sold: Array = []                 # item ids sold (report, tests)
+var parts_bought := 0                      # parts bought ahead of a whole item (report, tests)
+var _room_wanted_at := C.LONG_AGO          # last time a purchase found no room
+var _next_room_sale := C.LONG_AGO          # the next sale made only for room (SimBotBags.tidy)
+var _core_len := 99                        # the planned build's length (items past it are late luxuries)
+
+## An early part the hero no longer needs because it owns what it builds into (a Zap Stick after the Zap Wand).
+func _covered_by(h: SimUnit, id: String) -> bool:
+	for it in h.inventory:
+		if it != null and String(it.id) != id and id in SimBotBags.all_parts(String(it.id)):
+			return true
+	return false
 var _last_salve_buy := C.LONG_AGO
 var _last_clarity_buy := C.LONG_AGO
 var death_dmg := Vector3.ZERO              # damage by type that killed it lately: physical, magic, pure (fading)
@@ -1909,31 +2142,6 @@ func _counter_items(h: SimUnit) -> void:
 	if prof.disablers >= 2 and want == "spell_shield":
 		kind = "disable"
 	say("Getting %s against %s." % [String(d.name), String(why.get(kind, "them"))], "counter_%d_%s" % [h.id, want], 9999.0)
-
-## In the base with every slot full and something waiting in the stash: sell the cheapest early item (twigs, sticks,
-## bands, the Mini-Axe late), as players do, so the new item fits.
-const SPARE := ["branch", "tango", "faerie_fire", "clarity", "magic_stick", "circlet", "slippers", "gauntlets", "mantle",
-	"wraith_band", "tough_band", "smart_band", "magic_wand", "quelling_blade", "ring_protection", "small_shield"]
-func _sell_spare(h: SimUnit) -> void:
-	if w.time < 900.0 or not w.shop.in_shop(h) or not h.stash.any(func(x): return x != null):
-		return
-	for i in h.inventory.size():
-		if h.inventory[i] == null:
-			return
-	var worst := -1
-	var worst_v := INF
-	for i in h.inventory.size():
-		var it = h.inventory[i]
-		if it == null or not (String(it.id) in SPARE):
-			continue
-		if String(it.id) == "quelling_blade" and w.time < 1500.0:
-			continue
-		var v := float(SimData.item(String(it.id)).get("cost", 0))
-		if v < worst_v:
-			worst_v = v
-			worst = i
-	if worst >= 0:
-		w.shop.sell(h, worst)
 
 func _has_item(h: SimUnit, id: String) -> bool:
 	for i in 6:
@@ -2684,8 +2892,12 @@ func _azrin_spells(h: SimUnit, e: SimUnit) -> void:
 		_cast_deadline = w.time + 0.7
 		_spent()
 
-## Ezee: the ultimate when a real fight is on, Leap Strike onto the hero it would pick, Dark Stomp up close (it throws
-## enemies into walls and trees for the stun), Tainted Touch before the blows land.
+## Ezee: the ultimate when a real fight is on; Tainted Touch first (his blows then curse the target: it is revealed
+## and seen, the mark Leap Strike follows); Dark Stomp up close (it throws enemies into walls and trees for the stun);
+## Leap Strike last, and only when it is sure to land on the target and worth it (run 2026-10-18 h, the owner's rule):
+## Leap Strike jumps on the visible enemy in range with the lowest health share (a hurt creep will do), so it is cast
+## when the cursed target has lost a real share of its health (it is the one picked, and the blow can finish it), or
+## when the target stands alone (no other enemy in reach to steal the leap) and is hurt or getting away.
 func _ezee_spells(h: SimUnit, e: SimUnit) -> void:
 	var d := h.edge_distance(e)
 	var ab := w.abilities
@@ -2694,21 +2906,48 @@ func _ezee_spells(h: SimUnit, e: SimUnit) -> void:
 		_cast_deadline = w.time + 1.0
 		_spent()
 		return
-	var keen := e.hp < e.max_hp * 0.6 or h.hp > h.max_hp * 0.75
-	if keen and ab.cast_error(h, "leap_strike", -1, null, h.pos) == "" and ab.leap_target(h, h.ability_level_of("leap_strike")) == e and d > 150.0:
+	if ab.cast_error(h, "tainted_touch", -1, null, h.pos) == "" and d < 450.0 and h.get_modifier("tainted_touch").is_empty():
+		_order(h, {"type": O.CAST_NO_TARGET, "ability": "tainted_touch"}, true)
+		_cast_deadline = w.time + 0.8
+		_spent()
+		return
+	if _ezee_leap_ok(h, e) and ab.cast_error(h, "leap_strike", -1, null, h.pos) == "":
 		_order(h, {"type": O.CAST_NO_TARGET, "ability": "leap_strike"}, true)
 		_cast_deadline = w.time + 1.2
 		_spent()
+		leaps_cast += 1
 		return
 	if ab.cast_error(h, "dark_stomp", -1, null, h.pos) == "" and d < 260.0:
 		_order(h, {"type": O.CAST_NO_TARGET, "ability": "dark_stomp"}, true)
 		_cast_deadline = w.time + 0.9
 		_spent()
 		return
-	if ab.cast_error(h, "tainted_touch", -1, null, h.pos) == "" and d < 400.0:
-		_order(h, {"type": O.CAST_NO_TARGET, "ability": "tainted_touch"}, true)
-		_cast_deadline = w.time + 0.8
-		_spent()
+
+var leaps_cast := 0                        # report counter (tests)
+
+## Whether Leap Strike would land on `e` and is worth it now (see _ezee_spells).
+func _ezee_leap_ok(h: SimUnit, e: SimUnit) -> bool:
+	var ab := w.abilities
+	if h.ability_level_of("leap_strike") <= 0 or ab.leap_target(h, h.ability_level_of("leap_strike")) != e:
+		return false                           # it would jump on someone else (or nobody)
+	var d := h.edge_distance(e)
+	var frac := e.hp / maxf(1.0, e.max_hp)
+	var lv := h.ability_level_of("leap_strike")
+	var blow := ab.val(h, "leap_strike", "damage") + ab.val(h, "leap_strike", "str_mult") * h.str_total
+	var finish := e.hp <= blow * 1.1 + h.dmg_max * 2.0
+	var cursed := not e.get_modifier("tainted_curse").is_empty()
+	# alone: no other enemy unit the leap could pick within its reach
+	var alone := true
+	for o: SimUnit in w.query(h.pos, ab.cast_range(h, "leap_strike", -1) + 200.0, true):
+		if o != e and ab._ezee_can_hit(h, o) and w.vision.sees(h.team, o) and h.edge_distance(o) <= ab.cast_range(h, "leap_strike", -1):
+			alone = false
+			break
+	var fleeing := e.moving and d > h.attack_range + 120.0
+	if cursed and (frac < 0.55 or finish):
+		return true
+	if alone and (frac < 0.7 or finish or fleeing) and lv > 0:
+		return true
+	return false
 
 ## Sludge in a fight: Jump Knife in when Chomp is ready, Stench on, Blubber when he is being hit, Chomp in reach, the
 ## hook when it would land.

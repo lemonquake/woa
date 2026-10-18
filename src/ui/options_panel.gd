@@ -130,6 +130,8 @@ func _game_tab() -> void:
 	_check(v, "Screen shake", "screen_shake", Callable())
 	_check(v, "Damage numbers", "damage_numbers", Callable())
 	_check(v, "Show bot chat", "bot_chat", Callable())
+	_check(v, "Bot trash talk", "bot_trash_talk", Callable())
+	_note(v, "Bots talk like players: they all chat their kills, mock missed spells and roast teammates (you too) who feed or fall behind, in English, Filipino and Taglish. Turn it off to keep only their plain team calls.")
 	_check(v, "Bots learn from games", "bots_learn", func():
 		BotMemory.active = bool(Options.get_value("bots_learn")) and game != null)
 	_note(v, "Bots learn what worked: their fights and teamfights, their ganks, where they died, which items won, how far their skill shots land and which lane you like. It is saved on this computer.")

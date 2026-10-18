@@ -107,9 +107,17 @@ static func _build_units() -> void:
 	var flag := melee.duplicate()
 	flag.merge({"kind": K.CREEP_FLAG, "magic_resist": 0.4}, true)
 	var super_melee := melee.duplicate()
-	super_melee.merge({"hp": 700.0, "armor": 3.0, "dmg_min": 41.0, "dmg_max": 49.0, "xp": 25.0, "gold_min": 20, "gold_max": 26}, true)
+	super_melee.merge({"hp": 700.0, "armor": 3.0, "dmg_min": 36.0, "dmg_max": 44.0, "xp": 25.0, "gold_min": 20, "gold_max": 26}, true)
 	var super_ranged := ranged.duplicate()
-	super_ranged.merge({"hp": 475.0, "armor": 1.0, "dmg_min": 46.0, "dmg_max": 51.0, "xp": 22.0, "gold_min": 19, "gold_max": 25}, true)
+	super_ranged.merge({"hp": 475.0, "armor": 1.0, "dmg_min": 41.0, "dmg_max": 46.0, "xp": 22.0, "gold_min": 19, "gold_max": 25}, true)
+	# mega creeps (every enemy barracks down): fully upgraded super creeps (30 upgrades) from the first wave
+	var mega_melee := super_melee.duplicate()
+	mega_melee.merge({"hp": 1270.0, "dmg_min": 96.0, "dmg_max": 104.0}, true)
+	var mega_ranged := super_ranged.duplicate()
+	mega_ranged.merge({"hp": 1015.0, "dmg_min": 131.0, "dmg_max": 136.0}, true)
+	# siege creeps of a lane whose enemy ranged barracks fell: +16 damage (their only upgrade)
+	var super_siege := siege.duplicate()
+	super_siege.merge({"dmg_min": 51.0, "dmg_max": 62.0}, true)
 	var names := {
 		0: {"melee": "Footman", "ranged": "Archer", "siege": "Stone Golem", "flag": "Flag Bearer"},
 		1: {"melee": "Ghoul", "ranged": "Skeleton Archer", "siege": "Bone Golem", "flag": "Flag Bearer"},
@@ -118,7 +126,7 @@ static func _build_units() -> void:
 		var p := "dawn_" if team == 0 else "dusk_"
 		var n: Dictionary = names[team]
 		var el := EL.LIGHT if team == 0 else EL.DARK
-		for d in [melee, ranged, siege, flag, super_melee, super_ranged]:
+		for d in [melee, ranged, siege, flag, super_melee, super_ranged, mega_melee, mega_ranged, super_siege]:
 			d["element"] = el
 		_add(p + "melee", _named(melee, n.melee, p + "melee"))
 		_add(p + "ranged", _named(ranged, n.ranged, p + "ranged"))
@@ -126,6 +134,9 @@ static func _build_units() -> void:
 		_add(p + "flag", _named(flag, n.flag, p + "flag"))
 		_add(p + "melee_super", _named(super_melee, "Super " + n.melee, p + "melee"))
 		_add(p + "ranged_super", _named(super_ranged, "Super " + n.ranged, p + "ranged"))
+		_add(p + "melee_mega", _named(mega_melee, "Mega " + n.melee, p + "melee"))
+		_add(p + "ranged_mega", _named(mega_ranged, "Mega " + n.ranged, p + "ranged"))
+		_add(p + "siege_super", _named(super_siege, "Super " + n.siege, p + "siege"))
 
 	# Buildings (npc_dota_goodguys_*). Towers use the Reinforced (siege) attack class.
 	var tower := {"kind": K.TOWER, "hull": 144.0, "can_move": false, "bat": 0.9, "attack_speed": 110.0,
@@ -216,7 +227,7 @@ static func _build_units() -> void:
 		"auras": [{"id": "thick_hide_aura", "name": "Thick Hide Aura", "stats": {"armor": 3.0}, "radius": 1200.0}]}))
 
 	# Heroes. Blood Ranger: a ranged agility archer (stats follow the classic ranged-agility carry template).
-	_add("blood_ranger", {"name": "Blood Ranger", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+	_add("blood_ranger", {"name": "Jayla", "title": "the Blood Ranger", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
 		"hp_regen": 0.25, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 0.0,
 		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 27.0, "dmg_max": 34.0, "bat": 1.7,
 		"attack_speed": 100.0, "attack_point": 0.5, "backswing": 0.55, "acquire": 800.0, "range": 625.0,
@@ -448,12 +459,12 @@ static func _build_abilities() -> void:
 		"values": {"arrows": [30, 30, 30, 30], "waves": [5, 5, 5, 5], "wave_min": [4, 4, 4, 4], "wave_max": [7, 7, 7, 7],
 		"attack_pct": [0.55, 0.65, 0.75, 0.85], "radius": [400, 400, 400, 400], "wave_interval": [0.4, 0.4, 0.4, 0.4],
 		"arrow_speed": [1800, 1800, 1800, 1800]},
-		"desc": "Blood Ranger plants her feet and looses 30 arrows over five waves of four to seven into the target area. Each arrow strikes a random enemy there for a share of her attack damage. Channelled: moving, attacking, stopping, a stun, silence or a push ends it."}
+		"desc": "Jayla plants her feet and looses 30 arrows over five waves of four to seven into the target area. Each arrow strikes a random enemy there for a share of her attack damage. Channelled: moving, attacking, stopping, a stun, silence or a push ends it."}
 	_abilities["gale_impact"] = {"id": "gale_impact", "name": "Gale Impact", "behavior": "point", "key": "W",
 		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.3, "range": 2000,
 		"anim": "bow_1", "damage_type": "magical", "line": true, "direction": true,
 		"values": {"damage": [120, 200, 280, 360], "impact_pct": [0.2, 0.2, 0.2, 0.2], "width": [110, 110, 110, 110],
-		"speed": [2000, 2000, 2000, 2000], "distance": [2000, 2000, 2000, 2000], "push_speed": [1150, 1150, 1150, 1150]},
+		"speed": [2000, 2000, 2000, 2000], "distance": [2000, 2000, 2000, 2000], "push_speed": [963, 963, 963, 963]},
 		"desc": "Looses a great arrow toward the target point; it always flies its full 2000 range. Every enemy it passes is struck for magic damage and hurled aside; an enemy that crashes into a wall, unit, building or tree takes another 20% of that damage. The arrow fells every tree in its path, and so do the units it throws."}
 	_abilities["masterful_archery"] = {"id": "masterful_archery", "name": "Masterful Archery", "behavior": "passive",
 		"key": "E", "max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0.8, 0.8, 0.8, 0.8], "cast_point": 0.0,
@@ -466,7 +477,7 @@ static func _build_abilities() -> void:
 		"values": {"duration": [15, 15, 15], "lifesteal": [0.4, 0.5, 0.6], "bonus_range": [200, 300, 400],
 		"leap_chance": [0.3, 0.3, 0.3], "leap_distance": [300, 300, 300], "leap_time": [0.3, 0.3, 0.3],
 		"leap_cooldown": [1.0, 1.0, 1.0]},
-		"desc": "Blood Ranger gives in to the hunt: for 15 seconds her attacks steal life and reach much further. When an attack hits her she may leap back out of reach."}
+		"desc": "Jayla gives in to the hunt: for 15 seconds her attacks steal life and reach much further. When an attack hits her she may leap back out of reach."}
 	# Ezee, the Dark Paladin
 	_abilities["dark_stomp"] = {"id": "dark_stomp", "name": "Dark Stomp", "behavior": "no_target", "key": "Q",
 		"max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [12, 12, 12, 12], "cast_point": 0.45, "range": 0,

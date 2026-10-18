@@ -108,6 +108,8 @@ static func weapon_of(u: SimUnit) -> String:
 			return "arrow"
 		if proj.begins_with("boulder"):
 			return "siege"
+		if proj == "knife":
+			return "blade"
 		return "magic"
 	var wpn := String(cfg.get("R", ""))
 	for k in ["sword", "dagger", "cleaver", "scythe", "axe", "greatsword"]:

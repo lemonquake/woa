@@ -95,7 +95,7 @@ func _init() -> void:
 					marks[mt] = "  at %d:00 LH/net worth: %s | team net worth %d vs %d" % [int(mt / 60.0), ", ".join(row), tot[0], tot[1]]
 			for e in w.events:
 				if e.t == "chat":
-					chat.append("[%s] %s %s: %s" % [w.clock_text(), C.TEAM_NAMES[int(e.team)], e.name, e.text])
+					chat.append("[%s] %s%s %s: %s" % [w.clock_text(), "(All) " if bool(e.get("all", false)) else "", C.TEAM_NAMES[int(e.team)], e.name, e.text])
 				elif e.t == "glyph":
 					var fb := w.get_unit(int(e.get("by", -1)))
 					fortify.append("[%s] %s (%s)" % [w.clock_text(), C.TEAM_NAMES[int(e.team)], fb.bot_name if fb != null else "?"])

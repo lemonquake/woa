@@ -4,6 +4,87 @@
 
 ## Status (keep this section current)
 
+**2026-10-18 h: bots' items, chat, teleports, creep pressure, Azrael and Ezee; Dota creep upgrades and mega creeps;
+side-lane creeps into the base; take over a bot while watching; Jayla; sounds; Emelrich's run; Jump Knife; new build
+(your requests).** Run `work/lemondev/2026-10-18h-bots/` (handoff.md; probes' output and captures there).
+* **Sounds.** Ranged heroes' attacks sound like what they throw (`GameAudio._hero_shot`, by ModelCatalog "proj"): only
+  Jayla draws a bow; Azrin's fireballs whoosh and burst, Froster's bolts crackle with frost, Feran's knives whip
+  (dagger swings, dagger hits; his hits ring as blades), others a spell shot.
+* **Ser Emelrich's run.** Every motion-capture run bent his short-legged, long-bodied frame into a deep hunch with
+  tiny steps. He now runs on your own run clip (the one most heroes had) with the great sword run's arms laid over it
+  so the sword stays in both hands (`RepairedClips.COMPOSED`, clip `hero_run_gs`; joins check 0 failures, feet planted).
+* **Jump Knife** (and Crash Knife) lock for 3 s on damage from an enemy hero, **a unit an enemy hero owns** (tamed
+  beasts, turrets) or **the enemy fountain**; creeps and towers do not (`SimUnit.jump_lock_at`). Before, only heroes.
+* **Jayla, the Blood Ranger** (your name; the hero id stays `blood_ranger`; a saved look named "Blood Ranger" becomes
+  "Jayla"). **Gale Impact's push is 30% shorter** (push speed 1150 -> 963: 464 -> 325 units).
+* **Creeps (Dota 2's numbers, Liquipedia "Lane Creeps" read 2026-10-18).** Upgrades every 7:30: melee +12 HP +1
+  damage +1 gold; ranged +12 HP +2 damage **+3 gold +8 XP** (was +1, +4); super melee +19 HP +2 **+1.5 gold**, base
+  **36-44** (was 41-49); super ranged +18 HP +3 **+6 gold**, base **41-46**. **Mega creeps** when all six enemy
+  barracks are down: melee 1270 HP 96-104, ranged 1015 HP 131-136 (only their bounty grows). **Siege creeps +16 damage**
+  once the lane's ranged barracks falls. Flagbearers stay plain. Super creeps are drawn 1.05x, megas 1.12x.
+* **Top and bottom creeps walk into the base** after the tier 3 tower (both teams): they paced at the base's gate (the
+  goal flipped back to the gate 220 units past it). Inside, they go for the nearest standing building, the Ancient last.
+* **Bots commit to escape teleports** and only start one when no enemy hero they know of can reach them during the
+  channel; the only break is a ready Jump Knife with an enemy on top. Two 25-minute games: escapes landed 72/78 (was
+  25/35 in one game), self-cancels 0 (`tests/tools/tp_probe.gd`).
+* **Creeps on a bot.** It reads how fast the creeps hitting it would kill it: with a clearing spell ready that can
+  finish them (every hero's pack spells are listed, `SimBot.CLEAR_SPELLS`) it clears them (bot plan "Clearing
+  creeps"); otherwise, low or losing fast, it backs off and keeps backing off 2.5 s instead of flipping every second.
+* **Bots' items (deep fix, `src/sim/sim_bot_bags.gd`).** What each held item is worth now (early items fade from 7-20
+  minutes, spare boots, parts of nothing planned); sold at the shop, from the stash anywhere, or handed to the courier
+  to take home and sell; the six best (actives, boots, a support's Eye Ward) ride in the main slots; parts of the next
+  item bought when the whole is out of reach; LATE lists per kind of hero once the build runs out (buyback gold kept
+  after 35:00). Root causes fixed: an item bought away from the shop was marked bought while its pieces sat apart (the
+  "parts that never complete"), and "Inventory full" skipped the item for good; the courier now combines what
+  completes an item in full bags (as in Dota) and combines what it picks up from the stash. Dead bots shop too.
+  Two 40-minute games: loose parts 0-2 (was 14), no bot sitting on gold for its next item.
+* **Azrael's Soul Tap** is on only while a charge pays (a hero fight close by, a pack her cleave sweeps, a laning hit),
+  off once charged, off for one creep or a passing ally, and her charged strike goes to the pack or the hero.
+* **Ezee's Leap Strike** only when it is sure to land on the target and worth it: the target cursed by Tainted Touch
+  and under 55% (or the blow finishes it), or alone and hurt or running. Tainted Touch now comes first.
+* **Bot chat (`src/sim/sim_bot_chat.gd`): 2239 lines**, your 557 (`bot_trashtalk_chat_lines.json`, kept as is) and
+  1682 more in 27 categories (`tools/bot_chat_extra.json`; `python tools/bot_chat.py` builds
+  `assets/data/bot_chat.json` and `src/sim/bot_chat_lines.gd`). **All chat** (both teams read it; Shift+Enter types
+  to everyone, lines marked "(All)"): kills, first blood, streaks, shutdowns, dodged skillshots (new `skill_miss`
+  event), deaths to creeps or towers, buybacks, escapes, team fights, towers, megas, the greeting, the end. Team
+  chat: anyone (you too) dying again and again or behind on farm, an ally who stood by, excuses, praise. Your lines
+  get comebacks. Each bot has its own voice (Pinoy, Taglish or English; how often and how rough). Options > Game
+  "Bot trash talk" hides it. About 3-4 all chat lines a minute in a bot game.
+* **Take over a bot while watching**: the Watching panel's **Take control** gives you the watched hero with every
+  right a player has (its bot sits out), **Give back to bot** returns it (`Main.take_control`, `give_back`).
+* **Name checker** (your correction): "remember" was flagged for "ember"; a word now only counts as an invented
+  compound when the part before the root is a word of four letters or more, and "Emberstrike"-style compounds are
+  caught (they slipped through before).
+* New names (veto any): **Jayla**, **the Blood Ranger** (yours); "Mega Footman", "Mega Archer", "Mega Ghoul", "Mega
+  Skeleton Archer", "Super Stone Golem", "Super Bone Golem"; "Take control", "Give back to bot", "Played by you",
+  "You control <hero>", "Clearing creeps", "(All)", "Say to everyone (Enter to send, Esc to close)", "Bot trash
+  talk" and its note; the 1682 added chat lines; code `SimBotBags`, `SimBotChat`, `BotChatLines`, `SimWorld.botchat`,
+  `all_rax_dead`, `SimUnit.jump_lock_at`, `is_mega`, `SimBot.human`, `CLEAR_SPELLS`, `_creep_choice`, `_run_clear`,
+  `_ezee_leap_ok`, `_tp_safe`, `SimBot17.soul_want`, `soul_plan`, `best_pack`, `SimShop.combine_with`,
+  `RepairedClips.COMPOSED`, clip `hero_run_gs`, `Main.take_control`, `give_back`, `controlling`, `watching_match`,
+  option `bot_trash_talk`, event `skill_miss`, files `tools/bot_chat.py`, `tools/bot_chat_extra.json`,
+  `assets/data/bot_chat.json`, `tests/tools/tp_probe.gd`, `tests/tools/item_probe.gd`; tests
+  `test_creep_upgrades_super_mega`, `test_side_lane_creeps_enter_base`, `test_bot_creep_gang`,
+  `test_ezee_bot_leap_rule`, `test_azrael_soul_tap_planner`.
+Evidence: see the run's handoff.md (tests, probes, bot games, export).
+Not verified: no blind critic review; chat lines read in bot games only (no player game); Take control checked by
+the live probe and one capture at 1920x1080.
+
+**2026-10-19: shorter bot chat library (text edit only).** Run `work/lemondev/2026-10-19-chat/`.
+`bot_trashtalk_chat_lines.json` now contains **557 individually edited lines** in the same ten categories, replacing
+1,632 mostly repetitive entries. Filipino/Taglish and English reactions cover kills, revenge, missed spells,
+feeding, farm, role complaints and replies. Median length: **3 words** (was 8); **554/557** entries are six words or
+fewer. Requested profanity and informal spelling remain; regional/ethnic slurs are omitted. A few longer specific
+complaints remain, including the owner's tank/armor example. Metadata counts match; original file: run's `before.json`.
+Research: six sources, including actual SEA Dota chat logs, Filipino field observations and player language examples;
+links, editorial decisions and limitations in the run's `research.md`.
+Validation: `python work/lemondev/2026-10-19-chat/validate.py` prints **JSON contract OK** (shape/category order,
+counts, strings, uniqueness, length); `python tools/check_names.py` prints **Names OK**. Independent text comparison
+records are in the run directory. This JSON is not referenced by the searched game sources/tools/tests: live bot
+speech, chat channels and event/role selection are unchanged and were not runtime-tested. No build was requested.
+New game names or identifiers: **none**; all existing category keys remain. New player-visible chat strings are
+listed in full in `bot_trashtalk_chat_lines.json` for the owner's review. Unrelated working changes are preserved.
+
 **2026-10-18 g: 150% experience and gold, All-Bot matches you watch, a higher camera, Bots commands in the Debug panel,
 new build (your request).** Run `work/lemondev/2026-10-18g-spectate/` (contract.md, handoff.md; logs `logs/`, captures
 `shots/`).

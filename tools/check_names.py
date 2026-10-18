@@ -28,6 +28,8 @@ BANNED_SUFFIXES = ("warden", "fall", "forged", "bound", "born", "keeper", "calle
                    "bane", "shard", "heart", "song", "fang", "guard", "wright", "mantle")
 # Real English words that end in one of those suffixes.
 ENGLISH_OK = {
+    "remember", "remembers", "remembered", "remembering", "member", "members", "membership", "december",
+    "november", "september", "dismember",
     "downfall", "waterfall", "rainfall", "pitfall", "snowfall", "footfall", "landfall", "shortfall", "windfall",
     "freefall", "outbound", "inbound", "rebound", "unbound", "spellbound", "housebound", "firstborn", "newborn",
     "reborn", "stillborn", "unborn", "airborne", "goalkeeper", "gatekeeper", "shopkeeper", "innkeeper",
@@ -66,7 +68,7 @@ COMPOUND_OK = {
 }
 # Names the owner chose (never flagged). Matched case-insensitively and removed before checking.
 OWNER_NAMES = [
-    "Warriors of Aether", "Ancient Light", "Black Sun", "Blood Ranger", "Ezee the Dark Paladin", "Ezee", "Sludge",
+    "Warriors of Aether", "Ancient Light", "Black Sun", "Blood Ranger", "Jayla", "the Blood Ranger", "Ezee the Dark Paladin", "Ezee", "Sludge",
     "Burst Shot", "Gale Impact", "Masterful Archery", "Dark Stomp", "Leap Strike", "Tainted Touch", "Unholy Might",
     "Mini-Axe", "Vegan Picker", "Bot Gerald",
     # 2026-10-14: Azrin and her abilities; Sange, Yasha and Kaya renamed by the owner
@@ -124,9 +126,13 @@ def hits_in(text):
                 rest = None
                 if lw.startswith(r) and len(lw) - len(r) >= 3:
                     rest = lw[len(r):]
-                elif lw.endswith(r) and len(lw) - len(r) >= 3:
+                elif lw.endswith(r) and len(lw) - len(r) >= 4:
+                    # a word ending in a root is a compound only when what comes before is a word of its own
+                    # ("Stormember"); "remember", "member", "December" are ordinary words (2026-10-19, the owner)
                     rest = lw[:-len(r)]
-                if rest is not None and not rest.startswith(("s", "y", "ed", "er", "ing", "ly", "ish", "ness"))                         and not rest.endswith(("ed", "ing")):
+                # only a real ending after a root is fine (Embers, Stormy, Frosted); "Emberstrike" is a compound
+                if rest is not None and rest not in ("s", "es", "y", "ed", "er", "ers", "ing", "ings", "ly", "ish", "ness",
+                                                     "est", "en") and not rest.endswith(("ed", "ing")):
                     bad = True
                     break
         if bad:

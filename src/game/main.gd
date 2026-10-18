@@ -45,6 +45,8 @@ var player_hero_id := -1                   # your hero; while watching, the watc
 ## player_team follow the watched hero (its HUD, portrait and orders); the Watch panel (WatchPanel) picks the hero, the
 ## camera, whose sight shows and whose orders and plans are drawn. Nothing the watcher clicks reaches the simulation.
 var spectator := false
+var watching_match := false                # an All-Bot match (the Watching panel stays while you control a hero)
+var controlling := -1                      # watching: the hero you took over from its bot (take_control), or -1
 var vision_mode := -1                      # -1 your (the watched hero's) team; 0, 1 that team; 2 both; 3 the whole map
 var cam_mode := "free"                     # watching: "free", "follow" (the watched hero), "hero" (hero view), "auto"
 var show_orders := 1                       # watching: 0 off, 1 the watched hero's orders, 2 every hero's
@@ -207,7 +209,7 @@ func _ready() -> void:
 	input = InputController.new()
 	input.game = self
 	add_child(input)
-	if spectator:
+	if watching_match:
 		cam_mode = String(args.get("watch_cam", "auto"))
 		vision_mode = int(args.get("watch_vision", "2"))
 		watch_panel = WatchPanel.new()
@@ -343,6 +345,7 @@ func _spawn_heroes() -> void:
 				s.kind = "bot"
 				s.name = "Bot Pip"
 	spectator = not slots.any(func(s): return String(s.kind) == "you")
+	watching_match = spectator
 	BotMemory.active = bool(Options.get_value("bots_learn")) and not automated and not args.has("nolearn")
 	if BotMemory.active:
 		BotMemory.load_data()
@@ -953,7 +956,7 @@ func _drain_events() -> void:
 				# the bots score this game into what they learned (Options: Bots learn from games)
 				SimTeamAI.match_over(world)
 			"chat":
-				if hud and hud.has_method("on_chat") and int(e.team) == player_team:
+				if hud and hud.has_method("on_chat") and (int(e.team) == player_team or bool(e.get("all", false)) or spectator):
 					hud.on_chat(e)
 			"ping":
 				if int(e.team) == player_team and int(e.u) != player_hero_id:
@@ -1255,11 +1258,14 @@ func fog_bytes() -> PackedByteArray:
 
 # ---- Watching an All-Bot match ---------------------------------------------------------------------------------------
 
-## Watch another hero: its HUD, portrait, orders and (with "Hero's team" sight) its team's view.
+## Watch another hero: its HUD, portrait, orders and (with "Hero's team" sight) its team's view. While you control a
+## hero, watching another one gives yours back to its bot first.
 func watch(hid: int, move_camera := true) -> void:
 	var h := world.get_unit(hid)
 	if h == null or not h.is_hero():
 		return
+	if controlling >= 0 and hid != controlling:
+		give_back()
 	player_hero_id = hid
 	player_team = h.team
 	selected_id = hid
@@ -1269,6 +1275,64 @@ func watch(hid: int, move_camera := true) -> void:
 		center_on_hero()
 
 var _auto_next := 0.0
+
+## Watching an All-Bot match: take over a bot's hero at any time (the Watching panel's "Take control"). You play it
+## with every right a player has (orders, spells, items, shop, courier, glyph, chat, its gold and items, its team's
+## sight); its bot sits out until you give it back (give_back), and the bot plays on from wherever you left it.
+var _vision_watching := 2
+var _cam_watching := "auto"
+
+func take_control(hid := -1) -> void:
+	if not watching_match or world == null or multiplayer_match:
+		return
+	if controlling >= 0:
+		give_back()
+	var h := world.get_unit(hid if hid >= 0 else player_hero_id)
+	if h == null or not h.is_hero():
+		return
+	var b := world.bot_for(h.id)
+	if b == null:
+		return
+	watch(h.id, true)
+	b.human = true
+	h.bot = false
+	h.player = true
+	h.auto_attack = true
+	controlling = h.id
+	spectator = false
+	_vision_watching = vision_mode
+	_cam_watching = cam_mode
+	vision_mode = -1
+	cam_mode = "free"
+	_fog_tick = -1
+	selected_id = h.id
+	selected = [h.id]
+	if hud and hud.has_method("error"):
+		hud.error("You control %s" % SimTeamAI.hero_label(h))
+	if watch_panel != null:
+		watch_panel.refresh()
+
+## Hand the hero you took over back to its bot; you watch again.
+func give_back() -> void:
+	if controlling < 0 or world == null:
+		return
+	var h := world.get_unit(controlling)
+	var b := world.bot_for(controlling)
+	controlling = -1
+	if b != null:
+		b.human = false
+	if h != null:
+		h.player = false
+		h.bot = true
+		h.to_buy.clear()
+	spectator = true
+	vision_mode = _vision_watching
+	cam_mode = _cam_watching
+	_fog_tick = -1
+	if input != null and input.get("targeting") != null:
+		input.targeting = ""
+	if watch_panel != null:
+		watch_panel.refresh()
 
 ## Watching: the camera mode ("free", "follow", "hero", "auto"). Hero view also shows the watched hero's team's sight
 ## and its orders; leaving it puts back the sight chosen before.

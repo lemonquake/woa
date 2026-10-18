@@ -10,6 +10,7 @@ var map: SimMap
 var time := C.PREGAME_TIME
 var tick := 0
 var rng := RandomNumberGenerator.new()
+var botchat: SimBotChat                     # the bots' chat lines (SimBotChat)
 var units: Array[SimUnit] = []
 var by_id := {}
 var next_id := 1
@@ -72,6 +73,7 @@ func _init(p_seed := 1, p_map: SimMap = null) -> void:
 	shop = SimShop.new(self)
 	abilities = SimAbilities.new(self)
 	items = SimItems.new(self)
+	botchat = SimBotChat.new(self)
 	status = SimStatus.new(self)
 	orbs = SimOrbs.new(self)
 	sites = SimSites.new(self)
@@ -346,6 +348,7 @@ func step() -> void:
 	if profiling: t = _prof("vision", t)
 	_cleanup()
 	if profiling: t = _prof("cleanup", t)
+	botchat.tick()
 
 ## A fingerprint of the match state (multiplayer peers compare it to catch a desync): the clock, the RNG, every unit's
 ## place, health, mana, orders, gold, level and items, and the counts of projectiles, effects and living trees.
@@ -674,10 +677,22 @@ func _couriers() -> void:
 						var gave := false
 						for k in c.inventory.size():
 							var it = c.inventory[k]
-							if it != null and shop.place_in_bags(h, it):
+							# an item the hero sent home (a bot's junk) rides on to the stash
+							if it != null and not bool(it.get("home", false)) and shop.place_in_bags(h, it):
 								c.inventory[k] = null
 								gave = true
 						shop.combine_all(h)
+						# bags full: what completes an item with the hero's own parts still goes in, combined (as in
+						# Dota); before this the parts stayed on the courier and the hero's half-built item never formed
+						var guard := 0
+						while _has_items(c.inventory) and guard < 6 and shop.combine_with(h, c.inventory):
+							guard += 1
+							gave = true
+							for k in c.inventory.size():
+								var it2 = c.inventory[k]
+								if it2 != null and not bool(it2.get("home", false)) and shop.place_in_bags(h, it2):
+									c.inventory[k] = null
+							shop.combine_all(h)
 						h.refresh_stats()
 						if gave:
 							events.append({"t": "delivered", "u": h.id})
@@ -713,6 +728,8 @@ func _courier_take_stash(c: SimUnit, h: SimUnit) -> void:
 			break
 		c.inventory[k] = h.stash[i]
 		h.stash[i] = null
+	# the pieces it now carries combine on board (a recipe from the stash with parts bought to the courier)
+	shop.combine_all(h)
 
 ## Ground items that belong to the hero and lie in its fountain area (the Well).
 func _owner_items_in_well(h: SimUnit) -> Array:
@@ -809,16 +826,17 @@ func brain(team: int) -> SimTeamAI:
 	return brains[team]
 
 ## A team chat line from a hero (or -1 for the game). Teams only read their own lines.
-func chat(team: int, from_id: int, text: String) -> void:
+## all: all chat (both teams read it). bot_line: a bot's chat line (SimBotChat; the interface can hide its trash talk).
+func chat(team: int, from_id: int, text: String, all := false, bot_line := false) -> void:
 	var u := get_unit(from_id)
 	var who := ""
 	if u != null:
 		who = u.player_label() if u.player_label() != "" else String(u.look.get("display_name", u.def.get("name", "")))
-	var line := {"team": team, "u": from_id, "name": who, "text": text, "t": time}
+	var line := {"team": team, "u": from_id, "name": who, "text": text, "t": time, "all": all}
 	chat_log.append(line)
 	if chat_log.size() > 80:
 		chat_log.pop_front()
-	events.append({"t": "chat", "team": team, "u": from_id, "name": who, "text": text})
+	events.append({"t": "chat", "team": team, "u": from_id, "name": who, "text": text, "all": all, "bot_line": bot_line})
 	if brains[team] != null and u != null and not u.bot:
 		brains[team].on_player_chat(u, text)
 
@@ -891,6 +909,14 @@ func on_building_destroyed(u: SimUnit) -> void:
 
 func lane_rax_dead(team: int, lane: String, kind_s: String) -> bool:
 	return rax_dead.has("%d:%s:%s" % [team, lane, kind_s])
+
+## Every barracks of `team` destroyed (the enemy's lanes spawn mega creeps).
+func all_rax_dead(team: int) -> bool:
+	for lane in ["top", "mid", "bot"]:
+		for k in ["melee", "ranged"]:
+			if not lane_rax_dead(team, lane, k):
+				return false
+	return true
 
 # ---- Clock helpers ---------------------------------------------------------------------------------------------------
 

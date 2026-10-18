@@ -130,7 +130,7 @@ static func default_look(id: String) -> Dictionary:
 	g.merge({"hair": "long", "hair_color": "861620", "hair_length": 1.0, "skin": "e8c2a8", "eye": "cat",
 		"eye_color": "e0202c", "eye_glow": 0.55, "lip_color": "8a2028", "marking": "none", "build": -0.35}, true)
 	return {
-		"display_name": "Blood Ranger",
+		"display_name": "Jayla",
 		"look": HeroLook.sanitize(g),
 		"outfit": {"inner_garment": "silk_undershirt", "armor": "tc_trackers_leathers", "leggings": "trackers_breeches",
 			"boots": "wayfarer_boot", "gloves": "silk_glove", "accessory_1": "tc_bloodmoon_signet"},
@@ -201,6 +201,8 @@ static func _load() -> void:
 static func _sanitize(d: Dictionary, id: String) -> Dictionary:
 	var out := default_look(id)
 	out["display_name"] = String(d.get("display_name", out.display_name)).substr(0, 24)
+	if id == "blood_ranger" and out.display_name == "Blood Ranger":
+		out["display_name"] = "Jayla"        # the owner named her Jayla, the Blood Ranger (2026-10-18 h)
 	if id in OWN_BODY:
 		return out
 	out["look"] = HeroLook.sanitize(d.get("look", {}))

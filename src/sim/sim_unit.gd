@@ -105,6 +105,7 @@ var last_hits := 0
 var denies := 0
 var streak := 0
 var hero_damage_log := {}                  # enemy hero id -> last game time they damaged us
+var jump_lock_at := C.LONG_AGO             # last time an enemy hero, a unit a hero owns or the fountain hurt us (Jump Knife)
 var stick_charges := 0
 var player := false
 var auto_attack := true                    # idle heroes attack enemies in acquisition range (Dota "Standard")
@@ -181,6 +182,7 @@ var bounty_gold_add := 0.0
 var bounty_xp_add := 0.0
 var creep_dmg_add := 0.0
 var is_super := false
+var is_mega := false                       # lane creeps: a mega creep (every enemy barracks down)
 
 # ---- Buildings ------------------------------------------------------------------------------------------------------
 var invulnerable := false
@@ -666,9 +668,9 @@ func upgrade_hp() -> float:
 func _upgrade_val(i: int) -> float:
 	var key := ""
 	if kind == K.CREEP_MELEE or kind == K.CREEP_FLAG:
-		key = "super_melee" if is_super else "melee"
+		key = "mega_melee" if is_mega else ("super_melee" if is_super else "melee")
 	elif kind == K.CREEP_RANGED:
-		key = "super_ranged" if is_super else "ranged"
+		key = "mega_ranged" if is_mega else ("super_ranged" if is_super else "ranged")
 	if key == "" or kind == K.CREEP_FLAG:
 		return 0.0
 	var n := upgrade if i < 2 else upgrade

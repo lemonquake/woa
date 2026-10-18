@@ -53,7 +53,7 @@ static func _apply(w: SimWorld, hero_id: int, c: Dictionary) -> String:
 		"chat":
 			var text := String(c.get("text", "")).strip_edges().left(C.CHAT_MAX_LEN)
 			if text != "":
-				w.chat(h.team, h.id, text)
+				w.chat(h.team, h.id, text, bool(c.get("all", false)))
 		"glyph":
 			if not w.glyph(h.team, h.id):
 				return "Fortify is not ready"

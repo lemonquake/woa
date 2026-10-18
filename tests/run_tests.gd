@@ -378,6 +378,66 @@ func test_wave_composition() -> void:
 	var sieges := w.units.filter(func(u): return u.kind == K.CREEP_SIEGE).size()
 	check(sieges == 6, "wave 11 (5:00) brings a siege creep per lane per team")
 
+## Creep upgrades, super and mega creeps (run 2026-10-18 h; Liquipedia "Lane Creeps", Stats).
+func test_creep_upgrades_super_mega() -> void:
+	var w := SimWorld.new(1, _map)
+	var pick := func(id: String) -> SimUnit:
+		for u in w.units:
+			if u.alive and String(u.def.id) == id and u.lane == "mid" and u.team == C.DAWN:
+				return u
+		return null
+	# 30:00: 4 upgrades
+	w.time = 1800.0
+	w.ai.spawn_wave(61)
+	var m: SimUnit = pick.call("dawn_melee")
+	var r: SimUnit = pick.call("dawn_ranged")
+	near(m.max_hp, 598.0, 0.01, "melee at 30:00: 550 + 4 x 12 HP")
+	near(m.dmg_min, 23.0, 0.01, "melee at 30:00: 19 + 4 damage")
+	near(r.max_hp, 348.0, 0.01, "ranged at 30:00: 300 + 4 x 12 HP")
+	near(r.dmg_min, 29.0, 0.01, "ranged at 30:00: 21 + 4 x 2 damage")
+	near(r.bounty_gold_add, 12.0, 0.01, "ranged gold +3 an upgrade")
+	near(r.bounty_xp_add, 32.0, 0.01, "ranged experience +8 an upgrade")
+	check(pick.call("dawn_flag") == null or pick.call("dawn_flag").creep_dmg_add == 0.0, "flagbearers never upgrade")
+	# mid's enemy barracks fall: super melee and ranged, and siege creeps hit 16 harder
+	for u in w.units:
+		u.alive = u.alive and not u.is_lane_creep()
+	w.rax_dead["%d:mid:melee" % C.DUSK] = true
+	w.rax_dead["%d:mid:ranged" % C.DUSK] = true
+	w.ai.spawn_wave(71)
+	var sm: SimUnit = pick.call("dawn_melee_super")
+	var sr: SimUnit = pick.call("dawn_ranged_super")
+	var ss: SimUnit = pick.call("dawn_siege_super")
+	check(sm != null and sr != null and ss != null, "super melee, ranged and siege creeps in mid")
+	if sm and sr and ss:
+		near(sm.max_hp, 700.0 + 4 * 19.0, 0.01, "super melee: 700 + 19 an upgrade")
+		near(sm.dmg_min, 36.0 + 4 * 2.0, 0.01, "super melee: 36 + 2 an upgrade")
+		near(sr.max_hp, 475.0 + 4 * 18.0, 0.01, "super ranged: 475 + 18 an upgrade")
+		near(sr.dmg_min, 41.0 + 4 * 3.0, 0.01, "super ranged: 41 + 3 an upgrade")
+		near(ss.dmg_min, 51.0, 0.01, "siege creeps +16 damage")
+	check(pick.call("dawn_melee") == null, "no plain melee creeps in a super lane")
+	# every enemy barracks down: mega creeps in every lane, only their bounty grows
+	for lane in ["top", "mid", "bot"]:
+		for k in ["melee", "ranged"]:
+			w.rax_dead["%d:%s:%s" % [C.DUSK, lane, k]] = true
+	for u in w.units:
+		u.alive = u.alive and not u.is_lane_creep()
+	w.ai.spawn_wave(81)
+	var mm: SimUnit = pick.call("dawn_melee_mega")
+	var mr: SimUnit = pick.call("dawn_ranged_mega")
+	check(mm != null and mr != null and mm.is_mega, "mega creeps once every barracks is down")
+	if mm and mr:
+		near(mm.max_hp, 1270.0, 0.01, "mega melee 1270 HP")
+		near(mm.dmg_min, 96.0, 0.01, "mega melee 96-104 damage")
+		near(mr.max_hp, 1015.0, 0.01, "mega ranged 1015 HP")
+		near(mr.dmg_min, 131.0, 0.01, "mega ranged 131-136 damage")
+		near(mm.bounty_gold_add, 6.0, 0.01, "mega melee gold +1.5 an upgrade")
+		near(mr.bounty_gold_add, 24.0, 0.01, "mega ranged gold +6 an upgrade")
+	var top_m := 0
+	for u in w.units:
+		if u.alive and String(u.def.id) == "dawn_melee_mega" and u.lane == "top":
+			top_m += 1
+	check(top_m > 0, "mega creeps in the other lanes too")
+
 # ---- Aggro ------------------------------------------------------------------------------------------------------------
 
 func test_creep_aggro_attack_order() -> void:
@@ -489,6 +549,171 @@ func test_tower_invulnerability_chain() -> void:
 	check(not t2.invulnerable, "tier 2 becomes vulnerable after tier 1 falls")
 	var anc: SimUnit = w.units.filter(func(u): return u.team == C.DUSK and u.kind == K.ANCIENT)[0]
 	check(anc.invulnerable, "the Ancient stays invulnerable")
+
+## Side-lane creeps go into the enemy base once its tier 3 tower falls (run 2026-10-18 h: top and bottom waves paced at
+## the base's gate), for both teams and both side lanes.
+func test_side_lane_creeps_enter_base() -> void:
+	for team in [C.DAWN, C.DUSK]:
+		for lane in ["top", "bot"]:
+			var w := SimWorld.new(1, _map)
+			w.setup_match()
+			w.next_neutral_at = INF
+			w.time = 60.0
+			var foe: int = 1 - int(team)
+			# the lane's enemy towers fall; the enemy's other lanes stand (their creeps are cleared each second)
+			for u in w.units:
+				if u.team == foe and u.kind == K.TOWER and u.building_lane == lane and u.lane_tier <= 3:
+					w.combat.kill(u, null)
+			w.combat.process_deaths()
+			var anc: SimUnit = w.units.filter(func(u): return u.team == foe and u.kind == K.ANCIENT)[0]
+			w.ai.spawn_wave(2)
+			var mine: Array = w.units.filter(func(u): return u.alive and u.is_lane_creep() and u.team == team and u.lane == lane)
+			var best := INF
+			var hit_base := false
+			for i in 120:
+				for u in w.units:
+					if u.alive and u.is_lane_creep() and not (u.team == team and u.lane == lane):
+						u.alive = false
+				run(w, 1.0)
+				for c in mine:
+					if c.alive:
+						best = minf(best, c.pos.distance_to(anc.pos))
+						var t := w.get_unit(c.atk_target)
+						if t != null and t.is_building() and t.pos.distance_to(anc.pos) < 2600.0:
+							hit_base = true
+				if hit_base:
+					break
+			check(hit_base, "%s %s creeps fight the buildings inside the enemy base (closest to the Ancient %d)" % [
+				C.TEAM_NAMES[team], lane, roundi(best)])
+
+## Creeps on a bot (run 2026-10-18 h): with a clearing spell ready it clears them; without, low, it backs off and keeps
+## backing off for a while instead of flipping its choice every second.
+func test_bot_creep_gang() -> void:
+	for case in [["ezee", true], ["caziel", false]]:
+		var w := empty_world()
+		w.time = 400.0
+		var h := w.spawn(String(case[0]), C.DAWN, Vector2(-1500, -4000))
+		h.level = 8
+		h.refresh_stats()
+		for aid in h.abilities:
+			h.ability_level[aid] = 2 if not (SimData.ability(String(aid)).get("max_level", 4) == 3) else 1
+		h.refresh_stats()
+		h.mana = h.max_mana
+		var b := SimBot.new(w, h.id, "mid", "Bot Pip")
+		w.bots.append(b)
+		var creeps: Array = []
+		for i in 4:
+			var c := w.spawn("dusk_melee", C.DUSK, h.pos + Vector2(120, 0).rotated(i * 1.5))
+			c.lane = "mid"
+			c.atk_target = h.id
+			c.order = O.ATTACK_UNIT
+			c.order_target = h.id
+			creeps.append(c)
+		h.auto_attack = false
+		run(w, 0.2)                            # the creeps take the hero as their target; the unit grid fills
+		for c in creeps:
+			c.atk_target = h.id
+		h.hp = h.max_hp * (0.8 if bool(case[1]) else 0.35)
+		if bool(case[1]):
+			for c in creeps:
+				c.hp = 110.0                   # a worn wave: one Dark Stomp finishes it
+		b.mode_since = w.time - 2.0
+		b._next_think = w.time
+		b.think()
+		if bool(case[1]):
+			check(b.mode == "clear", "%s with Dark Stomp ready clears the creeps on it (mode %s)" % [case[0], b.mode])
+			run(w, 1.5)
+			check(b.creep_clears >= 1, "it cast its clearing spell")
+		else:
+			check(b.mode == "retreat", "%s low with no clearing spell backs off from four creeps (mode %s)" % [case[0], b.mode])
+			# the creeps stop hitting it a moment: it keeps backing off (no flip back to the lane at once)
+			for c in creeps:
+				c.atk_target = -1
+				c.order = O.HOLD
+			h.hp = h.max_hp * 0.6
+			b._next_think = w.time + 0.5
+			w.time += 0.5
+			b.think()
+			check(b.mode == "retreat", "still backing off half a second later (mode %s)" % b.mode)
+
+## Ezee's Leap Strike (run 2026-10-18 h, the owner's rule): only when the leap is sure to land on the target and worth
+## it: the target cursed by Tainted Touch and badly hurt, or alone and hurt or running.
+func test_ezee_bot_leap_rule() -> void:
+	var w := empty_world()
+	w.time = 600.0
+	var h := w.spawn("ezee", C.DAWN, Vector2(-1500, -4000))
+	h.level = 10
+	for aid in h.abilities:
+		h.ability_level[aid] = 3 if aid != "unholy_might" else 1
+	h.refresh_stats()
+	h.mana = h.max_mana
+	var b := SimBot.new(w, h.id, "mid", "Bot Pip")
+	var e := w.spawn("blood_ranger", C.DUSK, h.pos + Vector2(550, 0))
+	e.order = O.HOLD
+	e.level = 10
+	e.refresh_stats()
+	w.vision.update()
+	e.hp = e.max_hp * 0.9
+	check(not b._ezee_leap_ok(h, e), "a healthy lone target standing still: no leap")
+	e.hp = e.max_hp * 0.4
+	check(b._ezee_leap_ok(h, e), "a lone target at 40%: leap")
+	# a hurt creep nearer the bottom of the health list: the leap would pick it
+	var c := w.spawn("dusk_melee", C.DUSK, h.pos + Vector2(300, 150))
+	c.order = O.HOLD
+	c.hp = c.max_hp * 0.2
+	w.vision.update()
+	check(not b._ezee_leap_ok(h, e), "a creep lower on health in reach: the leap would land on it, no leap")
+	c.alive = false
+	var c2 := w.spawn("dusk_melee", C.DUSK, h.pos + Vector2(300, 150))
+	c2.order = O.HOLD
+	w.vision.update()
+	e.hp = e.max_hp * 0.65
+	check(not b._ezee_leap_ok(h, e), "not alone, not cursed, 65%: no leap")
+	w.status.apply(e, h.id, h.team, {"id": "tainted_curse", "dur": 5.0, "reveal": h.team, "reveal_r": 300.0, "fx": "curse"})
+	check(not b._ezee_leap_ok(h, e), "cursed but only at 65%: no leap yet")
+	e.hp = e.max_hp * 0.5
+	check(b._ezee_leap_ok(h, e), "cursed and at 50% (the one the leap picks): leap")
+
+## Azrael's Soul Tap planner (run 2026-10-18 h): off for one creep or an ally walking by, on for a packed wave, off once
+## she holds a charge.
+func test_azrael_soul_tap_planner() -> void:
+	var w := empty_world()
+	w.time = 600.0
+	var h := w.spawn("azrael", C.DAWN, Vector2(-1500, -4000))
+	h.level = 8
+	for aid in h.abilities:
+		h.ability_level[aid] = 2 if aid != "divine_darkness" else 1
+	h.refresh_stats()
+	h.mana = h.max_mana
+	var b := SimBot.new(w, h.id, "mid", "Bot Pip")
+	w.bots.append(b)
+	b.mode = "lane"
+	var one := w.spawn("dusk_melee", C.DUSK, h.pos + Vector2(250, 0))
+	one.order = O.HOLD
+	var ally := w.spawn("dawn_melee", C.DAWN, h.pos + Vector2(-200, 0))
+	ally.order = O.HOLD
+	run(w, 0.1)
+	b._scan(h)
+	check(SimBot17.soul_want(b, h) == "", "one enemy creep and an ally near: Soul Tap stays off")
+	ab_toggle(w, h, true)
+	SimBot17.soul_plan(b, h)
+	run(w, 0.1)
+	check(not bool(h.toggles.get("soul_tap", false)), "the planner switched it off (it was left on)")
+	for i in 4:
+		var c := w.spawn("dusk_melee", C.DUSK, one.pos + Vector2(60, 0).rotated(i * 1.6))
+		c.order = O.HOLD
+	run(w, 0.1)
+	b._scan(h)
+	check(SimBot17.soul_want(b, h) == "pack", "five enemy creeps packed in her cleave: on (got '%s')" % SimBot17.soul_want(b, h))
+	h.add_modifier({"id": "soul_tap", "source": h.id, "expires": w.time + 15.0, "stats": {"damage": 100.0}, "souls": 6})
+	check(SimBot17.soul_want(b, h) == "", "holding a charge: off (another scan only spends mana)")
+	h.remove_modifier("soul_tap")
+	h.mana = w.abilities.ability_mana(h, "soul_tap") + 10.0
+	check(SimBot17.soul_want(b, h) == "", "the door's mana is kept")
+
+func ab_toggle(w: SimWorld, h: SimUnit, on: bool) -> void:
+	if bool(h.toggles.get("soul_tap", false)) != on:
+		w.abilities.set_toggle(h, "soul_tap", on)
 
 func test_glyph() -> void:
 	var w := empty_world()
@@ -1359,6 +1584,7 @@ func test_shift_queue() -> void:
 func test_gale_impact() -> void:
 	var w := empty_world()
 	var r := _ranger(w, Vector2(-2000, -4000), {"gale_impact": 1})
+	r.auto_attack = false                      # the shorter push (2026-10-18 h) leaves the dummies in her reach
 	var on_left := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1500, -3970), 550.0)
 	var on_right := _dummy(w, "dusk_melee", C.DUSK, Vector2(-1200, -4030), 550.0)
 	w.vision.update()
@@ -2328,9 +2554,24 @@ func test_jump_knife() -> void:
 	run(w, 1.0)
 	near(start.distance_to(h.pos), 960.0, 40.0, "a point past 1200 lands 960 toward it")
 	h.inventory[0].ready = -INF
-	h.hero_damage_log[999] = w.time - 1.0
-	check(w.abilities.cast_error(h, "", 0, null, h.pos) == "Jump Knife is disabled", "disabled 3 s after hero damage")
-	h.hero_damage_log[999] = w.time - 3.5
+	h.jump_lock_at = C.LONG_AGO
+	# what locks it (Dota's Blink Dagger): an enemy hero, a unit an enemy hero owns, the enemy fountain; not creeps or
+	# towers (run 2026-10-18 h)
+	var foe := w.spawn("ezee", C.DUSK, h.pos + Vector2(3000, 0))
+	var beast := w.spawn("dusk_melee", C.DUSK, h.pos + Vector2(3000, 300))
+	beast.owner_id = foe.id
+	var creep := w.spawn("dusk_melee", C.DUSK, h.pos + Vector2(3000, 600))
+	var fountain := w.spawn("fountain", C.DUSK, h.pos + Vector2(3000, 900))
+	var tower := w.spawn("tower1", C.DUSK, h.pos + Vector2(3000, 1200))
+	for case in [[creep, false, "a lane creep does not lock it"], [tower, false, "a tower does not lock it"],
+			[foe, true, "an enemy hero locks it"], [beast, true, "a unit an enemy hero owns locks it"],
+			[fountain, true, "the enemy fountain locks it"]]:
+		var src: SimUnit = case[0]
+		h.jump_lock_at = C.LONG_AGO
+		h.hp = h.max_hp
+		w.combat.deal_damage(src.id, src.team, src.is_hero(), h, 10.0, C.DamageType.PHYSICAL)
+		check((w.abilities.cast_error(h, "", 0, null, h.pos) == "Jump Knife is disabled") == bool(case[1]), String(case[2]))
+	h.jump_lock_at = w.time - 3.5
 	check(w.abilities.cast_error(h, "", 0, null, h.pos) == "", "usable again after 3 s")
 
 func test_push_staff() -> void:
@@ -6913,6 +7154,11 @@ func test_new_heroes_and_blends() -> void:
 			for c in [String(cfg.get("run", "")), ModelCatalog.anim(cfg, "knockback"), ModelCatalog.anim(cfg, "getup"),
 					ModelCatalog.anim(cfg, "launch"), ModelCatalog.anim(cfg, "wall_impact")]:
 				if c != "" and c != "glide_fwd":                        # the gliders keep their own glide clip
+					if RepairedClips.COMPOSED.has(c):
+						# a run made of two clips at load (RepairedClips._compose_runs): both halves exist
+						var parts: Array = RepairedClips.COMPOSED[c]
+						check(lib.has_animation(String(parts[1])), "%s plays %s (its arms %s)" % [key, c, parts[1]])
+						continue
 					check(lib.has_animation(c), "%s plays %s" % [key, c])
 			if not bool(cfg.get("glide", false)):
 				check(float(ModelCatalog.clip(String(cfg.run)).get("ground_speed", 0.0)) > 1.0,

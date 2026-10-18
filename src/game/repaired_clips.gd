@@ -87,6 +87,43 @@ static func patch(model: Node) -> void:
 					for clip in set_.get_animation_list():
 						if lib.has_animation(clip):
 							_copy_arms(set_.get_animation(clip), lib.get_animation(clip))
+			_compose_runs(lib)
+
+## Runs made of two clips (run 2026-10-18 h): the owner's own run for the legs, hips and body, and a weapon run's arms
+## (time-scaled to the run's stride) so a held weapon stays in both hands. Ser Emelrich's short legs and long body
+## made every motion-capture run a deep forward hunch with tiny churning steps; the owner's run keeps him upright.
+## name -> [the run whose body is kept, the clip whose arms are laid over it]
+const COMPOSED := {"hero_run_gs": ["hero_run", "greatsword_run"]}
+const ARM_BONES := ["shoulder.L", "upper_arm.L", "forearm.L", "hand.L", "weapon.L", "shoulder.R", "upper_arm.R",
+	"forearm.R", "hand.R", "weapon.R"]
+
+static func _compose_runs(lib: AnimationLibrary) -> void:
+	for name in COMPOSED:
+		var spec: Array = COMPOSED[name]
+		if lib.has_animation(name) or not lib.has_animation(spec[0]) or not lib.has_animation(spec[1]):
+			continue
+		var body := (lib.get_animation(spec[0]) as Animation).duplicate(true) as Animation
+		var arms := lib.get_animation(spec[1]) as Animation
+		var k := body.length / maxf(arms.length, 0.01)
+		var by_bone := {}
+		for t in body.get_track_count():
+			if body.track_get_type(t) == Animation.TYPE_ROTATION_3D:
+				by_bone[String(body.track_get_path(t)).get_slice(":", 1)] = t
+		for t in arms.get_track_count():
+			var bone := String(arms.track_get_path(t)).get_slice(":", 1)
+			if arms.track_get_type(t) != Animation.TYPE_ROTATION_3D or not (bone in ARM_BONES):
+				continue
+			var d: int
+			if by_bone.has(bone):
+				d = by_bone[bone]
+				while body.track_get_key_count(d) > 0:
+					body.track_remove_key(d, 0)
+			else:
+				d = body.add_track(Animation.TYPE_ROTATION_3D)
+				body.track_set_path(d, arms.track_get_path(t))
+			for i in arms.track_get_key_count(t):
+				body.rotation_track_insert_key(d, arms.track_get_key_time(t, i) * k, arms.track_get_key_value(t, i))
+		lib.add_animation(name, body)
 
 ## Replace the keys of each bone track in `dst` that `src` has (matched by bone name).
 static func _copy_arms(src: Animation, dst: Animation) -> void:

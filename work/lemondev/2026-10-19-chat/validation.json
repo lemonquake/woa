@@ -1,0 +1,29 @@
+{
+  "sha256": "b213452a50dbfdbae7400fd939f5eda3667855cd35992689b9b43a608df1642b",
+  "categories": {
+    "casual_short_mockery": 50,
+    "missed_skillshot_and_whiffs": 49,
+    "killed_enemy_all_chat": 54,
+    "dying_too_much_and_feeding": 45,
+    "failing_lane_and_no_farm": 54,
+    "teammate_roast_and_blame": 80,
+    "gen_z_brainrot_and_slang": 25,
+    "ragebait_and_trolling": 44,
+    "responses_and_comebacks": 49,
+    "tagalog_trashtalk_and_kanal_humor": 107
+  },
+  "before": {
+    "lines": 1632,
+    "median_words": 8.0,
+    "at_most_six_words": 407,
+    "max_characters": 90,
+    "exact_duplicates": 0
+  },
+  "after": {
+    "lines": 557,
+    "median_words": 3,
+    "at_most_six_words": 554,
+    "max_characters": 50,
+    "exact_duplicates": 0
+  }
+}

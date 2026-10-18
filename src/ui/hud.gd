@@ -2134,7 +2134,7 @@ const ITEM_TEXT := {"tango": "Eat a tree to regenerate 7 health per second for 1
 	"gold": "Kill an enemy creep (not an ancient) within 600 and gain 160 gold. Two charges, one comes back every 90 seconds.",
 	"push": "Push a unit 600 forward the way it faces, cutting trees in its path. Range 550 on allies (or yourself), 850 on enemies. Costs 150 mana, 19 second cooldown.",
 	"shield": "Immune to debuffs (stuns, slows, pushes) and 60% magic resistance; removes slows and silences. Lasts 9 seconds, one second less each use down to 7. Costs 50 mana, 95 second cooldown.",
-	"jump": "Teleport to a point up to 1200 away (a farther point jumps 960 toward it). Disabled for 3 seconds after taking damage from an enemy hero. 15 second cooldown.",
+	"jump": "Teleport to a point up to 1200 away (a farther point jumps 960 toward it). Disabled for 3 seconds after taking damage from an enemy hero, a unit an enemy hero controls or the enemy fountain. 15 second cooldown.",
 	"sneak": "Turn invisible after 0.3 seconds for 17 seconds and move 20% faster. Attacking breaks it and the attack deals 175 extra damage. Costs 75 mana, 25 second cooldown.",
 	"overwhelm": "Stun an enemy within 150 for 1.6 s, even through debuff immunity. 75 mana, 35 s cooldown.",
 	"silence": "Silence an enemy within 900 for 5 seconds. When it ends, 30% of the damage it took meanwhile hits it again as magic damage. Costs 125 mana, 18 second cooldown.",

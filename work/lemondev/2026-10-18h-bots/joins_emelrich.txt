@@ -1,0 +1,4 @@
+== hero_emelrich (emelrich.glb; idle greatsword_idle, run hero_run_gs)
+  ok   slide hero_run_gs: planted foot at 0.92x the ground speed (5.59 m/s)
+  -> 42 joins and 3 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+TOTAL failures 0

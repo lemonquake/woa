@@ -178,12 +178,15 @@ const RESPAWN_TIME := [6, 8, 10, 14, 16, 26, 28, 30, 32, 34, 36, 44, 46, 48, 50,
 const WAVE_INTERVAL := 30.0
 const CREEP_UPGRADE_INTERVAL := 450.0       # 7:30
 const CREEP_MAX_UPGRADES := 30
-## Per-upgrade gains (APPROX): [hp, damage, gold, xp]
+## Per-upgrade gains: [hp, damage, gold, xp] (Liquipedia "Lane Creeps", Stats, read 2026-10-18). Mega creeps start
+## where fully upgraded super creeps end and only their bounty grows. Flagbearers never upgrade.
 const CREEP_UPGRADE := {
 	"melee": [12.0, 1.0, 1.0, 0.0],
-	"ranged": [12.0, 2.0, 1.0, 4.0],
-	"super_melee": [19.0, 2.0, 1.0, 0.0],
-	"super_ranged": [18.0, 3.0, 1.0, 0.0],
+	"ranged": [12.0, 2.0, 3.0, 8.0],
+	"super_melee": [19.0, 2.0, 1.5, 0.0],
+	"super_ranged": [18.0, 3.0, 6.0, 0.0],
+	"mega_melee": [0.0, 0.0, 1.5, 0.0],
+	"mega_ranged": [0.0, 0.0, 6.0, 0.0],
 }
 const CREEP_AGGRO_RADIUS := 500.0
 const CREEP_AGGRO_DURATION := 2.3

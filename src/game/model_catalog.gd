@@ -202,7 +202,7 @@ const MOCAP := {
 	# the five heroes of hero_ideas.txt (run 2026-10-18 e): Emelrich swings the great sword set, Burak swings both axes
 	# (the two-weapon slashes; the axe set's one-handed swings left his second axe flopping) and keeps the axe idle,
 	# Ghorman the axe set (he thumps his chest on the stage), Feran throws his knives overhand, Airah the spell set
-	"hero_emelrich": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_idle", "cast": "greatsword_cast", "death": "greatsword_death_1",
+	"hero_emelrich": {"run": "hero_run_gs", "run_female": "hero_run_gs", "idle": "greatsword_idle", "cast": "greatsword_cast", "death": "greatsword_death_1",
 		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"],
 		"deaths": ["greatsword_death_1", "greatsword_death_2"],
 		"anims": {"idle_2h": "greatsword_idle", "cast_weapon": "greatsword_cast", "cast_quick": "greatsword_cast",
@@ -279,7 +279,7 @@ static func clip(name: String) -> Dictionary:
 				for k in d.animations:
 					if not _meta.has(k):
 						_meta[k] = d.animations[k]
-	return _meta.get(name, {})
+	return _meta.get(String(RepairedClips.COMPOSED[name][0]) if RepairedClips.COMPOSED.has(name) else name, {})
 
 ## The moment within an attack clip (seconds at 1x) when the blow lands or the shot leaves.
 static func strike_time(name: String) -> float:

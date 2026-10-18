@@ -1,0 +1,443 @@
+
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 100%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 100% inv, tower1 mid 46%, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 100%, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 83%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 78%, tower3 top 85%, melee_rax top 100% inv, ranged_rax top 100% inv, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+    end Bot Ann retreat dead hp 0% pos (1493.0, 1639.0) task -
+    end Bot Bob retreat alive hp 41% pos (1043.0, 409.0) task retreat
+    end Bot Cat heal alive hp 47% pos (-6788.0, -6429.0) task -
+    end Bot Dan task alive hp 100% pos (33.0, -1540.0) task push
+    end Bot Eve heal alive hp 100% pos (-6832.0, -6444.0) task -
+    end Bot Fay task alive hp 67% pos (1221.0, 477.0) task fight
+    end Bot Gus farm alive hp 98% pos (3636.0, -6360.0) task -
+    end Bot Hal task alive hp 88% pos (1772.0, 771.0) task fight
+    end Bot Ivy retreat dead hp 0% pos (2949.0, 3913.0) task -
+    end Bot Jo task alive hp 95% pos (1731.0, 736.0) task fight
+  Ancient Light calls: teamfights 34, ganks 20, pushes 13 (chained on 3), towers lost 2, bots unstuck 4
+  Ancient Light sites: bot goals { "lamp": 23, "gate": 3, "lily": 1 }; done: warps 1, lilies 2, lamps lit 4, lamps put out 2
+  Black Sun calls: teamfights 23, ganks 11, pushes 1 (chained on 0), towers lost 4, bots unstuck 5
+  Black Sun sites: bot goals { "lamp": 22, "gate": 1, "lily": 1 }; done: warps 0, lilies 1, lamps lit 4, lamps put out 3
+seed 5: no winner at 20:00 (182.9 s real)
+  Ancient Light (towers lost 2):
+    Bot Ann  sludge        role 5 bot   7/ 3/ 8 lvl 12 LH  11 DN  4 nw  6810 | lane 24%, fight 5%, task 33%, retreat 17%, heal 3%, ward 5%, stack 2%, farm 12%
+             items: ["reveal_dust", "medic_kit", "glimmer_cape", "reveal_ward", "magic_wand", "slip_boots"]
+    Bot Bob  ezee          role 3 top   5/ 4/13 lvl 13 LH  25 DN  8 nw  7705 | lane 31%, fight 5%, task 29%, retreat 11%, heal 2%, farm 23%
+             items: ["belt_str", "spell_shield", "magic_wand", "quelling_blade", "tough_band", "slip_boots"]
+    Bot Cat  blood_ranger  role 1 bot   9/ 3/13 lvl 14 LH  52 DN  1 nw 12032 | lane 29%, fight 5%, task 33%, retreat 12%, heal 2%, farm 19%, clear 0%
+             items: ["spell_shield", "magic_wand", "power_treads", "quelling_blade", "dragon_lance", "crit_sword", "boots_elves", "wraith_band", "salve"]
+    Bot Dan  azrin         role 2 mid   9/ 4/ 8 lvl 18 LH  78 DN  4 nw 13302 | lane 39%, retreat 7%, fight 6%, task 24%, heal 5%, clear 0%, farm 19%
+             items: ["spell_shield", "frost_plate", "push_staff", "reveal_dust", "smart_band", "mana_boots"]
+    Bot Eve  azrael        role 4 top  11/ 2/13 lvl 15 LH  26 DN  3 nw 10291 | lane 31%, retreat 10%, fight 5%, task 38%, clear 0%, ward 3%, farm 8%, heal 2%, stack 2%
+             items: ["mask_of_madness", "reveal_dust", "quelling_blade", "medic_kit", "glimmer_cape", "power_treads", "wraith_band", "clarity", "magic_wand"]
+  Black Sun (towers lost 4):
+    Bot Fay  caziel        role 2 mid   6/ 9/ 0 lvl 13 LH  39 DN  4 nw  8058 | lane 31%, retreat 12%, fight 4%, heal 3%, task 14%, farm 37%
+             items: ["giant_axe", "magic_wand", "power_treads", "steel_hammer", "quelling_blade", "jump_knife", "salve", "wraith_band"]
+    Bot Gus  kragg         role 3 bot   2/ 8/ 1 lvl 12 LH  31 DN  7 nw  6031 | lane 20%, retreat 16%, task 15%, fight 1%, farm 46%, heal 2%
+             items: ["magic_stick", "spike_armor", "jump_knife", "quelling_blade", "tough_band"]
+    Bot Hal  tock          role 5 top   1/ 9/ 4 lvl  9 LH   8 DN  2 nw  4698 | lane 28%, retreat 14%, fight 2%, task 22%, ward 13%, stack 7%, pull 1%, farm 13%, clear 0%, heal 1%
+             items: ["chainmail", "reveal_ward", "glimmer_cape", "pointy_hat", "boots", "reveal_dust", "sobi_mask", "ring_regen"]
+    Bot Ivy  emelrich      role 1 top   1/ 8/ 4 lvl 13 LH  30 DN  7 nw  6343 | lane 36%, task 14%, retreat 20%, fight 4%, farm 26%, heal 1%
+             items: ["spell_shield", "magic_wand", "boots", "quelling_blade", "tough_band", "salve"]
+    Bot Jo   feran         role 4 bot   5/ 8/ 3 lvl 11 LH  17 DN  0 nw  8081 | lane 21%, retreat 9%, fight 4%, task 30%, ward 6%, stack 10%, farm 19%, heal 1%, clear 0%
+             items: ["reveal_ward", "medic_kit", "mana_boots", "reveal_dust", "glimmer_cape", "wizard_staff", "fur_hat", "magic_wand", "clarity"]
+  at 10:00 LH/net worth: Ann 5/4448, Bob 9/3517, Cat 18/6209, Dan 30/5792, Eve 11/5751, Fay 15/3372, Gus 7/1823, Hal 1/2305, Ivy 15/4401, Jo 3/5503 | team net worth 25717 vs 17404
+  at 20:00 LH/net worth: Ann 11/6810, Bob 25/7705, Cat 52/12032, Dan 78/13302, Eve 26/10291, Fay 39/8058, Gus 31/6031, Hal 8/4698, Ivy 30/6343, Jo 17/8081 | team net worth 50140 vs 33211
+  totals: kills 41 vs 15, net worth 50140 vs 33211
+  stuck: none
+  Fortify pressed 4 times: [3:38] Black Sun (Bot Fay), [10:52] Black Sun (Bot Fay), [16:53] Ancient Light (Bot Ann), [18:59] Black Sun (Bot Gus)
+  Ancient Light: counter-ganks called 37 (helpers fought in 38), juked home 4, counter items sludge:glimmer_cape, sludge:medic_kit, ezee:spell_shield, blood_ranger:spell_shield, azrin:spell_shield, azrin:push_staff, azrin:frost_plate, azrael:glimmer_cape, azrael:medic_kit
+  Black Sun: counter-ganks called 27 (helpers fought in 21), juked home 5, counter items caziel:jump_knife, caziel:spell_shield, kragg:jump_knife, kragg:spike_armor, kragg:spell_shield, tock:glimmer_cape, tock:medic_kit, emelrich:spell_shield, feran:medic_kit, feran:glimmer_cape
+  chat lines: 394
+    [-1:29] Ancient Light Bot Ann: I'll support Bot Cat in the bottom lane.
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Dan: I'll go mid.
+    [-1:29] Ancient Light Bot Eve: I'll support Bot Bob in the top lane.
+    [-1:29] Black Sun Bot Fay: I'll go mid.
+    [-1:29] Black Sun Bot Gus: I'll go bottom.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Ivy in the top lane.
+    [-1:29] Black Sun Bot Ivy: I'll farm the top lane (safe lane).
+    [-1:29] Black Sun Bot Jo: I'll support Bot Gus in the bottom lane.
+    [-0:49] (All) Ancient Light Bot Eve: may the best team win (us)
+    [-0:46] (All) Ancient Light Bot Dan: good luck have fun (you'll need it)
+    [0:49] Black Sun Bot Fay: Azrin is missing from mid! Careful.
+    [0:49] Ancient Light Bot Bob: Going for Ser Emelrich.
+    [0:52] (All) Ancient Light Bot Bob: may kasama ka pa nyan
+    [1:00] Ancient Light Bot Cat: Hold on, Bot Ann! Coming.
+    [1:00] Black Sun Bot Ivy: Hold on, Bot Hal! Coming.
+    [1:01] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [1:04] Black Sun Bot Fay: Lost them in the trees, going home.
+    [1:06] Ancient Light Bot Bob: Going for Tock.
+    [1:07] Ancient Light Bot Bob: Hold on, Bot Eve! Coming.
+    [1:09] (All) Ancient Light Bot Eve: Tock is free
+    [1:10] Ancient Light Bot Dan: Caziel is missing from mid! Careful.
+    [1:11] (All) Black Sun Bot Hal: play the game
+    [1:12] Black Sun Bot Fay: They're hitting our mid tower. Defend!
+    [1:14] Ancient Light Bot Cat: Going for Kragg.
+    [1:16] Black Sun Bot Hal: Going for Azrael.
+    [1:17] Ancient Light Bot Bob: next fight
+    [1:20] Ancient Light Bot Eve: Ser Emelrich is missing from top! Careful.
+    [1:31] Black Sun Bot Hal: Azrael is missing from top! Careful.
+    [1:35] Black Sun Bot Gus: Going for Sludge.
+    [1:38] Ancient Light Bot Ann: Lost them in the trees, going home.
+    [1:42] Ancient Light Bot Bob: Tock is missing from top! Careful.
+    [1:46] Black Sun Bot Gus: Sludge is missing from bottom! Careful.
+    [1:52] Black Sun Bot Gus: Hold on, Bot Jo! Coming.
+    [1:58] Black Sun Bot Fay: Going for Azrin.
+    [2:02] Black Sun Bot Hal: Hold on, Bot Ivy! Coming.
+    [2:03] Ancient Light Bot Bob: Hold on, Bot Eve! Coming.
+    [2:03] Ancient Light Bot Dan: mb
+    [2:09] Black Sun Bot Jo: Going for Jayla.
+    [2:10] Ancient Light Bot Eve: Running to you, help me turn on them.
+    [2:11] Ancient Light Bot Ann: Azrael the goat
+    [2:11] (All) Ancient Light Bot Eve: isa pa nga
+    [2:13] Black Sun Bot Hal: nice stun after we died
+    [2:19] Black Sun Bot Ivy: Going for Ezee.
+    [2:22] Ancient Light Bot Bob: Ser Emelrich is missing from top! Careful.
+    [2:31] (All) Ancient Light Bot Dan: not today
+    [2:34] Ancient Light Bot Ann: Hold on, Bot Cat! Coming.
+    [2:36] Ancient Light Bot Bob: Going for Ser Emelrich.
+    [2:37] Black Sun Bot Gus: Going for Jayla.
+    [2:39] Black Sun Bot Jo: Hold on, Bot Gus! Coming.
+    [2:40] (All) Black Sun Bot Gus: you again?
+    [2:42] Ancient Light Bot Ann: Their Kragg is low (38%) in the bottom lane. Going for the kill, Bot Eve come too.
+    [2:42] (All) Ancient Light Bot Dan: introboys
+    [2:44] Black Sun Bot Gus: Going for Sludge.
+    [2:52] Ancient Light Bot Cat: Running to you, help me turn on them.
+    [2:52] Ancient Light Bot Ann: Fight! Focus their Kragg.
+    [2:55] Ancient Light Bot Eve: Going for Feran Mock.
+    [2:56] (All) Black Sun Bot Gus: i pressed it i swear
+    [2:57] Ancient Light Bot Bob: lodi Jayla
+    [3:09] Black Sun Bot Ivy: Going for Ezee.
+    [3:11] Ancient Light Bot Ann: Hold on, Bot Cat! Coming.
+    [3:13] Black Sun Bot Jo: Hold on, Bot Gus! Coming.
+    [3:17] Ancient Light Bot Eve: Hold on, Bot Dan! Coming.
+    [3:20] Ancient Light Bot Cat: Going for Kragg.
+    [3:22] (All) Ancient Light Bot Cat: im built different
+    [3:22] Black Sun Bot Gus: Feran Mock tp mid
+    [3:24] (All) Ancient Light Bot Ann: respawn timer go brrr
+    [3:26] (All) Ancient Light Bot Bob: waley
+    [3:27] (All) Black Sun Bot Fay: whiff
+    [3:32] (All) Black Sun Bot Fay: balik fountain
+    [3:43] (All) Ancient Light Bot Bob: tutok naman lods
+    [3:44] Black Sun Bot Jo: Coming to defend, 18 s.
+    [3:45] (All) Black Sun Bot Hal: ok buddy retriever
+    [3:48] Black Sun Bot Fay: They're hitting our bottom tower. Defend!
+    [3:52] Black Sun Bot Hal: Hold on, Bot Ivy! Coming.
+    [3:52] Ancient Light Bot Dan: Hold on, Bot Eve! Coming.
+    [3:55] Black Sun Bot Ivy: Going for Ezee.
+    [3:57] Black Sun Bot Fay: not even moving bro
+    [3:57] (All) Ancient Light Bot Bob: walang tama kahit isa
+    [4:06] Ancient Light Bot Cat: Hold on, Bot Ann! Coming.
+    [4:16] Ancient Light Bot Ann: Going for Kragg.
+    [4:19] Black Sun Bot Fay: Level 6, I can gank now.
+    [4:22] (All) Ancient Light Bot Ann: outplayed
+    [4:23] Black Sun Bot Gus: misclick
+    [4:24] (All) Black Sun Bot Ivy: scoreboard
+    [4:25] Black Sun Bot Hal: equal opportunity feeder
+    [4:28] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [4:32] Black Sun Bot Jo: Hold on, Bot Fay! Coming.
+    [4:35] Black Sun Bot Fay: Going for Azrin.
+    [4:39] Black Sun Bot Jo: Come here.
+    [4:40] (All) Ancient Light Bot Eve: lakas ko ngayon
+    [4:42] (All) Black Sun Bot Fay: ambilis mo naman matunaw
+    [4:43] Ancient Light Bot Cat: Hold on, Bot Ann! Coming.
+    [4:49] Black Sun Bot Jo: Their Ezee is alone in the top lane. Going for the kill, Bot Hal come too.
+    [4:51] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [4:54] Black Sun Bot Hal: Fight! Focus their Ezee.
+    [4:54] Ancient Light Bot Bob: Going for Ser Emelrich.
+    [4:58] Ancient Light Bot Ann: Kragg is missing from bottom! Careful.
+    [4:59] (All) Ancient Light Bot Bob: malapit na sana
+    [5:00] Black Sun Bot Fay: Getting Jump Knife against getting caught.
+    [5:02] Black Sun Bot Hal: Backing off, too dangerous.
+    [5:08] Ancient Light Bot Dan: Getting Spell Shield against their stuns.
+    [5:12] (All) Black Sun Bot Jo: pain lang yun
+    [5:13] Ancient Light Bot Dan: ty Azrael
+    [5:14] Ancient Light Bot Bob: Lost them in the trees, going home.
+    [5:14] (All) Ancient Light Bot Eve: someone stop me
+    [5:15] (All) Black Sun Bot Ivy: take the L
+    [5:16] Ancient Light Bot Eve: Their Caziel is low (19%) in the mid lane. Going for the kill.
+    [5:18] Black Sun Bot Gus: They're hitting our bottom tower. Defend!
+    [5:19] Black Sun Bot Fay: lagged
+    [5:21] Black Sun Bot Hal: Ezee is missing from top! Careful.
+    [5:23] Ancient Light Bot Cat: Hold on, Bot Ann! Coming.
+    [5:27] Ancient Light Bot Ann: Going for Kragg.
+    [5:30] Black Sun Bot Ivy: Kragg pang ilang patay mo na
+    [5:32] Black Sun Bot Hal: Azrael is missing from top! Careful.
+    [5:48] Ancient Light Bot Ann: Keep going, their tower next.
+    [5:57] Black Sun Bot Fay: Going for Azrin.
+    [6:01] Black Sun Bot Jo: Stacked the medium camp for Bot Gus.
+    [6:07] Black Sun Bot Ivy: Hold on, Bot Hal! Coming.
+    [6:16] Black Sun Bot Jo: Come here.
+    [6:19] Black Sun Bot Jo: Hold on, Bot Fay! Coming.
+    [6:20] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [6:21] Black Sun Bot Hal: Kragg is broke
+    [6:22] Black Sun Bot Hal: Hold on, Bot Ivy! Coming.
+    [6:26] Black Sun Bot Ivy: Going for Ezee.
+    [6:27] Ancient Light Bot Eve: No escape from me.
+    [6:29] Black Sun Bot Fay: Azrin is missing from mid! Careful.
+    [6:31] Ancient Light Bot Bob: Hold on, Bot Eve! Coming.
+    [6:32] Black Sun Bot Jo: Their Azrael is low (37%) in the top lane. Going for the kill.
+    [6:32] Black Sun Bot Hal: huge lag spike
+    [6:33] (All) Ancient Light Bot Eve: init na init
+    [6:34] Black Sun Bot Fay: fed their mid
+    [6:36] Ancient Light Bot Ann: We have more heroes up. Let's push top and take their tower.
+    [6:37] Black Sun Bot Ivy: Feran Mock my wave bro
+    [6:39] Ancient Light Bot Eve: Running to you, help me turn on them.
+    [6:39] Black Sun Bot Jo: Backing off, too dangerous.
+    [6:47] Ancient Light Bot Ann: Fight! Focus their Tock.
+    [6:48] Black Sun Bot Hal: Going for Ezee.
+    [6:48] Black Sun Bot Jo: Hold on, Bot Hal! Coming.
+    [6:50] Black Sun Bot Gus: W Feran Mock
+    [6:52] (All) Black Sun Bot Jo: libre na naman
+    [6:53] (All) Ancient Light Bot Bob: sorry mga lods
+    [6:54] Black Sun Bot Ivy: their jungle is not yours
+    [6:55] Black Sun Bot Fay: They're hitting our top tower. Defend!
+    [6:55] (All) Ancient Light Bot Cat: you tp'd into me lol
+    [6:59] Ancient Light Bot Eve: Feran Mock is missing from top! Careful.
+    [7:06] Black Sun Bot Ivy: Sludge is missing from top! Careful.
+    [7:06] Black Sun Bot Ivy: Hold on, Bot Jo! Coming.
+    [7:09] Ancient Light Bot Ann: Hold on, Bot Cat! Coming.
+    [7:09] Ancient Light Bot Ann: Fight! Focus their Feran Mock.
+    [7:11] Black Sun Bot Jo: Going for Azrael.
+    [7:13] Black Sun Bot Jo: Hold on, Bot Ivy! Coming.
+    [7:13] (All) Black Sun Bot Ivy: pindot pa pota
+    [7:15] (All) Black Sun Bot Jo: that bounty was juicy
+    [7:20] Black Sun Bot Ivy: Going for Sludge.
+    [7:20] (All) Ancient Light Bot Dan: abot kita
+    [7:24] (All) Black Sun Bot Fay: massive W
+    [7:25] Ancient Light Bot Bob: what was that fight
+    [7:26] (All) Black Sun Bot Jo: akala mo malakas ka
+    [7:28] (All) Ancient Light Bot Eve: sige ikaw na
+    [7:33] Black Sun Bot Jo: Hold on, Bot Ivy! Coming.
+    [7:36] Ancient Light Bot Dan: Going for Kragg.
+    [7:40] Black Sun Bot Gus: Lost them in the trees, going home.
+    [7:47] Black Sun Bot Ivy: Hold on, Bot Jo! Coming.
+    [7:47] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [7:51] Black Sun Bot Jo: Going for Ezee.
+    [7:52] Ancient Light Bot Dan: Kragg is missing from mid! Careful.
+    [7:58] (All) Black Sun Bot Ivy: you thought
+    [7:59] Black Sun Bot Jo: wag mo agawan ng farm
+    [8:00] (All) Ancient Light Bot Eve: Feran Mock back to 0
+    [8:01] Black Sun Bot Hal: Hold on, Bot Ivy! Coming.
+    [8:01] (All) Black Sun Bot Fay: naluto ka pre
+    [8:04] (All) Black Sun Bot Hal: we are so back
+    [8:09] Ancient Light Bot Dan: Caziel is missing from mid! Careful.
+    [8:21] Black Sun Bot Hal: Azrael is missing from top! Careful.
+    [8:30] Ancient Light Bot Ann: Hold on, Bot Cat! Coming.
+    [8:30] Black Sun Bot Fay: Hold on, Bot Gus! Coming.
+    [8:34] Ancient Light Bot Cat: Running to you, help me turn on them.
+    [8:48] Ancient Light Bot Dan: Tock is missing from mid! Careful.
+    [8:53] Ancient Light Bot Eve: No escape from me.
+    [8:56] Black Sun Bot Jo: Getting Fade Cape against their magic damage.
+    [8:56] (All) Ancient Light Bot Eve: ulol!
+    [8:56] Black Sun Bot Jo: who taught you that build
+    [9:02] Black Sun Bot Gus: They're hitting our bottom tower. Defend!
+    [9:02] Black Sun Bot Hal: Hold on, Bot Ivy! Coming.
+    [9:02] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [9:08] Ancient Light Bot Dan: Their Kragg is alone in the bottom lane. Going for the kill, Bot Ann come too.
+    [9:11] Ancient Light Bot Ann: Backing off, too dangerous.
+    [9:13] Ancient Light Bot Bob: Running to you, help me turn on them.
+    [9:14] Ancient Light Bot Ann: Fight! Focus their Feran Mock.
+    [9:15] (All) Ancient Light Bot Bob: nakakatawa ka lods
+    [9:16] Black Sun Bot Gus: 3 of them together near bottom! Back off.
+    [9:19] Black Sun Bot Gus: Hold on, Bot Jo! Coming.
+    [9:20] (All) Black Sun Bot Gus: kulang lods
+    [9:23] Black Sun Bot Fay: Coming to defend (TP).
+    [9:24] (All) Ancient Light Bot Ann: try running earlier
+    [9:25] Black Sun Bot Fay: nobody had ult
+    [9:26] Black Sun Bot Jo: Bought Reveal Dust, they have invisible heroes.
+    [9:27] Ancient Light Bot Ann: Hold on, Bot Dan! Coming.
+    [9:30] Black Sun Bot Fay: Going for Sludge.
+    [9:32] Black Sun Bot Hal: Bought Reveal Dust, they have invisible heroes.
+    [9:33] (All) Black Sun Bot Ivy: ay nako
+    [9:34] Ancient Light Bot Cat: Going for Caziel.
+    [9:34] (All) Ancient Light Bot Cat: shhh tahimik
+    [9:36] Black Sun Bot Fay: 3 of them together near bottom! Back off.
+    [9:41] Ancient Light Bot Eve: Getting Medic Kit against their right clicks.
+    [9:43] (All) Ancient Light Bot Ann: tower dive gone wrong
+    [9:45] (All) Black Sun Bot Jo: iyakin
+    [9:46] Black Sun Bot Gus: They're hitting our bottom tower. Defend!
+    [9:48] Black Sun Bot Jo: Their Sludge is low (9%) in the mid lane. Going for the kill.
+    [9:53] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [10:00] Black Sun Bot Gus: They're hitting our top tower. Defend!
+    [10:00] Ancient Light Bot Bob: Fight! Focus their Ser Emelrich.
+    [10:05] Ancient Light Bot Eve: No escape from me.
+    [10:07] Ancient Light Bot Bob: Going for Ser Emelrich.
+    [10:12] Ancient Light Bot Cat: Going home to heal.
+    [10:18] (All) Ancient Light Bot Eve: busog na busog
+    [10:19] Ancient Light Bot Cat: akala ko kasama kayo
+    [10:19] Ancient Light Bot Ann: Getting Medic Kit against their right clicks.
+    [10:20] (All) Black Sun Bot Gus: tower 1 you 0
+    [10:21] (All) Black Sun Bot Hal: lutong luto
+    [10:22] Ancient Light Bot Eve: Their Tock is alone in the mid lane. Going for the kill.
+    [10:32] Black Sun Bot Fay: Fight! Focus their Ezee.
+    [10:33] Ancient Light Bot Eve: Hold on, Bot Bob! Coming.
+    [10:33] Ancient Light Bot Bob: Fight! Focus their Tock.
+    [10:40] Black Sun Bot Hal: Hold on, Bot Fay! Coming.
+    [10:42] Ancient Light Bot Eve: Fade Cape on you, Ezee, run!
+    [10:44] Black Sun Bot Ivy: well played
+    [10:47] Black Sun Bot Fay: Their Azrael is alone in the mid lane. Going for the kill, Bot Jo come too.
+    [10:57] Black Sun Bot Gus: Coming to defend (TP).
+    [10:59] Ancient Light Bot Ann: Fight! Focus their Caziel.
+    [11:02] Ancient Light Bot Eve: Their Feran Mock is alone in the mid lane. Going for the kill, Bot Dan come too.
+    [11:02] Ancient Light Bot Ann: skillshot? more like skill not
+    [11:03] Black Sun Bot Fay: Fight! Focus their Azrin.
+    [11:09] Ancient Light Bot Eve: No escape from me.
+    [11:11] Black Sun Bot Ivy: Hold on, Bot Jo! Coming.
+    [11:14] Black Sun Bot Jo: sige feed mo pa
+    [11:15] (All) Ancient Light Bot Bob: putek
+    [11:15] Black Sun Bot Fay: mid diff
+    [11:16] Ancient Light Bot Eve: Backing off, too dangerous.
+    [11:23] Black Sun Bot Ivy: Fight! Focus their Azrael.
+    [11:27] Ancient Light Bot Bob: Hold on, Bot Eve! Coming.
+    [11:29] Ancient Light Bot Bob: Fight! Focus their Feran Mock.
+    [11:30] Black Sun Bot Fay: Getting Spell Shield against their stuns.
+    [11:32] Ancient Light Bot Cat: Hold on, Bot Bob! TP coming.
+    [11:35] Ancient Light Bot Ann: Hold on, Bot Cat! TP coming.
+    [11:35] Black Sun Bot Ivy: Going for Azrael.
+    [11:39] Ancient Light Bot Bob: Their Ser Emelrich is alone in the mid lane. Going for the kill, Bot Cat come too.
+    [11:40] Black Sun Bot Jo: bawi lang
+    [11:41] (All) Ancient Light Bot Cat: spectate for a bit
+    [11:43] Ancient Light Bot Cat: Going for Ser Emelrich.
+    [11:51] Black Sun Bot Ivy: Lost them in the trees, going home.
+    [11:51] Ancient Light Bot Dan: Coming to defend, 10 s.
+    [12:06] Ancient Light Bot Dan: Getting Push Staff against them.
+    [12:10] Ancient Light Bot Ann: We're ahead in gold. Let's push top and take their tower.
+    [12:29] Black Sun Bot Gus: Their Sludge is alone in the top lane. Going for the kill, Bot Fay and Bot Hal come too.
+    [12:33] Black Sun Bot Hal: Backing off, too dangerous.
+    [12:36] Ancient Light Bot Dan: Their Kragg is alone in the top lane. Going for the kill, Bot Ann come too.
+    [12:36] Ancient Light Bot Ann: Fight! Focus their Kragg.
+    [12:40] (All) Black Sun Bot Gus: free dodge
+    [12:40] Ancient Light Bot Cat: ako dito boss
+    [12:42] (All) Ancient Light Bot Ann: sige iyak
+    [12:54] (All) Ancient Light Bot Dan: same guy again lol
+    [12:55] Ancient Light Bot Bob: We're ahead in gold. Let's push top and take their tower.
+    [12:56] Ancient Light Bot Ann: Fight! Focus their Kragg.
+    [13:07] Ancient Light Bot Bob: Going for Kragg.
+    [13:09] Ancient Light Bot Dan: Their Caziel is low (0%) in the mid lane. Going for the kill.
+    [13:12] Black Sun Bot Fay: wala tayong focus pota
+    [13:13] Black Sun Bot Gus: They're hitting our top tower. Defend!
+    [13:15] (All) Ancient Light Bot Cat: you're my favorite
+    [13:16] Black Sun Bot Ivy: 3 of them together near top! Back off.
+    [13:18] Ancient Light Bot Eve: No escape from me.
+    [13:24] Ancient Light Bot Cat: Going for Ser Emelrich.
+    [13:27] (All) Ancient Light Bot Eve: laglag ka boy
+    [13:28] Ancient Light Bot Cat: buhay pa ko dahil sayo
+    [13:28] Black Sun Bot Fay: Tock where's your core item
+    [13:28] Ancient Light Bot Bob: Keep going, their tower next.
+    [13:29] Black Sun Bot Ivy: walking alone at night again
+    [13:30] Ancient Light Bot Bob: loading...
+    [13:36] Ancient Light Bot Dan: Getting Frost Plate against their right clicks.
+    [13:46] Black Sun Bot Fay: They're hitting our top tower. Defend!
+    [13:48] Ancient Light Bot Dan: Their Feran Mock is alone in the mid lane. Going for the kill.
+    [13:51] Ancient Light Bot Bob: Fight! Focus their Feran Mock.
+    [13:53] Black Sun Bot Jo: 3 of them together near top! Back off.
+    [13:54] Black Sun Bot Hal: Fight! Focus their Jayla.
+    [13:59] Black Sun Bot Jo: Lost them in the trees, going home.
+    [14:11] Ancient Light Bot Ann: We're ahead in gold. Let's push mid and take their tower.
+    [14:13] Black Sun Bot Hal: 3 of them together near top! Back off.
+    [14:16] (All) Black Sun Bot Gus: you stunned nobody
+    [14:16] Ancient Light Bot Eve: Their Tock is alone in the top lane. Going for the kill, Bot Bob come too.
+    [14:16] Ancient Light Bot Bob: Fight! Focus their Tock.
+    [14:17] Black Sun Bot Fay: Hold on, Bot Gus! TP coming.
+    [14:17] Black Sun Bot Gus: Fight! Focus their Azrin.
+    [14:21] Black Sun Bot Ivy: Stand still.
+    [14:23] Ancient Light Bot Dan: Their Caziel is alone in the mid lane. Going for the kill, Bot Ann come too.
+    [14:23] Black Sun Bot Fay: Hold on, Bot Ivy! Coming.
+    [14:23] (All) Ancient Light Bot Dan: buy a shield next time
+    [14:24] Ancient Light Bot Eve: nice lods
+    [14:26] Black Sun Bot Hal: i thought we were fighting
+    [14:27] Ancient Light Bot Ann: Hold on, Bot Dan! Coming.
+    [14:28] Ancient Light Bot Dan: Hold on, Bot Ann! Coming.
+    [14:31] Black Sun Bot Jo: Everybody move!
+    [14:36] Black Sun Bot Ivy: Going for Azrin.
+    [14:37] Ancient Light Bot Ann: Fight! Focus their Feran Mock.
+    [14:39] Black Sun Bot Fay: They're hitting our top tower. Defend!
+    [14:41] Ancient Light Bot Cat: Going for Feran Mock.
+    [14:42] Ancient Light Bot Cat: salamat lods
+    [14:43] (All) Ancient Light Bot Dan: enjoy the grey screen
+    [14:43] Black Sun Bot Gus: death counter going crazy
+    [14:43] Black Sun Bot Ivy: 3 of them together near mid! Back off.
+    [14:44] Black Sun Bot Jo: my bad
+    [14:45] (All) Ancient Light Bot Ann: walked into fog lol
+    [14:47] Ancient Light Bot Dan: Going for Ser Emelrich.
+    [14:53] (All) Black Sun Bot Ivy: kulang sa range lods
+    [14:58] Black Sun Bot Hal: Coming to defend (TP).
+    [14:59] Ancient Light Bot Bob: 3 of them are dead. Let's push top and take their tower.
+    [15:00] (All) Ancient Light Bot Cat: bounty on my head now
+    [15:01] Black Sun Bot Ivy: i clicked
+    [15:06] Ancient Light Bot Cat: Hold on, Bot Bob! Coming.
+    [15:07] Ancient Light Bot Bob: Fight! Focus their Tock.
+    [15:10] Black Sun Bot Hal: 4 of them together near top! Back off.
+    [15:12] Ancient Light Bot Bob: ang angas
+    [15:18] Black Sun Bot Fay: Coming to defend, 16 s.
+    [15:25] (All) Ancient Light Bot Bob: back to base
+    [15:25] Ancient Light Bot Ann: so clean
+    [15:27] Ancient Light Bot Bob: Keep going, their tower next.
+    [15:29] Ancient Light Bot Dan: tower down
+    [15:42] Black Sun Bot Gus: Got my Jump Knife.
+    [15:54] Black Sun Bot Gus: Getting Spike Armor against their right clicks.
+    [15:54] Ancient Light Bot Ann: They're hitting our bottom tower. Defend!
+    [16:06] Ancient Light Bot Dan: Coming to defend (TP).
+    [16:09] Black Sun Bot Fay: ipon ipon tapos wala
+    [16:09] Black Sun Bot Fay: Fight! Focus their Ezee.
+    [16:10] Ancient Light Bot Bob: Fight! Focus their Caziel.
+    [16:15] Black Sun Bot Hal: 3 of them together near mid! Back off.
+    [16:17] Ancient Light Bot Ann: Going for Ser Emelrich.
+    [16:19] (All) Ancient Light Bot Bob: walang makapigil
+    [16:24] Ancient Light Bot Bob: We're ahead in gold. Let's push bottom and take their tower.
+    [16:35] Black Sun Bot Fay: Going home to heal.
+    [16:53] Ancient Light Bot Ann: They're hitting our bottom tower. Defend!
+    [17:01] Black Sun Bot Jo: Stacked the medium camp for Bot Gus.
+    [17:09] Ancient Light Bot Ann: We're ahead in gold. Let's push bottom and take their tower.
+    [17:11] Black Sun Bot Jo: Their Azrael is alone in the mid lane. Going for the kill, Bot Hal and Bot Gus come too.
+    [17:11] Ancient Light Bot Bob: Fight! Focus their Feran Mock.
+    [17:14] Black Sun Bot Hal: Backing off, too dangerous.
+    [17:17] (All) Ancient Light Bot Eve: nasayang stun mo
+    [17:18] Black Sun Bot Gus: Going for Azrael.
+    [17:23] Black Sun Bot Hal: Hold on, Bot Gus! Coming.
+    [17:23] Black Sun Bot Gus: Fight! Focus their Ezee.
+    [17:23] Ancient Light Bot Eve: patay na kami saka ka nagtp
+    [17:24] (All) Black Sun Bot Gus: tapos na pagyayabang mo
+    [17:37] Ancient Light Bot Dan: Bought Reveal Dust, they have invisible heroes.
+    [17:38] Black Sun Bot Gus: Going for Ezee.
+    [17:41] Ancient Light Bot Ann: Hold on, Bot Bob! Coming.
+    [17:43] Ancient Light Bot Bob: Lost them in the trees, going home.
+    [17:49] Ancient Light Bot Cat: Bought Reveal Dust, they have invisible heroes.
+    [17:52] Ancient Light Bot Eve: Bought Reveal Dust, they have invisible heroes.
+    [17:55] Ancient Light Bot Ann: Their Kragg is alone in the bottom lane. Going for the kill.
+    [17:55] Black Sun Bot Gus: Fight! Focus their Sludge.
+    [18:00] Black Sun Bot Hal: Fade Cape on you, Kragg, run!
+    [18:03] Ancient Light Bot Ann: Going for Kragg.
+    [18:05] Black Sun Bot Fay: Their Sludge is low (27%) in the bottom lane. Going for the kill.
+    [18:07] Ancient Light Bot Cat: We're ahead in gold. Let's push mid and take their tower.
+    [18:08] Black Sun Bot Hal: Hold on, Bot Gus! Coming.
+    [18:26] Ancient Light Bot Cat: Their Caziel is alone in the mid lane. Going for the kill, Bot Eve come too.
+    [18:29] Ancient Light Bot Cat: Fight! Focus their Caziel.
+    [18:32] Black Sun Bot Fay: Their Jayla is alone in the mid lane. Going for the kill, Bot Jo and Bot Hal come too.
+    [18:32] Black Sun Bot Fay: red flag
+    [18:34] Ancient Light Bot Eve: Opening the door.
+    [18:40] Black Sun Bot Hal: Backing off, too dangerous.
+    [18:47] Ancient Light Bot Dan: Going for Caziel.
+    [18:48] Ancient Light Bot Ann: Hold on, Bot Cat! Coming.
+    [18:53] Ancient Light Bot Dan: Fight! Focus their Tock.
+    [18:55] Ancient Light Bot Eve: Their Tock is alone in the mid lane. Going for the kill, Bot Cat and Bot Ann come too.
+    [19:00] Black Sun Bot Hal: Coming to defend, 8 s.
+    [19:02] Black Sun Bot Ivy: 3 of them together near mid! Back off.
+    [19:05] Ancient Light Bot Eve: Opening the door.
+    [19:08] Ancient Light Bot Ann: 2 of them are dead. Let's push mid and take their tower.
+    [19:13] Black Sun Bot Hal: Getting Medic Kit against their right clicks.
+    [19:15] Ancient Light Bot Cat: Going for Ser Emelrich.
+    [19:18] Black Sun Bot Jo: ward muna bago pasok
+    [19:19] (All) Ancient Light Bot Ann: that's 1 for me
+    [19:20] (All) Black Sun Bot Gus: then do it
+    [19:28] (All) Ancient Light Bot Eve: sablay ampota
+    [19:28] Ancient Light Bot Ann: tower dying
+    [19:35] Black Sun Bot Hal: Their Sludge is alone in the mid lane. Going for the kill, Bot Fay come too.
+    [19:35] Black Sun Bot Fay: Fight! Focus their Sludge.
+    [19:43] (All) Black Sun Bot Fay: who's godlike now
+    [19:48] Black Sun Bot Fay: Their Ezee is alone in the mid lane. Going for the kill, Bot Jo and Bot Hal come too.
+    [19:51] Ancient Light Bot Cat: our tower!
+    [19:54] Ancient Light Bot Bob: We're ahead in gold. Let's push mid and take their tower.
+    [19:55] Black Sun Bot Gus: Getting Spell Shield against their stuns.
+    [19:58] Black Sun Bot Hal: Going for Ezee.
+wins: Ancient Light 0, Black Sun 0

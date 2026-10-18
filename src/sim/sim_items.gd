@@ -83,10 +83,8 @@ func error(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, _p: Vector2) -
 		"jump":
 			if u.is_rooted():
 				return "Rooted"
-			var lock := float(d.values.hero_damage_lockout)
-			for hid in u.hero_damage_log:
-				if w.time - float(u.hero_damage_log[hid]) < lock:
-					return "Jump Knife is disabled"
+			if w.time - u.jump_lock_at < float(d.values.hero_damage_lockout):
+				return "Jump Knife is disabled"
 		"push":
 			if t == null or not t.alive or t.is_building() or t.is_ward() or t.kind == K.COURIER:
 				return "Must target a hero or creep"

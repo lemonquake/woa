@@ -1,0 +1,11 @@
+
+  [6:49] Bot 9 (feran) escape tp broken after 2.4 s: died; mode retreat -> retreat, hp 7% -> 0%, foe 862
+  [11:33] Bot 4 (froster) escape tp broken after 2.1 s: stunned; mode retreat -> retreat, hp 14% -> 7%, foe 4111
+  [23:29] Bot 0 (sludge) escape tp broken after 1.5 s: stunned; mode heal -> heal, hp 39% -> 27%, foe 6244
+seed 3 done at 25:00
+  [1:00] Bot 5 (caziel) escape tp broken after 0.3 s: died; mode retreat -> retreat, hp 2% -> 0%, foe 1542
+  [8:32] Bot 0 (sludge) escape tp broken after 1.5 s: died; mode retreat -> retreat, hp 8% -> 0%, foe 1532
+  [21:03] Bot 3 (azrin) escape tp broken after 0.8 s: died; mode retreat -> retreat, hp 14% -> 0%, foe 350
+seed 7 done at 25:00
+Teleports started 223, landed 216; escapes started 78, landed 72, broken then died within 8 s 1
+Broken by: { "died": 4, "stunned": 3 }

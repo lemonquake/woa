@@ -1,0 +1,46 @@
+
+== 20:00
+  Bot 0 sludge       lvl 13 gold   878 next root_staff (2250) | reveal_ward,reveal_dust,medic_kit,jump_knife,observer_ward,glimmer_cape | -,-,- | stash -,-,-,-,-,- | courier tp_scroll,-,-,-,-,- | junk [] loose []
+  Bot 1 ezee         lvl 14 gold   979 next stun_club (2425) | slip_boots,belt_str,magic_wand,quelling_blade,tough_band,spell_shield | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["quelling_blade", "tough_band"] loose []
+  Bot 2 blood_ranger lvl 15 gold   722 next push_staff (950) | gloves,boots,magic_wand,wraith_band,wizard_staff,spell_shield | -,fur_hat,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["gloves", "boots", "wraith_band"] loose ["gloves", "boots"]
+  Bot 3 azrin        lvl 18 gold   270 next dagon (0) | spell_sword,frost_plate,spell_shield,smart_band,big_gem,mana_boots | pointy_hat,gold_band,- | stash recipe_dagon,-,-,-,-,- | courier -,-,-,-,-,- | junk ["smart_band"] loose []
+  Bot 4 froster      lvl 11 gold    67 next medic_kit (1100) | reveal_ward,mana_boots,glimmer_cape,reveal_dust,magic_wand,push_staff | chainmail,ring_regen,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 5 caziel       lvl 14 gold   295 next mask_of_madness (1000) | power_treads,magic_wand,lifesteal,wraith_band,spell_shield,jump_knife | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["wraith_band"] loose []
+  Bot 6 kragg        lvl 13 gold    97 next crash_knife (4550) | jump_knife,magic_wand,slip_boots,-,spell_shield,- | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 7 tock         lvl 13 gold   667 next long_lens (2275) | glimmer_cape,mana_boots,magic_wand,reveal_dust,war_drum,reveal_ward | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 8 emelrich     lvl 12 gold   295 next jump_knife (2250) | slip_boots,magic_wand,-,quelling_blade,tough_band,spell_shield | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["quelling_blade", "tough_band"] loose []
+  Bot 9 feran        lvl 13 gold   553 next root_staff (2250) | push_staff,spell_sword,mana_boots,observer_ward,reveal_ward,reveal_dust | -,-,- | stash -,-,-,-,-,- | courier tp_scroll,-,-,-,-,- | junk [] loose []
+== 30:00
+  Bot 0 sludge       lvl 16 gold   854 next spell_shield (3050) | reveal_ward,reveal_dust,giant_axe,jump_knife,root_staff,war_drum | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 1 ezee         lvl 21 gold   785 next stun_club (825) | slip_boots,sure_hit_staff,magic_wand,belt_str,steel_hammer,spell_shield | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 2 blood_ranger lvl 23 gold   454 next crit_sword (0) | magic_wand,power_treads,sure_hit_staff,dragon_lance,push_staff,spell_shield | wraith_band,blades_attack,- | stash greatsword,recipe_crit_sword,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand", "wraith_band"] loose []
+  Bot 3 azrin        lvl 28 gold  5176 next hex_staff (5200) | kugmo_atuli,frost_plate,spell_shield,time_crystal,dagon,mana_boots | -,smart_band,push_staff | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["smart_band"] loose []
+  Bot 4 froster      lvl 17 gold   440 next net_staff (3450) | spell_sword,mana_boots,big_gem,reveal_dust,medic_kit,push_staff | observer_ward,-,reveal_ward | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 5 caziel       lvl 18 gold   947 next armor_breaker (3200) | power_treads,yasha,mask_of_madness,crit_sword,spell_shield,jump_knife | rust_stone,-,- | stash -,-,-,-,-,- | courier tp_scroll,-,-,-,-,- | junk [] loose []
+  Bot 6 kragg        lvl 17 gold   738 next crash_knife (1750) | jump_knife,magic_wand,slip_boots,war_axe,spell_shield,- | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 7 tock         lvl 17 gold   299 next time_crystal (2100) | soul_gem,mana_boots,observer_ward,reveal_dust,magic_wand,reveal_ward | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 8 emelrich     lvl 17 gold   274 next crash_knife (4550) | slip_boots,magic_wand,jump_knife,quelling_blade,tough_band,spell_shield | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand", "quelling_blade", "tough_band"] loose []
+  Bot 9 feran        lvl 17 gold    73 next guard_boots (2275) | reveal_dust,ring_regen,mana_boots,net_staff,reveal_ward,chainmail | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+== 40:00
+  Bot 0 sludge       lvl 24 gold   719 next upgrade_staff (3000) | reveal_ward,reveal_dust,spell_shield,team_shield,-,observer_ward | -,-,- | stash big_gem,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 1 ezee         lvl 26 gold  1821 next stun_blade (1925) | slip_boots,sure_hit_staff,giant_axe,spike_armor,stun_club,spell_shield | -,belt_str,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 2 blood_ranger lvl 29 gold  2207 next armor_breaker (1900) | shock_hammer,power_treads,sure_hit_staff,crit_bow,push_staff,spell_shield | dragon_lance,steel_hammer,- | stash -,-,-,-,-,- | courier tp_scroll,-,-,-,-,- | junk [] loose []
+  Bot 3 azrin        lvl 30 gold  5064 next long_lens (2275) | kugmo_atuli,frost_plate,spell_shield,time_crystal,dagon,mana_boots | hex_staff,refresh_stone,push_staff | stash -,-,-,-,-,- | courier tp_scroll,-,-,-,-,- | junk [] loose []
+  Bot 4 froster      lvl 23 gold  1305 next spell_shield (1450) | observer_ward,guard_boots,net_staff,reveal_dust,reveal_ward,steel_hammer | giant_axe,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 5 caziel       lvl 26 gold   473 next leech_blade (5050) | power_treads,moth_blade,mask_of_madness,armor_breaker,spell_shield,jump_knife | -,crit_sword,yasha | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 6 kragg        lvl 25 gold   137 next giant_heart (3600) | crash_knife,battle_armor,slip_boots,troll_ring,spell_shield,- | -,-,- | stash tp_scroll,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 7 tock         lvl 25 gold  1006 next refresh_stone (5000) | time_crystal,guard_boots,observer_ward,reveal_dust,magic_wand,reveal_ward | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 8 emelrich     lvl 23 gold   526 next battle_armor (4950) | slip_boots,ring_protection,crash_knife,-,-,spell_shield | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 9 feran        lvl 24 gold   500 next hex_staff (700) | mana_tiara,long_staff,guard_boots,net_staff,reveal_ward,observer_ward | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+== over the game (from 15:00)
+  Bot 0 sludge       average gold   664, sold 9 ["magic_wand", "clarity", "salve", "slip_boots", "medic_kit", "glimmer_cape", "war_drum", "jump_knife", "root_staff"], parts bought ahead 16, build 15/16
+  Bot 1 ezee         average gold   779, sold 4 ["clarity", "quelling_blade", "tough_band", "magic_wand"], parts bought ahead 13, build 15/18
+  Bot 2 blood_ranger average gold  1023, sold 3 ["quelling_blade", "wraith_band", "magic_wand"], parts bought ahead 13, build 20/22
+  Bot 3 azrin        average gold  1491, sold 4 ["salve", "magic_wand", "salve", "smart_band"], parts bought ahead 18, build 20/21
+  Bot 4 froster      average gold   810, sold 6 ["salve", "magic_wand", "war_drum", "glimmer_cape", "spell_sword", "push_staff"], parts bought ahead 16, build 16/17
+  Bot 5 caziel       average gold   667, sold 5 ["clarity", "salve", "quelling_blade", "wraith_band", "magic_wand"], parts bought ahead 9, build 18/19
+  Bot 6 kragg        average gold   850, sold 3 ["quelling_blade", "tough_band", "magic_wand"], parts bought ahead 8, build 14/15
+  Bot 7 tock         average gold   579, sold 5 ["clarity", "tango", "war_drum", "long_lens", "glimmer_cape"], parts bought ahead 13, build 15/16
+  Bot 8 emelrich     average gold   788, sold 3 ["quelling_blade", "tough_band", "magic_wand"], parts bought ahead 4, build 13/15
+  Bot 9 feran        average gold   558, sold 10 ["magic_wand", "salve", "glimmer_cape", "reveal_ward", "reveal_ward", "spell_sword", "push_staff", "observer_ward", "reveal_dust", "observer_ward"], parts bought ahead 16, build 15/16
+junk carried at the marks 20, loose parts 2, bots holding gold for their next item 4

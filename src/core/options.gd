@@ -23,7 +23,7 @@ const DEFAULTS := {
 	"monitor": 0, "window_mode": 0, "resolution": 0, "vsync": true, "frame_limit": 5, "render_scale": 1.0, "quality": 2,
 	"show_fps": false,
 	"edge_pan": true, "lock_cursor": false, "camera_speed": 32.0, "screen_shake": true, "damage_numbers": true, "center_on_respawn": true,
-	"bots_learn": true, "bot_chat": true, "quick_cast": false,
+	"bots_learn": true, "bot_chat": true, "bot_trash_talk": true, "quick_cast": false,
 }
 
 static var data := {}
@@ -56,7 +56,7 @@ static func _sanitize() -> void:
 	data.render_scale = clampf(float(data.render_scale), 0.5, 1.0)
 	data.camera_speed = clampf(float(data.camera_speed), 12.0, 60.0)
 	for k in ["mute_unfocused", "vsync", "show_fps", "edge_pan", "lock_cursor", "screen_shake", "damage_numbers", "center_on_respawn",
-			"bots_learn", "bot_chat"]:
+			"bots_learn", "bot_chat", "bot_trash_talk"]:
 		data[k] = bool(data[k])
 
 static func get_value(key: String):

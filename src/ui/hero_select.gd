@@ -11,7 +11,7 @@ const SETUP := "res://src/ui/game_setup.tscn"
 const MENU := "res://src/ui/main_menu.tscn"
 
 const INFO := {
-	"blood_ranger": {"title": "the Archer", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
+	"blood_ranger": {"title": "the Blood Ranger", "role": "Ranged  ·  Agility  ·  Carry, Nuker, Escape",
 		"story": "She hunted the Black Sun's beasts until the hunt hunted her back. Now the blood she spills keeps her standing, and every arrow she looses is a promise kept."},
 	"ezee": {"title": "the Dark Paladin", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
 		"story": "Once a knight of the Ancient Light, Ezee broke his word to win a war the light was losing. The shadow he bargained with still answers when he calls, and it is always hungry."},

@@ -1,0 +1,35 @@
+
+== 20:00
+  Bot 0 sludge       lvl 13 gold   661 next jump_knife (2250) | magic_wand,slip_boots,glimmer_cape,reveal_ward,medic_kit,reveal_dust | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 1 ezee         lvl 11 gold  1009 next spell_shield (1450) | steel_hammer,giant_axe,branch,branch,tough_band,magic_stick | clarity,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["tough_band", "clarity"] loose []
+  Bot 2 blood_ranger lvl 13 gold   356 next dragon_lance (2000) | halberd,magic_wand,power_treads,wraith_band,reveal_dust,spell_shield | -,salve,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand", "wraith_band", "salve"] loose []
+  Bot 3 azrin        lvl 16 gold   979 next frost_plate (1250) | mana_boots,wide_stone,spell_shield,plate_armor,plate_vest,magic_wand | salve,robe,smart_band | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["salve", "smart_band"] loose []
+  Bot 4 froster      lvl 13 gold  1616 next push_staff (1950) | medic_kit,glimmer_cape,mana_boots,reveal_ward,magic_wand,tango | fur_hat,salve,clarity | stash -,-,-,-,-,- | courier reveal_dust,reveal_dust,-,-,-,observer_ward | junk ["magic_wand", "tango", "salve", "clarity"] loose []
+  Bot 5 caziel       lvl 14 gold   189 next magic_wand (260) | magic_stick,boots,spell_shield,jump_knife,quelling_blade,reveal_dust | salve,wraith_band,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["quelling_blade", "salve", "wraith_band"] loose ["boots"]
+  Bot 6 kragg        lvl 12 gold   140 next slip_boots (500) | boots,magic_wand,spell_shield,quelling_blade,tough_band,clarity | -,-,- | stash blades_attack,-,-,-,-,- | courier -,-,-,-,-,- | junk ["quelling_blade", "tough_band", "clarity"] loose []
+  Bot 7 tock         lvl 13 gold   256 next long_lens (775) | reveal_ward,mana_stone,glimmer_cape,reveal_dust,war_drum,mana_boots | mana_gem,-,- | stash -,-,-,-,-,- | courier tp_scroll,-,-,-,-,- | junk [] loose []
+  Bot 8 emelrich     lvl 14 gold  1037 next crash_knife (4550) | slip_boots,jump_knife,reveal_dust,spell_shield,tough_band,quelling_blade | -,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["tough_band", "quelling_blade"] loose []
+  Bot 9 feran        lvl 12 gold   877 next push_staff (950) | reveal_dust,glimmer_cape,mana_boots,reveal_ward,wizard_staff,magic_wand | fur_hat,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+== 30:00
+  Bot 0 sludge       lvl 21 gold   830 next spell_shield (4050) | jump_knife,slip_boots,glimmer_cape,root_staff,medic_kit,war_drum | reveal_ward,magic_wand,reveal_dust | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+  Bot 1 ezee         lvl 17 gold   428 next sure_hit_staff (5000) | spell_shield,jump_knife,branch,branch,tough_band,magic_stick | -,-,- | stash recipe_magic_wand,-,-,-,-,- | courier -,-,-,-,-,- | junk ["tough_band"] loose []
+  Bot 2 blood_ranger lvl 24 gold  1284 next crit_sword (2000) | halberd,sure_hit_staff,power_treads,push_staff,dragon_lance,spell_shield | wraith_band,magic_wand,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["wraith_band", "magic_wand"] loose []
+  Bot 3 azrin        lvl 27 gold  1858 next hex_staff (2400) | mana_boots,kugmo_atuli,spell_shield,frost_plate,dagon,push_staff | smart_band,salve,magic_wand | stash -,-,-,-,-,- | courier time_crystal,long_staff,-,-,-,- | junk ["push_staff", "smart_band", "salve", "magic_wand"] loose []
+  Bot 4 froster      lvl 22 gold   897 next net_staff (1450) | medic_kit,glimmer_cape,mana_boots,war_drum,push_staff,reveal_dust | magic_wand,reveal_ward,clarity | stash -,-,-,-,-,- | courier observer_ward,spell_sword,wizard_staff,health_crystal,big_gem,- | junk ["magic_wand", "clarity"] loose []
+  Bot 5 caziel       lvl 19 gold   893 next mask_of_madness (1900) | sure_hit_staff,boots,spell_shield,jump_knife,boots_elves,reveal_dust | salve,quelling_blade,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["salve", "quelling_blade"] loose ["boots"]
+  Bot 6 kragg        lvl 18 gold  1329 next sure_hit_staff (3100) | boots,magic_wand,spell_shield,brass_knuckles,spear,blades_attack | tough_band,-,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand", "tough_band"] loose []
+  Bot 7 tock         lvl 18 gold  1036 next time_crystal (2400) | long_lens,observer_ward,glimmer_cape,mana_tiara,war_drum,mana_boots | reveal_ward,health_crystal,reveal_dust | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk [] loose []
+  Bot 8 emelrich     lvl 19 gold   780 next sure_hit_staff (900) | slip_boots,jump_knife,spear,spell_shield,brass_knuckles,huge_sword | -,quelling_blade,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["quelling_blade"] loose []
+  Bot 9 feran        lvl 17 gold   484 next root_staff (1250) | reveal_dust,glimmer_cape,mana_boots,reveal_ward,push_staff,spell_sword | wizard_staff,magic_wand,- | stash -,-,-,-,-,- | courier -,-,-,-,-,- | junk ["magic_wand"] loose []
+== over the game (from 15:00)
+  Bot 0 sludge       average gold   724, sold 1 ["clarity(shop worth 36 need true in 100 13:58)"], parts bought ahead 10, build 14/16
+  Bot 1 ezee         average gold   823, sold 2 ["salve(shop worth 91 need true in 0 13:37)", "quelling_blade(shop worth 89 need true in 0 19:22)"], parts bought ahead 6, build 13/19
+  Bot 2 blood_ranger average gold  1295, sold 1 ["quelling_blade(shop worth 63 need true in 100 17:04)"], parts bought ahead 9, build 21/23
+  Bot 3 azrin        average gold  1307, sold 2 ["clarity(shop worth 60 need true in 4050 9:42)", "clarity(shop worth 22 need true in 100 16:20)"], parts bought ahead 14, build 20/21
+  Bot 4 froster      average gold   858, sold 0 [], parts bought ahead 10, build 16/17
+  Bot 5 caziel       average gold   821, sold 4 ["wraith_band(shop worth 408 need true in 0 20:51)", "magic_wand(shop worth 333 need true in 0 25:32)", "gloves(shop worth 330 need true in 0 25:37)", "magic_wand(shop worth 308 need true in 0 26:37)"], parts bought ahead 6, build 15/20
+  Bot 6 kragg        average gold   587, sold 2 ["clarity(shop worth 0 need false in 450 21:18)", "quelling_blade(shop worth 51 need true in 0 26:04)"], parts bought ahead 6, build 10/16
+  Bot 7 tock         average gold   583, sold 2 ["magic_wand(shop worth 460 need true in 2150 10:51)", "clarity(shop worth 35 need true in 0 14:05)"], parts bought ahead 13, build 13/17
+  Bot 8 emelrich     average gold   688, sold 2 ["magic_wand(shop worth 460 need true in 1450 13:06)", "tough_band(shop worth 250 need true in 0 26:19)"], parts bought ahead 6, build 13/16
+  Bot 9 feran        average gold   595, sold 2 ["tango(shop worth 67 need true in 80 12:33)", "clarity(shop worth 22 need true in 250 16:17)"], parts bought ahead 11, build 12/17
+junk carried at the marks 37, loose parts 2, bots holding gold for their next item 0

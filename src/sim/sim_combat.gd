@@ -531,6 +531,11 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		w.abilities.frost_heart_charge(src, t, amount)
 	if src_hero and t.is_hero() and src_team != t.team:
 		t.hero_damage_log[src_id] = w.time
+	# Jump Knife's lock (Dota's Blink Dagger): any damage from an enemy hero, a unit an enemy hero owns (tamed beasts,
+	# turrets) or the enemy fountain
+	if t.is_hero() and src_team != t.team and (src_hero or (src != null and (src.kind == K.FOUNTAIN
+			or (src.owner_id >= 0 and src.kind != K.COURIER)))):
+		t.jump_lock_at = w.time
 	if t.is_hero() and src_hero and src_team != t.team:
 		for i in range(t.modifiers.size() - 1, -1, -1):
 			if t.modifiers[i].get("break_on_damage", false):

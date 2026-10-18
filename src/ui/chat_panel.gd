@@ -1,9 +1,10 @@
 class_name ChatPanel
 extends Control
-## Team chat, bottom left above the minimap (as in Dota): your team's lines from bots and yourself, each fading after
-## 12 seconds. Enter opens a line to type to your team (Enter sends, Esc closes); the bots understand a few plain words
-## (SimTeamAI.on_player_chat: "push top", "defend mid", "gank", "back", "group"). While the line is open the history
-## stays up. Options > Game "Show bot chat" hides the bots' lines.
+## Chat, bottom left above the minimap (as in Dota): your team's lines from bots and yourself and everyone's all chat
+## (marked "(All)"), each fading after 12 seconds. Enter opens a line to type to your team, Shift+Enter to everyone
+## (Enter sends, Esc closes); your bots understand a few plain words (SimTeamAI.on_player_chat: "push top", "defend
+## mid", "gank", "back", "group"). While the line is open the history stays up. Options > Game: "Show bot chat" hides
+## the bots' lines, "Bot trash talk" only their trash talk (SimBotChat).
 
 const U = preload("res://src/ui/ui_kit.gd")
 const W := 560.0
@@ -14,6 +15,7 @@ const ROWS := 8
 var hud
 var lines: Array = []                      # [{name, text, team, me, t (real seconds)}]
 var input: LineEdit
+var to_all := false                        # the open line goes to all chat
 var _now := 0.0
 
 func _ready() -> void:
@@ -37,7 +39,9 @@ func _ready() -> void:
 func is_open() -> bool:
 	return input.visible
 
-func open() -> void:
+func open(all := false) -> void:
+	to_all = all
+	input.placeholder_text = "Say to everyone (Enter to send, Esc to close)" if all else "Say to your team (Enter to send, Esc to close)"
 	input.visible = true
 	input.text = ""
 	input.grab_focus()
@@ -53,7 +57,7 @@ func _send(text: String) -> void:
 	close()
 	if t == "" or hud.game == null or hud.game.world == null:
 		return
-	hud.game.act({"k": "chat", "text": t})
+	hud.game.act({"k": "chat", "text": t, "all": to_all})
 
 ## A chat event from the world (only the player's team reaches here).
 func add(e: Dictionary) -> void:
@@ -61,7 +65,10 @@ func add(e: Dictionary) -> void:
 	var is_bot := u != null and u.bot
 	if is_bot and not bool(Options.get_value("bot_chat")):
 		return
-	lines.append({"name": String(e.name), "text": String(e.text), "me": int(e.u) == hud.game.player_hero_id,
+	if bool(e.get("bot_line", false)) and not bool(Options.get_value("bot_trash_talk")):
+		return
+	lines.append({"name": ("(All) " if bool(e.get("all", false)) else "") + String(e.name), "text": String(e.text),
+		"me": int(e.u) == hud.game.player_hero_id,
 		"hero": SimTeamAI.hero_label(u) if u != null else "", "t": _now,
 		"col": U.player_color(u) if u != null and u.is_hero() else U.DAWN})
 	while lines.size() > 40:

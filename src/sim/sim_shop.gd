@@ -317,6 +317,24 @@ func combine_all(u: SimUnit) -> void:
 			if changed:
 				break
 
+## Combine one item from the hero's bags together with `extra` (its courier's bags at a hand-over); the item lands
+## in the hero's bags (the slot of its first part there). Returns whether anything combined.
+func combine_with(u: SimUnit, extra: Array) -> bool:
+	for id in SimData.items():
+		for parts in recipe_sets(id):
+			if _combine(u, id, parts, [u.inventory, extra]):
+				# the result took its first part's slot: keep it in the hero's bags
+				for k in extra.size():
+					var it = extra[k]
+					if it != null and String(it.id) == String(id) and float(it.get("bought", -1.0)) == w.time:
+						var free := u.inventory.find(null)
+						if free >= 0:
+							u.inventory[free] = it
+							extra[k] = null
+				u.refresh_stats()
+				return true
+	return false
+
 func _combine(u: SimUnit, id: String, parts: Array, pool: Array) -> bool:
 	var found: Array = []                        # [array, index]
 	for part in parts:

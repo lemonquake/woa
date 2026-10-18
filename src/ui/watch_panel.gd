@@ -4,7 +4,8 @@ extends Control
 ## hero, Hero view, Auto), whose sight the screen shows (the watched hero's team, either team, both, the whole map),
 ## the bots' orders drawn as waypoints and what each bot is doing over its head, and the game speed. Clicking a hero on
 ## the top bar watches it too. Every control only changes what is shown (Main: watch(), set_cam_mode(), vision_mode,
-## show_orders, show_plans); the bots play on as they would.
+## show_orders, show_plans); the bots play on as they would. "Take control" takes the watched bot's hero over at any
+## time (Main.take_control: you play it as a player would) and "Give back to bot" hands it back (Main.give_back).
 
 const U = preload("res://src/ui/ui_kit.gd")
 const W := 300.0
@@ -31,6 +32,7 @@ var _orders: OptionButton
 var _plans: CheckBox
 var _speed_btns: Array[Button] = []
 var _pause_btn: Button
+var _take_btn: Button
 var _tick := 0.0
 
 func _ready() -> void:
@@ -77,6 +79,14 @@ func _ready() -> void:
 			if game.cam_mode == "auto":
 				game.set_cam_mode("follow"))
 	_body.add_child(_hero_pick)
+	_take_btn = _button("Take control", func():
+		if int(game.controlling) >= 0:
+			game.give_back()
+		else:
+			game.take_control())
+	_take_btn.tooltip_text = "Play the watched hero yourself, with everything a player has; give it back to its bot at any time"
+	_take_btn.custom_minimum_size = Vector2(0, 36)
+	v.add_child(_take_btn)
 
 	_body.add_child(_caption("Camera"))
 	var cams := GridContainer.new()
@@ -188,6 +198,7 @@ func refresh() -> void:
 		for h in w.heroes:
 			_hero_pick.add_item("%s  ·  %s" % [h.who(), SimConst.TEAM_NAMES[h.team]])
 	_hero_pick.select(_hero_ids.find(int(game.player_hero_id)))
+	_take_btn.text = "Give back to bot" if int(game.controlling) >= 0 else "Take control"
 	for i in CAMS.size():
 		_cam_btns[i].set_pressed_no_signal(String(game.cam_mode) == CAMS[i])
 	_sight.select(maxi(0, SIGHT.find(int(game.vision_mode))))

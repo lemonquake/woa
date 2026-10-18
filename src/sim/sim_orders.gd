@@ -279,11 +279,12 @@ func update(u: SimUnit) -> void:
 			var dest: Vector2 = u.channel.dest
 			u.channel = {}
 			w.combat.disjoint(u)
+			var tp_from := u.pos
 			u.pos = dest
 			u.path = PackedVector2Array()
 			u.order = O.NONE
 			u.atk_target = -1
-			w.events.append({"t": "tp_end", "u": u.id, "pos": dest})
+			w.events.append({"t": "tp_end", "u": u.id, "pos": dest, "from": tp_from})
 			return
 		else:
 			return

@@ -377,10 +377,11 @@ func _box_select(r: Rect2, shift: bool) -> void:
 
 func _key(k: InputEventKey, h: SimUnit) -> void:
 	var w: SimWorld = game.world
-	# Enter: type to your team (the chat line takes the keys until it closes)
+	# Enter: type to your team, Shift+Enter to everyone (all chat, as in Dota); the chat line takes the keys until it
+	# closes
 	if (k.keycode == KEY_ENTER or k.keycode == KEY_KP_ENTER) and game.hud and game.hud.get("chat") != null:
 		if not game.hud.chat.is_open():
-			game.hud.chat.open()
+			game.hud.chat.open(k.shift_pressed)
 		get_viewport().set_input_as_handled()
 		return
 	var m := Keybinds.match_event(k)

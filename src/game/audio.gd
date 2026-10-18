@@ -92,6 +92,39 @@ func at(n: String, pos: Vector3, vol := 0.0, variants := 0, cooldown := 0.06, pi
 	p.global_position = pos
 	p.play()
 
+## A ranged hero's attack leaving its hand, by what it throws (ModelCatalog "proj"): only the archer draws a bow;
+## Azrin's fireballs whoosh, Froster's bolts crackle with frost, Feran's knives whip through the air.
+func _hero_shot(src: SimUnit, p: Vector3) -> void:
+	match String(ModelCatalog.info(String(src.def.model)).get("proj", "")):
+		"arrow":
+			at("bow_attack", p, -4.0, 3)
+		"fireball", "fire", "fire_big":
+			at("fire_whoosh", p, -7.0, 0, 0.08, 0.12)
+			at("cast_fire", p, -14.0, 0, 0.2, 0.1)
+		"frost_bolt":
+			at("cast_ice", p, -11.0, 0, 0.1, 0.12)
+		"knife":
+			at("swing_dagger", p, -3.0, 2, 0.05, 0.15)
+			at("attack_woosh", p, -11.0, 3, 0.05, 0.2)
+		"bullet", "turret_shot":
+			at("crossbow_fire", p, -5.0, 2, 0.06)
+		_:
+			at("mage_attack", p, -8.0, 2, 0.08)
+
+## A ranged hero's attack landing, matched to _hero_shot.
+func _hero_shot_hit(src: SimUnit, p: Vector3) -> void:
+	match String(ModelCatalog.info(String(src.def.model)).get("proj", "")):
+		"arrow":
+			at("arrow_impact", p, -6.0, 2, 0.05)
+		"fireball", "fire", "fire_big":
+			at("fireball_hit", p, -10.0, 0, 0.1, 0.12)
+		"frost_bolt":
+			at("shatter_ice", p, -10.0, 0, 0.1, 0.12)
+		"knife":
+			at("dagger_hit", p, -5.0, 3, 0.05)
+		_:
+			at("magic_hit", p, -7.0, 2, 0.06)
+
 ## Play a stream at a point (AudioWorld's sounds): `key` limits repeats to one per `cooldown`; muffled: heard
 ## through the fog (quieter, high frequencies cut).
 func play_stream(s: AudioStream, pos: Vector3, vol: float, key: String, cooldown := 0.06, pitch_jitter := 0.08,
@@ -145,7 +178,7 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			var p := _pos(w, e.src)
 			match src.kind:
 				SimConst.Kind.HERO:
-					at("bow_attack", p, -4.0, 3)
+					_hero_shot(src, p)
 				SimConst.Kind.TOWER:
 					at("arcane_charge" if src.team == 0 else "lightning_zap_1", p, -8.0, 0, 0.1)
 				SimConst.Kind.CREEP_SIEGE:
@@ -173,7 +206,7 @@ func event(e: Dictionary, w: SimWorld) -> void:
 				return
 			if src2.is_ranged():
 				if src2.is_hero():
-					at("arrow_impact", p2, -6.0, 2, 0.05)
+					_hero_shot_hit(src2, p2)
 				elif src2.kind == SimConst.Kind.TOWER:
 					at("magic_hit", p2, -6.0, 2, 0.08)
 				else:

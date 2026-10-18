@@ -86,7 +86,8 @@ static func profile(w: SimWorld, team: int) -> Dictionary:
 const KIT_SPELLS := {"blood_ranger": [0.8, 0.2, 0.0], "ezee": [0.2, 0.55, 0.25], "sludge": [0.0, 0.5, 0.5],
 	"azrin": [0.0, 1.0, 0.0], "froster": [0.0, 1.0, 0.0], "caziel": [0.4, 0.6, 0.0], "tock": [0.0, 1.0, 0.0],
 	"kragg": [0.0, 1.0, 0.0], "roydo": [0.0, 1.0, 0.0], "blau": [0.0, 1.0, 0.0],
-	"azrael": [0.5, 0.25, 0.25]}
+	"azrael": [0.5, 0.25, 0.25], "airah": [0.0, 1.0, 0.0], "burak": [0.85, 0.0, 0.15], "emelrich": [1.0, 0.0, 0.0],
+	"feran": [0.3, 0.7, 0.0], "ghorman": [0.6, 0.4, 0.0]}
 
 static func _avg_networth(w: SimWorld, team: int) -> float:
 	var s := 0.0

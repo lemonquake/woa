@@ -624,7 +624,39 @@ func update_effects() -> void:
 				elif kits6.owns_effect(String(e.kind)):
 					done = kits6.update_effect(e)
 		if done:
+			if String(e.kind) in SKILLSHOTS:
+				_note_miss(e)
 			w.effects.remove_at(i)
+
+## Aimed spells that fly a line: when one ends without touching an enemy hero it passed near, that hero dodged it
+## (a "skill_miss" event; the bots' chat mocks it, SimBotChat).
+const SKILLSHOTS := ["line", "hook", "javelin", "gust", "time_bolt"]
+
+func _note_miss(e: Dictionary) -> void:
+	var src := w.get_unit(int(e.get("src", -1)))
+	if src == null or not src.is_hero() or not (e.has("hit") or String(e.kind) == "hook"):
+		return                                     # only effects that record what they hit can tell a miss
+	var hit: Dictionary = e.get("hit", {}) if e.get("hit", {}) is Dictionary else {}
+	for id in hit:
+		var o := w.get_unit(int(id))
+		if o != null and o.is_hero() and o.team != src.team:
+			return
+	var tgt := w.get_unit(int(e.get("target", -1)))
+	if tgt != null and tgt.is_hero() and tgt.team != src.team:
+		return                                     # a hook that caught a hero
+	var end: Vector2 = e.get("pos", src.pos)
+	var start: Vector2 = e.get("origin", e.get("from", src.pos))
+	var best: SimUnit = null
+	var best_d := 450.0
+	for o in w.heroes:
+		if not o.alive or o.team == src.team:
+			continue
+		var d := Geometry2D.get_closest_point_to_segment(o.pos, start, end).distance_to(o.pos)
+		if d < best_d:
+			best_d = d
+			best = o
+	if best != null:
+		w.events.append({"t": "skill_miss", "u": src.id, "near": best.id, "ability": String(e.get("ability", ""))})
 
 ## Fells every tree within `r` (+40, the trunk) of the segment `from`-`to`; each falls away along the line (Gale
 ## Impact's arrow, Fiery Javelin).
@@ -1452,6 +1484,7 @@ func _hook_latch(e: Dictionary, o: SimUnit) -> void:
 		caster.remove_modifier("hook_lock")
 	w.vision.add_source(int(e.team), e.pos, float(e.vision_r), float(e.vision_t))
 	var ally := o.team == int(e.team)
+	e["hit"] = {o.id: true}                        # what it caught (a dodge check at its end, _note_miss)
 	w.events.append({"t": "hook_latch", "u": o.id, "src": e.src, "pos": e.pos, "seq": e.seq, "ally": ally})
 	if not ally and o.is_creep():
 		e.target = -1

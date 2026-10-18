@@ -43,8 +43,9 @@ The owner's own names are never changed by an agent, even when they break this r
 
 * Game title: **Warriors of Aether**
 * Teams: **Ancient Light** and **Black Sun**
-* Heroes: **Blood Ranger**, **Ezee the Dark Paladin**, **Sludge**
-* Abilities: Blood Ranger's **Burst Shot**, **Gale Impact**, **Masterful Archery**, **Blood Ranger**; Ezee's
+* Heroes: **Jayla**, title **the Blood Ranger** (renamed by the owner 2026-10-18; was Blood Ranger), **Ezee the Dark
+  Paladin**, **Sludge**
+* Abilities: Jayla's **Burst Shot**, **Gale Impact**, **Masterful Archery**, **Blood Ranger**; Ezee's
   **Dark Stomp**, **Leap Strike**, **Tainted Touch**, **Unholy Might**
 * Items: **Mini-Axe**, **Vegan Picker**
 * Bot: **Bot Gerald**
