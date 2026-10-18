@@ -148,6 +148,10 @@ const DENY_XP_FACTOR := 0.5
 ## Hero kill XP: (base + factor * victim total XP) / heroes sharing (APPROX).
 const HERO_KILL_XP_BASE := 40.0
 const HERO_KILL_XP_FACTOR := 0.13
+## Experience and gold earned in a match are 150% of Dota's (the owner's choice, 2026-10-18; Game Setup can change it
+## per match). Mechanics tests set SimWorld.xp_rate and gold_rate back to 1.0 to check Dota's own numbers.
+const XP_RATE := 1.5
+const GOLD_RATE := 1.5
 
 # ---- Gold ---------------------------------------------------------------------------------------------------------------
 const STARTING_GOLD := 600

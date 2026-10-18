@@ -1,0 +1,59 @@
+04:37:37 | INFO: Data are loaded, start creating Blender stuff
+04:37:37 | INFO: Blender create Mesh node hero
+04:37:39 | INFO: glTF import finished in 1.73s
+[hero_body   2.3s] hero rig with 132 clips
+04:37:39 | INFO: Data are loaded, start creating Blender stuff
+04:37:39 | INFO: Blender create Mesh node Armour_LP_lambert8_0
+04:37:39 | INFO: Blender create Mesh node Armour_LP_lambert9_0
+04:37:39 | INFO: Blender create Mesh node pasted__Armour_LP_surfaceShader1_0
+04:37:39 | INFO: Blender create Mesh node pasted__Axe_LP_surfaceShader2_0
+04:37:39 | INFO: Blender create Mesh node Axe_LP_lambert10_0
+04:37:39 | INFO: glTF import finished in 0.28s
+[hero_body   2.7s] imported 12 objects from A:/Python/woa/work/downloads/sf_heroes/bulky_knight.glb
+[hero_body   2.7s]   dropped piece Axe_LP_lambert10_0 ( lambert10 )
+[hero_body   2.7s]   dropped piece pasted__Armour_LP_surfaceShader1_0 ( surfaceShader1 )
+[hero_body   2.7s]   dropped piece pasted__Axe_LP_surfaceShader2_0 ( surfaceShader2 )
+[hero_body   2.7s] kept 2 mesh pieces (26947 faces), rig: none
+[hero_body   2.7s] joined 2 pieces into one mesh (26947 faces)
+[hero_body   2.7s] scaled x27.429 to 1.950 m
+[hero_body   2.7s]   joint hips         (0.0, 0.0, 0.626) -> (0.0, 0.0, 0.832)
+[hero_body   2.7s]   joint head         (0.0, -0.016, 1.668) -> (0.0, -0.016, 1.942)
+[hero_body   2.7s]   joint upper_arm.L  (0.261, -0.005, 1.49) -> (0.379, -0.005, 1.257)
+[hero_body   2.7s]   joint hand.L       (0.433, -0.343, 1.262) -> (0.447, -0.439, 1.262)
+[hero_body   2.7s]   joint thigh.L      (0.236, 0.0, 0.598) -> (0.255, -0.027, 0.283)
+[hero_body   2.7s]   joint foot.L       (0.261, 0.022, 0.077) -> (0.261, -0.137, 0.036)
+[hero_body   2.7s]   native upper_arm.L  (0.259, -0.009, 1.476) -> (0.377, -0.009, 1.243) (model (0.261, -0.005, 1.49))
+[hero_body   2.7s]   native forearm.L    (0.377, -0.009, 1.243) -> (0.432, -0.346, 1.248) (model (0.379, -0.005, 1.257))
+[hero_body   2.7s]   native hand.L       (0.432, -0.346, 1.248) -> (0.44, -0.399, 1.248) (model (0.433, -0.343, 1.262))
+[hero_body   2.7s]   native thigh.L      (0.236, -0.0, 0.598) -> (0.255, -0.027, 0.283) (model (0.236, 0.0, 0.598))
+Warning: Bone Heat Weighting: failed to find solution for one or more bones
+[hero_body   3.1s]   Armour_LP_lambert8_0: automatic weights on 0.0% of vertices
+[hero_body   3.9s]   weight stand-in (voxel 2.0 cm): 14590 faces, 1 islands kept, automatic weights on 100.0%
+[hero_body   3.9s]     dominant bone per stand-in vertex: {'chest': 1135, 'foot.L': 228, 'foot.R': 241, 'forearm.L': 667, 'forearm.R': 423, 'hand.L': 202, 'hand.R': 275, 'head': 1163, 'neck': 81, 'shin.L': 421, 'shin.R': 429, 'shoulder.L': 1094, 'shoulder.R': 1054, 'spine': 2729, 'thigh.L': 1425, 'thigh.R': 1432, 'upper_arm.L': 689, 'upper_arm.R': 898}
+[hero_body   5.1s]   island gating: 176 pieces, 41 kept to their nearest limb
+[hero_body   5.2s] mesh: 26947 faces -> 26947 triangles
+[hero_body   5.4s] reach: 4481 vertices freed from limbs too far away
+[hero_body   5.4s] cloth: 469 hanging vertices follow the hips more than the legs
+[hero_body   5.5s] arms: 9 hand and forearm vertices freed from the trunk and legs
+[hero_body   5.6s] smoothed all weights (4 passes)
+[hero_body   5.8s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[texops]   hue remap 345:42:45:0.35:3.2 on 100.0% of texels
+[texops]   hue remap 345:42:45:0.35:3.2 on 99.5% of texels
+[hero_body   7.4s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   7.5s] unmix: 2656 vertices made wholly arm or body, 334 edges split (353 new vertices)
+Info: 7344 vertex weights limited
+[hero_body   8.7s] arm split: {'arm_left': 2893, 'arm_right': 3214, 'patches_moved': 11093, 'edges_split': 610, 'new_vertices': 809, 'reweighted': 3963}
+[hero_body  12.7s] retargeted 132 clips (4216 frames) onto the native rest in 4.0s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:37:49 | INFO: Starting glTF 2.0 export
+04:37:49 | INFO: Extracting primitive: emelrich
+04:37:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:37:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:37:50 | INFO: Primitives created: 2
+04:38:07 | INFO: Finished glTF 2.0 export in 17.271158456802368 s
+
+[hero_body  30.2s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/emelrich.glb (9.3 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

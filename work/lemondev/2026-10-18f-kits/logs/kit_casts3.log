@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 7: no winner at 30:00, 228064 ms
+  ezee       L12 K/D/A 6/12/8 LH  29  casts { "dark_stomp": 25, "tainted_touch": 19, "leap_strike": 8, "unholy_might": 5 }
+  azrin      L16 K/D/A 18/6/2 LH 102  casts { "touch_of_ember": 49, "fiery_javelin": 34, "spirit_of_fire": 27, "divine_smite": 10 }
+  kragg      L14 K/D/A 5/9/13 LH  18  casts { "iron_grip": 29, "repel": 16, "magnet_field": 6 }
+  blau       L14 K/D/A 3/7/14 LH  41  casts { "bounce_shot": 27, "lay_trap": 16, "summon_boulders": 12, "place_turret": 17 }
+  tock       L12 K/D/A 0/8/14 LH  33  casts { "time_bolt": 42, "rewind": 6, "slow_field": 11, "stop_time": 4, "fast_forward": 2 }
+  airah      L14 K/D/A 13/3/16 LH  45  casts { "gust": 38, "tailwind": 27, "wind_wall": 14, "hurricane": 7 }  | hurricane_end 7
+  burak      L14 K/D/A 6/8/13 LH  40  casts { "axe_throw": 28, "reckless_swing": 29, "berserk": 6 }  | axe_leap 10, unstoppable 5, berserk_cleared 4
+  emelrich   L14 K/D/A 7/8/6 LH  41  casts { "overhead_cut": 16, "sweep": 34, "steel_stance": 26, "giant_swing": 10 }  | windup 26
+  feran      L15 K/D/A 6/7/11 LH  56  casts { "joke_box": 33, "knife_juggle": 31, "shuffle": 5, "swap": 3 }  | joke_box_pop 33
+  ghorman    L14 K/D/A 9/7/14 LH   5  casts { "tame": 36, "roar": 22, "beast_form": 7, "blessing_of_the_beast_king": 11 }  | tame 36, maul 9
+WARNING: 5581 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 21 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

@@ -164,6 +164,16 @@ func update_projectiles() -> void:
 			continue
 		var to: Vector2 = t.pos - p.pos
 		var step: float = p.speed * C.DT
+		if not w.abilities.kits5.walls.is_empty():
+			# Airah's Wind Wall: an enemy ranged attack that touches it stops there
+			var nxt: Vector2 = p.pos + to.normalized() * minf(step, to.length())
+			var stop := w.abilities.kits5.wall_hit(int(p.snap.team), p.pos, nxt)
+			if stop != Vector2.INF:
+				w.projectiles.remove_at(i)
+				w.events.append({"t": "projectile_end", "id": p.id, "hit": false, "miss": true, "pos": stop,
+					"ground": true, "wall": true})
+				w.events.append({"t": "wind_wall_block", "pos": stop, "src": int(p.src)})
+				continue
 		if to.length() <= step + t.hull * 0.5:
 			w.projectiles.remove_at(i)
 			var landed := land_attack(p.snap, t)
@@ -226,7 +236,10 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	dmg += float(s.get("burst", 0.0)) + float(s.get("sneak", 0.0))
 	if s.mod != "":
 		dmg += w.abilities.attack_modifier_damage(s, t)
-	var bash := w.items.roll_bash(s, t)
+	# Beast Form's maul is that attack's bash (bashes never stack); else the items roll
+	var bash := w.abilities.kits6.maul(s, t)
+	if bash.is_empty():
+		bash = w.items.roll_bash(s, t)
 	if not bash.is_empty():
 		dmg += float(bash.damage)
 	dmg *= maxf(0.0, 1.0 + float(s.get("out_pct", 0.0)))
@@ -274,6 +287,8 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.kits2.on_attack_landed(s, t)
 	if bool(s.get("soul", false)) and t.team != s.team:
 		w.abilities.kits4.on_attack_landed(s, t, base_dmg)
+	if bool(s.hero) and t.team != s.team:
+		w.abilities.kits5.on_attack_landed(s, t, base_dmg)
 	if bool(s.hero):
 		w.items.on_attack_landed(s, t, base_dmg, pierce)
 	elif src != null and src.alive:
@@ -291,6 +306,17 @@ func _evaded(s: Dictionary, t: SimUnit) -> bool:
 		return false
 	if t.evasion > 0.0 and w.status.roll(t, "evasion", t.evasion):
 		return true
+	# Feran's Pie (Dota's blind): the attacker misses a share of its attacks
+	var src_b := w.get_unit(int(s.src))
+	if src_b != null and not src_b.modifiers.is_empty():
+		var bl := SimKits6.blind(src_b)
+		if bl > 0.0 and w.status.roll(src_b, "blind", bl):
+			return true
+	# Airah's Tailwind: ranged attacks against the unit are blown aside
+	if bool(s.ranged) and not t.modifiers.is_empty():
+		var rm := SimKits5.ranged_miss(t)
+		if rm > 0.0 and w.status.roll(t, "tailwind", rm):
+			return true
 	if bool(s.ranged) and not bool(s.get("flying", false)) and int(s.level_h) < w.map.level_at(t.pos):
 		var src := w.get_unit(s.src)
 		if src != null:
@@ -440,7 +466,9 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	match dtype:
 		C.DamageType.PHYSICAL:
 			if not opts.get("ignore_armor", false):
-				amount *= C.armor_multiplier(t.armor)
+				# Giant Swing ignores a share of the armor (only positive armor is ignored)
+				var ign := float(opts.get("armor_ignore", 0.0))
+				amount *= C.armor_multiplier(t.armor * (1.0 - clampf(ign, 0.0, 1.0)) if t.armor > 0.0 else t.armor)
 		C.DamageType.MAGICAL:
 			if t.is_building():
 				return 0.0
@@ -450,6 +478,13 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		var loss := t.defense_loss()
 		if loss > 0.0:
 			amount *= 1.0 + loss
+	if not t.modifiers.is_empty() and t.is_hero():
+		# Reckless Swing: Burak takes more of everything; Steel Stance: Ser Emelrich blocks blows from his front
+		var more := SimKits5.damage_taken(t)
+		if more != 0.0:
+			amount *= maxf(0.0, 1.0 + more)
+		if src_team != t.team and not reflected:
+			amount *= w.abilities.kits5.front_block(t, w.get_unit(src_id), key, is_attack)
 	if t.is_building() and t.backdoor_active and src_team != t.team:
 		amount *= 1.0 - C.BACKDOOR_DAMAGE_REDUCTION
 		t.backdoor_pool += amount
@@ -471,8 +506,13 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		amount = w.orbs.absorb(t, amount, src_hero, dtype == C.DamageType.MAGICAL)
 	if opts.get("non_lethal", false):
 		amount = clampf(amount, 0.0, maxf(0.0, t.hp - 1.0))
+	# Berserk holds half of every blow back (it returns later as pure damage)
+	if t.is_hero() and src_team != t.team and not t.modifiers.is_empty():
+		amount = w.abilities.kits5.hold_damage(t, amount, key)
 	amount = minf(amount, t.hp)
 	t.hp -= amount
+	if t.ability_level.has("rage") and amount > 0.0:
+		w.abilities.kits5.on_damaged(t, amount, w.get_unit(src_id))
 	w.status.on_damage(t, amount)
 	var src := w.get_unit(src_id)
 	# Death Scythe: 50% lifesteal from the damage dealt when it triggers
@@ -614,9 +654,9 @@ func _creep_death(t: SimUnit, killer: SimUnit, deny: bool) -> void:
 			if st != null and st != hero_killer and st.team == hero_killer.team:
 				give_gold(st, int(round(g * C.STACKER_SHARE)), false, st.pos)
 				give_xp(st, floorf(_xp_value(t) * C.STACKER_SHARE))
-		give_gold(hero_killer, g, false, t.pos)
+		var paid := give_gold(hero_killer, g, false, t.pos)
 		hero_killer.last_hits += 1
-		w.events.append({"t": "last_hit", "u": hero_killer.id, "target": t.id, "gold": g})
+		w.events.append({"t": "last_hit", "u": hero_killer.id, "target": t.id, "gold": paid})
 	# flagbearers pay their bounty to every enemy hero around them
 	if t.kind == K.CREEP_FLAG and killer != null and killer.team != t.team:
 		for h in w.heroes:
@@ -646,10 +686,13 @@ func _share_xp(t: SimUnit, amount: float, team: int, always: SimUnit = null) -> 
 	for h in near:
 		give_xp(h, each)
 
-func give_xp(h: SimUnit, amount: float) -> void:
+## Earned experience is scaled by the hero's own bonus (Unfair bots) and the match's rate; `raw` (Debug panel) is not.
+## Returns the experience given.
+func give_xp(h: SimUnit, amount: float, raw := false) -> float:
 	if amount <= 0.0 or h.level >= C.MAX_LEVEL:
-		return
-	amount *= h.xp_mult
+		return 0.0
+	if not raw:
+		amount *= h.xp_mult * w.xp_rate
 	h.xp += amount
 	w.events.append({"t": "xp", "u": h.id, "amount": amount})
 	var lvl := C.xp_level(h.xp)
@@ -658,12 +701,16 @@ func give_xp(h: SimUnit, amount: float) -> void:
 		h.ability_points += 1
 		h.refresh_stats()
 		w.events.append({"t": "level_up", "u": h.id, "level": h.level})
+	return amount
 
-func give_gold(h: SimUnit, amount: int, reliable: bool, at: Vector2) -> void:
+## Earned gold is scaled like experience (give_xp); `raw` gifts (Debug panel) are not. Returns the gold given (what
+## popups and the kill feed show).
+func give_gold(h: SimUnit, amount: int, reliable: bool, at: Vector2, raw := false) -> int:
 	if amount == 0:
-		return
-	if amount > 0 and h.gold_mult != 1.0:
-		amount = int(round(amount * h.gold_mult))
+		return 0
+	var mult := h.gold_mult * w.gold_rate
+	if amount > 0 and not raw and mult != 1.0:
+		amount = int(round(amount * mult))
 	if reliable:
 		h.gold_reliable += amount
 	else:
@@ -671,6 +718,7 @@ func give_gold(h: SimUnit, amount: int, reliable: bool, at: Vector2) -> void:
 	if amount > 0:
 		h.gold_earned += amount
 	w.events.append({"t": "gold", "u": h.id, "amount": amount, "pos": at})
+	return amount
 
 func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 	t.deaths += 1
@@ -700,11 +748,11 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 		if not w.first_blood:
 			w.first_blood = true
 			fb = C.FIRST_BLOOD_GOLD
-		give_gold(credit, int(base) + fb, false, t.pos)
+		var paid := give_gold(credit, int(base) + fb, false, t.pos)
 		credit.multi_kill = credit.multi_kill + 1 if w.time - credit.last_kill_at <= 18.0 else 1
 		credit.last_kill_at = w.time
 		w.events.append({"t": "hero_kill", "u": credit.id, "victim": t.id, "first_blood": fb > 0, "streak": credit.streak,
-			"multi": credit.multi_kill, "ended_streak": victim_streak, "gold": int(base) + fb})
+			"multi": credit.multi_kill, "ended_streak": victim_streak, "gold": paid})
 	else:
 		# no hero involved: the kill gold is split among the whole enemy team
 		var team_heroes := w.heroes.filter(func(h): return h.team == enemy_team)

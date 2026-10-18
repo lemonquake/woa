@@ -1,0 +1,191 @@
+== knight.glb (dawn_melee, dawn_flag): 17 shapes, height 1.94 m
+   hips       -0.16-0.09 m along, 0.180 x 0.111
+   chest      0.01-0.22 m along, 0.148 x 0.131
+   head       0.00-0.33 m along, 0.094 x 0.117
+   forearm.L  0.03-0.24 m along, 0.033 x 0.038
+   thigh.L    0.00-0.43 m along, 0.058 x 0.092
+  idle_shield        before: worst  1.6 cm (weapon.R in chest f66), 63/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  5.1 cm (weapon.R in chest f16), 9/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 36.7 cm (weapon.L in floor f46), 19/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_1            before: worst 15.4 cm (elbow.R in chest f13), 13/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_2            before: worst 10.7 cm (elbow.R in chest f3), 9/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_3            before: worst 19.0 cm (elbow.R in chest f13), 12/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/knight_collide.res (OK); worst 36.7 cm -> 0.0 cm
+== mage.glb (dawn_ranged): 17 shapes, height 1.89 m
+   hips       -0.10-0.10 m along, 0.157 x 0.112
+   chest      0.03-0.22 m along, 0.261 x 0.161
+   head       0.00-0.28 m along, 0.079 x 0.087
+   forearm.L  0.08-0.26 m along, 0.060 x 0.060
+   thigh.L    0.00-0.42 m along, 0.095 x 0.164
+  idle_staff         before: worst  8.0 cm (elbow.L in chest f77), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst 10.8 cm (weapon.R in chest f18), 21/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 113.7 cm (weapon.R in floor f46), 47/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 23.5 cm (elbow.L in chest f15), 17/17 frames over 1 cm | after: worst  0.8 cm (elbow.L in chest f7), 0 frames
+  staff_2            before: worst 22.1 cm (elbow.L in chest f11), 18/18 frames over 1 cm | after: worst  3.7 cm (elbow.L in chest f15), 10 frames
+  wrote res://assets/characters/units/anim_fixed/mage_collide.res (OK); worst 113.7 cm -> 3.7 cm
+== rune_golem.glb (dawn_siege): 16 shapes, height 2.93 m
+   hips       -0.34-0.17 m along, 0.375 x 0.258
+   chest      0.00-0.72 m along, 0.408 x 0.409
+   head       0.00-0.26 m along, 0.159 x 0.195
+   forearm.L  0.03-0.60 m along, 0.194 x 0.221
+   thigh.L    0.00-0.52 m along, 0.210 x 0.196
+  idle               before: worst  0.0 cm (-), 0/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  walk               before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 36.3 cm (hand.R in floor f46), 26/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_slam          before: worst 51.4 cm (elbow.R in chest f21), 28/43 frames over 1 cm | after: worst 20.7 cm (hand.L in hand.R f16), 5 frames
+  wrote res://assets/characters/units/anim_fixed/rune_golem_collide.res (OK); worst 51.4 cm -> 20.7 cm
+== ghoul_brute.glb (dusk_melee): 17 shapes, height 2.01 m
+   hips       -0.07-0.05 m along, 0.240 x 0.193
+   chest      0.03-0.26 m along, 0.245 x 0.141
+   head       0.00-0.07 m along, 0.064 x 0.065
+   forearm.L  0.00-0.23 m along, 0.064 x 0.064
+   thigh.L    0.12-0.49 m along, 0.083 x 0.107
+  idle               before: worst  2.4 cm (elbow.L in spine f109), 121/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  9.0 cm (hand.R in neck f18), 10/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 27.6 cm (weapon.R in floor f46), 33/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 13.7 cm (elbow.L in hand.R f1), 7/19 frames over 1 cm | after: worst  5.3 cm (elbow.R in chest f6), 7 frames
+  wrote res://assets/characters/units/anim_fixed/ghoul_brute_collide.res (OK); worst 27.6 cm -> 5.3 cm
+== necromancer.glb (dusk_ranged): 17 shapes, height 2.05 m
+   hips       -0.27-0.10 m along, 0.201 x 0.136
+   chest      0.01-0.23 m along, 0.143 x 0.120
+   head       0.00-0.25 m along, 0.065 x 0.074
+   forearm.L  0.00-0.30 m along, 0.067 x 0.075
+   thigh.L    0.00-0.46 m along, 0.107 x 0.155
+  idle_staff         before: worst 11.7 cm (weapon.R in thigh.R f13), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  7.0 cm (hand.L in hand.R f10), 8/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 116.1 cm (weapon.R in floor f46), 37/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 39.8 cm (fore.L in hand.R f5), 17/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  3.9 cm (hand.L in thigh.L f15), 2/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/necromancer_collide.res (OK); worst 116.1 cm -> 0.0 cm
+== warband_chieftain.glb (dusk_flag): 17 shapes, height 3.50 m
+   hips       -0.27-0.10 m along, 0.230 x 0.224
+   chest      0.09-0.36 m along, 0.270 x 0.230
+   head       0.00-0.30 m along, 0.132 x 0.118
+   forearm.L  0.02-0.38 m along, 0.064 x 0.070
+   thigh.L    0.00-0.56 m along, 0.145 x 0.232
+  idle               before: worst  0.0 cm (-), 0/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  7.8 cm (hand.R in head f18), 6/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 28.6 cm (weapon.R in floor f46), 22/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst 17.0 cm (weapon.R in hips f14), 8/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 55.2 cm (elbow.L in hand.R f2), 7/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/warband_chieftain_collide.res (OK); worst 55.2 cm -> 0.0 cm
+== obsidian_golem.glb (dusk_siege): 16 shapes, height 3.18 m
+   hips       -0.31-0.18 m along, 0.425 x 0.244
+   chest      0.00-0.74 m along, 0.457 x 0.384
+   head       0.00-0.53 m along, 0.154 x 0.182
+   forearm.L  0.02-0.62 m along, 0.212 x 0.207
+   thigh.L    0.03-0.49 m along, 0.208 x 0.193
+  idle               before: worst  0.0 cm (-), 0/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  walk               before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 33.0 cm (hand.R in floor f46), 27/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_slam          before: worst 51.0 cm (elbow.L in chest f21), 29/43 frames over 1 cm | after: worst 22.4 cm (hand.L in hand.R f17), 8 frames
+  wrote res://assets/characters/units/anim_fixed/obsidian_golem_collide.res (OK); worst 51.0 cm -> 22.4 cm
+== goblin_skulker.glb (mudling): 17 shapes, height 1.13 m
+   hips       -0.09-0.04 m along, 0.114 x 0.069
+   chest      0.03-0.15 m along, 0.083 x 0.103
+   head       0.00-0.22 m along, 0.184 x 0.118
+   forearm.L  0.00-0.21 m along, 0.021 x 0.022
+   thigh.L    0.06-0.21 m along, 0.068 x 0.087
+  idle               before: worst  1.2 cm (weapon.R in thigh.R f69), 7/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst 12.6 cm (weapon.R in head f15), 9/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 18.0 cm (weapon.R in floor f46), 26/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_1           before: worst  0.7 cm (weapon.R in hips f3), 0/14 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_2           before: worst  0.9 cm (elbow.R in spine f2), 0/14 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/goblin_skulker_collide.res (OK); worst 18.0 cm -> 0.0 cm
+== goblin_sapper.glb (mudling_digger): 17 shapes, height 1.26 m
+   hips       -0.15-0.04 m along, 0.105 x 0.084
+   chest      0.00-0.15 m along, 0.152 x 0.156
+   head       0.00-0.20 m along, 0.094 x 0.096
+   forearm.L  0.00-0.21 m along, 0.024 x 0.029
+   thigh.L    0.06-0.21 m along, 0.045 x 0.042
+  idle               before: worst  1.2 cm (weapon.R in thigh.R f69), 7/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  7.8 cm (weapon.R in head f15), 12/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 18.0 cm (weapon.R in floor f46), 27/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_1           before: worst  3.0 cm (weapon.R in hips f3), 5/14 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_2           before: worst  3.8 cm (elbow.R in spine f2), 5/14 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/goblin_sapper_collide.res (OK); worst 18.0 cm -> 0.0 cm
+== goblin_summoner.glb (mudling_foreman): 17 shapes, height 1.31 m
+   hips       -0.13-0.05 m along, 0.145 x 0.082
+   chest      0.03-0.14 m along, 0.076 x 0.077
+   head       0.00-0.35 m along, 0.107 x 0.083
+   forearm.L  0.00-0.21 m along, 0.027 x 0.024
+   thigh.L    0.06-0.21 m along, 0.039 x 0.039
+  idle               before: worst  6.5 cm (fore.L in hips f109), 121/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  9.7 cm (hand.R in head f18), 6/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst  8.9 cm (hand.R in floor f23), 31/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 12.1 cm (fore.L in hips f3), 16/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  4.3 cm (fore.L in hips f0), 3/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/goblin_summoner_collide.res (OK); worst 12.1 cm -> 0.0 cm
+== dire_wolf.glb: no upper_arm.L bone, skipped
+== orc_reaver.glb (strider): 17 shapes, height 2.08 m
+   hips       -0.13-0.06 m along, 0.168 x 0.134
+   chest      0.05-0.27 m along, 0.154 x 0.179
+   head       0.00-0.29 m along, 0.094 x 0.094
+   forearm.L  0.05-0.30 m along, 0.048 x 0.050
+   thigh.L    0.00-0.45 m along, 0.104 x 0.168
+  idle               before: worst  0.0 cm (-), 0/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  6.8 cm (weapon.R in head f17), 8/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 25.6 cm (weapon.R in floor f46), 25/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst  8.8 cm (elbow.R in chest f15), 7/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_3              before: worst  2.7 cm (weapon.R in chest f2), 1/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/orc_reaver_collide.res (OK); worst 25.6 cm -> 0.0 cm
+== orc_shaman.glb (strider_warlord): 17 shapes, height 2.14 m
+   hips       -0.26-0.07 m along, 0.184 x 0.154
+   chest      0.05-0.27 m along, 0.138 x 0.124
+   head       0.00-0.41 m along, 0.162 x 0.095
+   forearm.L  0.14-0.28 m along, 0.054 x 0.053
+   thigh.L    0.00-0.44 m along, 0.082 x 0.136
+  idle               before: worst  2.3 cm (elbow.R in spine f69), 103/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst 15.4 cm (weapon.R in head f1), 11/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 115.1 cm (weapon.R in floor f46), 37/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 28.4 cm (hand.L in hand.R f12), 16/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  1.6 cm (elbow.R in spine f0), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/orc_shaman_collide.res (OK); worst 115.1 cm -> 0.0 cm
+== mire_troll.glb (hill_troll): 17 shapes, height 2.82 m
+   hips       -0.31-0.10 m along, 0.286 x 0.304
+   chest      0.11-0.60 m along, 0.384 x 0.322
+   head       0.00-0.05 m along, 0.082 x 0.087
+   forearm.L  0.00-0.72 m along, 0.112 x 0.108
+   thigh.L    0.16-0.58 m along, 0.154 x 0.312
+  idle               before: worst  5.1 cm (elbow.R in chest f29), 121/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  0.0 cm (-), 0/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 44.6 cm (hand.R in floor f46), 33/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst 19.3 cm (hand.L in hand.R f1), 11/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 18.2 cm (elbow.R in chest f2), 9/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/mire_troll_collide.res (OK); worst 44.6 cm -> 0.0 cm
+== ogre_crusher.glb (ogre_brute): 17 shapes, height 3.00 m
+   hips       -0.39-0.03 m along, 0.331 x 0.310
+   chest      0.10-0.54 m along, 0.238 x 0.357
+   head       0.00-0.27 m along, 0.121 x 0.143
+   forearm.L  0.27-0.60 m along, 0.108 x 0.109
+   thigh.L    0.22-0.64 m along, 0.168 x 0.342
+  idle               before: worst  0.0 cm (-), 0/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst 10.4 cm (hand.R in chest f16), 7/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst  5.1 cm (hand.R in floor f20), 11/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_slam          before: worst 37.2 cm (fore.L in thigh.L f29), 26/43 frames over 1 cm | after: worst  8.2 cm (hand.R in upper_arm.L f23), 1 frames
+  gs_1               before: worst 44.3 cm (elbow.L in chest f21), 22/22 frames over 1 cm | after: worst  1.4 cm (hand.R in chest f2), 1 frames
+  wrote res://assets/characters/units/anim_fixed/ogre_crusher_collide.res (OK); worst 44.3 cm -> 8.2 cm
+== cinder_imp.glb (cinder_wyrmling): 17 shapes, height 1.09 m
+   hips       -0.13-0.06 m along, 0.075 x 0.282
+   chest      0.02-0.15 m along, 0.165 x 0.121
+   head       0.00-0.19 m along, 0.074 x 0.064
+   forearm.L  0.09-0.19 m along, 0.017 x 0.017
+   thigh.L    0.03-0.21 m along, 0.028 x 0.048
+  idle               before: worst  1.3 cm (elbow.R in chest f29), 82/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst  7.5 cm (weapon.R in head f15), 13/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 19.5 cm (weapon.R in floor f46), 25/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_1             before: worst  1.6 cm (weapon.R in hand.L f14), 2/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  1.1 cm (elbow.R in chest f0), 3/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/units/anim_fixed/cinder_imp_collide.res (OK); worst 19.5 cm -> 0.0 cm
+== magma_golem.glb (elder_cinder_wyrm): 16 shapes, height 2.67 m
+   hips       -0.34-0.11 m along, 0.330 x 0.211
+   chest      0.00-0.62 m along, 0.463 x 0.400
+   head       0.00-0.31 m along, 0.112 x 0.118
+   forearm.L  0.02-0.52 m along, 0.196 x 0.209
+   thigh.L    0.00-0.46 m along, 0.203 x 0.199
+  idle               before: worst  2.0 cm (elbow.R in chest f29), 64/121 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  run                before: worst 14.0 cm (fore.R in chest f18), 12/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 34.9 cm (hand.R in floor f46), 31/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_heavy         before: worst 44.8 cm (hand.R in chest f12), 15/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_slam          before: worst 56.5 cm (elbow.R in chest f21), 37/43 frames over 1 cm | after: worst 25.7 cm (hand.L in hand.R f17), 14 frames
+  wrote res://assets/characters/units/anim_fixed/magma_golem_collide.res (OK); worst 56.5 cm -> 25.7 cm

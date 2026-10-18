@@ -1,0 +1,88 @@
+04:38:41 | INFO: Data are loaded, start creating Blender stuff
+04:38:41 | INFO: Blender create Mesh node hero
+04:38:42 | INFO: glTF import finished in 1.64s
+[hero_body   2.2s] hero rig with 132 clips
+04:38:42 | INFO: Data are loaded, start creating Blender stuff
+04:38:42 | INFO: Blender create Mesh node Axe L_Axe_0
+04:38:42 | INFO: Blender create Mesh node Axe R_Axe_0
+04:38:42 | INFO: Blender create Mesh node Berserker_Body_0
+04:38:42 | INFO: Blender create Mesh node Berserker_Head_0
+04:38:43 | INFO: Blender create Mesh node Eyes_Eyes_0
+04:38:43 | INFO: Blender create Mesh node Beard_HairCrads_Beard_0
+04:38:43 | INFO: Blender create Mesh node Beard_Ring_Beard_Ring_0
+04:38:43 | INFO: Blender create Mesh node Chain_Chain_0
+04:38:43 | INFO: Blender create Mesh node Saagh_Boot_0
+04:38:43 | INFO: Blender create Mesh node Knife_Knife_0
+04:38:43 | INFO: Blender create Mesh node Skull Holder Rope_Skull_0
+04:38:43 | INFO: Blender create Mesh node Charm Holder Rope_Charm_0
+04:38:43 | INFO: Blender create Mesh node Horn_Horn_0
+04:38:43 | INFO: Blender create Mesh node Pouch Holder_Pouch_0
+04:38:43 | INFO: Blender create Mesh node Belt Buckle_Belts_0
+04:38:43 | INFO: Blender create Mesh node Leather_Leather_0
+04:38:43 | INFO: Blender create Mesh node Pants_Pants_0
+04:38:43 | INFO: glTF import finished in 0.69s
+[hero_body   3.1s] imported 39 objects from A:/Python/woa/work/downloads/sf_heroes/burak.glb
+[hero_body   3.1s]   dropped piece Axe L_Axe_0 ( material )
+[hero_body   3.1s]   dropped piece Axe R_Axe_0 ( material )
+[hero_body   3.1s]   dropped helper Icosphere
+[hero_body   3.1s] kept 15 mesh pieces (127642 faces), rig: Object_8 (161 bones)
+[hero_body   3.2s]   moved Object_14 by (0.0, 0.0, -0.0820000022649765)
+[hero_body   3.2s]   moved Object_16 by (0.0, 0.0, -0.0820000022649765)
+[hero_body   3.2s]   moved Object_18 by (0.0, 0.0, -0.0820000022649765)
+[hero_body   3.2s] joined 15 pieces into one mesh (127642 faces)
+[hero_body   3.2s] scaled x1.064 to 1.880 m
+[hero_body   3.2s]   joint hips         (0.0, 0.0, 1.072) -> (0.0, 0.0, 1.178)
+[hero_body   3.2s]   joint head         (0.0, -0.011, 1.668) -> (0.0, -0.011, 1.881)
+[hero_body   3.2s]   joint upper_arm.L  (0.202, 0.0, 1.519) -> (0.357, -0.053, 1.29)
+[hero_body   3.2s]   joint hand.L       (0.484, -0.138, 1.066) -> (0.519, -0.17, 0.933)
+[hero_body   3.2s]   joint thigh.L      (0.106, 0.0, 1.029) -> (0.128, -0.021, 0.561)
+[hero_body   3.2s]   joint foot.L       (0.149, 0.021, 0.103) -> (0.154, -0.085, 0.034)
+[hero_body   3.2s]   native upper_arm.L  (0.198, 0.001, 1.497) -> (0.352, -0.052, 1.269) (model (0.202, 0.0, 1.519))
+[hero_body   3.2s]   native forearm.L    (0.352, -0.052, 1.269) -> (0.48, -0.137, 1.045) (model (0.357, -0.053, 1.29))
+[hero_body   3.2s]   native hand.L       (0.48, -0.137, 1.045) -> (0.499, -0.155, 0.972) (model (0.484, -0.138, 1.066))
+[hero_body   3.2s]   native thigh.L      (0.106, 0.0, 1.029) -> (0.128, -0.021, 0.561) (model (0.106, 0.0, 1.029))
+Warning: Bone Heat Weighting: failed to find solution for one or more bones
+[hero_body   4.3s]   Object_11: automatic weights on 0.0% of vertices
+[hero_body   4.9s]   weight stand-in (voxel 1.9 cm): 10900 faces, 1 islands kept, automatic weights on 100.0%
+[hero_body   4.9s]     dominant bone per stand-in vertex: {'chest': 517, 'foot.L': 190, 'foot.R': 192, 'forearm.L': 366, 'forearm.R': 365, 'hand.L': 113, 'hand.R': 109, 'head': 768, 'hips': 210, 'neck': 92, 'shin.L': 851, 'shin.R': 854, 'shoulder.L': 293, 'shoulder.R': 356, 'spine': 682, 'thigh.L': 1979, 'thigh.R': 1689, 'toe.L': 144, 'toe.R': 144, 'upper_arm.L': 491, 'upper_arm.R': 493}
+[hero_body   8.2s]   island gating: 1498 pieces, 1401 kept to their nearest limb
+[hero_body   9.6s] mesh: 127642 faces -> 42000 triangles
+[hero_body  10.5s] reach: 1267 vertices freed from limbs too far away
+[hero_body  10.5s] cloth: 1788 hanging vertices follow the hips more than the legs
+[hero_body  10.6s] arms: 0 hand and forearm vertices freed from the trunk and legs
+[hero_body  10.8s] smoothed all weights (4 passes)
+[hero_body  11.2s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body  11.2s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  11.4s]   rigid: 911 vertices on 1612 faces ride their bone only, split off along 91 border edges
+[hero_body  11.6s] unmix: 1274 vertices made wholly arm or body, 146 edges split (146 new vertices)
+Info: 5043 vertex weights limited
+[hero_body  14.0s] arm split: {'arm_left': 4899, 'arm_right': 4246, 'patches_moved': 23653, 'edges_split': 1112, 'new_vertices': 1348, 'reweighted': 8976}
+[hero_body  17.9s] retargeted 132 clips (4216 frames) onto the native rest in 3.9s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:38:58 | INFO: Starting glTF 2.0 export
+04:38:58 | WARNING: Mesh burak is not valid, and may be exported wrongly
+04:38:58 | INFO: Extracting primitive: burak
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:58 | INFO: Primitives created: 15
+04:39:18 | INFO: Finished glTF 2.0 export in 20.198755979537964 s
+
+[hero_body  38.2s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/burak.glb (63.0 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

@@ -1,0 +1,11 @@
+04:41:16 | INFO: Data are loaded, start creating Blender stuff
+04:41:16 | INFO: Blender create Mesh node burak
+04:41:17 | INFO: glTF import finished in 1.67s
+REMNANTS burak.glb              left L   350 R     0   torn edges L    0 R   36
+00:06.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\remnants_r1\burak_0.png'
+00:06.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\remnants_r1\burak_1.png'
+00:06.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\remnants_r1\burak_2.png'
+PNG A:\Python\woa\work\lemondev\2026-10-18e-mocap2\remnants_r1\burak_0.png;A:\Python\woa\work\lemondev\2026-10-18e-mocap2\remnants_r1\burak_1.png;A:\Python\woa\work\lemondev\2026-10-18e-mocap2\remnants_r1\burak_2.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

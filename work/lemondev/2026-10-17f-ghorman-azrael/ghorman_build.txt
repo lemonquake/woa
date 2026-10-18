@@ -1,0 +1,46 @@
+00:20:49 | INFO: Data are loaded, start creating Blender stuff
+00:20:49 | INFO: Blender create Mesh node hero
+00:20:51 | INFO: glTF import finished in 1.91s
+[hero_body   2.6s] hero rig with 132 clips
+[hero_body   2.7s] imported 15 objects from A:/Python/woa/work/ghorman_src/ghorman_src.blend
+[hero_body   2.7s] kept 15 mesh pieces (48287 faces), rig: none
+[hero_body   2.7s] joined 1 pieces into one mesh (17888 faces)
+[hero_body   2.7s] joined 14 pieces into one mesh (30399 faces)
+[hero_body   2.7s] estimated joints from the mesh (height 2.050)
+[hero_body   2.7s] scaled x1.000 to 2.050 m
+[hero_body   2.7s]   joint hips         (0.0, 0.0, 1.116) -> (0.0, -0.036, 1.23)
+[hero_body   2.7s]   joint head         (0.0, -0.043, 1.822) -> (0.0, -0.033, 2.05)
+[hero_body   2.7s]   joint upper_arm.L  (0.216, 0.002, 1.567) -> (0.626, -0.019, 1.59)
+[hero_body   2.7s]   joint hand.L       (1.005, -0.079, 1.592) -> (1.15, -0.083, 1.594)
+[hero_body   2.7s]   joint thigh.L      (0.196, -0.061, 1.071) -> (0.196, -0.061, 0.581)
+[hero_body   2.7s]   joint foot.L       (0.273, -0.066, 0.091) -> (0.273, -0.182, 0.028)
+[hero_body   2.7s]   native upper_arm.L  (0.216, 0.014, 1.542) -> (0.626, -0.007, 1.565) (model (0.216, 0.002, 1.567))
+[hero_body   2.7s]   native forearm.L    (0.626, -0.007, 1.565) -> (1.005, -0.067, 1.567) (model (0.626, -0.019, 1.59))
+[hero_body   2.7s]   native hand.L       (1.005, -0.067, 1.567) -> (1.085, -0.069, 1.569) (model (1.005, -0.079, 1.592))
+[hero_body   2.7s]   native thigh.L      (0.196, -0.045, 1.054) -> (0.196, -0.045, 0.565) (model (0.196, -0.061, 1.071))
+[hero_body   3.4s]   ghorman_body: automatic weights on 100.0% of vertices
+[hero_body   3.6s]   island gating: 1 pieces, 0 kept to their nearest limb
+[hero_body   4.4s]   gear_beard: weights from the skin under it (59 of 27189 vertices had no skin of their own part nearby)
+[hero_body   4.5s] mesh: 48287 faces -> 66714 triangles
+[hero_body   6.8s] reach: 12491 vertices freed from limbs too far away
+[hero_body   7.0s] arms: 0 hand and forearm vertices freed from the trunk and legs
+[hero_body   7.3s] smoothed all weights (4 passes)
+[hero_body   7.8s] smoothed weights at the shoulders, elbows, hips, knees and neck
+Info: 10524 vertex weights limited
+[hero_body  11.6s] retargeted 132 clips (4216 frames) onto the native rest in 3.7s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+00:21:00 | INFO: Starting glTF 2.0 export
+00:21:00 | INFO: Extracting primitive: ghorman
+00:21:01 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:21:01 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:21:01 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:21:01 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:21:01 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:21:01 | INFO: Primitives created: 7
+00:21:22 | INFO: Finished glTF 2.0 export in 21.84961771965027 s
+
+[hero_body  33.6s] wrote A:/Python/woa/assets/characters/heroes17/ghorman.glb (25.0 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

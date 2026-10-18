@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 37 models in 2580 ms
+match ready in 21884 ms
+PASS the match is watched (no You slot)
+PASS ten heroes (10)
+PASS no hero is a player's
+PASS a bot plays every hero
+PASS the Watch panel is shown
+PASS 150% experience and gold (1.50, 1.50)
+PASS a shop order from the watcher is refused
+PASS the watcher's orders change nothing
+PASS every bot says what it is doing (10)
+plans: Tock: Laning bottom, Froster: Laning mid, Blau: Laning bottom, Ghorman: Laning top, Sludge: Retreating, Caziel: Laning top, Azrin: Fighting Froster, Ezee: Laning bottom, Airah: Placing a ward, Ser Emelrich: Laning bottom
+sight cells: Ancient Light 6029, Black Sun 5276, both 9604, whole map 20736 of 20736
+PASS both teams' sight is the union of the two
+PASS whole map shows every cell
+PASS whole map shows every hero
+Black Sun heroes hidden from Ancient Light's sight: 3
+PASS Auto keeps the camera on the watched hero (44 px)
+PASS watching another hero switches the team shown
+PASS Follow hero keeps the camera on it (1 px)
+PASS Hero view shows the hero's team's sight
+PASS leaving Hero view puts back the sight chosen before
+PASS panning switches to the Free camera
+PASS Black Sun bots picked (5)
+PASS +1000 gold to every Black Sun bot (not scaled)
+PASS level up every bot by one
+PASS give an item to one bot
+PASS set one bot's skill
+PASS one bot stands still
+watch_probe: 24 passed, 0 failed
+WARNING: 3922 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 21 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

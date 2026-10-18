@@ -4,6 +4,8 @@ extends Control
 ## button calls a SimDebug helper; switches stay on until turned off. Built from standard controls with the game theme.
 ## The Bot Log section shows what each bot did (SimBotLog): thoughts, orders and where they came from, the skills and
 ## items it used, time in each mode, and its latest steps; Save Bot Log writes every bot's log to user://bot_log.txt.
+## The Bots section acts on every bot, one team's bots or one bot: gold, levels, refresh, respawn, kill, teleport,
+## items, skill level, stand still.
 
 const U = preload("res://src/ui/ui_kit.gd")
 const W := 420.0                           # content width (the frame adds its own margins round it)
@@ -22,6 +24,10 @@ var _bot_pick: OptionButton
 var _bot_text: Label
 var _bot_ids: Array = []                   # hero id per entry of _bot_pick (-1: every bot, summaries only)
 var _bot_refresh := 0.0
+var _ai_pick: OptionButton
+var _ai_keys: Array = []                   # per entry of _ai_pick: "all", "team0", "team1" or a hero id
+var _item_pick: OptionButton
+var _item_ids: Array = []
 
 func _ready() -> void:
 	theme = U.theme()
@@ -80,7 +86,7 @@ func _ready() -> void:
 		["Skip 5 minutes", func(): SimDebug.skip_time(_w(), 300.0); _say("Clock +5 min")],
 		["Use glyph", func(): _w().glyph(game.player_team, game.player_hero_id)],
 	])
-	_section(v, "Your hero")
+	_section(v, "Watched hero" if game.spectator else "Your hero")
 	_grid(v, [
 		["Level up", func(): SimDebug.level_up(_w(), _h()); _say("Level %d" % _h().level)],
 		["Level +5", func(): SimDebug.level_up(_w(), _h(), 5); _say("Level %d" % _h().level)],
@@ -91,6 +97,7 @@ func _ready() -> void:
 		["Respawn now", func(): SimDebug.respawn(_w(), _h())],
 		["Teleport to camera", func(): SimDebug.teleport(_w(), _h(), View.to2(game.camera.target))],
 	])
+	_bots_section(v)
 	_section(v, "Switches")
 	var sw := GridContainer.new()
 	sw.columns = 2
@@ -154,6 +161,111 @@ func _ready() -> void:
 	_bot_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_bot_text.custom_minimum_size = Vector2(W - 20, 0)
 	v.add_child(_bot_text)
+
+## Bots: commands for every bot, one team's bots or one bot (the picker on top).
+func _bots_section(v: VBoxContainer) -> void:
+	_section(v, "Bots")
+	_ai_pick = _option()
+	v.add_child(_ai_pick)
+	_grid(v, [
+		["+1000 gold", func(): _each_bot(func(h): SimDebug.gold(_w(), h, 1000), "+1000 gold")],
+		["+10000 gold", func(): _each_bot(func(h): SimDebug.gold(_w(), h, 10000), "+10000 gold")],
+		["Take all gold", func(): _each_bot(func(h): SimDebug.take_gold(_w(), h), "Gold taken")],
+		["Level up", func(): _each_bot(func(h): SimDebug.level_up(_w(), h), "Level up")],
+		["Level +5", func(): _each_bot(func(h): SimDebug.level_up(_w(), h, 5), "Level +5")],
+		["Max level", func(): _each_bot(func(h): SimDebug.level_up(_w(), h, 30), "Max level")],
+		["Refresh", func(): _each_bot(func(h): SimDebug.refresh(_w(), h), "Refreshed")],
+		["Respawn now", func(): _each_bot(func(h): SimDebug.respawn(_w(), h), "Respawned")],
+		["Kill", func(): _each_bot(func(h): SimDebug.kill(_w(), h, null), "Killed")],
+		["Teleport to camera", func(): _each_bot(func(h): SimDebug.teleport(_w(), h, View.to2(game.camera.target)), "Teleported")],
+		["Stand still", func(): _each_bot(func(h): SimDebug.set_bot_still(_w(), h, true), "Standing still")],
+		["Play again", func(): _each_bot(func(h): SimDebug.set_bot_still(_w(), h, false), "Playing again")],
+	])
+	var srow := HBoxContainer.new()
+	srow.add_theme_constant_override("separation", 6)
+	var sl := Label.new()
+	sl.text = "Skill"
+	sl.add_theme_font_size_override("font_size", 14)
+	srow.add_child(sl)
+	var skill := _option()
+	skill.add_item("Set skill")
+	for n in GameSettings.SKILL_NAMES:
+		skill.add_item(n)
+	skill.item_selected.connect(func(i):
+		if i > 0:
+			var id: String = GameSettings.SKILLS[i - 1]
+			_each_bot(func(h): SimDebug.set_bot_skill(_w(), h, id), "Skill: " + GameSettings.SKILL_NAMES[i - 1])
+		skill.select(0))
+	srow.add_child(skill)
+	v.add_child(srow)
+	var irow := HBoxContainer.new()
+	irow.add_theme_constant_override("separation", 6)
+	_item_pick = _option()
+	var names: Array = []
+	for id in SimData.items():
+		var d: Dictionary = SimData.item(id)
+		if String(d.category) == "recipe" or int(d.cost) <= 0:
+			continue
+		names.append([String(d.name), String(id)])
+	names.sort_custom(func(a, b): return a[0] < b[0])
+	for n in names:
+		_item_pick.add_item(n[0])
+		_item_ids.append(n[1])
+	irow.add_child(_item_pick)
+	var give := Button.new()
+	give.text = "Give item"
+	give.focus_mode = Control.FOCUS_NONE
+	give.custom_minimum_size = Vector2(110, 32)
+	give.add_theme_font_size_override("font_size", 14)
+	give.pressed.connect(func():
+		if _item_pick.selected < 0:
+			return
+		var iid: String = _item_ids[_item_pick.selected]
+		_each_bot(func(h): SimDebug.give_item(_w(), h, iid), "Gave " + _item_pick.get_item_text(_item_pick.selected)))
+	irow.add_child(give)
+	v.add_child(irow)
+
+func _option() -> OptionButton:
+	var o := OptionButton.new()
+	o.focus_mode = Control.FOCUS_NONE
+	o.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	o.add_theme_font_size_override("font_size", 14)
+	o.fit_to_longest_item = false
+	return o
+
+## Run `f` on every hero the Bots picker names, and say what was done to how many.
+func _each_bot(f: Callable, what: String) -> void:
+	var w := _w()
+	if w == null or _ai_pick.selected < 0 or _ai_pick.selected >= _ai_keys.size():
+		return
+	var hs := SimDebug.bot_heroes(w, String(_ai_keys[_ai_pick.selected]))
+	for h in hs:
+		f.call(h)
+	if hs.is_empty():
+		_say("No bot to do that to")
+	else:
+		_say("%s: %s" % [what, _ai_pick.get_item_text(_ai_pick.selected) if hs.size() > 1 else hs[0].who()])
+
+## The Bots picker kept in step with the match's bots.
+func _update_ai_pick() -> void:
+	var w := _w()
+	if w == null or _ai_pick == null:
+		return
+	var keys: Array = ["all", "team0", "team1"]
+	for b in w.bots:
+		keys.append(str(int(b.hero_id)))
+	if keys == _ai_keys:
+		return
+	var keep: String = _ai_keys[_ai_pick.selected] if _ai_pick.selected >= 0 and _ai_pick.selected < _ai_keys.size() else "all"
+	_ai_keys = keys
+	_ai_pick.clear()
+	_ai_pick.add_item("Every bot")
+	_ai_pick.add_item(SimConst.TEAM_NAMES[0] + " bots")
+	_ai_pick.add_item(SimConst.TEAM_NAMES[1] + " bots")
+	for b in w.bots:
+		var h := w.get_unit(int(b.hero_id))
+		_ai_pick.add_item(h.who() if h != null else String(b.name))
+	_ai_pick.select(maxi(0, _ai_keys.find(keep)))
 
 func _section(v: VBoxContainer, text: String) -> void:
 	var l := Label.new()
@@ -275,6 +387,7 @@ func _process(_dt: float) -> void:
 		if _bot_refresh <= 0.0:
 			_bot_refresh = 0.5
 			_update_bot_log()
+			_update_ai_pick()
 
 ## Bot Log: the bots of the match in the picker (kept in step with the world), and the chosen one's log.
 func _update_bot_log() -> void:

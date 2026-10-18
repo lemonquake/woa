@@ -1,0 +1,4 @@
+x_dual_weapon_combo                frames 110 (3.67s) drift 1.99 m (max 2.34) hands apart 0.13-1.45 m lowest hand 0.66 m
+x_fighting_idle                    frames 100 (3.33s) drift 0.00 m (max 0.10) hands apart 0.45-0.58 m lowest hand 1.23 m
+x_ready_idle                       frames 76 (2.53s) drift 0.00 m (max 0.00) hands apart 0.41-0.41 m lowest hand 1.37 m
+x_warrior_idle                     frames 345 (11.50s) drift 0.00 m (max 0.03) hands apart 0.51-1.44 m lowest hand 0.86 m

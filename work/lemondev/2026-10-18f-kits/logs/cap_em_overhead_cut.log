@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 37 models in 2571 ms
+match ready in 15781 ms
+captured A:/Python/woa/work/lemondev/2026-10-18f-kits/shots/em_overhead_cut_8.png at game time 1:35
+captured A:/Python/woa/work/lemondev/2026-10-18f-kits/shots/em_overhead_cut_12.png at game time 1:36
+captured A:/Python/woa/work/lemondev/2026-10-18f-kits/shots/em_overhead_cut_16.png at game time 1:36
+captured A:/Python/woa/work/lemondev/2026-10-18f-kits/shots/em_overhead_cut_22.png at game time 1:37
+captured A:/Python/woa/work/lemondev/2026-10-18f-kits/shots/em_overhead_cut_30.png at game time 1:37
+WARNING: 1425 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 19 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

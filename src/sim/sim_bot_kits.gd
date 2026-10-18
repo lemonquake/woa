@@ -21,7 +21,7 @@ const ROLES := {
 	"roydo": [3, 2, 4, 1],
 	"blau": [1, 2, 3],
 	"azrael": [1, 2, 3],
-	# the five heroes of hero_ideas.txt (2026-10-18 e; roles from the file, skills not in yet)
+	# the five heroes of hero_ideas.txt (2026-10-18 e; roles from the file; kits since run 2026-10-18 f)
 	"airah": [4, 5, 2],
 	"burak": [1, 3],
 	"emelrich": [3, 1, 4],
@@ -74,6 +74,24 @@ const SKILLS := {
 	"azrael": ["soul_tap", "death_scythe", "soul_tap", "door_of_the_end", "soul_tap", "divine_darkness", "soul_tap",
 		"death_scythe", "death_scythe", "death_scythe", "divine_darkness", "door_of_the_end", "door_of_the_end",
 		"door_of_the_end", "divine_darkness"],
+	# the five heroes of hero_ideas.txt (run 2026-10-18 f; SimBot18 plays them)
+	# Airah: Gust first (harass and the drag), Tailwind early to save, the wall last
+	"airah": ["gust", "tailwind", "gust", "wind_wall", "gust", "hurricane", "gust", "tailwind", "tailwind", "tailwind",
+		"hurricane", "wind_wall", "wind_wall", "wind_wall", "hurricane"],
+	# Burak: Reckless Swing (farm, lifesteal) and the axe together, Unstoppable once Rage comes easy
+	"burak": ["axe_throw", "reckless_swing", "reckless_swing", "unstoppable", "reckless_swing", "berserk",
+		"reckless_swing", "axe_throw", "axe_throw", "axe_throw", "berserk", "unstoppable", "unstoppable", "unstoppable",
+		"berserk"],
+	# Ser Emelrich: Overhead Cut first (the stun), Sweep to farm, the stance last
+	"emelrich": ["overhead_cut", "sweep", "overhead_cut", "steel_stance", "overhead_cut", "giant_swing", "overhead_cut",
+		"sweep", "sweep", "sweep", "giant_swing", "steel_stance", "steel_stance", "steel_stance", "giant_swing"],
+	# Feran: knives first (harass and farm), the box for control, Swap late (a long cooldown)
+	"feran": ["knife_juggle", "joke_box", "knife_juggle", "swap", "knife_juggle", "shuffle", "knife_juggle", "joke_box",
+		"joke_box", "joke_box", "shuffle", "swap", "swap", "swap", "shuffle"],
+	# Ghorman: Tame first (the pack is his strength), Pack Leader with it, a point of Blessing at 8, Roar
+	"ghorman": ["tame", "pack_leader", "tame", "roar", "tame", "beast_form", "tame", "blessing_of_the_beast_king",
+		"pack_leader", "pack_leader", "beast_form", "pack_leader", "roar", "roar", "beast_form", "roar",
+		"blessing_of_the_beast_king", "blessing_of_the_beast_king", "blessing_of_the_beast_king"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -86,7 +104,8 @@ const SUPPORT_SKILLS := {
 ## Talent side per tier (0 left, 1 right), for heroes with a talent tree.
 const TALENTS := {"blood_ranger": [1, 1, 0, 1], "ezee": [0, 0, 1, 0], "sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
 	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0],
-	"azrael": [0, 1, 1, 0]}
+	"azrael": [0, 1, 1, 0], "airah": [0, 0, 1, 0], "burak": [0, 0, 0, 0], "emelrich": [0, 0, 1, 1], "feran": [0, 1, 1, 0],
+	"ghorman": [0, 0, 0, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -281,6 +300,16 @@ static func disable_power(hero: String) -> float:
 			return 0.45
 		"azrael":
 			return 0.3
+		"airah":
+			return 0.55
+		"burak":
+			return 0.2
+		"emelrich":
+			return 0.8
+		"feran":
+			return 0.65
+		"ghorman":
+			return 0.45
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
@@ -413,6 +442,43 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 			if ready.call("place_turret"):
 				total += dps(w, h, t) * ab.val(h, "place_turret", "damage_pct") * 1.13 * 6.0
 			total *= 1.0 + h.magic_amp
+		"airah":
+			if ready.call("gust"):
+				total += (ab.val(h, "gust", "damage") + ab.val(h, "gust", "crash_damage") * 0.3) * mr * 0.8
+			if ready.call("hurricane"):
+				total += ab.val(h, "hurricane", "dps") * 4.0 * mr
+			total *= 1.0 + h.magic_amp
+		"burak":
+			if ready.call("axe_throw"):
+				total += ab.val(h, "axe_throw", "damage") * arm * 0.7
+			if ready.call("reckless_swing"):
+				total += dps(w, h, t) * 1.5
+			if h.ability_level_of("berserk") > 0 and ab.cooldown_left(h, "berserk") <= 0.0:
+				total += ab.val(h, "berserk", "damage") * 5.0 / maxf(0.3, h.attack_interval()) * arm
+		"emelrich":
+			var ad := SimKits5.attack_damage(h)
+			if ready.call("overhead_cut"):
+				total += (ab.val(h, "overhead_cut", "damage") + ab.val(h, "overhead_cut", "attack_pct") * ad) * arm * 0.7
+				total += dps(w, h, t) * ab.val(h, "overhead_cut", "stun")
+			if ready.call("sweep"):
+				total += (ad + ab.val(h, "sweep", "damage")) * arm
+			if ready.call("giant_swing"):
+				var arm2 := C.armor_multiplier((t.armor if t != null else 3.0) * (1.0 - ab.val(h, "giant_swing", "armor_ignore")))
+				total += ab.val(h, "giant_swing", "damage") * arm2 * 0.7 + dps(w, h, t) * ab.val(h, "giant_swing", "stun")
+		"feran":
+			if ready.call("knife_juggle"):
+				total += ab.val(h, "knife_juggle", "damage") * minf(ab.val(h, "knife_juggle", "knives") * 0.5, 5.0) * mr
+			if ready.call("joke_box"):
+				total += ab.val(h, "joke_box", "damage") * mr * 0.8
+			if ready.call("shuffle"):
+				total += ab.val(h, "knife_juggle", "damage") * 3.0 * mr + dps(w, h, t) * ab.val(h, "shuffle", "stun")
+			total *= 1.0 + h.magic_amp
+		"ghorman":
+			var pack := w.abilities.kits6.beasts_of(h)
+			for bst: SimUnit in pack:
+				total += ((bst.dmg_min + bst.dmg_max) * 0.5 + bst.bonus_damage) * arm * 3.0
+			if ready.call("beast_form"):
+				total += (ab.val(h, "beast_form", "damage") * 4.0 + ab.val(h, "beast_form", "maul")) * arm
 		"sludge":
 			if ready.call("shuriken_hook"):
 				total += ab.val(h, "shuriken_hook", "damage") * 0.6

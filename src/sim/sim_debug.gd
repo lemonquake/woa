@@ -26,10 +26,10 @@ static func level_up(w: SimWorld, h: SimUnit, levels := 1) -> void:
 	var target := mini(h.level + levels, C.MAX_LEVEL)
 	var need := float(C.XP_TABLE[mini(target - 1, C.XP_TABLE.size() - 1)]) - h.xp
 	if need > 0.0:
-		w.combat.give_xp(h, need + 0.01)
+		w.combat.give_xp(h, need + 0.01, true)
 
 static func gold(w: SimWorld, h: SimUnit, amount: int) -> void:
-	w.combat.give_gold(h, amount, true, h.pos)
+	w.combat.give_gold(h, amount, true, h.pos, true)
 
 ## Full health and mana, every ability and item ready.
 static func refresh(w: SimWorld, h: SimUnit) -> void:
@@ -59,6 +59,57 @@ static func teleport(w: SimWorld, h: SimUnit, p: Vector2) -> void:
 	h.order = C.Order.NONE
 	h.order_queue.clear()
 	w.nudge_out(p, h.hull)
+
+# ---- Bots (the Debug panel's Bots section) ---------------------------------------------------------------------------
+
+## The heroes a Bots command acts on: "all" (every bot), "team0" / "team1" (that team's bots) or a hero id.
+static func bot_heroes(w: SimWorld, pick: String) -> Array[SimUnit]:
+	var out: Array[SimUnit] = []
+	for b in w.bots:
+		var h := w.get_unit(int(b.hero_id))
+		if h == null:
+			continue
+		if pick == "all" or pick == "team%d" % h.team or pick == str(h.id):
+			out.append(h)
+	return out
+
+## An item into the hero's bags (its stash when they are full). Returns false if both are full.
+static func give_item(w: SimWorld, h: SimUnit, item_id: String) -> bool:
+	if SimData.item(item_id).is_empty():
+		return false
+	var it := w.shop.new_item(item_id)
+	it["owner"] = h.id
+	var ok := w.shop.place_in_bags(h, it)
+	if not ok:
+		for i in h.stash.size():
+			if h.stash[i] == null:
+				h.stash[i] = it
+				ok = true
+				break
+	if ok:
+		w.shop.combine_all(h)
+		h.refresh_stats()
+	return ok
+
+## All the hero's gold, gone (to watch a bot play from behind).
+static func take_gold(w: SimWorld, h: SimUnit) -> void:
+	h.gold_reliable = 0
+	h.gold_unreliable = 0
+
+## A bot's skill level (Passive .. Unfair) and its gold and experience bonus with it.
+static func set_bot_skill(w: SimWorld, h: SimUnit, skill: String) -> void:
+	var b := w.bot_for(h.id)
+	if b != null:
+		b.set_skill(skill)
+
+## A bot that stands still and gives no orders (a training dummy), or plays again.
+static func set_bot_still(w: SimWorld, h: SimUnit, on: bool) -> void:
+	var b := w.bot_for(h.id)
+	if b == null:
+		return
+	b.passive = on
+	if on:
+		w.orders.clear(h)
 
 ## A teamfight for benchmarks: the dead come back, every hero is refreshed and the two teams stand face to face across
 ## `centre` (Ancient Light to the south-west), five abreast. On the first call each hero is levelled to `lvl` (bots

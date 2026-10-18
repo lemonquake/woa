@@ -2,8 +2,10 @@ extends Control
 ## Game Setup (after Hero Select's Play): who plays the match. Two teams of five slots; each slot is You, Bot or Empty,
 ## with a hero (or Random; bots may play the same hero as anyone else). Bots get a skill level (Dota's Passive, Easy,
 ## Medium, Hard, Unfair), a role if you want one (else the team shares roles out) and a name you can change; for yourself you can say which lane you will take, and your bots
-## leave it to you (they also notice where you actually go). Presets fill the usual line-ups. Start goes on to the
-## Hotkeys screen and the match. Saved in user://setup.json (GameSettings).
+## leave it to you (they also notice where you actually go). Presets fill the usual line-ups. With no slot set to You
+## the match is All Bots and you watch it (Watch Bots preset; the match opens the Watch panel). Experience and Gold set
+## the match's rates (150% by default). Start goes on to the Hotkeys screen and the match. Saved in user://setup.json
+## (GameSettings).
 
 const U = preload("res://src/ui/ui_kit.gd")
 const HERO_SELECT := "res://src/ui/hero_select.tscn"
@@ -12,6 +14,9 @@ const HOTKEYS := "res://src/ui/hotkeys_screen.tscn"
 var _rows := [[], []]                      # per team: [{kind, hero, skill, lane, name, icon}]
 var _error: Label
 var _learn: Label
+var _start_btn: Button
+var _xp_pick: OptionButton
+var _gold_pick: OptionButton
 var _capture_path := ""
 var _frames := 0
 
@@ -55,7 +60,7 @@ func _ready() -> void:
 	root.add_theme_constant_override("separation", 16)
 	margin.add_child(root)
 	root.add_child(_label("Game Setup", 44, U.GOLD, "title"))
-	var sub := _label("Choose who plays on each team: you, a bot, or nobody. Bots can play the same hero as anyone else. Pick the lane you want and your bots will leave it to you.", 17, U.TEXT_DIM)
+	var sub := _label("Choose who plays on each team: you, a bot, or nobody. Bots can play the same hero as anyone else. Pick the lane you want and your bots will leave it to you. Set no slot to You to watch the bots play.", 17, U.TEXT_DIM)
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD
 	root.add_child(sub)
 
@@ -68,6 +73,7 @@ func _ready() -> void:
 	pre.add_child(_button("1 vs 1 mid", func(): _preset("1v1"), 140))
 	pre.add_child(_button("Fill with bots", func(): _preset("fill"), 160))
 	pre.add_child(_button("Remove bots", func(): _preset("clear"), 160))
+	pre.add_child(_button("Watch bots", func(): _preset("watch"), 150))
 	var gap := Control.new()
 	gap.custom_minimum_size = Vector2(30, 0)
 	pre.add_child(gap)
@@ -85,6 +91,13 @@ func _ready() -> void:
 			_changed()
 		all.select(0))
 	pre.add_child(all)
+	# the match's experience and gold rates
+	var rates := HBoxContainer.new()
+	rates.add_theme_constant_override("separation", 10)
+	root.add_child(rates)
+	rates.add_child(_label("Match", 18, U.TEXT, "bold"))
+	_xp_pick = _rate_pick(rates, "Experience", "xp_rate")
+	_gold_pick = _rate_pick(rates, "Gold", "gold_rate")
 
 	# the two teams
 	var teams := HBoxContainer.new()
@@ -114,11 +127,15 @@ func _ready() -> void:
 		add_child(op)
 		op.tree_exited.connect(_refresh), 140))
 	var start := _button("Start", _start, 260)
+	_start_btn = start
 	start.theme_type_variation = "GoldButton"
 	start.add_theme_font_size_override("font_size", 26)
 	start.custom_minimum_size = Vector2(260, 60)
 	bottom.add_child(start)
 	_refresh()
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--preset=") and _capture_path != "":
+			_preset(a.substr(9))            # captures only (it saves the setup)
 	LoadingScreen.close(get_tree())
 
 func _label(text: String, size: int, col: Color, kind := "body") -> Label:
@@ -136,6 +153,20 @@ func _button(text: String, cb: Callable, w := 0.0) -> Button:
 	b.add_theme_font_size_override("font_size", 17)
 	b.pressed.connect(cb)
 	return b
+
+## Experience or Gold: the match's rate in percent of the usual amount.
+func _rate_pick(row: HBoxContainer, text: String, key: String) -> OptionButton:
+	row.add_child(_label("   " + text, 17, U.TEXT_DIM))
+	var ob := OptionButton.new()
+	ob.custom_minimum_size = Vector2(100, 42)
+	ob.tooltip_text = "%s earned in the match (100%% is the usual amount)" % ("Experience" if key == "xp_rate" else "Gold")
+	for r in GameSettings.RATES:
+		ob.add_item("%d%%" % r)
+	ob.item_selected.connect(func(i):
+		GameSettings.setup[key] = GameSettings.RATES[i]
+		_changed())
+	row.add_child(ob)
+	return ob
 
 func _team_panel(t: int) -> PanelContainer:
 	var p := PanelContainer.new()
@@ -238,10 +269,7 @@ func _set_kind(t: int, i: int, kind: String) -> void:
 					if String(o.name) == "":
 						o.name = _free_name()
 		s.hero = GameSettings.selected
-	elif s.kind == "you":
-		_error.text = "Choose another slot as You first."
-		_refresh()
-		return
+	# leaving You leaves the match to the bots: you watch it (the bot plays the hero you had)
 	if kind == "bot" and String(s.name) == "":
 		s.name = _free_name()
 	s.kind = kind
@@ -270,6 +298,7 @@ func _free_name() -> String:
 
 func _preset(which: String) -> void:
 	var you := GameSettings.your_slot()
+	var rates := [GameSettings.setup.get("xp_rate", GameSettings.DEFAULT_RATE), GameSettings.setup.get("gold_rate", GameSettings.DEFAULT_RATE)]
 	match which:
 		"5v5":
 			GameSettings.setup = GameSettings.default_setup()
@@ -293,6 +322,17 @@ func _preset(which: String) -> void:
 				for o in GameSettings.setup.teams[t]:
 					if o.kind == "bot":
 						o.kind = "empty"
+		"watch":
+			# All Bots, five a side, random heroes: you watch
+			GameSettings.setup = GameSettings.default_setup()
+			for t in 2:
+				for o in GameSettings.setup.teams[t]:
+					o.kind = "bot"
+					o.hero = "random"
+					if String(o.name) == "":
+						o.name = _free_name()
+	GameSettings.setup.xp_rate = rates[0]
+	GameSettings.setup.gold_rate = rates[1]
 	_changed()
 
 func _changed() -> void:
@@ -332,8 +372,12 @@ func _refresh() -> void:
 		for s in GameSettings.setup.teams[t]:
 			if s.kind != "empty":
 				counts[t] += 1
-	_learn.text = "%d vs %d  ·  Bots learn from games: %s (Options > Game)" % [counts[0], counts[1],
-		"on" if bool(Options.get_value("bots_learn")) else "off"]
+	var watch := GameSettings.watching()
+	_learn.text = "%d vs %d%s  ·  Bots learn from games: %s (Options > Game)" % [counts[0], counts[1],
+		"  ·  All bots: you watch" if watch else "", "on" if bool(Options.get_value("bots_learn")) else "off"]
+	_start_btn.text = "Watch" if watch else "Start"
+	_xp_pick.select(maxi(0, GameSettings.RATES.find(int(GameSettings.setup.get("xp_rate", GameSettings.DEFAULT_RATE)))))
+	_gold_pick.select(maxi(0, GameSettings.RATES.find(int(GameSettings.setup.get("gold_rate", GameSettings.DEFAULT_RATE)))))
 
 func _start() -> void:
 	for t in 2:

@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 7: no winner at 30:00, 234033 ms
+  airah      L11 K/D/A 6/10/8 LH  12  casts { "gust": 36, "tailwind": 15, "wind_wall": 9, "hurricane": 4 }  | hurricane_end 4
+  burak      L13 K/D/A 9/13/5 LH  42  casts { "axe_throw": 38, "reckless_swing": 37, "berserk": 12 }  | axe_leap 16, unstoppable 11, berserk_cleared 4
+  emelrich   L12 K/D/A 3/8/6 LH  45  casts { "overhead_cut": 14, "sweep": 31, "steel_stance": 9, "giant_swing": 8 }  | windup 22
+  feran      L12 K/D/A 2/11/5 LH  34  casts { "knife_juggle": 30, "joke_box": 28, "swap": 7, "shuffle": 1 }  | joke_box_pop 28
+  ghorman    L14 K/D/A 13/8/6 LH  14  casts { "tame": 37, "roar": 24, "beast_form": 9 }  | tame 37, maul 7  | NEVER: blessing_of_the_beast_king
+  ezee       L16 K/D/A 8/9/16 LH  55  casts { "dark_stomp": 41, "tainted_touch": 20, "leap_strike": 11, "unholy_might": 9 }
+  azrin      L21 K/D/A 30/0/8 LH 156  casts { "touch_of_ember": 58, "fiery_javelin": 39, "spirit_of_fire": 41, "divine_smite": 12 }
+  kragg      L13 K/D/A 3/10/7 LH   7  casts { "iron_grip": 26, "repel": 16, "magnet_field": 4 }
+  blau       L15 K/D/A 6/9/4 LH  66  casts { "bounce_shot": 29, "lay_trap": 12, "summon_boulders": 10, "place_turret": 10 }
+  tock       L12 K/D/A 2/7/7 LH  21  casts { "time_bolt": 38, "rewind": 9, "stop_time": 4, "slow_field": 10, "fast_forward": 1 }
+seed 11: no winner at 30:00, 225874 ms
+  airah      L12 K/D/A 5/13/8 LH  39  casts { "gust": 39, "tailwind": 21, "wind_wall": 10, "hurricane": 6 }  | hurricane_end 6
+  burak      L15 K/D/A 9/14/6 LH  48  casts { "axe_throw": 34, "reckless_swing": 37, "berserk": 7 }  | axe_leap 11, unstoppable 15, berserk_cleared 4
+  emelrich   L14 K/D/A 3/9/3 LH  54  casts { "overhead_cut": 12, "sweep": 32, "steel_stance": 18, "giant_swing": 11 }  | windup 23
+  feran      L15 K/D/A 9/9/3 LH  68  casts { "knife_juggle": 34, "joke_box": 30, "swap": 5, "shuffle": 4 }  | joke_box_pop 30
+  ghorman    L13 K/D/A 4/7/10 LH  16  casts { "tame": 36, "roar": 13, "beast_form": 8 }  | tame 36, maul 10  | NEVER: blessing_of_the_beast_king
+  ezee       L15 K/D/A 11/8/17 LH  63  casts { "dark_stomp": 38, "tainted_touch": 20, "leap_strike": 12, "unholy_might": 7 }
+  azrin      L20 K/D/A 27/4/9 LH 141  casts { "touch_of_ember": 53, "fiery_javelin": 36, "spirit_of_fire": 40, "divine_smite": 16 }
+  kragg      L14 K/D/A 5/8/23 LH  18  casts { "iron_grip": 29, "repel": 20, "magnet_field": 9 }
+  blau       L16 K/D/A 3/7/21 LH  52  casts { "bounce_shot": 32, "lay_trap": 14, "summon_boulders": 10, "place_turret": 20 }
+  tock       L16 K/D/A 6/5/17 LH  20  casts { "time_bolt": 40, "rewind": 5, "stop_time": 8, "slow_field": 11, "fast_forward": 8 }
+WARNING: 12026 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 21 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

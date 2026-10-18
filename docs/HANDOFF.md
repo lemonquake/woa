@@ -4,6 +4,106 @@
 
 ## Status (keep this section current)
 
+**2026-10-18 g: 150% experience and gold, All-Bot matches you watch, a higher camera, Bots commands in the Debug panel,
+new build (your request).** Run `work/lemondev/2026-10-18g-spectate/` (contract.md, handoff.md; logs `logs/`, captures
+`shots/`).
+* **150% experience and gold by default.** Every hero earns 1.5x experience and gold (bounties, last hits, kills,
+  assists, buildings, passive gold, orbs; Unfair bots' own bonus comes on top). Starting gold, Debug panel gifts and
+  sell refunds are not scaled. Game Setup has a new **Match** row: Experience and Gold, 100% / 150% / 200% / 300%
+  (multiplayer plays 150%). `SimConst.XP_RATE`, `GOLD_RATE`; `SimWorld.xp_rate`, `gold_rate`.
+* **All-Bot matches you watch.** In Game Setup set no slot to You (or press the new **Watch bots** preset: five bots a
+  side, random heroes); Start then reads **Watch**. In the match nothing you click reaches the game (orders, shop, chat
+  are refused: "You are watching this match"), the end screen says which team won, and the **Watching** panel (top
+  left, Hide / Show) has:
+  * the hero to watch (or click a hero on the top bar), with what its bot is doing now;
+  * Camera: **Free** (pan yourself; any pan switches to it), **Follow hero**, **Hero view** (the hero's own view: its
+    team's sight, its orders, the camera on it), **Auto** (every 4 s the camera goes to the hero in the biggest fight,
+    else the one in most danger; the default);
+  * Sight: Hero's team, Ancient Light, Black Sun, **Both teams** (the default), Whole map (only what you see; the bots
+    still see what they see);
+  * Orders: Off, Watched hero (default), Every hero: each bot's current order and its queue as numbered waypoints (the
+    Shift-queue drawing: green move, red attack, blue spell, gold hold);
+  * "Show what each bot is doing": a line over every shown hero ("Laning top", "Farming camps", "Ganking Sludge",
+    "Defending mid", "Retreating", "Saving Azrin", "Teleporting" ...);
+  * Game speed x1, x2, x4 and Pause.
+  The HUD (portrait, abilities, items, health) shows the watched hero.
+* **The camera starts higher**: 15.6 m from the ground point instead of 13.6 (about 15% more of the map in view; the
+  wheel zooms as before).
+* **Debug panel > Bots** (F9): pick Every bot, Ancient Light bots, Black Sun bots or one bot, then +1000 gold, +10000
+  gold, Take all gold, Level up, Level +5, Max level, Refresh, Respawn now, Kill, Teleport to camera, Stand still, Play
+  again, Skill (Passive .. Unfair) and Give item (any shop item into its bags or stash). While watching, "Your hero"
+  reads "Watched hero".
+* New names (veto any): Game Setup "Watch bots", "Watch", "Match", "Experience", "Gold", "All bots: you watch"; panel
+  "Watching", "Hide", "Show", "Free", "Follow hero", "Hero view", "Auto", "Sight", "Hero's team", "Both teams", "Whole
+  map", "Orders", "Watched hero", "Every hero", "Show what each bot is doing", "Pause", "Resume"; bot plan lines "Dead",
+  "Standing still", "Teleporting", "Retreating", "Going back to heal", "Fighting <hero>", "Saving <hero>", "Helping an
+  ally", "Team fight", "Defending <lane>", "Ganking <hero>", "Pushing <lane>", "Grouping up", "Following a team call",
+  "Laning <lane>", "Farming", "Farming camps", "Stacking a camp", "Pulling a camp", "Placing a ward"; Debug "Bots",
+  "Every bot", "Ancient Light bots", "Black Sun bots", "Take all gold", "Stand still", "Play again", "Set skill", "Give
+  item", "Watched hero", "You are watching this match"; end screen "<team> wins"; code `WatchPanel`
+  (`src/ui/watch_panel.gd`), `Main.spectator`, `watch()`, `set_cam_mode()`, `cam_mode`, `vision_mode`, `vis_team()`,
+  `sees()`, `sees_cell()`, `own_team()`, `fog_bytes()`, `show_orders`, `show_plans`, `CameraRig.user_moved`,
+  `SimBot.plan_text()`, `SimDebug.bot_heroes`, `give_item`, `take_gold`, `set_bot_skill`, `set_bot_still`,
+  `GameSettings.RATES`, `DEFAULT_RATE`, `watching()`, `xp_rate()`, `gold_rate()`; flags `--watch`, `--watch_cam=`,
+  `--watch_vision=`, `--xp_rate=`, `--gold_rate=`, Game Setup capture `--preset=`; test `test_match_rates`, probe
+  `tests/tools/watch_probe.gd`.
+Evidence: headless tests **274 passed, 0 failed** (1 new, `test_match_rates`; the Dota-number tests run at 100%);
+`sh tools/check.sh` no script errors, "Names OK"; `tests/tools/watch_probe.gd` 24/24 twice (`--watch --bots=5v5`, and
+through a saved Game Setup with no You slot: your `setup.json` was backed up and put back); captures `shots/`; release
+export `build/WarriorsOfAether.exe` rebuilt 2026-10-18 19:29, cold starts into a watched match and a player match with
+no script errors (`shots/export_watch.png`, `export_player.png`).
+Not verified: no blind critic review; the panel was checked at 1920x1080 only; the Auto camera's pick is a simple
+score; bot balance at 150% not re-measured in long games; multiplayer always plays 150% (no lobby setting).
+
+**2026-10-18 f: the five new heroes' kits, bots, icons and effects, new build (your request: "Finish implementing
+the new 5 heroes including their skill mechanics, proper icons, proper AI and everything").** Run
+`work/lemondev/2026-10-18f-kits/` (contract.md, handoff.md; logs `logs/`, captures `shots/`, icon sheet `icons/`).
+* **Airah, Burak, Ser Emelrich, Feran Mock and Ghorman have their full kits** from `hero_ideas.txt` (your annotations
+  there win), with talents, the Upgrade Staff upgrades and Burak's innate Rage (`src/sim/sim_kits5.gd`,
+  `sim_kits6.gd`). Hero Select no longer says "Skills coming later", and random picks (yours and the bots') can land
+  on them.
+  * Airah: Gust drags the enemies it hits along with its head, out 900 and back to her (walk away to pull free; a
+    crash into a tree, cliff, building or unit hurts more); Tailwind; Wind Wall stops enemy ranged attacks; Hurricane
+    drags to its middle, burns, then throws everyone out (a crash stuns 1 s).
+  * Burak: Rage (red bar under his mana; attack speed); Axe Throw sticks in the first enemy, tree or cliff, the free
+    recast leaps to it and attacks at once, a dropped axe is picked up by walking over it; Reckless Swing (cleave,
+    lifesteal, +15% damage taken); Unstoppable spends 40 Rage to shorten a stun, root or hex; Berserk holds half the
+    damage back (a dark stretch on his health bar) and returns it over 6 s unless he takes a hero down.
+  * Ser Emelrich: Overhead Cut and Giant Swing wind up with a red line or cone on the ground for everyone; once the
+    wind-up starts orders wait for it (Stop does nothing), a stun, hex or silence breaks it, with Steel Stance on only
+    a hex or silence breaks Giant Swing's; Sweep shoves enemies to his left; Steel Stance blocks from the front.
+  * Feran: Knife Juggle (at most 5 knives on one enemy a cast), Joke Box (Pie, Spring, Confetti, Glue), Swap, Shuffle.
+  * Ghorman: Tame (neutral or enemy lane creeps, his for good, they keep their spell), Roar, Pack Leader, Blessing of
+    the Beast King (D), Beast Form (his body swaps, every 3rd attack mauls). **You can select and order his beasts**
+    (click or box select, right click, minimap, Stop, Hold, control groups); left alone they follow him, fight what he
+    fights and use their own spell.
+* **Bots play all five** (`src/sim/sim_bot18.gd`): fight combos, escapes, farming, Burak's leap only when the fight
+  is in his favour, Ser Emelrich's wind-ups only on targets that cannot step out, Steel Stance toward ranged heroes,
+  Ghorman taming camp creeps with spells first and blessing hurt beasts. In 30-minute hard bot games every skill of
+  every new hero is cast (`tests/tools/kit_casts.gd`).
+* **22 new ability icons** (`tools/item_icons.py`, `assets/ui/skills/gen/`), buff bar names for the new effects.
+* **Effects** (`src/game/hero18_fx.gd`): Gust's wind, Tailwind's streaks, the Wind Wall curtain, the Hurricane funnel,
+  spinning and stuck axes, Rage's glow, Berserk's fire, the wind-up warnings, cut cracks, spinning knives, the gift
+  box with its fuse and confetti, swap smoke, Pie and dizzy marks, spirit light on beasts, the roar, the Blessing.
+* Fixed on the way: Frenzy Mask's active and Burak's Berserk shared one effect id (a script error in any game with the
+  item); a stun ended Giant Swing's wind-up even under Steel Stance.
+* New names (veto any): ability names are the file's; "Tailwind" added to the name checker's list of real words;
+  buff names "Axe Away", "Pie", "Confetti", "Glue", "Dizzy", "Tamed"; bot chat "Hold on to something.", "RAAAH!",
+  "Stand still.", "Everybody move!", "Come here.", "The beast is out."; the five heroes' Hero Select role lines and
+  stories; code `SimBot18`, `Hero18Fx`, `SimKits5.BERSERK` (effect `burak_berserk`), icon backdrop `wind`, files
+  `src/sim/sim_bot18.gd`, `src/game/hero18_fx.gd`, `tests/tools/kit_casts.gd`; tests `test_new5_data`,
+  `test_airah_*`, `test_burak_*`, `test_emelrich_*`, `test_feran_*`, `test_ghorman_*`.
+* Chosen where the file was silent (veto any): Blessing of the Beast King heals the beast 30-60%, cleanses it,
+  readies its spell and gives +20-50% damage and +20-50 attack speed for 8 s; Airah's talents; Gust's drag strength;
+  cast points; bot skill orders (Ghorman takes Blessing at level 8).
+Evidence: headless tests **273 passed, 0 failed** (23 new); `sh tools/check.sh` no script errors, "Names OK"; three
+30-minute bot games and one 25-minute game (`logs/kit_casts*.log`); in-game captures of every hero's skills
+(`shots/`); release export `build/WarriorsOfAether.exe` rebuilt 2026-10-18 09:02, cold starts into Ghorman and Ser
+Emelrich matches with no script errors (`shots/export_sheet.png`).
+Not verified: no blind critic review; Beast Form still uses its old body (its torn faces at the hips are now seen in
+every Ghorman game); bots never use Feran's Upgrade Staff Swap; balance against the older heroes is untested beyond
+four bot games.
+
 **2026-10-18 e: motion capture for the remaining clips and the five new heroes, the five made pickable, Airah rebuilt
 on the base body, a strict check of every animation join (your requests).** Run `work/lemondev/2026-10-18e-mocap2/`
 (contract.md, handoff.md; joins reports `joins_before.txt` -> `joins_final.txt`, remnant renders `remnants_*`, contact
@@ -928,6 +1028,9 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
     the enemy wave, between a creep and a tree, or beside the enemy hero (`--weaken=0.12`); `--cast=dark_stomp@4`
     (or `attack`) issues it at capture frame 4. `--board` shows the scoreboard, `--endscreen` the end screen,
     `--drag=x,y,w,h` a selection box, `--marker=x,y` a move marker.
+* Watch an All-Bot match without the menus: `godot --path . res://src/game/main.tscn -- --watch --bots=5v5 --nolearn
+  [--watch_cam=auto|follow|hero|free] [--watch_vision=-1|0|1|2|3]`; live checks: `godot --path . -s
+  tests/tools/watch_probe.gd -- --watch --bots=5v5 --nolearn [--min=4] [--out=dir]`.
 * Bot duels: `godot --headless --path . -s tests/tools/bot_duel.gd -- --a=blood_ranger --b=ezee --min=12`.
 * A game that stops advancing: `godot --headless --path . -s tests/tools/stall_probe.gd -- --a=roydo --b=ezee --min=10
   [--trace=348] [--seed=3]` prints a line per game minute with the real time, every step over 50 ms, and with
@@ -1037,7 +1140,8 @@ Every hotkey can be changed on the **Hotkeys** screen shown before each match ("
 | Screen edges, arrow keys, middle-drag | Pan the camera. In Borderless and Fullscreen the cursor is kept inside the game window, so pushing past an edge keeps panning (Windowed: Options > Game "Lock cursor to window (Windowed)") |
 | Mouse wheel | Zoom |
 | Hold right click | Repeats the move or attack order at the cursor |
-| F9, or the Debug button (top right) | Debug panel: force start, creep waves, camps, level up, gold, refresh, god mode, free spells, reveal map, skip time, game speed |
+| F9, or the Debug button (top right) | Debug panel: force start, creep waves, camps, level up, gold, refresh, god mode, free spells, reveal map, skip time, game speed; Bots: gold, levels, refresh, respawn, kill, teleport, items, skill, stand still for every bot, one team's bots or one bot |
+| Watching an All-Bot match | The Watching panel (top left): hero, camera (Free, Follow hero, Hero view, Auto), sight, bot orders, what each bot is doing, game speed. Click a hero on the top bar to watch it; any pan frees the camera |
 | Minimap | Left click or drag moves the camera; right click moves your hero |
 
 ## Architecture

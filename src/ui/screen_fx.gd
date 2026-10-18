@@ -37,7 +37,8 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	var h: SimUnit = game.world.get_unit(game.player_hero_id) if game and game.world else null
-	if h == null:
+	if h == null or bool(game.get("spectator")):
+		visible = false
 		return
 	var want_desat := 0.0 if h.alive else 1.0
 	var frac := h.hp / maxf(1.0, h.max_hp)

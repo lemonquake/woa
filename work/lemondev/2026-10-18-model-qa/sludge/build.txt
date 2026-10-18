@@ -1,0 +1,70 @@
+[INFO ] services.locationservice ...............: Not adding link to MakeHuman user data, since neither explicit path nor auto-discovery is set in preferences.
+[INFO ] mpfb.init ..............................: Build info 20261010
+[INFO ] mpfb.init ..............................: Online access preference is not enabled. Not checking if MakeHuman is online.
+[INFO ] mpfb.init ..............................: MPFB initialization has finished.
+[sludge] fingers curled into fists
+[sludge] raw height 1.840, scale 1.011
+[sludge] mesh verts 13524
+02:19:18 | INFO: Data are loaded, start creating Blender stuff
+02:19:18 | INFO: Blender create Mesh node hero
+02:19:20 | INFO: glTF import finished in 2.20s
+[sludge] hero bones ['root', 'hips', 'spine', 'chest', 'neck', 'head', 'shoulder.L', 'upper_arm.L', 'forearm.L', 'hand.L', 'weapon.L', 'shoulder.R', 'upper_arm.R', 'forearm.R', 'hand.R', 'weapon.R', 'thigh.L', 'shin.L', 'foot.L', 'toe.L', 'thigh.R', 'shin.R', 'foot.R', 'toe.R']
+[sludge] bone root         (0.0, 0.0, 0.0) -> (0.0, 0.0, 1.032)
+[sludge] bone hips         (0.0, -0.006, 1.032) -> (0.0, -0.006, 1.128)
+[sludge] bone spine        (0.0, 0.028, 1.128) -> (0.0, 0.028, 1.211)
+[sludge] bone chest        (0.0, 0.019, 1.211) -> (0.0, 0.019, 1.642)
+[sludge] bone neck         (0.0, -0.009, 1.642) -> (0.0, -0.009, 1.712)
+[sludge] bone head         (0.0, -0.058, 1.712) -> (0.0, -0.058, 1.832)
+[sludge] bone shoulder.L   (0.03, -0.013, 1.59) -> (0.318, -0.013, 1.59)
+[sludge] bone upper_arm.L  (0.318, -0.013, 1.59) -> (0.657, -0.013, 1.59)
+[sludge] bone forearm.L    (0.657, -0.013, 1.59) -> (0.985, -0.013, 1.59)
+[sludge] bone hand.L       (0.985, -0.013, 1.59) -> (1.062, -0.013, 1.59)
+[sludge] bone weapon.L     (0.989, -0.075, 1.551) -> (0.989, -0.152, 1.551)
+[sludge] bone shoulder.R   (-0.03, -0.013, 1.59) -> (-0.318, -0.013, 1.59)
+[sludge] bone upper_arm.R  (-0.318, -0.013, 1.59) -> (-0.657, -0.013, 1.59)
+[sludge] bone forearm.R    (-0.657, -0.013, 1.59) -> (-0.985, -0.013, 1.59)
+[sludge] bone hand.R       (-0.985, -0.013, 1.59) -> (-1.062, -0.013, 1.59)
+[sludge] bone weapon.R     (-0.989, -0.075, 1.551) -> (-0.989, -0.152, 1.551)
+[sludge] bone thigh.L      (0.144, 0.005, 1.017) -> (0.144, 0.005, 0.593)
+[sludge] bone shin.L       (0.144, 0.005, 0.593) -> (0.144, 0.005, 0.146)
+[sludge] bone foot.L       (0.144, 0.005, 0.146) -> (0.144, -0.125, 0.091)
+[sludge] bone toe.L        (0.144, -0.125, 0.091) -> (0.144, -0.266, 0.081)
+[sludge] bone thigh.R      (-0.144, 0.005, 1.017) -> (-0.144, 0.005, 0.593)
+[sludge] bone shin.R       (-0.144, 0.005, 0.593) -> (-0.144, 0.005, 0.146)
+[sludge] bone foot.R       (-0.144, 0.005, 0.146) -> (-0.144, -0.125, 0.091)
+[sludge] bone toe.R        (-0.144, -0.125, 0.091) -> (-0.144, -0.266, 0.081)
+[sludge] vertices with no bone weight: 0
+A:\Python\woa\tools\blender\sludge.py:457: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+[sludge] gear ['belt', 'loincloth_front', 'loincloth_back', 'strap_front', 'strap_back', 'arm_chain']
+00:20.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18-model-qa\sludge\sludge_rest_front.png'
+00:20.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18-model-qa\sludge\sludge_rest_side.png'
+00:20.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18-model-qa\sludge\sludge_idle_front.png'
+00:21.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18-model-qa\sludge\sludge_idle_side.png'
+00:21.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18-model-qa\sludge\sludge_run_front.png'
+00:21.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18-model-qa\sludge\sludge_run_side.png'
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:19:22 | INFO: Starting glTF 2.0 export
+02:19:22 | INFO: Extracting primitive: arm_chain
+02:19:22 | INFO: Primitives created: 1
+02:19:22 | INFO: Extracting primitive: belt
+02:19:22 | INFO: Primitives created: 1
+02:19:22 | INFO: Extracting primitive: loincloth_back
+02:19:22 | INFO: Primitives created: 1
+02:19:22 | INFO: Extracting primitive: loincloth_front
+02:19:22 | INFO: Primitives created: 1
+02:19:23 | INFO: Extracting primitive: sludge
+02:19:23 | INFO: Primitives created: 2
+02:19:23 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+02:19:23 | INFO: Extracting primitive: strap_back
+02:19:23 | INFO: Primitives created: 1
+02:19:23 | INFO: Extracting primitive: strap_front
+02:19:23 | INFO: Primitives created: 1
+02:19:47 | INFO: Finished glTF 2.0 export in 24.923784971237183 s
+
+[sludge] wrote A:/Python/woa/assets/characters/hero/sludge.glb
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+OBJ import of 'base.obj' took 28.29 ms
+
+Blender quit

@@ -93,7 +93,17 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"summon_boulders": "skills/gen/summon_boulders", "lay_trap": "skills/gen/lay_trap", "place_turret": "skills/gen/place_turret",
 	"pilot_turret": "skills/gen/pilot_turret", "soul_tap": "skills/gen/soul_tap",
 	"door_of_the_end": "skills/gen/door_of_the_end", "death_scythe": "skills/gen/death_scythe",
-	"divine_darkness": "skills/gen/divine_darkness"}
+	"divine_darkness": "skills/gen/divine_darkness",
+	# the five heroes of hero_ideas.txt (run 2026-10-18 f)
+	"gust": "skills/gen/gust", "tailwind": "skills/gen/tailwind", "wind_wall": "skills/gen/wind_wall",
+	"hurricane": "skills/gen/hurricane", "rage": "skills/gen/rage", "axe_throw": "skills/gen/axe_throw",
+	"reckless_swing": "skills/gen/reckless_swing", "unstoppable": "skills/gen/unstoppable",
+	"berserk": "skills/gen/berserk", "overhead_cut": "skills/gen/overhead_cut", "sweep": "skills/gen/sweep",
+	"steel_stance": "skills/gen/steel_stance", "giant_swing": "skills/gen/giant_swing",
+	"knife_juggle": "skills/gen/knife_juggle", "joke_box": "skills/gen/joke_box", "swap": "skills/gen/swap",
+	"shuffle": "skills/gen/shuffle", "tame": "skills/gen/tame", "roar": "skills/gen/roar",
+	"pack_leader": "skills/gen/pack_leader", "blessing_of_the_beast_king": "skills/gen/blessing_of_the_beast_king",
+	"beast_form": "skills/gen/beast_form"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
 const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}

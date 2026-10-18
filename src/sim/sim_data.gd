@@ -44,7 +44,9 @@ static func _ensure() -> void:
 	_build_abilities_15b()
 	_build_abilities_16()
 	_build_abilities_17()
+	_build_abilities_18()
 	_build_talents()
+	_build_talents_18()
 
 static func unit(id: String) -> Dictionary:
 	_ensure()
@@ -375,8 +377,8 @@ static func _add_heroes_17() -> void:
 static func _add_heroes_18() -> void:
 	# The five heroes from hero_ideas.txt (2026-10-18 e, the owner: "build the game now with all the new 5 heroes
 	# pickable by the player"): their names, titles, attack ranges, base stats and elements as written there (Airah's
-	# element: Lightning, the file's pick for its open question). Their skills are not in yet: they fight with attacks
-	# and items only until their kits land.
+	# element: Lightning, the file's pick for its open question). Their kits landed in run 2026-10-18 f (SimKits5,
+	# SimKits6).
 	var base := {"kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP, "mana": SimConst.HERO_BASE_MANA,
 		"mana_regen": 0.0, "magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "attack_speed": 100.0, "backswing": 0.5,
 		"vision_day": 1800.0, "vision_night": 800.0, "xp": 0.0, "abilities": [], "talents": []}
@@ -384,26 +386,41 @@ static func _add_heroes_18() -> void:
 		"dmg_min": 21.0, "dmg_max": 29.0, "bat": 1.7, "attack_point": 0.4, "acquire": 800.0, "range": 600.0,
 		"projectile_speed": 1200.0, "move_speed": 300.0, "turn_rate": 0.6, "primary": "int", "str": 18.0,
 		"str_gain": 2.0, "agi": 18.0, "agi_gain": 1.8, "int": 24.0, "int_gain": 3.4, "element": EL.LIGHTNING,
+		"abilities": ["gust", "tailwind", "wind_wall", "hurricane"],
+		"talents": [["airah_gust_damage", "airah_mana_regen"], ["airah_tailwind_miss", "airah_wall_time"],
+			["airah_gust_cooldown", "airah_magic_amp"], ["airah_hurricane_damage", "airah_hurricane_radius"]],
 		"model": "hero_airah"}))
 	_add("burak", _merged(base, {"name": "Burak", "title": "the Berserker", "hp_regen": 0.5, "armor": 2.0,
 		"dmg_min": 30.0, "dmg_max": 36.0, "bat": 1.7, "attack_point": 0.35, "acquire": 600.0, "range": 150.0,
 		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.7, "primary": "str", "str": 25.0,
 		"str_gain": 3.2, "agi": 18.0, "agi_gain": 2.1, "int": 15.0, "int_gain": 1.4, "element": EL.FIRE,
-		"model": "hero_burak"}))
+		"abilities": ["axe_throw", "reckless_swing", "unstoppable", "berserk"],
+		"talents": [["burak_damage", "burak_axe_damage"], ["burak_rage_decay", "burak_swing_lifesteal"],
+			["burak_unstoppable_rage", "burak_axe_window"], ["burak_berserk_time", "burak_berserk_return"]],
+		"innate": "rage", "model": "hero_burak"}))
 	_add("emelrich", _merged(base, {"name": "Ser Emelrich", "title": "the Heavy Sword", "hp_regen": 0.5,
 		"armor": 3.0, "dmg_min": 37.0, "dmg_max": 43.0, "bat": 1.8, "attack_point": 0.55, "acquire": 600.0,
 		"range": 150.0, "projectile_speed": 0.0, "move_speed": 290.0, "turn_rate": 0.5, "primary": "str",
 		"str": 26.0, "str_gain": 3.4, "agi": 13.0, "agi_gain": 1.5, "int": 16.0, "int_gain": 1.6, "element": EL.LIGHT,
+		"abilities": ["overhead_cut", "sweep", "steel_stance", "giant_swing"],
+		"talents": [["emelrich_health", "emelrich_cut_stun"], ["emelrich_sweep_damage", "emelrich_sweep_shove"],
+			["emelrich_stance_sides", "emelrich_cut_windup"], ["emelrich_swing_armor", "emelrich_swing_cooldown"]],
 		"model": "hero_emelrich"}))
 	_add("feran", _merged(base, {"name": "Feran Mock", "title": "the Jester", "hp_regen": 0.25, "armor": 1.0,
 		"dmg_min": 20.0, "dmg_max": 26.0, "bat": 1.7, "attack_point": 0.35, "acquire": 800.0, "range": 550.0,
 		"projectile_speed": 1100.0, "move_speed": 305.0, "turn_rate": 0.6, "primary": "int", "str": 18.0,
 		"str_gain": 1.9, "agi": 20.0, "agi_gain": 2.2, "int": 23.0, "int_gain": 3.0, "element": EL.NONE,
+		"abilities": ["knife_juggle", "joke_box", "swap", "shuffle"],
+		"talents": [["feran_knives", "feran_magic_amp"], ["feran_two_pranks", "feran_swap_cooldown"],
+			["feran_swap_range", "feran_box_damage"], ["feran_shuffle_stun", "feran_shuffle_radius"]],
 		"model": "hero_feran"}))
 	_add("ghorman", _merged(base, {"name": "Ghorman", "title": "the Beast King", "hp_regen": 0.5, "armor": 1.0,
 		"dmg_min": 30.0, "dmg_max": 36.0, "bat": 1.7, "attack_point": 0.4, "acquire": 600.0, "range": 150.0,
 		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.6, "primary": "str", "str": 24.0,
 		"str_gain": 3.0, "agi": 17.0, "agi_gain": 1.9, "int": 18.0, "int_gain": 1.8, "element": EL.NATURE,
+		"abilities": ["tame", "roar", "pack_leader", "blessing_of_the_beast_king", "beast_form"],
+		"talents": [["ghorman_beasts", "ghorman_roar_speed"], ["ghorman_tame_power", "ghorman_tame_cooldown"],
+			["ghorman_pack_armor", "ghorman_roar_radius"], ["ghorman_form_time", "ghorman_maul_every"]],
 		"model": "hero_ghorman"}))
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
@@ -786,6 +803,153 @@ static func _build_abilities_17() -> void:
 		"vision_cut": [0.3, 0.4, 0.5], "radius": [700, 700, 700], "attack_speed": [30, 40, 50]},
 		"desc": "Azrael spreads her white wings for 25 seconds: she flies over cliffs and trees, moves 15% faster, sees further day and night and attacks faster. Enemies within 700 of her lose part of their sight."}
 
+# ---- The five heroes of hero_ideas.txt (run 2026-10-18 f; SimKits5, SimKits6) ------------------------------------------
+## The numbers are the file's (the owner's annotations there win); chosen fill-ins (cast points, drag strength, Airah's
+## talents, Blessing of the Beast King's effect) are listed in docs/HANDOFF.md. "width" here is the whole width
+## ("full_width"), as the file writes it.
+
+static func _build_abilities_18() -> void:
+	# Airah, the Wind Goddess: she moves everyone
+	_abilities["gust"] = {"id": "gust", "name": "Gust", "behavior": "point", "key": "Q", "max_level": 4,
+		"mana": [110, 130, 150, 170], "cooldown": [12, 11, 10, 9], "cast_point": 0.3, "range": 900,
+		"anim": "spell_wave", "damage_type": "magical", "line": true, "direction": true, "full_width": true,
+		"values": {"damage": [80, 140, 200, 260], "crash_damage": [40, 60, 80, 100], "distance": [900, 900, 900, 900],
+		"width": [200, 200, 200, 200], "speed": [1600, 1600, 1600, 1600], "drag": [650, 650, 650, 650],
+		"drag_reach": [420, 420, 420, 420]}, "hidden_values": ["drag", "drag_reach"],
+		"desc": "A blast of wind rushes 900 ahead, then turns back to Airah wherever she is. Every enemy it hits takes magic damage and is dragged along toward its head; enemies can still move and act, and can pull free by walking away. An enemy dragged into a tree, cliff, building or unit takes more damage. Trees it hits fall."}
+	_abilities["tailwind"] = {"id": "tailwind", "name": "Tailwind", "behavior": "unit", "key": "W",
+		"target_team": "ally", "max_level": 4, "mana": [100, 100, 100, 100], "cooldown": [16, 14, 12, 10],
+		"cast_point": 0.2, "range": 800, "anim": "spell_quick",
+		"values": {"duration": [5, 5, 5, 5], "move_pct": [0.16, 0.22, 0.28, 0.34], "ranged_miss": [0.25, 0.30, 0.35, 0.40]},
+		"desc": "Wind at an ally's back (or Airah's) for 5 seconds: it moves 16 / 22 / 28 / 34% faster, walks through units, and ranged attacks against it miss 25 / 30 / 35 / 40% of the time. Removes slows when cast."}
+	_abilities["wind_wall"] = {"id": "wind_wall", "name": "Wind Wall", "behavior": "point", "key": "E", "max_level": 4,
+		"mana": [90, 100, 110, 120], "cooldown": [22, 20, 18, 16], "cast_point": 0.3, "range": 700, "anim": "spell_area",
+		"values": {"duration": [4, 4.5, 5, 5.5], "width": [600, 600, 600, 600], "slow": [0.3, 0.3, 0.3, 0.3]},
+		"desc": "A wall of wind 600 wide rises across Airah's aim for 4 / 4.5 / 5 / 5.5 seconds. Enemy ranged attacks that touch it stop. Enemies walking through it are slowed by 30%."}
+	_abilities["hurricane"] = {"id": "hurricane", "name": "Hurricane", "behavior": "point", "key": "R", "max_level": 3,
+		"required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [90, 80, 70], "cast_point": 0.4,
+		"range": 900, "anim": "spell_big", "damage_type": "magical", "aoe": true,
+		"values": {"radius": [450, 450, 450], "duration": [6, 6, 6], "pull": [400, 400, 400], "dps": [60, 90, 120],
+		"throw": [450, 450, 450], "crash_stun": [1.0, 1.0, 1.0], "ally_move_pct": [0.25, 0.25, 0.25]},
+		"desc": "A hurricane 450 wide for 6 seconds; Airah keeps moving and casting. Trees inside fall. Enemies inside are dragged toward its middle and take magic damage every second; allies inside move 25% faster. When it ends, every enemy still inside is thrown 450 straight out, and one that crashes into a tree, cliff, building or unit is stunned for 1 second."}
+	# Burak, the Berserker: getting hurt makes him stronger
+	_abilities["rage"] = {"id": "rage", "name": "Rage", "behavior": "innate", "key": "", "max_level": 1, "mana": [0],
+		"cooldown": [0], "cast_point": 0.0, "range": 0,
+		"values": {"max_rage": [100], "per_health_pct": [1], "per_hero_hit": [5], "decay": [10], "idle_time": [4],
+		"attack_speed_per_10": [5]},
+		"desc": "Burak fills with Rage (up to 100): 1 for every 1% of his health he loses and 5 for every attack he lands on a hero. After 4 seconds without hitting or being hit by a hero he loses 10 a second. Every 10 Rage gives him 5 attack speed (50 when full)."}
+	_abilities["axe_throw"] = {"id": "axe_throw", "name": "Axe Throw", "behavior": "point", "key": "Q", "max_level": 4,
+		"mana": [70, 75, 80, 85], "cooldown": [14, 13, 12, 11], "cast_point": 0.3, "range": 1000,
+		"anim": "javelin_throw", "damage_type": "physical", "line": true, "direction": true, "full_width": true,
+		"values": {"damage": [80, 140, 200, 260], "slow": [0.3, 0.3, 0.3, 0.3], "slow_duration": [2, 2, 2, 2],
+		"distance": [1000, 1000, 1000, 1000], "speed": [1500, 1500, 1500, 1500], "width": [100, 100, 100, 100],
+		"recast_window": [4, 4, 4, 4], "leap_time": [0.35, 0.35, 0.35, 0.35], "axe_out_cut": [0.2, 0.2, 0.2, 0.2],
+		"hero_rage": [15, 15, 15, 15], "fork": [20, 20, 20, 20]},
+		"hidden_values": ["leap_time", "fork"],
+		"desc": "Burak throws an axe up to 1000. The first enemy hit takes physical damage and is slowed by 30% for 2 seconds; the axe sticks in it, or in the first tree or cliff, or drops at the end. For 4 seconds he can cast it again for free to leap to the axe, landing beside it and attacking at once. Walking over a dropped axe picks it up and halves the cooldown left. While the axe is gone he deals 20% less attack damage. A hero hit gives 15 Rage. Upgrade Staff: both axes fly in a fork; he can leap to either."}
+	_abilities["reckless_swing"] = {"id": "reckless_swing", "name": "Reckless Swing", "behavior": "no_target",
+		"key": "W", "max_level": 4, "mana": [60, 60, 60, 60], "cooldown": [16, 15, 14, 13], "cast_point": 0.15,
+		"range": 0, "anim": "axe_battle_cry",
+		"values": {"duration": [8, 8, 8, 8], "cleave": [0.5, 0.6, 0.7, 0.8], "lifesteal": [0.15, 0.20, 0.25, 0.30],
+		"damage_taken": [0.15, 0.15, 0.15, 0.15], "cleave_start": [150, 150, 150, 150], "cleave_end": [360, 360, 360, 360],
+		"cleave_distance": [650, 650, 650, 650]}, "hidden_values": ["cleave_start", "cleave_end", "cleave_distance"],
+		"desc": "For 8 seconds Burak's attacks cleave 50 / 60 / 70 / 80% of their damage to the enemies behind his target and heal him for 15 / 20 / 25 / 30% of the damage, but he takes 15% more damage."}
+	_abilities["unstoppable"] = {"id": "unstoppable", "name": "Unstoppable", "behavior": "passive", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [12, 11, 10, 9], "cast_point": 0.0, "range": 0,
+		"values": {"rage_cost": [40, 40, 40, 40], "cut": [0.40, 0.50, 0.60, 0.70]},
+		"desc": "When a stun, root or hex lands on Burak while he has 40 Rage or more, he spends 40 Rage and it lasts 40 / 50 / 60 / 70% shorter. Break stops it."}
+	_abilities["berserk"] = {"id": "berserk", "name": "Berserk", "behavior": "no_target", "key": "R", "max_level": 3,
+		"required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [70, 60, 50], "cast_point": 0.2,
+		"range": 0, "anim": "axe_battle_cry",
+		"values": {"duration": [12, 12, 12], "damage": [40, 60, 80], "move_pct": [0.10, 0.10, 0.10],
+		"held": [0.5, 0.5, 0.5], "return_time": [6, 6, 6]},
+		"desc": "For 12 seconds Burak's Rage stays full, he deals 40 / 60 / 80 more attack damage, moves 10% faster and slows do nothing to him. Half of the damage he takes is held back and comes back as pure damage over 6 seconds after Berserk ends. Every enemy hero he kills or helps kill during Berserk clears the held damage."}
+	# Ser Emelrich, the Heavy Sword: slow, readable, crushing
+	_abilities["overhead_cut"] = {"id": "overhead_cut", "name": "Overhead Cut", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [90, 100, 110, 120], "cooldown": [13, 12, 11, 10], "cast_point": 0.3, "range": 450,
+		"anim": "greatsword_slam", "damage_type": "physical", "line": true, "direction": true, "full_width": true,
+		"values": {"windup": [0.6, 0.6, 0.6, 0.6], "distance": [450, 450, 450, 450], "width": [160, 160, 160, 160],
+		"damage": [100, 160, 220, 280], "attack_pct": [0.6, 0.6, 0.6, 0.6], "stun": [0.8, 1.0, 1.2, 1.4]},
+		"desc": "Ser Emelrich raises his sword (this part can still be called off), then winds up for 0.6 seconds with a red line on the ground for everyone to see; from then on only a stun, hex or silence stops the swing. The cut, 450 long and 160 wide, deals physical damage plus 60% of his attack damage and stuns. Trees on the line fall."}
+	_abilities["sweep"] = {"id": "sweep", "name": "Sweep", "behavior": "no_target", "key": "W", "max_level": 4,
+		"mana": [80, 85, 90, 95], "cooldown": [11, 11, 11, 11], "cast_point": 0.3, "range": 0,
+		"anim": "greatsword_slash_2", "damage_type": "physical",
+		"values": {"radius": [300, 300, 300, 300], "damage": [40, 70, 100, 130], "shove": [200, 200, 200, 200],
+		"impact_damage": [40, 60, 80, 100], "impact_stun": [0.5, 0.5, 0.5, 0.5]},
+		"desc": "A wide swing through the half circle in front of him (300): his attack damage plus 40 / 70 / 100 / 130 as physical damage. Enemies hit are shoved 200 to his left, so they pile up; one shoved into a tree, cliff, building or unit takes 40 / 60 / 80 / 100 more and is stunned for 0.5 seconds."}
+	_abilities["steel_stance"] = {"id": "steel_stance", "name": "Steel Stance", "behavior": "toggle", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [1, 1, 1, 1], "cast_point": 0.0, "range": 0,
+		"values": {"armor": [4, 6, 8, 10], "block": [0.25, 0.35, 0.45, 0.55], "front": [120, 120, 120, 120],
+		"move_cut": [0.2, 0.2, 0.2, 0.2], "turn_cut": [0.5, 0.5, 0.5, 0.5]},
+		"desc": "Toggle (1 second between toggles). While on, Ser Emelrich moves 20% slower and turns half as fast, but has 4 / 6 / 8 / 10 more armor and takes 25 / 35 / 45 / 55% less damage from attacks and line shots that come from his front 120 degrees. Other slows do nothing to him. How he faces matters."}
+	_abilities["giant_swing"] = {"id": "giant_swing", "name": "Giant Swing", "behavior": "point", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [20, 15, 10],
+		"cast_point": 0.3, "range": 700, "anim": "greatsword_power", "damage_type": "physical", "direction": true,
+		"values": {"windup": [1.2, 1.2, 1.2], "distance": [700, 700, 700], "angle": [100, 100, 100],
+		"damage": [150, 250, 350], "armor_ignore": [0.65, 0.65, 0.65], "stun": [1.2, 1.5, 1.8],
+		"back_delay": [0.5, 0.5, 0.5], "back_distance": [500, 500, 500], "back_angle": [70, 70, 70]},
+		"hidden_values": ["back_delay", "back_distance", "back_angle"],
+		"desc": "Ser Emelrich winds up for 1.2 seconds (a red cone for everyone to see), then cuts through a cone 700 long and 100 degrees wide: physical damage that ignores 65% of armor, and every enemy hit is knocked down (stunned). Every tree in the cone falls. A stun, hex or silence breaks the wind-up; with Steel Stance on only a hex or silence does. Upgrade Staff: 0.5 seconds later he swings back the other way (a smaller cone, half damage)."}
+	# Feran Mock, the Jester: chaos he can steer
+	_abilities["knife_juggle"] = {"id": "knife_juggle", "name": "Knife Juggle", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [80, 90, 100, 110], "cooldown": [9, 9, 9, 9], "cast_point": 0.3, "range": 700,
+		"anim": "javelin_throw", "damage_type": "magical", "line": true, "direction": true, "full_width": true,
+		"values": {"knives": [4, 5, 6, 7], "damage": [45, 60, 75, 90], "interval": [0.1, 0.1, 0.1, 0.1],
+		"spread": [25, 25, 25, 25], "distance": [800, 800, 800, 800], "speed": [1200, 1200, 1200, 1200],
+		"width": [60, 60, 60, 60], "max_hits": [5, 5, 5, 5]}, "hidden_values": ["interval"],
+		"desc": "Feran throws 4 / 5 / 6 / 7 knives 0.1 seconds apart, each at a random angle within 25 degrees of his aim, 800 far. Each knife deals magic damage to the first enemy it hits; one enemy is hit by at most 5 knives a cast."}
+	_abilities["joke_box"] = {"id": "joke_box", "name": "Joke Box", "behavior": "point", "key": "W", "max_level": 4,
+		"mana": [100, 110, 120, 130], "cooldown": [14, 13, 12, 11], "cast_point": 0.3, "range": 600,
+		"anim": "hook_throw", "damage_type": "magical", "aoe": true,
+		"values": {"radius": [275, 275, 275, 275], "fuse": [0.8, 0.8, 0.8, 0.8], "damage": [60, 100, 140, 180],
+		"pie_miss": [0.5, 0.5, 0.5, 0.5], "pie_duration": [3, 3, 3, 3], "spring": [350, 350, 350, 350],
+		"spring_stun": [0.6, 0.6, 0.6, 0.6], "silence": [1.5, 2.0, 2.5, 3.0], "root": [1.0, 1.3, 1.6, 1.9],
+		"pranks": [1, 1, 1, 1], "throw_time": [0.35, 0.35, 0.35, 0.35]}, "hidden_values": ["throw_time", "pranks"],
+		"desc": "Feran throws a box that lands and pops after a 0.8 second fuse: enemies within 275 take magic damage and each rolls its own prank. Pie: its attacks miss half the time for 3 seconds. Spring: thrown 350 in a random direction (a crash into a tree, cliff or unit stuns for 0.6 seconds). Confetti: silenced. Glue: rooted."}
+	_abilities["swap"] = {"id": "swap", "name": "Swap", "behavior": "unit", "key": "E", "target_team": "any",
+		"max_level": 4, "mana": [180, 180, 180, 180], "cooldown": [30, 28, 26, 24], "cast_point": 0.3,
+		"range": [700, 800, 900, 1000], "anim": "spell_quick",
+		"values": {"slow": [0.4, 0.4, 0.4, 0.4], "slow_duration": [1.5, 1.5, 1.5, 1.5], "mark_time": [6, 6, 6, 6]},
+		"hidden_values": ["mark_time"],
+		"desc": "Feran and any hero, ally or enemy, trade places at once; projectiles aimed at either of them miss. A swapped enemy is turned to face away and slowed by 40% for 1.5 seconds. Upgrade Staff: cast it on an allied hero to mark it, then on an enemy hero: those two trade places and Feran stays put."}
+	_abilities["shuffle"] = {"id": "shuffle", "name": "Shuffle", "behavior": "point", "key": "R", "max_level": 3,
+		"required_level": [6, 12, 18], "mana": [250, 300, 450], "cooldown": [80, 70, 60], "cast_point": 0.5,
+		"range": 700, "anim": "spell_big", "damage_type": "magical", "aoe": true,
+		"values": {"radius": [450, 550, 650], "stun": [0.8, 1.0, 1.2], "dizzy": [3, 3, 3], "dizzy_slow": [0.25, 0.25, 0.25],
+		"dizzy_turn": [0.5, 0.5, 0.5], "juggles": [6, 6, 6]},
+		"desc": "Every enemy hero and creep in the area trades places with another random enemy there, is stunned, then is dizzy for 3 seconds (turns half as fast and moves 25% slower). Then knives fly out of the middle in every direction: 6 Knife Juggles at its level, each hitting one enemy at most 5 times. With one enemy inside, it trades places with Feran instead."}
+	# Ghorman, the Beast King: he leads a pack
+	_abilities["tame"] = {"id": "tame", "name": "Tame", "behavior": "unit", "key": "Q", "target_team": "enemy",
+		"max_level": 4, "mana": [70, 70, 70, 70], "cooldown": [30, 26, 22, 18], "cast_point": 0.3, "range": 600,
+		"anim": "spell_quick",
+		"values": {"bonus": [0.2, 0.3, 0.4, 0.5], "max_beasts": [1, 2, 3, 5]},
+		"desc": "A neutral creep (not from the ancient camp) or an enemy lane creep becomes Ghorman's beast for good, with 20 / 30 / 40 / 50% more health and attack damage, and keeps its own ability. He can lead 1 / 2 / 3 / 5 at once; taming past that releases the oldest (it dies). Upgrade Staff: ancient creeps too, one of them at a time."}
+	_abilities["roar"] = {"id": "roar", "name": "Roar", "behavior": "no_target", "key": "W", "max_level": 4,
+		"mana": [90, 100, 110, 120], "cooldown": [15, 15, 15, 15], "cast_point": 0.3, "range": 0,
+		"anim": "axe_battle_cry",
+		"values": {"radius": [500, 500, 500, 500], "slow": [0.35, 0.40, 0.45, 0.50], "attack_cut": [0.15, 0.20, 0.25, 0.30],
+		"duration": [6, 6, 6, 6], "beast_reach": [900, 900, 900, 900], "beast_attack_speed": [30, 30, 30, 30],
+		"beast_attack_pct": [0.02, 0.02, 0.02, 0.02], "beast_move_pct": [0.2, 0.2, 0.2, 0.2]},
+		"desc": "Enemies within 500 are slowed by 35 / 40 / 45 / 50% and deal 15 / 20 / 25 / 30% less attack damage for 6 seconds. His beasts within 900 attack 30 faster (and 2% more for each beast he leads) and move 20% faster for 6 seconds."}
+	_abilities["pack_leader"] = {"id": "pack_leader", "name": "Pack Leader", "behavior": "passive", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"reach": [900, 900, 900, 900], "damage": [3, 4, 5, 6], "armor": [1.0, 1.5, 2.0, 2.5],
+		"heal": [0.08, 0.10, 0.12, 0.14]},
+		"desc": "Each of his beasts within 900 gives Ghorman 3 / 4 / 5 / 6 attack damage and 1 / 1.5 / 2 / 2.5 armor. When one of his beasts dies, he heals 8 / 10 / 12 / 14% of his health."}
+	_abilities["blessing_of_the_beast_king"] = {"id": "blessing_of_the_beast_king", "name": "Blessing of the Beast King",
+		"behavior": "unit", "key": "D", "target_team": "ally", "max_level": 4, "mana": [150, 150, 150, 150],
+		"cooldown": [10, 10, 10, 10], "cast_point": 0.2, "range": 600, "anim": "spell_quick",
+		"values": {"heal": [0.3, 0.4, 0.5, 0.6], "duration": [8, 8, 8, 8], "damage_pct": [0.2, 0.3, 0.4, 0.5],
+		"attack_speed": [20, 30, 40, 50]},
+		"desc": "Ghorman blesses one of his beasts: it heals 30 / 40 / 50 / 60% of its health, is cleansed of slows, silences and roots, its ability is ready again, and for 8 seconds it deals 20 / 30 / 40 / 50% more attack damage and attacks 20 / 30 / 40 / 50 faster."}
+	_abilities["beast_form"] = {"id": "beast_form", "name": "Beast Form", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 225, 300], "cooldown": [80, 70, 60],
+		"cast_point": 0.4, "range": 0, "anim": "axe_chest_thump",
+		"values": {"duration": [25, 25, 25], "hp": [300, 600, 900], "damage": [40, 60, 80], "move_speed": [40, 40, 40],
+		"maul_every": [3, 3, 3], "maul": [100, 150, 200], "bash": [0.6, 0.6, 0.6], "beast_hp": [0.25, 0.25, 0.25],
+		"beast_cooldown_rate": [0.25, 0.25, 0.25]},
+		"desc": "Ghorman becomes a huge beast for 25 seconds: 300 / 600 / 900 more health, 40 / 60 / 80 more attack damage and 40 more speed; every 3rd attack is a maul for 100 / 150 / 200 more physical damage and a 0.6 second bash. His beasts grow too: 25% more health, and their abilities come back 25% faster."}
+
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
 	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}
 
@@ -889,6 +1053,49 @@ static func _build_talents() -> void:
 	_talent("kragg_field_pull", "+40 Magnet Field pull", [{"ability": "magnet_field", "add": {"pull": 40.0}}])
 	_talent("kragg_field_stun", "+1s Magnet Field stun", [{"ability": "magnet_field", "add": {"end_stun": 1.0}}])
 	_talent("kragg_grip_charges", "+2 Iron Grip Charges", [{"ability": "iron_grip", "add": {"charges": 2.0}}])
+
+## The five heroes of hero_ideas.txt (run 2026-10-18 f): the file's talents; Airah's are chosen (her section has none).
+static func _build_talents_18() -> void:
+	_talent("airah_gust_damage", "+60 Gust damage", [{"ability": "gust", "add": {"damage": 60.0}}])
+	_talent("airah_mana_regen", "+1.5 Mana Regen", [], {"mana_regen": 1.5})
+	_talent("airah_tailwind_miss", "+10% Tailwind miss chance", [{"ability": "tailwind", "add": {"ranged_miss": 0.10}}])
+	_talent("airah_wall_time", "+1s Wind Wall", [{"ability": "wind_wall", "add": {"duration": 1.0}}])
+	_talent("airah_gust_cooldown", "-3s Gust cooldown", [{"ability": "gust", "add": {"cooldown": -3.0}}])
+	_talent("airah_magic_amp", "+8% Magic Amp", [], {"magic_amp": 0.08})
+	_talent("airah_hurricane_damage", "+40 Hurricane damage per second", [{"ability": "hurricane", "add": {"dps": 40.0}}])
+	_talent("airah_hurricane_radius", "+150 Hurricane radius", [{"ability": "hurricane", "add": {"radius": 150.0}}])
+	_talent("burak_damage", "+15 Attack Damage", [], {"damage": 15.0})
+	_talent("burak_axe_damage", "+150 Axe Throw damage", [{"ability": "axe_throw", "add": {"damage": 150.0}}])
+	_talent("burak_rage_decay", "Rage drains 50% slower", [{"ability": "rage", "mult": {"decay": 0.5}}])
+	_talent("burak_swing_lifesteal", "+10% Reckless Swing lifesteal", [{"ability": "reckless_swing", "add": {"lifesteal": 0.10}}])
+	_talent("burak_unstoppable_rage", "-20 Rage for Unstoppable", [{"ability": "unstoppable", "add": {"rage_cost": -20.0}}])
+	_talent("burak_axe_window", "+6s Axe Throw leap window", [{"ability": "axe_throw", "add": {"recast_window": 6.0}}])
+	_talent("burak_berserk_time", "+4s Berserk", [{"ability": "berserk", "add": {"duration": 4.0}}])
+	_talent("burak_berserk_return", "Berserk's held damage returns over 10s", [{"ability": "berserk", "add": {"return_time": 4.0}}])
+	_talent("emelrich_health", "+250 Health", [], {"hp": 250.0})
+	_talent("emelrich_cut_stun", "+1s Overhead Cut stun", [{"ability": "overhead_cut", "add": {"stun": 1.0}}])
+	_talent("emelrich_sweep_damage", "+60 Sweep damage", [{"ability": "sweep", "add": {"damage": 60.0}}])
+	_talent("emelrich_sweep_shove", "Sweep shoves 350", [{"ability": "sweep", "add": {"shove": 150.0}}])
+	_talent("emelrich_stance_sides", "Steel Stance blocks from the sides", [{"ability": "steel_stance", "add": {"front": 60.0}}])
+	_talent("emelrich_cut_windup", "-0.3s Overhead Cut wind-up", [{"ability": "overhead_cut", "add": {"windup": -0.3}}])
+	_talent("emelrich_swing_armor", "Giant Swing ignores all armor", [{"ability": "giant_swing", "add": {"armor_ignore": 0.35}}])
+	_talent("emelrich_swing_cooldown", "-20s Giant Swing cooldown", [{"ability": "giant_swing", "add": {"cooldown": -20.0}}])
+	_talent("feran_knives", "+1 Knife Juggle knife", [{"ability": "knife_juggle", "add": {"knives": 1.0}}])
+	_talent("feran_magic_amp", "+8% Magic Amp", [], {"magic_amp": 0.08})
+	_talent("feran_two_pranks", "Joke Box plays two pranks", [{"ability": "joke_box", "add": {"pranks": 1.0}}])
+	_talent("feran_swap_cooldown", "-3s Swap cooldown", [{"ability": "swap", "add": {"cooldown": -3.0}}])
+	_talent("feran_swap_range", "+200 Swap range", [{"ability": "swap", "add": {"range": 200.0}}])
+	_talent("feran_box_damage", "+60 Joke Box damage", [{"ability": "joke_box", "add": {"damage": 60.0}}])
+	_talent("feran_shuffle_stun", "+1s Shuffle stun", [{"ability": "shuffle", "add": {"stun": 1.0}}])
+	_talent("feran_shuffle_radius", "+150 Shuffle radius", [{"ability": "shuffle", "add": {"radius": 150.0}}])
+	_talent("ghorman_beasts", "+1 beast", [{"ability": "tame", "add": {"max_beasts": 1.0}}])
+	_talent("ghorman_roar_speed", "+20 Roar attack speed", [{"ability": "roar", "add": {"beast_attack_speed": 20.0}}])
+	_talent("ghorman_tame_power", "+15% tamed health and damage", [{"ability": "tame", "add": {"bonus": 0.15}}])
+	_talent("ghorman_tame_cooldown", "-6s Tame cooldown", [{"ability": "tame", "add": {"cooldown": -6.0}}])
+	_talent("ghorman_pack_armor", "+2 Pack Leader armor per beast", [{"ability": "pack_leader", "add": {"armor": 2.0}}])
+	_talent("ghorman_roar_radius", "+200 Roar radius", [{"ability": "roar", "add": {"radius": 200.0}}])
+	_talent("ghorman_form_time", "+10s Beast Form", [{"ability": "beast_form", "add": {"duration": 10.0}}])
+	_talent("ghorman_maul_every", "Maul every 2nd attack", [{"ability": "beast_form", "add": {"maul_every": -1.0}}])
 
 # ---- Items ----------------------------------------------------------------------------------------------------------
 ## Item data from items.txt. "stats": passive bonuses; "use": active effect; "recipe": components (recipe scroll cost

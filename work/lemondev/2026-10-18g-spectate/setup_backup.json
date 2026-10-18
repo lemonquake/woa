@@ -1,0 +1,88 @@
+{
+	"teams": [
+		[
+			{
+				"hero": "airah",
+				"kind": "you",
+				"lane": "mid",
+				"name": "",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "sludge",
+				"kind": "bot",
+				"lane": "",
+				"name": "Pota",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "azrael",
+				"kind": "bot",
+				"lane": "",
+				"name": "Tado",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "azrin",
+				"kind": "bot",
+				"lane": "",
+				"name": "Inamo",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "emelrich",
+				"kind": "bot",
+				"lane": "",
+				"name": "Lobot",
+				"role": "",
+				"skill": "unfair"
+			}
+		],
+		[
+			{
+				"hero": "random",
+				"kind": "bot",
+				"lane": "",
+				"name": "Jakololo",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "random",
+				"kind": "bot",
+				"lane": "",
+				"name": "-Ulokolok-",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "random",
+				"kind": "bot",
+				"lane": "",
+				"name": "wahahaha!",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "random",
+				"kind": "bot",
+				"lane": "",
+				"name": "Iho DeFuta",
+				"role": "",
+				"skill": "unfair"
+			},
+			{
+				"hero": "random",
+				"kind": "bot",
+				"lane": "",
+				"name": "asheshe",
+				"role": "",
+				"skill": "unfair"
+			}
+		]
+	]
+}

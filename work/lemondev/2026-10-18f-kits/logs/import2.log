@@ -1,0 +1,213 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+WARNING: Detected another project.godot at res://build/release-source. The folder will be ignored.
+   at: _should_skip_directory (editor/file_system/editor_file_system.cpp:3497)
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (6 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | GameSettings[39m[0m
+[  14% ] [90m[1mupdate_scripts_classes[22m | SimBot18[39m[0m
+[  28% ] [90m[1mupdate_scripts_classes[22m | SimBot[39m[0m
+[  42% ] [90m[1mupdate_scripts_classes[22m | SimBotKits[39m[0m
+[  57% ] [90m[1mupdate_scripts_classes[22m | SimKits6[39m[0m
+[  71% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (130 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | armor_breaker.svg[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | battle_armor.svg[39m[0m
+[   1% ] [90m[1m_update_scan_actions[22m | battle_staff.svg[39m[0m
+[   2% ] [90m[1m_update_scan_actions[22m | block_shield.svg[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | boots.svg[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | break_blade.svg[39m[0m
+[   4% ] [90m[1m_update_scan_actions[22m | burning_cape.svg[39m[0m
+[   5% ] [90m[1m_update_scan_actions[22m | cleave_axe.svg[39m[0m
+[   6% ] [90m[1m_update_scan_actions[22m | cloak.svg[39m[0m
+[   6% ] [90m[1m_update_scan_actions[22m | crash_knife.svg[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | crit_bow.svg[39m[0m
+[   8% ] [90m[1m_update_scan_actions[22m | crit_sword.svg[39m[0m
+[   9% ] [90m[1m_update_scan_actions[22m | dagon.svg[39m[0m
+[   9% ] [90m[1m_update_scan_actions[22m | dagon_2.svg[39m[0m
+[  10% ] [90m[1m_update_scan_actions[22m | dagon_3.svg[39m[0m
+[  11% ] [90m[1m_update_scan_actions[22m | dagon_4.svg[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | dagon_5.svg[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | dragon_lance.svg[39m[0m
+[  13% ] [90m[1m_update_scan_actions[22m | feather.svg[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | frost_plate.svg[39m[0m
+[  15% ] [90m[1m_update_scan_actions[22m | giant_heart.svg[39m[0m
+[  16% ] [90m[1m_update_scan_actions[22m | glimmer_cape.svg[39m[0m
+[  16% ] [90m[1m_update_scan_actions[22m | gold_band.svg[39m[0m
+[  17% ] [90m[1m_update_scan_actions[22m | gold_glove.svg[39m[0m
+[  18% ] [90m[1m_update_scan_actions[22m | guard_boots.svg[39m[0m
+[  19% ] [90m[1m_update_scan_actions[22m | halberd.svg[39m[0m
+[  19% ] [90m[1m_update_scan_actions[22m | heavy_sword.svg[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | hex_staff.svg[39m[0m
+[  21% ] [90m[1m_update_scan_actions[22m | igit_atuli.svg[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | iron_helm.svg[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | jump_knife.svg[39m[0m
+[  23% ] [90m[1m_update_scan_actions[22m | kugmo_atuli.svg[39m[0m
+[  24% ] [90m[1m_update_scan_actions[22m | leaf_hat.svg[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | leech_blade.svg[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | leech_totem.svg[39m[0m
+[  26% ] [90m[1m_update_scan_actions[22m | long_lens.svg[39m[0m
+[  27% ] [90m[1m_update_scan_actions[22m | magic_wand.svg[39m[0m
+[  28% ] [90m[1m_update_scan_actions[22m | mana_boots.svg[39m[0m
+[  29% ] [90m[1m_update_scan_actions[22m | mana_gem.svg[39m[0m
+[  29% ] [90m[1m_update_scan_actions[22m | mana_ring.svg[39m[0m
+[  30% ] [90m[1m_update_scan_actions[22m | mask_of_madness.svg[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | medic_kit.svg[39m[0m
+[  32% ] [90m[1m_update_scan_actions[22m | moth_blade.svg[39m[0m
+[  32% ] [90m[1m_update_scan_actions[22m | net_staff.svg[39m[0m
+[  33% ] [90m[1m_update_scan_actions[22m | plate_armor.svg[39m[0m
+[  34% ] [90m[1m_update_scan_actions[22m | power_treads.svg[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | power_treads_agi.svg[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | power_treads_int.svg[39m[0m
+[  36% ] [90m[1m_update_scan_actions[22m | power_treads_str.svg[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | push_staff.svg[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | refresh_stone.svg[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | relic.svg[39m[0m
+[  39% ] [90m[1m_update_scan_actions[22m | root_staff.svg[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | shawl.svg[39m[0m
+[  41% ] [90m[1m_update_scan_actions[22m | shock_hammer.svg[39m[0m
+[  41% ] [90m[1m_update_scan_actions[22m | silence_staff.svg[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | slip_boots.svg[39m[0m
+[  43% ] [90m[1m_update_scan_actions[22m | small_shield.svg[39m[0m
+[  44% ] [90m[1m_update_scan_actions[22m | smart_band.svg[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | sneak_blade.svg[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | soul_gem.svg[39m[0m
+[  46% ] [90m[1m_update_scan_actions[22m | speed_ribbon.svg[39m[0m
+[  47% ] [90m[1m_update_scan_actions[22m | spell_shield.svg[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | spell_sword.svg[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | spike_armor.svg[39m[0m
+[  49% ] [90m[1m_update_scan_actions[22m | steady_ring.svg[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | storm_hammer.svg[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | stun_blade.svg[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | stun_club.svg[39m[0m
+[  52% ] [90m[1m_update_scan_actions[22m | sure_hit_staff.svg[39m[0m
+[  53% ] [90m[1m_update_scan_actions[22m | swift_stone.svg[39m[0m
+[  54% ] [90m[1m_update_scan_actions[22m | team_shield.svg[39m[0m
+[  54% ] [90m[1m_update_scan_actions[22m | time_crystal.svg[39m[0m
+[  55% ] [90m[1m_update_scan_actions[22m | tough_band.svg[39m[0m
+[  56% ] [90m[1m_update_scan_actions[22m | travel_boots.svg[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | troll_ring.svg[39m[0m
+[  58% ] [90m[1m_update_scan_actions[22m | twin_swords.svg[39m[0m
+[  58% ] [90m[1m_update_scan_actions[22m | upgrade_gem.svg[39m[0m
+[  59% ] [90m[1m_update_scan_actions[22m | upgrade_staff.svg[39m[0m
+[  60% ] [90m[1m_update_scan_actions[22m | war_axe.svg[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | war_drum.svg[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | wide_stone.svg[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | wraith_band.svg[39m[0m
+[  63% ] [90m[1m_update_scan_actions[22m | yasha.svg[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | anomaly.svg[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | axe_throw.svg[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | beast_form.svg[39m[0m
+[  66% ] [90m[1m_update_scan_actions[22m | berserk.svg[39m[0m
+[  67% ] [90m[1m_update_scan_actions[22m | blessing_of_the_beast_king.svg[39m[0m
+[  67% ] [90m[1m_update_scan_actions[22m | bounce_shot.svg[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | dark_matter_skin.svg[39m[0m
+[  69% ] [90m[1m_update_scan_actions[22m | death_scythe.svg[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | divine_darkness.svg[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | door_of_the_end.svg[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | fast_forward.svg[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | giant_swing.svg[39m[0m
+[  73% ] [90m[1m_update_scan_actions[22m | grip_of_the_ruler.svg[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | gust.svg[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | hurricane.svg[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | iron_grip.svg[39m[0m
+[  76% ] [90m[1m_update_scan_actions[22m | joke_box.svg[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | knife_juggle.svg[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | lay_trap.svg[39m[0m
+[  78% ] [90m[1m_update_scan_actions[22m | magnetize.svg[39m[0m
+[  79% ] [90m[1m_update_scan_actions[22m | magnet_field.svg[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | overhead_cut.svg[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | overload.svg[39m[0m
+[  81% ] [90m[1m_update_scan_actions[22m | pack_leader.svg[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | pilot_turret.svg[39m[0m
+[  83% ] [90m[1m_update_scan_actions[22m | place_turret.svg[39m[0m
+[  83% ] [90m[1m_update_scan_actions[22m | quick_hands.svg[39m[0m
+[  84% ] [90m[1m_update_scan_actions[22m | rage.svg[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | reckless_swing.svg[39m[0m
+[  86% ] [90m[1m_update_scan_actions[22m | repel.svg[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | rewind.svg[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | roar.svg[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | shuffle.svg[39m[0m
+[  89% ] [90m[1m_update_scan_actions[22m | slow_field.svg[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | soul_tap.svg[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | steel_stance.svg[39m[0m
+[  91% ] [90m[1m_update_scan_actions[22m | stop_time.svg[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | summon_boulders.svg[39m[0m
+[  93% ] [90m[1m_update_scan_actions[22m | swap.svg[39m[0m
+[  93% ] [90m[1m_update_scan_actions[22m | sweep.svg[39m[0m
+[  94% ] [90m[1m_update_scan_actions[22m | tailwind.svg[39m[0m
+[  95% ] [90m[1m_update_scan_actions[22m | tame.svg[39m[0m
+[  96% ] [90m[1m_update_scan_actions[22m | time_bolt.svg[39m[0m
+[  96% ] [90m[1m_update_scan_actions[22m | unstoppable.svg[39m[0m
+[  97% ] [90m[1m_update_scan_actions[22m | void_rush.svg[39m[0m
+[  98% ] [90m[1m_update_scan_actions[22m | wind_wall.svg[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (22 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   4% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   8% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  13% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  17% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  21% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  26% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  30% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  34% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  43% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  47% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  52% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  56% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  60% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  65% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  86% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  91% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | wind_wall.svg[39m[0m
+[   4% ] [90m[1mreimport[22m | unstoppable.svg[39m[0m
+[   8% ] [90m[1mreimport[22m | tame.svg[39m[0m
+[  13% ] [90m[1mreimport[22m | tailwind.svg[39m[0m
+[  17% ] [90m[1mreimport[22m | sweep.svg[39m[0m
+[  21% ] [90m[1mreimport[22m | swap.svg[39m[0m
+[  26% ] [90m[1mreimport[22m | steel_stance.svg[39m[0m
+[  30% ] [90m[1mreimport[22m | shuffle.svg[39m[0m
+[  34% ] [90m[1mreimport[22m | roar.svg[39m[0m
+[  39% ] [90m[1mreimport[22m | reckless_swing.svg[39m[0m
+[  43% ] [90m[1mreimport[22m | rage.svg[39m[0m
+[  47% ] [90m[1mreimport[22m | pack_leader.svg[39m[0m
+[  52% ] [90m[1mreimport[22m | overhead_cut.svg[39m[0m
+[  56% ] [90m[1mreimport[22m | knife_juggle.svg[39m[0m
+[  60% ] [90m[1mreimport[22m | joke_box.svg[39m[0m
+[  65% ] [90m[1mreimport[22m | hurricane.svg[39m[0m
+[  69% ] [90m[1mreimport[22m | gust.svg[39m[0m
+[  73% ] [90m[1mreimport[22m | giant_swing.svg[39m[0m
+[  78% ] [90m[1mreimport[22m | blessing_of_the_beast_king.svg[39m[0m
+[  82% ] [90m[1mreimport[22m | berserk.svg[39m[0m
+[  86% ] [90m[1mreimport[22m | beast_form.svg[39m[0m
+[  91% ] [90m[1mreimport[22m | axe_throw.svg[39m[0m
+[  95% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (22 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m

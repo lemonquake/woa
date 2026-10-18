@@ -274,8 +274,8 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 			it["charges"] = int(it.charges) - 1
 			if not it.has("next_charge"):
 				it["next_charge"] = w.time + float(v.charge_time)
-			w.combat.give_gold(u, int(v.gold), true, t.pos)
-			w.events.append({"t": "gold_glove", "u": u.id, "target": t.id, "gold": int(v.gold)})
+			var paid := w.combat.give_gold(u, int(v.gold), true, t.pos)
+			w.events.append({"t": "gold_glove", "u": u.id, "target": t.id, "gold": paid})
 			w.combat.kill(t, null)
 	u.stats_dirty = true
 	return false

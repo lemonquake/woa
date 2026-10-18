@@ -35,6 +35,7 @@ BACK = {
     "gold": ("#8a6a10", "#1e1402", "#ffe28a"),
     "nature": ("#3a6a1a", "#0a1404", "#d0ff8a"),
     "dark": ("#3a2a4a", "#08060c", "#c8a8ff"),
+    "wind": ("#2a6a5e", "#04140f", "#c8fff0"),
 }
 
 # metals and materials: (light, mid, dark)
@@ -994,7 +995,7 @@ def make_icons():
     return R
 
 
-# ---- Ability icons for Tock, Kragg, Roydo and Blau (assets/ui/skills/gen) ---------------------------------------------------------
+# ---- Ability icons for Tock, Kragg, Roydo, Blau, Azrael and the five heroes of run 2026-10-18 f (assets/ui/skills/gen) ---------------------------------------------------------
 
 SKILL_OUT = os.path.join(os.path.dirname(__file__), "..", "assets", "ui", "skills", "gen")
 
@@ -1275,6 +1276,223 @@ def make_skills():
         for k in (-1, 1):
             at(ic, 64 + k * 5, 62, C(0, 0, 2.6, "#ff2020", stroke="#ff8080", sw=1))
         at(ic, 64, 64, rings("#20102a", 20, 3, 10, 0.5))
+
+    # ---- The five heroes of hero_ideas.txt (run 2026-10-18 f) ----
+
+    def swirl(col="#e8fff8", r=40, turns=1.6, sw=4.0, op=0.9, n=60):
+        """A spiral of wind winding in toward the middle."""
+        pts = []
+        for k in range(n + 1):
+            t = k / n
+            a = t * turns * 2 * math.pi
+            rr = r * (1.0 - t * 0.85)
+            pts.append("%.1f,%.1f" % (math.cos(a) * rr, math.sin(a) * rr * 0.75))
+        d = "M" + " L".join(pts)
+        return L(d, INK, sw + 3, op * 0.6) + L(d, col, sw, op)
+
+    def gust_lines(col="#f0fffa", n=3, x0=-46, x1=40, y0=-18, dy=18, curl=True):
+        s = ""
+        for k in range(n):
+            y = y0 + k * dy
+            d = "M%d,%d Q%d,%d %d,%d" % (x0 + k * 6, y, (x0 + x1) // 2, y - 10, x1 - k * 8, y)
+            if curl:
+                d += " q10,0 10,-8 q0,-8 -8,-8"
+            s += L(d, INK, 7, 0.7) + L(d, col, 3.5, 0.95)
+        return s
+
+    def throwing_knife(ic, sc=1.0):
+        s = P("M0,-34 L5,-8 L3,10 L-3,10 L-5,-8 Z", ic.metal(STEEL, -5, -34, 5, 10), sw=2.5)
+        s += P("M-9,10 L9,10 L7,15 L-7,15 Z", ic.metal(GOLD), sw=2)
+        s += P("M-2.5,15 L2.5,15 L2.5,28 L-2.5,28 Z", "#3a1a1a", sw=2)
+        s += C(0, 31, 4, "#d02a24", sw=1.8)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def paw(col="#f0e8d0", sc=1.0):
+        s = E(0, 8, 14, 12, col, sw=2.5)
+        for x, y in ((-14, -8), (-5, -16), (5, -16), (14, -8)):
+            s += E(x, y, 5, 6.5, col, sw=2)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def beast_head(ic, sc=1.0, mane="#d8a040", face="#8a5a2a"):
+        s = ""
+        for k in range(14):
+            a = k * 2 * math.pi / 14
+            s += P("M0,0 L%.1f,%.1f L%.1f,%.1f Z" % (math.cos(a - 0.25) * 30, math.sin(a - 0.25) * 30,
+                                                       math.cos(a) * 44, math.sin(a) * 44), mane, sw=2)
+        s += C(0, 0, 30, ic.rad([(0, "#f0c070"), (1, mane)], 0, 0, 30), sw=2.5)
+        s += P("M-20,-6 Q0,-24 20,-6 Q22,16 0,26 Q-22,16 -20,-6 Z", ic.metal((("#d8a070"), face, "#2e1606"), -20, -24, 20, 26), sw=2.5)
+        for k in (-1, 1):
+            s += P("M%d,-4 L%d,-8 L%d,0 Z" % (k * 6, k * 15, k * 14), "#ffe040", stroke="#3a1a00", sw=1.5)
+        s += P("M-6,10 L6,10 L0,16 Z", "#1a0a04", sw=1.5)
+        s += L("M-8,20 L-4,26 M8,20 L4,26", "#ffffff", 2.5)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    @icon("gust", "wind")
+    def _(ic):
+        at(ic, 60, 64, gust_lines("#f0fffa", 3, -48, 44, -20, 20))
+        at(ic, 98, 66, figure("#2a4a40", 0.55), 25)
+
+    @icon("tailwind", "wind")
+    def _(ic):
+        at(ic, 70, 66, figure("#ffffff", 0.95))
+        at(ic, 0, 0, '<g transform="translate(58 50)">%s</g>' % speed_lines("#e8fff8", 4, -48, 30, 0, 11, 0.85))
+        ic.add(badge(ic, '<g transform="scale(0.42)">%s</g>' % chevrons("#e0fff0"), rim=("#e0fff0", "#40c8a0", "#08402a")))
+
+    @icon("wind_wall", "wind")
+    def _(ic):
+        for k in range(5):
+            x = 36 + k * 14
+            d = "M%d,104 Q%d,80 %d,64 Q%d,44 %d,22" % (x, x - 10, x, x + 10, x)
+            ic.add(L(d, INK, 7, 0.6) + L(d, "#e8fff8", 3.5, 0.9))
+        at(ic, 104, 56, L("M-10,0 L10,0", "#ff9a8a", 4) + P("M10,-7 L18,0 L10,7 Z", "#ff9a8a", sw=1.5), 180)
+        at(ic, 94, 56, star("#ffffff", 6, 2, 4))
+
+    @icon("hurricane", "wind")
+    def _(ic):
+        at(ic, 64, 60, swirl("#e8fff8", 48, 1.8, 5.0))
+        at(ic, 64, 60, swirl("#a8f0d8", 30, 1.4, 2.5, 0.8))
+        for x, y, rot in ((22, 30, 30), (104, 36, -50), (100, 96, 120)):
+            at(ic, x, y, P("M0,-6 Q6,0 0,6 Q-6,0 0,-6 Z", "#6ab84a", sw=1.5), rot)
+
+    @icon("rage", "blood")
+    def _(ic):
+        at(ic, 64, 70, flame(ic, 1.2))
+        at(ic, 64, 64, mask(ic, RED), 0, 0.55)
+        at(ic, 0, 0, L("M40,52 L56,58 M88,52 L72,58", "#ffe060", 4))
+
+    @icon("axe_throw", "fire")
+    def _(ic):
+        at(ic, 70, 56, axe(ic, STEEL, WOOD, big=True), 50, 0.9)
+        for k in range(3):
+            a = 2.4 + k * 0.5
+            at(ic, 0, 0, L("M%d,%d A34,34 0 0 1 %d,%d" % (40 + k * 4, 92 - k * 6, 26 + k * 6, 60 - k * 6), "#ffe0b0", 2.5, 0.7))
+        at(ic, 0, 0, '<g transform="translate(40 84)">%s</g>' % speed_lines("#fff0d0", 3, -30, 18, 0, 9, 0.6))
+
+    @icon("reckless_swing", "fire")
+    def _(ic):
+        at(ic, 44, 64, axe(ic, STEEL, WOOD), -35, 0.8)
+        at(ic, 84, 64, axe(ic, STEEL, WOOD), 35, 0.8)
+        at(ic, 0, 0, L("M14,96 Q64,20 114,96", "#ffd07a", 8, 0.35) + L("M14,96 Q64,20 114,96", "#fff6d8", 2.5, 0.9))
+        ic.add(badge(ic, '<g transform="scale(0.36)">%s</g>' % cross(("#ffc8c8", "#e03040", "#400a10")), rim=RED))
+
+    @icon("unstoppable", "blood")
+    def _(ic):
+        at(ic, 64, 70, figure("#ffd8c8", 1.15))
+        for k in range(6):
+            a = -math.pi * 0.95 + k * 0.38
+            x0, y0 = 64 + math.cos(a) * 34, 62 + math.sin(a) * 34
+            x1, y1 = 64 + math.cos(a) * 54, 62 + math.sin(a) * 54
+            ic.add(L("M%.1f,%.1f L%.1f,%.1f" % (x0, y0, x1, y1), INK, 7) + L("M%.1f,%.1f L%.1f,%.1f" % (x0, y0, x1, y1), "#ffe060", 3))
+        at(ic, 64, 28, L("M-24,0 L-8,-4 L0,4 L10,-6 L24,0", "#ffffff", 2.5, 0.8))
+        at(ic, 0, 0, L("M36,96 L54,86 M92,96 L74,86", "#c8c8d8", 4) + L("M30,100 l8,-6 M98,100 l-8,-6", "#c8c8d8", 3))
+
+    @icon("berserk", "blood")
+    def _(ic):
+        at(ic, 64, 74, flame(ic, 1.5))
+        at(ic, 46, 58, axe(ic, STEEL, WOOD), -20, 0.7)
+        at(ic, 82, 58, axe(ic, STEEL, WOOD), 20, 0.7)
+        at(ic, 0, 0, P("M56,62 L60,58 L64,64 L68,58 L72,62 L68,70 L60,70 Z", "#ff2020", stroke="#ffe060", sw=1.5))
+
+    @icon("overhead_cut", "gold")
+    def _(ic):
+        at(ic, 62, 54, sword(ic, STEEL, GOLD, length=86, width=14, heavy=True), 0, 0.9)
+        at(ic, 0, 0, L("M64,108 L64,96", "#ff4030", 10, 0.5))
+        at(ic, 64, 104, E(0, 0, 34, 7, "none", stroke="#ff4030", sw=3, extra=' opacity="0.85"'))
+        at(ic, 0, 0, L("M30,26 Q64,6 98,26", "#ffffff", 3, 0.7))
+
+    @icon("sweep", "gold")
+    def _(ic):
+        at(ic, 0, 0, L("M24,40 A44,44 0 0 0 104,40", "#fff2b0", 10, 0.3) + L("M24,40 A44,44 0 0 0 104,40", "#ffffff", 3, 0.95))
+        at(ic, 70, 64, sword(ic, STEEL, GOLD, length=80, width=13, heavy=True), 70, 0.75)
+        at(ic, 0, 0, L("M20,52 L8,62 M24,58 L14,72", "#ffe28a", 3, 0.8))
+        at(ic, 22, 90, figure("#ffe0c0", 0.4), -30)
+
+    @icon("steel_stance", "armor")
+    def _(ic):
+        at(ic, 64, 64, E(0, 0, 50, 46, "none", stroke="#fff2b0", sw=2.5, extra=' stroke-dasharray="6 4" opacity="0.6"'))
+        at(ic, 64, 64, shield(ic, STEEL, GOLD), 0, 0.9)
+        at(ic, 64, 60, sword(ic, STEEL, GOLD, length=60, width=10, heavy=True), 0, 0.6)
+        for x, y in ((22, 40), (106, 40)):
+            at(ic, x, y, L("M-8,0 L6,0", "#ff9a8a", 3) + P("M6,-5 L12,0 L6,5 Z", "#ff9a8a", sw=1.2), 0 if x > 64 else 180)
+
+    @icon("giant_swing", "gold")
+    def _(ic):
+        at(ic, 64, 112, P("M0,0 L-58,-70 A90,90 0 0 1 58,-70 Z", ic.rad([(0, "#ff5030", 0.55), (1, "#ff5030", 0.05)], 0, 0, 90),
+                           stroke="#ff7050", sw=2))
+        at(ic, 64, 70, sword(ic, STEEL, GOLD, length=92, width=15, heavy=True), -55, 0.85)
+        at(ic, 0, 0, L("M16,58 A60,60 0 0 1 112,58", "#ffffff", 3, 0.85))
+
+    @icon("knife_juggle", "magic")
+    def _(ic):
+        for x, y, rot in ((34, 56, -40), (64, 40, 0), (94, 56, 40), (50, 82, -15), (80, 82, 15)):
+            at(ic, x, y, throwing_knife(ic, 0.62), rot)
+        at(ic, 64, 64, E(0, 0, 42, 30, "none", stroke="#f0c8ff", sw=2, extra=' stroke-dasharray="4 5" opacity="0.7"'))
+
+    @icon("joke_box", "magic")
+    def _(ic):
+        box = "M-26,-6 L26,-6 L26,34 L-26,34 Z"
+        at(ic, 64, 72, P(box, ic.lin([(0, "#ff5050"), (1, "#801818")], 0, -6, 0, 34), sw=3))
+        at(ic, 64, 72, L("M-26,8 L26,8 M-8,-6 L-8,34 M8,-6 L8,34", "#ffe060", 2.5, 0.9))
+        at(ic, 64, 72, P("M-30,-14 L30,-14 L26,-6 L-26,-6 Z", ic.metal(GOLD), sw=2.5))
+        at(ic, 0, 0, L("M64,58 L64,46 Q72,40 64,34 Q56,28 64,22", "#ffffff", 3))
+        at(ic, 64, 18, C(0, 0, 7, "#ffe060", sw=2))
+        for x, y, col in ((30, 34, "#ff60c0"), (98, 30, "#60e0ff"), (24, 66, "#ffe060"), (104, 62, "#80ff80")):
+            at(ic, x, y, star(col, 6, 2.5, 5))
+
+    @icon("swap", "magic")
+    def _(ic):
+        at(ic, 40, 70, figure("#f0e0ff", 0.7))
+        at(ic, 88, 70, figure("#ff9ab0", 0.7))
+        at(ic, 0, 0, L("M38,38 Q64,14 90,38", "#ffffff", 4) + P("M90,30 L96,42 L84,42 Z", "#ffffff", sw=1.5))
+        at(ic, 0, 0, L("M90,100 Q64,124 38,100", "#ffffff", 4) + P("M38,108 L32,96 L44,96 Z", "#ffffff", sw=1.5))
+        for x, y, col in ((64, 60, "#ff60c0"), (58, 76, "#60e0ff"), (70, 84, "#ffe060")):
+            at(ic, x, y, star(col, 4, 1.6, 5))
+
+    @icon("shuffle", "magic")
+    def _(ic):
+        at(ic, 64, 64, rings("#f0c8ff", 16, 3, 13, 0.6))
+        for k, col in enumerate(("#ffe0f0", "#c0e0ff", "#ffe8a0", "#d0ffd0")):
+            a = k * math.pi / 2 + math.pi / 4
+            at(ic, 64 + math.cos(a) * 30, 64 + math.sin(a) * 30, figure(col, 0.36))
+        at(ic, 64, 64, arrows_in("#ffffff", 50, 4, inward=False), 45)
+        at(ic, 64, 64, star("#ffe060", 9, 3.5, 5))
+
+    @icon("tame", "nature")
+    def _(ic):
+        at(ic, 64, 70, paw("#f0e8d0", 1.5))
+        at(ic, 64, 64, rings("#80ff80", 30, 2, 12, 0.45))
+        at(ic, 0, 0, L("M30,30 Q44,40 40,56 M98,30 Q84,40 88,56", "#a8ff9a", 3, 0.8))
+        ic.add(badge(ic, '<g transform="scale(0.32)">%s</g>' % cross(("#c8ffc8", "#30c040", "#0a4010")), rim=GREEN))
+
+    @icon("roar", "nature")
+    def _(ic):
+        at(ic, 52, 64, beast_head(ic, 0.9))
+        for k in range(3):
+            r = 18 + k * 12
+            at(ic, 86, 70, L("M%d,%d A%d,%d 0 0 1 %d,%d" % (0, -r, r, r, 0, r), "#fff2b0", 3, 0.85 - k * 0.2), 0)
+
+    @icon("pack_leader", "nature")
+    def _(ic):
+        for x, y, s in ((30, 84, 0.7), (98, 84, 0.7), (64, 92, 0.6)):
+            at(ic, x, y, paw("#d8c8a8", s))
+        at(ic, 64, 50, beast_head(ic, 0.75))
+        at(ic, 64, 18, P("M-16,6 L-12,-8 L-4,0 L0,-12 L4,0 L12,-8 L16,6 Z", ic.metal(GOLD), sw=2))
+
+    @icon("blessing_of_the_beast_king", "nature")
+    def _(ic):
+        at(ic, 64, 74, paw("#f0e8d0", 1.3))
+        at(ic, 64, 30, P("M-20,8 L-14,-10 L-5,0 L0,-14 L5,0 L14,-10 L20,8 Z", ic.metal(GOLD), sw=2.5))
+        for x, y in ((28, 48), (100, 48), (36, 100), (94, 104)):
+            at(ic, x, y, star("#d0ff8a", 6, 2.2, 4))
+        at(ic, 64, 72, rings("#d0ff8a", 34, 1, 10, 0.5))
+
+    @icon("beast_form", "nature")
+    def _(ic):
+        at(ic, 64, 62, beast_head(ic, 1.2, "#c88a30", "#6a3a1a"))
+        for k in (-1, 1):
+            for j in range(3):
+                x = 64 + k * (36 + j * 7)
+                ic.add(L("M%d,%d L%d,%d" % (x, 96 + j * 3, x + k * 10, 116), "#ffffff", 3, 0.85))
 
     return R
 

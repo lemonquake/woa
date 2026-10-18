@@ -747,7 +747,7 @@ func _update_boulders(w: SimWorld, dt: float) -> void:
 			continue
 		var p2: Vector2 = b.pos
 		n.global_position = fx.ground3(p2)
-		n.visible = game.world.vision.cell_visible(game.player_team, p2) or int(b.team) == game.player_team
+		n.visible = game.sees_cell(p2) or game.own_team(int(b.team))
 		var vel: Vector2 = b.vel
 		if vel.length() > 1.0:
 			# rolling: turn about the axis across the motion (sim x -> view x, sim y -> view -z)

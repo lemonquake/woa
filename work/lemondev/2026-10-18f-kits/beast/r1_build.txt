@@ -1,0 +1,5 @@
+== ghorman_beast
+[hero_body   3.5s] cloth: 1317 hanging vertices follow the hips more than the legs
+[hero_body   3.7s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   3.8s] unmix: 1163 vertices made wholly arm or body, 148 edges split (146 new vertices)
+[hero_body  21.6s] wrote A:/Python/woa/work/lemondev/2026-10-18f-kits/beast/r1/ghorman_beast.glb (12.8 MB)

@@ -47,6 +47,15 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 	if o.get("queue", false) and (not u.is_idle() or not u.channel.is_empty() or not u.order_queue.is_empty()):
 		u.order_queue.append(o)
 		return
+	# a locked wind-up (Overhead Cut, Giant Swing): nothing calls it off; an order given meanwhile waits for it to end
+	# (stop and hold are ignored), except what acts at once without a target (items, toggles)
+	if bool(u.channel.get("locked", false)):
+		var instant0 := type == O.CAST_NO_TARGET and w.abilities.is_instant(u, String(o.get("ability", "")),
+			int(o.get("item_slot", -1)))
+		if not instant0:
+			if type != O.STOP and type != O.HOLD:
+				u.order_queue = [o]
+			return
 	# any new order breaks a channel, except something that acts at once without a target: an item, a toggle (Stench)
 	# or an immediate spell (Blubber), as in Dota
 	if not u.channel.is_empty():
@@ -241,7 +250,10 @@ func update(u: SimUnit) -> void:
 		# so); the hero keeps facing the target
 		var ch := u.channel
 		var breaks_on_root := ch.has("site") or bool(SimData.ability(String(ch.ability)).get("channel_breaks_on_root", false))
-		if u.is_stunned() or u.is_silenced() or (breaks_on_root and u.has_flag("root")):
+		var breaks := u.is_stunned() or u.is_silenced() or (breaks_on_root and u.has_flag("root"))
+		if bool(ch.get("locked", false)):
+			breaks = w.abilities.kits5.windup_breaks(u, ch)     # with Steel Stance a stun does not break Giant Swing
+		if breaks:
 			cancel_channel(u)
 		else:
 			if ch.has("point"):

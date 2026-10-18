@@ -1,0 +1,10 @@
+bow_15_standing_dodge_forward      frames 31 (1.03s) drift 2.07 m (max 2.07) hands apart 0.93-1.06 m lowest hand 0.77 m
+gs_33_great_sword_jump_attack      frames 66 (2.20s) drift 3.11 m (max 3.11) hands apart 0.14-0.22 m lowest hand 0.67 m
+mag_37_Standing_React_Large_From_Back frames 51 (1.70s) drift 1.56 m (max 1.58) hands apart 0.87-1.16 m lowest hand 0.59 m
+x_getting_up                       frames 251 (8.37s) drift 0.71 m (max 0.71) hands apart 0.37-1.06 m lowest hand 0.03 m
+x_jump_attack                      frames 115 (3.83s) drift 2.18 m (max 2.28) hands apart 0.51-1.33 m lowest hand 0.29 m
+x_knocked_down                     frames 85 (2.83s) drift 1.72 m (max 1.77) hands apart 0.34-1.28 m lowest hand 0.02 m
+x_receiving_a_big_uppercut         frames 74 (2.47s) drift 1.45 m (max 1.62) hands apart 0.25-1.29 m lowest hand 0.62 m
+x_shoulder_hit_and_fall            frames 94 (3.13s) drift 1.50 m (max 1.50) hands apart 0.18-0.94 m lowest hand 0.05 m
+x_slash_advance                    frames 76 (2.53s) drift 0.00 m (max 0.53) hands apart 0.51-0.60 m lowest hand 0.90 m
+x_stumbling                        frames 150 (5.00s) drift 3.54 m (max 3.89) hands apart 0.20-1.24 m lowest hand -0.11 m

@@ -29,6 +29,8 @@ var paused := false
 ## The element table (SimConst.element_mult) is on. Mechanics tests of other rules turn it off to check Dota's numbers
 ## on their own; matches always play with it.
 var elements := true
+var xp_rate := C.XP_RATE                   # experience earned (all heroes; Game Setup "Experience")
+var gold_rate := C.GOLD_RATE               # gold earned, passive gold too (Game Setup "Gold")
 var debug_flags := {}                      # Debug panel switches (SimDebug): god, free_spells, reveal, passive_bot
 var _gold_acc := {}
 var _grid := {}
@@ -327,6 +329,8 @@ func step() -> void:
 	abilities.kits2.tick()
 	abilities.kits3.tick()
 	abilities.kits4.tick()
+	abilities.kits5.tick()
+	abilities.kits6.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()
@@ -390,7 +394,7 @@ func _clock() -> void:
 	if time >= 0.0:
 		var per_tick := C.passive_gpm(time) / 60.0 * C.DT
 		for h in heroes:
-			_gold_acc[h.id] += per_tick * h.gold_mult
+			_gold_acc[h.id] += per_tick * h.gold_mult * gold_rate
 			if _gold_acc[h.id] >= 1.0:
 				var g := int(_gold_acc[h.id])
 				_gold_acc[h.id] -= g

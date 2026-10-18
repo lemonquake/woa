@@ -25,6 +25,7 @@ var caziel_fx: CazielFx
 var hero15_fx: Hero15Fx
 var hero16_fx: Hero16Fx
 var azrael_fx: AzraelFx
+var hero18_fx: Hero18Fx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
@@ -39,7 +40,16 @@ var menus: Control
 var hud: Control
 var views := {}                            # unit id -> UnitView | BuildingView
 var player_team := C.DAWN
-var player_hero_id := -1
+var player_hero_id := -1                   # your hero; while watching, the watched hero (watch())
+## Watching an All-Bot match (Game Setup with no You slot, or --watch): every hero is a bot's. player_hero_id and
+## player_team follow the watched hero (its HUD, portrait and orders); the Watch panel (WatchPanel) picks the hero, the
+## camera, whose sight shows and whose orders and plans are drawn. Nothing the watcher clicks reaches the simulation.
+var spectator := false
+var vision_mode := -1                      # -1 your (the watched hero's) team; 0, 1 that team; 2 both; 3 the whole map
+var cam_mode := "free"                     # watching: "free", "follow" (the watched hero), "hero" (hero view), "auto"
+var show_orders := 1                       # watching: 0 off, 1 the watched hero's orders, 2 every hero's
+var show_plans := true                     # watching: what each bot is doing, over its head
+var watch_panel: Control
 var selected_id := -1                     # the primary selected unit (its card and portrait)
 var selected: Array = []                   # every selected unit id (box select)
 var fog_tex: ImageTexture
@@ -137,6 +147,11 @@ func _ready() -> void:
 	azrael_fx.fx = fx
 	azrael_fx.fire = fire_fx
 	add_child(azrael_fx)
+	hero18_fx = Hero18Fx.new()
+	hero18_fx.game = self
+	hero18_fx.fx = fx
+	hero18_fx.fire = fire_fx
+	add_child(hero18_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -192,6 +207,12 @@ func _ready() -> void:
 	input = InputController.new()
 	input.game = self
 	add_child(input)
+	if spectator:
+		cam_mode = String(args.get("watch_cam", "auto"))
+		vision_mode = int(args.get("watch_vision", "2"))
+		watch_panel = WatchPanel.new()
+		watch_panel.game = self
+		ui.add_child(watch_panel)
 	menus = preload("res://src/ui/match_menus.gd").new()
 	menus.set("game", self)
 	ui.add_child(menus)
@@ -267,6 +288,8 @@ var multiplayer_match := false              # this match began as a multiplayer 
 var paused_by := ""                         # who paused the game (multiplayer)
 
 func act(c: Dictionary) -> String:
+	if spectator:
+		return "You are watching this match"
 	if net != null:
 		net.send_command(c)
 		return ""
@@ -305,8 +328,21 @@ func _spawn_heroes() -> void:
 	var slots: Array = []
 	if automated or args.has("hero") or args.has("bot_hero") or args.has("bots"):
 		slots = _scripted_slots(automated, rng)
+		if args.has("xp_rate"):
+			world.xp_rate = float(args.xp_rate)
+		if args.has("gold_rate"):
+			world.gold_rate = float(args.gold_rate)
 	else:
 		slots = GameSettings.match_slots(rng)
+		world.xp_rate = GameSettings.xp_rate()
+		world.gold_rate = GameSettings.gold_rate()
+	if args.has("watch"):
+		# --watch: the scripted line-up with your slot played by a bot too
+		for s in slots:
+			if s.kind == "you":
+				s.kind = "bot"
+				s.name = "Bot Pip"
+	spectator = not slots.any(func(s): return String(s.kind) == "you")
 	BotMemory.active = bool(Options.get_value("bots_learn")) and not automated and not args.has("nolearn")
 	if BotMemory.active:
 		BotMemory.load_data()
@@ -330,20 +366,23 @@ func _spawn_heroes() -> void:
 			mine = h
 	if mine == null:
 		mine = (made[0][0] as SimUnit)
-	mine.player = true
-	mine.player_name = String(NetBrowser.load_prefs().get("name", ""))
+	if not spectator:
+		mine.player = true
+		mine.player_name = String(NetBrowser.load_prefs().get("name", ""))
 	player_hero_id = mine.id
 	player_team = mine.team
 	for m in made:
 		var h: SimUnit = m[0]
 		var s: Dictionary = m[1]
-		if h == mine:
+		if h == mine and not spectator:
 			if args.has("autoplay"):
 				world.bots.append(SimBot.new(world, h.id, "mid", "Autoplay"))
 			continue
 		world.bots.append(SimBot.new(world, h.id, "mid", String(s.name), String(s.skill)))
 		if String(s.get("role", "")) != "":
 			world.brain(h.team).fixed_role[h.id] = int(s.role)
+	if spectator:
+		return
 	var br := world.brain(player_team)
 	br.player_pref[mine.id] = String(_slot_of(made, mine).get("lane", ""))
 
@@ -525,9 +564,9 @@ func _sync_views() -> void:
 			views.erase(id)
 			continue
 		if v is UnitView:
-			v.fog_ok = u.team == player_team or world.vision.sees(player_team, u)
-			if u.team != player_team and not u.alive:
-				v.fog_ok = world.vision.cell_visible(player_team, u.pos)
+			v.fog_ok = sees(u)
+			if not u.alive and not own_team(u.team):
+				v.fog_ok = sees_cell(u.pos)
 			v.tick(u)
 		else:
 			v.update_state(u)
@@ -672,6 +711,8 @@ func _drain_events() -> void:
 			hero16_fx.event(e)
 		elif e.t in AzraelFx.EVENTS:
 			azrael_fx.event(e)
+		elif e.t in Hero18Fx.EVENTS:
+			hero18_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -679,13 +720,17 @@ func _drain_events() -> void:
 				var pu := world.get_unit(int(e.u))
 				paused_by = String(pu.look.get("display_name", pu.name)) if pu != null and bool(e.on) else ""
 			"respawn":
-				if int(e.u) == player_hero_id and bool(Options.get_value("center_on_respawn")) and _capture_frames < 0:
+				if int(e.u) == player_hero_id and bool(Options.get_value("center_on_respawn")) and _capture_frames < 0 and not spectator:
 					center_on_hero()
 			"cast_start":
 				var cv = views.get(e.u)
 				var aid := String(e.ability)
 				if cv is UnitView and int(e.get("slot", -1)) < 0 and aid != "tp":
-					cv.on_cast_start(aid, world.abilities.cast_point(aid, -1))
+					var cp := world.abilities.cast_point(aid, -1)
+					var cu := world.get_unit(int(e.u))
+					if aid in SimKits5.WINDUPS and cu != null:
+						cp += world.abilities.val(cu, aid, "windup")     # Ser Emelrich's blow lands as the wind-up ends
+					cv.on_cast_start(aid, cp)
 				if aid == "smash":
 					# the Ogre's Smash: its area glows red on the ground through the 2.8 s wind-up
 					fx.smash_warning(e.point, float(SimData.ability("smash").values.radius[0]), world.abilities.cast_point(aid, -1))
@@ -704,7 +749,7 @@ func _drain_events() -> void:
 			"crit":
 				# Dota: a red number with the critical damage (before the target's reductions) over the target
 				var ct := world.get_unit(int(e.target))
-				if ct and (ct.team == player_team or world.vision.sees(player_team, ct)):
+				if ct and sees(ct):
 					_crit_hit[int(e.target)] = int(e.u)
 					var cvw = views.get(ct.id)
 					var chh: float = (cvw.bar_height + 0.6) if cvw is UnitView else 2.4
@@ -844,7 +889,7 @@ func _drain_events() -> void:
 					fx.tango_eat(int(e.u), map.trees[ti].pos)
 			"tp_start":
 				var tu := world.get_unit(e.u)
-				if tu and (tu.team == player_team or world.vision.sees(player_team, tu)):
+				if tu and sees(tu):
 					fx.tp_start(e.u, View.to3(tu.pos, terrain.height_at(tu.pos)), View.to3(e.dest, terrain.height_at(e.dest)), tu.team)
 				elif tu:
 					# enemies still see where a Town Portal is going to land
@@ -882,6 +927,8 @@ func _drain_events() -> void:
 				var du := world.get_unit(e.u)
 				if du and du.is_building() and hud and hud.has_method("announce"):
 					var side := "Your" if du.team == player_team else "The enemy's"
+					if spectator:
+						side = SimConst.TEAM_NAMES[du.team] + "'s"
 					var what := {"tower1": "tier 1 tower", "tower2": "tier 2 tower", "tower3": "tier 3 tower", "tower4": "tier 4 tower",
 						"melee_rax": "melee barracks", "ranged_rax": "ranged barracks", "filler": "statue", "ancient": "Throne"}
 					var wname := String(what.get(String(du.def.id), "building"))
@@ -899,7 +946,10 @@ func _drain_events() -> void:
 					hud.kill_feed.on_deny_hero(du)
 			"victory":
 				if hud and hud.has_method("announce"):
-					hud.announce("Victory!" if int(e.team) == player_team else "Defeat", "The Throne has been destroyed")
+					var title := "Victory!" if int(e.team) == player_team else "Defeat"
+					if spectator:
+						title = "%s wins" % SimConst.TEAM_NAMES[int(e.team)]
+					hud.announce(title, "The Throne has been destroyed")
 				# the bots score this game into what they learned (Options: Bots learn from games)
 				SimTeamAI.match_over(world)
 			"chat":
@@ -985,7 +1035,7 @@ func _on_site(e: Dictionary) -> void:
 	if s.is_empty():
 		return
 	var h := world.get_unit(int(e.get("u", -1)))
-	var seen := world.vision.cell_visible(player_team, s.pos)
+	var seen := sees_cell(s.pos)
 	match String(e.what):
 		"warp":
 			var hv = views.get(int(e.u))
@@ -995,7 +1045,7 @@ func _on_site(e: Dictionary) -> void:
 			var col := Color(0.62, 0.42, 1.0)
 			if seen:
 				fx.shockwave(fx.ground3(e.from, 0.1), 2.2, col, 0.6)
-			if world.vision.cell_visible(player_team, e.to) or (h and h.team == player_team):
+			if sees_cell(e.to) or (h and own_team(h.team)):
 				fx.shockwave(fx.ground3(e.to, 0.1), 2.2, col, 0.6)
 			site_view.on_channel(int(e.id), -1.0)
 		"lily_taken":
@@ -1029,7 +1079,7 @@ func _on_damage(e: Dictionary) -> void:
 			fx.melee_hit(su, tu, amt)
 			if String(su.def.model) == "hero_azrael":
 				azrael_fx.scythe_hit(su, tu)
-	if not (tu.team == player_team or world.vision.sees(player_team, tu)):
+	if not sees(tu):
 		return
 	# the hit of a critical strike already showed its red number
 	if atk and int(_crit_hit.get(tu.id, -1)) == int(e.src):
@@ -1105,6 +1155,7 @@ func _process(dt: float) -> void:
 	hero15_fx.update(world, alpha, dt)
 	hero16_fx.update(world, alpha, dt)
 	azrael_fx.update(world, alpha, dt)
+	hero18_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)
@@ -1116,6 +1167,8 @@ func _process(dt: float) -> void:
 	_t = _tm("target", _t)
 	if _bench_until > 0.0:
 		_bench_frame(dt)
+	if spectator:
+		_watch_camera(dt)
 	atmosphere.update(world.is_night(), dt if _capture_frames < 0 else 10.0)
 	foliage.set_near_fade(camera.distance * camera.zoom)
 	_update_fog(dt)
@@ -1146,6 +1199,140 @@ func _process(dt: float) -> void:
 			_save_capture()
 
 # ---- Fog of war -------------------------------------------------------------------------------------------------------
+
+## The team whose sight the screen shows (-1: both teams or the whole map, see vision_mode).
+func vis_team() -> int:
+	return player_team if vision_mode < 0 else (vision_mode if vision_mode < 2 else -1)
+
+## A unit is shown: in the sight of the team (or teams) the screen shows. That team's own units always are.
+func sees(u: SimUnit) -> bool:
+	if vision_mode == 3:
+		return true
+	var t := vis_team()
+	if t < 0:
+		return world.vision.sees(C.DAWN, u) or world.vision.sees(C.DUSK, u)
+	return world.vision.sees(t, u)
+
+func sees_cell(p: Vector2) -> bool:
+	if vision_mode == 3 or world.vision.reveal_all:
+		return true
+	var t := vis_team()
+	if t < 0:
+		return world.vision.cell_visible(C.DAWN, p) or world.vision.cell_visible(C.DUSK, p)
+	return world.vision.cell_visible(t, p)
+
+## A team whose units are always shown (its own sight): the shown team; either team with both teams' sight.
+func own_team(team: int) -> bool:
+	if vision_mode >= 2:
+		return team == C.DAWN or team == C.DUSK
+	return team == vis_team()
+
+var _fog_both := PackedByteArray()
+var _fog_both_tick := -1
+
+## The sight grid to draw (0/1 a cell, SimMap.VN square): one team's, both teams' (the two OR'd 8 cells at a time),
+## or every cell (the Debug panel's reveal, or watching with the whole map).
+func fog_bytes() -> PackedByteArray:
+	var n := SimMap.VN
+	if world.vision.reveal_all or vision_mode == 3:
+		if _fog_all.size() != n * n:
+			_fog_all.resize(n * n)
+			_fog_all.fill(1)
+		return _fog_all
+	var t := vis_team()
+	if t >= 0:
+		return world.vision.visible[t]
+	if _fog_both_tick != world.tick or _fog_both.size() != n * n:
+		_fog_both_tick = world.tick
+		var a := world.vision.visible[0].to_int64_array()
+		var b := world.vision.visible[1].to_int64_array()
+		for i in a.size():
+			a[i] = a[i] | b[i]
+		_fog_both = a.to_byte_array()
+		for i in range(a.size() * 8, n * n):          # the tail that does not fill 8 bytes
+			_fog_both.append(world.vision.visible[0][i] | world.vision.visible[1][i])
+	return _fog_both
+
+# ---- Watching an All-Bot match ---------------------------------------------------------------------------------------
+
+## Watch another hero: its HUD, portrait, orders and (with "Hero's team" sight) its team's view.
+func watch(hid: int, move_camera := true) -> void:
+	var h := world.get_unit(hid)
+	if h == null or not h.is_hero():
+		return
+	player_hero_id = hid
+	player_team = h.team
+	selected_id = hid
+	selected = [hid]
+	_fog_tick = -1                          # redraw the fog now (the team may have changed)
+	if move_camera:
+		center_on_hero()
+
+var _auto_next := 0.0
+
+## Watching: the camera mode ("free", "follow", "hero", "auto"). Hero view also shows the watched hero's team's sight
+## and its orders; leaving it puts back the sight chosen before.
+var _vision_before_hero := 2
+
+func set_cam_mode(m: String) -> void:
+	if m == cam_mode:
+		return
+	if m == "hero":
+		_vision_before_hero = vision_mode
+		vision_mode = -1
+	elif cam_mode == "hero":
+		vision_mode = _vision_before_hero
+	cam_mode = m
+	_auto_next = 0.0
+	_fog_tick = -1
+	if watch_panel != null:
+		watch_panel.refresh()
+
+## Watching: the camera follows the watched hero (Follow hero, Hero view) or the action (Auto: every few seconds the
+## hero in the biggest fight, else the one in the most danger, is watched).
+func _watch_camera(dt: float) -> void:
+	if camera.user_moved:
+		camera.user_moved = false
+		if cam_mode != "free":
+			set_cam_mode("free")
+	if cam_mode == "auto":
+		_auto_next -= dt
+		if _auto_next <= 0.0:
+			_auto_next = 4.0
+			var best := _auto_pick()
+			if best >= 0 and best != player_hero_id:
+				watch(best, false)
+	if cam_mode in ["follow", "hero", "auto"]:
+		var h := world.get_unit(player_hero_id)
+		if h != null:
+			var p := View.to3(h.pos, terrain.height_at(h.pos))
+			var k := 1.0 - exp(-dt * (5.0 if cam_mode == "auto" else 12.0))
+			camera.target = camera.target.lerp(p, k)
+
+## The hero most worth watching now: living heroes of both teams near it (enemies count most), hero damage in the
+## last 3 s, low health; the watched hero gets a bonus so the camera does not flit.
+func _auto_pick() -> int:
+	var best := -1
+	var best_score := -INF
+	for h in world.heroes:
+		if not h.alive:
+			continue
+		var score := 0.0
+		for o in world.heroes:
+			if o != h and o.alive and o.pos.distance_to(h.pos) < 1400.0:
+				score += 3.0 if o.team != h.team else 1.0
+		for t in h.hero_damage_log.values():
+			if world.time - float(t) < 3.0:
+				score += 2.0
+				break
+		score += (1.0 - h.hp / maxf(1.0, h.max_hp)) * 2.0
+		score += h.networth() / 20000.0
+		if h.id == player_hero_id:
+			score += 1.5
+		if score > best_score:
+			best_score = score
+			best = h.id
+	return best
 
 func _build_fog() -> void:
 	var n := SimMap.VN
@@ -1185,12 +1372,7 @@ func _update_fog(dt: float) -> void:
 		_fog_prev_img.copy_from(fog_img)
 		_fog_prev.update(_fog_prev_img)
 		var n := SimMap.VN
-		var vis: PackedByteArray = world.vision.visible[player_team]
-		if world.vision.reveal_all:
-			if _fog_all.size() != n * n:
-				_fog_all.resize(n * n)
-				_fog_all.fill(1)
-			vis = _fog_all
+		var vis := fog_bytes()
 		fog_img.set_data(n, n, false, Image.FORMAT_L8, vis)
 		fog_tex.update(fog_img)
 		_fog_blend = 0.0 if _capture_frames < 0 else 1.0

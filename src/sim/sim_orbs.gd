@@ -155,10 +155,13 @@ func activate(h: SimUnit, kind: String) -> void:
 	match kind:
 		"gold":
 			var gold := 40 + 6 * int(floor(w.time / 240.0))
+			var paid := gold
 			for a in w.heroes:
 				if a.team == h.team:
-					w.combat.give_gold(a, gold, true, a.pos)
-			info["gold"] = gold
+					var g := w.combat.give_gold(a, gold, true, a.pos)
+					if a == h:
+						paid = g
+			info["gold"] = paid
 		"wisdom":
 			var xp := 280.0 * maxf(1.0, floor(w.time / 420.0))
 			# also the team's hero with the least experience (judged before the gain); the next one if that is the picker
@@ -167,11 +170,11 @@ func activate(h: SimUnit, kind: String) -> void:
 			var lowest: SimUnit = null
 			if not team.is_empty():
 				lowest = team[0] if team[0] != h else (team[1] if team.size() > 1 else null)
-			w.combat.give_xp(h, xp)
+			var got := w.combat.give_xp(h, xp)
 			if lowest != null:
 				w.combat.give_xp(lowest, xp)
 				info["also"] = lowest.id
-			info["xp"] = xp
+			info["xp"] = got if got > 0.0 else xp
 		"rejuvenation":
 			w.combat.heal(h, 40.0)
 			h.mana = minf(h.max_mana, h.mana + 80.0)

@@ -1,0 +1,59 @@
+02:10:00 | INFO: Data are loaded, start creating Blender stuff
+02:10:00 | INFO: Blender create Mesh node hero
+02:10:02 | INFO: glTF import finished in 1.67s
+[hero_body   2.2s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   6.4s] imported 1 objects from A:/Python/woa/work/downloads/sf_heroes/azrin/source/x/tripo_convert_4475020b-99be-422d-a147-2e53df15599b.fbx
+[hero_body   6.4s] kept 1 mesh pieces (1966291 faces), rig: none
+[hero_body  31.4s]   cut 258 more vertices: loose remnants of the cut prop (tripo_node_4475020b)
+[hero_body  33.5s]   cut 49033 vertices from tripo_node_4475020b
+[hero_body  33.5s] joined 1 pieces into one mesh (1868010 faces)
+Info: Removed: 7 vertices, 4 edges, 0 faces
+[hero_body  61.2s] low mesh 52000 triangles, unwrapped
+01:03.687  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\hero_body.py:480: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  67.0s]   baked color (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  71.3s]   baked rough (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  75.9s]   baked metal (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  78.2s]   baked normal
+[texops]   hue remap 275:356:80:1.6:1.1 on 52.6% of texels
+[hero_body  82.8s] scaled x1.814 to 1.780 m
+[hero_body  82.8s]   joint hips         (0.0, 0.0, 0.853) -> (0.0, 0.0, 0.98)
+[hero_body  82.8s]   joint head         (-0.002, -0.045, 1.47) -> (-0.002, -0.045, 1.687)
+[hero_body  82.8s]   joint upper_arm.L  (0.14, -0.027, 1.288) -> (0.299, -0.036, 1.016)
+[hero_body  82.8s]   joint hand.L       (0.405, -0.054, 0.907) -> (0.481, -0.054, 0.816)
+[hero_body  82.8s]   joint thigh.L      (0.082, 0.018, 0.798) -> (0.109, 0.036, 0.472)
+[hero_body  82.8s]   joint foot.L       (0.109, 0.109, 0.127) -> (0.109, 0.018, 0.045)
+[hero_body  82.8s] made glide_fwd from idle_staff (73 frames)
+[hero_body  82.8s]   native upper_arm.L  (0.119, -0.056, 1.253) -> (0.279, -0.065, 0.981) (model (0.14, -0.027, 1.288))
+[hero_body  82.8s]   native forearm.L    (0.279, -0.065, 0.981) -> (0.384, -0.084, 0.872) (model (0.299, -0.036, 1.016))
+[hero_body  82.8s]   native hand.L       (0.384, -0.084, 0.872) -> (0.426, -0.084, 0.822) (model (0.405, -0.054, 0.907))
+[hero_body  82.8s]   native thigh.L      (0.082, 0.018, 0.798) -> (0.109, 0.036, 0.472) (model (0.082, 0.018, 0.798))
+[hero_body  84.1s]   azrin: automatic weights on 100.0% of vertices
+[hero_body  84.4s]   island gating: 1 pieces, 0 kept to their nearest limb
+[hero_body  84.6s] mesh: 52000 faces -> 52000 triangles
+[hero_body  85.0s] reach: 16620 vertices freed from limbs too far away
+[hero_body  85.3s] cloth: 11709 hanging vertices follow the hips more than the legs
+[hero_body  85.4s] arms: 209 hand and forearm vertices freed from the trunk and legs
+[hero_body  85.6s] smoothed all weights (4 passes)
+[hero_body  86.0s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body  86.0s] hands: 0 hand and finger vertices given back to their arm only
+Info: 31544 vertex weights limited
+[hero_body  89.7s] retargeted 133 clips (4289 frames) onto the native rest in 3.7s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:11:30 | INFO: Starting glTF 2.0 export
+02:11:30 | INFO: Extracting primitive: azrin
+02:11:30 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:11:30 | INFO: Primitives created: 1
+02:11:50 | INFO: Finished glTF 2.0 export in 20.18207550048828 s
+
+[hero_body 110.0s] wrote A:/Python/woa/work/lemondev/2026-10-18-model-qa/azrin_test.glb (18.6 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

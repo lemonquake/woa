@@ -1,0 +1,123 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok   hero_ezee            idle_2h            worst head            0.1 deg at 1.78s
+ok   hero_ezee            hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_ezee            cast_quick         worst hand.R          4.2 deg at 0.13s
+ok   hero_ezee            death              worst shin.L          1.2 deg at 1.03s
+ok   hero_ezee            gs_1               worst shoulder.L      3.6 deg at 0.24s
+ok   hero_ezee            gs_2               worst chest           3.1 deg at 0.41s
+ok   hero_ezee            gs_3               worst head            3.3 deg at 0.26s
+ok   hero_ezee            gs_4               worst chest           1.9 deg at 0.48s
+ok   hero_ezee            boss_roar          worst upper_arm.R     0.8 deg at 0.39s
+ok   hero_ezee            boss_slam          worst shoulder.L      2.0 deg at 0.71s
+ok   hero_ezee            leap_slam          worst shin.R          8.6 deg at 0.60s
+ok   hero_ezee            cast_weapon        worst head            0.3 deg at 0.76s
+== hero_ezee worst 8.6 deg
+ok   hero_sludge          idle_1h            worst foot.L          0.1 deg at 0.99s
+ok   hero_sludge          hero_run           worst upper_arm.L     5.5 deg at 0.05s
+ok   hero_sludge          cast_quick         worst hand.L         13.5 deg at 0.13s
+ok   hero_sludge          death              worst forearm.R       3.9 deg at 1.13s
+ok   hero_sludge          axe_1              worst upper_arm.R    23.6 deg at 0.44s
+FAIL hero_sludge          axe_2              worst hand.R         43.2 deg at 0.44s
+FAIL hero_sludge          axe_3              worst hand.R         60.4 deg at 0.10s
+FAIL hero_sludge          hero_axe_smash     worst upper_arm.R    49.9 deg at 0.78s
+ok   hero_sludge          cast_channel       worst forearm.L       0.2 deg at 0.50s
+== hero_sludge worst 60.4 deg
+ok   hero_azrin           idle_staff         worst foot.L          0.1 deg at 0.25s
+noref   hero_azrin glide_fwd (not on the reference skeleton)
+ok   hero_azrin           cast_quick         worst hand.R          4.2 deg at 0.13s
+ok   hero_azrin           death              worst shin.L          1.2 deg at 1.03s
+ok   hero_azrin           staff_1            worst chest           1.8 deg at 0.23s
+ok   hero_azrin           staff_2            worst chest           2.8 deg at 0.29s
+ok   hero_azrin           cast_area          worst shoulder.L      3.7 deg at 0.42s
+ok   hero_azrin           cast_heavy         worst upper_arm.L     1.5 deg at 0.56s
+ok   hero_azrin           cast_ultimate      worst upper_arm.L     3.6 deg at 0.89s
+== hero_azrin worst 4.2 deg
+ok   hero_caziel          idle_shadowblade   worst head            0.5 deg at 1.75s
+ok   hero_caziel          hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_caziel          cast_quick         worst weapon.R        4.2 deg at 0.13s
+ok   hero_caziel          death              worst shin.L          1.2 deg at 1.03s
+ok   hero_caziel          dual_1             worst head            2.8 deg at 0.29s
+ok   hero_caziel          dual_2             worst head            2.8 deg at 0.29s
+ok   hero_caziel          dual_3             worst head            0.8 deg at 0.21s
+ok   hero_caziel          dual_4             worst thigh.R         5.9 deg at 0.44s
+ok   hero_caziel          dual_heavy         worst shin.L          1.8 deg at 0.58s
+ok   hero_caziel          blink              worst upper_arm.L     1.9 deg at 0.21s
+== hero_caziel worst 7.0 deg
+noref   hero_roydo roydo_idle (not on the reference skeleton)
+noref   hero_roydo roydo_run (not on the reference skeleton)
+noref   hero_roydo roydo_cast_shoot (not on the reference skeleton)
+FAIL hero_roydo           death              worst weapon.L      179.7 deg at 1.80s
+noref   hero_roydo roydo_punch_jab (not on the reference skeleton)
+noref   hero_roydo roydo_punch_cross (not on the reference skeleton)
+noref   hero_roydo roydo_idle_fold (not on the reference skeleton)
+noref   hero_roydo roydo_cast_throw (not on the reference skeleton)
+noref   hero_roydo roydo_cast_enter (not on the reference skeleton)
+== hero_roydo worst 179.7 deg
+noref   hero_blau blau_idle (not on the reference skeleton)
+noref   hero_blau blau_run_rifle (not on the reference skeleton)
+noref   hero_blau blau_cast_shoot (not on the reference skeleton)
+FAIL hero_blau            death              worst weapon.L      179.7 deg at 1.80s
+noref   hero_blau blau_shoot (not on the reference skeleton)
+noref   hero_blau blau_reload (not on the reference skeleton)
+noref   hero_blau blau_cast_throw (not on the reference skeleton)
+noref   hero_blau blau_jump_start (not on the reference skeleton)
+noref   hero_blau blau_kneel_fix (not on the reference skeleton)
+== hero_blau worst 179.7 deg
+ok   hero_azrael          idle_staff         worst foot.L          0.1 deg at 0.25s
+noref   hero_azrael glide_fwd (not on the reference skeleton)
+ok   hero_azrael          cast_quick         worst hand.R          4.2 deg at 0.13s
+ok   hero_azrael          death              worst shin.L          1.2 deg at 1.03s
+ok   hero_azrael          gs_1               worst hand.L          3.6 deg at 0.24s
+ok   hero_azrael          gs_3               worst head            3.3 deg at 0.26s
+ok   hero_azrael          gs_4               worst chest           1.9 deg at 0.48s
+ok   hero_azrael          gs_heavy           worst upper_arm.L     1.7 deg at 0.78s
+ok   hero_azrael          cast_heavy         worst shoulder.L      1.5 deg at 0.56s
+ok   hero_azrael          cast_ultimate      worst chest           3.6 deg at 0.89s
+== hero_azrael worst 4.2 deg
+ok   hero_emelrich        idle_2h            worst head            0.1 deg at 1.78s
+ok   hero_emelrich        hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_emelrich        cast_weapon        worst head            0.3 deg at 0.76s
+ok   hero_emelrich        death              worst shin.L          1.2 deg at 1.03s
+ok   hero_emelrich        gs_1               worst upper_arm.L     3.6 deg at 0.24s
+ok   hero_emelrich        gs_3               worst head            3.3 deg at 0.26s
+ok   hero_emelrich        gs_4               worst chest           1.9 deg at 0.48s
+== hero_emelrich worst 7.0 deg
+ok   hero_burak           idle_dual          worst chest           0.2 deg at 1.56s
+ok   hero_burak           hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_burak           war_cry            worst hand.R          0.8 deg at 0.39s
+ok   hero_burak           death              worst shin.L          1.2 deg at 1.03s
+ok   hero_burak           dual_1             worst head            2.8 deg at 0.29s
+ok   hero_burak           dual_2             worst head            2.8 deg at 0.29s
+ok   hero_burak           dual_3             worst head            0.8 deg at 0.21s
+ok   hero_burak           dual_4             worst thigh.R         5.9 deg at 0.44s
+== hero_burak worst 7.0 deg
+ok   hero_airah           idle_mage          worst shin.R          0.2 deg at 2.92s
+ok   hero_airah           fem_run            worst foot.R          7.0 deg at 0.44s
+ok   hero_airah           cast_area          worst weapon.L        3.7 deg at 0.42s
+ok   hero_airah           death              worst shin.L          1.2 deg at 1.03s
+ok   hero_airah           cast_quick         worst hand.R          4.2 deg at 0.13s
+== hero_airah worst 7.0 deg
+ok   hero_ghorman         idle_1h            worst foot.L          0.2 deg at 1.01s
+ok   hero_ghorman         hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_ghorman         war_cry            worst shoulder.R      0.8 deg at 0.39s
+ok   hero_ghorman         death              worst shin.L          1.2 deg at 1.03s
+ok   hero_ghorman         axe_1              worst head            3.8 deg at 0.36s
+ok   hero_ghorman         axe_2              worst head            2.7 deg at 0.36s
+ok   hero_ghorman         axe_3              worst upper_arm.L     1.2 deg at 0.39s
+== hero_ghorman worst 7.0 deg
+FAIL hero_ghorman_beast   idle               worst neck           59.6 deg at 1.67s
+FAIL hero_ghorman_beast   run_combat         worst neck           59.6 deg at 0.28s
+FAIL hero_ghorman_beast   boss_roar          worst neck           59.7 deg at 0.39s
+FAIL hero_ghorman_beast   death              worst neck           60.3 deg at 0.13s
+FAIL hero_ghorman_beast   boss_slam          worst neck           61.4 deg at 0.71s
+FAIL hero_ghorman_beast   hero_axe_smash     worst neck           60.4 deg at 0.56s
+== hero_ghorman_beast worst 61.4 deg
+ok   hero_feran           idle_dagger        worst thigh.L         0.1 deg at 0.83s
+ok   hero_feran           hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_feran           cast_quick         worst hand.R          4.2 deg at 0.13s
+ok   hero_feran           death              worst shin.L          1.2 deg at 1.03s
+ok   hero_feran           dagger_1           worst head            5.8 deg at 0.23s
+ok   hero_feran           dagger_2           worst head            6.4 deg at 0.23s
+== hero_feran worst 7.0 deg
+pose_compare: 89 clips checked, 11 failed (limit 25 deg)

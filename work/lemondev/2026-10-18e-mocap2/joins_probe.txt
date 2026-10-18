@@ -1,0 +1,75 @@
+== ezee (ezee.glb; idle greatsword_idle, run hero_run)
+  FAIL join greatsword_idle        -> hero_run               blend 0.12s: snap 19.0 deg (upper_arm.L at +0.07s), gap 112 deg (from 0.93s)
+  ok   join hero_run               -> greatsword_idle        blend 0.25s: snap 9.2 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  FAIL join greatsword_idle        -> greatsword_slash_1     blend 0.06s: snap 27.2 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  FAIL join hero_run               -> greatsword_slash_1     blend 0.06s: snap 38.9 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join greatsword_slash_1     -> greatsword_idle        blend 0.25s: snap 1.1 deg (forearm.L at +0.25s), gap 19 deg
+  FAIL join greatsword_slash_1     -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 89 deg
+  FAIL join greatsword_idle        -> greatsword_slash_2     blend 0.06s: snap 29.3 deg (forearm.R at +0.05s), gap 93 deg (from 0.00s)
+  FAIL join hero_run               -> greatsword_slash_2     blend 0.06s: snap 56.1 deg (weapon.R at +0.05s), gap 168 deg (from 0.33s)
+  ok   join greatsword_slash_2     -> greatsword_idle        blend 0.25s: snap 0.8 deg (shoulder.R at +0.25s), gap 23 deg
+  FAIL join greatsword_slash_2     -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 89 deg
+  FAIL join greatsword_idle        -> greatsword_slash_3     blend 0.06s: snap 35.5 deg (head at +0.05s), gap 105 deg (from 1.85s)
+  FAIL join hero_run               -> greatsword_slash_3     blend 0.06s: snap 48.4 deg (forearm.L at +0.05s), gap 156 deg (from 0.00s)
+  ok   join greatsword_slash_3     -> greatsword_idle        blend 0.25s: snap 1.3 deg (forearm.L at +0.25s), gap 3 deg
+  FAIL join greatsword_slash_3     -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 89 deg
+  FAIL join greatsword_idle        -> greatsword_slash_4     blend 0.06s: snap 27.1 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  FAIL join hero_run               -> greatsword_slash_4     blend 0.06s: snap 38.9 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join greatsword_slash_4     -> greatsword_idle        blend 0.25s: snap 2.1 deg (hand.L at +0.25s), gap 30 deg
+  FAIL join greatsword_slash_4     -> hero_run               blend 0.12s: snap 14.7 deg (upper_arm.L at +0.07s), gap 94 deg
+  FAIL join greatsword_slash_1     -> greatsword_slash_2     blend 0.06s: snap 28.4 deg (forearm.R at +0.05s), gap 91 deg
+  FAIL join greatsword_slash_2     -> greatsword_slash_3     blend 0.06s: snap 28.3 deg (forearm.L at +0.05s), gap 100 deg
+  ok   join greatsword_slash_3     -> greatsword_slash_4     blend 0.06s: snap 7.8 deg (weapon.L at +0.05s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_slash_1     blend 0.06s: snap 8.1 deg (hand.L at +0.05s), gap 30 deg
+  FAIL join greatsword_idle        -> greatsword_cast        blend 0.06s: snap 26.8 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  FAIL join hero_run               -> greatsword_cast        blend 0.06s: snap 38.7 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join greatsword_cast        -> greatsword_idle        blend 0.25s: snap 0.8 deg (forearm.L at +0.25s), gap 23 deg
+  FAIL join greatsword_cast        -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 89 deg
+  FAIL join greatsword_idle        -> greatsword_slam        blend 0.06s: snap 62.5 deg (forearm.L at +0.05s), gap 176 deg (from 2.78s)
+  FAIL join hero_run               -> greatsword_slam        blend 0.06s: snap 76.0 deg (weapon.R at +0.03s), gap 153 deg (from 0.33s)
+  ok   join greatsword_slam        -> greatsword_idle        blend 0.25s: snap 3.1 deg (forearm.R at +0.02s), gap 45 deg
+  FAIL join greatsword_slam        -> hero_run               blend 0.12s: snap 15.5 deg (upper_arm.L at +0.07s), gap 97 deg
+  FAIL join greatsword_idle        -> greatsword_power       blend 0.06s: snap 27.3 deg (head at +0.05s), gap 98 deg (from 0.93s)
+  FAIL join hero_run               -> greatsword_power       blend 0.06s: snap 38.8 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join greatsword_power       -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 0 deg
+  FAIL join greatsword_power       -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 89 deg
+  FAIL join greatsword_idle        -> greatsword_hit         blend 0.05s: snap 32.6 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_hit         -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 2 deg
+  FAIL join greatsword_idle        -> greatsword_hit_small   blend 0.05s: snap 51.8 deg (upper_arm.L at +0.02s), gap 145 deg (from 0.93s)
+  ok   join greatsword_hit_small   -> greatsword_idle        blend 0.25s: snap 6.7 deg (hand.R at +0.02s), gap 96 deg
+  FAIL join hero_run               -> greatsword_hit         blend 0.06s: snap 38.9 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  FAIL join greatsword_slash_1     -> greatsword_hit         blend 0.06s: snap 27.8 deg (hand.L at +0.02s), gap 119 deg
+  ok   join greatsword_hit         -> dizzy                  blend 0.20s: snap 8.0 deg (neck at +0.03s), gap 97 deg
+  ok   join dizzy                  -> greatsword_idle        blend 0.25s: snap 4.8 deg (hand.R at +0.20s), gap 74 deg (from 3.20s)
+  FAIL join greatsword_idle        -> knockback              blend 0.06s: snap 28.2 deg (upper_arm.L at +0.05s), gap 118 deg (from 0.93s)
+  FAIL join hero_run               -> knockback              blend 0.06s: snap 37.4 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  FAIL join knockback              -> getup                  blend 0.08s: snap 14.4 deg (shin.L at +0.08s), gap 0 deg
+  ok   join getup                  -> greatsword_idle        blend 0.25s: snap 5.5 deg (weapon.R at +0.25s), gap 68 deg
+  FAIL join getup                  -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 90 deg
+  FAIL join greatsword_idle        -> launch                 blend 0.06s: snap 47.7 deg (hand.L at +0.05s), gap 149 deg (from 0.93s)
+  FAIL join launch                 -> knockback              blend 0.08s: snap 14.4 deg (thigh.R at +0.02s), gap 153 deg (from 0.42s)
+  FAIL join knockback              -> wall_impact            blend 0.04s: snap 44.3 deg (thigh.R at +0.02s), gap 115 deg
+  ok   join wall_impact            -> getup                  blend 0.08s: snap 11.1 deg (head at +0.02s), gap 115 deg
+  FAIL join greatsword_idle        -> greatsword_death_1     blend 0.10s: snap 15.9 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  FAIL join hero_run               -> greatsword_death_1     blend 0.10s: snap 23.2 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  FAIL join greatsword_idle        -> greatsword_death_2     blend 0.10s: snap 16.0 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  FAIL join hero_run               -> greatsword_death_2     blend 0.10s: snap 23.2 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  FAIL join greatsword_idle        -> leap_slam              blend 0.06s: snap 24.8 deg (head at +0.03s), gap 95 deg (from 0.93s)
+  FAIL join hero_run               -> leap_slam              blend 0.06s: snap 38.2 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join leap_slam              -> greatsword_idle        blend 0.25s: snap 3.6 deg (hand.R at +0.02s), gap 56 deg
+  FAIL join leap_slam              -> hero_run               blend 0.12s: snap 15.9 deg (upper_arm.L at +0.07s), gap 110 deg
+  FAIL join hero_run               -> dodge_step             blend 0.04s: snap 57.0 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join dodge_step             -> greatsword_idle        blend 0.25s: snap 5.5 deg (weapon.R at +0.25s), gap 68 deg
+  FAIL join dodge_step             -> hero_run               blend 0.12s: snap 13.9 deg (foot.R at +0.12s), gap 90 deg
+  FAIL join hero_run               -> blink                  blend 0.04s: snap 57.1 deg (foot.L at +0.02s), gap 142 deg (from 0.50s)
+  ok   join blink                  -> greatsword_idle        blend 0.25s: snap 5.5 deg (weapon.R at +0.25s), gap 68 deg
+  FAIL join blink                  -> hero_run               blend 0.12s: snap 14.0 deg (foot.R at +0.12s), gap 90 deg
+  ok   join greatsword_idle        -> greatsword_power       blend 0.20s: snap 8.2 deg (head at +0.20s), gap 98 deg (from 0.93s)
+  ok   join greatsword_power       -> greatsword_idle        blend 0.00s: snap 0.0 deg (toe.R at +0.02s), gap 0 deg
+  ok   seam greatsword_idle        0.1 deg (shoulder.R; its steps p95 12.2) hips 0.0 cm
+  ok   seam hero_run               26.2 deg (hand.R; its steps p95 40.8) hips 0.0 cm
+  ok   seam dizzy                  0.0 deg (hips; its steps p95 2.5) hips 0.0 cm
+  ok   seam bow_draw_hold          0.1 deg (foot.L; its steps p95 0.6) hips 0.0 cm
+  ok   slide hero_run: planted foot at 0.89x the ground speed (5.59 m/s)
+  -> 67 joins and 4 loops checked, worst snap 76.0 deg (hero_run -> greatsword_slam), 46 failures
+TOTAL failures 46

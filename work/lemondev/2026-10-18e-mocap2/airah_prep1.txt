@@ -1,0 +1,128 @@
+05:08:27 | INFO: Data are loaded, start creating Blender stuff
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Body_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Face_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Lips_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Teeth_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Head_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Ears_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Legs_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_EyeSocket_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Mouth_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Arms_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Pupils_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_EyeMoisture_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Fingernails_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Cornea_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Irises_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Sclera_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1Female.Shape_Toenails_0
+05:08:27 | INFO: Blender create Mesh node Genesis8_1FemaleEyelashes.Shape_Eyelashes_0
+05:08:27 | INFO: Blender create Mesh node Female 8_1 Tear.Shape_Tear_0
+05:08:27 | INFO: glTF import finished in 0.10s
+[airah_prep] base body scaled x0.9804 to 1.76 m, 19203 vertices
+05:08:27 | INFO: Data are loaded, start creating Blender stuff
+05:08:27 | INFO: Blender create Mesh node Hair_0
+05:08:27 | INFO: Blender create Mesh node Hair_1
+05:08:27 | INFO: Blender create Mesh node PS3.face_PS3.face01_0
+05:08:27 | INFO: Blender create Mesh node PS3.face_PS3.face01_1
+05:08:27 | INFO: Blender create Mesh node PS3.face_PS3.face01_2
+05:08:27 | INFO: Blender create Mesh node leher_0
+05:08:27 | INFO: Blender create Mesh node body_0
+05:08:27 | INFO: Blender create Mesh node body_1
+05:08:27 | INFO: Blender create Mesh node body_2
+05:08:27 | INFO: Blender create Mesh node Cube.014_0
+05:08:27 | INFO: Blender create Mesh node sepatu_0
+05:08:27 | INFO: Blender create Mesh node IKAT KUPING_0
+05:08:27 | INFO: Blender create Mesh node BESI PERMATA KEPALA_0
+05:08:27 | INFO: Blender create Mesh node jepit rambut_0
+05:08:27 | INFO: Blender create Mesh node kain rambut_0
+05:08:27 | INFO: Blender create Mesh node jepit bulet_0
+05:08:27 | INFO: Blender create Mesh node kolorz_0
+05:08:27 | INFO: Blender create Mesh node Cube.016_Cube.000_0
+05:08:27 | INFO: Blender create Mesh node Cube.016_Cube.001_0
+05:08:27 | INFO: Blender create Mesh node aksesoris pinggang_0
+05:08:28 | INFO: Blender create Mesh node BEHA_0
+05:08:28 | INFO: Blender create Mesh node kain rok_0
+05:08:28 | INFO: Blender create Mesh node aksesoris beha_0
+05:08:28 | INFO: Blender create Mesh node KAIT BH_0
+05:08:28 | INFO: Blender create Mesh node kain tangan_0
+05:08:28 | INFO: Blender create Mesh node CRISTAL DADA_0
+05:08:28 | INFO: Blender create Mesh node PERMATA_0
+05:08:28 | INFO: Blender create Mesh node buntut_0
+05:08:28 | INFO: Blender create Mesh node gelang buntut_0
+05:08:28 | INFO: Blender create Mesh node lampu_0
+05:08:28 | INFO: glTF import finished in 0.76s
+05:08:28 | INFO: Data are loaded, start creating Blender stuff
+05:08:28 | INFO: Blender create Mesh node Hair_0
+05:08:28 | INFO: Blender create Mesh node Hair_1
+05:08:28 | INFO: Blender create Mesh node PS3.face_PS3.face01_0
+05:08:28 | INFO: Blender create Mesh node PS3.face_PS3.face01_1
+05:08:28 | INFO: Blender create Mesh node PS3.face_PS3.face01_2
+05:08:28 | INFO: Blender create Mesh node leher_0
+05:08:28 | INFO: Blender create Mesh node body_0
+05:08:28 | INFO: Blender create Mesh node body_1
+05:08:28 | INFO: Blender create Mesh node body_2
+05:08:28 | INFO: Blender create Mesh node Cube.014_0
+05:08:28 | INFO: Blender create Mesh node sepatu_0
+05:08:28 | INFO: Blender create Mesh node IKAT KUPING_0
+05:08:28 | INFO: Blender create Mesh node BESI PERMATA KEPALA_0
+05:08:28 | INFO: Blender create Mesh node jepit rambut_0
+05:08:28 | INFO: Blender create Mesh node kain rambut_0
+05:08:28 | INFO: Blender create Mesh node jepit bulet_0
+05:08:28 | INFO: Blender create Mesh node kolorz_0
+05:08:28 | INFO: Blender create Mesh node Cube.016_Cube.000_0
+05:08:28 | INFO: Blender create Mesh node Cube.016_Cube.001_0
+05:08:28 | INFO: Blender create Mesh node aksesoris pinggang_0
+05:08:28 | INFO: Blender create Mesh node BEHA_0
+05:08:28 | INFO: Blender create Mesh node kain rok_0
+05:08:28 | INFO: Blender create Mesh node aksesoris beha_0
+05:08:28 | INFO: Blender create Mesh node KAIT BH_0
+05:08:28 | INFO: Blender create Mesh node kain tangan_0
+05:08:28 | INFO: Blender create Mesh node CRISTAL DADA_0
+05:08:28 | INFO: Blender create Mesh node PERMATA_0
+05:08:28 | INFO: Blender create Mesh node buntut_0
+05:08:28 | INFO: Blender create Mesh node gelang buntut_0
+05:08:29 | INFO: Blender create Mesh node lampu_0
+05:08:29 | INFO: glTF import finished in 0.65s
+[airah_prep] Airah's sculpt 1.488 m tall, x1.183 to the base height
+[airah_prep] head pieces x1.160 onto the skull
+[airah_prep]   BESI PERMATA KEPALA_0: 0 of 720 vertices pushed out of the skin
+[airah_prep]   Hair_0: 2342 of 11443 vertices pushed out of the skin
+[airah_prep]   Hair_1: 2333 of 11420 vertices pushed out of the skin
+[airah_prep]   IKAT KUPING_0: 0 of 743 vertices pushed out of the skin
+[airah_prep]   jepit bulet_0: 81 of 132 vertices pushed out of the skin
+[airah_prep]   jepit rambut_0: 3 of 214 vertices pushed out of the skin
+[airah_prep]   kain rambut_0: 97 of 2760 vertices pushed out of the skin
+[airah_prep]   PERMATA_0: 0 of 90 vertices pushed out of the skin
+[airah_prep]   PS3.face_PS3.face01_2: 839 of 1025 vertices pushed out of the skin
+[airah_prep] bust 1.293 m, crotch 0.855 m, neck 1.512 m
+A:\Python\woa\tools\blender\airah_prep.py:241: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+[airah_prep]   airah_gear_top: 2656 vertices from the skin
+[airah_prep]   airah_gear_briefs: 1218 vertices from the skin
+[airah_prep]   airah_gear_collar: 374 vertices from the skin
+[airah_prep]   airah_gear_band_upper_R: 304 vertices from the skin
+[airah_prep]   airah_gear_band_wrist_R: 370 vertices from the skin
+[airah_prep]   airah_gear_band_upper_L: 308 vertices from the skin
+[airah_prep]   airah_gear_band_wrist_L: 370 vertices from the skin
+[airah_prep]   aksesoris pinggang_0: 876 of 2430 vertices pushed out of the skin
+[airah_prep]   buntut_0: 1153 of 8594 vertices pushed out of the skin
+[airah_prep]   gelang buntut_0: 0 of 4096 vertices pushed out of the skin
+[airah_prep]   kain rok_0: 141 of 1940 vertices pushed out of the skin
+[airah_prep]   belt: 1278 stray vertices left out
+[airah_prep] tail --rigid: hips:cap:0.052,0.071,1.063,0.252,1.146,0.607,0.060
+[airah_prep]   (and the tail's middle) hips:ball:0.152,0.609,0.835,0.711
+Info: Saved as "airah_src.blend"
+[airah_prep] saved A:\Python\woa\work\airah_src\airah_src.blend
+00:06.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\full_000.png'
+00:06.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\full_090.png'
+00:06.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\full_180.png'
+00:07.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\head_000.png'
+00:07.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\head_090.png'
+00:07.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\head_180.png'
+00:07.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\torso_000.png'
+00:07.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\torso_090.png'
+00:07.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-18e-mocap2\airah_prep1\torso_180.png'
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

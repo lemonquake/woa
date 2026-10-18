@@ -14,12 +14,16 @@ var hook_hits := {}                        # caster id -> [game time, caught uni
 var kits2: SimKits2                         # Tock's and Kragg's kits (run 2026-10-15 b)
 var kits3: SimKits3                         # Roydo's and Blau's kits (run 2026-10-16)
 var kits4: SimKits4                         # Azrael's kit (2026-10-17)
+var kits5: SimKits5                         # Airah's, Burak's and Ser Emelrich's kits (run 2026-10-18 f)
+var kits6: SimKits6                         # Feran Mock's and Ghorman's kits (run 2026-10-18 f)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
 	kits2 = SimKits2.new(world, self)
 	kits3 = SimKits3.new(world, self)
 	kits4 = SimKits4.new(world, self)
+	kits5 = SimKits5.new(world, self)
+	kits6 = SimKits6.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -175,6 +179,8 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 			return k4
 		if aid == "door_of_the_end" and kits4.exit_pending(u):
 			return ""                              # the exit: no mana, no cooldown
+	if aid == "axe_throw" and kits5.axe_recast_ready(u):
+		return "Rooted" if u.is_rooted() else ""     # the leap to his axe: no mana, no cooldown
 	if cooldown_left(u, aid) > 0.0:
 		return "Ability on cooldown"
 	if String(a.behavior) != "toggle" and u.mana < ability_mana(u, aid):
@@ -185,6 +191,14 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 			return ke
 		if aid == "pilot_turret" and kits3.is_piloting(u):
 			return ""
+	if kits5.handles(aid):
+		var k5 := kits5.cast_error(u, aid, target, point, check_target)
+		if k5 != "":
+			return k5
+	if kits6.handles(aid):
+		var k6 := kits6.cast_error(u, aid, target, point, check_target)
+		if k6 != "":
+			return k6
 	if a.behavior == "unit" and check_target:
 		var te := _target_error(u, a, target)
 		if te != "":
@@ -269,6 +283,8 @@ func is_instant(u: SimUnit, aid: String, slot: int) -> bool:
 	var a := SimData.ability(aid)
 	if aid == "pilot_turret" and kits3.is_piloting(u):
 		return true                              # Leave Turret: at once, no target
+	if aid == "axe_throw" and kits5.axe_recast_ready(u):
+		return true                              # the leap to his axe: at once, no target
 	return String(a.get("behavior", "")) == "toggle" or bool(a.get("immediate", false))
 
 ## "none", "point" (ground / tree) or "unit".
@@ -337,6 +353,10 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	if aid == "door_of_the_end" and kits4.try_exit_cast(u, p):
 		return                                   # the door's exit: free
+	if aid == "axe_throw" and kits5.try_axe_recast(u):
+		return                                   # the leap to his axe: free
+	if aid == "swap" and kits6.try_swap_mark(u, t):
+		return                                   # Upgrade Staff: marking the ally to swap is free
 	u.mana -= ability_mana(u, aid)
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
@@ -360,6 +380,12 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	if kits4.handles(aid):
 		kits4.cast(u, aid, lv, t, p)
+		return
+	if kits5.handles(aid):
+		kits5.cast(u, aid, lv, t, p)
+		return
+	if kits6.handles(aid):
+		kits6.cast(u, aid, lv, t, p)
 		return
 	match aid:
 		"fiery_javelin":
@@ -593,6 +619,10 @@ func update_effects() -> void:
 					done = kits3.update_effect(e)
 				elif kits4.owns_effect(String(e.kind)):
 					done = kits4.update_effect(e)
+				elif kits5.owns_effect(String(e.kind)):
+					done = kits5.update_effect(e)
+				elif kits6.owns_effect(String(e.kind)):
+					done = kits6.update_effect(e)
 		if done:
 			w.effects.remove_at(i)
 
@@ -860,7 +890,8 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 		if ti >= 0:
 			w.cut_tree(ti, u.pos, true)
 	var aid := String(k.ability)
-	if u.team == int(k.team) or not (aid in ["dark_stomp", "gale_impact", "repel"]):
+	var crash: Array = SimKits5.CRASHES.get(aid, SimKits6.CRASHES.get(aid, []))
+	if u.team == int(k.team) or not (aid in ["dark_stomp", "gale_impact", "repel"] or not crash.is_empty()):
 		return
 	var seq := int(k.seq)
 	if not _impacted.has(seq):
@@ -872,6 +903,13 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 	_impacted[seq][u.id] = true
 	var a := SimData.ability(aid)
 	var lv := int(k.lv)
+	if not crash.is_empty():
+		# the new heroes' crashes (Sweep, Hurricane, the Joke Box's Spring): their own damage and stun keys
+		if String(crash[0]) != "":
+			w.combat.deal_damage(int(k.src), int(k.team), true, u, _cv(int(k.src), aid, String(crash[0]), lv),
+				C.DamageType.PHYSICAL if String(a.get("damage_type", "")) == "physical" else C.DamageType.MAGICAL, false, aid)
+		k.stun = _cv(int(k.src), aid, String(crash[1]), lv)
+		return
 	if aid == "gale_impact":
 		# Gale Impact: the crash deals another 20% of the arrow's damage, no stun
 		w.combat.deal_damage(int(k.src), int(k.team), true, u, _cv(int(k.src), aid, "damage", lv) * _cv(int(k.src), aid, "impact_pct", lv),
@@ -1104,6 +1142,8 @@ func channel_tick(u: SimUnit) -> void:
 			_update_chomp(u)
 		"endless_winter":
 			_update_winter(u)
+		"overhead_cut", "giant_swing":
+			pass                                 # a wind-up: the blow lands when it ends (SimKits5.windup_done)
 
 ## A channel ended (finished, or cancelled by an order, stun, silence, push or death): undo what it holds.
 func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
@@ -1114,6 +1154,8 @@ func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
 			var t := w.get_unit(int(ch.get("target", -1)))
 			if t != null:
 				_remove_mod(t, "chomp", u.id)
+		"overhead_cut", "giant_swing":
+			kits5.windup_done(u, ch, _cancelled)
 
 func _remove_mod(t: SimUnit, mid: String, source: int) -> void:
 	for i in range(t.modifiers.size() - 1, -1, -1):
@@ -1307,6 +1349,7 @@ func _update_hammer(e: Dictionary) -> bool:
 ## Growing Gut: an enemy hero died. Every Sludge on the other team within 450 (alive) or credited with the kill grows.
 func on_hero_death(t: SimUnit, killer: SimUnit, credit: SimUnit) -> void:
 	t.stacks.erase("spirits")                         # the spirits of fire die with Azrin
+	kits5.on_hero_death(t, killer, credit)
 	for h in w.heroes:
 		if h.team == t.team or not h.ability_level.has("growing_gut"):
 			continue
@@ -1442,7 +1485,9 @@ func _hook_release(t: SimUnit, at: Vector2) -> void:
 ## Toggle abilities (Stench): on adds a pulse effect that ticks while it stays on; off ends it.
 func set_toggle(u: SimUnit, aid: String, on: bool) -> void:
 	u.toggles[aid] = on
-	if on:
+	if aid == "steel_stance":
+		kits5.on_stance(u, on)
+	elif on:
 		if aid == "soul_tap":
 			kits4.on_soul_tap_toggle(u)
 		else:

@@ -4,7 +4,7 @@ extends Node3D
 ## a middle-mouse drag, zoomed a little with the wheel, snapped to the hero with Space (held: follow).
 
 @export var pitch_deg := 55.0
-@export var distance := 13.6
+@export var distance := 15.6                # metres to the ground point (13.6 before 2026-10-18: raised a bit, owner's request)
 @export var fov := 46.0
 @export var edge_speed := 32.0             # m/s
 @export var edge_px := 6
@@ -19,6 +19,7 @@ var _drag_target := Vector3.ZERO
 var follow: Callable                       # returns the hero position (Vector3) or null
 var height_at: Callable                    # Vector2 sim -> height (game units)
 var edge_pan_enabled := true
+var user_moved := false                    # the player panned (edges, keys, middle drag); Main clears it (watching: Free camera)
 var _shake := 0.0                          # current shake strength (metres of jitter at the start)
 var _shake_left := 0.0
 var _shake_dur := 0.0
@@ -61,6 +62,7 @@ func _unhandled_input(e: InputEvent) -> void:
 		var d := (e as InputEventMouseMotion).position - _drag_from
 		var k := distance * zoom / get_viewport().get_visible_rect().size.y * 1.6
 		target = _drag_target + Vector3(-d.x * k, 0, -d.y * k)
+		user_moved = true
 
 func _process(dt: float) -> void:
 	var move := edge_dir() if edge_pan_enabled and not _drag else Vector2.ZERO
@@ -72,6 +74,7 @@ func _process(dt: float) -> void:
 		if Keybinds.held("camera_down"): move.y += 1
 	if move != Vector2.ZERO:
 		target += Vector3(move.x, 0, move.y).normalized() * edge_speed * dt * zoom
+		user_moved = true
 	if focused and Keybinds.held("follow_hero") and follow.is_valid():
 		var p = follow.call()
 		if p != null:

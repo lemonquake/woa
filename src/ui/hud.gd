@@ -239,7 +239,9 @@ func _draw_body() -> void:
 		_channel_bar(h, vs)
 	if game.multiplayer_match:
 		_net_overlay(vs)
-	if h and h.alive and (Input.is_key_pressed(KEY_SHIFT) or game.args.has("showqueue")) and game.input and game.input.hero_selected():
+	if game.spectator:
+		_watch_overlay(h)
+	elif h and h.alive and (Input.is_key_pressed(KEY_SHIFT) or game.args.has("showqueue")) and game.input and game.input.hero_selected():
 		_queue_waypoints(h)
 	if game.input and game.input.targeting != "":
 		var team: String = game.input.targeting_team()
@@ -269,6 +271,34 @@ func _net_overlay(vs: Vector2) -> void:
 		U.text_c(self, "Game Paused", r2.position + Vector2(260, 44), 34, U.GOLD, "title")
 		var by := "Paused by %s. " % game.paused_by if game.paused_by != "" else ""
 		U.text_c(self, by + "Esc opens the menu to unpause.", r2.position + Vector2(260, 76), 16, U.TEXT, "body")
+
+## Watching an All-Bot match: the bots' orders as waypoints (the watched hero's, or every shown hero's) and what each
+## bot is doing over its head (Watch panel: Orders, Plans).
+func _watch_overlay(h: SimUnit) -> void:
+	var w: SimWorld = game.world
+	if int(game.show_orders) == 2:
+		for o in w.heroes:
+			if o.alive and game.sees(o):
+				_queue_waypoints(o)
+	elif int(game.show_orders) == 1 and h and h.alive:
+		_queue_waypoints(h)
+	if not bool(game.show_plans):
+		return
+	var cam: Camera3D = game.camera.cam
+	for o in w.heroes:
+		if not o.alive or not game.sees(o):
+			continue
+		var b = w.bot_for(o.id)
+		if b == null:
+			continue
+		var v = game.views.get(o.id)
+		var up: float = (v.bar_height + 1.25) if v is UnitView else 3.0
+		var wp := View.to3(o.pos, game.terrain.height_at(o.pos)) + Vector3(0, up, 0)
+		if cam.is_position_behind(wp):
+			continue
+		var sp := cam.unproject_position(wp)
+		var col := Color(0.55, 1.0, 0.6) if o.id == game.player_hero_id else (U.DAWN if o.team == 0 else U.DUSK).lightened(0.35)
+		U.text_c(self, String(b.plan_text()), sp, 14, col, "bold")
 
 ## Shift held: the hero's current order and its queue as waypoints joined by a line, as in Dota (green move,
 ## red attack, blue spell or item, gold hold), numbered in the order they will run.
@@ -401,6 +431,8 @@ func over_hud(p: Vector2) -> bool:
 	if shop.visible and shop.get_global_rect().has_point(p):
 		return true
 	if to_buy.visible and to_buy.get_global_rect().has_point(p):
+		return true
+	if game.watch_panel != null and game.watch_panel.covers(p):
 		return true
 	return debug.covers(p)
 
@@ -2300,7 +2332,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		_fog_t -= get_process_delta_time()
 		if _fog_t <= 0.0:
 			_fog_t = 0.2
-			_fog_img.set_data(SimMap.VN, SimMap.VN, false, Image.FORMAT_L8, w.vision.visible[team])
+			_fog_img.set_data(SimMap.VN, SimMap.VN, false, Image.FORMAT_L8, hud.game.fog_bytes())
 			_fog_tex.update(_fog_img)
 		# buildings, creeps and neutrals go into one triangle batch (one draw call instead of one per dot); heroes are
 		# drawn after them, on top
@@ -2317,10 +2349,10 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				_quad(Rect2(bp - Vector2(sz, sz) * 0.5, Vector2(sz, sz)), Color(0, 0, 0, 0.8))
 				_quad(Rect2(bp - Vector2(sz - 2, sz - 2) * 0.5, Vector2(sz - 2, sz - 2)), col)
 				continue
-			if u.team != team and not w.vision.sees(team, u):
+			if not hud.game.sees(u):
 				continue
 			# Master of Shadows: gone from the enemy's minimap
-			if u.team != team and u.has_flag("minimap_hidden"):
+			if not hud.game.own_team(u.team) and u.has_flag("minimap_hidden"):
 				continue
 			if u.is_hero():
 				heroes.append(u)
@@ -2353,7 +2385,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 			_lines.clear()
 		# orbs your team can see: a dot in the orb's colour with a dark rim
 		for o in w.orbs.orbs:
-			if not w.vision.cell_visible(team, o.pos):
+			if not hud.game.sees_cell(o.pos):
 				continue
 			var op := _to_mm(o.pos)
 			draw_circle(op, 5.0, Color(0, 0, 0, 0.9))
@@ -2362,7 +2394,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 		# (a diamond in the holding team's colour, grey when dark or not in sight)
 		for s in w.sites.sites:
 			var sp := _to_mm(s.pos)
-			var seen: bool = w.vision.cell_visible(team, s.pos)
+			var seen: bool = hud.game.sees_cell(s.pos)
 			match String(s.kind):
 				"gate":
 					draw_circle(sp, 6.0, Color(0, 0, 0, 0.85))
@@ -2524,6 +2556,7 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 	func _focus(m: Vector2) -> void:
 		var p := _from_mm(Vector2(clampf(m.x, 0, S), clampf(m.y, 0, S)))
 		hud.game.camera.focus(View.to3(p, hud.game.terrain.height_at(p)))
+		hud.game.camera.user_moved = true
 
 # ======================================================================================================================
 
@@ -2574,7 +2607,7 @@ class TopBar extends Control:
 			var r := Rect2(x + 2, 6, 60, 40)
 			tiles.append([r, h.id])
 			var col := U.DAWN if h.team == 0 else U.DUSK
-			var seen: bool = h.team == hud.game.player_team or w.vision.sees(hud.game.player_team, h)
+			var seen: bool = hud.game.sees(h)
 			var pt: Texture2D = U.hero_portrait(String(h.def.id))
 			draw_rect(r, Color(0.05, 0.06, 0.08))
 			if pt:
@@ -2607,7 +2640,9 @@ class TopBar extends Control:
 				if (t[0] as Rect2).has_point((e as InputEventMouseButton).position):
 					var h: SimUnit = hud.game.world.get_unit(t[1])
 					var w: SimWorld = hud.game.world
-					if h and h.alive and (h.team == hud.game.player_team or w.vision.sees(hud.game.player_team, h)):
+					if h and hud.game.spectator:
+						hud.game.watch(h.id)
+					elif h and h.alive and hud.game.sees(h):
 						hud.game.camera.focus(View.to3(h.pos, hud.game.terrain.height_at(h.pos)))
 						hud.game.input.select([h.id])
 					accept_event()

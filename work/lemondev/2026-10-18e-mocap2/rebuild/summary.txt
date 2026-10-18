@@ -1,0 +1,28 @@
+== emelrich
+[hero_body   5.4s] reach: 4481 vertices freed from limbs too far away
+[hero_body   5.4s] cloth: 469 hanging vertices follow the hips more than the legs
+[hero_body   7.4s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   7.5s] unmix: 2656 vertices made wholly arm or body, 334 edges split (353 new vertices)
+[hero_body   8.7s] arm split: {'arm_left': 2893, 'arm_right': 3214, 'patches_moved': 11093, 'edges_split': 610, 'new_vertices': 809, 'reweighted': 3963}
+[hero_body  30.2s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/emelrich.glb (9.3 MB)
+== ghorman_beast
+[hero_body   4.5s] reach: 1170 vertices freed from limbs too far away
+[hero_body   4.6s] cloth: 1317 hanging vertices follow the hips more than the legs
+[hero_body   4.8s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   4.8s] unmix: 925 vertices made wholly arm or body, 154 edges split (153 new vertices)
+[hero_body   5.3s] arm split: {'arm_left': 598, 'arm_right': 312, 'patches_moved': 286, 'edges_split': 161, 'new_vertices': 202, 'reweighted': 852}
+[hero_body  25.5s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/ghorman_beast.glb (12.8 MB)
+== burak
+[hero_body  10.5s] reach: 1267 vertices freed from limbs too far away
+[hero_body  10.5s] cloth: 1788 hanging vertices follow the hips more than the legs
+[hero_body  11.2s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  11.6s] unmix: 1274 vertices made wholly arm or body, 146 edges split (146 new vertices)
+[hero_body  14.0s] arm split: {'arm_left': 4899, 'arm_right': 4246, 'patches_moved': 23653, 'edges_split': 1112, 'new_vertices': 1348, 'reweighted': 8976}
+[hero_body  38.2s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/burak.glb (63.0 MB)
+== airah
+[hero_body  12.2s] reach: 5417 vertices freed from limbs too far away
+[hero_body  12.3s] cloth: 1919 hanging vertices follow the hips more than the legs
+[hero_body  13.4s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  13.9s] unmix: 3082 vertices made wholly arm or body, 408 edges split (418 new vertices)
+[hero_body  16.1s] arm split: {'arm_left': 3415, 'arm_right': 1861, 'patches_moved': 12604, 'edges_split': 509, 'new_vertices': 660, 'reweighted': 4876}
+[hero_body  39.3s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/airah.glb (11.7 MB)

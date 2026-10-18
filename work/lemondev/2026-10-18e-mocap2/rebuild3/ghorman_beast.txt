@@ -1,0 +1,56 @@
+04:42:30 | INFO: Data are loaded, start creating Blender stuff
+04:42:30 | INFO: Blender create Mesh node hero
+04:42:32 | INFO: glTF import finished in 1.68s
+[hero_body   2.3s] hero rig with 132 clips
+04:42:32 | INFO: Data are loaded, start creating Blender stuff
+04:42:32 | INFO: Blender create Mesh node mace_low_weapon_mat_0
+04:42:32 | INFO: Blender create Mesh node tanga_low_tanga_mat_0
+04:42:32 | INFO: Blender create Mesh node troll_body_low_troll_body_mat_0
+04:42:32 | INFO: Blender create Mesh node lower_teeth_low_troll_body_mat_0
+04:42:32 | INFO: Blender create Mesh node upper_teeth_low_troll_body_mat_0
+04:42:32 | INFO: Blender create Mesh node eyes_low_troll_body_mat_0
+04:42:32 | INFO: Blender create Mesh node Box001_hair_mat_0
+04:42:33 | INFO: glTF import finished in 0.64s
+[hero_body   3.1s] imported 30 objects from A:/Python/woa/work/downloads/sf_heroes/ghorman_transform.glb
+[hero_body   3.1s]   dropped helper Icosphere
+[hero_body   3.1s] kept 7 mesh pieces (10467 faces), rig: Object_4 (117 bones)
+[hero_body   3.1s] joined 7 pieces into one mesh (10467 faces)
+[hero_body   3.1s] scaled x0.014 to 2.400 m
+[hero_body   3.1s]   joint hips         (0.0, 0.0, 1.195) -> (0.0, 0.0, 1.332)
+[hero_body   3.1s]   joint head         (0.0, -0.273, 2.015) -> (0.0, -0.41, 2.425)
+[hero_body   3.1s]   joint upper_arm.L  (0.478, -0.041, 1.879) -> (0.642, 0.0, 1.4)
+[hero_body   3.1s]   joint hand.L       (0.683, -0.232, 1.018) -> (0.711, -0.342, 0.744)
+[hero_body   3.1s]   joint thigh.L      (0.246, 0.0, 1.127) -> (0.328, -0.137, 0.58)
+[hero_body   3.1s]   joint foot.L       (0.383, 0.068, 0.198) -> (0.396, -0.178, 0.102)
+[hero_body   3.1s]   native upper_arm.L  (0.475, -0.079, 1.811) -> (0.639, -0.038, 1.333) (model (0.478, -0.041, 1.879))
+[hero_body   3.1s]   native forearm.L    (0.639, -0.038, 1.333) -> (0.68, -0.27, 0.95) (model (0.642, 0.0, 1.4))
+[hero_body   3.1s]   native hand.L       (0.68, -0.27, 0.95) -> (0.695, -0.331, 0.8) (model (0.683, -0.232, 1.018))
+[hero_body   3.1s]   native thigh.L      (0.246, -0.0, 1.127) -> (0.328, -0.137, 0.58) (model (0.246, 0.0, 1.127))
+[hero_body   3.3s]   mace_low_weapon_mat_0: automatic weights on 98.4% of vertices
+[hero_body   3.4s]   island gating: 53 pieces, 4 kept to their nearest limb
+[hero_body   3.4s] mesh: 10467 faces -> 10466 triangles
+[hero_body   3.7s] cloth: 1317 hanging vertices follow the hips more than the legs
+[hero_body   3.7s] arms: 498 hand and forearm vertices freed from the trunk and legs
+[hero_body   3.7s] smoothed all weights (4 passes)
+[hero_body   3.8s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body   3.8s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   3.9s]   rigid: 268 vertices on 490 faces ride their bone only, split off along 40 border edges
+[hero_body   3.9s] unmix: 1163 vertices made wholly arm or body, 148 edges split (146 new vertices)
+Info: 3235 vertex weights limited
+[hero_body   7.5s] retargeted 132 clips (4216 frames) onto the native rest in 3.6s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:42:37 | INFO: Starting glTF 2.0 export
+04:42:37 | INFO: Extracting primitive: ghorman_beast
+04:42:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:42:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:42:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:42:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:42:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:42:37 | INFO: Primitives created: 4
+04:42:52 | INFO: Finished glTF 2.0 export in 15.187440156936646 s
+
+[hero_body  22.9s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out3/ghorman_beast.glb (12.8 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

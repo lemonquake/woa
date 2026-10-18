@@ -1,0 +1,87 @@
+04:39:23 | INFO: Data are loaded, start creating Blender stuff
+04:39:23 | INFO: Blender create Mesh node hero
+04:39:25 | INFO: glTF import finished in 2.26s
+[hero_body   3.2s] hero rig with 132 clips
+04:39:25 | INFO: Data are loaded, start creating Blender stuff
+04:39:25 | INFO: Blender create Mesh node Hair_0
+04:39:25 | INFO: Blender create Mesh node Hair_1
+04:39:25 | INFO: Blender create Mesh node PS3.face_PS3.face01_0
+04:39:25 | INFO: Blender create Mesh node PS3.face_PS3.face01_1
+04:39:25 | INFO: Blender create Mesh node PS3.face_PS3.face01_2
+04:39:25 | INFO: Blender create Mesh node leher_0
+04:39:25 | INFO: Blender create Mesh node body_0
+04:39:25 | INFO: Blender create Mesh node body_1
+04:39:25 | INFO: Blender create Mesh node body_2
+04:39:25 | INFO: Blender create Mesh node Cube.014_0
+04:39:25 | INFO: Blender create Mesh node sepatu_0
+04:39:25 | INFO: Blender create Mesh node IKAT KUPING_0
+04:39:25 | INFO: Blender create Mesh node BESI PERMATA KEPALA_0
+04:39:25 | INFO: Blender create Mesh node jepit rambut_0
+04:39:25 | INFO: Blender create Mesh node kain rambut_0
+04:39:25 | INFO: Blender create Mesh node jepit bulet_0
+04:39:25 | INFO: Blender create Mesh node kolorz_0
+04:39:25 | INFO: Blender create Mesh node Cube.016_Cube.000_0
+04:39:25 | INFO: Blender create Mesh node Cube.016_Cube.001_0
+04:39:25 | INFO: Blender create Mesh node aksesoris pinggang_0
+04:39:25 | INFO: Blender create Mesh node BEHA_0
+04:39:26 | INFO: Blender create Mesh node kain rok_0
+04:39:26 | INFO: Blender create Mesh node aksesoris beha_0
+04:39:26 | INFO: Blender create Mesh node KAIT BH_0
+04:39:26 | INFO: Blender create Mesh node kain tangan_0
+04:39:26 | INFO: Blender create Mesh node CRISTAL DADA_0
+04:39:26 | INFO: Blender create Mesh node PERMATA_0
+04:39:26 | INFO: Blender create Mesh node buntut_0
+04:39:26 | INFO: Blender create Mesh node gelang buntut_0
+04:39:26 | INFO: Blender create Mesh node lampu_0
+04:39:26 | INFO: glTF import finished in 0.82s
+[hero_body   4.1s] imported 59 objects from A:/Python/woa/work/downloads/sf_heroes/airah.glb
+[hero_body   4.1s]   dropped piece lampu_0 ( Material.008 )
+[hero_body   4.1s] kept 29 mesh pieces (179735 faces), rig: none
+[hero_body   4.1s] joined 29 pieces into one mesh (179735 faces)
+[hero_body   4.1s] scaled x1.163 to 1.760 m
+[hero_body   4.1s]   joint hips         (0.0, 0.0, 1.123) -> (0.006, 0.0, 1.239)
+[hero_body   4.1s]   joint head         (0.064, 0.006, 1.542) -> (0.064, 0.012, 1.705)
+[hero_body   4.1s]   joint upper_arm.L  (0.137, 0.0, 1.443) -> (0.147, 0.058, 1.205)
+[hero_body   4.1s]   joint hand.L       (0.027, -0.159, 1.112) -> (-0.083, -0.249, 1.002)
+[hero_body   4.1s]   joint thigh.L      (0.047, 0.0, 1.067) -> (0.098, -0.035, 0.72)
+[hero_body   4.1s]   joint foot.L       (0.192, 0.012, 0.15) -> (0.198, -0.07, 0.053)
+[hero_body   4.1s]   native upper_arm.L  (0.178, -0.003, 1.4) -> (0.187, 0.055, 1.161) (model (0.137, 0.0, 1.443))
+[hero_body   4.1s]   native forearm.L    (0.187, 0.055, 1.161) -> (0.067, -0.163, 1.068) (model (0.147, 0.058, 1.205))
+[hero_body   4.1s]   native hand.L       (0.067, -0.163, 1.068) -> (0.007, -0.212, 1.008) (model (0.027, -0.159, 1.112))
+[hero_body   4.1s]   native thigh.L      (0.044, -0.0, 1.065) -> (0.095, -0.035, 0.717) (model (0.047, 0.0, 1.067))
+Warning: Bone Heat Weighting: failed to find solution for one or more bones
+[hero_body   5.7s]   aksesoris beha_0: automatic weights on 0.0% of vertices
+[hero_body   6.2s]   weight stand-in (voxel 1.8 cm): 7660 faces, 2 islands kept, automatic weights on 100.0%
+[hero_body   6.3s]     dominant bone per stand-in vertex: {'chest': 147, 'foot.L': 129, 'foot.R': 157, 'forearm.L': 52, 'forearm.R': 151, 'hand.L': 192, 'head': 1028, 'hips': 579, 'neck': 13, 'shin.L': 661, 'shin.R': 671, 'shoulder.L': 140, 'shoulder.R': 312, 'spine': 191, 'thigh.L': 809, 'thigh.R': 1545, 'toe.L': 96, 'upper_arm.L': 470, 'upper_arm.R': 319}
+[hero_body   6.6s]   weight stand-in (voxel 2.5 cm): 3686 faces, 1 islands kept, automatic weights on 100.0%
+[hero_body   6.6s]     dominant bone per stand-in vertex: {'chest': 82, 'foot.L': 57, 'foot.R': 65, 'forearm.L': 1, 'forearm.R': 68, 'hand.L': 84, 'head': 503, 'hips': 227, 'neck': 5, 'shin.L': 362, 'shin.R': 391, 'shoulder.L': 66, 'shoulder.R': 155, 'spine': 104, 'thigh.L': 527, 'thigh.R': 737, 'toe.L': 50, 'upper_arm.L': 40, 'upper_arm.R': 164}
+[hero_body   6.8s]   weight stand-in (voxel 3.5 cm): 1736 faces, 2 islands kept, automatic weights on 100.0%
+[hero_body   6.8s]     dominant bone per stand-in vertex: {'chest': 36, 'foot.L': 29, 'foot.R': 26, 'forearm.R': 32, 'hand.L': 5, 'head': 233, 'hips': 115, 'neck': 2, 'shin.L': 160, 'shin.R': 227, 'shoulder.L': 28, 'shoulder.R': 76, 'spine': 50, 'thigh.L': 235, 'thigh.R': 381, 'toe.L': 17, 'upper_arm.L': 15, 'upper_arm.R': 73}
+[hero_body   9.7s]   island gating: 60 pieces, 34 kept to their nearest limb
+[hero_body  11.9s] mesh: 179735 faces -> 60000 triangles
+[hero_body  12.2s] reach: 5417 vertices freed from limbs too far away
+[hero_body  12.3s] cloth: 1919 hanging vertices follow the hips more than the legs
+[hero_body  12.4s] arms: 1533 hand and forearm vertices freed from the trunk and legs
+[hero_body  12.6s] capture: 11958 vertices kept to their nearest bone and its neighbours
+[hero_body  12.8s] smoothed all weights (4 passes)
+[hero_body  13.4s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body  13.4s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  13.6s]   rigid: 1052 vertices on 1869 faces ride their bone only, split off along 169 border edges
+[hero_body  13.9s] unmix: 3082 vertices made wholly arm or body, 408 edges split (418 new vertices)
+Info: 2844 vertex weights limited
+[hero_body  16.1s] arm split: {'arm_left': 3415, 'arm_right': 1861, 'patches_moved': 12604, 'edges_split': 509, 'new_vertices': 660, 'reweighted': 4876}
+[hero_body  19.8s] retargeted 132 clips (4216 frames) onto the native rest in 3.7s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:39:42 | INFO: Starting glTF 2.0 export
+04:39:42 | INFO: Extracting primitive: airah
+04:39:42 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:39:42 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:39:42 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:39:42 | INFO: Primitives created: 22
+04:40:01 | INFO: Finished glTF 2.0 export in 19.340413331985474 s
+
+[hero_body  39.3s] wrote A:/Python/woa/work/lemondev/2026-10-18e-mocap2/rebuild_out/airah.glb (11.7 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

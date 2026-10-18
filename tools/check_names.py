@@ -62,6 +62,7 @@ COMPOUND_OK = {
     "firelight", "sunburn", "fireproof", "dreamy", "soulmate", "deathly", "dragonfly", "lightly", "nighttime",
     "daylight", "lifeguard", "lifelike", "warhammer", "warhorse", "wartime", "silvers", "golds", "windup",
     "stonemason", "moonstone", "bonfire", "campfire", "wildfire", "gunfire", "starter", "sundial", "suntan",
+    "tailwind", "headwind", "tailwinds",
 }
 # Names the owner chose (never flagged). Matched case-insensitively and removed before checking.
 OWNER_NAMES = [

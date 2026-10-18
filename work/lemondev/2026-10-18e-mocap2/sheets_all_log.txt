@@ -1,0 +1,291 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+blood_ranger bow_idle yaw 25
+blood_ranger bow_shoot yaw 25
+blood_ranger bow_shoot yaw 25
+blood_ranger cast_quick yaw 25
+blood_ranger bow_hold yaw 25
+blood_ranger war_cry yaw 25
+blood_ranger bow_run yaw 25
+blood_ranger stagger_back yaw 25
+blood_ranger stagger_recover yaw 25
+blood_ranger stagger_air yaw 25
+blood_ranger hit_from_back yaw 25
+blood_ranger hit_big yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/blood_ranger_p0.png rows: bow_idle@25, bow_shoot@25, bow_shoot@25, cast_quick@25, bow_hold@25, war_cry@25, bow_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, hit_big@25
+blood_ranger bow_hit yaw 25
+blood_ranger dizzy yaw 25
+blood_ranger bow_death_1 yaw 25
+blood_ranger bow_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/blood_ranger_p1.png rows: bow_hit@25, dizzy@25, bow_death_1@25, bow_death_2@25
+ezee greatsword_idle yaw 25
+ezee greatsword_power yaw 25
+ezee greatsword_slash_1 yaw 25
+ezee greatsword_slash_2 yaw 25
+ezee greatsword_slash_4 yaw 25
+ezee greatsword_cast yaw 25
+ezee greatsword_slam yaw 25
+ezee greatsword_leap yaw 25
+ezee greatsword_run yaw 25
+ezee stagger_back yaw 25
+ezee stagger_recover yaw 25
+ezee stagger_air yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/ezee_p0.png rows: greatsword_idle@25, greatsword_power@25, greatsword_slash_1@25, greatsword_slash_2@25, greatsword_slash_4@25, greatsword_cast@25, greatsword_slam@25, greatsword_leap@25, greatsword_run@25, stagger_back@25, stagger_recover@25, stagger_air@25
+ezee hit_from_back yaw 25
+ezee greatsword_hit yaw 25
+ezee greatsword_hit_small yaw 25
+ezee dizzy yaw 25
+ezee greatsword_death_1 yaw 25
+ezee greatsword_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/ezee_p1.png rows: hit_from_back@25, greatsword_hit@25, greatsword_hit_small@25, dizzy@25, greatsword_death_1@25, greatsword_death_2@25
+sludge axe_idle yaw 25
+sludge axe_chest_thump yaw 25
+sludge axe_chop yaw 25
+sludge axe_sweep yaw 25
+sludge axe_backhand yaw 25
+sludge hook_throw yaw 25
+sludge neck_bite yaw 25
+sludge axe_run yaw 25
+sludge stagger_back yaw 25
+sludge stagger_recover yaw 25
+sludge stagger_air yaw 25
+sludge hit_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/sludge_p0.png rows: axe_idle@25, axe_chest_thump@25, axe_chop@25, axe_sweep@25, axe_backhand@25, hook_throw@25, neck_bite@25, axe_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25
+sludge axe_hit yaw 25
+sludge hit_small yaw 25
+sludge dizzy yaw 25
+sludge death_from_front yaw 25
+sludge death_fall_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/sludge_p1.png rows: axe_hit@25, hit_small@25, dizzy@25, death_from_front@25, death_fall_back@25
+azrin idle_staff yaw 25
+azrin spell_area yaw 25
+azrin spell_strike_1 yaw 25
+azrin spell_strike_2 yaw 25
+azrin spell_quick yaw 25
+azrin javelin_throw yaw 25
+azrin spell_big yaw 25
+azrin glide_fwd yaw 25
+azrin stagger_back yaw 25
+azrin stagger_recover yaw 25
+azrin stagger_air yaw 25
+azrin hit_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/azrin_p0.png rows: idle_staff@25, spell_area@25, spell_strike_1@25, spell_strike_2@25, spell_quick@25, javelin_throw@25, spell_big@25, glide_fwd@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25
+azrin hit_big yaw 25
+azrin hit_small yaw 25
+azrin dizzy yaw 25
+azrin spell_death_1 yaw 25
+azrin spell_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/azrin_p1.png rows: hit_big@25, hit_small@25, dizzy@25, spell_death_1@25, spell_death_2@25
+froster spell_idle yaw 25
+froster spell_area yaw 25
+froster spell_strike_1 yaw 25
+froster spell_strike_2 yaw 25
+froster spell_quick yaw 25
+froster spell_heavy yaw 25
+froster spell_channel yaw 25
+froster spell_run yaw 25
+froster stagger_back yaw 25
+froster stagger_recover yaw 25
+froster stagger_air yaw 25
+froster hit_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/froster_p0.png rows: spell_idle@25, spell_area@25, spell_strike_1@25, spell_strike_2@25, spell_quick@25, spell_heavy@25, spell_channel@25, spell_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25
+froster hit_big yaw 25
+froster hit_small yaw 25
+froster dizzy yaw 25
+froster spell_death_1 yaw 25
+froster spell_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/froster_p1.png rows: hit_big@25, hit_small@25, dizzy@25, spell_death_1@25, spell_death_2@25
+caziel knife_idle yaw 25
+caziel dual_heavy yaw 25
+caziel dagger_stab_1 yaw 25
+caziel dagger_stab_2 yaw 25
+caziel dagger_stab_3 yaw 25
+caziel cast_quick yaw 25
+caziel spell_run yaw 25
+caziel stagger_back yaw 25
+caziel stagger_recover yaw 25
+caziel stagger_air yaw 25
+caziel hit_from_back yaw 25
+caziel hit_big yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/caziel_p0.png rows: knife_idle@25, dual_heavy@25, dagger_stab_1@25, dagger_stab_2@25, dagger_stab_3@25, cast_quick@25, spell_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, hit_big@25
+caziel hit_small yaw 25
+caziel dizzy yaw 25
+caziel death_from_front yaw 25
+caziel death_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/caziel_p1.png rows: hit_small@25, dizzy@25, death_from_front@25, death_from_back@25
+tock spell_idle_2 yaw 25
+tock spell_wave yaw 25
+tock spell_strike_1 yaw 25
+tock spell_strike_2 yaw 25
+tock spell_strike_3 yaw 25
+tock spell_quick yaw 25
+tock spell_area yaw 25
+tock spell_big yaw 25
+tock spell_run yaw 25
+tock stagger_back yaw 25
+tock stagger_recover yaw 25
+tock stagger_air yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/tock_p0.png rows: spell_idle_2@25, spell_wave@25, spell_strike_1@25, spell_strike_2@25, spell_strike_3@25, spell_quick@25, spell_area@25, spell_big@25, spell_run@25, stagger_back@25, stagger_recover@25, stagger_air@25
+tock hit_from_back yaw 25
+tock hit_big yaw 25
+tock hit_small yaw 25
+tock dizzy yaw 25
+tock spell_death_1 yaw 25
+tock spell_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/tock_p1.png rows: hit_from_back@25, hit_big@25, hit_small@25, dizzy@25, spell_death_1@25, spell_death_2@25
+kragg shield_idle yaw 25
+kragg shield_push yaw 25
+kragg shield_slash_1 yaw 25
+kragg shield_slash_2 yaw 25
+kragg shield_slash_3 yaw 25
+kragg shield_power yaw 25
+kragg shield_slam yaw 25
+kragg shield_run yaw 25
+kragg stagger_back yaw 25
+kragg stagger_recover yaw 25
+kragg stagger_air yaw 25
+kragg hit_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/kragg_p0.png rows: shield_idle@25, shield_push@25, shield_slash_1@25, shield_slash_2@25, shield_slash_3@25, shield_power@25, shield_slam@25, shield_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25
+kragg shield_hit yaw 25
+kragg dizzy yaw 25
+kragg shield_death_1 yaw 25
+kragg shield_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/kragg_p1.png rows: shield_hit@25, dizzy@25, shield_death_1@25, shield_death_2@25
+missing roydo launch
+missing roydo wall_impact
+missing roydo hit_light
+missing roydo idle_hurt
+roydo roydo_idle yaw 25
+roydo roydo_idle_fold yaw 25
+roydo roydo_cast_shoot yaw 25
+roydo roydo_punch_jab yaw 25
+roydo roydo_punch_cross yaw 25
+roydo roydo_cast_throw yaw 25
+roydo roydo_cast_enter yaw 25
+roydo roydo_run yaw 25
+roydo knockback yaw 25
+roydo getup yaw 25
+roydo hit_heavy yaw 25
+roydo death yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/roydo_p0.png rows: roydo_idle@25, roydo_idle_fold@25, roydo_cast_shoot@25, roydo_punch_jab@25, roydo_punch_cross@25, roydo_cast_throw@25, roydo_cast_enter@25, roydo_run@25, knockback@25, getup@25, hit_heavy@25, death@25
+missing blau launch
+missing blau wall_impact
+missing blau hit_light
+missing blau idle_hurt
+blau blau_idle yaw 25
+blau blau_reload yaw 25
+blau blau_shoot yaw 25
+blau blau_cast_shoot yaw 25
+blau blau_cast_throw yaw 25
+blau blau_jump_start yaw 25
+blau blau_kneel_fix yaw 25
+blau blau_run_rifle yaw 25
+blau knockback yaw 25
+blau getup yaw 25
+blau hit_heavy yaw 25
+blau death yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/blau_p0.png rows: blau_idle@25, blau_reload@25, blau_shoot@25, blau_cast_shoot@25, blau_cast_throw@25, blau_jump_start@25, blau_kneel_fix@25, blau_run_rifle@25, knockback@25, getup@25, hit_heavy@25, death@25
+azrael idle_staff yaw 25
+azrael greatsword_power yaw 25
+azrael greatsword_slash_1 yaw 25
+azrael greatsword_slash_2 yaw 25
+azrael greatsword_cast yaw 25
+azrael spell_heavy yaw 25
+azrael spell_big yaw 25
+azrael glide_fwd yaw 25
+azrael stagger_back yaw 25
+azrael stagger_recover yaw 25
+azrael stagger_air yaw 25
+azrael hit_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/azrael_p0.png rows: idle_staff@25, greatsword_power@25, greatsword_slash_1@25, greatsword_slash_2@25, greatsword_cast@25, spell_heavy@25, spell_big@25, glide_fwd@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25
+azrael hit_big yaw 25
+azrael hit_small yaw 25
+azrael dizzy yaw 25
+azrael spell_death_1 yaw 25
+azrael spell_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/azrael_p1.png rows: hit_big@25, hit_small@25, dizzy@25, spell_death_1@25, spell_death_2@25
+airah spell_idle_2 yaw 25
+airah spell_area yaw 25
+airah spell_strike_1 yaw 25
+airah spell_strike_2 yaw 25
+airah spell_strike_3 yaw 25
+airah spell_run yaw 25
+airah stagger_back yaw 25
+airah stagger_recover yaw 25
+airah stagger_air yaw 25
+airah hit_from_back yaw 25
+airah hit_big yaw 25
+airah hit_small yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/airah_p0.png rows: spell_idle_2@25, spell_area@25, spell_strike_1@25, spell_strike_2@25, spell_strike_3@25, spell_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, hit_big@25, hit_small@25
+airah dizzy yaw 25
+airah spell_death_1 yaw 25
+airah spell_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/airah_p1.png rows: dizzy@25, spell_death_1@25, spell_death_2@25
+burak axe_idle yaw 25
+burak axe_battle_cry yaw 25
+burak dual_slash_1 yaw 25
+burak dual_slash_2 yaw 25
+burak axe_run yaw 25
+burak stagger_back yaw 25
+burak stagger_recover yaw 25
+burak stagger_air yaw 25
+burak hit_from_back yaw 25
+burak axe_hit yaw 25
+burak hit_small yaw 25
+burak dizzy yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/burak_p0.png rows: axe_idle@25, axe_battle_cry@25, dual_slash_1@25, dual_slash_2@25, axe_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, axe_hit@25, hit_small@25, dizzy@25
+burak death_from_front yaw 25
+burak death_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/burak_p1.png rows: death_from_front@25, death_from_back@25
+emelrich greatsword_idle yaw 25
+emelrich greatsword_power yaw 25
+emelrich greatsword_slash_1 yaw 25
+emelrich greatsword_slash_2 yaw 25
+emelrich greatsword_slash_4 yaw 25
+emelrich greatsword_cast yaw 25
+emelrich greatsword_run yaw 25
+emelrich stagger_back yaw 25
+emelrich stagger_recover yaw 25
+emelrich stagger_air yaw 25
+emelrich hit_from_back yaw 25
+emelrich greatsword_hit yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/emelrich_p0.png rows: greatsword_idle@25, greatsword_power@25, greatsword_slash_1@25, greatsword_slash_2@25, greatsword_slash_4@25, greatsword_cast@25, greatsword_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, greatsword_hit@25
+emelrich greatsword_hit_small yaw 25
+emelrich dizzy yaw 25
+emelrich greatsword_death_1 yaw 25
+emelrich greatsword_death_2 yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/emelrich_p1.png rows: greatsword_hit_small@25, dizzy@25, greatsword_death_1@25, greatsword_death_2@25
+feran knife_idle yaw 25
+feran spell_quick yaw 25
+feran javelin_throw yaw 25
+feran spell_run yaw 25
+feran stagger_back yaw 25
+feran stagger_recover yaw 25
+feran stagger_air yaw 25
+feran hit_from_back yaw 25
+feran hit_big yaw 25
+feran hit_small yaw 25
+feran dizzy yaw 25
+feran death_from_front yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/feran_p0.png rows: knife_idle@25, spell_quick@25, javelin_throw@25, spell_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, hit_big@25, hit_small@25, dizzy@25, death_from_front@25
+feran death_from_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/feran_p1.png rows: death_from_back@25
+ghorman axe_idle yaw 25
+ghorman axe_chest_thump yaw 25
+ghorman axe_chop yaw 25
+ghorman axe_sweep yaw 25
+ghorman axe_backhand yaw 25
+ghorman axe_battle_cry yaw 25
+ghorman axe_run yaw 25
+ghorman stagger_back yaw 25
+ghorman stagger_recover yaw 25
+ghorman stagger_air yaw 25
+ghorman hit_from_back yaw 25
+ghorman axe_hit yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/ghorman_p0.png rows: axe_idle@25, axe_chest_thump@25, axe_chop@25, axe_sweep@25, axe_backhand@25, axe_battle_cry@25, axe_run@25, stagger_back@25, stagger_recover@25, stagger_air@25, hit_from_back@25, axe_hit@25
+ghorman hit_small yaw 25
+ghorman dizzy yaw 25
+ghorman death_from_front yaw 25
+ghorman death_fall_back yaw 25
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/sheets_all/ghorman_p1.png rows: hit_small@25, dizzy@25, death_from_front@25, death_fall_back@25

@@ -1,0 +1,20 @@
+== airah.glb (airah): 15 shapes, height 1.78 m
+   hips       -0.19-0.10 m along, 0.141 x 0.189
+   chest      0.00-0.23 m along, 0.127 x 0.090
+   head       0.03-0.28 m along, 0.086 x 0.083
+   forearm.L  0.13-0.25 m along, 0.047 x 0.028
+   thigh.L    0.00-0.41 m along, 0.081 x 0.093
+  spell_idle_2       before: worst  0.0 cm (-), 0/157 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  fem_run            before: worst  5.0 cm (hand.L in hips f15), 1/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_1      before: worst  1.2 cm (hand.L in floor f106), 7/110 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_area         before: worst  0.0 cm (-), 0/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_1     before: worst  0.0 cm (-), 0/62 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_2     before: worst  0.0 cm (-), 0/67 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_3     before: worst  0.0 cm (-), 0/70 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_mage          before: worst  0.0 cm (-), 0/151 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst  9.3 cm (fore.L in thigh.L f16), 10/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 15.0 cm (hand.R in floor f46), 12/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_2      before: worst  8.3 cm (hand.R in floor f110), 46/111 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/airah_collide.res (OK); worst 15.0 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/airah.res (OK): 7 mocap clips

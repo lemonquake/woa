@@ -1,0 +1,223 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+blood_ranger idle_bow yaw 0
+blood_ranger idle_bow yaw 150
+blood_ranger bow_1 yaw 0
+blood_ranger bow_1 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blood_ranger_p0.png rows: idle_bow@0, idle_bow@150, bow_1@0, bow_1@150
+blood_ranger bow_1 yaw 0
+blood_ranger bow_1 yaw 150
+blood_ranger cast_quick yaw 0
+blood_ranger cast_quick yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blood_ranger_p1.png rows: bow_1@0, bow_1@150, cast_quick@0, cast_quick@150
+blood_ranger bow_draw_hold yaw 0
+blood_ranger bow_draw_hold yaw 150
+blood_ranger war_cry yaw 0
+blood_ranger war_cry yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blood_ranger_p2.png rows: bow_draw_hold@0, bow_draw_hold@150, war_cry@0, war_cry@150
+blood_ranger hero_run yaw 0
+blood_ranger hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blood_ranger_p3.png rows: hero_run@0, hero_run@150
+ezee idle_2h yaw 0
+ezee idle_2h yaw 150
+ezee boss_roar yaw 0
+ezee boss_roar yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/ezee_p0.png rows: idle_2h@0, idle_2h@150, boss_roar@0, boss_roar@150
+ezee gs_1 yaw 0
+ezee gs_1 yaw 150
+ezee gs_2 yaw 0
+ezee gs_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/ezee_p1.png rows: gs_1@0, gs_1@150, gs_2@0, gs_2@150
+ezee gs_3 yaw 0
+ezee gs_3 yaw 150
+ezee gs_4 yaw 0
+ezee gs_4 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/ezee_p2.png rows: gs_3@0, gs_3@150, gs_4@0, gs_4@150
+ezee cast_quick yaw 0
+ezee cast_quick yaw 150
+ezee boss_slam yaw 0
+ezee boss_slam yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/ezee_p3.png rows: cast_quick@0, cast_quick@150, boss_slam@0, boss_slam@150
+ezee leap_slam yaw 0
+ezee leap_slam yaw 150
+ezee cast_weapon yaw 0
+ezee cast_weapon yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/ezee_p4.png rows: leap_slam@0, leap_slam@150, cast_weapon@0, cast_weapon@150
+ezee hero_run yaw 0
+ezee hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/ezee_p5.png rows: hero_run@0, hero_run@150
+sludge idle_1h yaw 0
+sludge idle_1h yaw 150
+sludge hero_axe_smash yaw 0
+sludge hero_axe_smash yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/sludge_p0.png rows: idle_1h@0, idle_1h@150, hero_axe_smash@0, hero_axe_smash@150
+sludge axe_1 yaw 0
+sludge axe_1 yaw 150
+sludge axe_2 yaw 0
+sludge axe_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/sludge_p1.png rows: axe_1@0, axe_1@150, axe_2@0, axe_2@150
+sludge axe_3 yaw 0
+sludge axe_3 yaw 150
+sludge cast_quick yaw 0
+sludge cast_quick yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/sludge_p2.png rows: axe_3@0, axe_3@150, cast_quick@0, cast_quick@150
+sludge cast_channel yaw 0
+sludge cast_channel yaw 150
+sludge hero_run yaw 0
+sludge hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/sludge_p3.png rows: cast_channel@0, cast_channel@150, hero_run@0, hero_run@150
+azrin idle_staff yaw 0
+azrin idle_staff yaw 150
+azrin cast_area yaw 0
+azrin cast_area yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/azrin_p0.png rows: idle_staff@0, idle_staff@150, cast_area@0, cast_area@150
+azrin staff_1 yaw 0
+azrin staff_1 yaw 150
+azrin staff_2 yaw 0
+azrin staff_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/azrin_p1.png rows: staff_1@0, staff_1@150, staff_2@0, staff_2@150
+azrin cast_quick yaw 0
+azrin cast_quick yaw 150
+azrin cast_heavy yaw 0
+azrin cast_heavy yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/azrin_p2.png rows: cast_quick@0, cast_quick@150, cast_heavy@0, cast_heavy@150
+azrin cast_ultimate yaw 0
+azrin cast_ultimate yaw 150
+azrin glide_fwd yaw 0
+azrin glide_fwd yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/azrin_p3.png rows: cast_ultimate@0, cast_ultimate@150, glide_fwd@0, glide_fwd@150
+froster idle_staff yaw 0
+froster idle_staff yaw 150
+froster cast_area yaw 0
+froster cast_area yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/froster_p0.png rows: idle_staff@0, idle_staff@150, cast_area@0, cast_area@150
+froster staff_1 yaw 0
+froster staff_1 yaw 150
+froster staff_2 yaw 0
+froster staff_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/froster_p1.png rows: staff_1@0, staff_1@150, staff_2@0, staff_2@150
+froster cast_quick yaw 0
+froster cast_quick yaw 150
+froster cast_heavy yaw 0
+froster cast_heavy yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/froster_p2.png rows: cast_quick@0, cast_quick@150, cast_heavy@0, cast_heavy@150
+froster cast_channel yaw 0
+froster cast_channel yaw 150
+froster hero_run yaw 0
+froster hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/froster_p3.png rows: cast_channel@0, cast_channel@150, hero_run@0, hero_run@150
+caziel idle_shadowblade yaw 0
+caziel idle_shadowblade yaw 150
+caziel dual_heavy yaw 0
+caziel dual_heavy yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/caziel_p0.png rows: idle_shadowblade@0, idle_shadowblade@150, dual_heavy@0, dual_heavy@150
+caziel dual_1 yaw 0
+caziel dual_1 yaw 150
+caziel dual_2 yaw 0
+caziel dual_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/caziel_p1.png rows: dual_1@0, dual_1@150, dual_2@0, dual_2@150
+caziel dual_3 yaw 0
+caziel dual_3 yaw 150
+caziel dual_4 yaw 0
+caziel dual_4 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/caziel_p2.png rows: dual_3@0, dual_3@150, dual_4@0, dual_4@150
+caziel cast_quick yaw 0
+caziel cast_quick yaw 150
+caziel blink yaw 0
+caziel blink yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/caziel_p3.png rows: cast_quick@0, cast_quick@150, blink@0, blink@150
+caziel hero_run yaw 0
+caziel hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/caziel_p4.png rows: hero_run@0, hero_run@150
+tock idle_wand yaw 0
+tock idle_wand yaw 150
+tock wand_heavy yaw 0
+tock wand_heavy yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/tock_p0.png rows: idle_wand@0, idle_wand@150, wand_heavy@0, wand_heavy@150
+tock wand_1 yaw 0
+tock wand_1 yaw 150
+tock wand_2 yaw 0
+tock wand_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/tock_p1.png rows: wand_1@0, wand_1@150, wand_2@0, wand_2@150
+tock wand_3 yaw 0
+tock wand_3 yaw 150
+tock cast_quick yaw 0
+tock cast_quick yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/tock_p2.png rows: wand_3@0, wand_3@150, cast_quick@0, cast_quick@150
+tock cast_area yaw 0
+tock cast_area yaw 150
+tock cast_ultimate yaw 0
+tock cast_ultimate yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/tock_p3.png rows: cast_area@0, cast_area@150, cast_ultimate@0, cast_ultimate@150
+tock hero_run yaw 0
+tock hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/tock_p4.png rows: hero_run@0, hero_run@150
+kragg idle_shield yaw 0
+kragg idle_shield yaw 150
+kragg shield_bash yaw 0
+kragg shield_bash yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/kragg_p0.png rows: idle_shield@0, idle_shield@150, shield_bash@0, shield_bash@150
+kragg sword_1 yaw 0
+kragg sword_1 yaw 150
+kragg sword_2 yaw 0
+kragg sword_2 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/kragg_p1.png rows: sword_1@0, sword_1@150, sword_2@0, sword_2@150
+kragg sword_3 yaw 0
+kragg sword_3 yaw 150
+kragg sword_4 yaw 0
+kragg sword_4 yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/kragg_p2.png rows: sword_3@0, sword_3@150, sword_4@0, sword_4@150
+kragg shield_bash yaw 0
+kragg shield_bash yaw 150
+kragg war_cry yaw 0
+kragg war_cry yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/kragg_p3.png rows: shield_bash@0, shield_bash@150, war_cry@0, war_cry@150
+kragg boss_roar yaw 0
+kragg boss_roar yaw 150
+kragg hero_run yaw 0
+kragg hero_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/kragg_p4.png rows: boss_roar@0, boss_roar@150, hero_run@0, hero_run@150
+roydo roydo_idle yaw 0
+roydo roydo_idle yaw 150
+roydo roydo_idle_fold yaw 0
+roydo roydo_idle_fold yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/roydo_p0.png rows: roydo_idle@0, roydo_idle@150, roydo_idle_fold@0, roydo_idle_fold@150
+roydo roydo_cast_shoot yaw 0
+roydo roydo_cast_shoot yaw 150
+roydo roydo_punch_jab yaw 0
+roydo roydo_punch_jab yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/roydo_p1.png rows: roydo_cast_shoot@0, roydo_cast_shoot@150, roydo_punch_jab@0, roydo_punch_jab@150
+roydo roydo_punch_cross yaw 0
+roydo roydo_punch_cross yaw 150
+roydo roydo_cast_shoot yaw 0
+roydo roydo_cast_shoot yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/roydo_p2.png rows: roydo_punch_cross@0, roydo_punch_cross@150, roydo_cast_shoot@0, roydo_cast_shoot@150
+roydo roydo_cast_throw yaw 0
+roydo roydo_cast_throw yaw 150
+roydo roydo_cast_enter yaw 0
+roydo roydo_cast_enter yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/roydo_p3.png rows: roydo_cast_throw@0, roydo_cast_throw@150, roydo_cast_enter@0, roydo_cast_enter@150
+roydo roydo_run yaw 0
+roydo roydo_run yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/roydo_p4.png rows: roydo_run@0, roydo_run@150
+blau blau_idle yaw 0
+blau blau_idle yaw 150
+blau blau_reload yaw 0
+blau blau_reload yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blau_p0.png rows: blau_idle@0, blau_idle@150, blau_reload@0, blau_reload@150
+blau blau_shoot yaw 0
+blau blau_shoot yaw 150
+blau blau_cast_shoot yaw 0
+blau blau_cast_shoot yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blau_p1.png rows: blau_shoot@0, blau_shoot@150, blau_cast_shoot@0, blau_cast_shoot@150
+blau blau_cast_throw yaw 0
+blau blau_cast_throw yaw 150
+blau blau_jump_start yaw 0
+blau blau_jump_start yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blau_p2.png rows: blau_cast_throw@0, blau_cast_throw@150, blau_jump_start@0, blau_jump_start@150
+blau blau_kneel_fix yaw 0
+blau blau_kneel_fix yaw 150
+blau blau_run_rifle yaw 0
+blau blau_run_rifle yaw 150
+saved A:/Python/woa/work/lemondev/2026-10-18-model-qa/all/blau_p3.png rows: blau_kneel_fix@0, blau_kneel_fix@150, blau_run_rifle@0, blau_run_rifle@150

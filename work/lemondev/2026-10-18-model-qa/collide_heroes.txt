@@ -1,0 +1,150 @@
+== hero.glb (blood_ranger, froster, tock, kragg): 17 shapes, height 1.80 m
+   hips       -0.05-0.10 m along, 0.072 x 0.111
+   chest      0.00-0.22 m along, 0.156 x 0.096
+   head       0.00-0.18 m along, 0.068 x 0.066
+   forearm.L  0.01-0.26 m along, 0.037 x 0.040
+   thigh.L    0.00-0.41 m along, 0.081 x 0.087
+  idle_bow           before: worst  4.7 cm (weapon.L in thigh.L f55), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst  1.5 cm (weapon.L in chest f8), 2/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 36.7 cm (weapon.L in floor f46), 19/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  8.8 cm (weapon.L in thigh.L f12), 6/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_1              before: worst  7.3 cm (elbow.L in chest f11), 15/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_draw_hold      before: worst 12.8 cm (elbow.R in chest f20), 41/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  war_cry            before: worst  8.7 cm (weapon.L in thigh.L f2), 5/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_staff         before: worst  1.7 cm (weapon.R in foot.R f9), 10/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 12.8 cm (elbow.L in chest f14), 15/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_2            before: worst 14.5 cm (fore.L in spine f12), 18/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst  9.9 cm (weapon.R in thigh.R f25), 13/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_heavy         before: worst  9.1 cm (weapon.R in chest f12), 11/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_wand          before: worst  0.0 cm (-), 0/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_1             before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_2             before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_3             before: worst  5.6 cm (weapon.R in chest f4), 3/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_heavy         before: worst  1.8 cm (weapon.R in chest f4), 4/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_ultimate      before: worst  9.0 cm (weapon.R in chest f11), 15/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_shield        before: worst  0.8 cm (weapon.R in chest f45), 0/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_bash        before: worst  9.2 cm (weapon.L in thigh.L f12), 17/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_1            before: worst 11.3 cm (elbow.R in chest f13), 15/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_2            before: worst  9.0 cm (weapon.L in thigh.L f7), 10/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_3            before: worst 14.7 cm (elbow.R in chest f13), 12/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_4            before: worst 13.4 cm (elbow.R in chest f9), 28/28 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  9.1 cm (weapon.L in thigh.L f3), 10/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/hero/anim_fixed/hero_collide.res (OK); worst 36.7 cm -> 0.0 cm
+== ezee.glb (ezee): 16 shapes, height 1.90 m
+   hips       -0.24-0.12 m along, 0.308 x 0.162
+   chest      0.00-0.20 m along, 0.331 x 0.166
+   head       0.00-0.24 m along, 0.072 x 0.070
+   forearm.L  0.03-0.17 m along, 0.029 x 0.052
+   thigh.L    0.00-0.47 m along, 0.079 x 0.133
+  idle_2h            before: worst 21.9 cm (fore.L in hips f8), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst 11.0 cm (weapon.R in hips f6), 11/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 38.4 cm (weapon.R in floor f46), 38/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  5.4 cm (elbow.L in hips f15), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 32.0 cm (fore.L in chest f9), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_2               before: worst 28.1 cm (weapon.R in hips f6), 21/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 30.0 cm (weapon.R in hips f17), 25/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 83.4 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  6.4 cm (weapon.R in thigh.R f0), 6/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_slam          before: worst 15.9 cm (weapon.R in hips f34), 37/43 frames over 1 cm | after: worst  6.8 cm (weapon.R in floor f31), 3 frames
+  leap_slam          before: worst 18.8 cm (weapon.R in hips f30), 29/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_weapon        before: worst 20.7 cm (weapon.R in chest f20), 16/26 frames over 1 cm | after: worst  4.9 cm (weapon.R in chest f22), 1 frames
+  wrote res://assets/characters/heroes17/anim_fixed/ezee_collide.res (OK); worst 83.4 cm -> 6.8 cm
+== sludge.glb (sludge): 17 shapes, height 1.79 m
+   hips       -0.22-0.08 m along, 0.241 x 0.165
+   chest      0.00-0.42 m along, 0.221 x 0.224
+   head       0.00-0.10 m along, 0.069 x 0.058
+   forearm.L  0.03-0.31 m along, 0.054 x 0.052
+   thigh.L    0.02-0.42 m along, 0.136 x 0.129
+  idle_1h            before: worst 10.4 cm (weapon.L in spine f30), 72/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst 18.2 cm (weapon.R in spine f8), 18/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 10.8 cm (weapon.R in floor f45), 20/46 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst 21.6 cm (fore.R in spine f14), 15/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 16.1 cm (fore.R in spine f0), 13/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_3              before: worst 10.3 cm (weapon.L in spine f10), 13/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_axe_smash     before: worst 14.7 cm (hand.L in spine f5), 30/41 frames over 1 cm | after: worst  2.8 cm (weapon.L in hand.R f34), 2 frames
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/hero/anim_fixed/sludge_collide.res (OK); worst 21.6 cm -> 2.8 cm
+== azrin.glb (azrin): 16 shapes, height 1.78 m
+   hips       -0.23-0.11 m along, 0.468 x 0.183
+   chest      0.00-0.26 m along, 0.195 x 0.136
+   head       0.00-0.25 m along, 0.116 x 0.081
+   forearm.L  0.00-0.15 m along, 0.046 x 0.062
+   thigh.L    0.00-0.11 m along, 0.156 x 0.117
+  idle_staff         before: worst 18.5 cm (weapon.R in hips f33), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  glide_fwd          before: worst 48.1 cm (weapon.R in hips f71), 91/91 frames over 1 cm | after: worst  3.1 cm (weapon.R in head f42), 2 frames
+  death              before: worst 60.3 cm (weapon.R in floor f46), 42/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst 41.5 cm (weapon.R in hips f14), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 47.3 cm (weapon.R in hips f4), 17/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_2            before: worst 40.4 cm (fore.L in hips f1), 18/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst 46.2 cm (weapon.R in hips f1), 25/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_heavy         before: worst 44.6 cm (weapon.R in hips f2), 23/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_ultimate      before: worst 44.7 cm (weapon.R in hips f32), 37/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/azrin_collide.res (OK); worst 60.3 cm -> 3.1 cm
+== caziel.glb (caziel): 17 shapes, height 1.85 m
+   hips       -0.24-0.12 m along, 0.128 x 0.142
+   chest      0.02-0.25 m along, 0.195 x 0.157
+   head       0.00-0.29 m along, 0.090 x 0.105
+   forearm.L  0.00-0.20 m along, 0.044 x 0.042
+   thigh.L    0.00-0.41 m along, 0.072 x 0.104
+  idle_shadowblade   before: worst 11.8 cm (weapon.R in chest f36), 16/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst  5.2 cm (weapon.R in hips f6), 8/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 23.6 cm (weapon.R in floor f46), 12/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  2.7 cm (weapon.L in thigh.L f0), 1/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_1             before: worst 10.7 cm (elbow.R in spine f15), 6/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_2             before: worst 16.8 cm (elbow.R in chest f10), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_3             before: worst 17.8 cm (elbow.L in chest f2), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_4             before: worst  6.4 cm (elbow.L in chest f0), 10/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_heavy         before: worst 11.5 cm (hand.L in chest f7), 15/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst 11.4 cm (hand.L in hips f4), 6/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/caziel_collide.res (OK); worst 23.6 cm -> 0.0 cm
+== roydo.glb (roydo): 17 shapes, height 1.86 m
+   hips       -0.05-0.13 m along, 0.129 x 0.100
+   chest      0.00-0.22 m along, 0.171 x 0.115
+   head       0.00-0.22 m along, 0.056 x 0.078
+   forearm.L  0.00-0.21 m along, 0.044 x 0.051
+   thigh.L    0.00-0.40 m along, 0.079 x 0.082
+  roydo_idle         before: worst  0.0 cm (-), 0/76 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_run          before: worst  0.0 cm (-), 0/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst  0.0 cm (-), 0/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_cast_shoot   before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_punch_jab    before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_punch_cross  before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_idle_fold    before: worst  5.2 cm (hand.L in chest f0), 76/76 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_cast_throw   before: worst  0.0 cm (-), 0/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_cast_enter   before: worst  0.0 cm (-), 0/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes16/anim_fixed/roydo_collide.res (OK); worst 5.2 cm -> 0.0 cm
+== blau.glb (blau): 17 shapes, height 1.87 m
+   hips       -0.06-0.13 m along, 0.093 x 0.133
+   chest      0.00-0.22 m along, 0.140 x 0.095
+   head       0.00-0.24 m along, 0.060 x 0.095
+   forearm.L  0.00-0.21 m along, 0.043 x 0.050
+   thigh.L    0.00-0.40 m along, 0.072 x 0.116
+  blau_idle          before: worst  0.0 cm (-), 0/51 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_run_rifle     before: worst  0.0 cm (-), 0/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 10.8 cm (hand.R in floor f46), 30/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_cast_shoot    before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_shoot         before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_reload        before: worst  0.0 cm (-), 0/51 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_cast_throw    before: worst 41.0 cm (hand.R in floor f24), 17/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_jump_start    before: worst 11.6 cm (hand.R in floor f0), 1/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_kneel_fix     before: worst 42.5 cm (hand.R in floor f124), 126/157 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes16/anim_fixed/blau_collide.res (OK); worst 42.5 cm -> 0.0 cm
+== azrael.glb (azrael): 17 shapes, height 1.80 m
+   hips       -0.17-0.10 m along, 0.149 x 0.096
+   chest      0.00-0.29 m along, 0.099 x 0.098
+   head       0.00-0.17 m along, 0.057 x 0.065
+   forearm.L  0.01-0.26 m along, 0.039 x 0.035
+   thigh.L    0.07-0.44 m along, 0.064 x 0.073
+  idle_staff         before: worst  5.7 cm (weapon.R in thigh.R f10), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  glide_fwd          before: worst  5.9 cm (weapon.R in thigh.R f55), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 52.6 cm (weapon.R in floor f20), 32/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  2.6 cm (fore.R in hips f0), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 13.5 cm (weapon.R in hips f14), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 12.7 cm (elbow.L in chest f10), 25/25 frames over 1 cm | after: worst  5.3 cm (elbow.L in forearm.R f14), 1 frames
+  gs_4               before: worst 65.7 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.4 cm (elbow.R in chest f9), 0 frames
+  gs_heavy           before: worst 28.3 cm (weapon.R in floor f33), 41/41 frames over 1 cm | after: worst  0.5 cm (elbow.R in chest f22), 0 frames
+  cast_heavy         before: worst  8.2 cm (weapon.R in thigh.R f4), 16/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_ultimate      before: worst 46.9 cm (weapon.R in floor f29), 26/41 frames over 1 cm | after: worst  3.5 cm (weapon.R in forearm.L f3), 1 frames
+  wrote res://assets/characters/heroes17/anim_fixed/azrael_collide.res (OK); worst 65.7 cm -> 5.3 cm

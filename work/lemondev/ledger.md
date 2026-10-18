@@ -408,3 +408,33 @@ seam). Looks are builder self-checks (contact sheets, close-ups, remnant renders
 | Q2 Twists | 1-3 | working tree | gate: anim_audit (game-played clips), pops scan, close-ups | n/a | PASS (self-check) | Mixamo toe flips (hinge clamp); hips not scaled to leg length (floor sink, foot slide) | none |
 | Q3 Clipping | 1-2 | working tree | gate: body_collide --applied | n/a | PASS (gate) 1.7 cm or less but Sludge 4.2 cm | push and hit clips never checked | Sludge's hook in the floor |
 | X1 Integration | 1-2 | working tree | gate: tests 251/251, check.sh, exports (05:00 and final), cold start | n/a | PASS (gate) | Hero Select grid overflow at 16 heroes (four a row) | none |
+
+
+## Session 2026-10-18 f (the five new heroes' kits, bots, icons, effects, build) — run `work/lemondev/2026-10-18f-kits/`
+
+No critic subagent was run (none asked for). Measured gates: headless tests (a test per ability group checking the
+file's numbers), `tests/tools/kit_casts.gd` (every skill cast by bots in 30-minute games), name check, export and cold
+start. Looks are builder self-checks (in-game captures, icon sheet).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| K1-K3 Kits | 1-3 | working tree | gate: 23 new tests | n/a | PASS (gate) | in order: kit files did not compile; Frenzy Mask and Berserk shared an effect id; a stun broke Giant Swing's wind-up under Steel Stance | none |
+| K4 Bots | 1-2 | working tree | gate: kit_casts, 3 games | n/a | PASS (gate) every skill cast | Shuffle and Blessing never cast (looser Shuffle rule, Blessing at 8, blessing out of fights) | Feran's Upgrade Staff Swap |
+| K5 Presentation | 1-2 | working tree | captures, icon sheet | n/a | PASS (self-check) | Hurricane funnel hid the fight (smaller, fainter) | none |
+| K6 Beast Form body | 0 | — | — | n/a | NOT DONE | old body kept | rebuild |
+| X1 Integration | 1 | working tree | gate: tests 273/273, check.sh, export, cold start (2 heroes) | n/a | PASS (gate) | none | live click test of beast control |
+
+
+## Session 2026-10-18 g (150% experience and gold, All-Bot watching, higher camera, Debug Bots, build) — run `work/lemondev/2026-10-18g-spectate/`
+
+No critic subagent was run (none asked for). Measured gates: headless tests, `tests/tools/watch_probe.gd` (live
+match, two ways in), name check, export and cold start. Looks are builder self-checks (captures at 1080p).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| R1 Rates | 1-2 | working tree | gate: test_match_rates + 11 Dota-number tests at 1.0 | n/a | PASS (gate) | popups and kill banners showed the unscaled gold | none |
+| S1 All-Bot match | 1 | working tree | gate: watch_probe (--watch and Game Setup) | n/a | PASS (gate) | none | none |
+| S2 Spectator view | 1-2 | working tree | gate: watch_probe 24/24; captures | n/a | PASS (self-check) | panel covered the team chat (compacted) | Auto camera tuning |
+| C1 Camera | 1 | working tree | captures | n/a | PASS (self-check) | none | none |
+| D1 Debug Bots | 1 | working tree | gate: watch_probe Bots checks; capture | n/a | PASS (gate) | none | none |
+| X1 Integration | 1 | working tree | gate: tests, check.sh, export, cold start | n/a | see docs/HANDOFF.md status | none | 4K UI check |

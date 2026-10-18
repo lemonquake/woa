@@ -57,7 +57,7 @@ func frame(dt: float) -> void:
 		var s := w.sites.get_site(int(id))
 		if s.is_empty():
 			continue
-		var seen: bool = w.vision.cell_visible(game.player_team, s.pos)
+		var seen: bool = game.sees_cell(s.pos)
 		match String(d.kind):
 			"gate":
 				var busy := w.time < float(_channel.get(id, -1.0))

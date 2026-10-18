@@ -1,0 +1,150 @@
+== hero.glb (blood_ranger, froster, tock, kragg): 17 shapes, height 1.80 m
+   hips       -0.05-0.10 m along, 0.072 x 0.111
+   chest      0.00-0.22 m along, 0.156 x 0.096
+   head       0.00-0.18 m along, 0.068 x 0.066
+   forearm.L  0.01-0.26 m along, 0.037 x 0.040
+   thigh.L    0.00-0.41 m along, 0.081 x 0.087
+  idle_bow           before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  hero_run           before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  bow_1              before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  bow_draw_hold      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  war_cry            before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  idle_staff         before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  staff_1            before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  staff_2            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  cast_area          before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  cast_heavy         before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  idle_wand          before: worst  0.0 cm (-), 0/81 frames over 1 cm
+  wand_1             before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  wand_2             before: worst  0.0 cm (-), 0/15 frames over 1 cm
+  wand_3             before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  wand_heavy         before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  cast_ultimate      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  idle_shield        before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  shield_bash        before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  sword_1            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  sword_2            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  sword_3            before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  sword_4            before: worst  0.0 cm (-), 0/28 frames over 1 cm
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  worst 0.0 cm
+== ezee.glb (ezee): 16 shapes, height 1.90 m
+   hips       -0.24-0.12 m along, 0.308 x 0.162
+   chest      0.00-0.20 m along, 0.331 x 0.166
+   head       0.00-0.24 m along, 0.072 x 0.070
+   forearm.L  0.03-0.17 m along, 0.029 x 0.052
+   thigh.L    0.00-0.47 m along, 0.079 x 0.133
+  idle_2h            before: worst  0.0 cm (-), 0/81 frames over 1 cm
+  hero_run           before: worst  0.0 cm (-), 0/21 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  gs_1               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_2               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_3               before: worst  0.0 cm (-), 0/25 frames over 1 cm
+  gs_4               before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  boss_slam          before: worst  6.8 cm (weapon.R in floor f31), 3/43 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  cast_weapon        before: worst  4.9 cm (weapon.R in chest f22), 1/26 frames over 1 cm
+  worst 6.8 cm
+== sludge.glb (sludge): 17 shapes, height 1.79 m
+   hips       -0.22-0.08 m along, 0.241 x 0.165
+   chest      0.00-0.42 m along, 0.221 x 0.224
+   head       0.00-0.10 m along, 0.069 x 0.058
+   forearm.L  0.03-0.31 m along, 0.054 x 0.052
+   thigh.L    0.02-0.42 m along, 0.136 x 0.129
+  idle_1h            before: worst  0.0 cm (-), 0/72 frames over 1 cm
+  hero_run           before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/46 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  axe_1              before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  axe_2              before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  axe_3              before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hero_axe_smash     before: worst  2.8 cm (weapon.L in hand.R f34), 2/41 frames over 1 cm
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  worst 2.8 cm
+== azrin.glb (azrin): 16 shapes, height 1.78 m
+   hips       -0.23-0.11 m along, 0.468 x 0.183
+   chest      0.00-0.26 m along, 0.195 x 0.136
+   head       0.00-0.25 m along, 0.116 x 0.081
+   forearm.L  0.00-0.15 m along, 0.046 x 0.062
+   thigh.L    0.00-0.11 m along, 0.156 x 0.117
+  idle_staff         before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  glide_fwd          before: worst  3.1 cm (weapon.R in head f42), 2/91 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  staff_1            before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  staff_2            before: worst  0.0 cm (-), 0/18 frames over 1 cm
+  cast_area          before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  cast_heavy         before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  cast_ultimate      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  worst 3.1 cm
+== caziel.glb (caziel): 17 shapes, height 1.85 m
+   hips       -0.24-0.12 m along, 0.128 x 0.142
+   chest      0.02-0.25 m along, 0.195 x 0.157
+   head       0.00-0.29 m along, 0.090 x 0.105
+   forearm.L  0.00-0.20 m along, 0.044 x 0.042
+   thigh.L    0.00-0.41 m along, 0.072 x 0.104
+  idle_shadowblade   before: worst  0.0 cm (-), 0/106 frames over 1 cm
+  hero_run           before: worst  0.0 cm (-), 0/21 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_1             before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_2             before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dual_3             before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  dual_4             before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  dual_heavy         before: worst  0.0 cm (-), 0/36 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  worst 0.0 cm
+== roydo.glb (roydo): 17 shapes, height 1.86 m
+   hips       -0.05-0.13 m along, 0.129 x 0.100
+   chest      0.00-0.22 m along, 0.171 x 0.115
+   head       0.00-0.22 m along, 0.056 x 0.078
+   forearm.L  0.00-0.21 m along, 0.044 x 0.051
+   thigh.L    0.00-0.40 m along, 0.079 x 0.082
+  roydo_idle         before: worst  0.0 cm (-), 0/76 frames over 1 cm
+  roydo_run          before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  roydo_cast_shoot   before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  roydo_punch_jab    before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  roydo_punch_cross  before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  roydo_idle_fold    before: worst  5.2 cm (hand.L in chest f0), 76/76 frames over 1 cm
+  roydo_cast_throw   before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  roydo_cast_enter   before: worst  0.0 cm (-), 0/17 frames over 1 cm
+  worst 5.2 cm
+== blau.glb (blau): 17 shapes, height 1.87 m
+   hips       -0.06-0.13 m along, 0.093 x 0.133
+   chest      0.00-0.22 m along, 0.140 x 0.095
+   head       0.00-0.24 m along, 0.060 x 0.095
+   forearm.L  0.00-0.21 m along, 0.043 x 0.050
+   thigh.L    0.00-0.40 m along, 0.072 x 0.116
+  blau_idle          before: worst  0.0 cm (-), 0/51 frames over 1 cm
+  blau_run_rifle     before: worst  0.0 cm (-), 0/29 frames over 1 cm
+  death              before: worst 10.8 cm (hand.R in floor f46), 30/73 frames over 1 cm
+  blau_cast_shoot    before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  blau_shoot         before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  blau_reload        before: worst  0.0 cm (-), 0/51 frames over 1 cm
+  blau_cast_throw    before: worst 41.0 cm (hand.R in floor f24), 17/41 frames over 1 cm
+  blau_jump_start    before: worst 11.6 cm (hand.R in floor f0), 1/30 frames over 1 cm
+  blau_kneel_fix     before: worst 42.5 cm (hand.R in floor f124), 126/157 frames over 1 cm
+  worst 42.5 cm
+== azrael.glb (azrael): 17 shapes, height 1.80 m
+   hips       -0.17-0.10 m along, 0.149 x 0.096
+   chest      0.00-0.29 m along, 0.099 x 0.098
+   head       0.00-0.17 m along, 0.057 x 0.065
+   forearm.L  0.01-0.26 m along, 0.039 x 0.035
+   thigh.L    0.07-0.44 m along, 0.064 x 0.073
+  idle_staff         before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  glide_fwd          before: worst  0.0 cm (-), 0/91 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  gs_1               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_3               before: worst  5.3 cm (elbow.L in forearm.R f14), 1/25 frames over 1 cm
+  gs_4               before: worst  0.4 cm (elbow.R in chest f9), 0/30 frames over 1 cm
+  gs_heavy           before: worst  0.5 cm (elbow.R in chest f22), 0/41 frames over 1 cm
+  cast_heavy         before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  cast_ultimate      before: worst  3.5 cm (weapon.R in forearm.L f3), 1/41 frames over 1 cm
+  worst 5.3 cm

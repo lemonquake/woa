@@ -50,6 +50,8 @@ func world(start_time := 0.0) -> SimWorld:
 		_restore_tree(i)
 	var w := SimWorld.new(1, _map)
 	w.elements = false
+	w.xp_rate = 1.0                           # Dota's own amounts (matches earn 150%: test_match_rates)
+	w.gold_rate = 1.0
 	w.time = start_time
 	w.next_wave_at = INF if start_time > 0.0 else 0.0
 	return w
@@ -280,6 +282,41 @@ func test_last_hit_gold_and_xp() -> void:
 	near(h.xp, 57.0, 0.01, "full 57 xp to the only hero nearby")
 	check(h.last_hits == 1, "last hit counted")
 
+## Matches earn 150% experience and gold by default (the owner's request); Debug panel gifts are not scaled.
+func test_match_rates() -> void:
+	var w := empty_world()
+	w.xp_rate = C.XP_RATE
+	w.gold_rate = C.GOLD_RATE
+	near(C.XP_RATE, 1.5, 0.001, "experience rate is 150% by default")
+	near(C.GOLD_RATE, 1.5, 0.001, "gold rate is 150% by default")
+	var fresh := SimWorld.new(1, _map)
+	check(fresh.xp_rate == 1.5 and fresh.gold_rate == 1.5, "a new match starts at 150%")
+	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
+	var c := w.spawn("dusk_melee", C.DUSK, Vector2(-1500, -4000))
+	c.order = O.HOLD
+	c.hp = 1.0
+	h.facing = 0.0
+	w.vision.update()
+	var g0 := h.gold()
+	w.command(h.id, {"type": O.ATTACK_UNIT, "target": c.id})
+	run(w, 2.0)
+	check(not c.alive, "creep died")
+	var gained := h.gold() - g0
+	check(gained >= 51 and gained <= 59, "last hit pays 150%% of 34-39 (got %d)" % gained)
+	near(h.xp, 85.5, 0.01, "150% of the 57 xp")
+	var g1 := h.gold()
+	SimDebug.gold(w, h, 1000)
+	check(h.gold() - g1 == 1000, "Debug panel gold is not scaled")
+	SimDebug.level_up(w, h)
+	check(h.level == 2, "Debug level up still gives exactly one level (got %d)" % h.level)
+	var p := SimWorld.new(1, _map)
+	p.time = -1.0
+	p.next_neutral_at = INF
+	var ph := p.spawn_hero("blood_ranger", C.DAWN)
+	check(ph.gold() == 600, "starting gold is not scaled")
+	run(p, 61.0)
+	check(ph.gold_reliable >= 133 and ph.gold_reliable <= 138, "150%% passive gold (got %d)" % ph.gold_reliable)
+
 func test_deny_xp_halved() -> void:
 	var w := empty_world()
 	var h := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
@@ -481,6 +518,7 @@ func test_shop_recipe() -> void:
 
 func test_starting_gold_and_passive() -> void:
 	var w := SimWorld.new(1, _map)
+	w.gold_rate = 1.0
 	w.time = -1.0
 	w.next_neutral_at = INF
 	var h := w.spawn_hero("blood_ranger", C.DAWN)
@@ -2489,6 +2527,8 @@ func test_spear_pierce() -> void:
 
 func _courier_world() -> Array:
 	var w := SimWorld.new(1, _map)
+	w.xp_rate = 1.0
+	w.gold_rate = 1.0
 	w.time = 30.0
 	w.next_wave_at = INF
 	w.next_neutral_at = INF
@@ -6854,8 +6894,8 @@ func test_mocap_clips() -> void:
 	check(absf(hips_y - rest_y) < 0.15, "the hips stand on the body's own height (%.2f, rest %.2f)" % [hips_y, rest_y])
 	m.free()
 
-## Run 2026-10-18 e: the five heroes of hero_ideas.txt are pickable (stats from the file, skills not in yet) but never
-## a random pick; every motion-capture run, push and leap clip a hero is given exists, the runs carry their measured
+## Run 2026-10-18 e: the five heroes of hero_ideas.txt are pickable (stats from the file; their kits came in run
+## 2026-10-18 f, so they are random picks too); every motion-capture run, push and leap clip a hero is given exists, the runs carry their measured
 ## ground speed, and AnimBlend's crossfade stays within the caller's limits.
 func test_new_heroes_and_blends() -> void:
 	for id in ["airah", "burak", "emelrich", "feran", "ghorman"]:
@@ -6863,8 +6903,8 @@ func test_new_heroes_and_blends() -> void:
 		var d := SimData.unit(id)
 		check(String(d.get("name", "")) != "" and float(d.get("str", 0.0)) > 0.0 and ModelCatalog.MODELS.has(String(d.model)),
 			"%s has stats and a body" % id)
-		check(not (id in GameSettings.random_pool()), "%s is never a random pick while its kit is missing" % id)
-	check(GameSettings.random_pool().size() == GameSettings.HEROES.size() - 5, "every hero with skills can be a random pick")
+		check(id in GameSettings.random_pool(), "%s can be a random pick now that its kit is in (run 2026-10-18 f)" % id)
+	check(GameSettings.random_pool().size() == GameSettings.HEROES.size(), "every hero can be a random pick")
 	check(SimData.unit("burak").primary == "str" and float(SimData.unit("airah").range) == 600.0, "stats from the file")
 	if MocapClips.available():
 		var lib := MocapClips.library()
@@ -6893,3 +6933,506 @@ func test_new_heroes_and_blends() -> void:
 		check(b >= 0.06 - 1e-4 and b <= 0.25 + 1e-4, "the crossfade stays between its least and its cap (%.2f s)" % b)
 	check(AnimBlend.gap_from(sk, from, ap.get_animation(idle), 0.0) < 1.0, "no gap from a pose to itself")
 	m.free()
+
+# ---- The five heroes of hero_ideas.txt: their kits (run 2026-10-18 f) ------------------------------------------------
+
+func test_new5_data() -> void:
+	for id in ["airah", "burak", "emelrich", "feran", "ghorman"]:
+		var d := SimData.unit(id)
+		check((d.talents as Array).size() == 4, "%s has 4 talent tiers" % id)
+		for tier in d.talents:
+			check((tier as Array).size() == 2, "%s: two talents a tier" % id)
+			for tid in tier:
+				check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+		for aid in d.abilities:
+			var a := SimData.ability(String(aid))
+			check(not a.is_empty(), "%s exists" % aid)
+			check(UiKit.ABILITY_ICONS.has(String(aid)), "%s has its own icon" % aid)
+		check(SimBotKits.SKILLS.has(id) and SimBotKits.TALENTS.has(id), "bots know the skill and talent order of " + id)
+		check(SimBot18.handles(id), "bots play the kit of " + id)
+		for aid in SimBotKits.SKILLS.get(id, []):
+			check(String(aid) in d.abilities, "the skill order of %s names its own skill %s" % [id, aid])
+	check(UiKit.ABILITY_ICONS.has("rage"), "Rage has its icon")
+	check(String(SimData.unit("burak").innate) == "rage", "Rage is Burak's innate")
+	check(SimData.ultimate_of(SimData.unit("airah").abilities) == "hurricane", "Hurricane is Airah's ultimate")
+	check(SimData.ultimate_of(SimData.unit("ghorman").abilities) == "beast_form", "Beast Form is Ghorman's ultimate")
+	near(float(SimData.ability("gust").values.damage[3]), 260.0, 0.01, "Gust 260 at level 4")
+	near(float(SimData.ability("berserk").cooldown[2]), 50.0, 0.01, "Berserk 50 s at level 3")
+	near(float(SimData.ability("giant_swing").values.armor_ignore[0]), 0.65, 0.001, "Giant Swing ignores 65% armor")
+	near(float(SimData.ability("shuffle").mana[2]), 450.0, 0.01, "Shuffle 450 mana at level 3")
+	near(float(SimData.ability("tame").values.max_beasts[3]), 5.0, 0.01, "Tame: 5 beasts at level 4")
+
+## A dummy that takes magic and physical damage at face value.
+func _plain(w: SimWorld, id: String, team: int, p: Vector2, hp := 50000.0) -> SimUnit:
+	var d := _dummy(w, id, team, p, hp)
+	d.def["magic_resist"] = 0.0
+	d.def["armor"] = 0.0
+	d.refresh_stats()
+	return d
+
+func test_airah_gust() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "airah", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(400, 0))
+	run(w, 0.1)
+	var hp0 := foe.hp
+	var x0 := foe.pos.x
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "gust", "point": o + Vector2(900, 0)})
+	var furthest := x0
+	for i in 120:
+		w.step()
+		furthest = maxf(furthest, foe.pos.x)
+	near(hp0 - foe.hp, 260.0 * (1.0 + a.magic_amp), 3.0, "260 magic damage at level 4 (and her magic amp), once")
+	check(furthest > x0 + 60.0, "the creep is dragged along with the wind's head (%.0f further)" % (furthest - x0))
+	check(w.effects.filter(func(e): return String(e.kind) == "gust").is_empty(), "the gust turns back and ends at Airah")
+
+func test_airah_gust_crash() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "airah", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(300, 0))
+	var block := _plain(w, "dawn_melee", C.DAWN, o + Vector2(370, 0))    # one of hers: the wind leaves it standing
+	run(w, 0.1)
+	block.pos = o + Vector2(370, 0)
+	var hp0 := foe.hp
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "gust", "point": o + Vector2(900, 0)})
+	run(w, 1.2)
+	near(hp0 - foe.hp, (260.0 + 100.0) * (1.0 + a.magic_amp), 1.0, "dragged into a unit: 100 more at level 4")
+
+func test_airah_tailwind() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "airah", o)
+	var ally := _hero16(w, "ezee", o + Vector2(200, 0))
+	w.status.apply(ally, 999, C.DUSK, {"id": "test_slow", "dur": 5.0, "slow": 0.5, "fx": "slow"})
+	ally.refresh_stats()
+	var base := float(ally.def.move_speed)
+	run(w, 0.1)
+	w.command(a.id, {"type": O.CAST_UNIT, "ability": "tailwind", "target": ally.id})
+	run(w, 0.5)
+	check(ally.get_modifier("test_slow").is_empty(), "Tailwind removes the slow")
+	check(not ally.get_modifier("tailwind").is_empty(), "Tailwind is on the ally")
+	check(ally.phased, "it walks through units")
+	check(ally.move_speed > base * 1.3, "34%% faster at level 4 (%.0f from %.0f)" % [ally.move_speed, base])
+	near(SimKits5.ranged_miss(ally), 0.40, 0.001, "ranged attacks miss 40% at level 4")
+
+func test_airah_wind_wall() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "airah", o)
+	var ranged := w.spawn("dusk_ranged", C.DUSK, o + Vector2(550, 0))
+	run(w, 0.1)
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "wind_wall", "point": o + Vector2(250, 0)})
+	run(w, 0.5)
+	check(w.abilities.kits5.walls.size() == 1, "the wall stands")
+	var hp0 := a.hp
+	w.command(ranged.id, {"type": O.ATTACK_UNIT, "target": a.id})
+	run(w, 3.0)
+	check(a.hp >= hp0 - 0.5, "no ranged attack gets through the wall (%.1f lost)" % (hp0 - a.hp))
+	check(not _events_of(w, "wind_wall_block").is_empty(), "the wall stops the shots")
+	var walker := w.spawn("dusk_melee", C.DUSK, o + Vector2(250, 30))
+	walker.order = O.HOLD
+	run(w, 0.2)
+	check(not walker.get_modifier("wind_wall_slow").is_empty(), "an enemy at the wall is slowed")
+	run(w, 6.0)
+	check(w.abilities.kits5.walls.is_empty(), "the wall is gone after 5.5 s")
+
+func test_airah_hurricane() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "airah", o)
+	var centre := o + Vector2(600, 0)
+	var foe := _plain(w, "dusk_melee", C.DUSK, centre + Vector2(300, 0))
+	var ally := _hero16(w, "ezee", centre + Vector2(-150, 0))
+	run(w, 0.1)
+	var hp0 := foe.hp
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "hurricane", "point": centre})
+	run(w, 0.6)
+	check(not w.effects.filter(func(e): return String(e.kind) == "hurricane").is_empty(), "the hurricane forms")
+	check(not ally.get_modifier("hurricane_wind").is_empty(), "allies inside move faster")
+	run(w, 1.5)
+	check(foe.pos.distance_to(centre) < 120.0, "the enemy is dragged to the middle (%.0f off)" % foe.pos.distance_to(centre))
+	run(w, 4.6)
+	near(hp0 - foe.hp, 120.0 * 6.0 * (1.0 + a.magic_amp), 40.0, "120 damage a second for 6 s at level 3")
+	check(not _events_of(w, "hurricane_end").is_empty(), "the hurricane ends and throws")
+	run(w, 1.5)
+	check(foe.pos.distance_to(centre) > 300.0, "thrown out of the middle (%.0f)" % foe.pos.distance_to(centre))
+
+func test_burak_rage() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "burak", o)
+	check(b.ability_level_of("rage") == 1, "Rage is learned from the start")
+	near(SimKits5.rage(b), 0.0, 0.01, "no Rage at first")
+	var foe := _hero16(w, "ezee", o + Vector2(0, 700), C.DUSK)
+	run(w, 0.1)
+	var as0 := b.attack_speed
+	w.combat.deal_damage(foe.id, foe.team, true, b, b.max_hp * 0.2, C.DamageType.PURE, false, "test")
+	run(w, 0.1)
+	near(SimKits5.rage(b), 20.0, 0.5, "20% health lost: 20 Rage")
+	b.refresh_stats()
+	near(b.attack_speed - as0, 10.0, 0.5, "20 Rage: +10 attack speed")
+	run(w, 3.5)
+	near(SimKits5.rage(b), 20.0, 0.5, "no drain for 4 s")
+	run(w, 1.5)
+	check(SimKits5.rage(b) < 15.0, "then it drains 10 a second (%.1f)" % SimKits5.rage(b))
+	w.abilities.kits5.add_rage(b, 500.0)
+	near(SimKits5.rage(b), 100.0, 0.01, "Rage stops at 100")
+
+func test_burak_axe_throw_and_leap() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "burak", o)
+	var foe := _plain(w, "ezee", C.DUSK, o + Vector2(700, 0), 5000.0)
+	run(w, 0.1)
+	var hp0 := foe.hp
+	var out0 := b.attack_out_pct
+	w.command(b.id, {"type": O.CAST_POINT, "ability": "axe_throw", "point": o + Vector2(1000, 0)})
+	run(w, 1.0)
+	check(not _events_of(w, "axe_hit").is_empty(), "the axe hits the first enemy")
+	check(hp0 - foe.hp > 200.0, "physical damage (%.0f)" % (hp0 - foe.hp))
+	check(not foe.get_modifier("axe_throw_slow").is_empty(), "and slows it")
+	near(SimKits5.rage(b), 15.0, 0.5, "a hero hit: 15 Rage")
+	b.refresh_stats()
+	near(b.attack_out_pct - out0, -0.2, 0.001, "one axe gone: -20% attack damage")
+	check(w.abilities.kits5.axe_recast_ready(b), "he can leap to it")
+	check(w.abilities.cast_error(b, "axe_throw", -1, null, b.pos) == "", "the recast is free and ready")
+	var mana := b.mana
+	w.command(b.id, {"type": O.CAST_NO_TARGET, "ability": "axe_throw"})
+	run(w, 0.6)
+	check(b.pos.distance_to(foe.pos) < 120.0, "he lands beside the target (%.0f)" % b.pos.distance_to(foe.pos))
+	check(b.mana >= mana - 1.0, "no mana for the leap")
+	check(b.order == O.ATTACK_UNIT and b.order_target == foe.id, "and attacks it at once")
+	b.refresh_stats()
+	near(b.attack_out_pct, out0, 0.001, "the axe is back in his hand")
+
+func test_burak_reckless_swing() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "burak", o)
+	var main := _plain(w, "dusk_melee", C.DUSK, o + Vector2(140, 0))
+	var behind := _plain(w, "dusk_melee", C.DUSK, o + Vector2(300, 20))
+	run(w, 0.1)
+	w.command(b.id, {"type": O.CAST_NO_TARGET, "ability": "reckless_swing"})
+	run(w, 0.3)
+	check(not b.get_modifier("reckless_swing").is_empty(), "Reckless Swing is on")
+	near(SimKits5.damage_taken(b), 0.15, 0.001, "he takes 15% more")
+	near(b.lifesteal_ability, 0.30, 0.001, "30% lifesteal at level 4")
+	var hb := behind.hp
+	w.command(b.id, {"type": O.ATTACK_UNIT, "target": main.id})
+	run(w, 2.0)
+	check(behind.hp < hb, "his attacks cleave the creep behind")
+	var foe := _hero16(w, "ezee", o + Vector2(0, 700), C.DUSK)
+	b.hp = b.max_hp * 0.5
+	var before := b.hp
+	w.combat.deal_damage(foe.id, foe.team, true, b, 100.0, C.DamageType.PURE, false, "test")
+	near(before - b.hp, 115.0, 0.5, "100 pure damage lands as 115")
+
+func test_burak_unstoppable() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "burak", o)
+	b.status_resist = 0.0
+	run(w, 0.1)
+	w.status.apply(b, 999, C.DUSK, {"id": "stunned", "stun": true, "dur": 2.0, "fx": "stun"})
+	near(float(b.get_modifier("stunned").expires) - w.time, 2.0, 0.05, "no Rage: the full stun")
+	b.remove_modifier("stunned")
+	w.abilities.kits5.add_rage(b, 60.0)
+	w.status.apply(b, 999, C.DUSK, {"id": "stunned", "stun": true, "dur": 2.0, "fx": "stun"})
+	near(float(b.get_modifier("stunned").expires) - w.time, 2.0 * 0.3, 0.05, "60 Rage: 70% shorter at level 4")
+	near(SimKits5.rage(b), 20.0, 0.5, "40 Rage spent")
+	near(w.abilities.cooldown_left(b, "unstoppable"), 9.0, 0.05, "9 s cooldown")
+
+func test_burak_berserk() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "burak", o)
+	var foe := _hero16(w, "ezee", o + Vector2(0, 600), C.DUSK)
+	run(w, 0.1)
+	var dmg0 := b.bonus_damage
+	w.command(b.id, {"type": O.CAST_NO_TARGET, "ability": "berserk"})
+	run(w, 0.4)
+	check(not b.get_modifier(SimKits5.BERSERK).is_empty(), "Berserk is on")
+	near(SimKits5.rage(b), 100.0, 0.01, "Rage locked at 100")
+	near(b.bonus_damage - dmg0, 80.0, 0.5, "+80 damage at level 3")
+	w.status.apply(b, foe.id, C.DUSK, {"id": "test_slow", "dur": 3.0, "slow": 0.5, "fx": "slow"})
+	b.refresh_stats()
+	check(b.move_speed >= float(b.def.move_speed) * 1.09, "slows do nothing (%.0f)" % b.move_speed)
+	var h0 := b.hp
+	w.combat.deal_damage(foe.id, foe.team, true, b, 200.0, C.DamageType.PURE, false, "test")
+	near(h0 - b.hp, 100.0, 0.5, "half of a blow is held back")
+	near(w.abilities.kits5.held(b), 100.0, 0.5, "100 held")
+	run(w, 12.0)
+	check(b.get_modifier(SimKits5.BERSERK).is_empty(), "Berserk ends after 12 s")
+	var h1 := b.hp
+	run(w, 6.5)
+	check(h1 - b.hp + b.hp_regen * 6.5 > 90.0, "the held damage comes back over 6 s (%.0f, less regen)" % (h1 - b.hp))
+	near(w.abilities.kits5.held(b), 0.0, 0.5, "all of it")
+	# a kill during Berserk clears it
+	b.ability_ready["berserk"] = 0.0
+	b.mana = b.max_mana
+	w.command(b.id, {"type": O.CAST_NO_TARGET, "ability": "berserk"})
+	run(w, 0.4)
+	w.combat.deal_damage(foe.id, foe.team, true, b, 200.0, C.DamageType.PURE, false, "test")
+	check(w.abilities.kits5.held(b) > 90.0, "held again")
+	foe.hp = 5.0
+	w.combat.deal_damage(b.id, b.team, true, foe, 100.0, C.DamageType.PURE, false, "test")
+	run(w, 0.1)
+	check(not foe.alive, "the enemy hero dies")
+	near(w.abilities.kits5.held(b), 0.0, 0.5, "a kill during Berserk clears the held damage")
+
+func test_emelrich_overhead_cut() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var e := _hero16(w, "emelrich", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(300, 0))
+	run(w, 0.1)
+	var hp0 := foe.hp
+	w.command(e.id, {"type": O.CAST_POINT, "ability": "overhead_cut", "point": foe.pos})
+	run(w, 0.45)
+	check(not _events_of(w, "windup").is_empty(), "the wind-up starts after the cast point")
+	check(bool(e.channel.get("locked", false)), "the wind-up is locked")
+	w.command(e.id, {"type": O.STOP})
+	w.command(e.id, {"type": O.MOVE, "point": o - Vector2(500, 0)})
+	check(not e.channel.is_empty(), "orders do not call it off")
+	run(w, 0.7)
+	var ad := SimKits5.attack_damage(e)
+	near(hp0 - foe.hp, 280.0 + 0.6 * ad, 2.0, "280 + 60% of his attack damage")
+	check(not foe.get_modifier("stunned").is_empty(), "and a stun")
+	# a stun breaks the wind-up
+	run(w, 2.0)
+	check(e.pos.distance_to(o) > 300.0, "the move ordered during the wind-up waited and then ran")
+	e.pos = o
+	e.ability_ready["overhead_cut"] = 0.0
+	e.mana = e.max_mana
+	var hp1 := foe.hp
+	w.command(e.id, {"type": O.CAST_POINT, "ability": "overhead_cut", "point": foe.pos})
+	for i in 60:
+		w.step()
+		if bool(e.channel.get("locked", false)):
+			break
+	check(bool(e.channel.get("locked", false)), "winding up again")
+	w.status.apply(e, 999, C.DUSK, {"id": "stunned", "stun": true, "dur": 0.3, "fx": "stun", "no_resist": true})
+	run(w, 1.0)
+	near(foe.hp, hp1, 2.0, "stunned in the wind-up: no cut")
+
+func test_emelrich_giant_swing_and_stance() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var e := _hero16(w, "emelrich", o)
+	var foe := _dummy(w, "dusk_melee", C.DUSK, o + Vector2(400, 100), 50000.0)
+	foe.def["armor"] = 20.0
+	foe.refresh_stats()
+	var behind := _dummy(w, "dusk_melee", C.DUSK, o - Vector2(400, 0), 50000.0)
+	run(w, 0.1)
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "steel_stance"})
+	run(w, 0.1)
+	check(bool(e.toggles.get("steel_stance", false)), "Steel Stance is on")
+	var hp0 := foe.hp
+	var hb := behind.hp
+	w.command(e.id, {"type": O.CAST_POINT, "ability": "giant_swing", "point": o + Vector2(700, 0)})
+	for i in 90:
+		w.step()
+		if bool(e.channel.get("locked", false)):
+			break
+	check(bool(e.channel.get("locked", false)), "the wind-up begins (after he turns, slowly in the stance)")
+	w.status.apply(e, 999, C.DUSK, {"id": "stunned", "stun": true, "dur": 0.3, "fx": "stun", "no_resist": true})
+	run(w, 1.4)
+	var exp_dmg := 350.0 * C.armor_multiplier(foe.armor * 0.35)
+	near(hp0 - foe.hp, exp_dmg, 3.0, "350 physical ignoring 65% armor (stance: a stun did not break it)")
+	check(not foe.get_modifier("stunned").is_empty(), "knocked down")
+	near(behind.hp, hb, 0.1, "nothing behind him is hit")
+
+func test_emelrich_steel_stance() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var e := _hero16(w, "emelrich", o)
+	var front := _hero16(w, "ezee", o + Vector2(300, 0), C.DUSK)
+	var back := _hero16(w, "ezee", o - Vector2(300, 0), C.DUSK)
+	run(w, 0.1)
+	var arm0 := e.armor
+	var ms0 := e.move_speed
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "steel_stance"})
+	run(w, 0.1)
+	near(e.armor - arm0, 10.0, 0.01, "+10 armor at level 4")
+	near(e.move_speed, ms0 * 0.8, 1.0, "20% slower")
+	near(e.turn_rate, float(e.def.turn_rate) * 0.5, 0.001, "turns half as fast")
+	e.facing = 0.0
+	near(w.abilities.kits5.front_block(e, front, "", true), 0.45, 0.001, "an attack from the front: 55% less")
+	near(w.abilities.kits5.front_block(e, back, "", true), 1.0, 0.001, "from behind: no block")
+	w.status.apply(e, front.id, C.DUSK, {"id": "test_slow", "dur": 3.0, "slow": 0.5, "fx": "slow"})
+	e.refresh_stats()
+	near(e.move_speed, ms0 * 0.8, 1.0, "other slows do nothing")
+	run(w, 1.1)
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "steel_stance"})
+	run(w, 0.1)
+	near(e.armor, arm0, 0.01, "off: the armor is gone")
+
+func test_emelrich_sweep() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var e := _hero16(w, "emelrich", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(200, 0))
+	var behind := _plain(w, "dusk_melee", C.DUSK, o - Vector2(200, 0))
+	run(w, 0.1)
+	e.facing = 0.0
+	var hp0 := foe.hp
+	var hb := behind.hp
+	var y0 := foe.pos.y
+	w.command(e.id, {"type": O.CAST_NO_TARGET, "ability": "sweep"})
+	run(w, 1.5)
+	check(hp0 - foe.hp > 130.0, "his attack damage + 130 (%.0f)" % (hp0 - foe.hp))
+	near(behind.hp, hb, 0.1, "the half circle behind him is safe")
+	check(foe.pos.y - y0 > 120.0, "shoved to his left (%.0f)" % (foe.pos.y - y0))
+
+func test_feran_knife_juggle() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var f := _hero16(w, "feran", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(150, 0))
+	foe.hull = 120.0
+	run(w, 0.1)
+	var hp0 := foe.hp
+	w.command(f.id, {"type": O.CAST_POINT, "ability": "knife_juggle", "point": foe.pos})
+	run(w, 2.0)
+	check(_events_of(w, "knife").size() == 7, "7 knives at level 4 (%d)" % _events_of(w, "knife").size())
+	near(hp0 - foe.hp, 5.0 * 90.0 * (1.0 + f.magic_amp), 1.0, "one enemy takes at most 5 knives")
+
+func test_feran_joke_box() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var f := _hero16(w, "feran", o)
+	var foes: Array = []
+	for k in 8:
+		foes.append(_plain(w, "dusk_melee", C.DUSK, o + Vector2(500, 0) + Vector2.from_angle(k * 0.8) * 120.0))
+	run(w, 0.1)
+	w.command(f.id, {"type": O.CAST_POINT, "ability": "joke_box", "point": o + Vector2(500, 0)})
+	run(w, 0.6)
+	check(_events_of(w, "joke_box_pop").is_empty(), "the box waits for its fuse")
+	run(w, 1.2)
+	var pop := _events_of(w, "joke_box_pop")
+	check(pop.size() == 1, "it pops")
+	var kinds := {}
+	if pop.size() == 1:
+		for id in pop[0].pranks:
+			for pr in pop[0].pranks[id]:
+				kinds[pr] = true
+		check((pop[0].pranks as Dictionary).size() == 8, "every enemy rolls a prank")
+	for d: SimUnit in foes:
+		near(d.max_hp - d.hp, 180.0 * (1.0 + f.magic_amp), 1.0, "180 magic damage at level 4")
+	check(kinds.size() >= 3, "the pranks are random (%s)" % str(kinds.keys()))
+
+func test_feran_swap() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var f := _hero16(w, "feran", o)
+	var foe := _hero16(w, "ezee", o + Vector2(800, 0), C.DUSK)
+	run(w, 0.1)
+	foe.facing = PI
+	var pf := f.pos
+	var pe := foe.pos
+	w.command(f.id, {"type": O.CAST_UNIT, "ability": "swap", "target": foe.id})
+	run(w, 0.5)
+	check(f.pos.distance_to(pe) < 20.0 and foe.pos.distance_to(pf) < 20.0, "they trade places")
+	check(not foe.get_modifier("swap_slow").is_empty(), "the enemy is slowed")
+	check(absf(angle_difference(foe.facing, 0.0)) < 0.3, "and turned to face away")
+	check(w.abilities.cast_error(f, "swap", -1, f, f.pos) != "", "not on himself")
+
+func test_feran_shuffle() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var f := _hero16(w, "feran", o)
+	var c := o + Vector2(600, 0)
+	var foes: Array = []
+	for k in 4:
+		foes.append(_plain(w, "dusk_melee", C.DUSK, c + Vector2.from_angle(k * PI * 0.5) * 250.0))
+	run(w, 0.1)
+	var before: Array = foes.map(func(d): return d.pos)
+	w.command(f.id, {"type": O.CAST_POINT, "ability": "shuffle", "point": c})
+	run(w, 0.7)
+	var moved := 0
+	for i in foes.size():
+		if (foes[i] as SimUnit).pos.distance_to(before[i]) > 50.0:
+			moved += 1
+		check(not (foes[i] as SimUnit).get_modifier("stunned").is_empty(), "everyone in it is stunned")
+	check(moved == 4, "every enemy takes another's place (%d moved)" % moved)
+	check(_events_of(w, "knife_juggle").size() == 6, "then 6 Knife Juggles fly out of the middle")
+	run(w, 1.5)
+	check(not (foes[0] as SimUnit).get_modifier("shuffle_dizzy").is_empty(), "then dizzy")
+	var w2 := empty_world()
+	var f2 := _hero16(w2, "feran", o)
+	var lone := _plain(w2, "dusk_melee", C.DUSK, c)
+	run(w2, 0.1)
+	w2.command(f2.id, {"type": O.CAST_POINT, "ability": "shuffle", "point": c})
+	run(w2, 0.7)
+	check(lone.pos.distance_to(o) < 60.0 and f2.pos.distance_to(c) < 60.0, "one enemy inside trades places with Feran")
+
+func test_ghorman_tame_and_pack() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var g := _hero16(w, "ghorman", o)
+	var ogre := w.spawn("ogre_brute", C.NEUTRAL, o + Vector2(300, 0))
+	var own := w.spawn("dawn_melee", C.DAWN, o + Vector2(0, -300))
+	run(w, 0.1)
+	check(w.abilities.cast_error(g, "tame", -1, own, own.pos) != "", "not his own creeps")
+	var hp0 := ogre.max_hp
+	w.command(g.id, {"type": O.CAST_UNIT, "ability": "tame", "target": ogre.id})
+	run(w, 0.5)
+	check(ogre.team == g.team and w.abilities.kits6.is_beast_of(g, ogre), "the ogre is his beast")
+	near(ogre.max_hp, hp0 * 1.5, 2.0, "+50% health at level 4")
+	check("smash" in ogre.abilities, "it keeps its ability")
+	run(w, 0.6)
+	check(not g.get_modifier("pack_leader").is_empty(), "Pack Leader counts it")
+	if not g.get_modifier("pack_leader").is_empty():
+		near(float((g.get_modifier("pack_leader").stats as Dictionary).armor), 2.5, 0.01, "+2.5 armor a beast")
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(-200, 0))
+	w.command(g.id, {"type": O.CAST_NO_TARGET, "ability": "roar"})
+	run(w, 0.5)
+	check(not foe.get_modifier("roar").is_empty(), "Roar slows and weakens the enemy")
+	check(not ogre.get_modifier("roar_pack").is_empty(), "and spurs his beast")
+	ogre.hp = ogre.max_hp * 0.3
+	g.mana = g.max_mana
+	w.command(g.id, {"type": O.CAST_UNIT, "ability": "blessing_of_the_beast_king", "target": ogre.id})
+	run(w, 0.5)
+	check(ogre.hp > ogre.max_hp * 0.85, "Blessing heals it 60%")
+	g.hp = g.max_hp * 0.5
+	var gh := g.hp
+	w.combat.kill(ogre, null)
+	run(w, 0.6)
+	check(g.hp - gh > g.max_hp * 0.13, "a beast dies: he heals 14%% (%.0f)" % (g.hp - gh))
+
+func test_ghorman_tame_cap_and_lane_creep() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var g := _hero16(w, "ghorman", o)
+	g.ability_level["tame"] = 1
+	var a := w.spawn("dusk_melee", C.DUSK, o + Vector2(300, 0))
+	var b := w.spawn("dusk_melee", C.DUSK, o + Vector2(300, 200))
+	var anc := w.spawn("hill_troll", C.NEUTRAL, o + Vector2(0, 300))
+	run(w, 0.1)
+	w.command(g.id, {"type": O.CAST_UNIT, "ability": "tame", "target": a.id})
+	run(w, 0.5)
+	check(w.abilities.kits6.is_beast_of(g, a), "an enemy lane creep can be tamed")
+	g.ability_ready["tame"] = 0.0
+	w.command(g.id, {"type": O.CAST_UNIT, "ability": "tame", "target": b.id})
+	run(w, 0.5)
+	check(w.abilities.kits6.is_beast_of(g, b) and not a.alive, "past the cap (1 at level 1) the oldest dies")
+	if bool(anc.def.get("ancient", false)):
+		check(w.abilities.cast_error(g, "tame", -1, anc, anc.pos) != "", "no ancient creeps without the Upgrade Staff")
+
+func test_ghorman_beast_form() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var g := _hero16(w, "ghorman", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(140, 0))
+	run(w, 0.1)
+	var hp0 := g.max_hp
+	var dmg0 := g.bonus_damage
+	w.command(g.id, {"type": O.CAST_NO_TARGET, "ability": "beast_form"})
+	run(w, 0.6)
+	near(g.max_hp - hp0, 900.0, 1.0, "+900 health at level 3")
+	near(g.bonus_damage - dmg0, 80.0, 0.5, "+80 damage at level 3")
+	w.command(g.id, {"type": O.ATTACK_UNIT, "target": foe.id})
+	run(w, 6.0)
+	check(_events_of(w, "maul").size() >= 1, "every 3rd attack is a maul (%d)" % _events_of(w, "maul").size())

@@ -625,7 +625,8 @@ func refresh_stats() -> void:
 	# haste (Speed Orb): the maximum speed, and slows cannot lower it
 	if has_flag("haste") and move_speed > 0.0:
 		move_speed = C.MOVE_SPEED_MAX
-	turn_rate = float(def.turn_rate)
+	# Steel Stance and Shuffle's dizziness turn the unit slower (a share of its turn rate)
+	turn_rate = float(def.turn_rate) * maxf(0.1, 1.0 + _mod_stat("turn_rate_pct"))
 	hp_regen_base = float(def.hp_regen) + attr_hpr
 	mana_regen_base = float(def.mana_regen) + attr_mpr
 	hp_regen = hp_regen_base + f.call("hp_regen")

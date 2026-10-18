@@ -1,0 +1,110 @@
+== airah.glb (airah): 16 shapes, height 1.76 m
+   hips       -0.22-0.09 m along, 0.156 x 0.116
+   chest      0.00-0.13 m along, 0.158 x 0.176
+   head       0.00-0.22 m along, 0.084 x 0.080
+   forearm.L  0.11-0.27 m along, 0.039 x 0.032
+   thigh.L    0.00-0.35 m along, 0.050 x 0.064
+  spell_idle_2       before: worst 11.2 cm (elbow.R in chest f82), 157/157 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  fem_run            before: worst 20.1 cm (elbow.R in chest f14), 21/21 frames over 1 cm | after: worst  3.3 cm (elbow.R in chest f16), 21 frames
+  spell_death_1      before: worst 12.1 cm (elbow.R in chest f38), 110/110 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_area         before: worst 11.6 cm (elbow.R in chest f15), 44/72 frames over 1 cm | after: worst  4.0 cm (elbow.R in chest f12), 14 frames
+  spell_strike_1     before: worst 17.7 cm (elbow.R in chest f13), 60/62 frames over 1 cm | after: worst  5.8 cm (elbow.R in chest f13), 14 frames
+  spell_strike_2     before: worst 14.4 cm (elbow.R in chest f12), 50/67 frames over 1 cm | after: worst  1.4 cm (elbow.R in chest f10), 8 frames
+  spell_strike_3     before: worst 16.0 cm (elbow.R in chest f12), 70/70 frames over 1 cm | after: worst  1.7 cm (elbow.R in chest f12), 5 frames
+  idle_mage          before: worst 16.9 cm (elbow.R in chest f35), 151/151 frames over 1 cm | after: worst  1.1 cm (elbow.R in chest f35), 151 frames
+  cast_area          before: worst 19.9 cm (elbow.R in upper_arm.L f21), 31/31 frames over 1 cm | after: worst  5.7 cm (elbow.R in upper_arm.L f23), 19 frames
+  death              before: worst 21.7 cm (hand.R in thigh.R f23), 47/47 frames over 1 cm | after: worst  1.4 cm (elbow.R in chest f35), 37 frames
+  cast_quick         before: worst 11.5 cm (elbow.R in chest f7), 16/16 frames over 1 cm | after: worst  1.2 cm (elbow.R in chest f8), 12 frames
+  spell_death_2      before: worst 14.8 cm (elbow.R in chest f43), 111/111 frames over 1 cm | after: worst  4.0 cm (hand.R in floor f85), 37 frames
+  wrote res://assets/characters/heroes17/anim_fixed/airah_collide.res (OK); worst 21.7 cm -> 5.8 cm
+  wrote res://assets/characters/hero/mocap/collide/airah.res (OK): 7 mocap clips
+== burak.glb (burak): 17 shapes, height 1.88 m
+   hips       -0.22-0.06 m along, 0.206 x 0.141
+   chest      0.00-0.23 m along, 0.098 x 0.147
+   head       0.00-0.10 m along, 0.071 x 0.051
+   forearm.L  0.00-0.27 m along, 0.065 x 0.049
+   thigh.L    0.00-0.44 m along, 0.081 x 0.123
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst  8.5 cm (weapon.L in hips f18), 10/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 13.2 cm (weapon.L in floor f64), 50/104 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_battle_cry     before: worst  6.7 cm (weapon.L in chest f11), 8/86 frames over 1 cm | after: worst  4.7 cm (elbow.L in chest f9), 2 frames
+  axe_chop           before: worst  8.8 cm (weapon.L in hips f27), 4/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_sweep          before: worst  3.1 cm (weapon.R in hips f27), 3/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_backhand       before: worst  0.0 cm (-), 0/82 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_dual          before: worst  0.0 cm (-), 0/71 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  war_cry            before: worst  0.0 cm (-), 0/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst  6.3 cm (weapon.R in floor f46), 25/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_1             before: worst 10.2 cm (elbow.R in chest f15), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_2             before: worst 17.2 cm (elbow.R in chest f14), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_3             before: worst 13.9 cm (elbow.L in chest f2), 15/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_4             before: worst  6.6 cm (elbow.R in chest f20), 8/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_back    before: worst 11.1 cm (weapon.L in floor f76), 48/90 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/burak_collide.res (OK); worst 17.2 cm -> 4.7 cm
+  wrote res://assets/characters/hero/mocap/collide/burak.res (OK): 7 mocap clips
+== emelrich.glb (emelrich): 17 shapes, height 1.95 m
+   hips       -0.25--0.06 m along, 0.158 x 0.138
+   chest      0.05-0.44 m along, 0.269 x 0.141
+   head       0.00-0.25 m along, 0.099 x 0.084
+   forearm.L  0.02-0.32 m along, 0.081 x 0.063
+   thigh.L    0.00-0.29 m along, 0.088 x 0.083
+  greatsword_idle    before: worst  1.6 cm (elbow.L in chest f27), 7/112 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst 10.6 cm (weapon.R in chest f6), 17/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_1 before: worst 70.7 cm (weapon.R in floor f68), 66/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_cast    before: worst  0.8 cm (weapon.R in head f15), 0/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_2 before: worst 11.6 cm (weapon.R in chest f11), 16/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_3 before: worst  8.7 cm (weapon.R in head f12), 3/50 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_4 before: worst  2.2 cm (weapon.R in hand.L f7), 4/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst 11.1 cm (elbow.L in chest f1), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  1.2 cm (weapon.R in chest f9), 1/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 98.5 cm (weapon.R in floor f46), 35/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_weapon        before: worst 22.9 cm (weapon.R in chest f20), 20/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 25.0 cm (elbow.L in chest f11), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 20.3 cm (elbow.R in chest f23), 25/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 100.5 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_2 before: worst 56.6 cm (weapon.R in floor f44), 51/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/emelrich_collide.res (OK); worst 100.5 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/emelrich.res (OK): 9 mocap clips
+== feran.glb (feran): 17 shapes, height 1.82 m
+   hips       -0.15-0.10 m along, 0.081 x 0.122
+   chest      0.00-0.22 m along, 0.133 x 0.116
+   head       0.00-0.19 m along, 0.067 x 0.077
+   forearm.L  0.01-0.28 m along, 0.043 x 0.025
+   thigh.L    0.00-0.43 m along, 0.075 x 0.095
+  knife_idle         before: worst  0.0 cm (-), 0/135 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst  0.0 cm (-), 0/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 16.9 cm (weapon.R in floor f50), 58/104 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_quick        before: worst  0.0 cm (-), 0/69 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  javelin_throw      before: worst  0.0 cm (-), 0/55 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_dagger        before: worst  0.0 cm (-), 0/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 24.1 cm (weapon.R in floor f46), 12/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_1           before: worst  6.0 cm (elbow.R in chest f14), 7/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_2           before: worst  8.4 cm (elbow.R in chest f2), 4/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_back    before: worst  4.0 cm (hand.L in floor f58), 31/90 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/feran_collide.res (OK); worst 24.1 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/feran.res (OK): 5 mocap clips
+== ghorman.glb (ghorman): 17 shapes, height 2.72 m
+   hips       -0.17-0.12 m along, 0.173 x 0.135
+   chest      0.00-0.25 m along, 0.238 x 0.244
+   head       0.01-0.61 m along, 0.088 x 0.085
+   forearm.L  0.02-0.38 m along, 0.059 x 0.038
+   thigh.L    0.00-0.46 m along, 0.129 x 0.141
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_run           before: worst 14.9 cm (weapon.R in thigh.R f8), 9/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 22.6 cm (weapon.R in floor f50), 62/104 frames over 1 cm | after: worst  7.7 cm (weapon.R in head f67), 5 frames
+  axe_battle_cry     before: worst  8.4 cm (elbow.L in forearm.R f8), 5/86 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_chop           before: worst  8.3 cm (weapon.R in head f4), 1/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_sweep          before: worst  0.0 cm (-), 0/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_backhand       before: worst 22.7 cm (weapon.R in floor f14), 13/82 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_1h            before: worst  8.1 cm (weapon.R in thigh.R f26), 74/74 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  war_cry            before: worst  8.9 cm (weapon.R in thigh.R f2), 9/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_chest_thump    before: worst 15.3 cm (weapon.R in chest f23), 16/86 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 26.5 cm (weapon.R in floor f20), 38/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst 21.0 cm (elbow.R in spine f14), 13/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 19.9 cm (elbow.R in spine f3), 13/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_3              before: worst 12.2 cm (weapon.R in chest f2), 12/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_fall_back    before: worst 11.8 cm (fore.L in thigh.L f5), 56/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/ghorman_collide.res (OK); worst 26.5 cm -> 7.7 cm
+  wrote res://assets/characters/hero/mocap/collide/ghorman.res (OK): 8 mocap clips

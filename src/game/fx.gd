@@ -161,7 +161,7 @@ func _chest(uid: int, frac := 0.55) -> Vector3:
 
 ## Only effects the player can see are worth drawing (and shaking the screen for).
 func _seen(p: Vector2) -> bool:
-	return game.world.vision.cell_visible(game.player_team, p)
+	return game.sees_cell(p)
 
 # ---- Bits: sparks, debris, splinters ---------------------------------------------------------------------------------
 

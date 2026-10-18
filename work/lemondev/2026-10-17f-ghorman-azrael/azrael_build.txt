@@ -1,0 +1,45 @@
+00:07:16 | INFO: Data are loaded, start creating Blender stuff
+00:07:16 | INFO: Blender create Mesh node hero
+00:07:17 | INFO: glTF import finished in 1.69s
+[hero_body   2.3s] hero rig with 132 clips
+[hero_body   2.4s] imported 14 objects from A:/Python/woa/work/azrael_src/azrael_src.blend
+[hero_body   2.4s] kept 6 mesh pieces (48480 faces), rig: Object_3 (233 bones)
+[hero_body   2.4s] rig map: {'chest': 'Bip001-Spine1_06', 'foot.L': 'Bip001-L-Foot_0208', 'foot.R': 'Bip001-R-Foot_0204', 'forearm.L': 'Bip001-L-Forearm_0142', 'forearm.R': 'Bip001-R-Forearm_0119', 'hand.L': 'Bip001-L-Hand_0143', 'hand.R': 'Bip001-R-Hand_0120', 'head': 'Bip001-Head_09', 'hips': 'Bip001-Pelvis_04', 'neck': 'Bip001-Neck_08', 'shin.L': 'Bip001-L-Calf_0207', 'shin.R': 'Bip001-R-Calf_0203', 'shoulder.L': 'Bip001-L-Clavicle_0139', 'shoulder.R': 'Bip001-R-Clavicle_0117', 'spine': 'Bip001-Spine_05', 'thigh.L': 'Bip001-L-Thigh_0206', 'thigh.R': 'Bip001-R-Thigh_0202', 'toe.L': 'Bip001-L-Toe0_0209', 'toe.R': 'Bip001-R-Toe0_0205', 'upper_arm.L': 'Bip001-L-UpperArm_0141', 'upper_arm.R': 'Bip001-R-UpperArm_0118'}
+[hero_body   2.6s] scaled x0.011 to 1.800 m
+[hero_body   2.6s]   joint hips         (0.0, 0.0, 1.073) -> (-0.0, 0.0, 1.168)
+[hero_body   2.6s]   joint head         (-0.0, -0.006, 1.629) -> (-0.0, -0.006, 1.631)
+[hero_body   2.6s]   joint upper_arm.L  (0.117, 0.023, 1.491) -> (0.282, 0.023, 1.3)
+[hero_body   2.6s]   joint hand.L       (0.455, 0.009, 1.101) -> (0.425, 0.012, 1.079)
+[hero_body   2.6s]   joint thigh.L      (0.094, 0.0, 1.073) -> (0.085, -0.006, 0.629)
+[hero_body   2.6s]   joint foot.L       (0.076, 0.03, 0.165) -> (0.072, -0.016, -0.001)
+[hero_body   2.7s] made glide_fwd from idle_staff (73 frames)
+[hero_body   2.7s]   native upper_arm.L  (0.108, 0.048, 1.47) -> (0.273, 0.049, 1.28) (model (0.117, 0.023, 1.491))
+[hero_body   2.7s]   native forearm.L    (0.273, 0.049, 1.28) -> (0.445, 0.034, 1.08) (model (0.282, 0.023, 1.3))
+[hero_body   2.7s]   native hand.L       (0.445, 0.034, 1.08) -> (0.405, 0.038, 1.051) (model (0.455, 0.009, 1.101))
+[hero_body   2.7s]   native thigh.L      (0.094, 0.0, 1.073) -> (0.085, -0.006, 0.629) (model (0.094, 0.0, 1.073))
+[hero_body   2.9s] mesh: 48480 faces -> 45170 triangles
+[hero_body   3.2s] reach: 2100 vertices freed from limbs too far away
+[hero_body   3.3s] cloth: 2334 hanging vertices follow the hips more than the legs
+[hero_body   3.3s] arms: 30 hand and forearm vertices freed from the trunk and legs
+[hero_body   3.5s] smoothed all weights (4 passes)
+[hero_body   3.9s] smoothed weights at the shoulders, elbows, hips, knees and neck
+Info: 2500 vertex weights limited
+[hero_body   7.6s] retargeted 133 clips (4289 frames) onto the native rest in 3.7s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+00:07:23 | INFO: Starting glTF 2.0 export
+00:07:23 | INFO: Extracting primitive: azrael
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+00:07:23 | INFO: Primitives created: 6
+00:07:41 | INFO: Finished glTF 2.0 export in 18.27417755126953 s
+
+[hero_body  26.1s] wrote A:/Python/woa/assets/characters/heroes17/azrael.glb (13.0 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

@@ -1,0 +1,308 @@
+05:29:26 | INFO: Data are loaded, start creating Blender stuff
+05:29:26 | INFO: Blender create Mesh node hero
+05:29:28 | INFO: glTF import finished in 1.60s
+FBX version: 7700
+[mocap] greatsword_idle                    frames 112 (3.73s) drift 0.00 m (max 0.11) hands apart 0.17-0.20 m lowest hand 0.82 m
+[mocap]   greatsword_idle: toe hinge 20
+[mocap]   greatsword_idle: 3.70s, strike 0.60s
+FBX version: 7700
+[mocap] greatsword_slash_1                 frames 39 (1.30s) drift 0.00 m (max 0.34) hands apart 0.16-0.21 m lowest hand 0.73 m
+[mocap]   greatsword_slash_1: toe hinge 70
+[mocap]   greatsword_slash_1: 1.27s, strike 0.63s
+FBX version: 7700
+[mocap] greatsword_slash_2                 frames 48 (1.60s) drift 0.21 m (max 0.50) hands apart 0.13-0.21 m lowest hand 0.69 m
+[mocap]   greatsword_slash_2: toe hinge 85
+[mocap]   greatsword_slash_2: 1.57s, strike 0.57s
+FBX version: 7700
+[mocap] greatsword_slash_3                 frames 50 (1.67s) drift 1.07 m (max 1.07) hands apart 0.14-0.23 m lowest hand 0.82 m
+[mocap]   greatsword_slash_3: toe hinge 66
+[mocap]   greatsword_slash_3: 1.63s, strike 0.53s
+FBX version: 7700
+[mocap] greatsword_slash_4                 frames 37 (1.23s) drift 0.00 m (max 0.13) hands apart 0.17-0.22 m lowest hand 0.86 m
+[mocap]   greatsword_slash_4: toe hinge 31
+[mocap]   greatsword_slash_4: 1.20s, strike 0.50s
+FBX version: 7700
+[mocap] greatsword_spin                    frames 57 (1.90s) drift 2.28 m (max 2.29) hands apart 0.14-0.23 m lowest hand 0.69 m
+[mocap]   greatsword_spin: toe hinge 65
+[mocap]   greatsword_spin: 1.87s, strike 0.43s
+FBX version: 7700
+[mocap] greatsword_cast                    frames 35 (1.17s) drift 0.00 m (max 0.17) hands apart 0.20-0.70 m lowest hand 0.86 m
+[mocap]   greatsword_cast: toe hinge 19
+[mocap]   greatsword_cast: 1.13s, strike 0.55s
+FBX version: 7700
+[mocap] greatsword_slam                    frames 77 (2.57s) drift 0.11 m (max 0.28) hands apart 0.13-0.20 m lowest hand 0.12 m
+[mocap]   greatsword_slam: toe hinge 69
+[mocap]   greatsword_slam: 2.53s, strike 0.63s
+FBX version: 7700
+[mocap] greatsword_power                   frames 106 (3.53s) drift 0.00 m (max 0.20) hands apart 0.13-0.20 m lowest hand 0.84 m
+[mocap]   greatsword_power: toe hinge 21
+[mocap]   greatsword_power: 3.50s, strike 1.00s
+FBX version: 7700
+[mocap] greatsword_death_1                 frames 73 (2.43s) drift 0.82 m (max 0.83) hands apart 0.19-1.39 m lowest hand -0.02 m
+[mocap]   greatsword_death_1: toe hinge 27
+[mocap]   greatsword_death_1: 2.40s, strike 1.43s
+FBX version: 7700
+[mocap] greatsword_death_2                 frames 79 (2.63s) drift 1.25 m (max 1.26) hands apart 0.19-0.38 m lowest hand -0.01 m
+[mocap]   greatsword_death_2: toe hinge 76
+[mocap]   greatsword_death_2: 2.60s, strike 1.47s
+FBX version: 7700
+[mocap] greatsword_hit                     frames 37 (1.23s) drift 0.00 m (max 0.25) hands apart 0.20-0.22 m lowest hand 0.49 m
+[mocap]   greatsword_hit: 1.20s, strike 0.47s
+FBX version: 7700
+[mocap] greatsword_hit_small               frames 27 (0.90s) drift 0.00 m (max 0.03) hands apart 0.12-0.14 m lowest hand 0.99 m
+[mocap]   greatsword_hit_small: toe hinge 27
+[mocap]   greatsword_hit_small: 0.87s, strike 0.13s
+FBX version: 7700
+[mocap] shield_idle                        frames 77 (2.57s) drift 0.00 m (max 0.01) hands apart 0.69-0.71 m lowest hand 0.92 m
+[mocap]   shield_idle: toe hinge 77
+[mocap]   shield_idle: 2.53s, strike 1.37s
+FBX version: 7700
+[mocap] shield_slash_1                     frames 46 (1.53s) drift 0.00 m (max 0.49) hands apart 0.44-1.22 m lowest hand 0.55 m
+[mocap]   shield_slash_1: toe hinge 74
+[mocap]   shield_slash_1: 1.50s, strike 0.60s
+FBX version: 7700
+[mocap] shield_slash_2                     frames 45 (1.50s) drift 0.09 m (max 0.42) hands apart 0.38-1.46 m lowest hand 0.78 m
+[mocap]   shield_slash_2: toe hinge 73
+[mocap]   shield_slash_2: 1.47s, strike 0.60s
+FBX version: 7700
+[mocap] shield_slash_3                     frames 31 (1.03s) drift 0.00 m (max 0.08) hands apart 0.49-1.19 m lowest hand 0.90 m
+[mocap]   shield_slash_3: toe hinge 41
+[mocap]   shield_slash_3: 1.00s, strike 0.62s
+FBX version: 7700
+[mocap] shield_push                        frames 32 (1.07s) drift 0.00 m (max 0.05) hands apart 0.69-1.25 m lowest hand 0.93 m
+[mocap]   shield_push: toe hinge 32
+[mocap]   shield_push: 1.03s, strike 0.40s
+FBX version: 7700
+[mocap] shield_power                       frames 72 (2.40s) drift 0.00 m (max 0.11) hands apart 0.49-1.08 m lowest hand 0.77 m
+[mocap]   shield_power: toe hinge 72
+[mocap]   shield_power: 2.37s, strike 0.70s
+FBX version: 7700
+[mocap] shield_slam                        frames 54 (1.80s) drift 0.06 m (max 0.19) hands apart 0.70-1.42 m lowest hand 0.08 m
+[mocap]   shield_slam: toe hinge 104
+[mocap]   shield_slam: 1.77s, strike 0.50s
+FBX version: 7700
+[mocap] shield_death_1                     frames 70 (2.33s) drift 1.20 m (max 1.20) hands apart 0.70-1.39 m lowest hand 0.01 m
+[mocap]   shield_death_1: toe hinge 103
+[mocap]   shield_death_1: 2.30s, strike 1.60s
+FBX version: 7700
+[mocap] shield_death_2                     frames 118 (3.93s) drift 1.01 m (max 1.05) hands apart 0.43-1.44 m lowest hand 0.03 m
+[mocap]   shield_death_2: toe hinge 224
+[mocap]   shield_death_2: 3.90s, strike 1.70s
+FBX version: 7700
+[mocap] shield_hit                         frames 22 (0.73s) drift 0.00 m (max 0.13) hands apart 0.70-1.03 m lowest hand 0.88 m
+[mocap]   shield_hit: toe hinge 22
+[mocap]   shield_hit: 0.70s, strike 0.27s
+FBX version: 7700
+[mocap] axe_idle                           frames 56 (1.87s) drift 0.00 m (max 0.02) hands apart 0.92-1.00 m lowest hand 0.82 m
+[mocap]   axe_idle: toe hinge 112
+[mocap]   axe_idle: 1.83s, strike 0.83s
+FBX version: 7700
+[mocap] axe_chop                           frames 59 (1.97s) drift 0.09 m (max 0.13) hands apart 0.69-1.34 m lowest hand 0.76 m
+[mocap]   axe_chop: toe hinge 116
+[mocap]   axe_chop: 1.93s, strike 0.50s
+FBX version: 7700
+[mocap] axe_sweep                          frames 59 (1.97s) drift 0.05 m (max 0.17) hands apart 0.83-1.41 m lowest hand 0.82 m
+[mocap]   axe_sweep: toe hinge 117
+[mocap]   axe_sweep: 1.93s, strike 0.50s
+FBX version: 7700
+[mocap] axe_backhand                       frames 82 (2.73s) drift 0.06 m (max 0.77) hands apart 0.72-1.37 m lowest hand 0.70 m
+[mocap]   axe_backhand: toe hinge 158
+[mocap]   axe_backhand: 2.70s, strike 0.57s
+FBX version: 7700
+[mocap] axe_chest_thump                    frames 86 (2.87s) drift 0.00 m (max 0.10) hands apart 0.57-1.01 m lowest hand 0.77 m
+[mocap]   axe_chest_thump: toe hinge 153
+[mocap]   axe_chest_thump: 2.83s, strike 1.00s
+FBX version: 7700
+[mocap] axe_battle_cry                     frames 86 (2.87s) drift 0.00 m (max 0.14) hands apart 0.14-1.25 m lowest hand 0.75 m
+[mocap]   axe_battle_cry: toe hinge 172
+[mocap]   axe_battle_cry: 2.83s, strike 1.00s
+FBX version: 7700
+[mocap] axe_hit                            frames 49 (1.63s) drift 0.00 m (max 0.10) hands apart 0.65-0.95 m lowest hand 0.81 m
+[mocap]   axe_hit: toe hinge 98
+[mocap]   axe_hit: 1.60s, strike 1.27s
+FBX version: 7700
+[mocap] hook_throw                         frames 55 (1.83s) drift 0.03 m (max 0.09) hands apart 0.39-1.11 m lowest hand 0.82 m
+[mocap]   hook_throw: 1.80s, strike 0.47s
+FBX version: 7700
+[mocap] neck_bite                          frames 126 (4.20s) drift 0.00 m (max 0.58) hands apart 0.39-1.26 m lowest hand 0.77 m
+[mocap]   neck_bite: toe hinge 144
+[mocap]   neck_bite: 4.17s, strike 0.87s
+FBX version: 7700
+[mocap] knife_idle                         frames 135 (4.50s) drift 0.00 m (max 0.07) hands apart 0.59-0.65 m lowest hand 0.84 m
+[mocap]   knife_idle: 4.47s, strike 0.93s
+FBX version: 7700
+[mocap] dagger_stab_1                      frames 32 (1.07s) drift 0.18 m (max 0.18) hands apart 0.20-0.43 m lowest hand 0.68 m
+[mocap]   dagger_stab_1: toe hinge 2
+[mocap]   dagger_stab_1: 1.03s, strike 0.60s
+FBX version: 7700
+[mocap] dagger_stab_2                      frames 33 (1.10s) drift 0.13 m (max 0.18) hands apart 0.23-0.57 m lowest hand 1.14 m
+[mocap]   dagger_stab_2: 1.07s, strike 0.50s
+FBX version: 7700
+[mocap] dagger_stab_3                      frames 65 (2.17s) drift 0.06 m (max 0.18) hands apart 0.54-1.27 m lowest hand 1.06 m
+[mocap]   dagger_stab_3: toe hinge 48
+[mocap]   dagger_stab_3: 2.13s, strike 0.55s
+FBX version: 7700
+[mocap] bow_idle                           frames 154 (5.13s) drift 0.00 m (max 0.00) hands apart 0.98-0.98 m lowest hand 0.89 m
+[mocap]   bow_idle: 5.10s, strike 3.77s
+FBX version: 7700
+FBX version: 7700
+[mocap] bow_shoot                          frames 44 (1.47s) drift 0.02 m (max 0.04) hands apart 0.30-1.25 m lowest hand 0.89 m
+[mocap]   bow_shoot: 1.43s, strike 0.80s
+FBX version: 7700
+[mocap] bow_hold                           frames 114 (3.80s) drift 0.03 m (max 0.03) hands apart 0.75-0.89 m lowest hand 1.38 m
+[mocap]   bow_hold: 3.77s, strike 1.33s
+FBX version: 7700
+[mocap] bow_loose                          frames 22 (0.73s) drift 0.03 m (max 0.03) hands apart 0.75-1.25 m lowest hand 0.89 m
+[mocap]   bow_loose: 0.70s, strike 0.07s
+FBX version: 7700
+[mocap] bow_dodge                          frames 50 (1.67s) drift 2.10 m (max 2.10) hands apart 0.89-1.09 m lowest hand 0.70 m
+[mocap]   bow_dodge: toe hinge 21
+[mocap]   bow_dodge: 1.63s, strike 0.40s
+FBX version: 7700
+[mocap] bow_death_1                        frames 94 (3.13s) drift 1.08 m (max 1.13) hands apart 0.38-1.36 m lowest hand 0.02 m
+[mocap]   bow_death_1: toe hinge 51
+[mocap]   bow_death_1: 3.10s, strike 1.73s
+FBX version: 7700
+[mocap] bow_death_2                        frames 96 (3.20s) drift 1.29 m (max 1.29) hands apart 0.56-1.19 m lowest hand -0.01 m
+[mocap]   bow_death_2: toe hinge 87
+[mocap]   bow_death_2: 3.17s, strike 1.37s
+FBX version: 7700
+[mocap] bow_hit                            frames 39 (1.30s) drift 0.00 m (max 0.12) hands apart 0.70-0.99 m lowest hand 0.88 m
+[mocap]   bow_hit: 1.27s, strike 0.17s
+FBX version: 7700
+[mocap] spell_idle                         frames 57 (1.90s) drift 0.00 m (max 0.06) hands apart 0.92-1.06 m lowest hand 0.82 m
+[mocap]   spell_idle: toe hinge 10
+[mocap]   spell_idle: 1.87s, strike 1.43s
+FBX version: 7700
+[mocap] spell_idle_2                       frames 157 (5.23s) drift 0.00 m (max 0.11) hands apart 0.59-0.98 m lowest hand 0.87 m
+[mocap]   spell_idle_2: 5.20s, strike 2.67s
+FBX version: 7700
+[mocap] spell_strike_1                     frames 62 (2.07s) drift 0.04 m (max 0.14) hands apart 0.85-1.44 m lowest hand 0.88 m
+[mocap]   spell_strike_1: toe hinge 41
+[mocap]   spell_strike_1: 2.03s, strike 0.53s
+FBX version: 7700
+[mocap] spell_strike_2                     frames 67 (2.23s) drift 0.00 m (max 0.16) hands apart 0.96-1.32 m lowest hand 0.88 m
+[mocap]   spell_strike_2: toe hinge 64
+[mocap]   spell_strike_2: 2.20s, strike 0.47s
+FBX version: 7700
+[mocap] spell_strike_3                     frames 70 (2.33s) drift 0.00 m (max 0.27) hands apart 0.90-1.39 m lowest hand 0.50 m
+[mocap]   spell_strike_3: toe hinge 85
+[mocap]   spell_strike_3: 2.30s, strike 0.33s
+FBX version: 7700
+[mocap] spell_quick                        frames 69 (2.30s) drift 0.00 m (max 0.10) hands apart 0.76-1.24 m lowest hand 0.70 m
+[mocap]   spell_quick: toe hinge 37
+[mocap]   spell_quick: 2.27s, strike 0.53s
+FBX version: 7700
+[mocap] spell_heavy                        frames 67 (2.23s) drift 0.16 m (max 0.19) hands apart 0.38-1.20 m lowest hand 0.88 m
+[mocap]   spell_heavy: toe hinge 87
+[mocap]   spell_heavy: 2.20s, strike 0.63s
+FBX version: 7700
+[mocap] spell_area                         frames 72 (2.40s) drift 0.14 m (max 0.20) hands apart 0.47-1.18 m lowest hand 0.29 m
+[mocap]   spell_area: toe hinge 74
+[mocap]   spell_area: 2.37s, strike 0.67s
+FBX version: 7700
+[mocap] spell_wave                         frames 69 (2.30s) drift 0.13 m (max 0.13) hands apart 0.25-1.44 m lowest hand 0.88 m
+[mocap]   spell_wave: toe hinge 55
+[mocap]   spell_wave: 2.27s, strike 0.77s
+FBX version: 7700
+[mocap] spell_big                          frames 66 (2.20s) drift 0.00 m (max 0.20) hands apart 0.66-1.06 m lowest hand 0.60 m
+[mocap]   spell_big: toe hinge 61
+[mocap]   spell_big: 2.17s, strike 0.63s
+FBX version: 7700
+[mocap] spell_channel                      frames 104 (3.47s) drift 0.00 m (max 0.64) hands apart 0.22-1.43 m lowest hand 0.80 m
+[mocap]   spell_channel: toe hinge 30
+[mocap]   spell_channel: 3.43s, strike 1.30s
+FBX version: 7700
+[mocap] javelin_throw                      frames 55 (1.83s) drift 0.03 m (max 0.09) hands apart 0.39-1.11 m lowest hand 0.82 m
+[mocap]   javelin_throw: 1.80s, strike 0.47s
+FBX version: 7700
+[mocap] spell_death_1                      frames 110 (3.67s) drift 0.86 m (max 0.90) hands apart 0.45-1.36 m lowest hand 0.05 m
+[mocap]   spell_death_1: toe hinge 117
+[mocap]   spell_death_1: 3.63s, strike 0.70s
+FBX version: 7700
+[mocap] spell_death_2                      frames 111 (3.70s) drift 1.32 m (max 1.40) hands apart 0.50-1.04 m lowest hand 0.01 m
+[mocap]   spell_death_2: toe hinge 121
+[mocap]   spell_death_2: 3.67s, strike 0.60s
+FBX version: 7700
+[mocap] hit_small                          frames 37 (1.23s) drift 0.00 m (max 0.02) hands apart 0.92-1.02 m lowest hand 0.88 m
+[mocap]   hit_small: toe hinge 10
+[mocap]   hit_small: 1.20s, strike 0.23s
+FBX version: 7700
+[mocap] hit_big                            frames 42 (1.40s) drift 1.08 m (max 1.09) hands apart 0.92-0.99 m lowest hand 0.88 m
+[mocap]   hit_big: toe hinge 35
+[mocap]   hit_big: 1.37s, strike 0.50s
+FBX version: 7700
+[mocap] dizzy                              frames 129 (4.30s) drift 0.00 m (max 0.14) hands apart 0.49-0.52 m lowest hand 0.83 m
+[mocap]   dizzy: 4.27s, strike 3.50s
+FBX version: 7700
+[mocap] death_from_front                   frames 104 (3.47s) drift 1.05 m (max 1.07) hands apart 0.26-0.63 m lowest hand 0.01 m
+[mocap]   death_from_front: toe hinge 189
+[mocap]   death_from_front: 3.43s, strike 1.57s
+FBX version: 7700
+[mocap] death_from_back                    frames 90 (3.00s) drift 1.13 m (max 1.20) hands apart 0.22-0.57 m lowest hand 0.03 m
+[mocap]   death_from_back: toe hinge 135
+[mocap]   death_from_back: 2.97s, strike 1.53s
+FBX version: 7700
+[mocap] death_fall_back                    frames 79 (2.63s) drift 0.95 m (max 0.98) hands apart 0.58-1.21 m lowest hand -0.02 m
+[mocap]   death_fall_back: toe hinge 107
+[mocap]   death_fall_back: 2.60s, strike 1.03s
+FBX version: 7700
+[mocap] greatsword_run                     frames 23 (0.77s) drift 1.85 m (max 1.85) hands apart 0.17-0.18 m lowest hand 0.87 m
+[mocap]   greatsword_run: toe hinge 41
+[mocap]   greatsword_run: ground speed 2.48 m/s
+[mocap]   greatsword_run: 0.73s, strike 0.40s
+FBX version: 7700
+[mocap] shield_run                         frames 22 (0.73s) drift 2.78 m (max 2.78) hands apart 0.54-0.88 m lowest hand 0.76 m
+[mocap]   shield_run: toe hinge 40
+[mocap]   shield_run: ground speed 3.90 m/s
+[mocap]   shield_run: 0.70s, strike 0.40s
+FBX version: 7700
+[mocap] axe_run                            frames 23 (0.77s) drift 1.79 m (max 1.79) hands apart 0.77-0.89 m lowest hand 0.89 m
+[mocap]   axe_run: toe hinge 46
+[mocap]   axe_run: ground speed 2.40 m/s
+[mocap]   axe_run: 0.73s, strike 0.40s
+FBX version: 7700
+[mocap] bow_run                            frames 27 (0.90s) drift 3.02 m (max 3.02) hands apart 0.80-0.88 m lowest hand 0.67 m
+[mocap]   bow_run: toe hinge 4
+[mocap]   bow_run: ground speed 3.42 m/s
+[mocap]   bow_run: 0.87s, strike 0.13s
+FBX version: 7700
+[mocap] spell_run                          frames 23 (0.77s) drift 2.76 m (max 2.76) hands apart 0.99-1.05 m lowest hand 0.92 m
+[mocap]   spell_run: toe hinge 9
+[mocap]   spell_run: ground speed 3.70 m/s
+[mocap]   spell_run: 0.73s, strike 0.53s
+FBX version: 7700
+[mocap] greatsword_leap                    frames 51 (1.70s) drift 2.81 m (max 2.81) hands apart 0.14-0.22 m lowest hand 0.67 m
+[mocap]   greatsword_leap: toe hinge 71
+[mocap]   greatsword_leap: airborne 0.70-0.90 s
+[mocap]   greatsword_leap: 1.67s, strike 1.17s
+FBX version: 7700
+[mocap] dagger_lunge                       frames 46 (1.53s) drift 0.06 m (max 0.56) hands apart 0.51-0.60 m lowest hand 0.96 m
+[mocap]   dagger_lunge: toe hinge 3
+[mocap]   dagger_lunge: 1.50s, strike 0.40s
+FBX version: 7700
+[mocap] stagger_back                       frames 35 (1.17s) drift 1.27 m (max 1.27) hands apart 0.29-1.29 m lowest hand 0.62 m
+[mocap]   stagger_back: toe hinge 14
+[mocap]   stagger_back: 1.13s, strike 0.63s
+FBX version: 7700
+[mocap] stagger_recover                    frames 40 (1.33s) drift 0.19 m (max 0.35) hands apart 0.25-0.61 m lowest hand 0.63 m
+[mocap]   stagger_recover: toe hinge 6
+[mocap]   stagger_recover: 1.30s, strike 0.20s
+FBX version: 7700
+[mocap] stagger_air                        frames 19 (0.63s) drift 0.76 m (max 0.76) hands apart 0.34-1.29 m lowest hand 0.62 m
+[mocap]   stagger_air: toe hinge 11
+[mocap]   stagger_air: 0.60s, strike 0.50s
+FBX version: 7700
+[mocap] hit_from_back                      frames 41 (1.37s) drift 1.58 m (max 1.58) hands apart 0.87-1.16 m lowest hand 0.59 m
+[mocap]   hit_from_back: toe hinge 33
+[mocap]   hit_from_back: 1.33s, strike 0.43s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+05:29:38 | INFO: Starting glTF 2.0 export
+05:29:48 | INFO: Finished glTF 2.0 export in 10.27345585823059 s
+
+[mocap] wrote work/mocap/hero_mocap.glb with 75 clips (2770.6 KB)
+[mocap] done in 23.1s
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

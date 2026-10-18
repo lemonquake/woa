@@ -32,7 +32,7 @@ func frame(dt: float) -> void:
 			s = _make(u)
 			_shells[u.id] = s
 		var root: Node3D = s.root
-		root.visible = u.team == game.player_team or w.vision.cell_visible(game.player_team, u.pos)
+		root.visible = game.own_team(u.team) or game.sees_cell(u.pos)
 		s.age = float(s.age) + dt
 		var k := minf(1.0, float(s.age) / FADE_IN) * clampf((u.glyph_until - w.time) / FADE_OUT, 0.0, 1.0)
 		for m in s.mats:
@@ -54,13 +54,13 @@ func on_glyph(e: Dictionary) -> void:
 	var col := LIGHT_COL if team == C_DAWN else DARK_RIM
 	for u in w.units:
 		if u.alive and u.is_building() and u.team == team and u.kind != SimConst.Kind.FOUNTAIN \
-				and (team == game.player_team or w.vision.cell_visible(game.player_team, u.pos)):
+				and (game.own_team(team) or game.sees_cell(u.pos)):
 			fx.shockwave(fx.ground3(u.pos), _radius(u) * 2.2, col, 0.7, 0.12, 2.5)
 
 ## A Fortified tower's splash: a quick ring of the team's colour, 300 across (3 m).
 func on_splash(e: Dictionary) -> void:
 	var p: Vector2 = e.pos
-	if not game.world.vision.cell_visible(game.player_team, p):
+	if not game.sees_cell(p):
 		return
 	var dawn := int(e.team) == C_DAWN
 	fx.shockwave(fx.ground3(p), float(e.radius) / 100.0, LIGHT_COL if dawn else DARK_RIM, 0.32, 0.22, 3.0)

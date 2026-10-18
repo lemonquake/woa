@@ -141,6 +141,54 @@ func brain() -> SimTeamAI:
 	var h := hero()
 	return w.brain(h.team) if h != null else null
 
+## What the bot is doing, in a few plain words (the Watch panel shows it over the hero). Reads only: safe to call
+## from the interface at any time.
+func plan_text() -> String:
+	var h := hero()
+	if h == null:
+		return ""
+	if not h.alive:
+		return "Dead"
+	if passive:
+		return "Standing still"
+	if not h.channel.is_empty() and String(h.channel.get("ability", "")) == "tp":
+		return "Teleporting"
+	var name_of := func(id: int) -> String:
+		var u := w.get_unit(id)
+		return String(u.def.get("name", u.name)) if u != null and u.is_hero() else ""
+	match mode:
+		"retreat":
+			return "Retreating"
+		"heal":
+			return "Going back to heal"
+		"fight":
+			var fname: String = name_of.call(_fight_target)
+			return "Fighting " + fname if fname != "" else "Fighting"
+		"task":
+			var t := brain().task_for(h.id) if brain() != null else {}
+			var tname: String = name_of.call(int(t.get("target", -1)))
+			var where := SimTeamAI.lane_label(String(t.get("lane", "")))
+			match String(t.get("kind", "")):
+				"save": return "Saving " + tname if tname != "" else "Helping an ally"
+				"fight": return "Team fight" + (" on " + tname if tname != "" else "")
+				"defend": return "Defending " + where if where != "" else "Defending"
+				"gank": return "Ganking " + tname if tname != "" else "Ganking"
+				"push": return "Pushing " + where if where != "" else "Pushing"
+				"group": return "Grouping up"
+				"retreat": return "Retreating"
+			return "Following a team call"
+		"lane":
+			return "Laning " + SimTeamAI.lane_label(lane)
+		"farm":
+			return "Farming camps" if _camp >= 0 else "Farming"
+		"stack":
+			return "Stacking a camp"
+		"pull":
+			return "Pulling a camp"
+		"ward":
+			return "Placing a ward"
+	return String(mode).capitalize()
+
 const ORDER_NAMES := ["None", "Move", "Attack", "Attack move", "Hold", "Stop", "Cast", "Cast", "Cast", "Follow",
 	"Drop item", "Pick up item", "Give item", "Take orb", "Use site"]
 
@@ -216,6 +264,9 @@ func think() -> void:
 	if SimBot16.tick(self, h):
 		return
 	if w.profiling: pt = w._prof("  bot:turret", pt)
+	# the five heroes of run 2026-10-18 f (Burak's axe leap, Steel Stance, Ghorman's taming)
+	if SimBot18.tick(self, h):
+		return
 	if mode != "retreat" and mode != "fight" and _grab_orb(h):
 		return
 	if _use_site(h):
@@ -766,6 +817,8 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 		return SimBot16.escape(self, h, fd)
 	if SimBot17.handles(kit):
 		return SimBot17.escape(self, h, fd)
+	if SimBot18.handles(kit):
+		return SimBot18.escape(self, h, fd)
 	var ab := w.abilities
 	match kit:
 		"tock":
@@ -1481,6 +1534,8 @@ func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 		return SimBot16.aoe_farm(self, h, ns, centre)
 	if _spells_ok() and SimBot17.handles(kit):
 		return SimBot17.aoe_farm(self, h, ns, centre)
+	if _spells_ok() and SimBot18.handles(kit):
+		return SimBot18.aoe_farm(self, h, ns, centre)
 	if _spells_ok():
 		var ab := w.abilities
 		match kit:
@@ -2472,6 +2527,8 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		SimBot16.spells(self, h, e)
 	elif SimBot17.handles(kit):
 		SimBot17.spells(self, h, e)
+	elif SimBot18.handles(kit):
+		SimBot18.spells(self, h, e)
 	else:
 		_ranger_spells(h, e)
 

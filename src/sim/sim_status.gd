@@ -93,6 +93,9 @@ func apply(t: SimUnit, src_id: int, src_team: int, m: Dictionary, pierce := fals
 	var dur := float(m.get("dur", 0.0))
 	if enemy and not m.get("no_resist", false):
 		dur *= 1.0 - t.status_resist
+	# Burak's Unstoppable: Rage spent to shorten a stun, root or hex
+	if enemy and t.is_hero() and t.ability_level.has("unstoppable") and dur > 0.0:
+		dur *= 1.0 - w.abilities.kits5.unstoppable_cut(t, m)
 	if dur <= 0.0:
 		return false
 	m["source"] = int(m.get("source", src_id))
@@ -118,8 +121,13 @@ func apply(t: SimUnit, src_id: int, src_team: int, m: Dictionary, pierce := fals
 	if not t.channel.is_empty():
 		# stuns and hexes end every channel at once; a silence ends spell channels (Burst Shot, Chomp) but not the
 		# Teleport Scroll, which is an item (mutes and roots end that one)
+		# Ser Emelrich's locked wind-ups have their own rule (SimKits5.windup_breaks: with Steel Stance a stun does not
+		# break Giant Swing)
 		var tp := String(t.channel.get("ability", "")) == "tp"
-		if m.get("stun", false) or m.get("hex", false) or (m.get("silence", false) and not tp) \
+		if bool(t.channel.get("locked", false)):
+			if w.abilities.kits5.windup_breaks(t, t.channel):
+				w.orders.cancel_channel(t)
+		elif m.get("stun", false) or m.get("hex", false) or (m.get("silence", false) and not tp) \
 				or (tp and (m.get("mute", false) or m.get("root", false))):
 			w.orders.cancel_channel(t)
 	var kind := disable_kind(m)

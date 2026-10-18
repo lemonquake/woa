@@ -7,7 +7,7 @@ extends RefCounted
 ## who sent it (and that hero's courier), whatever unit ids it names.
 ##
 ## Kinds (field "k") and their fields:
-##   order {u, o}            o: an order dictionary (SimOrders.issue); u: the hero or its courier
+##   order {u, o}            o: an order dictionary (SimOrders.issue); u: the hero, its courier or a beast it leads
 ##   courier_move {p}        courier {cmd}            courier_idle
 ##   ping {p, target, kind}  chat {text}              glyph
 ##   buy {item}              buy_listed {i}           to_buy_add {item}   to_buy_remove {i}   to_buy_auto {i}
@@ -34,7 +34,7 @@ static func _apply(w: SimWorld, hero_id: int, c: Dictionary) -> String:
 	match k:
 		"order":
 			var uid := int(c.get("u", hero_id))
-			if uid != h.id and uid != h.courier_id:
+			if uid != h.id and uid != h.courier_id and not w.abilities.kits6.is_beast_of(h, w.get_unit(uid)):
 				return ""
 			var o = c.get("o", {})
 			if not (o is Dictionary):

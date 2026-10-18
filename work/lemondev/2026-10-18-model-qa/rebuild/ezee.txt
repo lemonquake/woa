@@ -1,0 +1,58 @@
+02:18:14 | INFO: Data are loaded, start creating Blender stuff
+02:18:14 | INFO: Blender create Mesh node hero
+02:18:16 | INFO: glTF import finished in 1.58s
+[hero_body   2.1s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   6.3s] imported 1 objects from A:/Python/woa/work/downloads/sf_heroes/fallen-paladin-in-corrupted-black-plate-armor/source/x/tripo_convert_3786d797-fc30-4fb0-9746-8a6f87e0ac71.fbx
+[hero_body   6.4s] kept 1 mesh pieces (1992913 faces), rig: none
+[hero_body  59.9s]   cut 2505 more vertices: loose remnants of the cut prop (tripo_node_3786d797)
+[hero_body  62.2s]   cut 43321 vertices from tripo_node_3786d797
+[hero_body  62.3s] joined 1 pieces into one mesh (1906039 faces)
+Info: Removed: 7 vertices, 5 edges, 0 faces
+[hero_body  96.1s] low mesh 39999 triangles, unwrapped
+01:38.390  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\hero_body.py:481: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 101.5s]   baked color (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 106.0s]   baked rough (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 110.7s]   baked metal (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 113.1s]   baked normal
+[hero_body 114.1s] scaled x1.942 to 1.900 m
+[hero_body 114.1s]   joint hips         (0.0, 0.0, 0.987) -> (0.0, -0.01, 1.142)
+[hero_body 114.1s]   joint head         (0.0, -0.049, 1.638) -> (0.0, -0.049, 1.9)
+[hero_body 114.1s]   joint upper_arm.L  (0.301, -0.019, 1.424) -> (0.388, -0.078, 1.103)
+[hero_body 114.1s]   joint hand.L       (0.408, -0.233, 0.909) -> (0.412, -0.282, 0.783)
+[hero_body 114.1s]   joint thigh.L      (0.165, 0.0, 0.948) -> (0.194, -0.058, 0.482)
+[hero_body 114.1s]   joint foot.L       (0.223, 0.0, 0.113) -> (0.229, -0.155, 0.035)
+[hero_body 114.1s]   native upper_arm.L  (0.287, -0.043, 1.376) -> (0.374, -0.101, 1.055) (model (0.301, -0.019, 1.424))
+[hero_body 114.1s]   native forearm.L    (0.374, -0.101, 1.055) -> (0.394, -0.257, 0.861) (model (0.388, -0.078, 1.103))
+[hero_body 114.1s]   native hand.L       (0.394, -0.257, 0.861) -> (0.396, -0.283, 0.791) (model (0.408, -0.233, 0.909))
+[hero_body 114.1s]   native thigh.L      (0.165, 0.002, 0.948) -> (0.194, -0.056, 0.482) (model (0.165, 0.0, 0.948))
+[hero_body 114.9s]   ezee: automatic weights on 100.0% of vertices
+[hero_body 115.1s]   island gating: 1 pieces, 0 kept to their nearest limb
+[hero_body 115.2s] mesh: 39999 faces -> 39999 triangles
+[hero_body 115.3s] reach: 8092 vertices freed from limbs too far away
+[hero_body 115.5s] cloth: 4431 hanging vertices follow the hips more than the legs
+[hero_body 115.5s] arms: 0 hand and forearm vertices freed from the trunk and legs
+[hero_body 115.7s] smoothed all weights (4 passes)
+[hero_body 116.0s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body 116.0s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body 116.2s] unmix: 4012 vertices made wholly arm or body, 320 edges split (318 new vertices)
+Info: 15736 vertex weights limited
+[hero_body 119.9s] retargeted 132 clips (4216 frames) onto the native rest in 3.6s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:20:14 | INFO: Starting glTF 2.0 export
+02:20:14 | INFO: Extracting primitive: ezee
+02:20:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:20:14 | INFO: Primitives created: 1
+02:20:32 | INFO: Finished glTF 2.0 export in 18.792298078536987 s
+
+[hero_body 138.8s] wrote A:/Python/woa/assets/characters/heroes17/ezee.glb (19.7 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

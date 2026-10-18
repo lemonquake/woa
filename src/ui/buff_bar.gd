@@ -30,7 +30,8 @@ const NAMES := {"stunned": "Stunned", "bashed": "Bashed", "frosted": "Frozen", "
 	"orb_magic": "Magic Orb", "orb_shield": "Shield Orb", "reveal_dust": "Revealed", "corruption": "Armor Loss",
 	"magnet_charge": "Charge", "unholy_fatigue": "Tired", "tainted_curse": "Curse", "static_charge": "Static Charge",
 	"fortify_mark": "Fortify Mark", "ensnared": "Caught", "piloting": "In a Turret", "piloted": "Piloted",
-	"void_rush_buff": "Void Rush", "dark_matter_slow": "Dark Matter Skin"}
+	"void_rush_buff": "Void Rush", "dark_matter_slow": "Dark Matter Skin", "axe_out": "Axe Away", "joke_pie": "Pie",
+	"joke_confetti": "Confetti", "joke_glue": "Glue", "shuffle_dizzy": "Dizzy", "tamed": "Tamed"}
 
 ## Icons for those (assets/ui/<path>.svg); abilities and items use their own.
 const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "frosted": "status/frozen",
@@ -66,7 +67,10 @@ const PCT := ["move_speed_pct", "base_damage_pct", "magic_resist", "spell_amp", 
 ## Effects named after something else: Blood Ranger's ultimate is the ability "blood_ranger_ult".
 const ALIAS := {"blood_ranger": "blood_ranger_ult", "void_rush_buff": "void_rush", "dark_matter_slow": "dark_matter_skin",
 	"ensnared": "lay_trap", "piloting": "pilot_turret", "piloted": "pilot_turret", "in_door": "door_of_the_end",
-	"darkness_blind": "divine_darkness"}
+	"darkness_blind": "divine_darkness", "berserk": "mask_of_madness", "burak_berserk": "berserk",
+	"hurricane_wind": "hurricane", "axe_out": "axe_throw", "joke_pie": "joke_box", "joke_confetti": "joke_box",
+	"joke_glue": "joke_box", "shuffle_dizzy": "shuffle", "roar_pack": "roar", "beast_growth": "beast_form",
+	"tamed": "tame"}
 
 static var _index := {}                    # effect id -> {name, item | icon}: auras, creep attack effects, item uses
 

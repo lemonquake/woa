@@ -161,8 +161,8 @@ static func select(id: String) -> void:
 		selected = id
 		hero = look_for(id)
 
-## Heroes a random pick may land on: those with their skills in (the five heroes added 2026-10-18 e fight with attacks
-## only until their kits land, so they are picked on purpose, never by chance).
+## Heroes a random pick may land on: those with their skills in (every hero since run 2026-10-18 f; a hero added
+## without its kit yet is picked on purpose, never by chance).
 static func random_pool() -> Array:
 	return HEROES.filter(func(id): return not (SimData.unit(id).get("abilities", []) as Array).is_empty())
 
@@ -256,6 +256,9 @@ const ROLES := ["", "1", "2", "3", "4", "5"]
 const ROLE_NAMES := ["Any role", "Safe lane carry", "Mid", "Off lane", "Roamer", "Safe lane support"]
 const KINDS := ["you", "bot", "empty"]
 const KIND_NAMES := ["You", "Bot", "Empty"]
+## Experience and gold earned in the match, in percent of Dota's (SimWorld.xp_rate, gold_rate); 150 is the default.
+const RATES := [100, 150, 200, 300]
+const DEFAULT_RATE := 150
 
 static var setup := {}
 static var _setup_loaded := false
@@ -276,7 +279,7 @@ static func default_setup() -> Dictionary:
 				slot.name = BOT_NAMES[n]
 				n += 1
 			teams[t].append(slot)
-	return {"teams": teams}
+	return {"teams": teams, "xp_rate": DEFAULT_RATE, "gold_rate": DEFAULT_RATE}
 
 ## The classic duel: you against Bot Gerald in the middle lane.
 static func duel_setup() -> Dictionary:
@@ -321,8 +324,10 @@ static func load_setup() -> Dictionary:
 				you += 1
 				if you > 1:
 					s.kind = "bot"
-	if you == 0:
-		setup.teams[0][0].kind = "you"
+	# no You slot: an All-Bot match you watch (main.gd's spectator mode)
+	for key in ["xp_rate", "gold_rate"]:
+		var r := int(d.get(key, DEFAULT_RATE))
+		setup[key] = r if r in RATES else DEFAULT_RATE
 	for t in 2:
 		for s in setup.teams[t]:
 			if s.kind == "you":
@@ -334,7 +339,7 @@ static func save_setup() -> void:
 	if f:
 		f.store_string(JSON.stringify(setup, "\t"))
 
-## The slot you play in: [team, index].
+## The slot you play in: [team, index] ([0, 0] when nobody is You).
 static func your_slot() -> Array:
 	load_setup()
 	for t in 2:
@@ -342,6 +347,24 @@ static func your_slot() -> Array:
 			if setup.teams[t][i].kind == "you":
 				return [t, i]
 	return [0, 0]
+
+## Every slot is a bot or empty: you watch the match (spectator mode).
+static func watching() -> bool:
+	load_setup()
+	for t in 2:
+		for s in setup.teams[t]:
+			if s.kind == "you":
+				return false
+	return true
+
+## The match's experience and gold rates as multipliers (1.5 = 150%).
+static func xp_rate() -> float:
+	load_setup()
+	return float(setup.get("xp_rate", DEFAULT_RATE)) / 100.0
+
+static func gold_rate() -> float:
+	load_setup()
+	return float(setup.get("gold_rate", DEFAULT_RATE)) / 100.0
 
 ## Every filled slot with Random resolved: [{team, kind, hero, skill, name, lane}]. Random slots are filled after the
 ## chosen ones, each with varied_pick(), so a team gets a mix of heroes instead of three of one.

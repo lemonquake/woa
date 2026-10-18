@@ -11,7 +11,7 @@ extends Node
 ##   F1 / double-tap: centre on hero; Space: follow.   F4 or B: shop.  J: glyph.  F9: debug panel.
 ##   Hold right click: the move / attack order repeats towards the cursor (auto right-click).
 ## Every key above is the default: the player rebinds them on the Hotkeys screen (Keybinds).
-## Orders go to the selected units you control (your hero and courier). With nothing of yours selected (an enemy, a
+## Orders go to the selected units you control (your hero, courier and Ghorman's beasts). With nothing of yours selected (an enemy, a
 ## creep, a building, or nothing at all), any command (right click, Stop, Hold, Attack, Teleport, an ability or item
 ## key) first selects your hero again and then goes to it.
 
@@ -101,7 +101,7 @@ func _site_tip(m: Vector2) -> void:
 	var w: SimWorld = game.world
 	var s := w.sites.get_site(sid)
 	var lines: Array = [[w.sites.site_name(s), 18, UiKit.GOLD, "title"]]
-	var seen: bool = w.vision.cell_visible(game.player_team, s.pos)
+	var seen: bool = game.sees_cell(s.pos)
 	var say: Array = []
 	match String(s.kind):
 		"gate":
@@ -293,7 +293,28 @@ func _unhandled_input(e: InputEvent) -> void:
 
 func _owned(u: SimUnit) -> bool:
 	var h := hero()
-	return u != null and h != null and (u.id == h.id or u.id == h.courier_id)
+	return u != null and h != null and (u.id == h.id or u.id == h.courier_id or game.world.abilities.kits6.is_beast_of(h, u))
+
+## Ghorman's beasts among the selected units (they take right clicks, minimap moves, Stop and Hold).
+func _beasts_selected() -> Array:
+	var h := hero()
+	var out: Array = []
+	if h == null:
+		return out
+	for id in game.selected:
+		var u: SimUnit = game.world.get_unit(id)
+		if u != null and u.alive and game.world.abilities.kits6.is_beast_of(h, u):
+			out.append(u)
+	return out
+
+## A right click (or minimap click) for the selected beasts: attack an enemy under the cursor, else move there.
+func _order_beasts(tgt: SimUnit, ground: Vector2, shift: bool) -> void:
+	var h := hero()
+	for b: SimUnit in _beasts_selected():
+		if tgt != null and h != null and tgt.team != h.team and tgt.alive:
+			game.order(b.id, {"type": O.ATTACK_UNIT, "target": tgt.id, "queue": shift})
+		else:
+			game.order(b.id, {"type": O.MOVE, "point": ground, "queue": shift})
 
 func select(ids: Array) -> void:
 	game.selected = ids.duplicate()
@@ -411,10 +432,14 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			var cs := _courier_selected()
 			if cs:
 				game.act({"k": "courier_idle"})
+			for b: SimUnit in _beasts_selected():
+				game.order(b.id, {"type": O.STOP})
 		"hold":
 			targeting = ""
 			if hero_selected() and not stopping():
 				game.order(h.id, {"type": O.HOLD, "queue": queue})
+			for b2: SimUnit in _beasts_selected():
+				game.order(b2.id, {"type": O.HOLD, "queue": queue})
 		"attack":
 			if hero_selected() and not stopping():
 				targeting = "attack"
@@ -640,6 +665,7 @@ func move_selected(p: Vector2, shift := false) -> void:
 		game.order(game.player_hero_id, {"type": O.MOVE, "point": p, "queue": shift})
 	if _courier_selected():
 		game.act({"k": "courier_move", "p": p})
+	_order_beasts(null, p, shift)
 
 func use_item(slot: int, queue := false) -> void:
 	var h := hero()
@@ -793,6 +819,12 @@ func _right_click(pos: Vector2, shift: bool, repeat := false) -> void:
 		game.act({"k": "courier_move", "p": ground})
 		if not hero_selected() and not repeat:
 			game.fx.marker(View.to3(ground, game.terrain.height_at(ground)), false)
+	if not repeat and not _beasts_selected().is_empty():
+		var bt := w.get_unit(pick(pos))
+		_order_beasts(bt, ground, shift)
+		if not hero_selected():
+			game.fx.marker(View.to3(bt.pos if bt else ground, game.terrain.height_at(bt.pos if bt else ground)),
+				bt != null and h != null and bt.team != h.team)
 	if h == null or not h.alive or not hero_selected() or stopping():
 		return
 	var id := pick(pos)

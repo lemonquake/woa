@@ -12,3 +12,5 @@ work/heroes17_tex/
 work/downloads/mixamo/
 assets/characters/hero/mocap/
 work/mocap/
+__pycache__/
+*.blend1

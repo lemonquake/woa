@@ -1,0 +1,540 @@
+== hero.glb (blood_ranger, froster, tock, kragg): 17 shapes, height 1.80 m
+   hips       -0.05-0.10 m along, 0.072 x 0.111
+   chest      0.00-0.22 m along, 0.156 x 0.096
+   head       0.00-0.18 m along, 0.068 x 0.066
+   forearm.L  0.01-0.26 m along, 0.037 x 0.040
+   thigh.L    0.00-0.41 m along, 0.081 x 0.087
+  bow_idle           before: worst  0.0 cm (-), 0/154 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_run            before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_death_1        before: worst  0.6 cm (weapon.L in foot.L f44), 0/94 frames over 1 cm | after: worst  0.6 cm (weapon.L in foot.L f44), 0 frames
+  cast_quick         before: worst  8.8 cm (weapon.L in thigh.L f12), 6/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_shoot          before: worst  0.0 cm (-), 0/44 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_bow           before: worst  4.7 cm (weapon.L in thigh.L f55), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_1              before: worst  7.3 cm (elbow.L in chest f11), 15/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_draw_hold      before: worst 12.8 cm (elbow.R in chest f20), 41/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  war_cry            before: worst  8.7 cm (weapon.L in thigh.L f2), 5/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 36.7 cm (weapon.L in floor f25), 20/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 36.7 cm (weapon.L in floor f0), 15/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  1.3 cm (weapon.L in chest f15), 3/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  9.2 cm (weapon.L in thigh.L f28), 16/33 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.5 cm (weapon.R in thigh.R f7), 0/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst 10.1 cm (weapon.L in thigh.R f38), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 10.1 cm (weapon.L in thigh.L f8), 34/37 frames over 1 cm | after: worst  5.7 cm (weapon.L in shin.L f26), 6 frames
+  blink              before: worst  9.4 cm (weapon.L in thigh.L f2), 8/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_hold           before: worst  0.0 cm (-), 0/114 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  7.0 cm (weapon.R in head f5), 6/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  8.2 cm (weapon.L in thigh.L f3), 22/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  1.9 cm (weapon.R in head f0), 2/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  7.0 cm (weapon.R in head f40), 5/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_hit            before: worst  0.0 cm (-), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_dodge          before: worst  0.0 cm (-), 0/50 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 36.7 cm (weapon.L in floor f46), 19/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  bow_death_2        before: worst 16.3 cm (weapon.L in floor f84), 40/96 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_idle         before: worst  7.8 cm (weapon.R in head f43), 25/57 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_1      before: worst  0.7 cm (weapon.R in thigh.R f39), 0/110 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_quick        before: worst  0.0 cm (-), 0/69 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_1     before: worst  0.0 cm (-), 0/62 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_2     before: worst  0.0 cm (-), 0/67 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_staff         before: worst  1.7 cm (weapon.R in foot.R f9), 10/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst  9.9 cm (weapon.R in thigh.R f25), 13/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_heavy         before: worst  9.1 cm (weapon.R in chest f12), 11/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_area         before: worst  0.0 cm (-), 0/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_heavy        before: worst  3.5 cm (weapon.R in upper_arm.L f9), 3/67 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_channel      before: worst  9.0 cm (weapon.R in thigh.R f36), 34/104 frames over 1 cm | after: worst  0.9 cm (weapon.R in thigh.R f36), 0 frames
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 12.8 cm (elbow.L in chest f14), 15/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_2            before: worst 14.5 cm (fore.L in spine f12), 18/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_2      before: worst 19.7 cm (weapon.R in floor f75), 52/111 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_idle_2       before: worst  0.0 cm (-), 0/157 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_3     before: worst  0.0 cm (-), 0/70 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_wand          before: worst  0.0 cm (-), 0/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_heavy         before: worst  1.8 cm (weapon.R in chest f4), 4/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_ultimate      before: worst  9.0 cm (weapon.R in chest f11), 15/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_wave         before: worst  0.0 cm (-), 0/69 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_big          before: worst  0.0 cm (-), 0/66 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_1             before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_2             before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wand_3             before: worst  5.6 cm (weapon.R in chest f4), 3/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_idle        before: worst  0.0 cm (-), 0/77 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_run         before: worst  0.0 cm (-), 0/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_death_1     before: worst  7.4 cm (weapon.R in floor f65), 14/70 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_push        before: worst  0.0 cm (-), 0/32 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_slash_1     before: worst  7.2 cm (weapon.R in thigh.L f30), 6/46 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_slash_2     before: worst  4.9 cm (weapon.R in head f6), 3/45 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_slash_3     before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_shield        before: worst  0.8 cm (weapon.R in chest f45), 0/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_bash        before: worst  9.2 cm (weapon.L in thigh.L f12), 17/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  9.1 cm (weapon.L in thigh.L f3), 10/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_power       before: worst  7.3 cm (weapon.R in head f14), 4/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_slam        before: worst 15.0 cm (weapon.R in floor f21), 22/54 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_hit         before: worst  0.0 cm (-), 0/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_1            before: worst 11.3 cm (elbow.R in chest f13), 15/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_2            before: worst  9.0 cm (weapon.L in thigh.L f7), 10/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_3            before: worst 14.7 cm (elbow.R in chest f13), 12/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  sword_4            before: worst 13.4 cm (elbow.R in chest f9), 28/28 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  shield_death_2     before: worst  8.9 cm (hand.L in floor f95), 25/118 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/hero/anim_fixed/hero_collide.res (OK); worst 36.7 cm -> 5.7 cm
+  wrote res://assets/characters/hero/mocap/collide/hero.res (OK): 40 mocap clips
+== ezee.glb (ezee): 16 shapes, height 1.90 m
+   hips       -0.24-0.11 m along, 0.251 x 0.162
+   chest      0.00-0.20 m along, 0.333 x 0.167
+   head       0.00-0.24 m along, 0.072 x 0.070
+   forearm.L  0.03-0.17 m along, 0.057 x 0.054
+   thigh.L    0.00-0.47 m along, 0.079 x 0.133
+  greatsword_idle    before: worst  8.6 cm (fore.L in thigh.L f25), 31/112 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_run     before: worst  1.4 cm (weapon.R in thigh.R f4), 1/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_1 before: worst 37.7 cm (weapon.R in floor f45), 59/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_cast    before: worst  0.9 cm (fore.L in thigh.L f0), 0/35 frames over 1 cm | after: worst  0.5 cm (weapon.R in head f15), 0 frames
+  greatsword_slash_1 before: worst  7.7 cm (weapon.R in thigh.L f27), 8/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_2 before: worst 19.0 cm (weapon.R in chest f11), 14/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst 15.8 cm (fore.L in hips f77), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  6.4 cm (weapon.R in thigh.R f0), 5/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_slam          before: worst 16.7 cm (weapon.R in hips f35), 37/43 frames over 1 cm | after: worst 42.0 cm (weapon.R in floor f28), 3 frames
+  leap_slam          before: worst 18.2 cm (weapon.R in hips f30), 29/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_weapon        before: worst 21.0 cm (weapon.R in chest f20), 16/26 frames over 1 cm | after: worst  3.0 cm (weapon.R in chest f22), 1 frames
+  knockback          before: worst 38.5 cm (weapon.R in floor f26), 22/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 38.5 cm (weapon.R in floor f0), 25/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  4.1 cm (weapon.R in chest f1), 5/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  3.2 cm (weapon.R in thigh.R f16), 20/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  2.8 cm (elbow.L in chest f6), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  2.7 cm (elbow.L in chest f10), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  2.7 cm (elbow.L in chest f7), 13/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst 17.6 cm (fore.L in hips f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  7.7 cm (weapon.R in thigh.R f3), 8/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  2.7 cm (elbow.L in chest f0), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_power   before: worst  3.1 cm (weapon.R in thigh.R f61), 12/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slam    before: worst 29.0 cm (weapon.R in floor f24), 49/77 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_leap    before: worst  4.2 cm (elbow.R in thigh.R f12), 5/51 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst 14.6 cm (weapon.R in thigh.R f34), 17/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst 15.9 cm (fore.L in thigh.L f3), 32/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  6.5 cm (weapon.R in chest f3), 8/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  8.5 cm (weapon.R in chest f40), 10/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit     before: worst 16.7 cm (elbow.L in thigh.L f22), 35/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  1.0 cm (weapon.R in thigh.R f61), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 38.4 cm (weapon.R in floor f46), 32/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  2.6 cm (elbow.L in chest f15), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 34.5 cm (fore.L in chest f9), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_2               before: worst 24.6 cm (weapon.R in hips f6), 21/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 28.7 cm (fore.L in chest f0), 25/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 83.4 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_2 before: worst 24.1 cm (hand.L in floor f46), 60/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/ezee_collide.res (OK); worst 83.4 cm -> 42.0 cm
+  wrote res://assets/characters/hero/mocap/collide/ezee.res (OK): 18 mocap clips
+== sludge.glb (sludge): 17 shapes, height 1.79 m
+   hips       -0.22-0.08 m along, 0.241 x 0.165
+   chest      0.00-0.42 m along, 0.221 x 0.224
+   head       0.00-0.10 m along, 0.069 x 0.058
+   forearm.L  0.03-0.31 m along, 0.054 x 0.052
+   thigh.L    0.02-0.42 m along, 0.136 x 0.129
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_run            before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 30.7 cm (weapon.R in floor f50), 64/104 frames over 1 cm | after: worst  4.2 cm (weapon.L in floor f84), 26 frames
+  hook_throw         before: worst 19.2 cm (weapon.L in spine f23), 26/55 frames over 1 cm | after: worst  0.7 cm (weapon.L in chest f9), 0 frames
+  axe_chop           before: worst  3.7 cm (weapon.R in spine f40), 6/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_sweep          before: worst 10.9 cm (weapon.R in spine f36), 18/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_backhand       before: worst  3.9 cm (weapon.R in chest f38), 4/82 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_1h            before: worst 10.4 cm (weapon.L in spine f30), 72/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hero_axe_smash     before: worst 14.7 cm (hand.L in spine f5), 30/41 frames over 1 cm | after: worst  2.8 cm (weapon.L in hand.R f34), 2 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 11.0 cm (weapon.R in floor f26), 18/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 12.1 cm (weapon.R in floor f6), 18/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  3.8 cm (weapon.R in chest f0), 9/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  9.6 cm (weapon.L in thigh.L f20), 14/32 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/12 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst 26.8 cm (weapon.L in spine f56), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 15.4 cm (fore.L in thigh.L f22), 30/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst 13.0 cm (hand.R in spine f4), 5/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_chest_thump    before: worst 17.2 cm (weapon.R in chest f38), 29/86 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  neck_bite          before: worst 23.8 cm (weapon.L in chest f71), 91/126 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  7.9 cm (weapon.R in chest f8), 15/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  6.6 cm (weapon.R in chest f20), 36/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  7.9 cm (weapon.R in chest f2), 10/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_hit            before: worst 12.2 cm (weapon.L in chest f20), 22/49 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  9.1 cm (weapon.L in spine f65), 129/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 10.8 cm (weapon.R in floor f45), 20/46 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst 21.6 cm (fore.R in spine f14), 15/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 16.1 cm (fore.R in spine f0), 13/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_3              before: worst 10.3 cm (weapon.L in spine f10), 13/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_fall_back    before: worst 24.1 cm (weapon.L in chest f13), 62/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/hero/anim_fixed/sludge_collide.res (OK); worst 30.7 cm -> 4.2 cm
+  wrote res://assets/characters/hero/mocap/collide/sludge.res (OK): 17 mocap clips
+== azrin.glb (azrin): 16 shapes, height 1.78 m
+   hips       -0.23-0.10 m along, 0.460 x 0.187
+   chest      0.00-0.26 m along, 0.195 x 0.136
+   head       0.00-0.25 m along, 0.116 x 0.081
+   forearm.L  0.00-0.15 m along, 0.086 x 0.114
+   thigh.L    0.00-0.11 m along, 0.112 x 0.116
+  idle_staff         before: worst 18.7 cm (weapon.R in hips f38), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  glide_fwd          before: worst 46.0 cm (weapon.R in hips f27), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_1      before: worst 48.3 cm (fore.R in hips f40), 86/110 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_quick        before: worst 12.4 cm (weapon.R in head f64), 29/69 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_1     before: worst 19.8 cm (weapon.R in chest f51), 29/62 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_2     before: worst 20.6 cm (weapon.R in chest f4), 54/67 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst 43.4 cm (weapon.R in hips f29), 28/31 frames over 1 cm | after: worst  4.0 cm (hand.L in hips f25), 4 frames
+  cast_heavy         before: worst 45.3 cm (weapon.R in hips f3), 24/30 frames over 1 cm | after: worst 17.0 cm (elbow.R in hand.L f9), 14 frames
+  cast_quick         before: worst 43.2 cm (weapon.R in hips f14), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_ultimate      before: worst 45.7 cm (weapon.R in hips f39), 40/41 frames over 1 cm | after: worst 21.2 cm (hand.L in chest f24), 23 frames
+  knockback          before: worst 60.3 cm (weapon.R in floor f25), 25/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 60.3 cm (weapon.R in floor f0), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  5.1 cm (weapon.R in hand.L f13), 11/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst 42.5 cm (weapon.R in hips f0), 34/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst 45.5 cm (weapon.R in hips f9), 20/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst 44.4 cm (weapon.R in hips f8), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst 43.0 cm (weapon.R in hips f0), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst 40.8 cm (weapon.R in hips f14), 61/61 frames over 1 cm | after: worst 17.0 cm (elbow.R in hand.L f37), 36 frames
+  leap_slam          before: worst 40.8 cm (weapon.R in hips f6), 37/37 frames over 1 cm | after: worst 12.2 cm (elbow.R in hand.L f14), 3 frames
+  blink              before: worst 42.5 cm (weapon.R in hips f15), 16/16 frames over 1 cm | after: worst  3.1 cm (hand.L in chest f7), 7 frames
+  dodge_step         before: worst 43.4 cm (weapon.R in hips f13), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_area         before: worst 13.1 cm (weapon.R in head f18), 39/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  javelin_throw      before: worst 38.6 cm (weapon.R in hips f39), 55/55 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_big          before: worst 12.5 cm (weapon.R in chest f11), 52/66 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst 35.7 cm (fore.R in hips f25), 32/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst 15.6 cm (elbow.R in hips f0), 40/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst 11.6 cm (weapon.R in head f0), 13/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst 12.6 cm (weapon.R in head f9), 31/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_big            before: worst 12.6 cm (weapon.R in head f4), 25/42 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst 12.7 cm (weapon.R in head f16), 37/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst 36.0 cm (weapon.R in hips f34), 129/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 60.3 cm (weapon.R in floor f46), 44/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_1            before: worst 45.5 cm (weapon.R in hips f2), 17/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  staff_2            before: worst 49.2 cm (hand.L in hips f6), 18/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_2      before: worst 48.4 cm (fore.R in hips f39), 111/111 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/azrin_collide.res (OK); worst 60.3 cm -> 21.2 cm
+  wrote res://assets/characters/hero/mocap/collide/azrin.res (OK): 15 mocap clips
+== caziel.glb (caziel): 17 shapes, height 1.85 m
+   hips       -0.24-0.12 m along, 0.128 x 0.142
+   chest      0.02-0.25 m along, 0.193 x 0.157
+   head       0.00-0.29 m along, 0.090 x 0.105
+   forearm.L  0.01-0.20 m along, 0.042 x 0.031
+   thigh.L    0.00-0.41 m along, 0.073 x 0.102
+  knife_idle         before: worst  3.3 cm (weapon.R in hips f54), 36/135 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 16.1 cm (weapon.L in floor f63), 57/104 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  3.1 cm (weapon.L in thigh.L f0), 1/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_stab_1      before: worst  4.9 cm (weapon.L in chest f12), 9/32 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_stab_2      before: worst 17.3 cm (weapon.R in chest f16), 27/33 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_stab_3      before: worst  8.5 cm (weapon.L in chest f11), 27/65 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_shadowblade   before: worst 11.7 cm (weapon.R in chest f36), 16/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_heavy         before: worst  3.8 cm (fore.L in thigh.L f24), 10/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  2.2 cm (weapon.L in thigh.L f2), 2/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 23.6 cm (weapon.R in floor f32), 20/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 23.6 cm (weapon.R in floor f0), 17/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  4.8 cm (weapon.L in shin.L f23), 16/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  9.1 cm (fore.L in hips f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 10.6 cm (weapon.L in thigh.L f31), 18/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  4.5 cm (weapon.L in chest f0), 6/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  7.6 cm (fore.L in thigh.L f2), 25/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  0.8 cm (weapon.R in head f8), 0/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 23.6 cm (weapon.R in floor f46), 12/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_1             before: worst 10.3 cm (elbow.R in spine f15), 6/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_2             before: worst 16.7 cm (elbow.R in chest f10), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_3             before: worst 17.8 cm (elbow.L in chest f2), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_4             before: worst  6.6 cm (elbow.L in chest f0), 8/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_back    before: worst 10.0 cm (weapon.L in chest f7), 62/90 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/caziel_collide.res (OK); worst 23.6 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/caziel.res (OK): 14 mocap clips
+== roydo.glb (roydo): 17 shapes, height 1.86 m
+   hips       -0.05-0.13 m along, 0.129 x 0.100
+   chest      0.00-0.22 m along, 0.171 x 0.115
+   head       0.00-0.22 m along, 0.056 x 0.078
+   forearm.L  0.00-0.21 m along, 0.044 x 0.051
+   thigh.L    0.00-0.40 m along, 0.079 x 0.082
+  roydo_idle         before: worst  0.0 cm (-), 0/76 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_run          before: worst  0.0 cm (-), 0/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst  0.0 cm (-), 0/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_cast_shoot   before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_punch_jab    before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_punch_cross  before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_idle_fold    before: worst  5.2 cm (hand.L in chest f0), 76/76 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_cast_throw   before: worst  0.0 cm (-), 0/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  roydo_cast_enter   before: worst  0.0 cm (-), 0/17 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst  2.0 cm (hand.L in floor f12), 1/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst  1.5 cm (hand.L in floor f27), 1/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/11 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes16/anim_fixed/roydo_collide.res (OK); worst 5.2 cm -> 0.0 cm
+== blau.glb (blau): 17 shapes, height 1.87 m
+   hips       -0.06-0.13 m along, 0.093 x 0.133
+   chest      0.00-0.22 m along, 0.140 x 0.095
+   head       0.00-0.24 m along, 0.060 x 0.095
+   forearm.L  0.00-0.21 m along, 0.043 x 0.050
+   thigh.L    0.00-0.40 m along, 0.072 x 0.116
+  blau_idle          before: worst  0.0 cm (-), 0/51 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_run_rifle     before: worst  0.0 cm (-), 0/29 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 10.8 cm (hand.R in floor f46), 30/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_cast_shoot    before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_shoot         before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_reload        before: worst  0.0 cm (-), 0/51 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_cast_throw    before: worst 41.0 cm (hand.R in floor f24), 17/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_jump_start    before: worst 11.6 cm (hand.R in floor f0), 1/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blau_kneel_fix     before: worst 42.5 cm (hand.R in floor f124), 126/157 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst  2.7 cm (hand.L in floor f12), 1/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 20.7 cm (hand.R in floor f16), 3/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/11 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes16/anim_fixed/blau_collide.res (OK); worst 42.5 cm -> 0.0 cm
+== azrael.glb (azrael): 17 shapes, height 1.80 m
+   hips       -0.17-0.10 m along, 0.149 x 0.096
+   chest      0.00-0.29 m along, 0.099 x 0.098
+   head       0.00-0.17 m along, 0.057 x 0.065
+   forearm.L  0.01-0.26 m along, 0.039 x 0.035
+   thigh.L    0.07-0.44 m along, 0.064 x 0.073
+  idle_staff         before: worst  5.7 cm (weapon.R in thigh.R f10), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  glide_fwd          before: worst  5.9 cm (weapon.R in thigh.R f55), 91/91 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_1      before: worst 32.3 cm (weapon.R in floor f78), 33/110 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_cast    before: worst  0.8 cm (elbow.L in chest f0), 0/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_1 before: worst  0.8 cm (elbow.L in chest f38), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_2 before: worst 10.3 cm (weapon.R in hips f19), 4/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_heavy           before: worst 28.3 cm (weapon.R in floor f33), 41/41 frames over 1 cm | after: worst  0.5 cm (elbow.R in chest f22), 0 frames
+  cast_heavy         before: worst  8.2 cm (weapon.R in thigh.R f4), 16/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_ultimate      before: worst 46.9 cm (weapon.R in floor f29), 26/41 frames over 1 cm | after: worst  3.5 cm (weapon.R in forearm.L f3), 1 frames
+  knockback          before: worst 27.0 cm (weapon.R in floor f25), 21/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 50.1 cm (weapon.R in floor f7), 21/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  8.4 cm (weapon.R in thigh.R f17), 22/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  4.7 cm (weapon.R in thigh.R f6), 15/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  3.0 cm (weapon.R in thigh.R f5), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  3.0 cm (hand.R in thigh.R f6), 12/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  6.0 cm (elbow.L in chest f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 15.7 cm (weapon.R in hips f34), 30/37 frames over 1 cm | after: worst  5.1 cm (fore.L in thigh.L f22), 12 frames
+  blink              before: worst 12.2 cm (weapon.R in hips f4), 9/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  2.6 cm (fore.R in hips f14), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_power   before: worst  7.3 cm (weapon.R in head f24), 50/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_heavy        before: worst  4.9 cm (weapon.R in forearm.L f10), 8/67 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_big          before: worst  8.2 cm (weapon.R in chest f16), 23/66 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  8.3 cm (weapon.R in thigh.R f32), 19/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  8.1 cm (weapon.R in head f25), 31/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  1.7 cm (elbow.R in chest f8), 7/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  5.6 cm (weapon.R in head f40), 6/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_big            before: worst  7.5 cm (weapon.R in head f38), 15/42 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst  7.8 cm (weapon.R in head f23), 32/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  3.1 cm (weapon.R in thigh.R f33), 105/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 52.6 cm (weapon.R in floor f20), 32/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  2.6 cm (fore.R in hips f0), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 13.5 cm (weapon.R in hips f14), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 12.7 cm (elbow.L in chest f10), 25/25 frames over 1 cm | after: worst  5.3 cm (elbow.L in forearm.R f14), 1 frames
+  gs_4               before: worst 65.7 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.4 cm (elbow.R in chest f9), 0 frames
+  spell_death_2      before: worst 108.5 cm (weapon.R in floor f67), 75/111 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/azrael_collide.res (OK); worst 108.5 cm -> 5.3 cm
+  wrote res://assets/characters/hero/mocap/collide/azrael.res (OK): 15 mocap clips
+== airah.glb (airah): 15 shapes, height 1.78 m
+   hips       -0.19-0.10 m along, 0.141 x 0.189
+   chest      0.00-0.23 m along, 0.127 x 0.090
+   head       0.03-0.28 m along, 0.086 x 0.083
+   forearm.L  0.13-0.25 m along, 0.047 x 0.028
+   thigh.L    0.00-0.41 m along, 0.081 x 0.093
+  spell_idle_2       before: worst  0.0 cm (-), 0/157 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_1      before: worst  0.0 cm (-), 0/110 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_area         before: worst  0.0 cm (-), 0/72 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_1     before: worst  0.0 cm (-), 0/62 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_2     before: worst  0.0 cm (-), 0/67 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_strike_3     before: worst  0.0 cm (-), 0/70 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_mage          before: worst  0.0 cm (-), 0/151 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst  9.3 cm (fore.L in thigh.L f16), 10/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 15.0 cm (hand.R in floor f26), 19/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 15.0 cm (hand.R in floor f0), 8/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  5.6 cm (fore.L in hips f36), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 10.4 cm (hand.L in hips f4), 23/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst 16.3 cm (hand.L in hips f4), 5/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  2.6 cm (fore.L in thigh.L f1), 2/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 15.0 cm (hand.R in floor f46), 12/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_death_2      before: worst  6.5 cm (hand.R in floor f110), 44/111 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/airah_collide.res (OK); worst 16.3 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/airah.res (OK): 15 mocap clips
+== burak.glb (burak): 17 shapes, height 1.88 m
+   hips       -0.22-0.06 m along, 0.206 x 0.141
+   chest      0.00-0.23 m along, 0.098 x 0.147
+   head       0.00-0.10 m along, 0.071 x 0.051
+   forearm.L  0.00-0.27 m along, 0.065 x 0.049
+   thigh.L    0.00-0.44 m along, 0.081 x 0.123
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_run            before: worst  2.3 cm (weapon.L in chest f17), 3/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 20.3 cm (weapon.L in floor f65), 56/104 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_battle_cry     before: worst  6.7 cm (weapon.L in chest f11), 8/86 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_chop           before: worst  8.8 cm (weapon.L in hips f27), 4/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_sweep          before: worst  3.1 cm (weapon.R in hips f27), 3/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_backhand       before: worst  0.0 cm (-), 0/82 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_dual          before: worst  0.0 cm (-), 0/71 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  war_cry            before: worst  0.0 cm (-), 0/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst  6.3 cm (weapon.R in floor f26), 18/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 11.7 cm (weapon.L in thigh.L f16), 17/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  3.9 cm (weapon.L in shin.L f33), 20/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  3.2 cm (fore.L in hips f6), 15/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  2.9 cm (fore.L in hips f0), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  3.0 cm (fore.L in hips f7), 12/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  5.6 cm (elbow.L in spine f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 12.8 cm (weapon.L in thigh.L f31), 20/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  4.8 cm (weapon.L in hips f4), 6/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  3.0 cm (fore.L in hips f14), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  3.0 cm (weapon.R in head f6), 8/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  5.6 cm (fore.L in thigh.L f1), 29/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  4.6 cm (weapon.R in head f17), 7/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  4.7 cm (weapon.R in head f40), 3/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_hit            before: worst  7.6 cm (weapon.L in head f11), 20/49 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst  4.4 cm (weapon.R in head f16), 7/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.6 cm (weapon.R in thigh.R f43), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst  6.3 cm (weapon.R in floor f46), 25/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_1             before: worst 10.2 cm (elbow.R in chest f15), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_2             before: worst 17.2 cm (elbow.R in chest f14), 16/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_3             before: worst 13.9 cm (elbow.L in chest f2), 15/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dual_4             before: worst  6.6 cm (elbow.R in chest f20), 8/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_back    before: worst 18.2 cm (weapon.L in floor f77), 49/90 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/burak_collide.res (OK); worst 20.3 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/burak.res (OK): 15 mocap clips
+== emelrich.glb (emelrich): 17 shapes, height 1.95 m
+   hips       -0.25--0.06 m along, 0.158 x 0.138
+   chest      0.05-0.44 m along, 0.269 x 0.141
+   head       0.00-0.25 m along, 0.099 x 0.084
+   forearm.L  0.02-0.32 m along, 0.081 x 0.063
+   thigh.L    0.00-0.29 m along, 0.088 x 0.083
+  greatsword_idle    before: worst  1.6 cm (elbow.L in chest f27), 7/112 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_1 before: worst 39.3 cm (weapon.R in floor f68), 52/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_cast    before: worst  0.8 cm (weapon.R in head f15), 0/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_2 before: worst 11.6 cm (weapon.R in chest f11), 16/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_4 before: worst  2.2 cm (weapon.R in hand.L f7), 4/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst 11.1 cm (elbow.L in chest f1), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  1.2 cm (weapon.R in chest f9), 1/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 98.6 cm (weapon.R in floor f25), 24/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 98.6 cm (weapon.R in floor f0), 25/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  1.1 cm (weapon.R in chest f1), 1/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  3.5 cm (elbow.R in chest f1), 3/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  3.4 cm (elbow.R in chest f6), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  3.3 cm (elbow.R in chest f10), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  3.3 cm (elbow.R in chest f7), 13/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  5.4 cm (hand.L in chest f5), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 16.0 cm (hand.R in chest f12), 23/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  3.5 cm (hand.R in spine f4), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  3.3 cm (elbow.R in chest f0), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  9.1 cm (weapon.R in head f6), 9/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  8.7 cm (weapon.R in head f9), 8/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  9.9 cm (weapon.R in head f17), 8/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst 10.9 cm (weapon.R in head f40), 10/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit     before: worst 17.9 cm (weapon.R in floor f18), 12/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  1.1 cm (elbow.R in chest f32), 15/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 98.5 cm (weapon.R in floor f46), 35/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_weapon        before: worst 22.9 cm (weapon.R in chest f20), 20/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 25.0 cm (elbow.L in chest f11), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 20.3 cm (elbow.R in chest f23), 25/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 100.5 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_2 before: worst 35.2 cm (weapon.R in floor f44), 37/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/emelrich_collide.res (OK); worst 100.5 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/emelrich.res (OK): 16 mocap clips
+== feran.glb (feran): 17 shapes, height 1.82 m
+   hips       -0.15-0.10 m along, 0.081 x 0.122
+   chest      0.00-0.22 m along, 0.133 x 0.116
+   head       0.00-0.19 m along, 0.067 x 0.077
+   forearm.L  0.01-0.28 m along, 0.043 x 0.025
+   thigh.L    0.00-0.43 m along, 0.075 x 0.095
+  knife_idle         before: worst  0.0 cm (-), 0/135 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_run          before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 17.5 cm (weapon.R in floor f50), 58/104 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  spell_quick        before: worst  0.0 cm (-), 0/69 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  javelin_throw      before: worst  0.0 cm (-), 0/55 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_dagger        before: worst  0.0 cm (-), 0/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 24.1 cm (weapon.R in floor f28), 20/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 24.1 cm (weapon.R in floor f0), 11/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  8.0 cm (fore.L in spine f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 10.8 cm (weapon.R in thigh.R f7), 16/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  0.7 cm (weapon.R in thigh.R f0), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  2.8 cm (weapon.R in thigh.R f33), 2/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  3.5 cm (fore.L in thigh.L f2), 3/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_big            before: worst  0.0 cm (-), 0/42 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 24.1 cm (weapon.R in floor f46), 12/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_1           before: worst  6.0 cm (elbow.R in chest f14), 7/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dagger_2           before: worst  8.4 cm (elbow.R in chest f2), 4/15 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_back    before: worst  4.9 cm (hand.L in floor f58), 33/90 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/feran_collide.res (OK); worst 24.1 cm -> 0.0 cm
+  wrote res://assets/characters/hero/mocap/collide/feran.res (OK): 13 mocap clips
+== ghorman.glb (ghorman): 17 shapes, height 2.72 m
+   hips       -0.17-0.12 m along, 0.173 x 0.135
+   chest      0.00-0.25 m along, 0.238 x 0.244
+   head       0.01-0.61 m along, 0.088 x 0.085
+   forearm.L  0.02-0.38 m along, 0.059 x 0.038
+   thigh.L    0.00-0.46 m along, 0.129 x 0.141
+  axe_idle           before: worst  0.0 cm (-), 0/56 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_run            before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_from_front   before: worst 29.6 cm (weapon.R in floor f50), 62/104 frames over 1 cm | after: worst  1.7 cm (weapon.R in head f61), 1 frames
+  axe_battle_cry     before: worst  8.4 cm (elbow.L in forearm.R f8), 5/86 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_chop           before: worst  8.3 cm (weapon.R in head f4), 1/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_sweep          before: worst  0.0 cm (-), 0/59 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_backhand       before: worst 23.8 cm (weapon.R in floor f14), 14/82 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_1h            before: worst  8.1 cm (weapon.R in thigh.R f26), 74/74 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  war_cry            before: worst  8.9 cm (weapon.R in thigh.R f2), 9/36 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 25.1 cm (weapon.R in floor f32), 21/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 25.7 cm (weapon.R in floor f1), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  5.9 cm (weapon.R in thigh.R f16), 22/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  7.0 cm (weapon.R in thigh.R f6), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  5.1 cm (elbow.R in chest f10), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  5.1 cm (elbow.R in chest f7), 13/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst 15.6 cm (elbow.L in spine f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 15.2 cm (fore.L in thigh.L f6), 28/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst 12.6 cm (weapon.R in thigh.R f1), 9/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  5.1 cm (elbow.R in chest f14), 11/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_chest_thump    before: worst 15.3 cm (weapon.R in chest f23), 16/86 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst 15.2 cm (weapon.R in thigh.R f32), 22/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst 14.8 cm (fore.L in thigh.L f2), 40/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  5.0 cm (weapon.R in head f0), 12/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst 12.5 cm (weapon.R in chest f0), 13/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_hit            before: worst 11.2 cm (fore.L in thigh.L f14), 21/49 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_small          before: worst 13.2 cm (weapon.R in chest f6), 37/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  3.2 cm (elbow.R in chest f78), 129/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 26.5 cm (weapon.R in floor f20), 38/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_1              before: worst 21.0 cm (elbow.R in spine f14), 13/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_2              before: worst 19.9 cm (elbow.R in spine f3), 13/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  axe_3              before: worst 12.2 cm (weapon.R in chest f2), 12/21 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death_fall_back    before: worst 11.8 cm (fore.L in thigh.L f5), 59/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/ghorman_collide.res (OK); worst 29.6 cm -> 1.7 cm
+  wrote res://assets/characters/hero/mocap/collide/ghorman.res (OK): 16 mocap clips

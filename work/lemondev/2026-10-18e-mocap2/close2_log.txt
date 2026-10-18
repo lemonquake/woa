@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+burak dual_idle yaw 0
+burak dual_idle yaw 140
+burak dual_slash_1 yaw 0
+burak dual_slash_1 yaw 140
+burak dual_slash_2 yaw 0
+burak dual_slash_2 yaw 140
+burak dual_slash_3 yaw 0
+burak dual_slash_3 yaw 140
+saved A:/Python/woa/work/lemondev/2026-10-18e-mocap2/close2/burak.png rows: dual_idle@0, dual_idle@140, dual_slash_1@0, dual_slash_1@140, dual_slash_2@0, dual_slash_2@140, dual_slash_3@0, dual_slash_3@140

@@ -25,7 +25,7 @@ func frame(_dt: float) -> void:
 			add_child(n)
 			_nodes[id] = n
 		var p: Vector2 = o.pos
-		n.visible = w.vision.cell_visible(game.player_team, p)
+		n.visible = game.sees_cell(p)
 		n.global_position = fx.ground3(p)
 		var core: Node3D = n.get_child(0)
 		core.position.y = 0.95 + 0.12 * sin(t * 2.4 + id)

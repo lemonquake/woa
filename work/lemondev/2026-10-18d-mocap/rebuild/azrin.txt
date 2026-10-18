@@ -1,0 +1,60 @@
+04:01:27 | INFO: Data are loaded, start creating Blender stuff
+04:01:27 | INFO: Blender create Mesh node hero
+04:01:29 | INFO: glTF import finished in 2.20s
+[hero_body   3.0s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   8.8s] imported 1 objects from A:/Python/woa/work/downloads/sf_heroes/azrin/source/x/tripo_convert_4475020b-99be-422d-a147-2e53df15599b.fbx
+[hero_body   8.8s] kept 1 mesh pieces (1966291 faces), rig: none
+[hero_body  36.1s]   cut 258 more vertices: loose remnants of the cut prop (tripo_node_4475020b)
+[hero_body  38.2s]   cut 49033 vertices from tripo_node_4475020b
+[hero_body  38.2s] joined 1 pieces into one mesh (1868010 faces)
+Info: Removed: 7 vertices, 4 edges, 0 faces
+[hero_body  68.6s] low mesh 52000 triangles, unwrapped
+01:12.250  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\hero_body.py:485: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  74.7s]   baked color (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  79.9s]   baked rough (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  84.9s]   baked metal (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  87.5s]   baked normal
+[texops]   hue remap 275:356:80:1.6:1.1 on 52.6% of texels
+[hero_body  93.4s] scaled x1.814 to 1.780 m
+[hero_body  93.4s]   joint hips         (0.0, 0.0, 0.853) -> (0.0, 0.0, 0.98)
+[hero_body  93.4s]   joint head         (-0.002, -0.045, 1.47) -> (-0.002, -0.045, 1.687)
+[hero_body  93.4s]   joint upper_arm.L  (0.14, -0.027, 1.288) -> (0.299, -0.036, 1.016)
+[hero_body  93.4s]   joint hand.L       (0.405, -0.054, 0.907) -> (0.481, -0.054, 0.816)
+[hero_body  93.4s]   joint thigh.L      (0.082, 0.018, 0.798) -> (0.109, 0.036, 0.472)
+[hero_body  93.4s]   joint foot.L       (0.109, 0.109, 0.127) -> (0.109, 0.018, 0.045)
+[hero_body  93.4s] made glide_fwd from idle_staff (73 frames)
+[hero_body  93.4s]   native upper_arm.L  (0.119, -0.056, 1.253) -> (0.279, -0.065, 0.981) (model (0.14, -0.027, 1.288))
+[hero_body  93.4s]   native forearm.L    (0.279, -0.065, 0.981) -> (0.384, -0.084, 0.872) (model (0.299, -0.036, 1.016))
+[hero_body  93.4s]   native hand.L       (0.384, -0.084, 0.872) -> (0.426, -0.084, 0.822) (model (0.405, -0.054, 0.907))
+[hero_body  93.4s]   native thigh.L      (0.082, 0.018, 0.798) -> (0.109, 0.036, 0.472) (model (0.082, 0.018, 0.798))
+[hero_body  95.1s]   azrin: automatic weights on 100.0% of vertices
+[hero_body  95.5s]   island gating: 1 pieces, 0 kept to their nearest limb
+[hero_body  95.6s] mesh: 52000 faces -> 52000 triangles
+[hero_body  95.9s] reach: 16620 vertices freed from limbs too far away
+[hero_body  96.3s] cloth: 11709 hanging vertices follow the hips more than the legs
+[hero_body  96.3s] arms: 209 hand and forearm vertices freed from the trunk and legs
+[hero_body  96.5s] smoothed all weights (4 passes)
+[hero_body  96.9s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body  96.9s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  98.7s] arm split: {'arm_left': 3898, 'arm_right': 3166, 'patches_moved': 287, 'edges_split': 1128, 'new_vertices': 1141, 'reweighted': 6928}
+Info: 23289 vertex weights limited
+[hero_body 102.4s] retargeted 133 clips (4289 frames) onto the native rest in 3.7s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:03:09 | INFO: Starting glTF 2.0 export
+04:03:09 | INFO: Extracting primitive: azrin
+04:03:09 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:03:10 | INFO: Primitives created: 1
+04:03:30 | INFO: Finished glTF 2.0 export in 20.97651958465576 s
+
+[hero_body 123.5s] wrote A:/Python/woa/work/lemondev/2026-10-18d-mocap/rebuild/azrin.glb (18.6 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

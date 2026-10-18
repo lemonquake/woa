@@ -153,9 +153,9 @@ func _show_end() -> void:
 	var w: SimWorld = game.world
 	var v: VBoxContainer = _end.get_child(0)
 	_end.custom_minimum_size = Vector2(760, 0)
-	var won: bool = w.winner == game.player_team
+	var won: bool = w.winner == game.player_team or bool(game.get("spectator"))
 	var t := Label.new()
-	t.text = "Victory" if won else "Defeat"
+	t.text = ("%s wins" % SimConst.TEAM_NAMES[w.winner]) if bool(game.get("spectator")) else ("Victory" if won else "Defeat")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	t.add_theme_font_override("font", U.font("title"))
 	t.add_theme_font_size_override("font_size", 48)

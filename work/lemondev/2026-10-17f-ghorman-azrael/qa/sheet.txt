@@ -1,0 +1,62 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+ezee idle_2h yaw 0
+ezee idle_2h yaw 90
+ezee boss_roar yaw 0
+ezee boss_roar yaw 90
+ezee gs_1 yaw 0
+ezee gs_1 yaw 90
+ezee gs_2 yaw 0
+ezee gs_2 yaw 90
+ezee gs_3 yaw 0
+ezee gs_3 yaw 90
+ezee gs_4 yaw 0
+ezee gs_4 yaw 90
+ezee cast_quick yaw 0
+ezee cast_quick yaw 90
+ezee boss_slam yaw 0
+ezee boss_slam yaw 90
+ezee leap_slam yaw 0
+ezee leap_slam yaw 90
+ezee cast_weapon yaw 0
+ezee cast_weapon yaw 90
+ezee hero_run yaw 0
+ezee hero_run yaw 90
+saved A:/Python/woa/work/lemondev/2026-10-17f-ghorman-azrael/qa/sheet/ezee.png rows: idle_2h@0, idle_2h@90, boss_roar@0, boss_roar@90, gs_1@0, gs_1@90, gs_2@0, gs_2@90, gs_3@0, gs_3@90, gs_4@0, gs_4@90, cast_quick@0, cast_quick@90, boss_slam@0, boss_slam@90, leap_slam@0, leap_slam@90, cast_weapon@0, cast_weapon@90, hero_run@0, hero_run@90
+azrin idle_staff yaw 0
+azrin idle_staff yaw 90
+azrin cast_area yaw 0
+azrin cast_area yaw 90
+azrin staff_1 yaw 0
+azrin staff_1 yaw 90
+azrin staff_2 yaw 0
+azrin staff_2 yaw 90
+azrin cast_quick yaw 0
+azrin cast_quick yaw 90
+azrin cast_heavy yaw 0
+azrin cast_heavy yaw 90
+azrin cast_ultimate yaw 0
+azrin cast_ultimate yaw 90
+azrin glide_fwd yaw 0
+azrin glide_fwd yaw 90
+saved A:/Python/woa/work/lemondev/2026-10-17f-ghorman-azrael/qa/sheet/azrin.png rows: idle_staff@0, idle_staff@90, cast_area@0, cast_area@90, staff_1@0, staff_1@90, staff_2@0, staff_2@90, cast_quick@0, cast_quick@90, cast_heavy@0, cast_heavy@90, cast_ultimate@0, cast_ultimate@90, glide_fwd@0, glide_fwd@90
+caziel idle_shadowblade yaw 0
+caziel idle_shadowblade yaw 90
+caziel dual_heavy yaw 0
+caziel dual_heavy yaw 90
+caziel dual_1 yaw 0
+caziel dual_1 yaw 90
+caziel dual_2 yaw 0
+caziel dual_2 yaw 90
+caziel dual_3 yaw 0
+caziel dual_3 yaw 90
+caziel dual_4 yaw 0
+caziel dual_4 yaw 90
+caziel cast_quick yaw 0
+caziel cast_quick yaw 90
+caziel blink yaw 0
+caziel blink yaw 90
+caziel hero_run yaw 0
+caziel hero_run yaw 90
+saved A:/Python/woa/work/lemondev/2026-10-17f-ghorman-azrael/qa/sheet/caziel.png rows: idle_shadowblade@0, idle_shadowblade@90, dual_heavy@0, dual_heavy@90, dual_1@0, dual_1@90, dual_2@0, dual_2@90, dual_3@0, dual_3@90, dual_4@0, dual_4@90, cast_quick@0, cast_quick@90, blink@0, blink@90, hero_run@0, hero_run@90

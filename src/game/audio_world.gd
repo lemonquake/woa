@@ -208,7 +208,7 @@ func strike(mat: String, pos: Vector3, vol := -6.0) -> void:
 func _seen(pos: Vector3) -> bool:
 	if game == null or game.world == null:
 		return true
-	return game.world.vision.cell_visible(game.player_team, View.to2(pos))
+	return game.sees_cell(View.to2(pos))
 
 # ---- Room ------------------------------------------------------------------------------------------------------------
 
@@ -347,7 +347,7 @@ func _update_steps(now: float, lp: Vector3) -> void:
 	for h: SimUnit in game.world.heroes:
 		if not h.alive or not h.moving or h.has_flag("hidden") or h.has_flag("flying"):
 			continue
-		if not game.world.vision.sees(game.player_team, h) or game.map.level_at(h.pos) == SimMap.RIVER:
+		if not game.sees(h) or game.map.level_at(h.pos) == SimMap.RIVER:
 			continue
 		var p3 := View.to3(h.pos, game.terrain.height_at(h.pos))
 		if p3.distance_to(lp) > 22.0 or now < float(_step_at.get(h.id, 0.0)):

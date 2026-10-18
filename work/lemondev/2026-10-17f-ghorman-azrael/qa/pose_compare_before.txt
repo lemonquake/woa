@@ -1,0 +1,123 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ok   hero_ezee            idle_2h            worst upper_arm.R     5.5 deg at 1.11s
+FAIL hero_ezee            hero_run           worst upper_arm.L    40.7 deg at 0.00s  over: { "upper_arm.L": 40.6716045072699, "forearm.L": 27.0928896165083, "upper_arm.R": 29.2057113060561, "forearm.R": 26.2709105008431 }
+ok   hero_ezee            cast_quick         worst weapon.L       14.4 deg at 0.13s
+ok   hero_ezee            death              worst upper_arm.R     1.8 deg at 0.26s
+FAIL hero_ezee            gs_1               worst hand.R         55.9 deg at 0.18s  over: { "upper_arm.L": 33.0929119815883, "forearm.L": 35.9596106781344, "forearm.R": 38.5203681262827, "hand.R": 55.9286181129613, "weapon.R": 55.9286181129613, "hand.L": 39.7857699530542, "upper_arm.R": 27.7796941658571, "weapon.L": 39.7857494624867 }
+FAIL hero_ezee            gs_2               worst hand.R         86.1 deg at 0.06s  over: { "upper_arm.R": 73.5282636605621, "hand.R": 86.1470176615931, "weapon.R": 86.1470176615931, "forearm.R": 42.8148529820228, "forearm.L": 53.0142207903465, "hand.L": 62.3939488227957, "weapon.L": 62.3939966341199 }
+FAIL hero_ezee            gs_3               worst hand.L         39.7 deg at 0.26s  over: { "hand.L": 39.7391334214014, "weapon.L": 39.7391334214014, "forearm.L": 28.9080380016486, "hand.R": 35.6760758653088, "weapon.R": 35.6760553747413 }
+FAIL hero_ezee            gs_4               worst weapon.R      239.3 deg at 0.80s  over: { "upper_arm.L": 44.0353360697178, "forearm.L": 36.7444745458497, "hand.L": 33.6718832118682, "weapon.L": 33.6718593062061, "forearm.R": 78.4563066184288, "hand.R": 122.943254796068, "weapon.R": 239.268438776987, "upper_arm.R": 210.259532541675 }
+ok   hero_ezee            boss_roar          worst upper_arm.L     4.9 deg at 0.51s
+FAIL hero_ezee            boss_slam          worst upper_arm.R   168.4 deg at 1.06s  over: { "upper_arm.R": 168.41702870499, "forearm.R": 95.1523557048773, "hand.R": 112.459037363503, "weapon.R": 112.459037363503 }
+FAIL hero_ezee            leap_slam          worst weapon.L       48.7 deg at 0.70s  over: { "forearm.L": 36.6284262167566, "hand.L": 48.6504914768008, "weapon.L": 48.6505427032196 }
+ok   hero_ezee            cast_weapon        worst forearm.R       7.5 deg at 0.28s
+== hero_ezee worst 239.3 deg
+ok   hero_sludge          idle_1h            worst foot.L          0.2 deg at 0.99s
+ok   hero_sludge          hero_run           worst upper_arm.L     5.5 deg at 0.05s
+ok   hero_sludge          cast_quick         worst hand.L         13.5 deg at 0.13s
+ok   hero_sludge          death              worst forearm.R       3.9 deg at 1.13s
+ok   hero_sludge          axe_1              worst upper_arm.R    23.6 deg at 0.44s
+FAIL hero_sludge          axe_2              worst weapon.R       43.2 deg at 0.44s  over: { "upper_arm.R": 28.6412354447423, "forearm.R": 29.246726592022, "hand.R": 43.1892532164716, "weapon.R": 43.1892737070391 }
+FAIL hero_sludge          axe_3              worst hand.R         60.4 deg at 0.10s  over: { "upper_arm.R": 50.6307613926734, "forearm.R": 50.0893220518827, "hand.R": 60.3581221482142, "weapon.R": 60.3581221482142 }
+FAIL hero_sludge          hero_axe_smash     worst upper_arm.R    49.9 deg at 0.78s  over: { "upper_arm.R": 49.8743828288916, "hand.R": 46.1293183899873, "weapon.R": 46.1293013145144, "forearm.L": 25.970016762242, "hand.L": 27.0738999830684, "forearm.R": 33.9379327404186, "weapon.L": 27.0738999830684 }
+ok   hero_sludge          cast_channel       worst forearm.L       0.2 deg at 0.50s
+== hero_sludge worst 60.4 deg
+FAIL hero_azrin           idle_staff         worst hand.R         55.0 deg at 0.25s  over: { "hand.R": 54.9974174422784, "weapon.R": 54.9974174422784 }
+noref   hero_azrin glide_fwd (not on the reference skeleton)
+ok   hero_azrin           cast_quick         worst hand.L         15.8 deg at 0.13s
+ok   hero_azrin           death              worst upper_arm.R     1.8 deg at 0.26s
+FAIL hero_azrin           staff_1            worst hand.R         38.6 deg at 0.27s  over: { "hand.R": 38.6056088871244, "weapon.R": 38.6056088871244 }
+FAIL hero_azrin           staff_2            worst weapon.L       32.8 deg at 0.15s  over: { "hand.L": 32.8466495110635, "weapon.L": 32.8466768318202, "hand.R": 26.6730617938897, "weapon.R": 26.6730327655858 }
+FAIL hero_azrin           cast_area          worst hand.R         39.9 deg at 0.67s  over: { "hand.L": 37.7655161097804, "weapon.L": 37.7654751286453, "hand.R": 39.943707832327, "weapon.R": 39.943707832327 }
+FAIL hero_azrin           cast_heavy         worst hand.R         46.0 deg at 0.40s  over: { "hand.L": 43.8164831483322, "weapon.L": 43.8165207143726, "hand.R": 46.0385588362962, "weapon.R": 46.0385246853504 }
+FAIL hero_azrin           cast_ultimate      worst weapon.L       28.6 deg at 0.33s  over: { "hand.L": 28.6184994525426, "hand.R": 26.7899485287035, "weapon.R": 26.7899195003995, "weapon.L": 28.6185284808466 }
+== hero_azrin worst 55.0 deg
+FAIL hero_caziel          idle_shadowblade   worst hand.R         32.3 deg at 1.75s  over: { "hand.R": 32.3074197364694, "weapon.R": 32.2596323179414 }
+FAIL hero_caziel          hero_run           worst upper_arm.L    50.4 deg at 0.00s  over: { "upper_arm.L": 50.3838568843666, "forearm.L": 36.1069037075857, "upper_arm.R": 33.156313212559, "forearm.R": 30.1466210906441 }
+ok   hero_caziel          cast_quick         worst hand.L         15.3 deg at 0.13s
+ok   hero_caziel          death              worst upper_arm.R     1.8 deg at 0.26s
+ok   hero_caziel          dual_1             worst hand.R          9.6 deg at 0.29s
+ok   hero_caziel          dual_2             worst weapon.L        9.2 deg at 0.13s
+FAIL hero_caziel          dual_3             worst weapon.L       99.9 deg at 0.31s  over: { "forearm.L": 84.0328350568532, "hand.L": 99.9371081241463, "weapon.L": 99.9371491052813 }
+FAIL hero_caziel          dual_4             worst hand.R         63.9 deg at 0.36s  over: { "hand.R": 63.8563333052305, "weapon.R": 63.8563333052305, "hand.L": 35.0503724807277, "weapon.L": 35.0505773864028, "upper_arm.R": 55.1467526982916 }
+FAIL hero_caziel          dual_heavy         worst hand.R         36.4 deg at 0.29s  over: { "hand.L": 31.1654496732837, "hand.R": 36.424295768127, "weapon.R": 36.424295768127, "weapon.L": 31.1654496732837 }
+FAIL hero_caziel          blink              worst hand.L         31.7 deg at 0.17s  over: { "hand.R": 31.5732768535305, "weapon.R": 31.5732768535305, "hand.L": 31.7319592234229, "weapon.L": 31.7318328649232 }
+== hero_caziel worst 99.9 deg
+noref   hero_roydo roydo_idle (not on the reference skeleton)
+noref   hero_roydo roydo_run (not on the reference skeleton)
+noref   hero_roydo roydo_cast_shoot (not on the reference skeleton)
+FAIL hero_roydo           death              worst weapon.L      232.6 deg at 0.80s  over: { "weapon.R": 206.844547239696, "weapon.L": 232.584825466562 }
+noref   hero_roydo roydo_punch_jab (not on the reference skeleton)
+noref   hero_roydo roydo_punch_cross (not on the reference skeleton)
+noref   hero_roydo roydo_idle_fold (not on the reference skeleton)
+noref   hero_roydo roydo_cast_throw (not on the reference skeleton)
+noref   hero_roydo roydo_cast_enter (not on the reference skeleton)
+== hero_roydo worst 232.6 deg
+noref   hero_blau blau_idle (not on the reference skeleton)
+noref   hero_blau blau_run_rifle (not on the reference skeleton)
+noref   hero_blau blau_cast_shoot (not on the reference skeleton)
+FAIL hero_blau            death              worst weapon.L      232.6 deg at 0.80s  over: { "weapon.R": 206.844547239696, "weapon.L": 232.584825466562 }
+noref   hero_blau blau_shoot (not on the reference skeleton)
+noref   hero_blau blau_reload (not on the reference skeleton)
+noref   hero_blau blau_cast_throw (not on the reference skeleton)
+noref   hero_blau blau_jump_start (not on the reference skeleton)
+noref   hero_blau blau_kneel_fix (not on the reference skeleton)
+== hero_blau worst 232.6 deg
+FAIL hero_azrael          idle_staff         worst hand.R         60.0 deg at 0.50s  over: { "hand.R": 60.0093043873017, "weapon.R": 60.0093043873017 }
+noref   hero_azrael glide_fwd (not on the reference skeleton)
+ok   hero_azrael          cast_quick         worst hand.L         18.2 deg at 0.13s
+ok   hero_azrael          death              worst upper_arm.L    13.9 deg at 0.00s
+FAIL hero_azrael          gs_1               worst hand.R         54.9 deg at 0.18s  over: { "forearm.R": 37.6166589670091, "hand.R": 54.9118966436807, "weapon.R": 54.9118966436807, "upper_arm.R": 27.0474210472036 }
+FAIL hero_azrael          gs_3               worst hand.R         38.7 deg at 0.26s  over: { "hand.L": 38.6809561189534, "hand.R": 38.690398855481, "weapon.R": 38.690398855481, "weapon.L": 38.6809356283859, "upper_arm.R": 31.7687397921034, "forearm.R": 25.399929900525 }
+FAIL hero_azrael          gs_4               worst upper_arm.L    50.6 deg at 0.32s  over: { "upper_arm.L": 50.6498927525386, "forearm.L": 42.1221420265892, "hand.L": 36.0125207385399, "hand.R": 32.1140400055934, "weapon.R": 32.1140400055934, "weapon.L": 36.0125002479724, "upper_arm.R": 32.2422460714091 }
+FAIL hero_azrael          gs_heavy           worst upper_arm.R   114.2 deg at 1.00s  over: { "upper_arm.R": 114.177799826624, "forearm.R": 68.1499746326081, "hand.R": 95.0037307885378, "weapon.R": 95.0037307885378, "hand.L": 33.0864130565931, "weapon.L": 33.0864608679173, "forearm.L": 25.8959553135242 }
+FAIL hero_azrael          cast_heavy         worst hand.R         55.6 deg at 0.24s  over: { "hand.L": 51.7964527028466, "hand.R": 55.6240565627758, "weapon.R": 55.6240565627758, "weapon.L": 51.7964356273736 }
+FAIL hero_azrael          cast_ultimate      worst weapon.R       29.4 deg at 0.33s  over: { "hand.L": 28.6841717214123, "hand.R": 29.4364760773542, "weapon.R": 29.4365033981108, "weapon.L": 28.6841444006556 }
+== hero_azrael worst 114.2 deg
+ok   hero_emelrich        idle_2h            worst upper_arm.R     5.5 deg at 1.11s
+ok   hero_emelrich        hero_run           worst upper_arm.L    20.7 deg at 0.06s
+ok   hero_emelrich        cast_weapon        worst hand.R          8.7 deg at 0.69s
+ok   hero_emelrich        death              worst upper_arm.R     1.8 deg at 0.26s
+FAIL hero_emelrich        gs_1               worst hand.R         48.7 deg at 0.18s  over: { "forearm.R": 30.7017208097748, "hand.R": 48.6960727442269, "weapon.R": 48.6960727442269, "upper_arm.R": 26.709280579511, "upper_arm.L": 27.3717645327727, "hand.L": 27.9047241937088, "weapon.L": 27.9047515144654 }
+FAIL hero_emelrich        gs_3               worst weapon.R       39.5 deg at 0.26s  over: { "hand.L": 35.9903738501561, "hand.R": 39.4798082140889, "weapon.R": 39.4798287046564, "weapon.L": 35.9903738501561, "upper_arm.R": 30.6384971637226 }
+FAIL hero_emelrich        gs_4               worst hand.R        238.1 deg at 0.72s  over: { "hand.L": 39.7609729512725, "weapon.L": 39.7609319701375, "forearm.R": 74.4917233146949, "hand.R": 238.097935598543, "weapon.R": 238.097935598543, "upper_arm.R": 210.039190639051 }
+== hero_emelrich worst 238.1 deg
+ok   hero_burak           idle_dual          worst shoulder.R      0.2 deg at 1.56s
+ok   hero_burak           hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_burak           war_cry            worst hand.L          4.4 deg at 0.39s
+ok   hero_burak           death              worst upper_arm.R     1.8 deg at 0.26s
+ok   hero_burak           dual_1             worst hand.R         11.8 deg at 0.17s
+ok   hero_burak           dual_2             worst hand.L         11.4 deg at 0.17s
+FAIL hero_burak           dual_3             worst hand.L         71.9 deg at 0.21s  over: { "forearm.L": 66.7384818896791, "hand.L": 71.8680290884395, "weapon.L": 71.8680290884395 }
+FAIL hero_burak           dual_4             worst hand.L         75.5 deg at 0.58s  over: { "upper_arm.L": 56.3136836877991, "forearm.L": 56.3189087825142, "hand.L": 75.4591444785463, "weapon.L": 75.4591444785463 }
+== hero_burak worst 75.5 deg
+ok   hero_airah           idle_mage          worst hand.L          3.5 deg at 3.75s
+ok   hero_airah           fem_run            worst upper_arm.L    15.7 deg at 0.06s
+FAIL hero_airah           cast_area          worst upper_arm.R   175.3 deg at 0.75s  over: { "hand.L": 54.2530463510575, "weapon.L": 54.2530292755846, "upper_arm.R": 175.268732970888, "forearm.R": 72.9665830541661, "hand.R": 133.89598222456, "weapon.R": 133.895927583047 }
+ok   hero_airah           death              worst upper_arm.R    18.4 deg at 0.77s
+FAIL hero_airah           cast_quick         worst hand.R         50.1 deg at 0.46s  over: { "hand.R": 50.1149216008919, "weapon.R": 50.1149216008919 }
+== hero_airah worst 175.3 deg
+ok   hero_ghorman         idle_1h            worst foot.L          0.2 deg at 1.01s
+ok   hero_ghorman         hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_ghorman         war_cry            worst forearm.L      14.2 deg at 1.07s
+ok   hero_ghorman         death              worst upper_arm.R     2.3 deg at 0.00s
+FAIL hero_ghorman         axe_1              worst upper_arm.R    27.5 deg at 0.42s  over: { "upper_arm.R": 27.5385577523044 }
+FAIL hero_ghorman         axe_2              worst weapon.R       44.3 deg at 0.42s  over: { "upper_arm.R": 28.8988138311745, "hand.R": 44.2972977300498, "weapon.R": 44.2973148055228, "forearm.R": 31.3469346297201 }
+FAIL hero_ghorman         axe_3              worst hand.R         58.2 deg at 0.11s  over: { "upper_arm.R": 51.4640478865095, "forearm.R": 50.9161881678991, "hand.R": 58.1521213104618, "weapon.R": 58.1521076500835 }
+== hero_ghorman worst 58.2 deg
+FAIL hero_ghorman_beast   idle               worst neck           59.6 deg at 1.67s  over: { "neck": 59.6099159057743 }
+FAIL hero_ghorman_beast   run_combat         worst neck           59.6 deg at 0.28s  over: { "neck": 59.6099295661527 }
+FAIL hero_ghorman_beast   boss_roar          worst neck           59.7 deg at 0.39s  over: { "neck": 59.7415882925938 }
+FAIL hero_ghorman_beast   death              worst neck           60.3 deg at 0.13s  over: { "neck": 60.3088696541093 }
+FAIL hero_ghorman_beast   boss_slam          worst hand.R         85.8 deg at 1.06s  over: { "neck": 61.4186934319663, "upper_arm.L": 30.657413372629, "forearm.L": 30.6567679197524, "hand.L": 30.8660790668674, "upper_arm.R": 80.0516680538145, "forearm.R": 79.757368862857, "weapon.L": 30.8660278404487, "hand.R": 85.8043470709336, "weapon.R": 85.8043470709336 }
+FAIL hero_ghorman_beast   hero_axe_smash     worst hand.L        234.7 deg at 0.89s  over: { "neck": 60.3593242615081, "upper_arm.L": 200.158611664954, "upper_arm.R": 51.4485809231341, "hand.R": 47.7716715268627, "weapon.R": 47.7716373759169, "forearm.L": 219.102004724201, "hand.L": 234.730898224537, "forearm.R": 35.0124273647937, "weapon.L": 131.335385285857 }
+== hero_ghorman_beast worst 234.7 deg
+ok   hero_feran           idle_dagger        worst thigh.L         0.1 deg at 0.83s
+ok   hero_feran           hero_run           worst foot.R          7.0 deg at 0.44s
+ok   hero_feran           cast_quick         worst weapon.L       13.7 deg at 0.13s
+ok   hero_feran           death              worst upper_arm.R     1.8 deg at 0.26s
+FAIL hero_feran           dagger_1           worst hand.R         35.7 deg at 0.23s  over: { "hand.R": 35.7248980574961, "weapon.R": 35.724874151834 }
+FAIL hero_feran           dagger_2           worst upper_arm.R    63.1 deg at 0.19s  over: { "upper_arm.R": 63.0597283423319, "forearm.R": 41.5478699664583, "hand.R": 39.21576334606, "weapon.R": 39.21576334606 }
+== hero_feran worst 63.1 deg
+pose_compare: 89 clips checked, 49 failed (limit 25 deg)

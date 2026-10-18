@@ -1,0 +1,12 @@
+== emelrich
+REMNANTS emelrich.glb           left L     0 R    19   torn edges L    0 R  143
+== feran
+REMNANTS feran.glb              left L     0 R     0   torn edges L    0 R    0
+== burak
+REMNANTS burak.glb              left L     0 R     0   torn edges L    0 R    4
+== airah
+REMNANTS airah.glb              left L    11 R     7   torn edges L  623 R 1340
+== ghorman
+REMNANTS ghorman.glb            left L     0 R     0   torn edges L    0 R    0
+== ghorman_beast
+REMNANTS ghorman_beast.glb      left L     0 R     0   torn edges L  127 R  462

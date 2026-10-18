@@ -256,6 +256,13 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 	var fill := Rect2(r.position, Vector2(width * frac, height))
 	draw_rect(fill, col)
 	draw_rect(Rect2(fill.position, Vector2(fill.size.x, height * 0.35)), Color(1, 1, 1, 0.18))
+	var rage_on := u.is_hero() and u.ability_level.has("rage")
+	if rage_on:
+		# Berserk's held damage: a dark stretch at the end of his health, what will come back
+		var held: float = game.world.abilities.kits5.held(u)
+		if held > 0.0:
+			var hw := minf(width * frac, width * held / maxf(1.0, u.max_hp))
+			draw_rect(Rect2(r.position.x + width * frac - hw, r.position.y, hw, height), Color(0.25, 0.02, 0.04, 0.85))
 	if not u.is_hero() and not u.is_building():
 		_disable_bar(u, Rect2(r.position.x, r.end.y + 3, width, 4), false)
 	if u.is_hero():
@@ -268,14 +275,21 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		var mr := Rect2(r.position.x, r.end.y + 2, width, 4)
 		draw_rect(mr.grow(1.0), Color(0, 0, 0, 0.85))
 		draw_rect(Rect2(mr.position, Vector2(width * clampf(u.mana / maxf(1.0, u.max_mana), 0.0, 1.0), 4)), Color(0.25, 0.5, 1.0))
+		var below := 0.0
+		if rage_on:
+			# Burak's Rage: a red bar under his mana (0-100)
+			var rr2 := Rect2(r.position.x, mr.end.y + 2, width, 3)
+			draw_rect(rr2.grow(1.0), Color(0, 0, 0, 0.85))
+			draw_rect(Rect2(rr2.position, Vector2(width * clampf(SimKits5.rage(u) / 100.0, 0.0, 1.0), 3)), Color(1.0, 0.18, 0.08))
+			below = 5.0
 		var lv := str(u.level)
 		var badge := Rect2(r.position.x - 20, r.position.y - 4, 18, 17)
 		draw_rect(badge, Color(0.05, 0.05, 0.07, 0.95))
 		draw_rect(badge, Color(0.85, 0.7, 0.35), false, 1.0)
 		var tw := font.get_string_size(lv, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
 		_texts.append([font, Vector2(badge.position.x + 9 - tw * 0.5, badge.position.y + 13), lv, 12, 0, Color(1, 0.92, 0.7)])
-		var dy := _disable_bar(u, Rect2(r.position.x, r.end.y + 9, width, 6), true)
-		_status_icons(u, Vector2(r.position.x, r.end.y + 9 + dy))
+		var dy := _disable_bar(u, Rect2(r.position.x, r.end.y + 9 + below, width, 6), true)
+		_status_icons(u, Vector2(r.position.x, r.end.y + 9 + below + dy))
 		# "lemonQ (Ezee)": the player in their player colour, the hero in its team's colour
 		var parts := UiKit.who_parts(u)
 		var nf := UiKit.font("bold")

@@ -1,0 +1,1 @@
+test_gs_slash                      frames 39 (1.30s) drift 0.00 m (max 0.34) hands apart 0.16-0.21 m lowest hand 0.73 m

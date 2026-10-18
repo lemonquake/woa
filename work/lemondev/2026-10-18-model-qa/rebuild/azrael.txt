@@ -1,0 +1,55 @@
+02:17:45 | INFO: Data are loaded, start creating Blender stuff
+02:17:45 | INFO: Blender create Mesh node hero
+02:17:47 | INFO: glTF import finished in 1.81s
+[hero_body   2.5s] hero rig with 132 clips
+[hero_body   2.6s] imported 14 objects from A:/Python/woa/work/azrael_src/azrael_src.blend
+[hero_body   2.6s] kept 6 mesh pieces (48480 faces), rig: Object_3 (233 bones)
+[hero_body   2.6s] rig map: {'chest': 'Bip001-Spine1_06', 'foot.L': 'Bip001-L-Foot_0208', 'foot.R': 'Bip001-R-Foot_0204', 'forearm.L': 'Bip001-L-Forearm_0142', 'forearm.R': 'Bip001-R-Forearm_0119', 'hand.L': 'Bip001-L-Hand_0143', 'hand.R': 'Bip001-R-Hand_0120', 'head': 'Bip001-Head_09', 'hips': 'Bip001-Pelvis_04', 'neck': 'Bip001-Neck_08', 'shin.L': 'Bip001-L-Calf_0207', 'shin.R': 'Bip001-R-Calf_0203', 'shoulder.L': 'Bip001-L-Clavicle_0139', 'shoulder.R': 'Bip001-R-Clavicle_0117', 'spine': 'Bip001-Spine_05', 'thigh.L': 'Bip001-L-Thigh_0206', 'thigh.R': 'Bip001-R-Thigh_0202', 'toe.L': 'Bip001-L-Toe0_0209', 'toe.R': 'Bip001-R-Toe0_0205', 'upper_arm.L': 'Bip001-L-UpperArm_0141', 'upper_arm.R': 'Bip001-R-UpperArm_0118'}
+[hero_body   2.7s] hand L: 3 fingers, hand turned 90 deg from the converted bone, palm side (-0.8, 0.07, -0.59)
+[hero_body   2.7s] hand R: 3 fingers, hand turned 90 deg from the converted bone, palm side (0.8, 0.07, -0.59)
+[hero_body   3.1s] hands: 636 palm vertices keep the hand for the curl
+[hero_body   3.1s]   Object_9: 156 edges stretched over 1.6x by the pose (worst 5.1x); bones: [('Bip001-L-Hand_0143', 105), ('Bip001-R-Hand_0120', 105), ('Bip001-R-Finger3_0127', 66), ('Bip001-L-Finger3_0150', 66), ('Bip001-L-Finger0_0144', 32), ('Bip001-R-Finger31_0128', 32), ('Bip001-L-Finger31_0151', 32), ('Bip001-R-Finger0_0121', 32)]
+[hero_body   3.2s] hand L: fist closed, grip 7.512 from the wrist
+[hero_body   3.2s] hand R: fist closed, grip 7.512 from the wrist
+[hero_body   3.6s] scaled x0.011 to 1.800 m
+[hero_body   3.6s]   joint hips         (0.0, 0.0, 1.073) -> (-0.0, 0.0, 1.168)
+[hero_body   3.6s]   joint head         (-0.0, -0.006, 1.629) -> (-0.0, -0.006, 1.631)
+[hero_body   3.6s]   joint upper_arm.L  (0.117, 0.023, 1.491) -> (0.282, 0.023, 1.3)
+[hero_body   3.6s]   joint hand.L       (0.455, 0.009, 1.101) -> (0.541, -0.01, 0.982)
+[hero_body   3.6s]   joint thigh.L      (0.094, 0.0, 1.073) -> (0.085, -0.006, 0.629)
+[hero_body   3.6s]   joint foot.L       (0.076, 0.03, 0.165) -> (0.072, -0.016, -0.001)
+[hero_body   3.6s] made glide_fwd from idle_staff (73 frames)
+[hero_body   3.6s]   hand.L rolled 10 deg to the grip; weapon bone in the fist
+[hero_body   3.6s]   hand.R rolled -10 deg to the grip; weapon bone in the fist
+[hero_body   3.7s]   native upper_arm.L  (0.108, 0.048, 1.47) -> (0.273, 0.049, 1.28) (model (0.117, 0.023, 1.491))
+[hero_body   3.7s]   native forearm.L    (0.273, 0.049, 1.28) -> (0.445, 0.034, 1.08) (model (0.282, 0.023, 1.3))
+[hero_body   3.7s]   native hand.L       (0.445, 0.034, 1.08) -> (0.492, 0.024, 1.015) (model (0.455, 0.009, 1.101))
+[hero_body   3.7s]   native thigh.L      (0.094, 0.0, 1.073) -> (0.085, -0.006, 0.629) (model (0.094, 0.0, 1.073))
+[hero_body   3.8s] mesh: 48480 faces -> 45181 triangles
+[hero_body   4.1s] reach: 76 vertices freed from limbs too far away
+[hero_body   4.2s] cloth: 642 hanging vertices follow the hips more than the legs
+[hero_body   4.3s] arms: 2890 hand and forearm vertices freed from the trunk and legs
+[hero_body   4.5s] smoothed all weights (4 passes)
+[hero_body   4.8s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body   4.9s] hands: 64 hand and finger vertices given back to their arm only
+[hero_body   5.2s] unmix: 257 vertices made wholly arm or body, 40 edges split (39 new vertices)
+Info: 1700 vertex weights limited
+[hero_body   9.1s] retargeted 133 clips (4289 frames) onto the native rest in 3.9s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:17:53 | INFO: Starting glTF 2.0 export
+02:17:53 | INFO: Extracting primitive: azrael
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:17:54 | INFO: Primitives created: 6
+02:18:11 | INFO: Finished glTF 2.0 export in 17.26454186439514 s
+
+[hero_body  26.5s] wrote A:/Python/woa/assets/characters/heroes17/azrael.glb (13.0 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

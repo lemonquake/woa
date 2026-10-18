@@ -1,0 +1,57 @@
+02:22:31 | INFO: Data are loaded, start creating Blender stuff
+02:22:31 | INFO: Blender create Mesh node hero
+02:22:33 | INFO: glTF import finished in 1.60s
+[hero_body   2.2s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   6.4s] imported 1 objects from A:/Python/woa/work/downloads/sf_heroes/caziel/source/x/tripo_convert_d03ec570-144a-49d0-a86c-8be37c8e5eff.fbx
+[hero_body   6.4s] kept 1 mesh pieces (1942176 faces), rig: none
+[hero_body   6.4s] joined 1 pieces into one mesh (1942176 faces)
+Info: Removed: 0 vertices, 0 edges, 0 faces
+[hero_body  35.9s] low mesh 40000 triangles, unwrapped
+00:38.219  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\hero_body.py:481: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  41.1s]   baked color (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  45.4s]   baked rough (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  49.8s]   baked metal (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  52.2s]   baked normal
+[texops]   hue remap  on 51.2% of texels
+[hero_body  56.6s] scaled x1.888 to 1.850 m
+[hero_body  56.6s]   joint hips         (0.0, 0.0, 0.935) -> (0.0, 0.0, 1.057)
+[hero_body  56.6s]   joint head         (0.0, -0.066, 1.567) -> (0.0, -0.066, 1.784)
+[hero_body  56.6s]   joint upper_arm.L  (0.208, -0.009, 1.397) -> (0.259, -0.009, 1.057)
+[hero_body  56.6s]   joint hand.L       (0.283, -0.085, 0.868) -> (0.287, -0.104, 0.708)
+[hero_body  56.6s]   joint thigh.L      (0.123, 0.009, 0.887) -> (0.147, -0.028, 0.481)
+[hero_body  56.6s]   joint foot.L       (0.166, 0.028, 0.113) -> (0.179, -0.123, 0.038)
+[hero_body  56.6s]   native upper_arm.L  (0.2, -0.03, 1.369) -> (0.251, -0.03, 1.029) (model (0.208, -0.009, 1.397))
+[hero_body  56.6s]   native forearm.L    (0.251, -0.03, 1.029) -> (0.276, -0.106, 0.84) (model (0.259, -0.009, 1.057))
+[hero_body  56.6s]   native hand.L       (0.276, -0.106, 0.84) -> (0.278, -0.116, 0.752) (model (0.283, -0.085, 0.868))
+[hero_body  56.6s]   native thigh.L      (0.123, 0.009, 0.887) -> (0.147, -0.028, 0.481) (model (0.123, 0.009, 0.887))
+[hero_body  57.5s]   caziel: automatic weights on 100.0% of vertices
+[hero_body  57.8s]   island gating: 1 pieces, 0 kept to their nearest limb
+[hero_body  58.0s] mesh: 40000 faces -> 40000 triangles
+[hero_body  58.2s] reach: 7663 vertices freed from limbs too far away
+[hero_body  58.3s] cloth: 3478 hanging vertices follow the hips more than the legs
+[hero_body  58.3s] arms: 374 hand and forearm vertices freed from the trunk and legs
+[hero_body  58.5s] smoothed all weights (4 passes)
+[hero_body  58.9s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body  58.9s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  59.1s] unmix: 4789 vertices made wholly arm or body, 426 edges split (425 new vertices)
+Info: 17634 vertex weights limited
+[hero_body  62.8s] retargeted 132 clips (4216 frames) onto the native rest in 3.6s
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:23:34 | INFO: Starting glTF 2.0 export
+02:23:34 | INFO: Extracting primitive: caziel
+02:23:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:23:34 | INFO: Primitives created: 1
+02:23:51 | INFO: Finished glTF 2.0 export in 17.39976477622986 s
+
+[hero_body  80.3s] wrote A:/Python/woa/assets/characters/heroes17/caziel.glb (18.8 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit
