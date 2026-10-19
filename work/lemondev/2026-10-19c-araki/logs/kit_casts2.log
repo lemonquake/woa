@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 7: no winner at 25:00, 313180 ms
+  blau       L15 K/D/A 0/11/8 LH  50  casts { "bounce_shot": 22, "lay_trap": 19, "summon_boulders": 5, "place_turret": 24 }
+  araki      L14 K/D/A 6/9/3 LH  17  casts { "blur_strike": 39, "djin_bomb": 21, "ghosts_of_the_will": 4, "the_blur": 6 }
+  tock       L17 K/D/A 7/10/11 LH  23  casts { "time_bolt": 40, "rewind": 8, "stop_time": 7, "slow_field": 11, "fast_forward": 2 }
+  kragg      L17 K/D/A 7/11/4 LH  47  casts { "iron_grip": 19, "repel": 12, "magnet_field": 6 }
+  froster    L20 K/D/A 7/8/7 LH  81  casts { "breath_of_cold": 51, "ice_pulse": 22, "endless_winter": 4 }
+  blau       L15 K/D/A 1/5/11 LH  47  casts { "bounce_shot": 25, "lay_trap": 12, "summon_boulders": 6, "place_turret": 38 }
+  azrin      L23 K/D/A 18/4/7 LH 126  casts { "touch_of_ember": 49, "fiery_javelin": 30, "spirit_of_fire": 26, "divine_smite": 10 }
+  sludge     L15 K/D/A 10/5/9 LH  33  casts { "shuriken_hook": 20, "stench": 29, "blubber": 10, "chomp": 9 }
+  ezee       L17 K/D/A 2/8/18 LH  47  casts { "dark_stomp": 30, "tainted_touch": 21, "leap_strike": 4, "unholy_might": 8 }
+  caziel     L17 K/D/A 17/6/6 LH  31  casts { "swift_dagger": 35, "master_of_shadows": 19 }
+WARNING: 5592 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 23 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

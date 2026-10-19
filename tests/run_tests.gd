@@ -3183,8 +3183,10 @@ func test_bots_leave_the_players_lane() -> void:
 			lanes[b.lane] = true
 	check(not lanes.has("mid"), "no bot stays mid once the player takes it (%s)" % str(lanes))
 	check(lanes.has("top") and lanes.has("bot"), "and both side lanes stay covered")
-	var said := w.chat_log.filter(func(l): return String(l.text).begins_with("You're mid?"))
-	check(not said.is_empty(), "the bot says so in chat")
+	# typed the way a player would (SimBotChat.casual): "ok u mid, i'll go top", "fine, top" ...
+	var new_lane := SimTeamAI.lane_label(mid_bot.lane)
+	var said := w.chat_log.filter(func(l): return int(l.u) == mid_bot.hero_id and String(l.text).to_lower().contains(new_lane))
+	check(not said.is_empty(), "the bot says so in chat (%s)" % str(w.chat_log.map(func(l): return String(l.text))))
 
 func test_ping_replies_with_reasons() -> void:
 	BotMemory.active = false
@@ -3210,8 +3212,9 @@ func test_ping_replies_with_reasons() -> void:
 	w.ping(C.DAWN, foe.pos, me.id, foe.id)
 	run(w, 1.0)
 	var texts := w.chat_log.map(func(l): return String(l.text))
-	check(texts.any(func(t): return t.begins_with("I'm dead, back in")), "a dead bot says when it is back (%s)" % str(texts))
-	check(texts.any(func(t): return t.contains("no TP") and t.contains("too far")), "a far bot without a TP says why")
+	# typed the way a player would (SimBotChat.casual): "dead 20s", "no tp, too far" ...
+	check(texts.any(func(t): return t.contains("20")), "a dead bot says when it is back (%s)" % str(texts))
+	check(texts.any(func(t): return t.to_lower().contains("tp")), "a far bot without a TP says why")
 
 func test_chat_is_rate_limited() -> void:
 	var w := _team_world(["sludge"], ["ezee"])
@@ -7682,3 +7685,835 @@ func test_ghorman_beast_form() -> void:
 	w.command(g.id, {"type": O.ATTACK_UNIT, "target": foe.id})
 	run(w, 6.0)
 	check(_events_of(w, "maul").size() >= 1, "every 3rd attack is a maul (%d)" % _events_of(w, "maul").size())
+
+# ---- Ranked play (run 2026-10-19 b) -----------------------------------------------------------------------------------
+
+func test_ranked_tiers() -> void:
+	for c in [[0, 0, 0], [599, 0, 0], [600, 0, 1], [1199, 0, 1], [1200, 0, 2], [2999, 0, 4], [3000, 0, 5], [5999, 1, 9],
+			[6000, 0, 10], [7000, 3, 11], [6000, 10, 11], [6000, 11, 10], [6500, 0, 10]]:
+		check(Ranked.tier_of(int(c[0]), int(c[1])) == int(c[2]), "%d MMR place %d -> rank %d (got %d)" % [c[0], c[1], c[2], Ranked.tier_of(int(c[0]), int(c[1]))])
+	check(Ranked.tier_name(0) == "Rookie" and Ranked.tier_name(5) == "Chief Commander" and Ranked.tier_name(10) == "Aetherium"
+		and Ranked.tier_name(11) == "Aetherium+", "rank names")
+	for c in [[600, 1], [719, 1], [720, 2], [1199, 5], [0, 1], [599, 5], [6500, 0]]:
+		check(Ranked.stars(int(c[0])) == int(c[1]), "%d MMR -> %d stars (got %d)" % [c[0], c[1], Ranked.stars(int(c[0]))])
+
+func test_ranked_elo() -> void:
+	check(Ranked.elo_delta(1000, 1000, true) == 25 and Ranked.elo_delta(1000, 1000, false) == -25, "even game: +25 / -25")
+	check(Ranked.elo_delta(1200, 1000, true) < 25 and Ranked.elo_delta(1000, 1200, true) > 25, "beating a stronger team pays more")
+	for a in [800.0, 1000.0, 2500.0, 6100.0]:
+		for b in [900.0, 1500.0, 6000.0]:
+			check(Ranked.elo_delta(a, b, true) == -Ranked.elo_delta(b, a, false), "zero sum %d vs %d" % [a, b])
+	near(Ranked.win_chance(1400, 1000), 1.0 / (1.0 + pow(10.0, -1.0)), 1e-6, "Elo odds at 400")
+
+func test_bot_names() -> void:
+	var r := RandomNumberGenerator.new()
+	r.seed = 77
+	var names := BotNames.make_many(400, r)
+	check(names.size() == 400, "400 names (got %d)" % names.size())
+	var seen := {}
+	for n in names:
+		var k := BotNames.key(String(n))
+		check(not seen.has(k), "unique: " + String(n))
+		seen[k] = true
+		check(String(n).length() >= 3 and String(n).length() <= 22, "length: " + String(n))
+	for o in BotNames.OWNER:
+		check(o in names, "the owner's example is kept: " + o)
+
+func _test_ladder() -> void:
+	Ranked.reset("user://ranked_test.json")
+	if FileAccess.file_exists(Ranked.path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(Ranked.path))
+	Ranked.load_data()
+
+func _end_ladder() -> void:
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Ranked.path))
+	Ranked.reset()
+
+func test_ranked_ladder() -> void:
+	_test_ladder()
+	var bots := Ranked.bots()
+	check(bots.size() >= 100, "at least 100 bots (%d)" % bots.size())
+	var high := 0
+	var top := 0
+	var names := {}
+	for b in bots:
+		if int(b.mmr) > 3000:
+			high += 1
+		top = maxi(top, int(b.mmr))
+		names[BotNames.key(String(b.name))] = true
+		check(b.has("skill") and b.has("toxic") and b.has("coop") and b.has("voice") and (b.heroes as Array).size() >= 1, "profile fields: " + String(b.name))
+	check(names.size() == bots.size(), "names unique on the ladder")
+	check(high >= 8 and top >= 6000, "a top of the ladder exists (%d above 3000, best %d)" % [high, top])
+	check(int(Ranked.me().mmr) == Ranked.YOUR_START, "you start at 1000")
+	check(Ranked.tier_for(Ranked.leaderboard()[0]) == Ranked.TIERS - 1, "the best player is Aetherium+")
+	# save and load
+	Ranked.set_player_name("Tester")
+	Ranked.reset(Ranked.path)
+	Ranked.load_data()
+	check(String(Ranked.me().name) == "Tester" and Ranked.bots().size() == bots.size(), "save and load")
+	# 300 rounds: MMR stays sane, the top changes, random starters move toward their skill
+	var before_top := Ranked.leaderboard().slice(0, 10).map(func(p): return String(p.id))
+	var off0: Array = []
+	for b in Ranked.bots():
+		if String(b.start) == "random":
+			off0.append(absf(float(b.mmr) - float(b.skill)))
+	var r := RandomNumberGenerator.new()
+	r.seed = 5
+	Ranked.simulate_rounds(300, r)
+	Ranked._mark_dirty()
+	var off1: Array = []
+	for b in Ranked.bots():
+		check(is_finite(float(b.mmr)) and int(b.mmr) >= 0 and int(b.mmr) < 12000, "MMR sane: %s %d" % [b.name, b.mmr])
+		if String(b.start) == "random":
+			off1.append(absf(float(b.mmr) - float(b.skill)))
+	off0.sort()
+	off1.sort()
+	if not off0.is_empty():
+		check(float(off1[off1.size() / 2]) < float(off0[off0.size() / 2]), "random starters closer to their skill (median %.0f -> %.0f)" % [off0[off0.size() / 2], off1[off1.size() / 2]])
+	print("    random starters: %d, median distance to skill %.0f -> %.0f" % [off0.size(), off0[off0.size() / 2] if not off0.is_empty() else 0.0, off1[off1.size() / 2] if not off1.is_empty() else 0.0])
+	var after_top := Ranked.leaderboard().slice(0, 10).map(func(p): return String(p.id))
+	check(before_top != after_top, "the top ten changed")
+	_end_ladder()
+
+func test_ranked_match_result() -> void:
+	_test_ladder()
+	var r := RandomNumberGenerator.new()
+	r.seed = 9
+	var l := Matchmaker.build_lineup(Ranked.bots(), Ranked.me(), [2], r)
+	var d := HeroDraft.new(l, 3)
+	while not d.done():
+		if d.current() == "me":
+			d.pick("me", "azrin" if not d.taken("azrin") else d.auto_hero("me"))
+		d.step(0.25)
+	l.heroes = d.picks
+	var teams := [[], []]
+	for t in 2:
+		for p in l.teams[t]:
+			teams[t].append(String(p.id))
+	Ranked.begin_match({"teams": teams, "mine": l.mine, "heroes": l.heroes, "roles": l.roles})
+	var ally := String(teams[l.mine][1])
+	var foe := String(teams[1 - l.mine][0])
+	var a0 := int(Ranked.profile(ally).mmr)
+	var f0 := int(Ranked.profile(foe).mmr)
+	var res := Ranked.finish_match(true, false, {"perf": 0.5})
+	check(int(res.hero_xp) == Ranked.hero_xp_gain(true, 0.5) and Ranked.hero_xp(Ranked.me(), String(l.heroes.me)) == int(res.hero_xp),
+		"your hero earned XP for the win (%d)" % int(res.get("hero_xp", -1)))
+	check(int(res.delta) > 0 and int(res.new) == Ranked.YOUR_START + int(res.delta), "a win adds MMR (%+d)" % int(res.delta))
+	check(int(Ranked.profile(ally).mmr) == a0 + int(res.delta) and int(Ranked.profile(foe).mmr) == f0 - int(res.delta), "the other nine moved too")
+	check(int(Ranked.me().wins) == 1 and (Ranked.me().history as Array).size() == 1, "your record")
+	check(not Ranked.has_pending(), "nothing pending after the result")
+	Ranked.begin_match({"teams": teams, "mine": l.mine, "heroes": l.heroes, "roles": l.roles})
+	var left := Ranked.abandon_pending()
+	check(int(left.delta) < 0 and int(Ranked.me().abandons) == 1 and String(Ranked.me().history[0].r) == "A", "leaving is a loss")
+	_end_ladder()
+
+func test_matchmaker_lineup() -> void:
+	_test_ladder()
+	var r := RandomNumberGenerator.new()
+	for s in 6:
+		r.seed = 100 + s
+		var my_roles: Array = [[1], [2], [3, 4], [5], [1, 2, 3, 4, 5], [4]][s]
+		var near: Array = Ranked.bots().filter(func(b): return absi(int(b.mmr) - 1000) <= 450)
+		var l := Matchmaker.build_lineup(near, Ranked.me(), my_roles, r)
+		check(l.heroes.is_empty(), "no hero is chosen before the pick")
+		var d := HeroDraft.new(l, 50 + s)
+		while not d.done():
+			if d.current() == "me":
+				d.pick("me", "froster" if not d.taken("froster") else d.auto_hero("me"))
+			d.step(0.2)
+		l.heroes = d.picks
+		var ids := {}
+		var heroes := {}
+		for t in 2:
+			check((l.teams[t] as Array).size() == 5, "five a side")
+			var rs: Array = []
+			for p in l.teams[t]:
+				ids[String(p.id)] = true
+				rs.append(int(l.roles[String(p.id)]))
+				heroes[String(l.heroes[String(p.id)])] = true
+			rs.sort()
+			check(rs == [1, 2, 3, 4, 5], "every role on each side (%s)" % str(rs))
+		check(ids.size() == 10 and ids.has("me"), "ten different players with you")
+		check(heroes.size() == 10, "no hero twice")
+		check(int(l.my_role) in my_roles and int(l.roles.me) == int(l.my_role), "your role is one you ticked")
+		check(absf(float(l.avg[0]) - float(l.avg[1])) <= 150.0, "even teams (%.0f vs %.0f)" % [l.avg[0], l.avg[1]])
+		check(String(l.heroes.me) != "", "you play the hero you picked")
+		var slots := Matchmaker.slots_for(l)
+		check(slots.size() == 10 and slots.filter(func(x): return x.kind == "you").size() == 1, "ten slots, one is you")
+		for x in slots:
+			if x.kind == "bot":
+				check(x.has("rating") and x.has("traits") and String(x.role) != "", "bot slot has its skill and role")
+	_end_ladder()
+
+func test_matchmaker_search_decline() -> void:
+	_test_ladder()
+	var mm := Matchmaker.new()
+	mm.rng.seed = 3
+	mm.start([2, 3])
+	var t := 0.0
+	while mm.state == "searching" and t < 60.0:
+		mm.step(0.1)
+		t += 0.1
+	check(mm.state == "found", "a match is found (%s after %.1f s)" % [mm.state, t])
+	var first := {}
+	for side in 2:
+		for p in mm.lineup.teams[side]:
+			first[String(p.id)] = true
+	mm.decline()
+	check(mm.state == "searching", "declining searches again")
+	t = 0.0
+	while mm.state == "searching" and t < 60.0:
+		mm.step(0.1)
+		t += 0.1
+	var same := 0
+	for side in 2:
+		for p in mm.lineup.teams[side]:
+			if first.has(String(p.id)) and String(p.id) != "me":
+				same += 1
+	check(mm.state == "found" and same == 0, "the declined nine stay out of the next offer (%d again)" % same)
+	# accept: everyone in once the bots accept (no fails)
+	mm.lineup.fails = {}
+	mm.accept()
+	for i in 200:
+		mm.step(0.1)
+	check(mm.state == "ready", "everyone accepted -> ready (%s)" % mm.state)
+	_end_ladder()
+
+func test_rated_bot_settings() -> void:
+	var prev := SimBot.rated(0.0)
+	for rr in range(250, 7501, 250):
+		var s := SimBot.rated(float(rr))
+		for k in ["think", "react", "lh_error"]:
+			check(float(s[k]) <= float(prev[k]) + 1e-6, "%s does not grow with skill at %d" % [k, rr])
+		for k in ["aim", "items", "item_use", "farm"]:
+			check(float(s[k]) >= float(prev[k]) - 1e-6, "%s does not fall with skill at %d" % [k, rr])
+		check(bool(s.advanced) == (rr >= 1800), "stacking, pulling, warding and counters from 1800 (%d)" % rr)
+		check(float(s.gold) == 1.0, "no gold bonus for ranked bots")
+		prev = s
+
+func test_rated_bot_builds() -> void:
+	var w := empty_world()
+	var a := w.spawn_hero("ezee", C.DAWN, {})
+	var b := w.spawn_hero("ezee", C.DUSK, {})
+	var hi := SimBot.new(w, a.id, "mid", "High")
+	var lo := SimBot.new(w, b.id, "mid", "Low")
+	var opts: Array = SimBotKits.builds("ezee", 2)
+	var plan: Array = (opts[clampi(lo.build_idx, 0, opts.size() - 1)] as Array).duplicate()
+	hi.set_rating(6500.0, {"coop": 0.95})
+	lo.set_rating(300.0, {"coop": 0.2, "disrupt": 0.6, "toxic": 0.9, "rage": true})
+	check("spell_shield" in hi.build.slice(0, 12), "a strong melee core plans Spell Shield early: %s" % str(hi.build))
+	check("jump_knife" in hi.build, "and a Jump Knife")
+	var odd := 0
+	for id in lo.build:
+		if not (id in plan):
+			odd += 1
+	check(odd >= 3, "a weak bot's build is scrambled (%d random items): %s" % [odd, str(lo.build)])
+	check(not bool(lo.sk.advanced) and bool(hi.sk.advanced), "counter items only for the strong one")
+	check(a.gold_mult == 1.0 and b.gold_mult == 1.0, "no gold bonus")
+	check(lo.aggression > hi.aggression - 0.05, "a ragebaiter is bold")
+
+func test_hero_mastery_levels() -> void:
+	check(Ranked.hero_xp_for(1) == 350 and Ranked.hero_level(349) == 0 and Ranked.hero_level(350) == 1, "Bronze 1 at 350 XP")
+	check(Ranked.hero_xp_gain(true, 1.0) * 2 < 350 and Ranked.hero_xp_gain(true, 0.5) * 3 >= 350, "the first star takes at least three wins")
+	check(Ranked.hero_xp_gain(false, 1.0) == 80 and Ranked.hero_xp_gain(true, 1.0, true) == 0, "a loss gives a little, a left match nothing")
+	var prev := 0
+	for lv in range(1, Ranked.HERO_LEVELS + 1):
+		var step := Ranked.hero_xp_for(lv) - Ranked.hero_xp_for(lv - 1)
+		check(step > prev, "each star costs more than the last (%d)" % lv)
+		prev = step
+	var p := {"id": "x", "mmr": 1000, "hero_stats": {"azrael": [0, 0, Ranked.hero_xp_for(5)]}}
+	var m := Ranked.hero_medal(p, "azrael")
+	check(int(m.medal) == 1 and int(m.stars) == 5 and String(m.name) == "Bronze 5", "level 5 is Bronze 5 (%s)" % m.name)
+	p.hero_stats.azrael[2] = Ranked.hero_xp_for(6)
+	check(String(Ranked.hero_medal(p, "azrael").name) == "Silver 1", "level 6 is Silver 1")
+	p.hero_stats.azrael[2] = Ranked.hero_xp_for(25) + 50
+	m = Ranked.hero_medal(p, "azrael")
+	check(int(m.medal) == 5 and int(m.stars) == 5, "level 25 is Diamond 5")
+	check(Ranked.hero_xp_for(21) / Ranked.hero_xp_gain(true, 1.0) >= 300, "Diamond takes 300+ of the best wins (%d)" % (Ranked.hero_xp_for(21) / Ranked.hero_xp_gain(true, 1.0)))
+
+func test_hero_top_players() -> void:
+	_test_ladder()
+	var seen_top := 0
+	for h in GameSettings.random_pool():
+		var b := Ranked.hero_board(String(h))
+		for i in b.size():
+			var p := Ranked.profile(String(b[i].id))
+			var m := Ranked.hero_medal(p, String(h))
+			if int(m.top) > 0:
+				seen_top += 1
+				check(int(m.medal) == 5 and int(m.top) <= Ranked.TOP_HERO and int(m.top) == i + 1, "a Top Player is a Diamond in the top %d" % Ranked.TOP_HERO)
+			if i > 0:
+				check(int(b[i].xp) <= int(b[i - 1].xp), "ranked by XP")
+	check(seen_top > 0, "some heroes have Top Players (%d)" % seen_top)
+	var big := 0
+	for bot in Ranked.bots():
+		if int(bot.skill) >= 5000:
+			var best := Ranked.top_heroes(bot, 1)
+			if not best.is_empty() and int(best[0][1].medal) >= 4:
+				big += 1
+	check(big >= 5, "the best bots have Platinum or Diamond heroes (%d)" % big)
+	_end_ladder()
+
+func test_hero_draft() -> void:
+	_test_ladder()
+	var me := Ranked.me()
+	me.hero_stats = {"azrael": [300, 200, Ranked.hero_xp_for(22)]}
+	Ranked._mark_dirty()
+	var r := RandomNumberGenerator.new()
+	r.seed = 21
+	var near: Array = Ranked.bots().filter(func(b): return absi(int(b.mmr) - 1000) <= 450)
+	var l := Matchmaker.build_lineup(near, me, [2], r)
+	var d := HeroDraft.new(l, 9)
+	var nums := d.order.duplicate()
+	nums.sort()
+	check(d.order.size() == 10 and nums.size() == 10 and d.order.has("me"), "ten players, each with a pick number")
+	for id in d.wants:
+		if d.team_of(String(id)) == d.mine():
+			check(String(d.wants[id]) != "azrael", "teammates leave your Diamond hero to you")
+	var t := 0.0
+	while not d.done() and t < 200.0:
+		if d.current() == "me":
+			check(d.pick("me", "azrael") == "" or d.taken("azrael"), "you pick your hero")
+			if d.current() == "me":
+				d.pick("me", d.auto_hero("me"))
+		d.step(0.2)
+		t += 0.2
+	check(d.done(), "everyone picked")
+	var hs := {}
+	for id in d.picks:
+		hs[String(d.picks[id])] = true
+	check(hs.size() == 10, "no hero twice")
+	var said := d.chat.filter(func(c): return String(c.text).to_lower().contains("azrael"))
+	check(not said.is_empty(), "your team talks about your Diamond Azrael (%d lines)" % said.size())
+	check(d.chat.all(func(c): return int(c.team) == d.mine()), "only your team's chat is shown")
+	# a teammate changes its mind when you take its hero
+	var l2 := Matchmaker.build_lineup(near, me, [1, 2, 3, 4, 5], r)
+	var d2 := HeroDraft.new(l2, 13)
+	var mate := ""
+	for id in d2.wants:
+		if d2.team_of(String(id)) == d2.mine() and d2.number_of(String(id)) > d2.number_of("me"):
+			mate = String(id)
+	if mate != "":
+		var want := String(d2.wants[mate])
+		d2._said_want[mate] = true
+		while d2.current() != "me":
+			d2.step(0.2)
+		if not d2.taken(want):
+			var n0 := d2.chat.size()
+			d2.pick("me", want)
+			check(String(d2.wants[mate]) != want and d2.chat.size() > n0, "a teammate whose hero you took wants another and says so")
+	_end_ladder()
+
+# ---- Living players (run 2026-10-19 d) ----------------------------------------------------------------------------
+
+func test_persona_basics() -> void:
+	var prof := {"toxic": 0.2, "coop": 0.8, "skill": 3000, "country": "PH", "voice": {"tl": 0.7}, "heroes": ["sludge"], "id": "b1",
+		"bot": true}
+	var a := Persona.make(42, prof)
+	var b := Persona.make(42, prof)
+	check(a == b, "the same seed makes the same persona")
+	check(Persona.make(43, prof) != a, "another seed makes another persona")
+	for k in ["talk", "kind", "ego", "temper", "humor", "focus", "style", "hours", "bio"]:
+		check(a.has(k), "persona has %s" % k)
+	prof["persona"] = a
+	check(not Persona.labels(prof).is_empty() and Persona.labels(prof).size() <= 2, "one or two labels (%s)" % str(Persona.labels(prof)))
+	# presence over a day for 60 players: some online, some in a match, some away; the same hour gives the same answer
+	var seen := {"online": 0, "match": 0, "offline": 0}
+	var t0 := 1790000000
+	for i in 60:
+		var p := {"id": "b%d" % i, "bot": true, "country": ["PH", "US", "BR", "DE"][i % 4], "heroes": ["azrin"]}
+		p["persona"] = Persona.make(1000 + i, p)
+		for hh in range(0, 24, 3):
+			var pr := Persona.presence(p, t0 + hh * 3600)
+			seen[String(pr.state)] = int(seen[String(pr.state)]) + 1
+			check(pr == Persona.presence(p, t0 + hh * 3600), "presence is the same for the same time")
+			check(Persona.online(p, t0 + hh * 3600) == (String(pr.state) != "offline"), "online() agrees with presence()")
+	check(int(seen.online) > 20 and int(seen.match) > 20 and int(seen.offline) > 60, "online, in a match and away all happen (%s)" % str(seen))
+	print("    presence over a day: %s" % str(seen))
+
+func test_ranked_living_upgrade() -> void:
+	_test_ladder()
+	# make the ladder look like one saved before living players: 160 bots, no personas, no feed
+	var keep := {}
+	Ranked.data.bots = (Ranked.data.bots as Array).slice(0, 160)
+	for b in Ranked.data.bots:
+		for k in ["persona", "mood", "learning", "learn_n", "friends", "you"]:
+			b.erase(k)
+		keep[String(b.id)] = [int(b.mmr), int(b.wins), int(b.losses), String(b.name)]
+	for k in ["feed", "tops", "grow_t"]:
+		Ranked.data.erase(k)
+	for k in ["met", "friends", "requests"]:
+		Ranked.data.me.erase(k)
+	Ranked.data.me.mmr = 1234
+	Ranked.save()
+	Ranked.reset(Ranked.path)
+	Ranked.load_data()
+	var bots := Ranked.bots()
+	check(bots.size() == Ranked.LADDER_SIZE, "the ladder grew to %d (%d)" % [Ranked.LADDER_SIZE, bots.size()])
+	var same := 0
+	var named := {}
+	for b in bots:
+		check(b.get("persona") is Dictionary and not (b.persona as Dictionary).is_empty(), "every bot has a persona")
+		named[BotNames.key(String(b.name))] = true
+		if keep.has(String(b.id)):
+			var k: Array = keep[String(b.id)]
+			if int(b.mmr) == int(k[0]) and int(b.wins) == int(k[1]) and int(b.losses) == int(k[2]) and String(b.name) == String(k[3]):
+				same += 1
+	check(same == 160, "the 160 old players keep their MMR, record and name (%d)" % same)
+	check(named.size() == bots.size(), "names stay unique after the growth")
+	check(int(Ranked.me().mmr) == 1234 and Ranked.me().get("met") is Dictionary, "your profile is kept and upgraded")
+	# the personas are the same each time the old file is upgraded
+	var first := String(JSON.stringify(bots[3].persona))
+	Ranked.reset(Ranked.path)
+	Ranked.load_data()
+	check(String(JSON.stringify(Ranked.bots()[3].persona)) == first, "a saved persona loads back the same")
+	_end_ladder()
+
+func test_ranked_living_rounds() -> void:
+	_test_ladder()
+	var r := RandomNumberGenerator.new()
+	r.seed = 21
+	Ranked.simulate_rounds(160, r)
+	var kinds := {}
+	for e in Ranked.data.feed:
+		kinds[String(e.k)] = true
+	check(kinds.has("rank") and kinds.has("streak") and kinds.has("learning"), "the feed hears of ranks, streaks and heroes being learned (%s)" % str(kinds.keys()))
+	check(Ranked.feed_text(Ranked.data.feed[0]) != "", "a feed entry reads as words: %s" % Ranked.feed_text(Ranked.data.feed[0]))
+	var statuses := {}
+	var moods := {}
+	var lines := 0
+	for b in Ranked.bots():
+		statuses[Persona.status(b)] = true
+		moods[snappedf(float(b.mood), 0.1)] = true
+		if not (b.history as Array).is_empty() and (b.history[0] as Dictionary).has("k") and (b.history[0] as Dictionary).has("len"):
+			lines += 1
+	check(statuses.size() >= 20, "players' statuses differ (%d kinds)" % statuses.size())
+	check(moods.size() >= 6, "moods follow results (%d values)" % moods.size())
+	check(lines >= 200, "ladder games have K/D/A and a length (%d)" % lines)
+	var learned: Array = (Ranked.data.feed as Array).filter(func(e): return String(e.k) == "main")
+	check(not learned.is_empty(), "some players took up a hero they were learning (%d)" % learned.size())
+	print("    feed %d entries, %d statuses, kinds %s" % [(Ranked.data.feed as Array).size(), statuses.size(), str(kinds.keys())])
+	_end_ladder()
+
+func test_ranked_match_memory() -> void:
+	_test_ladder()
+	var r := RandomNumberGenerator.new()
+	r.seed = 4
+	var asked := 0
+	var ally := ""
+	var foe := ""
+	for game in 6:
+		var l := Matchmaker.build_lineup(Ranked.bots(), Ranked.me(), [2], r)
+		var teams := [[], []]
+		var heroes := {}
+		var i := 0
+		for t in 2:
+			for p in l.teams[t]:
+				teams[t].append(String(p.id))
+				heroes[String(p.id)] = String(GameSettings.random_pool()[i])
+				i += 1
+		ally = String(teams[l.mine][1])
+		foe = String(teams[1 - l.mine][0])
+		Ranked.begin_match({"teams": teams, "mine": l.mine, "heroes": heroes, "roles": l.roles})
+		var rel := {ally: {"praised": 1}, foe: {"kills_on_you": 3, "flamed": 1}}
+		var res := Ranked.finish_match(true, false, {"perf": 0.7, "k": 9, "x": 2, "a": 11, "rel": rel})
+		asked += (res.get("requests", []) as Array).size()
+		if game == 0:
+			var ay: Dictionary = Ranked.profile(ally).you
+			var fy: Dictionary = Ranked.profile(foe).you
+			check(int(ay.with) == 1 and int(ay.with_w) == 1 and String(ay.last_side) == "with", "a teammate remembers the win with you")
+			check(float(ay.rep) > 0.0, "and likes you for it (%.2f)" % float(ay.rep))
+			check(int(fy.vs) == 1 and int(fy.kills_on) == 3 and int(fy.flamed) == 1, "an enemy remembers the kills and your flame")
+			check((Ranked.me().met as Dictionary).size() == 9, "your profile met nine players")
+			check(not (Ranked.me().history[0] as Dictionary).has("rel"), "the match details stay out of your history")
+	check(asked >= 1, "players who liked the games sent friend requests (%d)" % asked)
+	var req: Array = Ranked.me().requests
+	if not req.is_empty():
+		var id := String(req[0].id)
+		Ranked.accept_request(id)
+		check(id in (Ranked.me().friends as Array) and bool(Ranked.profile(id).you.get("friend", false)), "an accepted request makes a friend")
+	# the match carries what each bot remembers and who it is
+	var l2 := Matchmaker.build_lineup(Ranked.bots(), Ranked.me(), [2], r)
+	for t in 2:
+		for p in l2.teams[t]:
+			l2.heroes[String(p.id)] = "sludge"
+	var slots := Matchmaker.slots_for(l2)
+	for s in slots:
+		if s.kind == "bot":
+			check(not (s.traits.persona as Dictionary).is_empty() and String(s.traits.pid) != "" and s.traits.has("you") and String(s.traits.card.rank) != "",
+				"a bot slot carries persona, id, memory and rank")
+	check(not Ranked.recent_players().is_empty(), "recent players listed")
+	_end_ladder()
+
+func test_matchmaker_presence() -> void:
+	_test_ladder()
+	Ranked.clock_override = 1790003600
+	var mm := Matchmaker.new()
+	mm.rng.seed = 8
+	mm.start([1, 2, 3, 4, 5])
+	var t := 0.0
+	while mm.state == "searching" and t < 90.0:
+		mm.step(0.1)
+		t += 0.1
+	check(mm.state == "found", "a match is found at this hour (%.1f s)" % t)
+	if mm.state == "found":
+		var off := 0
+		for side in 2:
+			for p in mm.lineup.teams[side]:
+				if String(p.id) != "me" and not Persona.online(p, Ranked.clock_override):
+					off += 1
+		check(off == 0 or mm.t >= mm.expect + 25.0, "only online players are matched (%d offline)" % off)
+	Ranked.clock_override = 0
+	_end_ladder()
+
+## A loud bot for chat tests: it always talks when it may.
+func _loud(w: SimWorld, h: SimUnit, kind := 0.5) -> void:
+	var ps := Persona.make(h.id * 97 + 5, {"toxic": 0.3, "coop": 0.8, "country": "US", "voice": {"tl": 0.0}, "heroes": []})
+	ps.talk = 1.0
+	ps.kind = kind
+	w.botchat._ps[h.id] = ps
+	w.botchat._voice[h.id] = {"tl": 0.0, "salt": 1.0, "rough": 0.0}
+
+func _chat_world(human := false) -> SimWorld:
+	var w := _team_world(["sludge", "ezee", "azrin"], ["froster", "caziel", "kragg"], human)
+	for h in w.heroes:
+		if h.bot:
+			_loud(w, h)
+	w.time = 600.0
+	return w
+
+func _queued(w: SimWorld, u: SimUnit, cat: String) -> bool:
+	return w.botchat._queue.any(func(q): return int(q.u) == u.id and String(q.cat) == cat)
+
+func _kill(w: SimWorld, victim: SimUnit, killer: SimUnit) -> void:
+	victim.deaths += 1
+	killer.kills += 1
+	w.botchat._on_kill({"victim": victim.id, "u": killer.id, "first_blood": false, "streak": 1, "multi": 1, "ended_streak": 0})
+
+func _next_moment(w: SimWorld) -> void:
+	w.time += 8.0
+	w.botchat._flush()
+	w.botchat._queue.clear()
+	w.botchat._bot_last.clear()
+
+func test_chat_revenge_and_rivals() -> void:
+	var w := _chat_world()
+	var a := w.heroes[0]
+	var b := w.heroes[3]
+	_kill(w, a, b)
+	_next_moment(w)
+	_kill(w, b, a)
+	check(_queued(w, a, "revenge"), "killing the hero that killed it is a revenge line")
+	_next_moment(w)
+	var rival := false
+	for i in 4:
+		_kill(w, b, a)
+		rival = rival or _queued(w, a, "rival")
+		_next_moment(w)
+	check(rival, "killing the same hero again and again calls out the count")
+
+func test_chat_kill_steal_and_skills() -> void:
+	var w := _chat_world()
+	var a := w.heroes[0]
+	var mate := w.heroes[1]
+	var b := w.heroes[3]
+	w.botchat._dmg[b.id] = {mate.id: [900.0, w.time]}
+	_kill(w, b, a)
+	check(_queued(w, mate, "ks"), "the ally who did the work calls the kill steal")
+	_next_moment(w)
+	# a dodged skillshot names the ability
+	var named := false
+	for i in 6:
+		w.botchat._on_miss({"u": a.id, "near": b.id, "ability": String(a.abilities[0])})
+		named = named or _queued(w, b, "miss_named") or _queued(w, b, "missed_skillshot_and_whiffs")
+		_next_moment(w)
+	check(named, "the dodger mocks the miss")
+	# an enemy ultimate, seen used
+	w.vision.reveal_all = true
+	w.vision.update()
+	for x in w.heroes:
+		x.pos = Vector2(0, 0) + Vector2(x.id * 30, 0)
+	var ult := SimBotKits.ultimate(b)
+	var called := false
+	for i in 8:
+		w.botchat._ult_said = [C.LONG_AGO, C.LONG_AGO]
+		w.botchat._on_cast({"u": b.id, "ability": ult})
+		for m in [w.heroes[0], w.heroes[1], w.heroes[2]]:
+			called = called or _queued(w, m, "enemy_ult")
+		_next_moment(w)
+	check(called, "an enemy ultimate used gets a call")
+
+func test_chat_answers_the_player() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	var ezee := w.heroes[1]
+	var b = w.botchat._bot_of(ezee)
+	b.card = {"rank": "Legendary 3", "mmr": 3720, "country": "PH"}
+	var ask := func(text: String, all := false) -> Array:
+		w.botchat._queue.clear()
+		w.botchat._bot_last.clear()
+		w.botchat._on_chat({"t": "chat", "u": me.id, "text": text, "all": all})
+		return w.botchat._queue.duplicate()
+	var q: Array = ask.call("ezee what rank u")
+	check(q.any(func(x): return int(x.u) == ezee.id and String(x.cat) == "r_rank" and (String(x.text).to_lower().contains("legendary") or String(x.text).contains("3720"))),
+		"asked its rank, the bot answers with it (%s)" % str(q.map(func(x): return x.text)))
+	q = ask.call("ezee where u from")
+	check(q.any(func(x): return int(x.u) == ezee.id and String(x.cat) == "r_from"), "asked where from, it says")
+	me.deaths = 7
+	q = ask.call("ezee noob")
+	check(q.any(func(x): return int(x.u) == ezee.id and String(x.cat) in ["r_insult_fact", "r_insult_calm", "responses_and_comebacks"]), "an insult gets an answer")
+	q = ask.call("where is froster")
+	check(q.any(func(x): return String(x.cat) in ["r_where_seen", "r_where_lost", "p_dead"]), "asked where a hero is, a teammate says (%s)" % str(q.map(func(x): return x.cat)))
+	q = ask.call("are you a bot", true)
+	check(q.any(func(x): return String(x.cat) == "r_bot"), "called a bot, it denies it")
+	q = ask.call("sorry guys")
+	check(q.any(func(x): return String(x.cat) in ["r_sorry_kind", "r_sorry_rude"]), "an apology gets an answer")
+	q = ask.call("push bot")
+	check(not q.any(func(x): return String(x.cat) == "r_bot"), "push bot is about the lane, not an accusation")
+	var rel: Dictionary = w.botchat._rel.get(ezee.id, {})
+	check(int(rel.get("flamed", 0)) >= 1, "the flame is remembered for Ranked")
+
+func test_chat_threads_and_typing() -> void:
+	var w := _chat_world()
+	var a := w.heroes[0]
+	var mate := w.heroes[1]
+	w.botchat._queue.append({"at": w.time, "team": a.team, "u": a.id, "text": "ezee stop feeding", "all": false,
+		"cat": "teammate_roast_and_blame", "target": mate.id})
+	w.botchat._flush()
+	check(_queued(w, mate, "t_sorry") or _queued(w, mate, "t_argue"), "a flamed teammate answers back")
+	# typing: the same style and seed type the same; different styles differ
+	var st1 := {"lower": true, "punct": 0.0, "typo": 0.0, "stretch": 0.0, "short": 1.0, "laugh": "wkwk", "pet": "bro", "pet_rate": 1.0}
+	var r1 := RandomNumberGenerator.new()
+	r1.seed = 7
+	var r2 := RandomNumberGenerator.new()
+	r2.seed = 7
+	var t1 := ChatStyle.apply("Thanks, you are the best {laugh}", st1, 0.0, r1)
+	var t2 := ChatStyle.apply("Thanks, you are the best {laugh}", st1, 0.0, r2)
+	check(t1 == t2, "same style and seed, same text (%s)" % t1)
+	check(t1.contains("wkwk") and t1.contains("bro") and t1 == t1.to_lower(), "their laugh, pet word, lower case (%s)" % t1)
+	var shout := ChatStyle.apply("why", {"lower": true, "caps": 1.0, "stretch": 0.0, "typo": 0.0}, 0.0, r1)
+	check(shout == "WHY", "a caps typist shouts (%s)" % shout)
+	var nm := ChatStyle.apply("ty froster", {"lower": true, "stretch": 1.0}, 0.0, r1, false, 0.0, -1.0, ["froster"])
+	check(nm.contains("froster"), "names are never stretched (%s)" % nm)
+	# a ping reply typed casually keeps its facts
+	var c := w.botchat.casual(a, "p_dead", {"sec": 23}, "I'm dead, back in 23 s.", true)
+	check(c.contains("23") and c != "I'm dead, back in 23 s.", "a ping reply in a player's words (%s)" % c)
+
+func test_chat_same_on_every_machine() -> void:
+	var logs: Array = []
+	var hashes: Array = []
+	for k in 2:
+		# each machine builds its own map (a game cuts trees)
+		var m := SimMap.new()
+		m.build(1)
+		var w := SimWorld.new(5, m)
+		w.setup_match()
+		var i := 0
+		for team in [C.DAWN, C.DUSK]:
+			for id in (["sludge", "ezee", "azrin", "froster", "tock"] if team == C.DAWN else ["caziel", "kragg", "blood_ranger", "azrael", "araki"]):
+				var h := w.spawn_hero(id, team)
+				w.bots.append(SimBot.new(w, h.id, "mid", "Bot %d" % i))
+				i += 1
+		run(w, 150.0)
+		logs.append(w.chat_log.map(func(l): return "%d:%s" % [int(l.u), String(l.text)]))
+		hashes.append(w.state_hash())
+	check(not (logs[0] as Array).is_empty(), "the bots talked (%d lines)" % (logs[0] as Array).size())
+	check(hashes[0] == hashes[1], "the two worlds stayed in step")
+	check(logs[0] == logs[1], "two machines stepping the same world see the same chat")
+
+# ---- Araki, the Blur (run 2026-10-19 c) -----------------------------------------------------------------------------
+
+## A Senryukai test hit: Araki's attack fixed at 100 damage.
+func _araki_hit(w: SimWorld, a: SimUnit, t: SimUnit) -> float:
+	var s := w.combat.attack_snapshot(a, "")
+	s.dmg_min = 100.0
+	s.dmg_max = 100.0
+	s.bonus = 0.0
+	var hp := t.hp
+	w.combat.land_attack(s, t)
+	return (hp - t.hp) / w.combat.attack_class_multiplier(s, t)
+
+func test_araki_senryukai() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "araki", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(140, 0))
+	run(w, 0.1)
+	near(_araki_hit(w, a, foe), 104.0, 0.01, "the first hit adds a stack and deals it")
+	near(_araki_hit(w, a, foe), 108.0, 0.01, "the second: two stacks")
+	near(_araki_hit(w, a, foe), 112.0, 0.01, "the third: three stacks")
+	check(w.abilities.kits7.stacks_on(a, foe) == 3, "3 stacks on the enemy")
+	run(w, 14.0)
+	near(_araki_hit(w, a, foe), 116.0, 0.01, "a hit within 15 s renews the stacks")
+	run(w, 15.5)
+	check(w.abilities.kits7.stacks_on(a, foe) == 0, "15 s without a hit: the stacks are gone")
+	near(_araki_hit(w, a, foe), 104.0, 0.01, "and count from one again")
+	a.add_modifier({"id": "test_break", "source": -1, "expires": w.time + 5.0, "break": true})
+	near(_araki_hit(w, a, foe), 100.0, 0.01, "break turns Senryukai off")
+
+func test_araki_blur_strike() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "araki", o)
+	var near1 := _plain(w, "dusk_melee", C.DUSK, o + Vector2(200, 0))
+	var near2 := _plain(w, "dusk_melee", C.DUSK, o + Vector2(450, 200))
+	var off := _plain(w, "dusk_melee", C.DUSK, o + Vector2(300, 330))
+	run(w, 0.1)
+	var h1 := near1.hp
+	var h2 := near2.hp
+	var ho := off.hp
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "blur_strike", "point": o + Vector2(900, 0)})
+	run(w, 0.4)
+	near(a.pos.distance_to(o), 600.0, 2.0, "he dashes 600 (aimed farther)")
+	var magic := 140.0 * (1.0 + a.magic_amp)
+	check(h1 - near1.hp > magic + a.dmg_min, "an enemy on the path takes an attack and the magic damage (%.0f)" % (h1 - near1.hp))
+	check(h2 - near2.hp > magic + a.dmg_min, "one 200 from the path too (%.0f)" % (h2 - near2.hp))
+	near(off.hp, ho, 0.01, "one 330 from the path is safe")
+	check(not near1.get_modifier("blur_strike_slow").is_empty(), "the slashed are slowed")
+	near(near1.move_speed / float(near1.def.move_speed), 0.4, 0.02, "by 60%")
+	check(w.abilities.kits7.stacks_on(a, near1) == 1, "the slash is an attack (Senryukai counts it)")
+	near(w.abilities.cooldown_left(a, "blur_strike"), 0.0, 0.01, "a hit refreshes the cooldown")
+	check(w.abilities.kits7.strike_again(a), "and he may dash again")
+	var p1 := a.pos
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "blur_strike", "point": o})
+	run(w, 0.4)
+	check(a.pos.distance_to(p1) > 500.0, "the second dash")
+	check(w.abilities.kits7.stacks_on(a, near1) == 2, "slashes them again")
+	check(w.abilities.cooldown_left(a, "blur_strike") > 9.0, "only once: now the full cooldown")
+	check(not w.abilities.kits7.strike_again(a), "no third dash")
+	# a dash that hits nothing is not refreshed; a refresh left unused goes back on the first cast's cooldown
+	var w2 := empty_world()
+	var b := _hero16(w2, "araki", o)
+	run(w2, 0.1)
+	w2.command(b.id, {"type": O.CAST_POINT, "ability": "blur_strike", "point": o + Vector2(0, 600)})
+	run(w2, 0.4)
+	check(w2.abilities.cooldown_left(b, "blur_strike") > 9.0, "no hit, no refresh")
+	var w3 := empty_world()
+	var c := _hero16(w3, "araki", o)
+	_plain(w3, "dusk_melee", C.DUSK, o + Vector2(200, 0))
+	run(w3, 0.1)
+	w3.command(c.id, {"type": O.CAST_POINT, "ability": "blur_strike", "point": o + Vector2(600, 0)})
+	run(w3, 7.0)
+	check(not w3.abilities.kits7.strike_again(c), "the refresh lasts 6 s")
+	near(w3.abilities.cooldown_left(c, "blur_strike"), 3.0, 0.3, "then the first cast's cooldown runs on")
+	c.add_modifier({"id": "test_root", "source": -1, "expires": w3.time + 5.0, "root": true})
+	c.ability_ready["blur_strike"] = w3.time
+	check(w3.abilities.cast_error(c, "blur_strike", -1, null, o) == "Rooted", "not while rooted")
+
+func test_araki_djin_bomb() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "araki", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(600, 0))
+	run(w, 0.1)
+	var mr0 := foe.magic_resist
+	w.command(a.id, {"type": O.CAST_POINT, "ability": "djin_bomb", "point": o + Vector2(600, 0)})
+	run(w, 0.5)
+	check(foe.get_modifier("djin_bomb").is_empty(), "nothing before the bomb lands")
+	run(w, 0.4)
+	var m := foe.get_modifier("djin_bomb")
+	check(not m.is_empty(), "inside the cloud")
+	near(foe.magic_resist, 1.0 - (1.0 - mr0) * 1.25, 0.001, "25% less magic resistance at level 4")
+	near(foe.status_resist, -0.25, 0.001, "25% less status resistance")
+	var s1 := float(m.get("slow", 0.0))
+	run(w, 2.0)
+	var s3 := float(foe.get_modifier("djin_bomb").get("slow", 0.0))
+	check(s3 > s1 + 0.2, "the slow grows every second inside (%.2f -> %.2f)" % [s1, s3])
+	near(s3, 0.14 * 3.0, 0.001, "14% a second at level 4")
+	foe.pos = o + Vector2(1400, 0)
+	run(w, 0.7)
+	check(foe.get_modifier("djin_bomb").is_empty(), "it fades soon after leaving")
+	near(foe.magic_resist, mr0, 0.001, "magic resistance back")
+	foe.pos = o + Vector2(600, 0)
+	run(w, 3.0)
+	check(foe.get_modifier("djin_bomb").is_empty(), "the cloud lasts 5 seconds")
+
+func test_araki_ghosts() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "araki", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(600, 0))
+	run(w, 0.1)
+	var hp0 := foe.hp
+	w.command(a.id, {"type": O.CAST_UNIT, "ability": "ghosts_of_the_will", "target": foe.id})
+	run(w, 0.6)
+	var alive := w.units.filter(func(u): return u.alive and String(u.def.id) == "araki_ghost")
+	check(alive.size() >= 1 and alive.size() < 9, "the ghosts come one by one (%d)" % alive.size())
+	run(w, 4.0)
+	check(_events_of(w, "ghost_hit").size() == 9, "9 ghosts strike at level 4 (%d)" % _events_of(w, "ghost_hit").size())
+	check(w.abilities.kits7.stacks_on(a, foe) == 9, "each adds a Senryukai stack")
+	var one := 0.55 * (a.dmg_min + a.dmg_max) * 0.5
+	check(hp0 - foe.hp > 9.0 * one * 0.8, "each strikes for 55%% of his attack (%.0f)" % (hp0 - foe.hp))
+	check(w.units.filter(func(u): return u.alive and String(u.def.id) == "araki_ghost").is_empty(), "and they are gone")
+	# one hit destroys a ghost
+	w.abilities.cooldown_left(a, "ghosts_of_the_will")
+	a.ability_ready["ghosts_of_the_will"] = w.time
+	a.mana = a.max_mana
+	w.command(a.id, {"type": O.CAST_UNIT, "ability": "ghosts_of_the_will", "target": foe.id})
+	run(w, 0.5)
+	var g: SimUnit = null
+	for u in w.units:
+		if u.alive and String(u.def.id) == "araki_ghost":
+			g = u
+	check(g != null, "a ghost is out")
+	if g != null:
+		w.combat.deal_damage(foe.id, foe.team, false, g, 1.0, C.DamageType.PHYSICAL, true, "attack")
+		run(w, 0.1)
+		check(not g.alive, "one hit and it is gone")
+
+func test_araki_the_blur() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "araki", o)
+	_plain(w, "dusk_melee", C.DUSK, o + Vector2(2000, 0))
+	run(w, 0.1)
+	a.ability_ready["djin_bomb"] = w.time + 10.0
+	var as0 := a.attack_speed
+	w.command(a.id, {"type": O.CAST_NO_TARGET, "ability": "the_blur"})
+	run(w, 0.2)
+	near(a.attack_speed - as0, 100.0, 0.01, "+100 attack speed at level 3")
+	near(w.abilities.cooldown_left(a, "djin_bomb"), 5.0 - 0.2, 0.1, "the running cooldown is halved")
+	near(w.abilities.ability_cooldown(a, "blur_strike"), 5.0, 0.01, "Blur Strike's cooldown is 5 s")
+	near(w.abilities.ability_cooldown(a, "djin_bomb"), 6.0, 0.01, "Djin Bomb's 6 s")
+	near(w.abilities.ability_cooldown(a, "ghosts_of_the_will"), 18.0, 0.01, "Ghosts of the Will's is not")
+	check(w.abilities.kits7.blur_attacks(a) == 21, "21 fast attacks")
+	for k in 20:
+		w.abilities.kits7.on_attack_released(a)
+	a.refresh_stats()
+	near(a.attack_speed - as0, 100.0, 0.01, "still fast after 20")
+	w.abilities.kits7.on_attack_released(a)
+	near(a.attack_speed, as0, 0.01, "the 21st attack ends the speed")
+	near(w.abilities.ability_cooldown(a, "blur_strike"), 5.0, 0.01, "the cooldowns stay halved")
+	run(w, 19.0)
+	near(w.abilities.ability_cooldown(a, "blur_strike"), 10.0, 0.01, "19 s later they are back")
+
+func test_araki_data() -> void:
+	var d := SimData.unit("araki")
+	check(not d.is_empty() and d.kind == K.HERO, "Araki is a hero")
+	check(String(d.primary) == "agi" and int(d.element) == C.Element.NONE, "agility, no element (Neutral)")
+	near(float(d.agi_gain), 2.8, 1e-6, "2.8 agility a level")
+	near(float(d.int_gain), 2.1, 1e-6, "2.1 intelligence a level")
+	near(float(d.str_gain), 1.7, 1e-6, "1.7 strength a level")
+	near(float(d.range), 150.0, 0.01, "melee")
+	check(String(d.innate) == "senryukai", "Senryukai is his innate")
+	check(SimData.ultimate_of(d.abilities) == "the_blur", "The Blur is his ultimate")
+	check((d.talents as Array).size() == 4, "4 talent tiers")
+	for tier in d.talents:
+		for tid in tier:
+			check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+	for aid in (d.abilities as Array) + ["senryukai"]:
+		check(not SimData.ability(String(aid)).is_empty(), "%s exists" % aid)
+		check(UiKit.ABILITY_ICONS.has(String(aid)), "%s has its own icon" % aid)
+	check(SimBotKits.SKILLS.has("araki") and SimBotKits.TALENTS.has("araki"), "bots know his skill and talent order")
+	check(SimBot19.handles("araki"), "bots play his kit")
+	for aid in SimBotKits.SKILLS.get("araki", []):
+		check(String(aid) in d.abilities, "his skill order names his own skill %s" % aid)
+	check("araki" in GameSettings.HEROES and "araki" in GameSettings.OWN_BODY, "pickable, with his own body")
+	near(float(SimData.ability("blur_strike").mana[0]), 90.0, 0.01, "Blur Strike 90 mana at level 1")
+	near(float(SimData.ability("blur_strike").values.damage[3]), 140.0, 0.01, "Blur Strike 140 at level 4")
+	near(float(SimData.ability("ghosts_of_the_will").values.ghosts[3]), 9.0, 0.01, "9 ghosts at level 4")
+	near(float(SimData.ability("ghosts_of_the_will").mana[0]), 110.0, 0.01, "Ghosts of the Will 110 mana (owner, 2026-10-19 c)")
+	near(float(SimData.ability("ghosts_of_the_will").cooldown[0]), 21.0, 0.01, "Ghosts of the Will 21 s at level 1")
+	near(float(SimData.ability("ghosts_of_the_will").cooldown[3]), 18.0, 0.01, "18 s at level 4")
+	near(float(SimData.ability("the_blur").cooldown[2]), 40.0, 0.01, "The Blur 40 s at level 3")
+	near(float(SimData.ability("djin_bomb").values.slow_per_second[3]), 0.14, 1e-6, "Djin Bomb 14% a second at level 4")

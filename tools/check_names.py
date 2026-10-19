@@ -80,6 +80,8 @@ OWNER_NAMES = [
     # 2026-10-16: Roydo and Blau with their titles and abilities
     "Roydo", "the Anomaly", "Anomaly", "Grip of the Ruler", "Void Rush", "Dark Matter Skin", "Blau",
     "the Master Tactician", "Master Tactician", "Bounce Shot", "Summon Boulders", "Lay Trap", "Place Turret",
+    # 2026-10-19 b: the ranked ranks (Rookie .. Transcendent are plain words; Aetherium and Aetherium+ are the owner's)
+    "Aetherium",
 ]
 # The owner named the pure damage type "Aether" (2026-10-14). Only these exact texts may use it, so a new
 # "Aether ..." compound is still caught.

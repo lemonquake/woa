@@ -22,7 +22,7 @@ const SEAM := 6.0                           # degrees beyond the loop's own step
 const SEAM_CM := 3.0
 const SLIDE := [0.75, 1.3]                  # planted foot speed / ground speed
 const FLOOR := -0.02                        # metres: a trunk bone this far under the floor
-const BODIES := ["hero_emelrich", "hero_feran", "hero_burak", "hero_airah", "hero_ghorman", "hero_ghorman_beast"]
+const BODIES := ["hero_emelrich", "hero_feran", "hero_burak", "hero_airah", "hero_ghorman", "hero_ghorman_beast", "hero_araki"]
 
 var _models: Array = []
 var _out := ""

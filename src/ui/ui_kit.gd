@@ -103,7 +103,9 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"knife_juggle": "skills/gen/knife_juggle", "joke_box": "skills/gen/joke_box", "swap": "skills/gen/swap",
 	"shuffle": "skills/gen/shuffle", "tame": "skills/gen/tame", "roar": "skills/gen/roar",
 	"pack_leader": "skills/gen/pack_leader", "blessing_of_the_beast_king": "skills/gen/blessing_of_the_beast_king",
-	"beast_form": "skills/gen/beast_form"}
+	"beast_form": "skills/gen/beast_form", "senryukai": "skills/gen/senryukai", "blur_strike": "skills/gen/blur_strike",
+	"djin_bomb": "skills/gen/djin_bomb", "ghosts_of_the_will": "skills/gen/ghosts_of_the_will",
+	"the_blur": "skills/gen/the_blur"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
 const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}

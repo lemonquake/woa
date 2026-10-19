@@ -78,6 +78,17 @@ const MODELS := {
 	"hero_feran": {"scene": H17 + "feran.glb", "scale": 1.0, "attack": ["dagger_1", "dagger_2"],
 		"cast": "cast_quick", "idle": "idle_dagger", "run": "hero_run", "run_min": 0.72, "death": "death",
 		"R": "throwing_knife", "L": "", "proj": "knife", "bar": 2.4},
+	# Araki (run 2026-10-19 c): the Shadowflame Samurai (dark_igorek, CC BY 4.0; tools/blender/araki_prep.py, then
+	# hero_body.py), his katana cut out of the same model (tools/blender/araki_katana.py, prep_weapon.py) in the right
+	# hand; green soul-fire trails behind his cuts. His ghosts (Ghosts of the Will) are the same body, see-through
+	# ("ghost": UnitView's ghost shader), hovering
+	"hero_araki": {"scene": H17 + "araki.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
+		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "araki_katana", "L": "", "bar": 2.5, "swing_trail": true, "trail_color": Color(0.55, 1.0, 0.45, 0.6)},
+	"araki_ghost": {"scene": H17 + "araki.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
+		"cast": "cast_quick", "idle": "hero_run", "run": "hero_run", "run_min": 0.9, "death": "death",
+		"R": "araki_katana", "L": "", "bar": 2.4, "ghost": Color(0.45, 1.0, 0.55), "float": 0.35, "bob": 0.06,
+		"swing_trail": true, "trail_color": Color(0.55, 1.0, 0.6, 0.5)},
 	# Tock: the hero body with a brass wand; his bolts are golden orbs
 	"hero_tock": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["wand_1", "wand_2", "wand_3"],
 		"cast": "cast_quick", "idle": "idle_wand", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
@@ -156,7 +167,9 @@ const MODELS := {
 ## its MODELS entry when the library is present: idle, attack, cast and deaths are replaced, and "anims" turns the old
 ## clip names the game asks for (ability clips, hit reactions, stun, the stage's idle and flourish) into mocap ones.
 ## Run 2026-10-18 e added the runs (one per weapon: great sword, sword and shield, axe, bow, spell), Leap Strike's leap,
-## Caziel's dash-stab (his double stab) and the push clips (MOCAP_ALL). The spinning third great sword slash is left out:
+## Caziel's dash-stab (his double stab) and the push clips (MOCAP_ALL). Tock and Airah stand in spell_idle, not
+## spell_idle_2: that clip's stance turns the body about 60 degrees away from where the hero faces (run 2026-10-19 c:
+## she showed the back of her head in her portrait and both faced off to the side in the versus shot). The spinning third great sword slash is left out:
 ## its body turns half round while it fades in, and no crossfade from a stance gets there without a flip. Azrin and Azrael keep their staff idle and glide; Azrael swings only
 ## the slashes whose blade head moves the way her scythe's blade faces (swing_dir.gd).
 const MOCAP := {
@@ -189,9 +202,9 @@ const MOCAP := {
 		"death": "death_from_front", "deaths": ["death_from_front", "death_from_back"],
 		"anims": {"idle_shadowblade": "knife_idle", "blink": "dagger_stab_1", "hit_heavy": "hit_big", "hit_light": "hit_small",
 			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
-	"hero_tock": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle_2", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
+	"hero_tock": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
 		"cast": "spell_quick", "death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
-		"anims": {"idle_wand": "spell_idle_2", "cast_quick": "spell_quick", "cast_area": "spell_area",
+		"anims": {"idle_wand": "spell_idle", "cast_quick": "spell_quick", "cast_area": "spell_area",
 			"cast_ultimate": "spell_big", "wand_heavy": "spell_wave", "hit_heavy": "hit_big", "hit_light": "hit_small",
 			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
 	"hero_kragg": {"run": "shield_run", "run_female": "shield_run", "idle": "shield_idle", "attack": ["shield_slash_1", "shield_slash_2", "shield_slash_3"],
@@ -220,10 +233,20 @@ const MOCAP := {
 		"deaths": ["death_from_front", "death_from_back"],
 		"anims": {"idle_dagger": "knife_idle", "cast_quick": "spell_quick", "hit_heavy": "hit_big", "hit_light": "hit_small",
 			"hit_front": "hit_small", "idle_hurt": "dizzy"}},
-	"hero_airah": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle_2", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
+	"hero_airah": {"run": "spell_run", "run_female": "spell_run", "idle": "spell_idle", "attack": ["spell_strike_1", "spell_strike_2", "spell_strike_3"],
 		"cast": "spell_area", "death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
-		"anims": {"idle_mage": "spell_idle_2", "cast_area": "spell_area", "cast_quick": "spell_quick",
+		"anims": {"idle_mage": "spell_idle", "cast_area": "spell_area", "cast_quick": "spell_quick",
 			"hit_heavy": "hit_big", "hit_light": "hit_small", "hit_front": "hit_small", "idle_hurt": "dizzy"}},
+	# Araki swings his katana with the great sword set (two hands on the grip), quick cuts
+	"hero_araki": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_idle", "cast": "greatsword_cast",
+		"death": "greatsword_death_1", "attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"],
+		"deaths": ["greatsword_death_1", "greatsword_death_2"],
+		"anims": {"idle_2h": "greatsword_idle", "cast_quick": "greatsword_cast", "cast_weapon": "greatsword_cast",
+			"boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit", "hit_light": "greatsword_hit_small",
+			"hit_front": "greatsword_hit_small", "idle_hurt": "dizzy"}},
+	"araki_ghost": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_run",
+		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"], "death": "greatsword_death_1",
+		"deaths": ["greatsword_death_1"], "anims": {"idle_2h": "greatsword_idle"}},
 	"hero_azrael": {"attack": ["greatsword_slash_1", "greatsword_slash_2"], "cast": "greatsword_cast",
 		"death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
 		"anims": {"cast_quick": "greatsword_cast", "cast_heavy": "spell_heavy", "cast_ultimate": "spell_big",

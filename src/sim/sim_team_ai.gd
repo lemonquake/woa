@@ -154,6 +154,11 @@ func assign_lanes() -> void:
 	for h in ms:
 		if h.bot:
 			continue
+		# ranked: the role you were matched into (Matchmaker) holds
+		if fixed_role.has(h.id) and int(fixed_role[h.id]) in need:
+			roles[h.id] = int(fixed_role[h.id])
+			need.erase(int(fixed_role[h.id]))
+			continue
 		var lk := String(player_lane.get(h.id, player_pref.get(h.id, "")))
 		if lk == "":
 			lk = BotMemory.player_lane(String(h.def.id))
@@ -201,6 +206,16 @@ func assign_lanes() -> void:
 		lane_of[h.id] = lane_name(KITS.ROLE_LANE[int(roles[h.id])], team)
 		var b := bot_of(h.id)
 		if b != null:
+			# ranked: a disruptive bot may take the lane it wants (mid most often) over the one it was given, decided
+			# once a match
+			if b.disrupt > 0.0 and b.lane_grab == "":
+				b.lane_grab = "-"
+				if rng.randf() < b.disrupt * 0.7:
+					var want := "mid" if rng.randf() < 0.6 else lane_name(["safe", "off"][rng.randi_range(0, 1)], team)
+					if want != String(lane_of[h.id]):
+						b.lane_grab = want
+			if b.lane_grab != "" and b.lane_grab != "-":
+				lane_of[h.id] = b.lane_grab
 			b.set_role(int(roles[h.id]), String(lane_of[h.id]))
 
 func _role_for_lane_kind(lk: String, hero: String, need: Array) -> int:
@@ -220,12 +235,24 @@ func _announce_lanes() -> void:
 		var r := int(roles.get(h.id, 0))
 		var ln := lane_label(String(lane_of.get(h.id, "mid")))
 		var text := "I'll go %s." % ln
+		var b := bot_of(h.id)
+		if b != null and b.lane_grab != "" and b.lane_grab != "-":
+			var grab: Array = ["%s or feed" % ln, "ako %s" % ln, "I'm going %s, deal with it" % ln, "akin ang %s" % ln,
+				"basta ako %s" % ln, "%s is mine" % ln]
+			say(h, String(grab[rng.randi_range(0, grab.size() - 1)]), "lane_%d" % h.id, 9999.0, true)
+			continue
+		var kind := "lane_mid" if String(lane_of.get(h.id, "mid")) == "mid" else "lane_off"
+		var f := {"lane": ln}
 		if r == 5 or r == 4:
 			var core := _core_in_lane(String(lane_of[h.id]), h)
 			text = "I'll support %s in the %s lane." % [_name_of(core), ln] if core != null else "I'll support the %s lane." % ln
+			kind = "lane_sup"
+			if core != null:
+				f["core"] = hero_label(core) if core.bot else _name_of(core)
 		elif r == 1:
 			text = "I'll farm the %s lane (safe lane)." % ln
-		say(h, text, "lane_%d" % h.id, 9999.0, true)
+			kind = "lane_safe"
+		say(h, text, "lane_%d" % h.id, 9999.0, true, kind, f)
 
 func _core_in_lane(lane: String, not_h: SimUnit) -> SimUnit:
 	for h in members():
@@ -273,12 +300,13 @@ func _watch_players() -> void:
 			if m.bot and String(old.get(m.id, "")) != String(lane_of.get(m.id, "")):
 				var ln := lane_label(String(lane_of[m.id]))
 				var r := int(roles.get(m.id, 0))
+				var sf := {"lane": lane_label(best), "lane2": ln}
 				if String(old.get(m.id, "")) == best:
-					say(m, "You're %s? Okay, I'll go %s." % [lane_label(best), ln], "swap_%d_%s" % [m.id, best], 60.0, true)
+					say(m, "You're %s? Okay, I'll go %s." % [lane_label(best), ln], "swap_%d_%s" % [m.id, best], 60.0, true, "lane_swap", sf)
 				elif r >= 4 and String(lane_of[m.id]) == best:
-					say(m, "I'll support you in the %s lane." % ln, "swap_%d_%s" % [m.id, best], 60.0, true)
+					say(m, "I'll support you in the %s lane." % ln, "swap_%d_%s" % [m.id, best], 60.0, true, "lane_sup_you", sf)
 				else:
-					say(m, "Going %s so no lane is empty." % ln, "swap_%d_%s" % [m.id, best], 60.0, true)
+					say(m, "Going %s so no lane is empty." % ln, "swap_%d_%s" % [m.id, best], 60.0, true, "lane_fill", sf)
 
 # ---- What the team knows ----------------------------------------------------------------------------------------------
 
@@ -518,7 +546,8 @@ func _call_defence() -> void:
 			existing = _new_plan("defend", lane, b.id, b.pos, 25.0)
 			if heroes > 0:
 				var first := _first_bot()
-				if first != null and say(first, "They're hitting our %s %s. Defend!" % [lane_label(lane), _building_word(b)], "def_%d" % b.id, 40.0):
+				if first != null and say(first, "They're hitting our %s %s. Defend!" % [lane_label(lane), _building_word(b)], "def_%d" % b.id, 40.0,
+						false, "def", {"lane": lane_label(lane), "bld": _building_word(b)}):
 					w.ping(team, b.pos, first.id, b.id, "defend")
 		existing.until = w.time + 12.0
 		var have := (existing.members as Dictionary).size()
@@ -552,7 +581,8 @@ func _call_defence() -> void:
 			if heroes > 0:
 				var e := eta(h, b.pos)
 				say(h, "Coming to defend (TP)." if e.tp else "Coming to defend, %d s." % ceili(float(e.time)),
-					"defgo_%d_%d" % [h.id, b.id], 30.0)
+					"defgo_%d_%d" % [h.id, b.id], 30.0, false, "def_tp" if e.tp else "def_go",
+					{"sec": ceili(float(e.time)), "lane": lane_label(lane)})
 
 func _building_word(b: SimUnit) -> String:
 	match b.kind:
@@ -665,11 +695,12 @@ func _call_ganks() -> void:
 		var ln := lane_label(lane_of_point(e.pos))
 		var text := "Their %s %s in the %s lane. Going for the kill" % [hero_label(e), why, ln]
 		text += (", %s come too." % " and ".join(names)) if not names.is_empty() else "."
-		if say(lead, text, "gank_%d" % e.id, 25.0):
+		if say(lead, text, "gank_%d" % e.id, 25.0, false, "gank", {"hero": hero_label(e), "lane": ln}):
 			w.ping(team, e.pos, lead.id, e.id, "attack")
 		for i in range(1, chosen.size()):
 			var et2 := eta(chosen[i], e.pos)
-			say(chosen[i], "Coming (TP)." if et2.tp else "On my way.", "gank_go_%d_%d" % [chosen[i].id, e.id], 25.0)
+			say(chosen[i], "Coming (TP)." if et2.tp else "On my way.", "gank_go_%d_%d" % [chosen[i].id, e.id], 25.0, false,
+				"gank_tp" if et2.tp else "gank_go", {"hero": hero_label(e)})
 
 # ---- Calls: counter-ganks ----------------------------------------------------------------------------------------------
 
@@ -747,10 +778,11 @@ func _call_saves() -> void:
 		var lead: SimUnit = helpers[0]
 		var et0 := eta(lead, v.pos)
 		var text := "Hold on, %s! %s." % [_name_of(v), "TP coming" if bool(et0.tp) else "Coming"]
-		if say(lead, text, "save_%d" % v.id, 20.0, true):
+		var sv := {"ally": hero_label(v) if v.bot else (v.player_label() if v.player_label() != "" else hero_label(v))}
+		if say(lead, text, "save_%d" % v.id, 20.0, true, "save_tp" if bool(et0.tp) else "save", sv):
 			w.ping(team, v.pos, lead.id, focus.id, "defend")
 		if v.bot and helpers.size() >= 1:
-			say(v, "Running to you, help me turn on them.", "save_run_%d" % v.id, 20.0)
+			say(v, "Running to you, help me turn on them.", "save_run_%d" % v.id, 20.0, false, "save_run")
 		return                             # one call per think
 
 ## The ganker to turn on: the one hurting the victim most lately, else the easiest to kill.
@@ -911,7 +943,7 @@ func _call_teamfight() -> void:
 		_fight_plan["d0"] = _deaths_of(team)
 		fights_called += 1
 		var who := _first_bot_of(best_al)
-		if who != null and say(who, "Fight! Focus their %s." % hero_label(focus), "teamfight", 20.0, true):
+		if who != null and say(who, "Fight! Focus their %s." % hero_label(focus), "teamfight", 20.0, true, "teamfight", {"hero": hero_label(focus)}):
 			w.ping(team, focus.pos, who.id, focus.id, "attack")
 	_fight_plan.target = focus.id
 	_fight_plan.pos = focus.pos
@@ -1069,8 +1101,9 @@ func _call_push() -> void:
 	pushes_called += 1
 	var lead := w.get_unit(int((p.members as Dictionary).keys()[0]))
 	var why := "%d of them are dead" % dead if dead >= 2 else ("we have more heroes up" if aa - ea >= 2 else 		("we're ahead in gold" if rich else "we're stronger now"))
+	var short_why := "%d dead" % dead if dead >= 2 else ("we have more up" if aa - ea >= 2 else ("we're richer" if rich else "we're stronger"))
 	say(lead, "%s. Let's push %s and take their %s." % [why.left(1).to_upper() + why.substr(1), lane_label(best), _building_word(target)],
-		"push_%d" % target.id, 45.0)
+		"push_%d" % target.id, 45.0, false, "push", {"lane": lane_label(best), "bld": _building_word(target), "why": short_why})
 
 ## From 25:00 a push gathers the whole team: bots that were dead or busy when it was called join it once they are
 ## free (alive, over half health, in no bigger play).
@@ -1112,7 +1145,7 @@ func _advance_pushes() -> void:
 		pushes_chained += 1
 		var lead := _first_bot_of(_members_of(p))
 		if lead != null:
-			say(lead, "Keep going, their %s next." % _building_word(nxt), "push_on_%d" % nxt.id, 30.0)
+			say(lead, "Keep going, their %s next." % _building_word(nxt), "push_on_%d" % nxt.id, 30.0, false, "push_on", {"bld": _building_word(nxt)})
 
 func _members_of(p: Dictionary) -> Array[SimUnit]:
 	var out: Array[SimUnit] = []
@@ -1161,7 +1194,8 @@ func _call_missing() -> void:
 		for h in members():
 			if h.bot and h.alive and String(lane_of.get(h.id, "")) == ln and h.pos.distance_to(s.pos) < 2500.0:
 				_missing_called[e.id] = w.time
-				say(h, "%s is missing from %s! Careful." % [hero_label(e), lane_label(ln)], "miss_%d" % e.id, 60.0)
+				say(h, "%s is missing from %s! Careful." % [hero_label(e), lane_label(ln)], "miss_%d" % e.id, 60.0, false, "miss",
+					{"hero": hero_label(e), "lane": lane_label(ln)})
 				break
 
 ## Four or more enemies seen together near one of ours: everyone near backs off unless we are stronger there.
@@ -1187,7 +1221,8 @@ func _call_danger() -> void:
 				if a.bot:
 					p.members[a.id] = true
 			var who := h if h.bot else _first_bot()
-			if who != null and say(who, "%d of them together near %s! Back off." % [es.size(), lane_label(lane_of_point(h.pos))], "danger", 20.0):
+			if who != null and say(who, "%d of them together near %s! Back off." % [es.size(), lane_label(lane_of_point(h.pos))], "danger", 20.0,
+					false, "danger", {"n": es.size(), "lane": lane_label(lane_of_point(h.pos))}):
 				w.ping(team, es[0].pos, who.id, -1, "danger")
 			return
 
@@ -1253,7 +1288,7 @@ func _answer_ping(pg: Dictionary) -> void:
 					if q != p and q.kind in ["gank", "push"] and (q.members as Dictionary).has(h.id):
 						(q.members as Dictionary).erase(h.id)
 				if not any:
-					say(h, "Okay, backing off.", "ping_ok_%d" % pg.id, 0.0, true)
+					say(h, "Okay, backing off.", "ping_ok_%d" % pg.id, 0.0, true, "ok_back")
 					any = true
 		return
 	if kind == "attack" and t != null and t.is_hero():
@@ -1304,7 +1339,7 @@ func _answer_ping(pg: Dictionary) -> void:
 		var h: SimUnit = rp[0]
 		var r: Dictionary = rp[1]
 		if bool(r.ok) and yes >= cap:
-			r = {"ok": false, "text": "Enough of us are going, I'll hold my lane." if h.pos.distance_to(where) < 5000.0 else ""}
+			r = {"ok": false, "text": "Enough of us are going, I'll hold my lane." if h.pos.distance_to(where) < 5000.0 else "", "k": "p_enough"}
 		if bool(r.ok):
 			plan.members[h.id] = true
 			yes += 1
@@ -1312,7 +1347,7 @@ func _answer_ping(pg: Dictionary) -> void:
 		var near := h.alive and h.pos.distance_to(where) < 3500.0
 		if bool(r.ok) or near or answered < 2:
 			if String(r.text) != "":
-				say(h, String(r.text), "ping_%d_%d" % [pg.id, h.id], 0.0, true)
+				say(h, String(r.text), "ping_%d_%d" % [pg.id, h.id], 0.0, true, String(r.get("k", "")), r.get("f", {}))
 				answered += 1
 	if yes == 0:
 		plans.erase(plan)
@@ -1322,23 +1357,27 @@ func _ping_reply(h: SimUnit, plan: Dictionary, tu: SimUnit) -> Dictionary:
 	var where: Vector2 = plan.pos
 	if not h.alive:
 		var left := ceili(maxf(0.0, h.respawn_at - w.time))
-		return {"ok": false, "text": "I'm dead, back in %d s." % left}
+		return {"ok": false, "text": "I'm dead, back in %d s." % left, "k": "p_dead", "f": {"sec": left}}
 	if h.hp < h.max_hp * 0.3:
-		return {"ok": false, "text": "I'm low on health (%d%%), healing first." % roundi(h.hp / h.max_hp * 100.0)}
+		return {"ok": false, "text": "I'm low on health (%d%%), healing first." % roundi(h.hp / h.max_hp * 100.0), "k": "p_low",
+			"f": {"pct": roundi(h.hp / h.max_hp * 100.0)}}
 	var cur := task_for(h.id)
 	if not cur.is_empty() and cur.kind == "defend" and kind != "defend" and int(cur.target) != int(plan.target):
-		return {"ok": false, "text": "I'm defending our %s tower." % lane_label(String(cur.lane))}
+		return {"ok": false, "text": "I'm defending our %s tower." % lane_label(String(cur.lane)), "k": "p_defending",
+			"f": {"lane": lane_label(String(cur.lane))}}
 	var e := eta(h, where)
 	var far := float(e.time) > (22.0 if kind == "defend" else 18.0)
 	if far:
 		var tp_cd := w.abilities.cooldown_left(h, "tp")
 		if h.tp_charges <= 0:
-			return {"ok": false, "text": "I have no TP and it's too far (%d s away)." % ceili(float(e.time))}
+			return {"ok": false, "text": "I have no TP and it's too far (%d s away)." % ceili(float(e.time)), "k": "p_no_tp",
+				"f": {"sec": ceili(float(e.time))}}
 		if tp_cd > 0.0:
-			return {"ok": false, "text": "My TP is on cooldown (%d s) and it's too far." % ceili(tp_cd)}
+			return {"ok": false, "text": "My TP is on cooldown (%d s) and it's too far." % ceili(tp_cd), "k": "p_tp_cd", "f": {"sec": ceili(tp_cd)}}
 		if h.mana < C.TP_MANA:
-			return {"ok": false, "text": "Not enough mana to teleport."}
-		return {"ok": false, "text": "Too far (%d s away) and no tower of ours near there to teleport to." % ceili(float(e.time))}
+			return {"ok": false, "text": "Not enough mana to teleport.", "k": "p_no_mana_tp"}
+		return {"ok": false, "text": "Too far (%d s away) and no tower of ours near there to teleport to." % ceili(float(e.time)), "k": "p_far",
+			"f": {"sec": ceili(float(e.time))}}
 	if kind == "gank" and tu != null:
 		var ours := KITS.power(w, h, tu)
 		for a in allies_near(where, 1800.0):
@@ -1350,33 +1389,35 @@ func _ping_reply(h: SimUnit, plan: Dictionary, tu: SimUnit) -> Dictionary:
 			theirs += KITS.power(w, x, h)
 			n += 1
 		if n >= 2 and theirs > ours * 1.5:
-			return {"ok": false, "text": "Too risky, I see %d of them there." % n}
+			return {"ok": false, "text": "Too risky, I see %d of them there." % n, "k": "p_risky", "f": {"n": n}}
 		if h.mana < h.max_mana * 0.25 and KITS.burst(w, h, tu) <= 0.0:
-			return {"ok": false, "text": "I'm out of mana, I'd be no help."}
+			return {"ok": false, "text": "I'm out of mana, I'd be no help.", "k": "p_oom"}
 		var ult := KITS.ultimate(h)
 		if ult != "" and h.ability_level_of(ult) > 0 and w.abilities.cooldown_left(h, ult) > 20.0 and rng.randf() < 0.35:
-			return {"ok": false, "text": "My ultimate is on cooldown (%d s). Wait for it." % ceili(w.abilities.cooldown_left(h, ult))}
+			return {"ok": false, "text": "My ultimate is on cooldown (%d s). Wait for it." % ceili(w.abilities.cooldown_left(h, ult)), "k": "p_ult_cd",
+				"f": {"sec": ceili(w.abilities.cooldown_left(h, ult))}}
 	if kind == "push":
 		if enemies_alive() > allies_alive() + 1:
-			return {"ok": false, "text": "They have more heroes up. Too risky to push now."}
+			return {"ok": false, "text": "They have more heroes up. Too risky to push now.", "k": "p_more_up"}
 	# the carry keeps farming early unless it is close by
 	var role := int(roles.get(h.id, 3))
 	if role == 1 and w.time < 900.0 and float(e.time) > 10.0 and kind != "defend" and rng.randf() < 0.6:
-		return {"ok": false, "text": "I need to farm my lane right now, sorry."}
+		return {"ok": false, "text": "I need to farm my lane right now, sorry.", "k": "p_farm"}
 	# sometimes a bot simply prefers what it is doing (not every ping is agreed to)
 	if kind in ["gank", "push", "group"] and rng.randf() < 0.12:
-		return {"ok": false, "text": "I'd rather keep farming, the timing isn't good for me."}
+		return {"ok": false, "text": "I'd rather keep farming, the timing isn't good for me.", "k": "p_timing"}
 	if bool(e.tp):
-		return {"ok": true, "text": "Coming, I'll teleport."}
+		return {"ok": true, "text": "Coming, I'll teleport.", "k": "p_tp"}
 	var secs := ceili(float(e.time))
 	match kind:
 		"push":
-			return {"ok": true, "text": "Okay, pushing %s with you." % lane_label(String(plan.lane)) if secs < 6 else "Okay, pushing %s. %d s away." % [lane_label(String(plan.lane)), secs]}
+			return {"ok": true, "text": "Okay, pushing %s with you." % lane_label(String(plan.lane)) if secs < 6 else "Okay, pushing %s. %d s away." % [lane_label(String(plan.lane)), secs],
+				"k": "p_push", "f": {"lane": lane_label(String(plan.lane)), "sec": secs}}
 		"defend":
-			return {"ok": true, "text": "Coming to defend." if secs < 6 else "Coming to defend, %d s." % secs}
+			return {"ok": true, "text": "Coming to defend." if secs < 6 else "Coming to defend, %d s." % secs, "k": "p_def", "f": {"sec": secs}}
 		"gank":
-			return {"ok": true, "text": "On my way." if secs < 6 else "On my way, %d s." % secs}
-	return {"ok": true, "text": "Coming." if secs < 6 else "Coming, %d s." % secs}
+			return {"ok": true, "text": "On my way." if secs < 6 else "On my way, %d s." % secs, "k": "p_omw", "f": {"sec": secs}}
+	return {"ok": true, "text": "Coming." if secs < 6 else "Coming, %d s." % secs, "k": "p_omw", "f": {"sec": secs}}
 
 func _building_near(p: Vector2, p_team: int, r: float) -> SimUnit:
 	var best: SimUnit = null
@@ -1425,7 +1466,7 @@ func on_player_chat(h: SimUnit, text: String) -> void:
 		else:
 			var b := _first_bot()
 			if b != null:
-				say(b, "I don't see anyone to gank right now.", "nogank", 10.0, true)
+				say(b, "I don't see anyone to gank right now.", "nogank", 10.0, true, "nogank")
 		return
 	if t.contains("group") or t.contains("come") or t.contains("help"):
 		on_ping({"id": -_plan_id, "team": team, "pos": h.pos, "kind": "defend", "target": h.id, "from": h.id, "t": w.time})
@@ -1434,8 +1475,10 @@ func on_player_chat(h: SimUnit, text: String) -> void:
 
 ## A bot says something in team chat. Lines are rate limited so chat stays readable: one line per key per `every`
 ## seconds, a bot at most every 6 s and the team at most every 2 s (`urgent` lines, such as ping replies, skip the
-## last two limits).
-func say(h: SimUnit, text: String, key := "", every := 30.0, urgent := false) -> bool:
+## last two limits). kind and f (run 2026-10-19 d): what the call is and its facts, so the bot types it the way a
+## player would ("tp cd 40s", "sludge ss", "omw") in its own voice (SimBotChat.casual); some calls a player would not
+## bother typing are left out (the plan still happens).
+func say(h: SimUnit, text: String, key := "", every := 30.0, urgent := false, kind := "", f := {}) -> bool:
 	if h == null or text == "":
 		return false
 	if key != "" and w.time - float(_said.get(key, C.LONG_AGO)) < every:
@@ -1445,6 +1488,10 @@ func say(h: SimUnit, text: String, key := "", every := 30.0, urgent := false) ->
 			return false
 	if key != "":
 		_said[key] = w.time
+	if kind != "" and h.bot and w.botchat != null:
+		text = w.botchat.casual(h, kind, f, text, urgent)
+		if text == "":
+			return true                        # not typed: the call still counts as made
 	_last_chat = w.time
 	_bot_chat[h.id] = w.time
 	w.chat(team, h.id, text)

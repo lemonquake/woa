@@ -14,15 +14,15 @@ const ACCENTS := {
 	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0), "roydo": Color(0.62, 0.42, 1.0),
 	"blau": Color(0.35, 0.82, 1.0), "azrael": Color(0.92, 0.12, 0.16), "airah": Color(0.55, 0.92, 0.85),
 	"burak": Color(1.0, 0.32, 0.18), "emelrich": Color(1.0, 0.88, 0.55), "feran": Color(0.95, 0.25, 0.45),
-	"ghorman": Color(0.55, 0.85, 0.35)}
+	"ghorman": Color(0.55, 0.85, 0.35), "araki": Color(0.5, 1.0, 0.35)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
 	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
 	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy", "airah": "cast_area",
-	"burak": "war_cry", "emelrich": "boss_roar", "feran": "cast_quick", "ghorman": "war_cry"}
+	"burak": "war_cry", "emelrich": "boss_roar", "feran": "cast_quick", "ghorman": "war_cry", "araki": "boss_roar"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_staff", "sludge": "idle_1h",
 	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
 	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff", "airah": "idle_mage",
-	"burak": "idle_dual", "emelrich": "idle_2h", "feran": "idle_dagger", "ghorman": "idle_1h"}
+	"burak": "idle_dual", "emelrich": "idle_2h", "feran": "idle_dagger", "ghorman": "idle_1h", "araki": "idle_2h"}
 
 var hero_id := ""
 var model: Node3D
@@ -343,6 +343,19 @@ func _aim_portrait() -> void:
 			bi = skeleton.find_bone("Head")             # the Universal rig (Roydo, Blau)
 		if bi >= 0:
 			head = (skeleton.global_transform * skeleton.get_bone_global_pose(bi)).origin + Vector3(0, 0.05, 0)
+			# the camera goes in front of the face, wherever the stance turns it (run 2026-10-19 c: the great sword
+			# idle stands side-on, so Ser Emelrich and Araki showed a shoulder and the back of the helmet): the head's
+			# forward now is its rest forward (the model's +Z) carried by its pose; the 3/4 turn of `yaw` is kept
+			var rest := skeleton.get_bone_global_rest(bi).basis
+			var cur := skeleton.get_bone_global_pose(bi).basis
+			var f := skeleton.global_transform.basis * (cur * (rest.inverse() * Vector3(0, 0, 1)))
+			f.y = 0.0
+			if f.length() > 0.2 and model:
+				# the face points at angle `face` (from +Z toward +X); a front-facing model faces `yaw`: the model is
+				# turned back by the difference (the camera and the backdrop behind the hero stay put)
+				var face := atan2(f.x, f.z)
+				model.rotation.y = yaw - clampf(angle_difference(yaw, face), -1.4, 1.4)
+				head = (skeleton.global_transform * skeleton.get_bone_global_pose(bi)).origin + Vector3(0, 0.05, 0)
 	cam.position = head + Vector3(0.0, 0.05, 1.9)
 	cam.look_at(head - Vector3(0, 0.04, 0))
 
@@ -367,13 +380,46 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 	if _halo:
 		_halo.light_color = col
 	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
-	var own := id in GameSettings.OWN_BODY
-	model = (load(String(cfg.scene) if own else HeroLook.MODEL) as PackedScene).instantiate()
-	RepairedClips.patch(model)
-	add_child(model)
+	var built := make_hero(id, look, self)
+	model = built.model
+	anim = built.anim
+	skeleton = built.skeleton
 	model.rotation.y = yaw
+	_lift = float(built.lift)
+	model.position.y = _lift
+	_stage_aura(id, cfg)
+	framing(mode)
+	if anim:
+		# the motion-capture stand-ins of the stage clips, when the model has them (ModelCatalog.anim)
+		var idle := ModelCatalog.anim(cfg, String(IDLE.get(id, "idle")))
+		var fl := ModelCatalog.anim(cfg, String(FLOURISH.get(id, "")))
+		if flourish and anim.has_animation(fl):
+			_play(fl, false)
+			anim.queue(idle)
+			if anim.has_animation(idle) and skeleton:
+				# the flourish eases back into the idle (the queue's default blend is a cut)
+				var fa := anim.get_animation(fl)
+				var ia0 := anim.get_animation(idle)
+				anim.set_blend_time(fl, idle, AnimBlend.time_from(skeleton, AnimBlend.clip_pose(skeleton, fa, fa.length),
+					ia0, 0.0, 0.25))
+		else:
+			_play(idle, true)
+		var ia := anim.get_animation(idle)
+		if ia:
+			ia.loop_mode = Animation.LOOP_LINEAR
+
+## A hero's model as the stages show it (own body or the customisable one in its look, weapons in hand), added to
+## `parent`. Returns {model, anim, skeleton, lift (how high a floating hero hovers), cfg}. Used by show_hero() and the
+## ranked versus scene (VersusStage).
+static func make_hero(id: String, look: Dictionary, parent: Node) -> Dictionary:
+	var cfg := ModelCatalog.info(String(SimData.unit(id).model))
+	var own := id in GameSettings.OWN_BODY
+	var model := (load(String(cfg.scene) if own else HeroLook.MODEL) as PackedScene).instantiate() as Node3D
+	RepairedClips.patch(model)
+	parent.add_child(model)
 	var anims := model.find_children("*", "AnimationPlayer", true, false)
-	anim = anims[0] if not anims.is_empty() else null
+	var anim: AnimationPlayer = anims[0] if not anims.is_empty() else null
+	var skeleton: Skeleton3D = null
 	if own:
 		model.scale = Vector3.ONE * 0.92
 		var sks := model.find_children("*", "Skeleton3D", true, false)
@@ -406,28 +452,8 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 							m.metallic = 0.85
 							m.roughness = 0.3
 							mi.set_surface_override_material(i, m)
-	_lift = 0.38 if cfg.has("float") and skeleton != null else 0.0
-	model.position.y = _lift
-	_stage_aura(id, cfg)
-	framing(mode)
-	if anim:
-		# the motion-capture stand-ins of the stage clips, when the model has them (ModelCatalog.anim)
-		var idle := ModelCatalog.anim(cfg, String(IDLE.get(id, "idle")))
-		var fl := ModelCatalog.anim(cfg, String(FLOURISH.get(id, "")))
-		if flourish and anim.has_animation(fl):
-			_play(fl, false)
-			anim.queue(idle)
-			if anim.has_animation(idle) and skeleton:
-				# the flourish eases back into the idle (the queue's default blend is a cut)
-				var fa := anim.get_animation(fl)
-				var ia0 := anim.get_animation(idle)
-				anim.set_blend_time(fl, idle, AnimBlend.time_from(skeleton, AnimBlend.clip_pose(skeleton, fa, fa.length),
-					ia0, 0.0, 0.25))
-		else:
-			_play(idle, true)
-		var ia := anim.get_animation(idle)
-		if ia:
-			ia.loop_mode = Animation.LOOP_LINEAR
+	var lift := 0.38 if cfg.has("float") and skeleton != null else 0.0
+	return {"model": model, "anim": anim, "skeleton": skeleton, "lift": lift, "cfg": cfg}
 
 func _play(clip: String, loop: bool) -> void:
 	if anim == null or not anim.has_animation(clip):

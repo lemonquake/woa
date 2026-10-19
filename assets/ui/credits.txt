@@ -113,6 +113,12 @@ By not named in the download (the owner to fill in). Sketchfab (the owner's down
 [b]Ghorman's deer skull, hood, fur collar (recoloured gold as his mane), shoulder cape, belt and pouches, coat skirt, trousers, bracers and boots, fitted to his body[/b]
 By ArtLeaving (aptyphawk22). sketchfab.com/3d-models/9d4331e7b7524146a5a01aeb9a302a06. Licence: CC BY 4.0.
 
+[b]Araki's body (2026-10-19 c): "Shadowflame Samurai", its rest pose rebuilt and bound to the hero skeleton (tools/blender/araki_prep.py, hero_body.py); also his see-through ghosts and Blur Strike's echoes[/b]
+By dark_igorek. sketchfab.com/3d-models/03def921ed814b3a9de5c5962b86a45c. Licence: CC BY 4.0.
+
+[b]Araki's katana (2026-10-19 c): the katana of "Shadowflame Samurai", cut out as his weapon (tools/blender/araki_katana.py, prep_weapon.py)[/b]
+By dark_igorek. sketchfab.com/3d-models/03def921ed814b3a9de5c5962b86a45c. Licence: CC BY 4.0.
+
 [b]Ghorman's club and beard[/b]
 By Warriors of Aether (procedural, Blender 5.2). tools/blender/heroes17_gear.py, tools/blender/ghorman_prep.py. Licence: Project-owned.
 

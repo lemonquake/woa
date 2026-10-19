@@ -1,0 +1,203 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+DEATH 1 of araki at 2:20, killed by blood_ranger
+  2:09 lane     hp  53% mana   3% lvl 2 | blood_ranger 1209 away (61%), 0 enemy heroes in 1200, tower edge 3012, threat 1.86
+  2:10 lane     hp  54% mana   3% lvl 2 | blood_ranger 1183 away (62%), 1 enemy heroes in 1200, tower edge 2872, threat 1.88
+  2:10 lane     hp  54% mana   3% lvl 2 | blood_ranger 1106 away (63%), 1 enemy heroes in 1200, tower edge 2733, threat 1.90
+  2:11 lane     hp  54% mana   4% lvl 2 | blood_ranger 1010 away (64%), 1 enemy heroes in 1200, tower edge 2596, threat 1.92
+  2:11 retreat  hp  54% mana   4% lvl 2 | blood_ranger 1050 away (64%), 1 enemy heroes in 1200, tower edge 2633, threat 1.93
+  2:12 lane     hp  54% mana   4% lvl 2 | blood_ranger 958 away (65%), 1 enemy heroes in 1200, tower edge 2530, threat 1.05
+  2:12 lane     hp  55% mana   4% lvl 2 | blood_ranger 921 away (66%), 1 enemy heroes in 1200, tower edge 2490, threat 1.05
+  2:13 lane     hp  55% mana   4% lvl 2 | blood_ranger 921 away (67%), 1 enemy heroes in 1200, tower edge 2490, threat 1.06
+  2:13 lane     hp  55% mana   4% lvl 2 | blood_ranger 921 away (67%), 1 enemy heroes in 1200, tower edge 2490, threat 1.06
+  2:14 lane     hp  55% mana   5% lvl 2 | blood_ranger 921 away (68%), 1 enemy heroes in 1200, tower edge 2490, threat 1.30
+  2:14 lane     hp  42% mana   5% lvl 2 | blood_ranger 914 away (69%), 1 enemy heroes in 1200, tower edge 2523, threat 1.28
+  2:15 lane     hp  42% mana   5% lvl 2 | blood_ranger 812 away (70%), 1 enemy heroes in 1200, tower edge 2639, threat 1.28
+  2:15 lane     hp  42% mana   5% lvl 2 | blood_ranger 662 away (71%), 2 enemy heroes in 1200, tower edge 2639, threat 1.29
+  2:16 lane     hp  42% mana   5% lvl 2 | blood_ranger 662 away (71%), 2 enemy heroes in 1200, tower edge 2639, threat 1.29
+  2:16 lane     hp  35% mana   5% lvl 2 | blood_ranger 498 away (72%), 2 enemy heroes in 1200, tower edge 2469, threat 1.42
+  2:17 retreat  hp  23% mana   5% lvl 2 | blood_ranger 338 away (73%), 2 enemy heroes in 1200, tower edge 2300, threat 1.74
+  2:17 retreat  hp  16% mana   6% lvl 2 | blood_ranger 338 away (74%), 2 enemy heroes in 1200, tower edge 2300, threat 4.49
+  2:18 retreat  hp  13% mana   6% lvl 2 | blood_ranger 346 away (74%), 2 enemy heroes in 1200, tower edge 2304, threat 5.09
+  2:18 retreat  hp  13% mana   6% lvl 2 | roydo 366 away (35%), 2 enemy heroes in 1200, tower edge 2416, threat 5.08
+  2:19 retreat  hp   4% mana   6% lvl 2 | roydo 349 away (36%), 2 enemy heroes in 1200, tower edge 2545, threat 5.47
+  2:19 retreat  hp   2% mana   6% lvl 2 | roydo 315 away (37%), 2 enemy heroes in 1200, tower edge 2643, threat 11.46
+  2:20 retreat  hp   2% mana   6% lvl 2 | roydo 273 away (37%), 2 enemy heroes in 1200, tower edge 2688, threat 11.16
+DEATH 2 of araki at 3:33, killed by tower1
+  3:22 lane     hp  74% mana  17% lvl 5 | roydo 1513 away (100%), 0 enemy heroes in 1200, tower edge 231, threat 1.38
+  3:22 lane     hp  74% mana  17% lvl 5 | roydo 1449 away (100%), 0 enemy heroes in 1200, tower edge 314, threat 1.37
+  3:23 lane     hp  75% mana  17% lvl 5 | roydo 1297 away (100%), 0 enemy heroes in 1200, tower edge 314, threat 1.37
+  3:23 lane     hp  75% mana  17% lvl 5 | roydo 1153 away (100%), 1 enemy heroes in 1200, tower edge 314, threat 1.37
+  3:24 lane     hp  75% mana  17% lvl 5 | roydo 940 away (100%), 1 enemy heroes in 1200, tower edge 226, threat 1.37
+  3:24 lane     hp  75% mana  17% lvl 5 | roydo 795 away (100%), 1 enemy heroes in 1200, tower edge 84, threat 0.51
+  3:25 lane     hp  76% mana  18% lvl 5 | roydo 567 away (100%), 1 enemy heroes in 1200, tower edge -48, threat 0.51
+  3:25 lane     hp  62% mana  18% lvl 5 | roydo 438 away (100%), 1 enemy heroes in 1200, tower edge -75, threat 0.54
+  3:26 lane     hp  59% mana  18% lvl 5 | roydo 433 away (100%), 1 enemy heroes in 1200, tower edge -75, threat 0.54
+  3:26 lane     hp  59% mana  18% lvl 5 | roydo 433 away (100%), 1 enemy heroes in 1200, tower edge -32, threat 0.54
+  3:27 task     hp  60% mana  18% lvl 5 | roydo 220 away (100%), 1 enemy heroes in 1200, tower edge -91, threat 0.54
+  3:27 task     hp  54% mana  18% lvl 5 | roydo 170 away (83%), 1 enemy heroes in 1200, tower edge -110, threat 0.55
+  3:28 task     hp  53% mana  19% lvl 5 | roydo 130 away (83%), 1 enemy heroes in 1200, tower edge -110, threat 0.56
+  3:28 task     hp  46% mana  19% lvl 5 | roydo 130 away (81%), 1 enemy heroes in 1200, tower edge -110, threat 0.57
+  3:29 task     hp  45% mana  19% lvl 5 | roydo 130 away (67%), 1 enemy heroes in 1200, tower edge -110, threat 0.52
+  3:29 task     hp  38% mana  19% lvl 5 | roydo 130 away (66%), 1 enemy heroes in 1200, tower edge -110, threat 0.57
+  3:30 task     hp  37% mana  19% lvl 5 | roydo 130 away (59%), 1 enemy heroes in 1200, tower edge -110, threat 0.54
+  3:30 task     hp  31% mana  19% lvl 5 | roydo 130 away (54%), 1 enemy heroes in 1200, tower edge -110, threat 0.54
+  3:31 task     hp  22% mana  20% lvl 5 | roydo 130 away (49%), 1 enemy heroes in 1200, tower edge -110, threat 0.61
+  3:31 task     hp  23% mana  20% lvl 5 | roydo 130 away (47%), 1 enemy heroes in 1200, tower edge -110, threat 0.68
+  3:32 retreat  hp  13% mana  20% lvl 5 | roydo 134 away (44%), 1 enemy heroes in 1200, tower edge -108, threat 1.58
+  3:32 retreat  hp   6% mana  20% lvl 5 | roydo 245 away (45%), 1 enemy heroes in 1200, tower edge -56, threat 0.82
+DEATH 3 of araki at 4:50, killed by azrin
+  4:40 lane     hp  91% mana  12% lvl 6 | roydo 1040 away (100%), 1 enemy heroes in 1200, tower edge 2091, threat 1.13
+  4:41 lane     hp  91% mana  12% lvl 6 | roydo 994 away (100%), 2 enemy heroes in 1200, tower edge 2051, threat 1.12
+  4:41 retreat  hp  91% mana  12% lvl 6 | roydo 767 away (100%), 2 enemy heroes in 1200, tower edge 1940, threat 2.36
+  4:42 retreat  hp  76% mana  13% lvl 6 | roydo 455 away (100%), 2 enemy heroes in 1200, tower edge 1866, threat 2.58
+  4:42 retreat  hp  76% mana  13% lvl 6 | roydo 514 away (100%), 2 enemy heroes in 1200, tower edge 2049, threat 2.58
+  4:43 retreat  hp  75% mana  13% lvl 6 | roydo 395 away (100%), 2 enemy heroes in 1200, tower edge 2093, threat 2.41
+  4:43 retreat  hp  73% mana  13% lvl 6 | roydo 351 away (100%), 2 enemy heroes in 1200, tower edge 2262, threat 2.43
+  4:44 retreat  hp  41% mana  13% lvl 6 | roydo 258 away (94%), 2 enemy heroes in 1200, tower edge 2332, threat 7.25
+  4:44 retreat  hp  40% mana  13% lvl 6 | roydo 195 away (95%), 2 enemy heroes in 1200, tower edge 2363, threat 3.26
+  4:45 retreat  hp  34% mana  14% lvl 6 | roydo 307 away (94%), 2 enemy heroes in 1200, tower edge 2484, threat 3.55
+  4:45 retreat  hp  32% mana  14% lvl 6 | roydo 250 away (91%), 2 enemy heroes in 1200, tower edge 2572, threat 8.10
+  4:45 CAST blur_strike (mode retreat)
+  4:45   dash 1 hits (1 heroes) refreshed
+  4:46 retreat  hp  38% mana   1% lvl 6 | roydo 476 away (77%), 2 enemy heroes in 1200, tower edge 2471, threat 2.40
+  4:46 retreat  hp  28% mana   2% lvl 6 | roydo 523 away (76%), 2 enemy heroes in 1200, tower edge 2587, threat 2.18
+  4:47 retreat  hp  26% mana   2% lvl 6 | roydo 549 away (73%), 2 enemy heroes in 1200, tower edge 2738, threat 2.22
+  4:47 retreat  hp  25% mana   2% lvl 6 | roydo 543 away (73%), 2 enemy heroes in 1200, tower edge 2892, threat 2.27
+  4:48 retreat  hp  24% mana   2% lvl 6 | roydo 543 away (74%), 2 enemy heroes in 1200, tower edge 3040, threat 2.33
+  4:48 retreat  hp  22% mana   2% lvl 6 | roydo 547 away (74%), 2 enemy heroes in 1200, tower edge 3160, threat 2.40
+  4:49 retreat  hp  21% mana   2% lvl 6 | roydo 533 away (74%), 2 enemy heroes in 1200, tower edge 3216, threat 2.46
+  4:49 retreat  hp  20% mana   3% lvl 6 | roydo 528 away (74%), 2 enemy heroes in 1200, tower edge 3279, threat 2.55
+  4:50 retreat  hp  20% mana   3% lvl 6 | roydo 528 away (75%), 2 enemy heroes in 1200, tower edge 3350, threat 2.53
+DEATH 4 of araki at 8:47, killed by caziel
+  8:36 retreat  hp  47% mana  12% lvl 9 | caziel 1120 away (66%), 2 enemy heroes in 1200, tower edge 4230, threat 2.96
+  8:37 retreat  hp  48% mana  12% lvl 9 | caziel 1295 away (66%), 0 enemy heroes in 1200, tower edge 4353, threat 2.95
+  8:37 retreat  hp  48% mana  13% lvl 9 | caziel 1438 away (67%), 0 enemy heroes in 1200, tower edge 4475, threat 2.95
+  8:38 retreat  hp  48% mana  13% lvl 9 | caziel 1458 away (67%), 0 enemy heroes in 1200, tower edge 4628, threat 2.95
+  8:38 retreat  hp  48% mana  13% lvl 9 | caziel 1551 away (67%), 0 enemy heroes in 1200, tower edge 4788, threat 2.95
+  8:39 retreat  hp  49% mana  13% lvl 9 | caziel 1600 away (67%), 0 enemy heroes in 1200, tower edge 4939, threat 1.43
+  8:39 task     hp  49% mana  13% lvl 9 | caziel 1473 away (68%), 0 enemy heroes in 1200, tower edge 4812, threat 2.94
+  8:40 task     hp  49% mana  13% lvl 9 | caziel 1310 away (68%), 0 enemy heroes in 1200, tower edge 4651, threat 2.94
+  8:40 task     hp  49% mana  14% lvl 9 | caziel 1144 away (68%), 2 enemy heroes in 1200, tower edge 4488, threat 2.94
+  8:41 task     hp  49% mana  14% lvl 9 | caziel 1009 away (68%), 2 enemy heroes in 1200, tower edge 4364, threat 0.83
+  8:41 task     hp  50% mana  14% lvl 9 | caziel 897 away (68%), 2 enemy heroes in 1200, tower edge 4280, threat 0.83
+  8:42 task     hp  50% mana  14% lvl 9 | caziel 805 away (69%), 2 enemy heroes in 1200, tower edge 4208, threat 0.83
+  8:42 task     hp  50% mana  14% lvl 9 | caziel 768 away (69%), 2 enemy heroes in 1200, tower edge 4145, threat 0.87
+  8:43 task     hp  50% mana  15% lvl 9 | caziel 783 away (69%), 2 enemy heroes in 1200, tower edge 4081, threat 0.87
+  8:43 task     hp  51% mana  15% lvl 9 | caziel 755 away (69%), 2 enemy heroes in 1200, tower edge 3914, threat 1.22
+  8:44 task     hp  51% mana  15% lvl 9 | sludge 708 away (100%), 2 enemy heroes in 1200, tower edge 3742, threat 1.22
+  8:44 task     hp  51% mana  15% lvl 9 | sludge 384 away (99%), 2 enemy heroes in 1200, tower edge 3568, threat 1.22
+  8:45 task     hp  49% mana  15% lvl 9 | sludge 183 away (98%), 2 enemy heroes in 1200, tower edge 3412, threat 1.23
+  8:45 task     hp  48% mana  15% lvl 9 | caziel 325 away (57%), 2 enemy heroes in 1200, tower edge 3398, threat 1.29
+  8:46 task     hp  22% mana  16% lvl 9 | caziel 52 away (57%), 2 enemy heroes in 1200, tower edge 3319, threat 1.29
+  8:46 retreat  hp  13% mana  16% lvl 9 | caziel 26 away (48%), 2 enemy heroes in 1200, tower edge 3288, threat 1.09
+  8:47 retreat  hp   7% mana  16% lvl 9 | caziel 24 away (49%), 2 enemy heroes in 1200, tower edge 3265, threat 1.21
+DEATH 5 of araki at 11:45, killed by azrin
+  11:36 CAST blur_strike (mode farm)
+  11:36   dash 5 hits (0 heroes) refreshed
+  11:37 farm     hp  97% mana  55% lvl 10 | blood_ranger 5351 away (69%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:37 CAST blur_strike (mode farm)
+  11:37   dash 8 hits (0 heroes)
+  11:37 task     hp  95% mana  42% lvl 10 | blood_ranger 5219 away (69%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:38 task     hp  94% mana  42% lvl 10 | azrin 5142 away (53%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:38 task     hp  94% mana  42% lvl 10 | caziel 5034 away (64%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:39 task     hp  93% mana  42% lvl 10 | caziel 5111 away (64%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:39 task     hp  93% mana  43% lvl 10 | azrin 5130 away (54%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:40 task     hp  92% mana  43% lvl 10 | caziel 5100 away (60%), 0 enemy heroes in 1200, tower edge 6920, threat 0.00
+  11:40 task     hp  92% mana  43% lvl 10 | caziel 575 away (61%), 3 enemy heroes in 1200, tower edge 3749, threat 3.02
+  11:41 retreat  hp  93% mana  43% lvl 10 | caziel 491 away (61%), 3 enemy heroes in 1200, tower edge 3749, threat 3.00
+  11:41 CAST djin_bomb (mode retreat)
+  11:41 retreat  hp  48% mana  28% lvl 10 | caziel 132 away (61%), 3 enemy heroes in 1200, tower edge 3845, threat 3.75
+  11:42 retreat  hp  47% mana  38% lvl 10 | caziel 194 away (61%), 3 enemy heroes in 1200, tower edge 3974, threat 3.76
+  11:42 retreat  hp  44% mana  39% lvl 10 | caziel 198 away (62%), 3 enemy heroes in 1200, tower edge 4115, threat 3.65
+  11:43 retreat  hp  35% mana  39% lvl 10 | caziel 247 away (62%), 3 enemy heroes in 1200, tower edge 4181, threat 4.13
+  11:43 retreat  hp  32% mana  39% lvl 10 | caziel 230 away (62%), 3 enemy heroes in 1200, tower edge 4241, threat 4.24
+  11:44 retreat  hp  30% mana  39% lvl 10 | caziel 211 away (62%), 3 enemy heroes in 1200, tower edge 4313, threat 4.37
+  11:44 retreat  hp  24% mana  39% lvl 10 | caziel 251 away (62%), 3 enemy heroes in 1200, tower edge 4482, threat 4.13
+  11:45 retreat  hp  19% mana  39% lvl 10 | caziel 228 away (63%), 3 enemy heroes in 1200, tower edge 4622, threat 4.35
+DEATH 6 of araki at 14:25, killed by azrin
+  14:15 task     hp  53% mana  34% lvl 11 | roydo 2234 away (71%), 0 enemy heroes in 1200, tower edge 2455, threat 0.00
+  14:15 task     hp  53% mana  34% lvl 11 | roydo 2066 away (71%), 0 enemy heroes in 1200, tower edge 2494, threat 0.00
+  14:16 task     hp  53% mana  34% lvl 11 | roydo 1911 away (67%), 0 enemy heroes in 1200, tower edge 2565, threat 0.00
+  14:16 task     hp  54% mana  35% lvl 11 | roydo 1774 away (67%), 0 enemy heroes in 1200, tower edge 2669, threat 0.00
+  14:17 task     hp  54% mana  35% lvl 11 | roydo 1646 away (67%), 0 enemy heroes in 1200, tower edge 2780, threat 0.00
+  14:17 task     hp  54% mana  35% lvl 11 | roydo 1528 away (67%), 0 enemy heroes in 1200, tower edge 2896, threat 0.55
+  14:18 task     hp  54% mana  35% lvl 11 | roydo 1424 away (64%), 0 enemy heroes in 1200, tower edge 3017, threat 0.56
+  14:18 task     hp  54% mana  36% lvl 11 | roydo 1329 away (64%), 0 enemy heroes in 1200, tower edge 3143, threat 0.76
+  14:19 task     hp  55% mana  36% lvl 11 | roydo 1310 away (63%), 0 enemy heroes in 1200, tower edge 3264, threat 0.79
+  14:19 task     hp  55% mana  36% lvl 11 | roydo 1157 away (60%), 1 enemy heroes in 1200, tower edge 3283, threat 2.28
+  14:20 task     hp  55% mana  36% lvl 11 | roydo 112 away (60%), 2 enemy heroes in 1200, tower edge 3081, threat 1.12
+  14:20 CAST the_blur (mode task)
+  14:20 task     hp  55% mana  24% lvl 11 | roydo 159 away (57%), 2 enemy heroes in 1200, tower edge 3081, threat 1.21
+  14:21 task     hp  48% mana  24% lvl 11 | roydo 216 away (53%), 2 enemy heroes in 1200, tower edge 3081, threat 1.22
+  14:21 task     hp  48% mana  25% lvl 11 | roydo 195 away (53%), 2 enemy heroes in 1200, tower edge 3077, threat 1.22
+  14:22 task     hp  46% mana  35% lvl 11 | roydo 195 away (49%), 2 enemy heroes in 1200, tower edge 3077, threat 1.13
+  14:22 CAST djin_bomb (mode task)
+  14:22 task     hp  46% mana  20% lvl 11 | roydo 203 away (49%), 2 enemy heroes in 1200, tower edge 3077, threat 1.77
+  14:23 retreat  hp  39% mana  20% lvl 11 | azrin 202 away (100%), 2 enemy heroes in 1200, tower edge 3203, threat 1.79
+  14:23 retreat  hp  39% mana  20% lvl 11 | azrin 81 away (100%), 2 enemy heroes in 1200, tower edge 3375, threat 1.79
+  14:24 retreat  hp  26% mana  20% lvl 11 | azrin 161 away (100%), 2 enemy heroes in 1200, tower edge 3547, threat 1.88
+  14:24 retreat  hp  26% mana  21% lvl 11 | azrin 327 away (100%), 2 enemy heroes in 1200, tower edge 3713, threat 1.88
+DEATH 7 of araki at 15:41, killed by sludge
+  15:31 farm     hp 100% mana  58% lvl 11 | sludge 5975 away (88%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:31 farm     hp  98% mana  58% lvl 11 | sludge 6062 away (88%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:32 farm     hp  98% mana  58% lvl 11 | sludge 6119 away (88%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:32 farm     hp  98% mana  58% lvl 11 | sludge 6171 away (88%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:33 farm     hp  98% mana  59% lvl 11 | sludge 6210 away (89%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:33 farm     hp  99% mana  59% lvl 11 | sludge 6260 away (89%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:34 task     hp  99% mana  47% lvl 11 | sludge 6313 away (89%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:34 task     hp  97% mana  47% lvl 11 | sludge 6355 away (90%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:35 task     hp  97% mana  47% lvl 11 | sludge 6393 away (90%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:35 task     hp  97% mana  48% lvl 11 | sludge 6437 away (90%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:36 task     hp  98% mana  48% lvl 11 | sludge 6490 away (90%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:36 task     hp  98% mana  48% lvl 11 | sludge 6500 away (91%), 0 enemy heroes in 1200, tower edge 1952, threat 0.00
+  15:37 task     hp  98% mana  48% lvl 11 | blood_ranger 1498 away (98%), 0 enemy heroes in 1200, tower edge 3631, threat 0.00
+  15:37 task     hp  98% mana  49% lvl 11 | blood_ranger 1428 away (98%), 0 enemy heroes in 1200, tower edge 3572, threat 0.53
+  15:38 task     hp  98% mana  49% lvl 11 | blood_ranger 1248 away (99%), 0 enemy heroes in 1200, tower edge 3393, threat 0.53
+  15:38 task     hp  99% mana  49% lvl 11 | blood_ranger 78 away (97%), 2 enemy heroes in 1200, tower edge 2177, threat 0.53
+  15:39 task     hp  99% mana  49% lvl 11 | blood_ranger 49 away (97%), 2 enemy heroes in 1200, tower edge 2177, threat 0.94
+  15:39 CAST djin_bomb (mode task)
+  15:39 task     hp  77% mana  34% lvl 11 | blood_ranger 179 away (98%), 2 enemy heroes in 1200, tower edge 2261, threat 0.95
+  15:40 task     hp  69% mana  35% lvl 11 | sludge 221 away (91%), 2 enemy heroes in 1200, tower edge 2273, threat 0.87
+  15:40 task     hp  44% mana  35% lvl 11 | sludge 184 away (92%), 2 enemy heroes in 1200, tower edge 2241, threat 0.75
+  15:41 task     hp  18% mana  35% lvl 11 | sludge 146 away (91%), 2 enemy heroes in 1200, tower edge 2210, threat 0.97
+DEATH 8 of araki at 18:04, killed by blood_ranger
+  17:54 task     hp 100% mana 100% lvl 11 | blood_ranger 1714 away (99%), 0 enemy heroes in 1200, tower edge 6818, threat 0.00
+  17:55 task     hp 100% mana 100% lvl 11 | blood_ranger 1553 away (99%), 0 enemy heroes in 1200, tower edge 6679, threat 1.19
+  17:55 task     hp 100% mana 100% lvl 11 | blood_ranger 1396 away (99%), 0 enemy heroes in 1200, tower edge 6503, threat 1.19
+  17:56 task     hp 100% mana 100% lvl 11 | blood_ranger 1386 away (99%), 0 enemy heroes in 1200, tower edge 6326, threat 1.19
+  17:56 task     hp 100% mana 100% lvl 11 | blood_ranger 1375 away (99%), 0 enemy heroes in 1200, tower edge 6149, threat 1.19
+  17:57 task     hp 100% mana 100% lvl 11 | blood_ranger 1420 away (99%), 0 enemy heroes in 1200, tower edge 6030, threat 1.19
+  17:57 task     hp 100% mana 100% lvl 11 | blood_ranger 1589 away (99%), 0 enemy heroes in 1200, tower edge 6034, threat 1.19
+  17:58 task     hp 100% mana 100% lvl 11 | blood_ranger 1781 away (99%), 0 enemy heroes in 1200, tower edge 6042, threat 1.19
+  17:58 task     hp 100% mana 100% lvl 11 | blood_ranger 1990 away (99%), 0 enemy heroes in 1200, tower edge 6056, threat 1.19
+  17:59 task     hp 100% mana 100% lvl 11 | blood_ranger 2179 away (99%), 0 enemy heroes in 1200, tower edge 6061, threat 1.19
+  17:59 task     hp 100% mana 100% lvl 11 | blood_ranger 2353 away (99%), 0 enemy heroes in 1200, tower edge 6061, threat 0.00
+  18:00 task     hp 100% mana 100% lvl 11 | blood_ranger 2284 away (99%), 0 enemy heroes in 1200, tower edge 6061, threat 0.00
+  18:00 task     hp 100% mana 100% lvl 11 | blood_ranger 2112 away (99%), 0 enemy heroes in 1200, tower edge 6061, threat 0.00
+  18:01 task     hp 100% mana 100% lvl 11 | blood_ranger 1933 away (99%), 0 enemy heroes in 1200, tower edge 6061, threat 0.00
+  18:01 task     hp 100% mana 100% lvl 11 | blood_ranger 1622 away (99%), 0 enemy heroes in 1200, tower edge 5942, threat 0.00
+  18:02 task     hp 100% mana 100% lvl 11 | blood_ranger 1275 away (99%), 0 enemy heroes in 1200, tower edge 5762, threat 0.00
+  18:02 task     hp 100% mana 100% lvl 11 | blood_ranger 1037 away (99%), 1 enemy heroes in 1200, tower edge 5583, threat 0.00
+  18:03 task     hp  74% mana 100% lvl 11 | blood_ranger 867 away (99%), 1 enemy heroes in 1200, tower edge 5475, threat 0.00
+  18:03 task     hp  71% mana 100% lvl 11 | blood_ranger 823 away (99%), 1 enemy heroes in 1200, tower edge 5476, threat 1.22
+  18:04 retreat  hp  25% mana 100% lvl 11 | blood_ranger 789 away (99%), 1 enemy heroes in 1200, tower edge 5441, threat 1.99
+  18:04 CAST blur_strike (mode retreat)
+  18:04   dash 4 hits (0 heroes) refreshed
+araki: K/D/A 5/8/2 LH 46 lvl 12 nw 7168
+  casts blur_strike in farm                15
+  casts blur_strike in fight               5
+  casts blur_strike in lane                6
+  casts blur_strike in retreat             9
+  casts blur_strike in task                5
+  casts djin_bomb in fight                 3
+  casts djin_bomb in lane                  2
+  casts djin_bomb in retreat               1
+  casts djin_bomb in task                  6
+  casts ghosts_of_the_will in task         1
+  casts the_blur in fight                  3
+  casts the_blur in task                   3
+WARNING: 5948 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 23 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

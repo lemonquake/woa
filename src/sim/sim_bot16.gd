@@ -340,6 +340,8 @@ static func tick(b: SimBot, h: SimUnit) -> bool:
 			return _inside(b, h)
 		if _climb_in(b, h):
 			return true
+		if b._spells_ok() and _spam_turret(b, h):
+			return true
 		# laning: a kill when his combo can finish the laner, then the turret and Bounce Shot as harass (the shared
 		# lane logic waits for 60% mana, more than his small pool has)
 		if b.mode in ["lane", "farm"] and _blau_hunt(b, h):
@@ -423,7 +425,7 @@ static func _blau_hunt(b: SimBot, h: SimUnit) -> bool:
 		return false
 	if b._hunt_target != best.id:
 		b._hunt_target = best.id
-		b.say("Going for %s." % SimTeamAI.hero_label(best), "hunt_%d" % best.id, 20.0)
+		b.say("Going for %s." % SimTeamAI.hero_label(best), "hunt_%d" % best.id, 20.0, false, "go", {"hero": SimTeamAI.hero_label(best)})
 		b.botlog.add(w.time, "think", "can kill %s (%d health left): going in" % [best.who(), int(best.hp)])
 	_blau(b, h, best)
 	if b._busy(h):
@@ -433,6 +435,35 @@ static func _blau_hunt(b: SimBot, h: SimUnit) -> bool:
 	else:
 		b._order(h, {"type": O.ATTACK_UNIT, "target": best.id})
 	return true
+
+## The turret costs little and is back every 10 s, so Blau keeps one working wherever there is something to shoot
+## (the owner, 2026-10-19 c: bots never seemed to use it; in a 25-minute bot game they built one every 2 minutes):
+## an enemy hero within 1100 (running away too: it stands between him and the chaser), else three or more enemy creeps
+## or camp creeps beside him (it farms and pushes with him). Half a Bounce Shot's mana stays for the shot.
+static func _spam_turret(b: SimBot, h: SimUnit) -> bool:
+	var w := b.w
+	var ab := w.abilities
+	if h.ability_level_of("place_turret") <= 0 or ab.cooldown_left(h, "place_turret") > 0.0:
+		return false
+	if h.mana < ab.ability_mana(h, "place_turret") + ab.ability_mana(h, "bounce_shot") * 0.5:
+		return false
+	var near: SimUnit = null
+	for f in b._foes:
+		if f.alive and f.pos.distance_to(h.pos) < 1100.0 and (near == null or f.pos.distance_to(h.pos) < near.pos.distance_to(h.pos)):
+			near = f
+	if near != null:
+		return _place_turret(b, h, near.pos)
+	if b.mode == "retreat":
+		return false
+	var mid := Vector2.ZERO
+	var n := 0
+	for o: SimUnit in w.query(h.pos, 800.0, true):
+		if o.alive and o.team != h.team and o.is_creep() and w.vision.sees(h.team, o):
+			mid += o.pos
+			n += 1
+	if n >= 3:
+		return _place_turret(b, h, mid / n)
+	return false
 
 ## In lane from level 6: a turret beside the enemy laner when it stands near our wave (it shoots him and his creeps,
 ## and zones him off them), with mana left for Bounce Shot.

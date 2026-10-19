@@ -35,6 +35,45 @@ const SKILLS := {
 }
 const SKILL_IDS := ["passive", "easy", "medium", "hard", "unfair"]
 
+## Ranked bots (run 2026-10-19 b): they play by a hidden skill on the MMR scale, between these points: 0-1000 like
+## Easy, 2500 like Medium, 4500 like Hard, 7000 like Unfair without its gold. Spells always on; stacking, pulling,
+## warding and counter items from 1800. items: how good its item choices are (below 0.35 a scrambled build, below
+## 0.6 two items swapped for random ones, from 0.8 a Spell Shield planned for a core, a Jump Knife for a melee hero,
+## Fade Cape and Push Staff for a support); item_use: the chance it uses an item when the moment calls for it (each
+## look); farm: how well it farms (the jungle and the lane it picks).
+const RATED := [
+	[0.0, {"think": 0.5, "react": 1.3, "lh_error": 0.5, "aim": 0.15, "lock_every": 8.0, "lock_for": 6.0,
+		"after_use": 7.0, "aggr": 0.75, "items": 0.1, "item_use": 0.06, "farm": 0.2}],
+	[1000.0, {"think": 0.42, "react": 0.8, "lh_error": 0.42, "aim": 0.35, "lock_every": 8.0, "lock_for": 5.0,
+		"after_use": 5.0, "aggr": 0.82, "items": 0.3, "item_use": 0.2, "farm": 0.35}],
+	[2500.0, {"think": 0.3, "react": 0.45, "lh_error": 0.2, "aim": 0.7, "lock_every": 10.0, "lock_for": 3.0,
+		"after_use": 3.0, "aggr": 0.9, "items": 0.62, "item_use": 0.55, "farm": 0.65}],
+	[4500.0, {"think": 0.2, "react": 0.15, "lh_error": 0.0, "aim": 1.0, "lock_every": 0.0, "lock_for": 0.0,
+		"after_use": 0.0, "aggr": 1.0, "items": 0.88, "item_use": 0.9, "farm": 0.9}],
+	[7000.0, {"think": 0.15, "react": 0.11, "lh_error": 0.0, "aim": 1.0, "lock_every": 0.0, "lock_for": 0.0,
+		"after_use": 0.0, "aggr": 1.05, "items": 1.0, "item_use": 1.0, "farm": 1.0}],
+]
+
+## A ranked bot's settings for a skill on the MMR scale (RATED, interpolated).
+static func rated(r: float) -> Dictionary:
+	var lo: Array = RATED[0]
+	var hi: Array = RATED[RATED.size() - 1]
+	if r >= float(hi[0]):
+		lo = hi
+	elif r > float(lo[0]):
+		for i in RATED.size() - 1:
+			if r <= float(RATED[i + 1][0]):
+				lo = RATED[i]
+				hi = RATED[i + 1]
+				break
+	else:
+		hi = lo
+	var f := 0.0 if float(hi[0]) == float(lo[0]) else clampf((r - float(lo[0])) / (float(hi[0]) - float(lo[0])), 0.0, 1.0)
+	var out := {"spells": true, "advanced": r >= 1800.0, "gold": 1.0, "xp": 1.0, "rating": r}
+	for k in (lo[1] as Dictionary):
+		out[k] = lerpf(float(lo[1][k]), float(hi[1][k]), f)
+	return out
+
 var w: SimWorld
 var hero_id := -1
 var lane := "mid"
@@ -46,6 +85,18 @@ var role := 2
 var skill := "hard"
 var sk: Dictionary = SKILLS["hard"]
 var aggression := 1.0                      # personality: <1 careful, >1 bold
+var rating := -1.0                         # ranked: hidden skill on the MMR scale (-1: a Game Setup skill level)
+var coop := 1.0                            # ranked: how often it goes along with the team's calls (1 always)
+var disrupt := 0.0                         # ranked: how likely it takes the lane it wants over the one given
+var toxic := 0.0                           # ranked: how rough it is in chat
+var rage := false                          # ranked: a ragebaiter (dives, flames, ignores the team)
+var voice := {}                            # ranked: its chat voice {tl, salt, rough} ({} = from its name)
+var lane_grab := ""                        # ranked: the lane a disruptive bot took for itself ("" none)
+var persona := {}                          # ranked: who the player is (Persona: traits, typing; {} = from its name)
+var pid := ""                              # ranked: the player's id on the ladder ("" for a Game Setup bot)
+var you_rec := {}                          # ranked: what it remembers of earlier matches with you (Ranked "you")
+var card := {}                             # ranked: what it can tell you about itself (rank, mmr, country, friends)
+var _calls_judged := {}                    # team call id -> true once a selfish bot decided about it
 var skill_order: Array = []
 var build: Array = []
 var build_idx := 0
@@ -86,12 +137,88 @@ func _init(world: SimWorld = null, hid := -1, p_lane := "mid", p_name := "Bot", 
 func set_skill(p_skill: String) -> void:
 	skill = p_skill if SKILLS.has(p_skill) else "hard"
 	sk = SKILLS[skill]
+	rating = -1.0
 	var h := hero()
 	if h != null:
 		h.gold_mult = float(sk.gold)
 		h.xp_mult = float(sk.xp)
 	aggression = float(sk.aggr) * rng.randf_range(0.9, 1.12)
 	_plan_knife()
+
+## A ranked bot: its play from its hidden skill (RATED) and its personality from its profile (coop, disrupt, toxic,
+## rage, voice). Its build is redone for its item sense while nothing is bought.
+func set_rating(r: float, traits := {}) -> void:
+	rating = r
+	skill = "ranked"
+	sk = rated(r)
+	coop = clampf(float(traits.get("coop", 1.0)), 0.0, 1.0)
+	disrupt = clampf(float(traits.get("disrupt", 0.0)), 0.0, 1.0)
+	toxic = clampf(float(traits.get("toxic", 0.0)), 0.0, 1.0)
+	rage = bool(traits.get("rage", false))
+	voice = (traits.get("voice", {}) as Dictionary).duplicate() if traits.get("voice", {}) is Dictionary else {}
+	persona = (traits.get("persona", {}) as Dictionary).duplicate(true) if traits.get("persona", {}) is Dictionary else {}
+	pid = String(traits.get("pid", ""))
+	you_rec = (traits.get("you", {}) as Dictionary).duplicate(true) if traits.get("you", {}) is Dictionary else {}
+	card = (traits.get("card", {}) as Dictionary).duplicate(true) if traits.get("card", {}) is Dictionary else {}
+	var h := hero()
+	if h != null:
+		h.gold_mult = 1.0
+		h.xp_mult = 1.0
+	aggression = float(sk.aggr) * rng.randf_range(0.9, 1.12) + (0.3 if rage else 0.0)
+	if _build_i == 0 and not build.is_empty():
+		_rate_build()
+	_plan_knife()
+
+## Items a scrambled build draws from: finished items and big parts, 900-6000 gold.
+func _random_items(n: int) -> Array:
+	var pool: Array = []
+	for id in SimData.items():
+		var d: Dictionary = SimData.item(id)
+		if bool(d.get("consumable", false)) or not (String(d.category) in ["upgrades", "armaments", "misc", "big_parts"]):
+			continue
+		if int(d.cost) < 900 or int(d.cost) > 6000 or id in build:
+			continue
+		pool.append(id)
+	pool.sort()
+	var out: Array = []
+	while out.size() < n and not pool.is_empty():
+		out.append(pool.pop_at(rng.randi_range(0, pool.size() - 1)))
+	return out
+
+## A ranked bot's build for its item sense (RATED "items"): the starting items stay; below 0.35 a few planned items
+## and random ones in a random order; below 0.6 two planned items swapped for random ones; from 0.8 a Spell Shield
+## for a core, a Fade Cape and a Push Staff for a support (and _plan_knife's Jump Knife for a melee core).
+func _rate_build() -> void:
+	if rating < 0.0 or build.is_empty():
+		return
+	var q := float(sk.get("items", 1.0))
+	var start := 0
+	while start < build.size() and start < 9 and int(SimData.item(String(build[start])).get("cost", 0)) <= 500:
+		start += 1
+	var rest: Array = build.slice(start)
+	if q < 0.35:
+		rest = rest.slice(0, rng.randi_range(2, 5)) + _random_items(4 + rng.randi_range(0, 3))
+		for i in range(rest.size() - 1, 0, -1):
+			var j := rng.randi_range(0, i)
+			var x = rest[i]
+			rest[i] = rest[j]
+			rest[j] = x
+	elif q < 0.6:
+		var swaps := _random_items(2)
+		for x in swaps:
+			if rest.size() > 3:
+				rest[rng.randi_range(2, rest.size() - 1)] = x
+	if q >= 0.8:
+		var wants: Array = ["glimmer_cape", "push_staff"] if KITS.is_support(role) else ["spell_shield"]
+		for wid in wants:
+			var at := rest.find(wid)
+			var good := mini(4, rest.size())
+			if at < 0 or at > good:
+				if at >= 0:
+					rest.remove_at(at)
+				rest.insert(mini(good, rest.size()), wid)
+	build = build.slice(0, start) + rest
+	_core_len = build.size()
 
 ## Role (1..5) and lane from the team's brain. The build is picked (or learned, BotMemory) once, before anything is
 ## bought; later role changes keep the items already planned.
@@ -104,6 +231,7 @@ func set_role(r: int, p_lane: String) -> void:
 		var opts: Array = KITS.builds(kit, r)
 		build_idx = BotMemory.pick_build(KITS.build_key(kit, r), opts.size(), 0, _team())
 		build = (opts[clampi(build_idx, 0, opts.size() - 1)] as Array).duplicate()
+		_rate_build()
 	_plan_knife()
 	_core_len = build.size()
 
@@ -112,7 +240,8 @@ const BOOT_UPGRADES := ["power_treads", "slip_boots", "mana_boots", "guard_boots
 ## Unfair bots on melee heroes buy a Jump Knife right after their boots (the owner's rule): to jump on a target to
 ## gank it, or away to escape.
 func _plan_knife() -> void:
-	if skill != "unfair" or build.is_empty():
+	# Unfair bots, and ranked bots with good item sense (RATED "items" from 0.8)
+	if not (skill == "unfair" or (rating >= 0.0 and float(sk.get("items", 0.0)) >= 0.8)) or build.is_empty():
 		return
 	var h := hero()
 	if h == null or float(h.def.projectile_speed) > 0.0:
@@ -198,10 +327,12 @@ func plan_text() -> String:
 const ORDER_NAMES := ["None", "Move", "Attack", "Attack move", "Hold", "Stop", "Cast", "Cast", "Cast", "Follow",
 	"Drop item", "Pick up item", "Give item", "Take orb", "Use site"]
 
-func say(text: String, key := "", every := 30.0, urgent := false) -> void:
+## A line in team chat (SimTeamAI.say). kind and f: what the call is and its facts, typed the bot's own way
+## (SimBotChat.casual); "voice": a hero's own line, only typed in the bot's style.
+func say(text: String, key := "", every := 30.0, urgent := false, kind := "voice", f := {}) -> void:
 	var b := brain()
 	if b != null:
-		b.say(hero(), text, key, every, urgent)
+		b.say(hero(), text, key, every, urgent, kind, f)
 		botlog.on_say(w.time, text)
 
 # ---- Thinking ---------------------------------------------------------------------------------------------------------
@@ -283,6 +414,9 @@ func think() -> void:
 	if w.profiling: pt = w._prof("  bot:turret", pt)
 	# the five heroes of run 2026-10-18 f (Burak's axe leap, Steel Stance, Ghorman's taming)
 	if SimBot18.tick(self, h):
+		return
+	# Araki (run 2026-10-19 c): Blur Strike's second dash home after a lane poke
+	if SimBot19.tick(self, h):
 		return
 	if mode != "retreat" and mode != "fight" and _grab_orb(h):
 		return
@@ -500,6 +634,14 @@ func _choose_mode(h: SimUnit) -> void:
 	var task := brain().task_for(h.id)
 	if not task.is_empty() and w.time < float(_given_up.get(int(task.get("id", -1)), C.LONG_AGO)):
 		task = {}                                  # this bot gave up on that play (nothing to do there)
+	if not task.is_empty() and coop < 1.0 and String(task.kind) != "retreat" and not _calls_judged.has(int(task.get("id", -1))):
+		_calls_judged[int(task.get("id", -1))] = true
+		if rng.randf() > coop:
+			_give_up(task, 90.0)
+			if toxic > 0.4 and rng.randf() < toxic:
+				say(["no", "kayo na lang", "farm muna ako", "busy", "di ako sasama", "go without me", "nah"][rng.randi_range(0, 6)],
+					"refuse_%d" % h.id, 40.0)
+			task = {}
 	if not task.is_empty():
 		botlog.on_task(w.time, task)
 	d["retreat"] = _retreat_desire(h, task)
@@ -555,7 +697,7 @@ func _leave_mode(h: SimUnit, old: String, new_mode: String) -> void:
 	if old == "task" and new_mode == "retreat":
 		var t := brain().task_for(h.id)
 		if not t.is_empty() and String(t.kind) == "gank":
-			say("Backing off, too dangerous.", "abort_%d" % int(t.id), 30.0)
+			say("Backing off, too dangerous.", "abort_%d" % int(t.id), 30.0, false, "abort")
 
 func _run_mode(h: SimUnit) -> void:
 	match mode:
@@ -601,7 +743,7 @@ const CLEAR_SPELLS := {
 	"blau": [["summon_boulders", "point"], ["bounce_shot", "point"]],
 	"azrael": [["soul_tap", "toggle"], ["door_of_the_end", "point"]], "airah": [["gust", "line"]],
 	"emelrich": [["sweep", "self"]], "feran": [["joke_box", "point"], ["knife_juggle", "line"]],
-	"burak": [["reckless_swing", "self"]], "ghorman": [["roar", "self"]],
+	"burak": [["reckless_swing", "self"]], "ghorman": [["roar", "self"]], "araki": [["blur_strike", "line"]],
 }
 const CLEAR_DAMAGE_KEYS := ["damage", "explode_damage", "blast_damage", "impact_damage", "crash_damage"]
 
@@ -769,6 +911,11 @@ func _retreat_bar() -> float:
 var _threat_back_until := C.LONG_AGO      # a retreat from a stronger enemy holds until then (see _retreat_desire)
 
 func _retreat_desire(h: SimUnit, task: Dictionary) -> float:
+	if rage:
+		return _retreat_core(h, task) * 0.55
+	return _retreat_core(h, task)
+
+func _retreat_core(h: SimUnit, task: Dictionary) -> float:
 	if not task.is_empty() and String(task.kind) == "retreat" and h.pos.distance_to(task.pos) < 2800.0:
 		return 0.95
 	var hpf := h.hp / h.max_hp
@@ -933,7 +1080,7 @@ func _juke_tp(h: SimUnit) -> bool:
 	_cast_deadline = w.time + 3.5
 	_chased_at = C.LONG_AGO
 	jukes += 1
-	say("Lost them in the trees, going home.", "juke_%d" % h.id, 45.0)
+	say("Lost them in the trees, going home.", "juke_%d" % h.id, 45.0, false, "juke")
 	return true
 
 func _run_retreat(h: SimUnit) -> void:
@@ -987,7 +1134,7 @@ func _run_retreat(h: SimUnit) -> void:
 			and not _has_item(h, "salve") and w.abilities.cast_error(h, "tp", -1, null, w.map.fountains[h.team]) == "":
 		_order(h, {"type": O.CAST_POINT, "ability": "tp", "point": w.map.fountains[h.team]}, true)
 		_cast_deadline = w.time + 3.5
-		say("Going home to heal.", "tp_home_%d" % h.id, 60.0)
+		say("Going home to heal.", "tp_home_%d" % h.id, 60.0, false, "heal")
 		return
 	# chased: through the trees and out of their sight rather than down the open road
 	if not chasers.is_empty() and helper == null and bool(sk.advanced) and fd > 200.0:
@@ -1009,6 +1156,8 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 		return SimBot17.escape(self, h, fd)
 	if SimBot18.handles(kit):
 		return SimBot18.escape(self, h, fd)
+	if SimBot19.handles(kit):
+		return SimBot19.escape(self, h, fd)
 	var ab := w.abilities
 	match kit:
 		"tock":
@@ -1181,7 +1330,7 @@ func _run_fight(h: SimUnit, e: SimUnit) -> void:
 	if _fight.is_empty() or int(_fight.target) != e.id:
 		_fight = {"x": fight_features(h, e), "target": e.id, "t0": w.time, "my0": h.hp / h.max_hp, "e0": e.hp / e.max_hp}
 		if e.hp < e.max_hp * 0.4:
-			say("Going for %s." % SimTeamAI.hero_label(e), "go_%d" % e.id, 20.0)
+			say("Going for %s." % SimTeamAI.hero_label(e), "go_%d" % e.id, 20.0, false, "go", {"hero": SimTeamAI.hero_label(e)})
 	if not w.vision.sees(h.team, e):
 		_go(h, e.pos)
 		return
@@ -1248,7 +1397,7 @@ func _dead(h: SimUnit) -> void:
 				if u.alive and u.team != h.team and u.team != C.NEUTRAL and (u.is_hero() or u.is_lane_creep()):
 					threatened = true
 	if threatened and w.buyback(h) == "":
-		say("Buying back to defend.", "bb_%d" % h.id, 60.0, true)
+		say("Buying back to defend.", "bb_%d" % h.id, 60.0, true, "bb")
 
 var _retreat := {}                         # {t0, hp0}: a retreat in progress (learning the retreat bar)
 
@@ -1517,9 +1666,14 @@ func _run_farm(h: SimUnit) -> void:
 			best_s = s
 			pick = ln
 			pick_camp = -1
+	var fq := float(sk.get("farm", 1.0))
+	if fq < 0.7 and pick != "" and rng.randf() > fq + 0.3:
+		pick = ["top", "mid", "bot"][rng.randi_range(0, 2)]   # a poor farmer drifts to some other lane
 	for c in w.map.camps:
 		if not b.camp_up(c.id) or b.camp_claimed_by_other(c.id, h.id):
 			continue
+		if fq < 1.0 and (String(c.kind) == "ancient" and fq < 0.8 or rng.randf() > fq):
+			continue                       # a poor farmer seldom thinks of the jungle
 		if c.side != h.team and w.time < 1200.0 and role > 1:
 			continue                       # the enemy's jungle only for the carry, and later
 		if not _can_clear(h, c) or not _safe_to_farm(h, c.pos):
@@ -1726,6 +1880,8 @@ func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 		return SimBot17.aoe_farm(self, h, ns, centre)
 	if _spells_ok() and SimBot18.handles(kit):
 		return SimBot18.aoe_farm(self, h, ns, centre)
+	if _spells_ok() and SimBot19.handles(kit):
+		return SimBot19.aoe_farm(self, h, ns, centre)
 	if _spells_ok():
 		var ab := w.abilities
 		match kit:
@@ -1854,7 +2010,8 @@ func _run_stack(h: SimUnit) -> void:
 				b.stack_count[int(_stack.camp)] = int(b.stack_count.get(int(_stack.camp), 0)) + 1
 				var core := b._core_in_lane(lane, h)
 				if core != null and rng.randf() < 0.5:
-					say("Stacked the %s camp for %s." % [String(c.kind), b._name_of(core)], "stk_%d" % h.id, 120.0)
+					say("Stacked the %s camp for %s." % [String(c.kind), b._name_of(core)], "stk_%d" % h.id, 120.0, false, "stack",
+						{"core": SimTeamAI.hero_label(core) if core.bot else (core.player_label() if core.player_label() != "" else SimTeamAI.hero_label(core))})
 				_stack = {}
 
 ## The safe lane's support pulls a pull camp into its own creep wave as the wave walks past (Dota's :15 / :45 pull),
@@ -1996,7 +2153,7 @@ func _learn(h: SimUnit) -> void:
 			break
 	if h.level == 6 and role == 2 and not _said_six:
 		_said_six = true
-		say("Level 6, I can gank now.", "six_%d" % h.id, 9999.0)
+		say("Level 6, I can gank now.", "six_%d" % h.id, 9999.0, false, "six")
 
 var _said_six := false
 
@@ -2065,7 +2222,8 @@ func _shop(h: SimUnit) -> void:
 				break
 			_build_i += 1
 			if KITS.power_spike(h, id):
-				say("Got my %s." % String(d.get("name", id)), "item_%d_%s" % [h.id, id], 9999.0)
+				say("Got my %s." % String(d.get("name", id)), "item_%d_%s" % [h.id, id], 9999.0, false, "item",
+					{"item": String(d.get("name", id)), "item_id": id})
 	# away from the shop, the courier brings what is waiting in the stash
 	if h.alive and (h.stash.any(func(x): return x != null) or h.courier_items.any(func(x): return x != null)) and not w.shop.in_shop(h):
 		var c := w.get_unit(h.courier_id)
@@ -2120,7 +2278,7 @@ func _counter_items(h: SimUnit) -> void:
 	var sight := SimBotItems.wants_sight(w, h, role, prof)
 	if sight != "" and w.time - _last_dust_buy > 60.0 and h.gold() >= int(SimData.item(sight).cost) + 100 			and w.shop.buy(h, sight) == "":
 		_last_dust_buy = w.time
-		say("Bought %s, they have invisible heroes." % String(SimData.item(sight).name), "dust_%d" % h.id, 300.0)
+		say("Bought %s, they have invisible heroes." % String(SimData.item(sight).name), "dust_%d" % h.id, 300.0, false, "dust_buy")
 	# one counter at a time: the last one planned is bought first (no re-ordering every half minute)
 	for c in counters_bought:
 		if not w.shop.owns(h, String(c)) and build.find(c) >= _build_i:
@@ -2141,7 +2299,10 @@ func _counter_items(h: SimUnit) -> void:
 	var kind := String((SimBotItems.ANSWERS.get(want, ["physical"]) as Array)[0])
 	if prof.disablers >= 2 and want == "spell_shield":
 		kind = "disable"
-	say("Getting %s against %s." % [String(d.name), String(why.get(kind, "them"))], "counter_%d_%s" % [h.id, want], 9999.0)
+	var short := {"magic": "magic", "physical": "right clicks", "disable": "stuns", "invis": "invis", "evasion": "evasion",
+		"escape": "ganks"}
+	say("Getting %s against %s." % [String(d.name), String(why.get(kind, "them"))], "counter_%d_%s" % [h.id, want], 9999.0, false,
+		"counter", {"item": String(d.name), "why": String(short.get(kind, "them"))})
 
 func _has_item(h: SimUnit, id: String) -> bool:
 	for i in 6:
@@ -2150,8 +2311,11 @@ func _has_item(h: SimUnit, id: String) -> bool:
 			return true
 	return false
 
-## The main slot holding an item whose active can be used now (no error), or -1.
+## The main slot holding an item whose active can be used now (no error), or -1. A ranked bot with poor item sense
+## (RATED "item_use") often does not think of it at that moment.
 func _ready_slot(h: SimUnit, item_id: String, t: SimUnit = null, p := Vector2.INF) -> int:
+	if rating >= 0.0 and rng.randf() > float(sk.get("item_use", 1.0)):
+		return -1
 	for i in 6:
 		var it = h.inventory[i]
 		if it != null and it.id == item_id:
@@ -2218,7 +2382,8 @@ func _save_items(h: SimUnit) -> void:
 				_order(h, {"type": O.CAST_UNIT, "ability": "", "item_slot": gc, "target": a.id}, true)
 				_cast_deadline = w.time + 0.3
 				if a != h:
-					say("Fade Cape on you, %s, run!" % SimTeamAI.hero_label(a), "glimmer_%d" % a.id, 30.0)
+					say("Fade Cape on you, %s, run!" % SimTeamAI.hero_label(a), "glimmer_%d" % a.id, 30.0, false, "fade_cape",
+						{"ally": SimTeamAI.hero_label(a)})
 				return
 			# Push Staff pushes where the ally faces: only when it is already running away from the chaser
 			if ps >= 0 and a != h and a.moving and absf(angle_difference(a.facing, (a.pos - chaser.pos).angle())) < 0.6 					and w.abilities.cast_error(h, "", ps, a, a.pos) == "":
@@ -2232,7 +2397,7 @@ func _save_items(h: SimUnit) -> void:
 			continue
 		var ls := b.last_seen(e)
 		if float(ls[1]) < 3.0 and (ls[0] as Vector2).distance_to(h.pos) < 800.0 and _use_item(h, "reveal_dust"):
-			say("Dusting their %s." % SimTeamAI.hero_label(e), "dust_use_%d" % e.id, 20.0)
+			say("Dusting their %s." % SimTeamAI.hero_label(e), "dust_use_%d" % e.id, 20.0, false, "dust_use", {"hero": SimTeamAI.hero_label(e)})
 			return
 
 ## Whether enemy heroes hurt `a` within the last `secs` seconds.
@@ -2273,7 +2438,10 @@ func _fight_items(h: SimUnit, e: SimUnit) -> void:
 				_cast_deadline = w.time + 0.6
 				return
 	var bkb := _ready_slot(h, "spell_shield")
-	if bkb >= 0 and d < 500.0 and (h.hp < h.max_hp * 0.75 or e.hp < e.max_hp * 0.5 or _foes.size() >= 2):
+	# a sharp ranked bot puts it on before the stuns land: going in on a disabler, or two enemy heroes near
+	var early := rating >= 0.0 and float(sk.get("item_use", 0.0)) >= 0.85 and d < 650.0 \
+			and (KITS.disable_power(String(e.def.id)) >= 0.6 or _foes.size() >= 2)
+	if bkb >= 0 and (early or d < 500.0 and (h.hp < h.max_hp * 0.75 or e.hp < e.max_hp * 0.5 or _foes.size() >= 2)):
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": bkb})
 	var mom := _ready_slot(h, "mask_of_madness")
 	if mom >= 0 and d < h.attack_range + 100.0 and h.hp > h.max_hp * 0.5:
@@ -2360,6 +2528,8 @@ func _jump_slot(h: SimUnit, p: Vector2) -> int:
 	return s if s >= 0 else _ready_slot(h, "jump_knife", null, p)
 
 func _use_item(h: SimUnit, item_id: String) -> bool:
+	if rating >= 0.0 and rng.randf() > float(sk.get("item_use", 1.0)):
+		return false
 	for i in 6:
 		var it = h.inventory[i]
 		if it != null and it.id == item_id and h.get_meta("used_" + item_id, -99.0) + 13.0 < w.time:
@@ -2737,6 +2907,8 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		SimBot17.spells(self, h, e)
 	elif SimBot18.handles(kit):
 		SimBot18.spells(self, h, e)
+	elif SimBot19.handles(kit):
+		SimBot19.spells(self, h, e)
 	else:
 		_ranger_spells(h, e)
 

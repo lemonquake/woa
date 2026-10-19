@@ -473,3 +473,50 @@ games, joins check, name check, export and cold start. Sounds and looks are buil
 | W1 Creeps | 1 | working tree | 2 tests | n/a | PASS (gate) | gate pacing at side lanes | none |
 | S1 Take control | 1 | working tree | watch_probe 32/32 | n/a | PASS (gate) | none | none |
 | X1 Integration | 1 | working tree | tests, check.sh, export, cold start | n/a | see docs/HANDOFF.md | none | blind review |
+
+## Session 2026-10-19 b (ranked matchmaking) — run `work/lemondev/2026-10-19b-ranked/`
+
+One fresh-context critic on the final captures (no source, no benchmark: not a blind A/B). Measured gates: headless
+tests, live click probe with a real ranked match, bot games by rating, name check, captures at 1080p and 4K.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| R1 Ranked data | 1-3 | working tree | 4 tests | n/a | PASS (gate) | JSON roles as floats; `Ranked.set_name` hit Resource.set_name | none |
+| R2 Matchmaker | 1 | working tree | 2 tests, probe | n/a | PASS (gate) | none | none |
+| R3 Rated bots | 1 | working tree | 2 tests, 4 bot games | n/a | PASS (gate) | none | calibrate against players |
+| R4 Ranked UI | 1-4 | working tree | critic 1 + recheck | n/a (no benchmark) | IMPLEMENTED, benchmark UNVERIFIED | hover card over Accept (fixed) | Dota 2 client comparison |
+| R4b Emblems | 1-5 | working tree | critic 1 | n/a | self-check after fix | Hero/Transcendent less grand than Mythic (fixed) | none |
+| R5 Match hook | 1-2 | working tree | probe 38/38 | n/a | PASS (gate) | icons blank/squashed after a window resize (baked with a validity check) | none |
+| R6 Hero pick | 1-2 | working tree | test_hero_draft, probe | n/a | PASS (gate) | long names clipped (fit) | none |
+| R7 3D versus | 1-2 | working tree | captures 1080/4K, probe | n/a | self-check (owner asked for 3D) | square embers, plates over titles, off-screen plate (fixed) | owner's look |
+| R8 Hero mastery | 1-2 | working tree | 2 tests, probe | n/a | PASS (gate) | no Diamonds on the ladder (top bots' records deepened); first star in 2 wins (350 XP) | balance over real games |
+| X Integration | 2 | working tree | tests 291, check.sh, probe 45/45 | n/a | see docs/HANDOFF.md | none | release export |
+
+## Session 2026-10-19 c (Araki, the Blur; Blau's turrets; Airah and Tock facing; build) — run `work/lemondev/2026-10-19c-araki/`
+
+No critic subagent was run (none asked for); no Dota 2 client here, so the benchmark gate is UNVERIFIED. Measured
+gates: headless tests, kit tests, body collision, animation joins, bot games and a death probe, name check, captures.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| M1 Body, katana | 1-5 | working tree | close-ups, body_collide, anim_joins | n/a | PASS (gate) | broken source rest pose (fixed by araki_prep); arm split tore armour (off); 113 MB > GitHub limit (1536 tex) | none |
+| K1 Kit | 1-2 | working tree | 6 tests | n/a | PASS (gate) | Blur Strike walked instead of dashing past 600 (direction cast); ghosts killed by the summon timeout (own expiry) | none |
+| B1 Araki bot | 1-4 | working tree | 7 bot games, araki_probe x4 | n/a | IMPLEMENTED (gate measured) | mana starvation: escape dash unaffordable (reserve kept); Ghosts cast once in 20 min (cast earlier) | real players |
+| V1 Look, FX, UI | 1-3 | working tree | captures 1080p | n/a | self-check | demon cloud read as a bright vortex (darkened); rising smoke not visible in captures | owner's eye |
+| F1 Facing | 1-2 | working tree | versus_shot, portraits | n/a | PASS (self-check) | spell_idle_2 turns the body; portraits side-on in the great sword idle | none |
+| F2 Blau turrets | 1 | working tree | kit_casts | n/a | PASS (gate) | built only in hero fights (13-16 a game) | none |
+| X1 Integration | 1 | working tree | tests, check.sh, export | n/a | see docs/HANDOFF.md | none | blind review |
+
+## Session 2026-10-19 d (living players: personas, living ladder, chat brain, Players tab, online writer) — run `work/lemondev/2026-10-19d-living/`
+
+One fresh-context critic, blind A/B of chat transcripts (old system vs the new one, same seed), isolation by
+instruction (shared filesystem). No commercial benchmark for bot chat (UNVERIFIED gate).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| P1 Persona, ladder | 1-2 | working tree | 4 tests, captures | n/a | PASS (gate) | same match minute for everyone online; feed flooded by "started learning" (fixed) | weeks of real time |
+| P2 Memory, friends | 1 | working tree | test, ranked_probe 45/45 | n/a | PASS (gate) | bot history lacked K/D/A of matches with you (fixed) | none |
+| P3 Chat brain | 1-4 | working tree | critic 1 + measured recheck | A (candidate) / true | PASS | echoes across players, filler after "!", repeated calls (fixed in 2-3, recheck measured) | owner's ear |
+| P4 Players tab | 1-2 | working tree | captures 1080p/4K | n/a | IMPLEMENTED | none seen | blind review |
+| P5 Online writer | 1-3 | working tree | llm_probe vs mock | n/a | IMPLEMENTED, UNVERIFIED (no real call) | "150%" broke the system prompt's formatting (fixed); probe wrote to the real usage file (fixed) | owner's key, one match |
+| X Integration | 1 | working tree | full suite, check.sh, talk_probe, export | n/a | see docs/HANDOFF.md | none | none |

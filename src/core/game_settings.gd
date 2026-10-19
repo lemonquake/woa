@@ -6,11 +6,11 @@ extends RefCounted
 
 const PATH := "user://hero.json"
 const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg", "roydo", "blau",
-	"azrael", "airah", "burak", "emelrich", "feran", "ghorman"]
+	"azrael", "airah", "burak", "emelrich", "feran", "ghorman", "araki"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
 ## heroes with a model of their own (no Hero Creator look); 2026-10-17: Ezee, Azrin and Caziel got theirs, then Azrael
 const OWN_BODY := ["sludge", "roydo", "blau", "ezee", "azrin", "caziel", "azrael", "airah", "burak", "emelrich", "feran",
-	"ghorman"]
+	"ghorman", "araki"]
 
 static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id
@@ -264,6 +264,9 @@ const DEFAULT_RATE := 150
 
 static var setup := {}
 static var _setup_loaded := false
+## A ranked match from the Ranked screen (Matchmaker.slots_for): the match plays these slots instead of Game Setup's,
+## at 150% experience and gold. Cleared when its result is in.
+static var ranked: Array = []
 
 static func default_setup() -> Dictionary:
 	var teams := [[], []]
@@ -361,16 +364,26 @@ static func watching() -> bool:
 
 ## The match's experience and gold rates as multipliers (1.5 = 150%).
 static func xp_rate() -> float:
+	if not ranked.is_empty():
+		return float(DEFAULT_RATE) / 100.0
 	load_setup()
 	return float(setup.get("xp_rate", DEFAULT_RATE)) / 100.0
 
 static func gold_rate() -> float:
+	if not ranked.is_empty():
+		return float(DEFAULT_RATE) / 100.0
 	load_setup()
 	return float(setup.get("gold_rate", DEFAULT_RATE)) / 100.0
 
 ## Every filled slot with Random resolved: [{team, kind, hero, skill, name, lane}]. Random slots are filled after the
 ## chosen ones, each with varied_pick(), so a team gets a mix of heroes instead of three of one.
 static func match_slots(rng: RandomNumberGenerator) -> Array:
+	if not ranked.is_empty():
+		var rs: Array = ranked.duplicate(true)
+		for s in rs:
+			if s.kind == "you" and not (String(s.hero) in HEROES):
+				s.hero = selected                  # (the draft always picks one)
+		return rs
 	load_setup()
 	var out := []
 	var used_names := {}

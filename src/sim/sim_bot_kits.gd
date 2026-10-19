@@ -27,6 +27,8 @@ const ROLES := {
 	"emelrich": [3, 1, 4],
 	"feran": [4, 2, 5],
 	"ghorman": [3, 4],
+	# Araki (the owner's hero, run 2026-10-19 c): a melee agility carry who can play mid or off lane
+	"araki": [1, 2, 3],
 }
 ## Heroes without their own item builds yet borrow those of a hero who fights the same way.
 const BUILD_LIKE := {"airah": "froster", "burak": "azrael", "emelrich": "kragg", "feran": "azrin", "ghorman": "ezee"}
@@ -92,6 +94,11 @@ const SKILLS := {
 	"ghorman": ["tame", "pack_leader", "tame", "roar", "tame", "beast_form", "tame", "blessing_of_the_beast_king",
 		"pack_leader", "pack_leader", "beast_form", "pack_leader", "roar", "roar", "beast_form", "roar",
 		"blessing_of_the_beast_king", "blessing_of_the_beast_king", "blessing_of_the_beast_king"],
+	# Araki (SimBot19): Blur Strike first (farm, trades, the gap closer), the bomb at 2 for its slow and the cut, Ghosts
+	# at 4 once Senryukai stacks pay, then Blur Strike to 4, Ghosts next (more ghosts, bigger share), the bomb last
+	"araki": ["blur_strike", "djin_bomb", "blur_strike", "ghosts_of_the_will", "blur_strike", "the_blur",
+		"blur_strike", "ghosts_of_the_will", "ghosts_of_the_will", "ghosts_of_the_will", "the_blur", "djin_bomb",
+		"djin_bomb", "djin_bomb", "the_blur"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -105,7 +112,7 @@ const SUPPORT_SKILLS := {
 const TALENTS := {"blood_ranger": [1, 1, 0, 1], "ezee": [0, 0, 1, 0], "sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
 	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0],
 	"azrael": [0, 1, 1, 0], "airah": [0, 0, 1, 0], "burak": [0, 0, 0, 0], "emelrich": [0, 0, 1, 1], "feran": [0, 1, 1, 0],
-	"ghorman": [0, 0, 0, 0]}
+	"ghorman": [0, 0, 0, 0], "araki": [0, 0, 0, 1]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -173,6 +180,21 @@ const BUILDS := {
 			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "boots", "magic_stick",
 				"gloves", "boots_elves", "magic_wand", "sneak_blade", "crit_sword", "spell_shield", "armor_breaker",
 				"battle_armor"],
+		],
+	},
+	# Araki: every Blur Strike slash is an attack, so attack effects pay many times over: Cleave Axe for farming,
+	# the bash and chain lightning lines for fights; Spell Shield, crits and evasion to close games
+	"araki": {
+		"core": [
+			["tango", "salve", "clarity", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "cleave_axe", "yasha", "spell_shield", "crit_bow",
+				"armor_breaker", "moth_blade"],
+			["tango", "salve", "clarity", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "shock_hammer", "stun_club", "storm_hammer", "spell_shield",
+				"crit_bow", "stun_blade", "moth_blade"],
+			["tango", "salve", "clarity", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "mask_of_madness", "yasha", "armor_breaker", "spell_shield",
+				"crit_bow", "moth_blade", "leech_blade"],
 		],
 	},
 	"tock": {
@@ -310,6 +332,8 @@ static func disable_power(hero: String) -> float:
 			return 0.65
 		"ghorman":
 			return 0.45
+		"araki":
+			return 0.35
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
@@ -473,6 +497,22 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 			if ready.call("shuffle"):
 				total += ab.val(h, "knife_juggle", "damage") * 3.0 * mr + dps(w, h, t) * ab.val(h, "shuffle", "stun")
 			total *= 1.0 + h.magic_amp
+		"araki":
+			# Blur Strike: an attack and its magic damage, twice when the refresh lands; the bomb's cut on the magic; the
+			# ghosts' share of his attack with the stacks they bring; The Blur's faster attacks
+			var avg := (h.dmg_min + h.dmg_max) * 0.5 + h.bonus_damage
+			var st := float(w.abilities.kits7.stacks_on(h, t)) * ab.val(h, "senryukai", "damage_per_stack")
+			var mr2 := mr
+			if ready.call("djin_bomb"):
+				mr2 = minf(1.0, mr * (1.0 + ab.val(h, "djin_bomb", "magic_resist_cut")))
+			if ready.call("blur_strike") or w.abilities.kits7.strike_again(h):
+				var casts := 1.7 if not w.abilities.kits7.strike_again(h) else 1.0
+				total += casts * (ab.val(h, "blur_strike", "damage") * mr2 * (1.0 + h.magic_amp) + (avg + st) * arm)
+			if ready.call("ghosts_of_the_will"):
+				var g := ab.val(h, "ghosts_of_the_will", "ghosts")
+				total += g * ab.val(h, "ghosts_of_the_will", "damage_pct") * (avg + st + g * 0.5 * ab.val(h, "senryukai", "damage_per_stack")) * arm * 0.85
+			if h.ability_level_of("the_blur") > 0 and ab.cooldown_left(h, "the_blur") <= 0.0:
+				total += dps(w, h, t) * 2.5
 		"ghorman":
 			var pack := w.abilities.kits6.beasts_of(h)
 			for bst: SimUnit in pack:

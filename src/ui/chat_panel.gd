@@ -67,16 +67,43 @@ func add(e: Dictionary) -> void:
 		return
 	if bool(e.get("bot_line", false)) and not bool(Options.get_value("bot_trash_talk")):
 		return
-	lines.append({"name": ("(All) " if bool(e.get("all", false)) else "") + String(e.name), "text": String(e.text),
+	var line := {"name": ("(All) " if bool(e.get("all", false)) else "") + String(e.name), "text": String(e.text),
 		"me": int(e.u) == hud.game.player_hero_id,
 		"hero": SimTeamAI.hero_label(u) if u != null else "", "t": _now,
-		"col": U.player_color(u) if u != null and u.is_hero() else U.DAWN})
+		"col": U.player_color(u) if u != null and u.is_hero() else U.DAWN}
+	# the online chat writer's version of a bot line: shown if it is ready, waited for a moment if it is coming
+	var llm = hud.game.get("llm")
+	var lid := int(e.get("lid", -1))
+	if llm != null and lid >= 0:
+		var r: Dictionary = llm.text_for(lid)
+		if String(r.state) == "ready":
+			line.text = String(r.text)
+		elif String(r.state) == "waiting":
+			line["lid"] = lid
+			_waiting.append(line)
+			return
+	lines.append(line)
 	while lines.size() > 40:
 		lines.pop_front()
 	queue_redraw()
 
+var _waiting: Array = []                   # bot lines waiting a moment for the online chat writer
+
 func _process(dt: float) -> void:
 	_now += dt
+	if not _waiting.is_empty():
+		var llm = hud.game.get("llm")
+		for l in _waiting.duplicate():
+			var r: Dictionary = llm.text_for(int(l.lid)) if llm != null else {"state": "none"}
+			if String(r.state) != "waiting":
+				_waiting.erase(l)
+				if String(r.state) == "ready":
+					l.text = String(r.text)
+				l.t = _now
+				lines.append(l)
+				while lines.size() > 40:
+					lines.pop_front()
+				queue_redraw()
 	# the fade needs no more than 30 redraws a second (new lines and typing redraw at once)
 	_redraw_t -= dt
 	if _redraw_t <= 0.0 and not lines.is_empty() and (_now - float(lines[-1].t) < SHOW + FADE + 0.5 or is_open()):

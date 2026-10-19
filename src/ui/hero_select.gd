@@ -42,6 +42,8 @@ const INFO := {
 		"story": "Feran Mock belongs to nobody. Juggled knives, a box full of nasty jokes and a trick for swapping places: chaos, but chaos he can steer. When the fight gets crowded he shuffles everyone round and fills the air with knives."},
 	"ghorman": {"title": "the Beast King", "role": "Melee  ·  Strength  ·  Initiator, Jungler, Pusher",
 		"story": "Ghorman rules the wild. He tames the creeps of the forest and the lanes, and the more beasts follow him the harder he hits. When he roars they all charge, and when he becomes the beast himself, his pack grows with him."},
+	"araki": {"title": "the Blur", "role": "Melee  ·  Agility  ·  Carry, Escape, Nuker",
+		"story": "Araki has fought for centuries in the Undead realm, and his katana, Senryukai, cuts deeper the longer a fight goes on. He flashes through his enemies faster than they can turn, sets a demon loose in a cloud of smoke, and calls the ghosts of the dead to strike beside him. When he falls into complete concentration, he is only a blur."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }
@@ -132,12 +134,14 @@ func _build_ui() -> void:
 		U.text(head, "Choose your hero", Vector2(4, 46), 44, U.GOLD, "title")
 		U.art_rect(head, "divider", Rect2(0, 62, 520, 30)))
 	add_child(head)
-	# the hero grid: portrait cards, four a row
+	# the hero grid: portrait cards, four a row; with more than 16 heroes five a row of smaller cards, so four rows still
+	# fit above Back (run 2026-10-19 c: the 17th card sat under it)
+	var many := GameSettings.HEROES.size() > 16
 	var grid := GridContainer.new()
-	grid.columns = 4
+	grid.columns = 5 if many else 4
 	grid.position = Vector2(60, 132)
-	grid.add_theme_constant_override("h_separation", 18)
-	grid.add_theme_constant_override("v_separation", 10)
+	grid.add_theme_constant_override("h_separation", 14 if many else 18)
+	grid.add_theme_constant_override("v_separation", 8 if many else 10)
 	add_child(grid)
 	for id in GameSettings.HEROES:
 		var card := _card(id)
@@ -224,7 +228,7 @@ func _button(text: String, variation: String, w: float, cb: Callable) -> Button:
 func _card(id: String) -> Control:
 	var d := SimData.unit(id)
 	var c := Control.new()
-	c.custom_minimum_size = Vector2(150, 196)
+	c.custom_minimum_size = Vector2(130, 170) if GameSettings.HEROES.size() > 16 else Vector2(150, 196)
 	c.mouse_filter = Control.MOUSE_FILTER_STOP
 	c.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	c.set_meta("hover", false)

@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3: no winner at 25:00, 265949 ms
+  araki      L10 K/D/A 0/13/0 LH  40  casts { "blur_strike": 40, "djin_bomb": 14, "the_blur": 7, "ghosts_of_the_will": 4 }
+  blau       L14 K/D/A 2/13/0 LH  41  casts { "bounce_shot": 33, "lay_trap": 21, "summon_boulders": 6, "place_turret": 13 }
+  burak      L10 K/D/A 1/11/2 LH  11  casts { "axe_throw": 33, "reckless_swing": 18, "berserk": 6 }  | axe_leap 15, unstoppable 9
+  feran      L 9 K/D/A 0/12/0 LH  13  casts { "knife_juggle": 10, "joke_box": 23, "swap": 4, "shuffle": 5 }  | joke_box_pop 23
+  ghorman    L14 K/D/A 3/7/2 LH  14  casts { "tame": 35, "roar": 17, "beast_form": 7, "blessing_of_the_beast_king": 10 }  | tame 35, maul 9
+  ezee       L17 K/D/A 6/0/15 LH  75  casts { "dark_stomp": 19, "tainted_touch": 24, "leap_strike": 9, "unholy_might": 13 }
+  azrin      L25 K/D/A 29/0/4 LH 151  casts { "touch_of_ember": 55, "fiery_javelin": 43, "spirit_of_fire": 36, "divine_smite": 12 }
+  kragg      L18 K/D/A 8/2/13 LH  30  casts { "iron_grip": 25, "repel": 10, "magnet_field": 6 }
+  blau       L20 K/D/A 6/2/16 LH  92  casts { "bounce_shot": 29, "lay_trap": 13, "place_turret": 16, "summon_boulders": 1 }
+  tock       L17 K/D/A 7/3/14 LH  35  casts { "time_bolt": 56, "rewind": 2, "stop_time": 8, "slow_field": 18, "fast_forward": 2 }
+WARNING: 5654 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 23 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

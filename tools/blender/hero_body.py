@@ -166,7 +166,7 @@ def core_role(name):
         return "spine*"
     if base.startswith("chest") or base.startswith("upperchest") or base == "ribcage":
         return "chest"
-    if re.fullmatch(r"neck\d*", base):
+    if re.fullmatch(r"neck(twist)?\d*", base):          # CC rigs name theirs NeckTwist01, NeckTwist02
         return "neck*"
     if base in ("head", "headbone"):
         return "head"

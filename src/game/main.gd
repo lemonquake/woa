@@ -26,6 +26,7 @@ var hero15_fx: Hero15Fx
 var hero16_fx: Hero16Fx
 var azrael_fx: AzraelFx
 var hero18_fx: Hero18Fx
+var araki_fx: ArakiFx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
@@ -45,6 +46,7 @@ var player_hero_id := -1                   # your hero; while watching, the watc
 ## player_team follow the watched hero (its HUD, portrait and orders); the Watch panel (WatchPanel) picks the hero, the
 ## camera, whose sight shows and whose orders and plans are drawn. Nothing the watcher clicks reaches the simulation.
 var spectator := false
+var ranked_match := false                   # a ranked match (Ranked screen): its result moves MMR
 var watching_match := false                # an All-Bot match (the Watching panel stays while you control a hero)
 var controlling := -1                      # watching: the hero you took over from its bot (take_control), or -1
 var vision_mode := -1                      # -1 your (the watched hero's) team; 0, 1 that team; 2 both; 3 the whole map
@@ -154,6 +156,11 @@ func _ready() -> void:
 	hero18_fx.fx = fx
 	hero18_fx.fire = fire_fx
 	add_child(hero18_fx)
+	araki_fx = ArakiFx.new()
+	araki_fx.game = self
+	araki_fx.fx = fx
+	araki_fx.fire = fire_fx
+	add_child(araki_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -226,6 +233,18 @@ func _ready() -> void:
 	_sync_views()
 	if mp:
 		_start_net()
+	elif not args.has("capture") and not args.has("bench") and (LlmChat.ready_to_run() or args.has("llm")):
+		# the online chat writer: single player only (every multiplayer machine must show the same lines)
+		var lc := LlmChat.load_config()
+		if args.has("llm_endpoint"):
+			lc["endpoint"] = String(args.llm_endpoint)
+			lc["api_key"] = String(lc.get("api_key", "test"))
+		if not lc.is_empty():
+			llm = LlmChat.new()
+			llm.name = "LlmChat"
+			add_child(llm)
+			llm.setup(world, player_team, lc)
+			print("online bot chat on (%s)" % llm.model())
 	booted = true
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
 	await _stage(0.96, "Ready")
@@ -286,6 +305,7 @@ func _ready() -> void:
 ## through the network session to be applied on every machine at the same tick in multiplayer (its error, if any,
 ## then comes back later as an "error" event). Returns the error now in single player, "" in multiplayer.
 var net = null                              # NetMatch while a multiplayer match runs, else null
+var llm: LlmChat = null                     # the online chat writer (Options "Online bot chat" with a key), else null
 var multiplayer_match := false              # this match began as a multiplayer one (stays true if the server goes)
 var paused_by := ""                         # who paused the game (multiplayer)
 
@@ -335,6 +355,7 @@ func _spawn_heroes() -> void:
 		if args.has("gold_rate"):
 			world.gold_rate = float(args.gold_rate)
 	else:
+		ranked_match = not GameSettings.ranked.is_empty()
 		slots = GameSettings.match_slots(rng)
 		world.xp_rate = GameSettings.xp_rate()
 		world.gold_rate = GameSettings.gold_rate()
@@ -357,6 +378,8 @@ func _spawn_heroes() -> void:
 		var look: Dictionary
 		if s.kind == "you":
 			look = (GameSettings.default_look(id) if automated else GameSettings.look_for(id)).duplicate(true)
+			if ranked_match:
+				look.display_name = String(Ranked.me().name)      # ranked: your player name, like everyone else's
 		elif team == C.DAWN:
 			look = GameSettings.default_look(id).duplicate(true)
 			look.display_name = String(s.name)
@@ -371,7 +394,7 @@ func _spawn_heroes() -> void:
 		mine = (made[0][0] as SimUnit)
 	if not spectator:
 		mine.player = true
-		mine.player_name = String(NetBrowser.load_prefs().get("name", ""))
+		mine.player_name = String(Ranked.me().name) if ranked_match else String(NetBrowser.load_prefs().get("name", ""))
 	player_hero_id = mine.id
 	player_team = mine.team
 	for m in made:
@@ -380,8 +403,13 @@ func _spawn_heroes() -> void:
 		if h == mine and not spectator:
 			if args.has("autoplay"):
 				world.bots.append(SimBot.new(world, h.id, "mid", "Autoplay"))
+			if ranked_match and String(s.get("role", "")) != "":
+				world.brain(h.team).fixed_role[h.id] = int(s.role)       # the role you were matched into
 			continue
-		world.bots.append(SimBot.new(world, h.id, "mid", String(s.name), String(s.skill)))
+		var bot := SimBot.new(world, h.id, "mid", String(s.name), String(s.skill))
+		world.bots.append(bot)
+		if s.has("rating"):
+			bot.set_rating(float(s.rating), s.get("traits", {}))      # a ranked player: its own skill and manners
 		if String(s.get("role", "")) != "":
 			world.brain(h.team).fixed_role[h.id] = int(s.role)
 	if spectator:
@@ -716,6 +744,8 @@ func _drain_events() -> void:
 			azrael_fx.event(e)
 		elif e.t in Hero18Fx.EVENTS:
 			hero18_fx.event(e)
+		elif e.t in ArakiFx.EVENTS:
+			araki_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -958,6 +988,9 @@ func _drain_events() -> void:
 			"chat":
 				if hud and hud.has_method("on_chat") and (int(e.team) == player_team or bool(e.get("all", false)) or spectator):
 					hud.on_chat(e)
+			"chat_intent":
+				if llm != null:
+					llm.want(e)
 			"ping":
 				if int(e.team) == player_team and int(e.u) != player_hero_id:
 					fx.ping(e.pos)
@@ -1159,6 +1192,7 @@ func _process(dt: float) -> void:
 	hero16_fx.update(world, alpha, dt)
 	azrael_fx.update(world, alpha, dt)
 	hero18_fx.update(world, alpha, dt)
+	araki_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)

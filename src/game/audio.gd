@@ -200,6 +200,9 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "ezee":
 				at("greatsword_hit", p2, -5.0, 3, 0.05)
 				return
+			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "araki":
+				at("sword_hit", p2, -7.0, 3, 0.05)          # his katana (and his ghosts' blows)
+				return
 			if src2.kind == SimConst.Kind.HERO and String(src2.def.id) == "sludge":
 				at("axe_hit", p2, -4.0, 3, 0.05)
 				at("hit_flesh", p2, -10.0, 3, 0.05)
@@ -441,5 +444,25 @@ func event(e: Dictionary, w: SimWorld) -> void:
 		"tree":
 			if not bool(e.alive) and e.has("from"):
 				at("break_wood", View.to3(game.map.trees[int(e.i)].pos, game.terrain.height_at(game.map.trees[int(e.i)].pos)), -4.0, 2, 0.1)
+		# Araki (run 2026-10-19 c): the dash's rush and cut, the bomb's throw and burst, the ghosts' hiss, The Blur
+		"blur_strike":
+			var pf := View.to3(e.from, game.terrain.height_at(e.from)) + Vector3(0, 1.0, 0)
+			var pt := View.to3(e.to, game.terrain.height_at(e.to)) + Vector3(0, 1.0, 0)
+			at("blink", pf, -6.0, 0, 0.05)
+			at("swing_light", pt, -2.0, 3, 0.05)
+			if not (e.hits as Array).is_empty():
+				at("cleave", pt, -5.0, 2, 0.05)
+		"djin_bomb":
+			at("swing_dagger", _pos(w, e.u), -6.0, 2, 0.1)
+		"djin_smoke":
+			var pd := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.6, 0)
+			at("fire_explode", pd, -3.0, 0, 0.2, 0.05)
+			at("shade_hiss", pd, -6.0, 0, 0.3, 0.05)
+		"ghosts_call":
+			at("dark_cast", _pos(w, e.u), -5.0, 0, 0.2)
+		"ghost_spawn":
+			at("shade_hiss", _pos(w, e.ghost), -14.0, 0, 0.15, 0.15)
+		"the_blur":
+			at("boss_charge", _pos(w, e.u), -5.0, 0, 0.3)
 		"attack_start":
 			pass

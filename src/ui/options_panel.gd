@@ -132,6 +132,15 @@ func _game_tab() -> void:
 	_check(v, "Show bot chat", "bot_chat", Callable())
 	_check(v, "Bot trash talk", "bot_trash_talk", Callable())
 	_note(v, "Bots talk like players: they all chat their kills, mock missed spells and roast teammates (you too) who feed or fall behind, in English, Filipino and Taglish. Turn it off to keep only their plain team calls.")
+	_check(v, "Online bot chat", "llm_chat", Callable())
+	var used := LlmChat.usage_total()
+	var lc := LlmChat.load_config()
+	var or_key := String(lc.get("provider", "")) == "openrouter"
+	var state := "Ready (%s)." % String(lc.get("model", LlmChat.OR_MODEL if or_key else LlmChat.MODEL)) if not lc.is_empty() \
+		else "No API key yet: put {\"api_key\": \"...\"} in llm.json in the game's data folder, or set OPENROUTER_API_KEY."
+	if not used.is_empty():
+		state += " So far: %d lines, $%.3f." % [int(used.get("calls", 0)), float(used.get("usd", 0.0))]
+	_note(v, "Single player only. An online language model (DeepSeek V4.1 Flash through OpenRouter) writes the bots' lines in their own voice; the bots still decide what to say about, so chat works the same without it. Well under a cent a match (docs/LLM_CHAT.md). " + state)
 	_check(v, "Bots learn from games", "bots_learn", func():
 		BotMemory.active = bool(Options.get_value("bots_learn")) and game != null)
 	_note(v, "Bots learn what worked: their fights and teamfights, their ganks, where they died, which items won, how far their skill shots land and which lane you like. It is saved on this computer.")

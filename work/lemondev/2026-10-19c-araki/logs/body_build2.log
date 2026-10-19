@@ -1,0 +1,70 @@
+15:28:24 | INFO: Data are loaded, start creating Blender stuff
+15:28:24 | INFO: Blender create Mesh node hero
+15:28:26 | INFO: glTF import finished in 1.51s
+[hero_body   2.0s] hero rig with 132 clips
+15:28:26 | INFO: Data are loaded, start creating Blender stuff
+15:28:26 | INFO: Blender create Mesh node Samurai_armor_mat_0
+15:28:26 | INFO: Blender create Mesh node Samurai_body_mat_0
+15:28:26 | INFO: Blender create Mesh node Samurai_top_mat_0
+15:28:26 | INFO: Blender create Mesh node Samurai_legs_mat_0
+15:28:26 | INFO: Blender create Mesh node Samurai_details_mat_0
+15:28:26 | INFO: Blender create Mesh node Samurai_weapon_mat_0
+15:28:26 | INFO: Blender create Mesh node katana_weapon_mat_0
+15:28:26 | INFO: glTF import finished in 0.38s
+[hero_body   2.5s] imported 15 objects from A:/Python/woa/work/downloads/sf_heroes/shadowflame_samurai.glb
+[hero_body   2.5s]   dropped helper Icosphere
+[hero_body   2.5s]   dropped piece katana_weapon_mat_0 ( weapon_mat )
+[hero_body   2.5s] kept 6 mesh pieces (72759 faces), rig: Object_4 (147 bones)
+[hero_body   2.5s] rig map: {'chest': 'CC_Base_Spine02_039', 'foot.L': 'CC_Base_L_Foot_07', 'foot.R': 'CC_Base_R_Foot_024', 'forearm.L': 'CC_Base_L_Forearm_055', 'forearm.R': 'CC_Base_R_Forearm_081', 'hand.L': 'CC_Base_L_Hand_059', 'hand.R': 'CC_Base_R_Hand_085', 'head': 'CC_Base_Head_042', 'hips': 'CC_Base_Hip_03', 'neck': 'CC_Base_NeckTwist01_040', 'shin.L': 'CC_Base_L_Calf_06', 'shin.R': 'CC_Base_R_Calf_023', 'shoulder.L': 'CC_Base_L_Clavicle_053', 'shoulder.R': 'CC_Base_R_Clavicle_077', 'spine': 'CC_Base_Spine01_038', 'thigh.L': 'CC_Base_L_Thigh_05', 'thigh.R': 'CC_Base_R_Thigh_020', 'toe.L': 'CC_Base_L_ToeBase_09', 'toe.R': 'CC_Base_R_ToeBase_025', 'upper_arm.L': 'CC_Base_L_Upperarm_054', 'upper_arm.R': 'CC_Base_R_Upperarm_078'}
+[hero_body   2.6s] hand L: 3 fingers, hand turned 8 deg from the converted bone, palm side (-0.68, -0.71, 0.17)
+[hero_body   2.6s] hand R: 3 fingers, hand turned 7 deg from the converted bone, palm side (0.71, -0.69, 0.15)
+[hero_body   3.1s] scaled x2.386 to 1.880 m
+[hero_body   3.1s]   joint hips         (0.0, 0.0, 1.557) -> (0.0, 0.338, 1.571)
+[hero_body   3.1s]   joint head         (-0.0, 1.355, 1.364) -> (-0.0, 1.355, 1.651)
+[hero_body   3.1s]   joint upper_arm.L  (0.0, -2.521, 1.557) -> (0.0, -2.521, 1.557)
+[hero_body   3.1s]   joint hand.L       (1.562, 0.333, 1.521) -> (1.834, 0.101, 1.635)
+[hero_body   3.1s]   joint thigh.L      (-0.0, -2.521, 1.557) -> (-0.0, -2.521, 1.557)
+[hero_body   3.1s]   joint foot.L       (0.54, -2.409, 1.328) -> (0.571, -2.526, 1.671)
+[hero_body   3.1s]   hand.L rolled -0 deg to the grip; weapon bone in the fist
+[hero_body   3.1s]   hand.R rolled 12 deg to the grip; weapon bone in the fist
+[hero_body   3.1s]   native upper_arm.L  (1.629, -0.007, 3.924) -> (1.621, -0.106, 3.93) (model (0.0, -2.521, 1.557))
+[hero_body   3.1s]   native forearm.L    (1.621, -0.106, 3.93) -> (3.183, 2.747, 3.895) (model (0.0, -2.521, 1.557))
+[hero_body   3.1s]   native hand.L       (3.183, 2.747, 3.895) -> (3.333, 2.62, 3.957) (model (1.562, 0.333, 1.521))
+[hero_body   3.1s]   native thigh.L      (0.0, -0.105, 4.075) -> (0.0, -0.205, 4.071) (model (-0.0, -2.521, 1.557))
+[hero_body   3.7s] mesh: 72759 faces -> 49999 triangles
+[hero_body  12.5s] cloth: 4218 hanging vertices follow the hips more than the legs
+[hero_body  12.5s] arms: 3351 hand and forearm vertices freed from the trunk and legs
+[hero_body  12.7s] smoothed all weights (4 passes)
+[hero_body  13.1s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body  13.2s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body  13.6s] unmix: 6292 vertices made wholly arm or body, 963 edges split (971 new vertices)
+Info: 17696 vertex weights limited
+[hero_body  15.6s] arm split: {'arm_left': 1504, 'arm_right': 1504, 'patches_moved': 2828, 'edges_split': 36, 'new_vertices': 54, 'reweighted': 4874}
+[hero_body  19.2s] retargeted 132 clips (4216 frames) onto the native rest in 3.5s
+00:26.266  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_rest_front.png'
+00:27.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_rest_side.png'
+00:28.422  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_idle_front.png'
+00:29.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_idle_side.png'
+00:31.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_hero_run_front.png'
+00:33.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_hero_run_side.png'
+00:34.391  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_gs_1_front.png'
+00:35.797  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-19c-araki\model\preview\araki_gs_1_side.png'
+[hero_body  33.6s] previews in A:/Python/woa/work/lemondev/2026-10-19c-araki/model/preview
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+15:28:57 | INFO: Starting glTF 2.0 export
+15:28:57 | INFO: Extracting primitive: araki
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+15:28:58 | INFO: Primitives created: 6
+15:29:15 | INFO: Finished glTF 2.0 export in 17.928141117095947 s
+
+[hero_body  51.7s] wrote A:/Python/woa/assets/characters/heroes17/araki.glb (112.9 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

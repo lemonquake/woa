@@ -60,6 +60,12 @@ The owner's own names are never changed by an agent, even when they break this r
   **Lay Trap**, **Place Turret**
 * Hero (2026-10-17): **Azrael**, title **the Death Dealer**; abilities **Soul Tap**, **Door of the End**, **Death
   Scythe**, **Divine Darkness**
+* Hero (2026-10-19 c): **Araki**, title **the Blur**; innate **Senryukai**; abilities **Blur Strike**, **Djin Bomb**,
+  **Ghosts of the Will**, **The Blur**
+* Ranks (2026-10-19): **Rookie**, **Advanced**, **Licensed**, **Expert**, **Commander**, **Chief Commander**,
+  **Legendary**, **Mythic**, **Hero**, **Transcendent**, **Aetherium**, **Aetherium+** (allowed as "Aetherium" in
+  `tools/check_names.py`). Bot example names: **01-hank pop**, **weakass**, **BISAKOL SLAYER**, **basta tangalog bobo**,
+  **mama mo**
 * Damage type (2026-10-14): **Aether** (pure damage). Only the exact label is allowed (see `OWNER_EXACT` in
   `tools/check_names.py`), so new "Aether ..." compounds are still caught.
 

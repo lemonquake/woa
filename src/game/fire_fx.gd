@@ -209,6 +209,12 @@ static func ramp(kind := "fire") -> GradientTexture1D:
 			g.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
 			g.colors = PackedColorArray([Color(1.0, 0.35, 0.3, 1.0), Color(0.85, 0.05, 0.08, 1.0), Color(0.3, 0.0, 0.03, 0.85),
 				Color(0.02, 0.0, 0.0, 0.0)])
+		"shadowflame":
+			# Araki (run 2026-10-19 c): the soul-fire of his body's arms and eyes, white-green cores, acid green, dying
+			# to a dark teal
+			g.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
+			g.colors = PackedColorArray([Color(0.92, 1.0, 0.85, 1.0), Color(0.5, 1.0, 0.3, 1.0), Color(0.12, 0.55, 0.25, 0.8),
+				Color(0.02, 0.12, 0.08, 0.0)])
 		"holy":
 			g.offsets = PackedFloat32Array([0.0, 0.35, 0.75, 1.0])
 			g.colors = PackedColorArray([Color(1.0, 0.97, 0.85, 1.0), Color(1.0, 0.78, 0.35, 1.0), Color(1.0, 0.42, 0.12, 0.8),

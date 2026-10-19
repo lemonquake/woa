@@ -1,0 +1,125 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 84%, melee_rax top 100% inv, ranged_rax top 100% inv, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 52%, tower3 bot 99%, melee_rax bot 100% inv, ranged_rax bot 100% inv, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 100% inv, tower1 bot 1%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 86%, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 100% inv, tower1 top 27%, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+    end Bot Ann farm alive hp 100% pos (3220.0, -628.0) task push
+    end Bot Bob task alive hp 100% pos (3323.0, -2278.0) task push
+    end Bot Cat retreat dead hp 0% pos (-1469.0, -1772.0) task push
+    end Bot Dan task dead hp 0% pos (-1373.0, -2008.0) task gank
+    end Bot Eve fight alive hp 52% pos (-1030.0, -2074.0) task gank
+    end Bot Fay task alive hp 11% pos (-1104.0, -2070.0) task save
+    end Bot Gus task alive hp 100% pos (-900.0, -533.0) task fight
+    end Bot Hal task dead hp 0% pos (-1366.0, -662.0) task -
+    end Bot Ivy retreat dead hp 0% pos (-2853.0, -2762.0) task -
+    end Bot Jo task alive hp 68% pos (-2119.0, -1283.0) task save
+  Ancient Light calls: teamfights 42, ganks 19, pushes 5 (chained on 0), towers lost 5, bots unstuck 3
+  Ancient Light sites: bot goals { "lamp": 19 }; done: warps 0, lilies 0, lamps lit 9, lamps put out 3
+  Black Sun calls: teamfights 67, ganks 38, pushes 17 (chained on 4), towers lost 1, bots unstuck 5
+  Black Sun sites: bot goals { "lamp": 19, "gate": 1 }; done: warps 0, lilies 0, lamps lit 6, lamps put out 7
+seed 3: no winner at 30:00 (365.2 s real)
+  Ancient Light (towers lost 5):
+    Bot Ann  araki         role 1 bot   6/14/ 4 lvl 16 LH  59 DN  5 nw 11054 | lane 25%, fight 3%, retreat 20%, task 19%, heal 3%, farm 30%, clear 0%
+             items: ["spell_shield", "spear", "magic_wand", "power_treads", "jump_knife", "brass_knuckles", "quelling_blade"]
+    Bot Bob  ezee          role 3 top   7/ 8/ 6 lvl 20 LH  63 DN  3 nw 14920 | lane 14%, fight 6%, task 24%, retreat 15%, farm 37%, heal 3%, clear 0%
+             items: ["spell_shield", "jump_knife", "slip_boots", "magic_wand", "belt_str", "sure_hit_staff", "tough_band"]
+    Bot Cat  tock          role 5 bot   0/17/ 5 lvl 14 LH  20 DN  0 nw  6135 | lane 24%, retreat 13%, fight 2%, task 17%, stack 11%, ward 12%, pull 2%, farm 18%, heal 1%, clear 0%
+             items: ["reveal_ward", "mana_boots", "glimmer_cape", "push_staff", "reveal_dust", "observer_ward"]
+    Bot Dan  kragg         role 4 top   0/17/ 5 lvl 11 LH   7 DN  1 nw  5215 | lane 17%, fight 3%, task 22%, retreat 13%, heal 0%, ward 17%, farm 21%, stack 6%
+             items: ["reveal_ward", "boots", "push_staff", "reveal_dust", "glimmer_cape", "observer_ward"]
+    Bot Eve  froster       role 2 mid   9/10/ 0 lvl 19 LH 104 DN  1 nw 17221 | lane 27%, retreat 11%, heal 3%, task 18%, clear 0%, fight 2%, farm 39%
+             items: ["kugmo_atuli", "spell_shield", "mana_boots", "big_gem", "reveal_dust", "push_staff", "magic_wand", "smart_band", "mana_gem"]
+  Black Sun (towers lost 1):
+    Bot Fay  caziel        role 1 top  11/ 8/ 9 lvl 19 LH  46 DN  4 nw 12124 | lane 26%, retreat 14%, heal 5%, fight 4%, task 24%, farm 27%
+             items: ["magic_wand", "power_treads", "jump_knife", "mask_of_madness", "quelling_blade", "spell_shield", "wraith_band"]
+    Bot Gus  azrin         role 2 mid  29/ 1/11 lvl 27 LH 165 DN  5 nw 31304 | lane 24%, fight 8%, task 35%, retreat 4%, clear 0%, farm 27%, heal 2%
+             items: ["spell_shield", "dagon", "mana_boots", "hex_staff", "magic_wand", "kugmo_atuli", "clarity", "salve", "smart_band"]
+    Bot Hal  sludge        role 5 top   3/ 3/ 5 lvl 15 LH  64 DN  7 nw  9655 | lane 23%, retreat 13%, task 11%, ward 11%, stack 2%, fight 1%, pull 0%, heal 18%, farm 20%, clear 0%
+             items: ["root_staff", "slip_boots", "glimmer_cape", "jump_knife", "observer_ward", "reveal_dust", "ring_regen", "chainmail", "reveal_ward"]
+    Bot Ivy  roydo         role 3 bot   6/ 6/22 lvl 20 LH  91 DN  2 nw 14756 | lane 23%, retreat 7%, fight 6%, task 33%, heal 3%, farm 28%, clear 0%
+             items: ["slip_boots", "jump_knife", "troll_ring", "magic_wand", "spell_shield", "spike_armor", "smart_band"]
+    Bot Jo   blood_ranger  role 4 bot  16/ 5/20 lvl 24 LH  71 DN  4 nw 18853 | lane 18%, retreat 6%, fight 3%, task 42%, ward 8%, stack 5%, farm 15%, heal 2%, clear 0%
+             items: ["long_lens", "push_staff", "spell_shield", "glimmer_cape", "dragon_lance", "slip_boots", "clarity", "reveal_dust", "reveal_ward"]
+  at 10:00 LH/net worth: Ann 11/5714, Bob 11/6855, Cat 11/2218, Dan 2/2207, Eve 25/3340, Fay 15/3705, Gus 28/7368, Hal 12/3436, Ivy 20/4803, Jo 8/5514 | team net worth 20334 vs 24826
+  at 20:00 LH/net worth: Ann 42/7877, Bob 43/8817, Cat 13/2872, Dan 6/3407, Eve 71/9436, Fay 37/7645, Gus 104/18532, Hal 38/7111, Ivy 44/9912, Jo 24/9308 | team net worth 32409 vs 52508
+  totals: kills 22 vs 65, net worth 54545 vs 86692
+  stuck: none
+  Fortify pressed 8 times: [5:27] Ancient Light (Bot Ann), [5:56] Black Sun (Bot Fay), [10:58] Ancient Light (Bot Ann), [16:07] Ancient Light (Bot Ann), [18:15] Black Sun (Bot Fay), [22:26] Ancient Light (Bot Ann), [24:20] Black Sun (Bot Fay), [28:46] Ancient Light (Bot Ann)
+  Ancient Light: counter-ganks called 35 (helpers fought in 28), juked home 10, counter items araki:spell_shield, araki:jump_knife, araki:sure_hit_staff, ezee:spell_shield, ezee:jump_knife, ezee:sure_hit_staff, tock:push_staff, tock:glimmer_cape, kragg:push_staff, kragg:glimmer_cape, froster:push_staff, froster:cloak, froster:spell_shield
+  Black Sun: counter-ganks called 37 (helpers fought in 44), juked home 7, counter items caziel:spell_shield, caziel:jump_knife, azrin:spell_shield, sludge:glimmer_cape, roydo:spell_shield, blood_ranger:glimmer_cape
+  chat lines: 522
+    [-1:29] Ancient Light Bot Ann: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll support Bot Ann in the bottom lane.
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Bob in the top lane.
+    [-1:29] Ancient Light Bot Eve: I'll go mid.
+    [-1:29] Black Sun Bot Fay: I'll farm the top lane (safe lane).
+    [-1:29] Black Sun Bot Gus: I'll go mid.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Fay in the top lane.
+    [-1:29] Black Sun Bot Ivy: I'll go bottom.
+    [-1:29] Black Sun Bot Jo: I'll support Bot Ivy in the bottom lane.
+    [-0:47] Black Sun Bot Ivy: kawawa kayo ngayon
+    [-0:44] (All) Black Sun Bot Jo: i can feel the win
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 57%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 86%, tower3 bot 85%, melee_rax bot 100% inv, ranged_rax bot 100% inv, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 100% inv, tower1 bot 18%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 76%, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 79%, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+    end Bot Ann farm alive hp 96% pos (4837.0, -1699.0) task push
+    end Bot Bob retreat dead hp 0% pos (1324.0, -5550.0) task push
+    end Bot Cat task alive hp 100% pos (4026.0, -5446.0) task push
+    end Bot Dan retreat dead hp 0% pos (-821.0, -364.0) task push
+    end Bot Eve retreat dead hp 0% pos (102.0, -613.0) task push
+    end Bot Fay retreat alive hp 100% pos (-4051.0, -2961.0) task push
+    end Bot Gus farm alive hp 99% pos (-3684.0, 1497.0) task push
+    end Bot Hal heal alive hp 33% pos (-4306.0, -49.0) task push
+    end Bot Ivy farm alive hp 75% pos (-2794.0, -1359.0) task push
+    end Bot Jo task alive hp 100% pos (-2351.0, -2400.0) task push
+  Ancient Light calls: teamfights 31, ganks 16, pushes 3 (chained on 0), towers lost 4, bots unstuck 1
+  Ancient Light sites: bot goals { "lily": 1, "lamp": 26, "gate": 12 }; done: warps 0, lilies 2, lamps lit 9, lamps put out 6
+  Black Sun calls: teamfights 51, ganks 27, pushes 20 (chained on 3), towers lost 2, bots unstuck 3
+  Black Sun sites: bot goals { "lamp": 15, "lily": 1 }; done: warps 0, lilies 0, lamps lit 9, lamps put out 3
+seed 7: no winner at 30:00 (302.4 s real)
+  Ancient Light (towers lost 4):
+    Bot Ann  araki         role 1 bot   9/12/ 5 lvl 18 LH  81 DN  6 nw 15069 | lane 27%, fight 6%, retreat 9%, task 22%, heal 1%, farm 35%, clear 0%
+             items: ["cleave_axe", "spell_shield", "jump_knife", "brass_knuckles", "spear", "power_treads", "magic_wand", "salve"]
+    Bot Bob  ezee          role 3 top   1/12/ 3 lvl 17 LH  57 DN 13 nw  8101 | lane 26%, fight 1%, task 13%, retreat 16%, heal 2%, farm 42%, clear 0%
+             items: ["spell_shield", "reveal_dust", "magic_stick", "jump_knife", "branch", "branch", "tough_band", "quelling_blade"]
+    Bot Cat  tock          role 5 bot   3/11/ 6 lvl 14 LH  27 DN  0 nw  9209 | lane 20%, retreat 12%, fight 1%, task 19%, ward 15%, stack 8%, heal 1%, farm 23%, clear 0%
+             items: ["long_lens", "war_drum", "glimmer_cape", "mana_boots", "reveal_ward", "reveal_dust", "magic_wand", "mana_gem"]
+    Bot Dan  kragg         role 4 top   2/11/ 6 lvl 14 LH  18 DN  2 nw  6734 | lane 16%, fight 1%, task 26%, retreat 15%, ward 20%, stack 8%, heal 2%, farm 12%
+             items: ["glimmer_cape", "reveal_ward", "slip_boots", "small_shield", "magic_wand", "reveal_dust"]
+    Bot Eve  froster       role 2 mid   4/14/ 0 lvl 21 LH 116 DN  2 nw 13992 | lane 33%, retreat 5%, task 14%, fight 5%, clear 1%, farm 41%, heal 1%
+             items: ["salve", "mana_boots", "spell_shield", "push_staff", "kugmo_atuli", "reveal_dust", "cloak", "magic_wand"]
+  Black Sun (towers lost 2):
+    Bot Fay  caziel        role 1 top  13/ 2/ 7 lvl 25 LH 100 DN  2 nw 19302 | lane 24%, retreat 8%, heal 3%, task 30%, fight 3%, farm 33%
+             items: ["spell_shield", "yasha", "power_treads", "mask_of_madness", "armor_breaker", "crit_sword", "magic_wand", "reveal_dust"]
+    Bot Gus  azrin         role 2 mid  27/ 0/ 9 lvl 28 LH 178 DN  9 nw 32386 | lane 25%, fight 6%, retreat 7%, task 28%, clear 0%, heal 2%, farm 32%
+             items: ["spell_shield", "dagon", "hex_staff", "time_crystal", "mana_boots", "kugmo_atuli", "smart_band", "magic_wand", "push_staff"]
+    Bot Hal  sludge        role 5 top   9/ 2/ 8 lvl 21 LH  31 DN  2 nw 11403 | lane 18%, retreat 10%, fight 1%, task 22%, heal 19%, ward 11%, stack 4%, pull 1%, farm 15%
+             items: ["root_staff", "slip_boots", "observer_ward", "medic_kit", "jump_knife", "glimmer_cape", "reveal_ward"]
+    Bot Ivy  roydo         role 3 bot   5/ 9/11 lvl 21 LH  87 DN  6 nw 13133 | lane 26%, retreat 13%, task 28%, fight 3%, farm 27%, heal 4%, clear 0%
+             items: ["jump_knife", "spell_shield", "plate_vest", "broadsword", "slip_boots", "push_staff", "smart_band", "magic_wand"]
+    Bot Jo   blood_ranger  role 4 bot   6/ 8/15 lvl 21 LH  79 DN  1 nw 14223 | lane 22%, fight 2%, retreat 5%, task 33%, ward 7%, stack 5%, farm 24%, heal 3%, clear 0%
+             items: ["dragon_lance", "slip_boots", "medic_kit", "reveal_ward", "push_staff", "glimmer_cape", "reveal_dust", "wraith_band", "magic_wand"]
+  at 10:00 LH/net worth: Ann 17/6190, Bob 9/1717, Cat 2/2709, Dan 3/2354, Eve 25/2742, Fay 21/4190, Gus 40/7481, Hal 2/3723, Ivy 17/3215, Jo 9/3229 | team net worth 15712 vs 21838
+  at 20:00 LH/net worth: Ann 58/12737, Bob 31/5666, Cat 20/6262, Dan 16/5859, Eve 61/8215, Fay 52/8800, Gus 97/20606, Hal 21/6123, Ivy 50/6962, Jo 38/8482 | team net worth 38739 vs 50973
+  totals: kills 19 vs 60, net worth 53105 vs 90447
+  stuck: ["Bot Fay stuck at (4595.0, -5273.0) (task) from 6:33", "Bot Hal stuck at (4813.0, -5235.0) (task) from 6:33"]
+  Fortify pressed 7 times: [6:53] Ancient Light (Bot Ann), [7:23] Black Sun (Bot Fay), [11:53] Ancient Light (Bot Ann), [14:04] Black Sun (Bot Fay), [17:05] Ancient Light (Bot Ann), [19:51] Black Sun (Bot Fay), [25:41] Ancient Light (Bot Bob)
+  Ancient Light: counter-ganks called 30 (helpers fought in 31), juked home 6, counter items araki:spell_shield, araki:jump_knife, araki:sure_hit_staff, ezee:spell_shield, ezee:jump_knife, ezee:sure_hit_staff, tock:glimmer_cape, kragg:glimmer_cape, froster:cloak, froster:spell_shield, froster:push_staff
+  Black Sun: counter-ganks called 40 (helpers fought in 35), juked home 6, counter items caziel:spell_shield, azrin:spell_shield, sludge:glimmer_cape, roydo:spell_shield, roydo:push_staff, blood_ranger:glimmer_cape, blood_ranger:medic_kit
+  chat lines: 512
+    [-1:29] Ancient Light Bot Ann: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light Bot Bob: I'll go top.
+    [-1:29] Ancient Light Bot Cat: I'll support Bot Ann in the bottom lane.
+    [-1:29] Ancient Light Bot Dan: I'll support Bot Bob in the top lane.
+    [-1:29] Ancient Light Bot Eve: I'll go mid.
+    [-1:29] Black Sun Bot Fay: I'll farm the top lane (safe lane).
+    [-1:29] Black Sun Bot Gus: I'll go mid.
+    [-1:29] Black Sun Bot Hal: I'll support Bot Fay in the top lane.
+    [-1:29] Black Sun Bot Ivy: I'll go bottom.
+    [-1:29] Black Sun Bot Jo: I'll support Bot Ivy in the bottom lane.
+    [-0:49] Black Sun Bot Jo: gl losers
+    [-0:49] (All) Ancient Light Bot Ann: wag magfeed ha
+wins: Ancient Light 0, Black Sun 0
+WARNING: 10701 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 20 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

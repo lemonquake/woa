@@ -4,6 +4,257 @@
 
 ## Status (keep this section current)
 
+**2026-10-19 d: living players: every bot has a personality, a typing style, a daily schedule, moods, friends and a
+memory of you; a chat brain that knows the match (revenge, rivals, kill steals, abilities, ultimates, items, gold,
+tilt) and answers what you type; team calls in players' words; a Players tab (friends, requests, recent players,
+ladder activity, who is online); an optional online chat writer (Claude Haiku 5.5) wired in and off; new build
+(your request).** Run `work/lemondev/2026-10-19d-living/` (contract.md, handoff.md, recheck.py; logs `logs/`, captures
+`ui/`, `shots/`, blind review `review/`). Costs, advantages and setup of the online writer: **`docs/LLM_CHAT.md`**.
+* **Persona** (`src/core/persona.gd`): traits (talk, kind, ego, temper, humor, focus), typing (lower case, short
+  forms, typos, stretched letters, their laugh by country: haha / wkwk / kkkk / 555 / jaja, a pet word: lods, pre,
+  bai, bro, mate ...), a daily schedule in their time zone (evening, night, after school, all day ...), labels
+  ("Friendly", "Shot caller", "Flamer", "Quiet" ...), a bio. Ranked bots get theirs from the ladder; Game Setup and
+  multiplayer bots get one from their name (the same on every machine).
+* **The ladder lives** (`src/core/ranked.gd`): 300 players (an old ladder is upgraded in place: MMR, records and
+  names kept; tested), two new accounts a day up to 420; who plays depends on who is online at that hour; each ladder
+  game has K/D/A and a length; moods follow results; now and then a player learns a new hero and keeps it if it goes
+  well; statuses ("On a 6 win streak", "Learning Araki", "Just reached Legendary", "Rough week: -140 MMR in 10 games",
+  or their own words); friends; an activity feed (ranks reached, streaks, Gold+ medals, heroes learned, new Top 1
+  players, the top ten). Matchmaking only finds players who are online and not in a match (a long search takes
+  anyone, so it never stalls).
+* **They remember you**: after a ranked match each of the nine keeps games with / against you, results, the kills
+  between you, who flamed whom and how much it likes you; next time: "uy Bea, panalo tayo last time ah", "Bea, revenge
+  time", "oh its the flamer", "Bea killed me 5 times last game". Bots that liked a game send **friend requests**;
+  you can add players from their profile (a kind one or one who likes you says yes).
+* **Chat brain** (`src/sim/sim_bot_chat.gd`, lines `src/sim/chat_mind.gd`, typing `src/sim/chat_style.gd`): revenge
+  ("payback caziel", "bawi ako"), rivals ("6th time lol", "suki kita"), kill steals ("ks", "sorry ks"), the ability
+  that landed ("felt that fiery javelin?", "nerf burst shot"), "perma stun", dodged spells named ("dodged ur shuriken
+  hook"), double kills, wipes, 1 HP escapes, enemy ultimates ("ezee used unholy might, go"), ult ready, items done,
+  the gold gap ("we're 9k up, push", "they're 7k up, play safe"), a fed enemy, an enemy core dead long enough to push;
+  tilt (shouting, blaming, "ayoko na") or a kind bot cheering the team up; flamed teammates answer back ("ikaw nga
+  1/6/0") and someone tells them to stop. Library lines naming a minute ("still holding tangos at 25 min") wait for a
+  game that long.
+* **Talking with them**: what you type is understood: greetings, "what rank", "where u from" (a city), "where is
+  <hero>" (where the team last saw it), "what item", "why no help" (what they were doing when you died), insults (with
+  your own score: "says the 0/7/0 froster"), praise, thanks, sorry, gg, ff, report, lag, "are you a bot" ("u are the
+  bot"); "push bot" stays a lane call. Address a bot by its name or hero.
+* **Team calls in players' words**: "I'm dead, back in 23 s." -> "dead 23s"; "Hold on, X! Coming." -> "hold sludge",
+  "kapit araki"; "X is missing from mid! Careful." -> "kragg ss"; lane calls "mid", "ako safe", "sup kragg"; calls a
+  player would not bother typing are left out sometimes (the plan still happens; answers to your pings always come);
+  nobody echoes another's call word for word or repeats one within 150 s.
+* **Players tab** (Ranked): Friends (requests with Accept / Ignore, friends with online state and status), Recently
+  played with (with you / against you, what they think of you), Ladder activity, Online now (in a match as which hero,
+  or free). Profiles show status, online state, labels, the record with you, Add friend / Remove friend; the hover card
+  shows them too; the footer counts players online.
+* **Hero pick chat** is typed in each player's style.
+* **Online bot chat** (Options > Game, off; `src/core/llm_chat.gd`): your choice, **OpenRouter** with **DeepSeek
+  V4.1 Flash** (`deepseek/deepseek-v4.1-flash`) by default; with your key in `llm.json` in the game's data folder (or
+  `OPENROUTER_API_KEY`) it rewrites the lines you can read in each bot's voice with the match around it; the bots' own
+  brain still decides; the bot's own line is shown if no answer comes in 4 s; single player only; per-match cap; the
+  cost OpenRouter reports is logged in `llm_usage.json`. About $0.0015-0.005 a match (see the doc). `"model"` in
+  `llm.json` picks any other OpenRouter model; a non-OpenRouter key uses Anthropic's API (`claude-haiku-5-5`). Tested
+  against a local stand-in of both APIs (`tools/llm_mock.py`), not the real services: your key was not used here, so
+  put it in `llm.json` yourself (steps in the doc).
+* Chosen where open (veto any): ladder 300 / 420, two new accounts a day; the trait formulas; online 80% / away 12%
+  chance to play a ladder round; learning chance 1 in 220 games, kept after 14 games at 50%+ wins (35% anyway); feed
+  thresholds (Commander+, streaks 6/9/12, Gold+ medals); likes: +0.18 a win together, -0.22 a flame, +0.12 praise;
+  friend request chances; call skip rates; the 150 s repeat rule and no line of 3+ words said by two players in a
+  match; the online writer's 150 calls, 4 s wait, half of ordinary lines (OpenRouter and DeepSeek V4.1 Flash are
+  yours).
+* New names (veto any): tab **Players**; panels **Friends**, **Recently played with**, **Ladder activity**, **Online
+  now**; **Add friend**, **Remove friend**, **Ignore**, **Back**; "Wants to be friends", "after a game with you /
+  against you", "No friends yet ...", the empty-list hints, "N online · N in a match · N on the ladder", "Online", "In a
+  match as <hero> · N min", "Last seen ...", labels **Friendly, Quiet, Talks a lot, Shot caller, Show-off, Tilts
+  easily, Joker, Tryhard, Flamer, Troll, Plays alone, Chill, Team player, Calm**; feelings **Likes you, Friendly to
+  you, Annoyed with you, Does not like you, No strong feelings**, "Never played with you", "With you N (N won)",
+  "Against N (you won N)"; statuses "On a N win streak", "Lost N in a row", "Learning <hero>", "Just reached <rank>",
+  "Climbing: +N MMR in 10 games", "Rough week: -N MMR in 10 games"; feed lines ("<name> reached <rank>", "... is on a N
+  win streak", "... earned <medal> on <hero>", "... now plays <hero>", "... started learning <hero>", "... is the new
+  Top 1 Player on <hero>", "... made the top ten", "You and <name> are now friends"); notices ("<name> accepted your
+  friend request.", "<name> did not answer your friend request.", "Removed from your friends."); option **Online bot
+  chat** and its note; the bios, pet words, laughs and cities in `persona.gd` / `chat_mind.gd`; every line in
+  `ChatMind.T` and `ChatMind.CALLS`; code `Persona`, `ChatMind`, `ChatStyle`, `LlmChat`, `PresenceLine`, `PersonRow`,
+  `FeedRow`, `SimBotChat.persona / mind / speak / casual / relations`, `SimBot.persona / pid / you_rec / card`,
+  `Ranked.ask_friend / accept_request / ignore_request / remove_friend / recent_players / online_counts / feed_text /
+  clock_override / stamp`, event `chat_intent`, option `llm_chat`, files `user://llm.json`, `user://llm_usage.json`;
+  tools `tools/llm_mock.py`, `tests/tools/llm_probe.gd`, `talk_probe.gd`, `living_ladder.gd`, `options_shot.gd`,
+  `bot_game.gd --names=ladder`; tests `test_persona_basics`, `test_ranked_living_*`, `test_ranked_match_memory`,
+  `test_matchmaker_presence`, `test_chat_*` (five new).
+Evidence: headless tests **307 passed, 0 failed** (297 + 10 new) on the final code; `sh tools/check.sh` no script
+errors, "Names OK"; live window probes: `talk_probe.gd` 6/6 (lane calls in players' words; greeting, rank, where is a
+hero, an insult, "are you a bot" in all chat all answered in the HUD), `ranked_probe.gd` 45/45 through real clicks and a
+real ranked match (18 bots remember you afterwards); `llm_probe.gd` 17/17 against the stand-in API (both services);
+blind A/B by a fresh critic of the old and new chat (same seed): **the new chat won with a clear advantage**; its
+largest remaining gap (echoes between players, filler after "!", repeated calls) measured by `recheck.py`: old system
+24 / 0 / 13, reviewed pass 4 / 6 / 1, final 0 / 0 / 0 on both seeds; distinct lines in a 25-minute game 59% -> 88%.
+Captures: Players tab at 1080p and 4K, a bot profile, the hover card, Options, the chat in a live match (`ui/`, `shots/`).
+Not verified: no real OpenRouter / DeepSeek call (your key was not used here); the Players screen has no blind review
+and no commercial comparison; ladder dynamics over weeks of real time; the critic flagged your example bot name
+"BISAKOL SLAYER" ("bisakol" is a regional slur) and BotNames still uses "bisakol": yours to decide.
+Release build: `build/WarriorsOfAether.exe` rebuilt 2026-10-19 20:57 (exit 0, pack 710 MB); it cold-starts into a 5v5
+match with no script errors and the new chat (`shots/exe_match.png`, `exe_match2.png`).
+
+**2026-10-19 c: Araki, the Blur (your hero: kit, bot, body, effects, icons); Blau's bots spam turrets; Airah and Tock
+face the right way (versus, portraits); every portrait looks at the camera; new build (your requests).** Run
+`work/lemondev/2026-10-19c-araki/` (contract.md, handoff.md; logs `logs/`, captures `shots/`, `ui/`, `versus/`,
+`portraits/`, `model/`).
+* **Araki, the Blur** (your kit and numbers; Neutral, agility, melee 150; strength 20 +1.7, agility 24 +2.8,
+  intelligence 18 +2.1; damage 49-53, armor 5, speed 305, attack point 0.3).
+  * **Senryukai** (innate, Dota's Fury Swipes): each of his hits on an enemy adds a stack, +4 physical damage a stack
+    on his hits on that enemy (the hit that adds it counts), 15 s renewed by every hit, no limit; ghosts' hits add
+    stacks too. Break turns it off; not on buildings.
+  * **Blur Strike** (Q, 90/110/120/130 mana, 10 s): an instant dash up to 600 (200 at least; aimed by direction, so a
+    far click dashes the full 600) over trees and cliffs; every enemy within 250 of the path takes an attack (crit,
+    bash, Cleave Axe and every item effect roll per enemy) plus 50/80/110/140 magic damage and a 60% slow for 1 s. A
+    dash that hits anything refreshes the cooldown once: a second dash within 6 s, else the first cooldown runs on.
+  * **Djin Bomb** (W, 90-120 mana, 12 s, 750 range): lands after 0.4 s; a demon cloud (radius 450) for 5 s: enemies
+    inside lose 10/15/20/25% magic and status resistance and are slowed 5/8/11/14% more each second inside (5 s: up
+    to 70%); it fades 0.5 s after they leave.
+  * **Ghosts of the Will** (E, 110 mana and 21/20/19/18 s: your change mid-run, was 160 and 18 s; 650 range): 3/5/7/9 ghosts, one every 0.3 s; each flies at 650 through
+    units and over terrain, strikes once for 25/35/45/55% of his attack damage (Senryukai's bonus scaled the same) and
+    vanishes; one hit (any damage) destroys a ghost; if the target dies they go for the nearest enemy (a hero first)
+    within 700. Ghost blows carry no item procs (no crit, bash, lifesteal).
+  * **The Blur** (R, 75/100/125 mana, 80/60/40 s; no cast time): 19 s of half cooldowns for Blur Strike and Djin Bomb
+    (the running ones halved at once), and his next 9/15/21 attacks 60/80/100 faster (each attack he releases spends
+    one; Blur Strike's slashes and ghosts do not).
+  * Talents: +2 Senryukai damage per stack / +50 Blur Strike damage; +2 Ghosts / -3s Djin Bomb cooldown; +15% Ghost
+    damage / +10% Djin Bomb magic resistance cut; +8 The Blur attacks / Blur Strike refreshes twice.
+  * **His bot** (`src/sim/sim_bot19.gd`): The Blur first when it commits; the bomb before the magic damage, placed to
+    cover the most enemy heroes and never on its own cloud; Blur Strike along the line that slashes the most heroes,
+    ending just past the target, never into a tower without the kill; the refresh slashes back through them, or is
+    kept to escape when low; Ghosts on the enemy carrying the most stacks. Lane: a dash through the laner and its
+    creeps (the creeps make the refresh sure), the second dash home. Farm: through 3+ creeps, then back. Running:
+    the dash toward safety bent through an enemy unit for the second dash, the bomb on chasers only if it does not
+    cost the dash. One Blur Strike of mana kept back when the fight can turn on him (the traced deaths were all
+    dashes and bombs spent, escape on 9% mana). Skill order Q W Q E Q R, Q, E to 4, W last; talents left, left, left,
+    right; builds: Cleave Axe line, bash and chain lightning line, Frenzy Mask line.
+  * **Body**: the Shadowflame Samurai (dark_igorek, Sketchfab, CC BY 4.0; credited in ASSET_CREDITS and the Credits
+    screen), downloaded with your Sketchfab sign-in. Its rest skeleton was broken (Y-up, bones at the origin), so
+    `tools/blender/araki_prep.py` bakes the shown pose as the rest; `hero_body.py` binds it (the arm split is off: it
+    tore the back armour), 50k triangles, 1536 textures (71 MB; 113 MB at 2048 was over GitHub's 100 MB limit). His
+    katana is the model's own (`tools/blender/araki_katana.py`, `prep_weapon.py`). He swings the great sword motion
+    capture (two hands on the grip). Collision fixed for every clip he plays (worst 35.7 -> 0 cm; leap_slam 3.2 cm,
+    a clip he never plays); animation joins 42 + 3 loops, 0 failures.
+  * **Effects** (`src/game/araki_fx.gd`): see-through echoes of his body along each dash, a green streak and scorch, a
+    crossed cut on everything slashed; the bomb thrown on an arc with a spitting fuse, bursting in green fire into a
+    dark swirling cloud with the demon's eyes and maw; ghosts drawn with `src/game/ghost.gdshader` (his body,
+    see-through green, hovering), a green cut where they strike; The Blur's shockwave, katana glow and trailing
+    streaks; green sparks on enemies with 4+ stacks. Sounds for each. Five icons (`tools/item_icons.py`, "soul").
+* **Blau's bots spam the turret** (your report: never seen it). They did build turrets, but only every two minutes
+  (13 and 16 in 25-minute games: only in fights against a hero). Now one goes down whenever it is ready and there is
+  something to shoot: an enemy hero within 1100 (also when running), or 3+ enemy creeps or camp creeps beside him;
+  half a Bounce Shot of mana kept. Same kind of game: 24 and 38 turrets.
+* **Airah and Tock faced the wrong way** in the versus shot (and Airah showed the back of her head in her portrait):
+  both stood in the motion-capture idle `spell_idle_2`, whose stance turns the body about 60 degrees away. They now
+  stand in `spell_idle` (Froster's). **Portraits** now aim at the face whichever way a stance turns it (the great
+  sword idle had Ser Emelrich and Araki side-on); all 17 re-baked.
+* Hero Select fits 17 heroes (five a row of smaller cards when there are more than 16); the ranked pick's tiles narrow
+  to keep two rows (17: nine a row).
+* Chosen where open (veto any): his base attributes, damage, armor, speed, attack point; Djin Bomb's mana, range and
+  throw time; The Blur's mana; Blur Strike's 200 minimum, cast point 0.1, path radius 250 read as a radius (500 wide),
+  the 6 s window for the second dash; ghosts' 6 s life, 700 retarget, share applied to Senryukai, no item procs;
+  The Blur halving running cooldowns; every talent; the bot's builds and orders; Clarity in his starting items.
+* New names (veto any): yours: **Araki**, **the Blur**, **Senryukai**, **Blur Strike**, **Djin Bomb**, **Ghosts of the
+  Will**, **The Blur**. Mine: the unit **Ghost**; buff names **Second Dash**, **Fast Attacks**; the eight talent
+  labels above; Hero Select's "Melee · Agility · Carry, Escape, Nuker" and his story; bot line "Too slow."; code
+  `SimKits7`, `SimBot19`, `ArakiFx`, `ghost.gdshader`, unit `araki_ghost`, weapon `araki_katana`, modifiers
+  `senryukai`, `blur_strike_again`, `the_blur`, `the_blur_speed`, `djin_bomb`, `ghost_form`, effects `djin_smoke`,
+  `ghost_call`, fire ramp `shadowflame`, icon backdrop `soul`; tools `tools/blender/araki_prep.py`, `araki_katana.py`,
+  `tests/tools/araki_probe.gd`, `versus_shot.gd`; tests `test_araki_*`.
+Evidence: headless tests 297 passed, 0 failed (`test_araki_*` six of them); `sh tools/check.sh` no script errors, "Names
+OK"; body collision 0 cm in every clip he plays (was up to 35.7 cm); animation joins 0 failures; 30-minute bot games:
+his line-up (with Ezee, Tock, Kragg, Froster) loses the kills about 1 to 3 to Caziel's whichever side it plays, and
+Araki went 6/11/6, 8/11/8, 6/14/4, 9/12/5 there (before the bot's mana fix 5/15/4, 6/13/7); traded into Caziel's team
+he went 8/4/10 with 76 last hits while Caziel went 6/11/10 with 46; every skill cast in every game (Ghosts of the
+Will 8 times in 20 minutes, from once). Captures in a live match (`shots/`), Hero Select, the ranked pick, the versus
+shot and all portraits (`ui/`, `versus/`, `portraits/`).
+Not verified: no blind critic review; no Dota 2 comparison; bots measured against bots only; the demon cloud's rising
+smoke does not show in captures (its ground swirl, burst and eyes do).
+Release build: `build/WarriorsOfAether.exe` rebuilt 2026-10-19 16:42 (exit 0, pack 709 MB); it cold-starts into a match
+as Araki with no script errors (`export/exe_araki_44.png`). The menus of the exe were not clicked through.
+
+**2026-10-19 b: Ranked: MMR and 12 ranks with 3D emblems, a global ladder of 160 bot players with their own skill,
+names, countries and pictures, role queue, Find Match and Accept, a hero pick with numbered turns, a 3D versus
+shot, hero mastery medals (Bronze .. Diamond, Top 5 .. Top 1 Player), profile and leaderboard (your requests).** Run
+`work/lemondev/2026-10-19b-ranked/` (contract.md, handoff.md; logs `logs/`, captures `final/`, `final2/`, `draft/`,
+`probe4/`).
+* **Main Menu > Ranked**: **Play** (your rank and your heroes, tick your roles: Carry, Mid, Off Lane, Soft Support, Hard
+  Support; Find Match; the search with a progress bar, players found, Cancel), **Profile**, **Leaderboard**, **Guilds**
+  (coming soon; from Licensed). No hero is chosen before matchmaking (your correction).
+* **Match found**: a big green **Accept** and **Decline**, a 15 s ring, ten lights; both teams at the sides, hover a
+  player for rank, MMR, W-L, behaviour score, roles, best medals, last ten games. Low-behaviour bots sometimes fail to
+  accept (back into the queue); Decline keeps those nine out of your next offers.
+* **Hero Pick** (`src/ui/ranked_draft.gd`, `src/core/hero_draft.gd`): each of the ten gets a random numbered turn; the
+  one picking glows; heroes land in their slots with a flash and sparks; 30 s for you (Lock in, Random; then a hero
+  for your role is picked for you). Your bots call their heroes in team chat ("Azrael ako", "I'll go Kragg carry") and
+  pick them unless someone takes them first, then change their mind ("ok you take Azrael, I'll go Froster", or "bro
+  Azrael was mine"). Your heroes with **Gold or better** are left to you, and your team says so ("wait, Bea is Diamond
+  Azrael"), hurries you while enemies pick ("hurry, pick Azrael before they take it"), and reacts if a strong enemy
+  snipes it (an enemy of 2500+ may take your Platinum+ hero to deny it). Every pick is logged in the chat.
+* **Versus** (your request: fully rendered): all ten heroes in 3D on a battle field (`src/ui/versus_stage.gd`), your team
+  on the left in blue light, the enemy on the right in red, in wedges facing each other across a seam of light, embers,
+  fog, shadows; each plays its flourish and stands ready while the camera pushes in; over each hero the player's name,
+  then their rank, then their medal on that hero; VS slams down with a flash and a shake; the match loads. Each hero is
+  placed as it is picked, so the reveal does not stall. Then the match plays the picked heroes.
+* **MMR**: you start at **1000**; Elo on team averages, +25 / -25 for an even game; leaving a ranked match is a loss.
+  New bot accounts start at 1500, about one in seven at a random MMR (smurfs, boosted), the rest near their skill;
+  the ladder keeps playing while you are away and after each of your games.
+* **Ranks** (your names): Rookie 0 .. Transcendent 5400, Aetherium 6000, **Aetherium+** = top ten in Aetherium; 5 stars
+  in each rank below Aetherium. Shiny 3D emblems, grander each rank; drag the profile's emblem to turn it.
+* **Hero mastery** (your request): every hero has XP for every player. Each match gives a win 100 or a loss 20, plus up
+  to 60 for how you played (KDA 35%, net worth place 25%, share of team hero damage 25%, last hits 15%); a left match
+  gives none. 5 stars a medal: Bronze, Silver, Gold, Platinum, Diamond; the first star takes 350 XP (three wins at
+  least), each next star 18% more (Gold about 75 wins, Diamond about 450). The five Diamonds with the most XP on a hero
+  are its **Top 5 .. Top 1 Players**. Bots' records fit their years of play (the best have 2-4 thousand games, Diamond
+  and Top medals on their mains). Medals show on profiles, hover cards, the pick, the versus and the end screen ("Jayla
+  +115 hero XP", "New star", "New medal"). Leaderboard > **Heroes**: each hero's global ranking by mastery.
+* **Global ladder**: each bot has a country (Philippines, Indonesia, Malaysia, Thailand, Vietnam, Singapore, Peru,
+  Brazil, Russia, Ukraine, United States, Germany, Sweden, China, South Korea, Australia); Filipino-sounding names are
+  Filipino; bots from elsewhere chat in English.
+* **Bots play at their own skill** (`SimBot.RATED`): reactions, last hits, aim, spells, items (strong cores plan Spell
+  Shield, melee ones a Jump Knife; supports Fade Cape and Push Staff; weak bots build random items), item use, farming;
+  selfish bots refuse calls and grab lanes ("mid or feed"); ragebaiters dive and flame. 6200-skill bots beat 700-skill
+  bots 2/2; 2600 led 1600 in both games.
+* Chosen where open (veto any): you start at 1000, bot accounts 1500; 160 bots; K 50; the mastery XP numbers above; Top
+  5 needs Diamond; enemy snipe chance 35%; 30 s pick time; countries and their shares.
+* New names (veto any): **Ranked**, **Find Match**, **Accept**, **Decline**, **Cancel**, **Hero Pick**, **Lock in**,
+  **Random**, "Choose your roles" and note, **Carry**, **Mid**, **Off Lane**, **Soft Support**, **Hard Support**, the
+  role lines, "All roles", "Estimated wait", "Your rank", "Your heroes" and its note, "Top of the ladder", "Full
+  leaderboard", "Your recent matches", "Finding match", "Players found", the search lines ("Searching for players near
+  N MMR", "Widening the search...", "Matching roles", "Balancing teams", "Match found"), "Your match is ready", "Match
+  ready", "Everyone accepted. Next: the hero pick", "Your team", "Enemy team", "Average MMR", "First ranked match",
+  "Pick N of 10", "Your turn: pick a hero", "<name> is picking", "Picking...", "Wants <hero>", "Choose a hero", "Your
+  teammates say in chat which heroes they want.", "Plays ...", "Your record", "Team chat", "<name> picked <hero>",
+  "Wait for your turn", "Locked in", "All heroes picked", "Loading the match", "VS", **Bronze**, **Silver**, **Gold**,
+  **Platinum**, **Diamond**, **Top N Player**, "Unranked", "hero XP", "New star", "New medal", "Best heroes", "Heroes",
+  "Numbers", "Hero XP", "Medal", "On this hero", "No games on this hero yet", "Profile", "Player", "Change picture",
+  "Use hero", "Name", "Save", "Playing since", "Behaviour score", "Good", "Fair", "Poor: often flames, feeds or leaves",
+  "Last ten", "Drag to turn", "Leaderboard place", "Top rank: climb the leaderboard", "Top ten of the leaderboard",
+  "Matches", "Wins", "Losses", "Win rate", "Highest MMR", "Streak", "Best streak", "Left matches", "MMR over the last N
+  matches", "Recent matches", "Won", "Lost", "Left", "Everyone", "Top 100", "Near me", "(you)", "Back to leaderboard",
+  **Guilds**, "Coming soon", "Soon", "Guild: coming soon", "Season 1" and the footer, "Leave match", "Leaving a ranked
+  match counts as a loss.", "Ranked: +N MMR", "Rank up", "Rank down", "Main Menu"; notices ("Pick at least one role.",
+  "A player failed to accept. You are back in the queue.", "You did not accept the match.", "You declined. Searching
+  again.", "Your last ranked match was left before it ended: a loss", "Picture changed.", "Name saved.", "That file
+  could not be read as a picture.", "Choose a picture", "Pictures"); bot chat in the pick and lanes (all lines in
+  `src/core/hero_draft.gd`, `src/sim/sim_bot.gd` refusals, `src/sim/sim_team_ai.gd` lane grabs); the country names;
+  the generated bot names and their word lists (`src/core/bot_names.gd`; your five examples kept); code `Ranked`,
+  `BotNames`, `Matchmaker`, `HeroDraft`, `RankEmblem`, `EmblemView`, `Avatar`, `HeroBadge`, `VersusStage`,
+  `RankedNum`, `HeroStage.make_hero`, `rank_metal.gdshader`, `SimBot.RATED`/`rated`/`set_rating`, `GameSettings.ranked`,
+  `Main.ranked_match`, env `WOA_RANKED_FILE`, files `user://ranked.json`, `user://ranked_avatar.png`, scenes
+  `ranked_menu.tscn`, `ranked_draft.tscn`; tools `tests/tools/ranked_probe.gd`, `emblem_sheet.gd`, `bot_game.gd
+  --rating=`; tests `test_ranked_*`, `test_bot_names`, `test_matchmaker_*`, `test_rated_bot_*`, `test_hero_*`.
+Evidence: headless tests 291 passed, 0 failed; live probe through real clicks and a real ranked match (search, decline,
+accept, pick by click, 3D versus with ten heroes, match with the picked heroes, MMR and hero XP on a win, profile,
+leaderboard, guilds, leaving = loss) 45/45; `sh tools/check.sh` no script errors, "Names OK"; captures at 1920x1080 and
+3840x2160; bot games in `logs/`; one fresh-context critic pass on the earlier screens (its largest defect fixed).
+Not verified: no comparison with Dota 2's client; how bot skill compares with a human player's MMR is a guess; the
+versus scene's frame rate on weaker GPUs; the native picture dialog was not driven.
+Release build: `build/WarriorsOfAether.exe` rebuilt 2026-10-19 05:47 (exit 0); it cold-starts into a match with no script
+errors (`export/match.png`), and the exported pack opens the Ranked screen's offer and the 3D versus
+(`export/pck_ranked.png`, `pck_versus.png`; loaded with `godot --main-pack build/WarriorsOfAether.pck <scene>`). A full
+ranked match through the exe's own menus was not clicked through (the live probe ran on the project).
+
 **2026-10-18 h: bots' items, chat, teleports, creep pressure, Azrael and Ezee; Dota creep upgrades and mega creeps;
 side-lane creeps into the base; take over a bot while watching; Jayla; sounds; Emelrich's run; Jump Knife; new build
 (your requests).** Run `work/lemondev/2026-10-18h-bots/` (handoff.md; probes' output and captures there).
@@ -1095,6 +1346,7 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   Bot or Empty, with a hero (or Random; bots may play the same hero), a bot skill (Passive, Easy, Medium, Hard, Unfair)
   and name, and the lane you want. Presets: 5 vs 5, 1 vs 1 mid. **Start** goes to the Hotkeys screen and the match.
 * Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
+* Ranked (2026-10-19 b): Main Menu > Ranked, or `godot --path . res://src/ui/ranked_menu.tscn -- [--capture=x.png --tab=play|profile|leaderboard|guilds --state=search|found|ready --hover=n --profile=b12 --view=heroes --board=heroes --hero=azrael --4k]`; the pick and versus alone: `godot --path . res://src/ui/ranked_draft.tscn -- [--capture=x.png --at=8 | --phase=versus --frames=330] [--4k]`; live probe `godot --path . -s tests/tools/ranked_probe.gd -- --out=dir` (its own ladder file); emblems `godot --path . -s tests/tools/emblem_sheet.gd -- --out=x.png`; set `WOA_RANKED_FILE=user://other.json` to keep your ladder untouched.
 * Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 155 tests.
 * Teamfight benchmark (the one that matters for lag in fights): `godot --path . res://src/game/main.tscn -- --bench=40
   --t=600 --fight --autoplay --lineup=ezee,azrin,froster,sludge,tock,blood_ranger,caziel,kragg,azrin,froster
@@ -1178,6 +1430,16 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   --python tools/blender/azrael.py`; her look variants side by side: `godot --path . -s tests/tools/azrael_look.gd --
   --out=x.png [--close]`; which way a weapon's head moves in a swing: `godot --headless --path . -s
   tests/tools/swing_dir.gd -- [--clips=gs_1,gs_3]`.
+* Araki's body (2026-10-19 c; B = the Blender command): `B -b --factory-startup --python tools/blender/araki_prep.py --
+  --src=A:/Python/woa/work/downloads/sf_heroes/shadowflame_samurai.glb --out=A:/Python/woa/work/araki_src`, then `B -b
+  --factory-startup --python tools/blender/hero_body.py -- --src=A:/Python/woa/work/araki_src/araki_src.blend
+  --name=araki --drop="katana" --height=1.88 --faces=50000 --tex=1536 --split=0
+  --out=A:/Python/woa/assets/characters/heroes17/araki.glb`; katana: `B ... --python tools/blender/araki_katana.py --
+  --src=<that glb> --out=<x.glb>` then `prep_weapon.py -- --src=<x.glb> --out=assets/weapons/araki_katana.glb
+  --length=1.0 --grip=0.13 --flip_head`; then `godot --headless --path . --import` and `body_collide.gd --
+  --heroes=araki --fix`. His deaths and casts in a bot game: `godot --headless --path . -s tests/tools/araki_probe.gd --
+  [--min=20] [--seed=3]`. The versus shot with chosen heroes: `godot --path . -s tests/tools/versus_shot.gd --
+  --a=airah,tock,araki,ezee,feran --b=... --out=dir`.
 * Rebuild the building models: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python tools/blender/buildings.py`.
 * Re-bake the terrain texture arrays (needs the GPU, not headless): `godot --path . -s tests/tools/bake_terrain_arrays.gd`.
 

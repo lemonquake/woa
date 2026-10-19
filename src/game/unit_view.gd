@@ -128,7 +128,23 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 	shade.position.y = 0.04
 	shade.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(shade)
+	if cfg.has("ghost"):
+		_ghostify(cfg.ghost)
+		shade.visible = false
 	_play(String(cfg.idle), true)
+
+static var _ghost_mats := {}
+
+## A spirit (Araki's ghosts): every surface, weapons too, drawn with the see-through ghost shader in colour `c`.
+func _ghostify(c: Color) -> void:
+	if not _ghost_mats.has(c):
+		var m := ShaderMaterial.new()
+		m.shader = load("res://src/game/ghost.gdshader")
+		m.set_shader_parameter("col", c)
+		_ghost_mats[c] = m
+	for mi: MeshInstance3D in find_children("*", "MeshInstance3D", true, false):
+		mi.material_override = _ghost_mats[c]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 ## The model's skinned pieces as one mesh (MeshMerge): one skin to update and one draw for every flat or gear
 ## surface. Creeps of a kind and team share theirs. --nomerge keeps the pieces (benchmarks, comparisons).

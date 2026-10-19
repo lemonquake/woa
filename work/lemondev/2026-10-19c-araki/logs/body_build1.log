@@ -1,0 +1,30 @@
+15:27:44 | INFO: Data are loaded, start creating Blender stuff
+15:27:44 | INFO: Blender create Mesh node hero
+15:27:46 | INFO: glTF import finished in 1.52s
+[hero_body   2.1s] hero rig with 132 clips
+15:27:46 | INFO: Data are loaded, start creating Blender stuff
+15:27:46 | INFO: Blender create Mesh node Samurai_armor_mat_0
+15:27:46 | INFO: Blender create Mesh node Samurai_body_mat_0
+15:27:46 | INFO: Blender create Mesh node Samurai_top_mat_0
+15:27:46 | INFO: Blender create Mesh node Samurai_legs_mat_0
+15:27:46 | INFO: Blender create Mesh node Samurai_details_mat_0
+15:27:46 | INFO: Blender create Mesh node Samurai_weapon_mat_0
+15:27:46 | INFO: Blender create Mesh node katana_weapon_mat_0
+15:27:46 | INFO: glTF import finished in 0.37s
+[hero_body   2.6s] imported 15 objects from A:/Python/woa/work/downloads/sf_heroes/shadowflame_samurai.glb
+[hero_body   2.6s]   dropped helper Icosphere
+[hero_body   2.6s]   dropped piece katana_weapon_mat_0 ( weapon_mat )
+[hero_body   2.6s] kept 6 mesh pieces (72759 faces), rig: Object_4 (147 bones)
+[hero_body   2.6s] rig bones not recognised for: ['neck']
+[hero_body   2.6s] source bones: ['_rootJoint', 'RL_BoneRoot_02', 'CC_Base_Hip_03', 'CC_Base_Pelvis_04', 'CC_Base_L_Thigh_05', 'CC_Base_L_Calf_06', 'CC_Base_L_Foot_07', 'CC_Base_L_ToeBaseShareBone_08', 'CC_Base_L_ToeBaseShareBone_end_0105', 'CC_Base_L_ToeBase_09', 'CC_Base_L_PinkyToe1_010', 'CC_Base_L_PinkyToe1_end_00', 'CC_Base_L_RingToe1_011', 'CC_Base_L_RingToe1_end_01', 'CC_Base_L_MidToe1_012', 'CC_Base_L_MidToe1_end_0106', 'CC_Base_L_IndexToe1_013', 'CC_Base_L_IndexToe1_end_0107', 'CC_Base_L_BigToe1_014', 'CC_Base_L_BigToe1_end_0108', 'CC_Base_L_CalfTwist01_015', 'CC_Base_L_CalfTwist02_016', 'CC_Base_L_CalfTwist02_end_0109', 'CC_Base_L_KneeShareBone_017', 'CC_Base_L_KneeShareBone_end_0110', 'CC_Base_L_ThighTwist01_018', 'CC_Base_L_ThighTwist02_019', 'CC_Base_L_ThighTwist02_end_0111', 'CC_Base_R_Thigh_020', 'CC_Base_R_ThighTwist01_021', 'CC_Base_R_ThighTwist02_022', 'CC_Base_R_ThighTwist02_end_0112', 'CC_Base_R_Calf_023', 'CC_Base_R_Foot_024', 'CC_Base_R_ToeBase_025', 'CC_Base_R_PinkyToe1_026', 'CC_Base_R_PinkyToe1_end_0113', 'CC_Base_R_BigToe1_027', 'CC_Base_R_BigToe1_end_0114', 'CC_Base_R_IndexToe1_028', 'CC_Base_R_IndexToe1_end_0115', 'CC_Base_R_MidToe1_029', 'CC_Base_R_MidToe1_end_0116', 'CC_Base_R_RingToe1_030', 'CC_Base_R_RingToe1_end_0117', 'CC_Base_R_ToeBaseShareBone_031', 'CC_Base_R_ToeBaseShareBone_end_0118', 'CC_Base_R_KneeShareBone_032', 'CC_Base_R_KneeShareBone_end_0119', 'CC_Base_R_CalfTwist01_033', 'CC_Base_R_CalfTwist02_034', 'CC_Base_R_CalfTwist02_end_0120', 'CC_Base_Pelvis.001_035', 'CC_Base_Pelvis.001_end_0121', 'CC_Base_Pelvis.002_036', 'CC_Base_Pelvis.002_end_0122', 'CC_Base_Waist_037', 'CC_Base_Spine01_038', 'CC_Base_Spine02_039', 'CC_Base_NeckTwist01_040', 'CC_Base_NeckTwist02_041', 'CC_Base_Head_042', 'CC_Base_FacialBone_043', 'CC_Base_JawRoot_044', 'CC_Base_Tongue01_045', 'CC_Base_Tongue02_046', 'CC_Base_Tongue03_047', 'CC_Base_Tongue03_end_0123', 'CC_Base_Teeth02_048', 'CC_Base_Teeth02_end_0124', 'CC_Base_R_Eye_049', 'CC_Base_R_Eye_end_0125', 'CC_Base_L_Eye_050', 'CC_Base_L_Eye_end_0126', 'CC_Base_UpperJaw_051', 'CC_Base_Teeth01_052', 'CC_Base_Teeth01_end_0127', 'CC_Base_L_Clavicle_053', 'CC_Base_L_Upperarm_054', 'CC_Base_L_Forearm_055']
+Traceback (most recent call last):
+  File "A:\Python\woa\tools\blender\hero_body.py", line 2460, in <module>
+    main()
+    ~~~~^^
+  File "A:\Python\woa\tools\blender\hero_body.py", line 2368, in main
+    raise RuntimeError("could not map the source rig; give --joints")
+RuntimeError: could not map the source rig; give --joints
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit
+EXIT 0

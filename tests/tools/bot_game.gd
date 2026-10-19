@@ -3,7 +3,10 @@ extends SceneTree
 ## their time, their team chat, and any hero that got stuck.
 ##   godot --headless --path . -s tests/tools/bot_game.gd -- [--a=sludge,ezee,blood_ranger,sludge,ezee]
 ##       [--b=blood_ranger,ezee,sludge,ezee,blood_ranger] [--min=45] [--seeds=3,7,11] [--skill=hard] [--skill_b=hard]
-##       [--learn=path/to/memory.json] [--chat] [--out=work/file.txt] [--tf_off=0|1]
+##       [--learn=path/to/memory.json] [--chat] [--out=work/file.txt] [--tf_off=0|1] [--rating=6000] [--rating_b=800]
+##       [--names=ladder]
+## --rating / --rating_b play that team as ranked bots of that hidden skill (MMR scale), each with a personality made
+## the way the ladder makes one (Ranked._make_bot: cooperation, lane grabbing, chat, ragebaiters).
 ## --learn turns the bots' memory on with that file (it is read first and written after each game), so repeated runs
 ## show what learning changes. Without it the bots use their built-in values.
 
@@ -41,7 +44,7 @@ func out(s: String) -> void:
 func _init() -> void:
 	var opts := {"a": "sludge,ezee,blood_ranger,sludge,ezee", "b": "blood_ranger,ezee,sludge,ezee,blood_ranger",
 		"min": "45", "seeds": "3,7,11", "skill": "hard", "skill_b": "", "learn": "", "learn_teams": "1,1", "chat": "",
-		"out": "", "no_save": "", "tf_off": ""}
+		"out": "", "no_save": "", "tf_off": "", "rating": "", "rating_b": "", "names": ""}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--"):
 			var kv := arg.substr(2).split("=", true, 1)
@@ -61,14 +64,29 @@ func _init() -> void:
 		var w := SimWorld.new(seed, m)
 		w.setup_match()
 		var names := ["Bot Ann", "Bot Bob", "Bot Cat", "Bot Dan", "Bot Eve", "Bot Fay", "Bot Gus", "Bot Hal", "Bot Ivy", "Bot Jo"]
+		if String(opts.names) == "ladder":
+			# --names=ladder: player names the way the ladder makes them (chat transcripts read like a real match)
+			var nr := RandomNumberGenerator.new()
+			nr.seed = seed * 7919
+			names = BotNames.make_many(10, nr)
 		var n := 0
 		var heroes: Array = []
 		for team in [C.DAWN, C.DUSK]:
 			var list := String(opts.a if team == C.DAWN else opts.b).split(",", false)
 			var skill := String(opts.skill) if team == C.DAWN or String(opts.skill_b) == "" else String(opts.skill_b)
+			var rating := String(opts.rating if team == C.DAWN else opts.rating_b)
+			var tr := RandomNumberGenerator.new()
+			tr.seed = seed * 31 + team
 			for id in list:
 				var h := w.spawn_hero(id, team)
-				w.bots.append(SimBot.new(w, h.id, "mid", names[n], skill))
+				var bot := SimBot.new(w, h.id, "mid", names[n], skill)
+				w.bots.append(bot)
+				if rating != "":
+					var prof := Ranked._make_bot(n, names[n], float(rating) + tr.randf_range(-150.0, 150.0), tr, 0)
+					bot.set_rating(float(prof.skill), {"coop": prof.coop, "disrupt": prof.disrupt, "toxic": prof.toxic,
+						"rage": prof.rage, "voice": prof.voice, "persona": prof.get("persona", {}),
+						"card": {"rank": "%s %d" % [Ranked.tier_name(Ranked.tier_of(int(prof.mmr))), Ranked.stars(int(prof.mmr))],
+							"mmr": int(prof.mmr), "country": String(prof.country)}})
 				heroes.append(h)
 				n += 1
 		if String(opts.tf_off) != "":

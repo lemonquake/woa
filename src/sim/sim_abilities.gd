@@ -16,6 +16,7 @@ var kits3: SimKits3                         # Roydo's and Blau's kits (run 2026-
 var kits4: SimKits4                         # Azrael's kit (2026-10-17)
 var kits5: SimKits5                         # Airah's, Burak's and Ser Emelrich's kits (run 2026-10-18 f)
 var kits6: SimKits6                         # Feran Mock's and Ghorman's kits (run 2026-10-18 f)
+var kits7: SimKits7                         # Araki's kit (run 2026-10-19 c)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
@@ -24,6 +25,7 @@ func _init(world: SimWorld = null) -> void:
 	kits4 = SimKits4.new(world, self)
 	kits5 = SimKits5.new(world, self)
 	kits6 = SimKits6.new(world, self)
+	kits7 = SimKits7.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -132,7 +134,7 @@ func ability_mana(u: SimUnit, aid: String) -> float:
 	return val(u, aid, "mana") * SimOrbs.mana_mult(u)
 
 func ability_cooldown(u: SimUnit, aid: String) -> float:
-	return maxf(0.0, val(u, aid, "cooldown")) * SimOrbs.cooldown_mult(u)
+	return maxf(0.0, val(u, aid, "cooldown")) * SimOrbs.cooldown_mult(u) * kits7.cooldown_mult(u, aid)
 
 func cooldown_left(u: SimUnit, aid: String) -> float:
 	return maxf(0.0, float(u.ability_ready.get(aid, C.LONG_AGO)) - w.time)
@@ -199,6 +201,10 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		var k6 := kits6.cast_error(u, aid, target, point, check_target)
 		if k6 != "":
 			return k6
+	if kits7.handles(aid):
+		var k7 := kits7.cast_error(u, aid, target, point, check_target)
+		if k7 != "":
+			return k7
 	if a.behavior == "unit" and check_target:
 		var te := _target_error(u, a, target)
 		if te != "":
@@ -386,6 +392,9 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	if kits6.handles(aid):
 		kits6.cast(u, aid, lv, t, p)
+		return
+	if kits7.handles(aid):
+		kits7.cast(u, aid, lv, t, p)
 		return
 	match aid:
 		"fiery_javelin":
@@ -623,6 +632,8 @@ func update_effects() -> void:
 					done = kits5.update_effect(e)
 				elif kits6.owns_effect(String(e.kind)):
 					done = kits6.update_effect(e)
+				elif kits7.owns_effect(String(e.kind)):
+					done = kits7.update_effect(e)
 		if done:
 			if String(e.kind) in SKILLSHOTS:
 				_note_miss(e)

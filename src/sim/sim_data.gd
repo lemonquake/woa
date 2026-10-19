@@ -45,8 +45,10 @@ static func _ensure() -> void:
 	_build_abilities_16()
 	_build_abilities_17()
 	_build_abilities_18()
+	_build_abilities_19()
 	_build_talents()
 	_build_talents_18()
+	_build_talents_19()
 
 static func unit(id: String) -> Dictionary:
 	_ensure()
@@ -305,6 +307,7 @@ static func _build_units() -> void:
 	_add_heroes_16()
 	_add_heroes_17()
 	_add_heroes_18()
+	_add_heroes_19()
 
 static func _add_heroes_15b() -> void:
 	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
@@ -433,6 +436,30 @@ static func _add_heroes_18() -> void:
 		"talents": [["ghorman_beasts", "ghorman_roar_speed"], ["ghorman_tame_power", "ghorman_tame_cooldown"],
 			["ghorman_pack_armor", "ghorman_roar_radius"], ["ghorman_form_time", "ghorman_maul_every"]],
 		"model": "hero_ghorman"}))
+
+static func _add_heroes_19() -> void:
+	# Araki, the Blur (the owner's hero, 2026-10-19 c): a melee agility samurai of no element (Neutral), centuries of
+	# fighting in the Undead realm behind him. The owner gave the kit and the attribute gains (agility 2.8, intelligence
+	# 2.1, strength 1.7); base attributes, damage, armor, speed and attack timing follow the melee agility template
+	# (chosen, see docs/HANDOFF.md). Body: the Shadowflame Samurai (tools/blender/araki_prep.py, hero_body.py).
+	_add("araki", {"name": "Araki", "title": "the Blur", "kind": K.HERO, "hull": 24.0, "hp": SimConst.HERO_BASE_HP,
+		"hp_regen": 0.5, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 1.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 25.0, "dmg_max": 29.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.3, "backswing": 0.5, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "agi", "str": 20.0, "str_gain": 1.7, "agi": 24.0, "agi_gain": 2.8, "int": 18.0,
+		"int_gain": 2.1, "element": EL.NONE,
+		"abilities": ["blur_strike", "djin_bomb", "ghosts_of_the_will", "the_blur"], "innate": "senryukai",
+		"talents": [["araki_senryukai", "araki_strike_damage"], ["araki_ghosts", "araki_bomb_cooldown"],
+			["araki_ghost_damage", "araki_bomb_resist"], ["araki_blur_attacks", "araki_strike_refresh"]],
+		"model": "hero_araki"})
+	# a ghost of Ghosts of the Will: Araki's look, see-through; flies (phased, over cliffs and trees) at 650, strikes
+	# its target once and is gone; any hit destroys it (1 health). No bounty. SimKits7 moves it.
+	_add("araki_ghost", {"name": "Ghost", "kind": K.SUMMON, "hull": 16.0, "hp": 1.0, "hp_regen": 0.0, "mana": 0.0,
+		"armor": 0.0, "dmg_min": 0.0, "dmg_max": 0.0, "bat": 1.7, "attack_speed": 100.0, "attack_point": 0.25,
+		"backswing": 0.3, "acquire": 0.0, "range": 150.0, "projectile_speed": 0.0, "move_speed": 650.0,
+		"can_move": false, "can_attack": false, "turn_rate": 3.0, "vision_day": 200.0, "vision_night": 200.0,
+		"xp": 0.0, "gold_min": 0, "gold_max": 0, "flying": true, "element": EL.NONE, "model": "araki_ghost"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -961,6 +988,44 @@ static func _build_abilities_18() -> void:
 		"beast_cooldown_rate": [0.25, 0.25, 0.25]},
 		"desc": "Ghorman becomes a huge beast for 25 seconds: 300 / 600 / 900 more health, 40 / 60 / 80 more attack damage and 40 more speed; every 3rd attack is a maul for 100 / 150 / 200 more physical damage and a 0.6 second bash. His beasts grow too: 25% more health, and their abilities come back 25% faster."}
 
+# ---- Araki, the Blur (the owner's kit, 2026-10-19 c; his numbers; chosen fill-ins listed in docs/HANDOFF.md) ---------
+
+static func _build_abilities_19() -> void:
+	# Senryukai: Dota's Fury Swipes as an innate (a stacking debuff that adds damage to each of his hits on that unit)
+	_abilities["senryukai"] = {"id": "senryukai", "name": "Senryukai", "behavior": "innate", "key": "", "max_level": 1,
+		"mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0, "damage_type": "physical",
+		"values": {"damage_per_stack": [4], "duration": [15]},
+		"desc": "Araki's katana grows sharper the longer the fight goes on. Each of his attacks (and his ghosts') on an enemy adds a stack: every stack deals 4 more physical damage on his hits on that enemy. The stacks last 15 seconds, renewed with every hit. Not on buildings."}
+	_abilities["blur_strike"] = {"id": "blur_strike", "name": "Blur Strike", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [90, 110, 120, 130], "cooldown": [10, 10, 10, 10], "cast_point": 0.1, "range": 600,
+		"anim": "greatsword_slash_2", "damage_type": "magical", "line": true, "full_width": true, "direction": true,
+		"values": {"distance": [600, 600, 600, 600], "min_distance": [200, 200, 200, 200], "radius": [250, 250, 250, 250],
+		"damage": [50, 80, 110, 140], "slow": [0.6, 0.6, 0.6, 0.6], "slow_duration": [1.0, 1.0, 1.0, 1.0],
+		"refreshes": [1, 1, 1, 1], "refresh_window": [6, 6, 6, 6], "width": [500, 500, 500, 500]},
+		"hidden_values": ["min_distance", "refresh_window", "width"],
+		"desc": "Araki dashes up to 600 like a flash and slashes every enemy within 250 of his path: each one takes an attack (critical strikes, bashes and every other attack effect can happen) and 50 / 80 / 110 / 140 magic damage, and is slowed by 60% for 1 second. If he hits any enemy unit, Blur Strike's cooldown is refreshed once: he can dash a second time within 6 seconds."}
+	_abilities["djin_bomb"] = {"id": "djin_bomb", "name": "Djin Bomb", "behavior": "point", "key": "W", "max_level": 4,
+		"mana": [90, 100, 110, 120], "cooldown": [12, 12, 12, 12], "cast_point": 0.25, "range": 750,
+		"anim": "hook_throw", "aoe": true,
+		"values": {"radius": [450, 450, 450, 450], "duration": [5, 5, 5, 5], "magic_resist_cut": [0.10, 0.15, 0.20, 0.25],
+		"status_resist_cut": [0.10, 0.15, 0.20, 0.25], "slow_per_second": [0.05, 0.08, 0.11, 0.14],
+		"throw_time": [0.4, 0.4, 0.4, 0.4], "linger": [0.5, 0.5, 0.5, 0.5]},
+		"hidden_values": ["throw_time", "linger"],
+		"desc": "Araki throws a bomb that sets a demon loose in a cloud of smoke (radius 450) for 5 seconds. Enemies inside lose 10 / 15 / 20 / 25% magic resistance and 10 / 15 / 20 / 25% status resistance, and are slowed by 5 / 8 / 11 / 14% more for every second they stay in it."}
+	_abilities["ghosts_of_the_will"] = {"id": "ghosts_of_the_will", "name": "Ghosts of the Will", "behavior": "unit",
+		"key": "E", "target_team": "enemy", "max_level": 4, "mana": [110, 110, 110, 110], "cooldown": [21, 20, 19, 18],
+		"cast_point": 0.3, "range": 650, "anim": "greatsword_cast", "damage_type": "physical",
+		"values": {"ghosts": [3, 5, 7, 9], "damage_pct": [0.25, 0.35, 0.45, 0.55], "interval": [0.3, 0.3, 0.3, 0.3],
+		"speed": [650, 650, 650, 650], "lifetime": [6, 6, 6, 6], "retarget": [700, 700, 700, 700]},
+		"hidden_values": ["lifetime", "retarget"],
+		"desc": "Araki calls 3 / 5 / 7 / 9 ghosts from the Undead realm, one every 0.3 seconds. Each flies out at 650 (through units, over cliffs and trees), strikes the target once for 25 / 35 / 45 / 55% of Araki's attack damage, and is gone. Their hits add Senryukai stacks and renew them. One hit destroys a ghost. If the target dies, the ghosts left go for the nearest enemy."}
+	_abilities["the_blur"] = {"id": "the_blur", "name": "The Blur", "behavior": "no_target", "key": "R", "max_level": 3,
+		"required_level": [6, 12, 18], "mana": [75, 100, 125], "cooldown": [80, 60, 40], "cast_point": 0.0,
+		"range": 0, "anim": "greatsword_power", "immediate": true,
+		"values": {"duration": [19, 19, 19], "attack_speed": [60, 80, 100], "attacks": [9, 15, 21],
+		"cooldown_pct": [0.5, 0.5, 0.5]},
+		"desc": "Araki falls into complete concentration for 19 seconds: Blur Strike and Djin Bomb have half their cooldowns (the ones already running are halved too), and his next 9 / 15 / 21 attacks are 60 / 80 / 100 faster."}
+
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
 	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}
 
@@ -1107,6 +1172,16 @@ static func _build_talents_18() -> void:
 	_talent("ghorman_roar_radius", "+200 Roar radius", [{"ability": "roar", "add": {"radius": 200.0}}])
 	_talent("ghorman_form_time", "+10s Beast Form", [{"ability": "beast_form", "add": {"duration": 10.0}}])
 	_talent("ghorman_maul_every", "Maul every 2nd attack", [{"ability": "beast_form", "add": {"maul_every": -1.0}}])
+
+static func _build_talents_19() -> void:
+	_talent("araki_senryukai", "+2 Senryukai damage per stack", [{"ability": "senryukai", "add": {"damage_per_stack": 2.0}}])
+	_talent("araki_strike_damage", "+50 Blur Strike damage", [{"ability": "blur_strike", "add": {"damage": 50.0}}])
+	_talent("araki_ghosts", "+2 Ghosts", [{"ability": "ghosts_of_the_will", "add": {"ghosts": 2.0}}])
+	_talent("araki_bomb_cooldown", "-3s Djin Bomb cooldown", [{"ability": "djin_bomb", "add": {"cooldown": -3.0}}])
+	_talent("araki_ghost_damage", "+15% Ghost damage", [{"ability": "ghosts_of_the_will", "add": {"damage_pct": 0.15}}])
+	_talent("araki_bomb_resist", "+10% Djin Bomb magic resistance cut", [{"ability": "djin_bomb", "add": {"magic_resist_cut": 0.10}}])
+	_talent("araki_blur_attacks", "+8 The Blur attacks", [{"ability": "the_blur", "add": {"attacks": 8.0}}])
+	_talent("araki_strike_refresh", "Blur Strike refreshes twice", [{"ability": "blur_strike", "add": {"refreshes": 1.0}}])
 
 # ---- Items ----------------------------------------------------------------------------------------------------------
 ## Item data from items.txt. "stats": passive bonuses; "use": active effect; "recipe": components (recipe scroll cost

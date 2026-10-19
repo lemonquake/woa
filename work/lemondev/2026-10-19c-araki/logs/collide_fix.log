@@ -1,0 +1,45 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+== araki.glb (araki): 16 shapes, height 1.88 m
+   hips       -0.22-0.07 m along, 0.175 x 0.119
+   chest      0.00-0.24 m along, 0.138 x 0.130
+   head       0.00-0.25 m along, 0.109 x 0.106
+   forearm.L  0.06-0.26 m along, 0.051 x 0.092
+   thigh.L    0.00-0.44 m along, 0.081 x 0.085
+  greatsword_idle    before: worst  3.3 cm (fore.L in hips f27), 11/112 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_1 before: worst 17.8 cm (weapon.R in floor f70), 33/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_cast    before: worst  4.4 cm (weapon.R in head f14), 7/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_2 before: worst  8.4 cm (weapon.R in head f5), 6/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst 12.3 cm (fore.L in hips f74), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hook_throw         before: worst  3.2 cm (weapon.R in thigh.R f30), 10/55 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_power   before: worst  4.8 cm (fore.L in hips f63), 29/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 13.7 cm (weapon.R in floor f26), 19/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 13.7 cm (weapon.R in floor f0), 11/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  6.7 cm (fore.L in chest f35), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 12.7 cm (hand.L in head f14), 19/37 frames over 1 cm | after: worst  3.2 cm (hand.L in thigh.L f22), 1 frames
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  6.1 cm (weapon.R in head f6), 4/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  9.5 cm (weapon.R in head f9), 7/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  8.3 cm (weapon.R in head f17), 5/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst  8.8 cm (weapon.R in head f8), 9/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit     before: worst  7.3 cm (weapon.R in head f11), 7/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 13.7 cm (weapon.R in floor f46), 11/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 18.5 cm (elbow.L in chest f19), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 15.0 cm (elbow.R in chest f15), 25/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 35.7 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_2 before: worst  8.3 cm (weapon.R in head f42), 56/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/araki_collide.res (OK); worst 35.7 cm -> 3.2 cm
+  wrote res://assets/characters/hero/mocap/collide/araki.res (OK): 17 mocap clips

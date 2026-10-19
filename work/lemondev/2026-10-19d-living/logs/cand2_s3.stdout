@@ -1,0 +1,405 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 100%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 100% inv, tower1 mid 16%, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 100% inv, tower1 bot 14%, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100%, tower4 100%, tower3 bot 88%, melee_rax bot 100% inv, ranged_rax bot 100% inv, melee_rax mid 100%, ranged_rax mid 100%, tower3 top 75%, melee_rax top 100% inv, ranged_rax top 100% inv, filler bot 100% inv, filler mid 100%, filler top 100% inv
+    end 01-hank pop heal dead hp 0% pos (5795.0, 3591.0) task -
+    end weakass task alive hp 84% pos (4136.0, 3826.0) task push
+    end BISAKOL SLAYER ward alive hp 99% pos (-5018.0, -2383.0) task -
+    end basta tangalog bobo task alive hp 56% pos (4210.0, 3700.0) task push
+    end mama mo heal alive hp 52% pos (-6832.0, -6444.0) task push
+    end farmer56 farm alive hp 51% pos (2395.0, 5175.0) task -
+    end pogi67 ward alive hp 100% pos (2677.0, 5754.0) task -
+    end crazy gremlin retreat dead hp 0% pos (6403.0, 3883.0) task -
+    end [CEB] kape farm alive hp 100% pos (6331.0, 1244.0) task -
+    end lord90 farm alive hp 87% pos (-1593.0, 7350.0) task -
+  Ancient Light calls: teamfights 35, ganks 30, pushes 16 (chained on 6), towers lost 1, bots unstuck 4
+  Ancient Light sites: bot goals { "lamp": 15 }; done: warps 0, lilies 0, lamps lit 7, lamps put out 2
+  Black Sun calls: teamfights 13, ganks 16, pushes 2 (chained on 0), towers lost 7, bots unstuck 4
+  Black Sun sites: bot goals { "lamp": 16, "gate": 1, "lily": 1 }; done: warps 1, lilies 0, lamps lit 5, lamps put out 2
+seed 3: no winner at 25:00 (306.7 s real)
+  Ancient Light (towers lost 1):
+    01-hank pop araki         role 1 bot   4/ 6/ 8 lvl 17 LH  93 DN 15 nw 12066 | lane 38%, fight 6%, retreat 5%, heal 4%, farm 43%, task 3%, clear 0%
+             items: ["spell_shield", "quelling_blade", "steady_ring", "huge_sword", "spear", "power_treads", "salve", "wraith_band"]
+    weakass  froster       role 2 mid  18/ 0/ 2 lvl 21 LH  87 DN  2 nw 19861 | lane 27%, retreat 10%, fight 16%, task 14%, heal 7%, farm 25%, clear 0%
+             items: ["mana_boots", "push_staff", "kugmo_atuli", "salve", "spell_shield", "frost_plate", "magic_wand", "smart_band"]
+    BISAKOL SLAYER sludge        role 4 top   1/ 3/ 6 lvl 12 LH  33 DN  5 nw  7045 | lane 23%, task 8%, retreat 17%, fight 2%, ward 15%, stack 9%, heal 5%, farm 21%, clear 0%
+             items: ["observer_ward", "reveal_dust", "slip_boots", "medic_kit", "glimmer_cape", "reveal_ward", "magic_wand"]
+    basta tangalog bobo azrin         role 5 bot   8/ 0/ 7 lvl 18 LH  63 DN  2 nw 13616 | lane 32%, fight 8%, retreat 4%, task 14%, heal 3%, ward 7%, stack 7%, clear 0%, farm 24%
+             items: ["glimmer_cape", "push_staff", "medic_kit", "root_staff", "spell_sword", "mana_boots", "salve", "reveal_ward", "clarity"]
+    mama mo  ezee          role 3 top   3/ 5/ 5 lvl 17 LH  76 DN 14 nw 11252 | lane 35%, task 12%, retreat 6%, fight 6%, heal 3%, farm 38%, clear 0%
+             items: ["slip_boots", "jump_knife", "giant_axe", "spike_armor", "steel_hammer", "reveal_dust", "tough_band", "magic_wand", "quelling_blade"]
+  Black Sun (towers lost 7):
+    farmer56 caziel        role 2 mid   1/11/ 1 lvl 13 LH  64 DN  9 nw  7307 | lane 38%, fight 2%, retreat 9%, heal 6%, farm 44%, task 1%
+             items: ["power_treads", "magic_wand", "reveal_dust", "wraith_band", "spell_shield"]
+    pogi67   tock          role 5 mid   1/ 6/ 1 lvl 12 LH  25 DN  8 nw  5111 | lane 31%, fight 2%, retreat 8%, ward 12%, stack 12%, task 1%, heal 6%, pull 0%, farm 27%, clear 0%
+             items: ["reveal_ward", "mana_boots", "observer_ward", "reveal_dust", "glimmer_cape", "belt_str", "speed_ribbon", "ring_regen"]
+    crazy gremlin kragg         role 3 bot   1/ 8/ 4 lvl 15 LH  46 DN  5 nw  7838 | lane 28%, retreat 17%, task 12%, fight 2%, heal 2%, farm 40%
+             items: ["magic_stick", "spell_shield", "quelling_blade", "tough_band"]
+    [CEB] kape blood_ranger  role 1 top   7/ 3/ 1 lvl 20 LH 128 DN  7 nw 16384 | lane 28%, retreat 10%, fight 7%, task 8%, heal 2%, farm 44%, clear 0%
+             items: ["spell_shield", "crit_sword", "power_treads", "dragon_lance", "push_staff", "shock_hammer", "reveal_dust", "wraith_band"]
+    lord90   azrael        role 4 bot   4/ 7/ 2 lvl 12 LH  54 DN  2 nw  8358 | lane 25%, retreat 17%, fight 1%, task 11%, ward 13%, stack 7%, heal 2%, farm 22%, clear 1%
+             items: ["mask_of_madness", "reveal_ward", "glimmer_cape", "reveal_dust", "magic_wand", "power_treads", "wraith_band", "quelling_blade"]
+  at 10:00 LH/net worth: ank pop 34/4955, ass 12/6142, KOL SLAYER 6/2694, a tangalog bobo 9/4435,  mo 29/4630, er56 20/2727, 67 5/2052, y gremlin 9/2415, ] kape 24/6286, 90 13/4622 | team net worth 22856 vs 18102
+  at 20:00 LH/net worth: ank pop 72/8755, ass 45/13078, KOL SLAYER 22/5163, a tangalog bobo 47/9262,  mo 48/7976, er56 51/5566, 67 22/4425, y gremlin 39/5881, ] kape 82/11728, 90 39/7139 | team net worth 44234 vs 34739
+  totals: kills 34 vs 14, net worth 63840 vs 44998
+  stuck: none
+  Fortify pressed 8 times: [6:12] Ancient Light (01-hank pop), [9:13] Black Sun (pogi67), [11:39] Ancient Light (01-hank pop), [14:23] Black Sun (farmer56), [17:42] Ancient Light (weakass), [19:23] Black Sun (farmer56), [22:50] Ancient Light (01-hank pop), [24:33] Black Sun (farmer56)
+  Ancient Light: counter-ganks called 22 (helpers fought in 10), juked home 4, counter items araki:spell_shield, araki:sure_hit_staff, froster:frost_plate, froster:spell_shield, sludge:glimmer_cape, sludge:medic_kit, azrin:medic_kit, azrin:glimmer_cape, ezee:spike_armor, ezee:jump_knife, ezee:spell_shield
+  Black Sun: counter-ganks called 23 (helpers fought in 8), juked home 7, counter items caziel:spell_shield, caziel:jump_knife, tock:glimmer_cape, kragg:spell_shield, kragg:jump_knife, blood_ranger:spell_shield, blood_ranger:push_staff, azrael:glimmer_cape
+  chat lines: 351
+    [-1:29] Ancient Light 01-hank pop: i'll farm bottom
+    [-1:29] Ancient Light weakass: i'll mid
+    [-1:29] Ancient Light BISAKOL SLAYER: support ako kay ezee
+    [-1:29] Ancient Light basta tangalog bobo: I'll sup araki
+    [-1:29] Ancient Light mama mo: I'll go top bai
+    [-1:29] Black Sun farmer56: MID AKO
+    [-1:29] Black Sun pogi67: basta ako mid
+    [-1:29] Black Sun crazy gremlin: Off
+    [-1:29] Black Sun [CEB] kape: safe
+    [-1:29] Black Sun lord90: Support kragg
+    [-0:47] (All) Ancient Light BISAKOL SLAYER: gising na mga lods
+    [-0:46] Black Sun pogi67: Goodluck sa atin!
+    [-0:45] (All) Black Sun crazy gremlin: Mid is mine
+    [-0:43] (All) Ancient Light basta tangalog bobo: Panalo na to.
+    [0:44] Ancient Light BISAKOL SLAYER: jayla missing
+    [0:50] (All) Ancient Light basta tangalog bobo: Kragg unang alay
+    [1:01] Ancient Light weakass: coming 7s
+    [1:01] Ancient Light BISAKOL SLAYER: papunta na ezee
+    [1:04] Ancient Light 01-hank pop: help me
+    [1:14] (All) Ancient Light basta tangalog bobo: Xp machine
+    [1:15] Ancient Light mama mo: Tulong
+    [1:22] (All) Ancient Light 01-hank pop: melted wkwk
+    [1:28] Ancient Light BISAKOL SLAYER: kainis sablay
+    [1:28] (All) Black Sun [CEB] kape: bro missed point blank
+    [1:30] (All) Ancient Light mama mo: Bai suuure
+    [1:35] Black Sun pogi67: Run to me.
+    [1:38] Black Sun farmer56: THEY'RE HITTING TOP
+    [2:00] Ancient Light weakass: gank tock mid
+    [2:05] Black Sun farmer56: HANG ON
+    [2:11] Ancient Light weakass: tock mine
+    [2:14] Ancient Light basta tangalog bobo: Lodi Froster
+    [2:15] Black Sun pogi67: San yung stun mo.
+    [2:16] Black Sun [CEB] kape: tp top
+    [2:16] Black Sun farmer56: TALK LESS PLAY MORE
+    [2:24] Black Sun pogi67: Papunta na caziel
+    [2:43] Black Sun farmer56: CAREFUL FROSTER MISSING
+    [2:44] (All) Ancient Light BISAKOL SLAYER: time bolt missed lol
+    [2:46] (All) Black Sun farmer56: SPECTATE FOR A BIT :)
+    [3:06] Ancient Light BISAKOL SLAYER: omw idol
+    [3:14] (All) Ancient Light basta tangalog bobo: Talo ka sa creep.
+    [3:16] (All) Black Sun farmer56: DENY LOOOL
+    [3:24] Black Sun lord90: Help me
+    [3:28] Black Sun farmer56: HUGE LAG SPIKE
+    [3:28] (All) Ancient Light weakass: 1v9 time
+    [3:29] Black Sun lord90: Papunta na kragg.
+    [3:31] (All) Black Sun lord90: Thats for earlier
+    [3:41] Ancient Light BISAKOL SLAYER: tping
+    [3:52] Black Sun farmer56: HELP
+    [3:56] Ancient Light 01-hank pop: help
+    [4:00] Ancient Light basta tangalog bobo: Ks pa
+    [4:01] (All) Black Sun crazy gremlin: Blur strike so broken
+    [4:02] Ancient Light weakass: he juked me
+    [4:03] Ancient Light 01-hank pop: too skow
+    [4:03] Black Sun farmer56: FROSTER NOT MID
+    [4:13] Black Sun farmer56: BOTTOM TOWER
+    [4:25] Black Sun crazy gremlin: Hold azrael
+    [4:31] Ancient Light mama mo: Papunta na sludge!
+    [4:42] Black Sun lord90: He juked me!
+    [4:48] (All) Ancient Light basta tangalog bobo: Suswertehin ka lang.
+    [4:48] Ancient Light 01-hank pop: careful azrael missing
+    [4:52] Black Sun [CEB] kape: ako na naman
+    [4:53] (All) Ancient Light mama mo: O ano ngayon jayla bai
+    [4:54] Black Sun farmer56: TOCK TP TOP
+    [4:55] Ancient Light BISAKOL SLAYER: nice one
+    [4:55] (All) Ancient Light weakass: carry incoming dude
+    [4:55] Black Sun pogi67: Ikaw nga 1/3/0 lods
+    [4:58] Black Sun crazy gremlin: Focus guys
+    [5:00] Ancient Light 01-hank pop: spell shield vs stuns
+    [5:00] Black Sun pogi67: Getting Fade Cape vs magic. lods
+    [5:04] Ancient Light weakass: lets kill tock
+    [5:05] (All) Ancient Light mama mo: Ubos sila
+    [5:06] Black Sun farmer56: NEVER FIGHT IN THEIR JUNGLE
+    [5:07] Black Sun farmer56: SPELL SHIELD VS STUNS
+    [5:13] Black Sun lord90: Hold kragg
+    [5:19] Black Sun crazy gremlin: B
+    [5:22] (All) Black Sun [CEB] kape: who's laughing now ezee
+    [5:24] Ancient Light 01-hank pop: help me
+    [5:25] (All) Ancient Light basta tangalog bobo: Sue u will.
+    [5:25] Black Sun pogi67: Run to me
+    [5:28] Black Sun lord90: Same death again
+    [5:30] Black Sun farmer56: FROST HEART SO BROKEN
+    [5:32] Black Sun pogi67: Big braiiiin
+    [5:33] (All) Ancient Light basta tangalog bobo: Ikaw na naman kragg
+    [5:38] Black Sun pogi67: Ingat wala si froster.
+    [5:50] Ancient Light basta tangalog bobo: Ingat wala si azrael
+    [5:52] Black Sun lord90: Coming kragg
+    [5:57] Black Sun [CEB] kape: angas
+    [5:58] Black Sun lord90: Help
+    [5:58] Ancient Light 01-hank pop: coming azrin
+    [5:59] Ancient Light BISAKOL SLAYER: wala kami dyan tanga
+    [6:00] Ancient Light basta tangalog bobo: Ok na ok na tol
+    [6:04] Ancient Light basta tangalog bobo: Si azrael
+    [6:05] Black Sun farmer56: DEF TOP
+    [6:06] (All) Ancient Light basta tangalog bobo: Bounty claimeeeed
+    [6:07] Ancient Light 01-hank pop: mid tower
+    [6:08] (All) Black Sun [CEB] kape: pikon talooo
+    [6:15] Ancient Light basta tangalog bobo: Heal muna ako tol
+    [6:19] Ancient Light basta tangalog bobo: Mid diff lods. tol
+    [6:20] (All) Black Sun [CEB] kape: bring your whole team
+    [6:21] Ancient Light BISAKOL SLAYER: pasensya
+    [6:22] (All) Black Sun crazy gremlin: Npc behavior
+    [6:28] Black Sun crazy gremlin: Careful azrin missing
+    [6:28] Ancient Light weakass: jayla not mid
+    [6:30] Ancient Light BISAKOL SLAYER: kapit froster
+    [6:37] Ancient Light 01-hank pop: too slow
+    [6:39] Black Sun crazy gremlin: Araki used the blur, go.
+    [6:44] Ancient Light BISAKOL SLAYER: tock
+    [6:49] Black Sun lord90: Ezee top, kill
+    [6:53] (All) Black Sun [CEB] kape: suki kita ezee hahahaha
+    [6:55] (All) Ancient Light mama mo: Crush mo ba ako!
+    [7:01] Ancient Light basta tangalog bobo: Naka stack araki.
+    [7:04] Black Sun farmer56: DEF MID
+    [7:17] Black Sun lord90: Wait coming
+    [7:22] Black Sun farmer56: THEY'RE ON ME
+    [7:25] (All) Black Sun [CEB] kape: perfect burst shot
+    [7:25] Black Sun crazy gremlin: Ingat wala si araki.
+    [7:26] Black Sun farmer56: CANT CATCH ME
+    [7:28] (All) Ancient Light weakass: free caziel again
+    [7:28] Ancient Light BISAKOL SLAYER: ayos froster
+    [7:30] Ancient Light weakass: lost him
+    [7:35] Ancient Light 01-hank pop: hang on
+    [7:38] Black Sun lord90: Hang on
+    [7:48] Black Sun pogi67: Group mid
+    [7:49] Ancient Light basta tangalog bobo: Uwi muna
+    [7:50] Black Sun [CEB] kape: cleaaan
+    [7:51] Black Sun lord90: Ult up lets fight!
+    [7:57] Ancient Light mama mo: Nawala si jayla bai
+    [7:58] Black Sun lord90: Careful azrin missing!
+    [8:00] Ancient Light basta tangalog bobo: Fade Cape para sa magic
+    [8:20] Ancient Light weakass: tock mid, kill
+    [8:27] Black Sun [CEB] kape: si froster
+    [8:28] Black Sun lord90: Bro folded
+    [8:28] Ancient Light basta tangalog bobo: Offlane diff
+    [8:28] (All) Ancient Light BISAKOL SLAYER: newbie
+    [8:29] Black Sun farmer56: THAT BUILD IS A CRIME
+    [8:29] Black Sun farmer56: FARM MUNA AKO
+    [8:32] Black Sun pogi67: Tingnan mo sarili mo.
+    [8:38] Black Sun lord90: Lost him
+    [8:45] Ancient Light 01-hank pop: azrael not bottom
+    [8:50] Ancient Light mama mo: May dust ako.
+    [8:50] (All) Ancient Light BISAKOL SLAYER: konti paaaaa
+    [8:52] (All) Black Sun [CEB] kape: puro ka chat
+    [9:00] Ancient Light basta tangalog bobo: May dust ako.
+    [9:03] Black Sun farmer56: EZEE USED UNHOLY MIGHT, GO
+    [9:07] Black Sun crazy gremlin: Nvm lost him.
+    [9:07] Ancient Light BISAKOL SLAYER: hold froster
+    [9:13] Black Sun [CEB] kape: tp
+    [9:14] Black Sun farmer56: EZEE LEAP STRIKE IS STUPID
+    [9:15] Ancient Light 01-hank pop: kragg mia
+    [9:15] Black Sun lord90: Caziel ur feeding!
+    [9:31] Ancient Light weakass: dust bought, they have invis
+    [9:31] Black Sun crazy gremlin: Tp bottom man
+    [9:39] Ancient Light BISAKOL SLAYER: help
+    [9:43] Ancient Light BISAKOL SLAYER: buhay pa ko dahil sayo. idol
+    [9:44] (All) Ancient Light mama mo: Bai ganti lang jayla haha
+    [9:46] (All) Black Sun [CEB] kape: ok we even.
+    [9:47] Black Sun crazy gremlin: Ss azrin
+    [9:47] Ancient Light 01-hank pop: sheesh kayo na lang
+    [10:00] Black Sun lord90: Tp kragg
+    [10:01] Ancient Light BISAKOL SLAYER: stack ready ezee
+    [10:09] (All) Ancient Light weakass: u again?
+    [10:10] Black Sun pogi67: Depensa mid
+    [10:10] Black Sun farmer56: MISCLICKED
+    [10:11] Black Sun crazy gremlin: Minimap exists
+    [10:20] Black Sun pogi67: Tp
+    [10:23] Ancient Light weakass: run to me
+    [10:42] Black Sun crazy gremlin: Tp
+    [10:50] Ancient Light mama mo: Jump Knife para sa ganks!
+    [10:58] Black Sun [CEB] kape: atras
+    [11:08] Black Sun [CEB] kape: no divine smite for a whule, go
+    [11:09] Ancient Light weakass: good joooooob
+    [11:18] (All) Black Sun lord90: U traded 3 for 1.
+    [11:29] Black Sun farmer56: BOTTOM TOWER
+    [11:31] Ancient Light 01-hank pop: bottom tower now
+    [11:33] Ancient Light weakass: coming araki
+    [11:33] Ancient Light 01-hank pop: focus azrael
+    [11:33] Black Sun crazy gremlin: B b b.
+    [11:39] Ancient Light BISAKOL SLAYER: tp na
+    [11:45] Ancient Light 01-hank pop: keep going
+    [11:47] Ancient Light basta tangalog bobo: Salamat sa tore.
+    [11:48] Ancient Light basta tangalog bobo: Tara azrael bottom.
+    [11:57] Ancient Light basta tangalog bobo: Laban
+    [11:58] Black Sun farmer56: TP
+    [12:08] Black Sun pogi67: Brb respawniiing
+    [12:10] (All) Ancient Light basta tangalog bobo: Bounty on my head now tol
+    [12:11] (All) Black Sun [CEB] kape: ratio
+    [12:34] Ancient Light mama mo: Patayin natin si caziel
+    [12:38] Black Sun farmer56: EZEE NO ULT
+    [12:40] Black Sun [CEB] kape: dust bought, they have invis!
+    [12:42] Black Sun farmer56: TP
+    [12:45] Black Sun lord90: Tp mid
+    [12:47] Ancient Light basta tangalog bobo: Patayin natin si tock
+    [12:52] Ancient Light weakass: patayin natin si kragg
+    [12:53] Black Sun lord90: Dust bought, they have invis bro
+    [12:58] Black Sun farmer56: KAYO NA LANG
+    [12:59] Ancient Light mama mo: Kragg ult down, fight now.
+    [13:02] (All) Ancient Light basta tangalog bobo: Ang swerteeeeee
+    [13:03] Ancient Light basta tangalog bobo: Heal
+    [13:05] Black Sun lord90: B
+    [13:06] Ancient Light weakass: tower next
+    [13:06] Black Sun [CEB] kape: ward muna bago pasok
+    [13:06] (All) Black Sun farmer56: LODS? HAHA
+    [13:06] Black Sun farmer56: FIGHT
+    [13:13] Ancient Light 01-hank pop: top tower
+    [13:15] Ancient Light BISAKOL SLAYER: heal muna ako
+    [13:16] (All) Ancient Light weakass: rampage soon
+    [13:16] Black Sun lord90: Fed their offlane too!
+    [13:18] (All) Black Sun [CEB] kape: you're welcome
+    [13:32] Ancient Light weakass: go go
+    [13:33] Black Sun farmer56: MID TOWER
+    [13:39] Ancient Light mama mo: Papunta
+    [13:44] Black Sun farmer56: NOW
+    [13:56] Black Sun pogi67: Busy
+    [14:01] Ancient Light 01-hank pop: push top
+    [14:05] Ancient Light weakass: hang on
+    [14:05] Black Sun farmer56: TPING
+    [14:06] Black Sun pogi67: Tara na
+    [14:12] Ancient Light weakass: kragg top, kill
+    [14:15] (All) Black Sun pogi67: Time bolt lang katapat mo!
+    [14:25] Black Sun [CEB] kape: go without me
+    [14:31] Black Sun crazy gremlin: Lets kill froster
+    [14:31] Black Sun crazy gremlin: Fight man
+    [14:36] Ancient Light BISAKOL SLAYER: caziel bottom, kill
+    [14:39] Ancient Light BISAKOL SLAYER: now
+    [14:45] (All) Black Sun farmer56: AIM SLUDGE AIM HAHA
+    [14:49] Ancient Light weakass: gj
+    [14:50] Black Sun [CEB] kape: dead again?
+    [14:50] (All) Ancient Light BISAKOL SLAYER: denied ur life hahaha
+    [14:53] Black Sun farmer56: U DIED MOREEEEE
+    [15:03] Black Sun crazy gremlin: Kill ezee first.
+    [15:13] Black Sun pogi67: Depensa lang muna
+    [15:14] Ancient Light basta tangalog bobo: Go farm the jungle then. tol
+    [15:16] Ancient Light BISAKOL SLAYER: sorry
+    [15:21] Black Sun crazy gremlin: Help man
+    [15:21] Ancient Light 01-hank pop: top tower!
+    [15:27] Black Sun crazy gremlin: B
+    [15:37] Ancient Light weakass: gank tock mid
+    [15:39] Ancient Light 01-hank pop: push top
+    [15:43] Black Sun pogi67: Lost him
+    [15:46] Black Sun [CEB] kape: nvm lost him.
+    [15:51] Black Sun lord90: Tping
+    [16:03] Ancient Light BISAKOL SLAYER: idol nawala
+    [16:13] Ancient Light 01-hank pop: tower next
+    [16:16] Black Sun farmer56: DEFEND MID
+    [16:23] Ancient Light mama mo: May knife na, ako mauuna
+    [16:33] Black Sun lord90: Froster wasted ult!
+    [16:34] Black Sun farmer56: HELP
+    [16:34] Black Sun farmer56: KILL FROSTER FIRST
+    [16:47] Black Sun crazy gremlin: Tp
+    [16:54] Ancient Light 01-hank pop: push bottom na
+    [16:54] Black Sun lord90: No escape from me.
+    [16:57] Black Sun [CEB] kape: groyp up
+    [16:59] Black Sun lord90: It's not that deep.
+    [16:59] Black Sun farmer56: DI AKO SASAMA
+    [17:00] Ancient Light basta tangalog bobo: Niec lods
+    [17:00] Black Sun farmer56: LOOK AT UR SCORE
+    [17:01] Ancient Light BISAKOL SLAYER: stacked for u ezee
+    [17:03] Black Sun crazy gremlin: Just play
+    [17:21] Black Sun pogi67: Tara
+    [17:21] Ancient Light weakass: tp bottom
+    [17:23] Black Sun crazy gremlin: Fight
+    [17:24] (All) Black Sun farmer56: ZERO GOLD
+    [17:27] Ancient Light 01-hank pop: blood ranger on cd
+    [17:29] Black Sun pogi67: Lost him lods
+    [17:31] (All) Black Sun [CEB] kape: isnag gale impact lang
+    [17:48] Black Sun lord90: Ezee top, kill.
+    [17:55] Black Sun crazy gremlin: Kill ezee first.
+    [17:59] Black Sun lord90: No escape from me.
+    [17:59] Black Sun lord90: They used unholy might, push!
+    [18:07] Ancient Light basta tangalog bobo: Omw
+    [18:21] Black Sun [CEB] kape: mag isa si ezee sa bottom
+    [18:23] Ancient Light weakass: tock alone mid
+    [18:24] Black Sun pogi67: Ezee 48s, tower now!
+    [18:24] Ancient Light mama mo: Nag-lag ako
+    [18:25] (All) Black Sun [CEB] kape: stop coming to me ezee
+    [18:31] (All) Ancient Light basta tangalog bobo: Buti nakatakas ka
+    [18:39] Ancient Light 01-hank pop: we're 11k up, push!
+    [18:39] Black Sun [CEB] kape: di ka pa nadala xd
+    [18:41] Ancient Light basta tangalog bobo: Where are your items.
+    [18:41] Black Sun farmer56: THEY'RE 11K UP, PLAY SAFE
+    [18:42] Ancient Light BISAKOL SLAYER: sorry na
+    [18:50] Black Sun farmer56: MID TOWER
+    [19:02] Ancient Light weakass: azrael mid go.
+    [19:05] (All) Ancient Light weakass: too easy
+    [19:07] Black Sun farmer56: TP AKO
+    [19:26] Black Sun crazy gremlin: Lets kill froster
+    [19:28] Ancient Light mama mo: Bai tara kragg top!
+    [19:35] Ancient Light 01-hank pop: defend top
+    [19:58] (All) Ancient Light basta tangalog bobo: Wiyh 10 hp lmao
+    [20:00] Ancient Light 01-hank pop: group mid
+    [20:16] Black Sun crazy gremlin: Lost him man
+    [20:21] Ancient Light weakass: caziel mid, kill!
+    [20:29] Black Sun farmer56: LAG
+    [20:34] Black Sun [CEB] kape: tp bottom
+    [20:42] Black Sun lord90: No escape from me.
+    [20:44] Ancient Light basta tangalog bobo: Cd divine darkness ni azrael
+    [20:45] Ancient Light 01-hank pop: group mid
+    [20:48] Ancient Light basta tangalog bobo: Si azrael
+    [20:51] Ancient Light weakass: dude omw
+    [20:52] Black Sun [CEB] kape: azrin alone bottom
+    [20:58] Ancient Light weakass: dust
+    [21:01] Ancient Light 01-hank pop: busy
+    [21:03] Black Sun crazy gremlin: They're hitting mid
+    [21:04] Black Sun pogi67: Worth
+    [21:06] Black Sun lord90: Focus froster, he has frost plate
+    [21:07] Black Sun farmer56: ANOTHER TOWER GONE
+    [21:08] Ancient Light 01-hank pop: kragg mid, kill
+    [21:20] Ancient Light basta tangalog bobo: Buy boots at least
+    [21:21] Black Sun farmer56: GANK ARAKI MID
+    [21:36] Black Sun lord90: Dont worry i got this
+    [21:45] Black Sun farmer56: DEF TOP PLS
+    [21:47] Ancient Light basta tangalog bobo: Tara top
+    [21:51] (All) Black Sun [CEB] kape: nice tp into death
+    [21:56] Black Sun farmer56: TPING
+    [22:00] Ancient Light basta tangalog bobo: Tol si caziel una
+    [22:09] (All) Ancient Light basta tangalog bobo: My bounty is huge lol!
+    [22:10] Black Sun lord90: Caziel paid by the other team?
+    [22:12] Black Sun farmer56: U DIDNT HEEEELP
+    [22:12] Black Sun pogi67: Tp kragg lods
+    [22:14] Black Sun crazy gremlin: Chill, we can win! man
+    [22:17] Black Sun lord90: Tping
+    [22:19] (All) Ancient Light basta tangalog bobo: 2 lol
+    [22:19] Ancient Light BISAKOL SLAYER: azrin nice
+    [22:21] Black Sun pogi67: Back before you di!
+    [22:22] Ancient Light basta tangalog bobo: Tol tuloy
+    [22:22] Black Sun crazy gremlin: I thought you were coming
+    [22:23] Black Sun lord90: Walang nagdedepensa
+    [22:34] Ancient Light basta tangalog bobo: Patayin natin si azrael.
+    [22:35] Ancient Light weakass: go
+    [22:35] Black Sun lord90: Mag isa si azrin sa mid!
+    [22:45] Ancient Light weakass: kill azrael
+    [22:51] Ancient Light basta tangalog bobo: Tp na tol
+    [23:03] Ancient Light weakass: go
+    [23:07] Ancient Light basta tangalog bobo: May dust ako.
+    [23:08] Black Sun farmer56: WE NEED FARM
+    [23:08] Ancient Light BISAKOL SLAYER: bodied idol
+    [23:09] Black Sun farmer56: JUMP KNIFE VS GANKS
+    [23:17] Ancient Light 01-hank pop: we're richer, push mid
+    [23:36] Ancient Light 01-hank pop: nah
+    [23:59] Black Sun pogi67: Dont go bottom
+    [23:59] (All) Black Sun pogi67: Buhay pa
+    [24:01] Ancient Light BISAKOL SLAYER: stacked for u ezee.
+    [24:04] Black Sun farmer56: INGAT KAY FROSTER :)
+    [24:10] Black Sun farmer56: BOTTOM TOWER
+    [24:21] Black Sun [CEB] kape: tigil mo yan pre
+    [24:21] Ancient Light weakass: kragg 50s, tower now
+    [24:22] Black Sun farmer56: GO WITHOUT ME
+    [24:22] (All) Black Sun crazy gremlin: You guys left me.
+    [24:26] Black Sun lord90: Tp
+    [24:32] Black Sun [CEB] kape: coming
+    [24:59] Ancient Light weakass: barracks next
+wins: Ancient Light 0, Black Sun 0
+WARNING: 5977 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 20 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

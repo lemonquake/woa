@@ -333,6 +333,7 @@ func step() -> void:
 	abilities.kits4.tick()
 	abilities.kits5.tick()
 	abilities.kits6.tick()
+	abilities.kits7.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()
@@ -827,7 +828,8 @@ func brain(team: int) -> SimTeamAI:
 
 ## A team chat line from a hero (or -1 for the game). Teams only read their own lines.
 ## all: all chat (both teams read it). bot_line: a bot's chat line (SimBotChat; the interface can hide its trash talk).
-func chat(team: int, from_id: int, text: String, all := false, bot_line := false) -> void:
+## lid: a bot line's id (SimBotChat), so the online chat writer (LlmChat) can show its version of it.
+func chat(team: int, from_id: int, text: String, all := false, bot_line := false, lid := -1) -> void:
 	var u := get_unit(from_id)
 	var who := ""
 	if u != null:
@@ -836,7 +838,7 @@ func chat(team: int, from_id: int, text: String, all := false, bot_line := false
 	chat_log.append(line)
 	if chat_log.size() > 80:
 		chat_log.pop_front()
-	events.append({"t": "chat", "team": team, "u": from_id, "name": who, "text": text, "all": all, "bot_line": bot_line})
+	events.append({"t": "chat", "team": team, "u": from_id, "name": who, "text": text, "all": all, "bot_line": bot_line, "lid": lid})
 	if brains[team] != null and u != null and not u.bot:
 		brains[team].on_player_chat(u, text)
 

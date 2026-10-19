@@ -31,7 +31,8 @@ const NAMES := {"stunned": "Stunned", "bashed": "Bashed", "frosted": "Frozen", "
 	"magnet_charge": "Charge", "unholy_fatigue": "Tired", "tainted_curse": "Curse", "static_charge": "Static Charge",
 	"fortify_mark": "Fortify Mark", "ensnared": "Caught", "piloting": "In a Turret", "piloted": "Piloted",
 	"void_rush_buff": "Void Rush", "dark_matter_slow": "Dark Matter Skin", "axe_out": "Axe Away", "joke_pie": "Pie",
-	"joke_confetti": "Confetti", "joke_glue": "Glue", "shuffle_dizzy": "Dizzy", "tamed": "Tamed"}
+	"joke_confetti": "Confetti", "joke_glue": "Glue", "shuffle_dizzy": "Dizzy", "tamed": "Tamed",
+	"blur_strike_again": "Second Dash", "the_blur_speed": "Fast Attacks"}
 
 ## Icons for those (assets/ui/<path>.svg); abilities and items use their own.
 const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "frosted": "status/frozen",
@@ -70,7 +71,7 @@ const ALIAS := {"blood_ranger": "blood_ranger_ult", "void_rush_buff": "void_rush
 	"darkness_blind": "divine_darkness", "berserk": "mask_of_madness", "burak_berserk": "berserk",
 	"hurricane_wind": "hurricane", "axe_out": "axe_throw", "joke_pie": "joke_box", "joke_confetti": "joke_box",
 	"joke_glue": "joke_box", "shuffle_dizzy": "shuffle", "roar_pack": "roar", "beast_growth": "beast_form",
-	"tamed": "tame"}
+	"tamed": "tame", "blur_strike_again": "blur_strike", "the_blur_speed": "the_blur", "ghost_form": "ghosts_of_the_will"}
 
 static var _index := {}                    # effect id -> {name, item | icon}: auras, creep attack effects, item uses
 

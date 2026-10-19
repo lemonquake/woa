@@ -1,0 +1,449 @@
+  Ancient Light standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 5%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 79%, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 94%, filler top 100% inv, filler mid 100% inv, filler bot 100% inv
+  Black Sun standing: ancient 100% inv, tower4 100% inv, tower4 100% inv, tower3 bot 100% inv, melee_rax bot 100% inv, ranged_rax bot 100% inv, tower2 bot 84%, tower3 mid 100% inv, melee_rax mid 100% inv, ranged_rax mid 100% inv, tower2 mid 65%, tower3 top 100% inv, melee_rax top 100% inv, ranged_rax top 100% inv, tower2 top 86%, filler bot 100% inv, filler mid 100% inv, filler top 100% inv
+    end 01-hank pop farm alive hp 100% pos (758.0, -6440.0) task -
+    end weakass retreat dead hp 0% pos (1812.0, 3616.0) task retreat
+    end BISAKOL SLAYER retreat alive hp 46% pos (-676.0, 1798.0) task gank
+    end basta tangalog bobo farm alive hp 98% pos (2267.0, 1440.0) task gank
+    end mama mo retreat dead hp 0% pos (1190.0, 2954.0) task push
+    end 08-paolo lang task alive hp 73% pos (1612.0, 3613.0) task push
+    end tinola ni lito ward alive hp 73% pos (1765.0, 4069.0) task push
+    end [CEB] dodong retreat dead hp 0% pos (1299.0, 2058.0) task push
+    end soggyguy farm alive hp 100% pos (-2569.0, 6205.0) task -
+    end chibog.exe farm alive hp 93% pos (1640.0, 3678.0) task push
+  Ancient Light calls: teamfights 34, ganks 29, pushes 5 (chained on 0), towers lost 3, bots unstuck 3
+  Ancient Light sites: bot goals { "lamp": 22 }; done: warps 0, lilies 0, lamps lit 5, lamps put out 5
+  Black Sun calls: teamfights 33, ganks 13, pushes 6 (chained on 2), towers lost 3, bots unstuck 5
+  Black Sun sites: bot goals { "lamp": 16, "gate": 1 }; done: warps 1, lilies 0, lamps lit 9, lamps put out 2
+seed 7: no winner at 25:00 (260.6 s real)
+  Ancient Light (towers lost 3):
+    01-hank pop araki         role 1 bot   3/11/ 2 lvl 12 LH  71 DN  2 nw  8865 | lane 36%, fight 5%, retreat 10%, task 10%, heal 3%, farm 35%
+             items: ["jump_knife", "quelling_blade", "power_treads", "magic_wand", "wraith_band", "spell_shield"]
+    weakass  froster       role 2 mid  12/ 5/ 1 lvl 23 LH 115 DN  4 nw 20015 | lane 29%, retreat 10%, fight 10%, task 18%, heal 1%, clear 0%, farm 32%
+             items: ["mana_boots", "frost_plate", "push_staff", "mana_tiara", "spell_shield", "kugmo_atuli", "smart_band", "magic_wand"]
+    BISAKOL SLAYER sludge        role 4 top   2/ 3/ 5 lvl 12 LH  26 DN  2 nw  6796 | lane 21%, retreat 20%, fight 1%, task 10%, heal 3%, farm 30%, ward 7%, stack 7%, clear 0%
+             items: ["slip_boots", "reveal_ward", "glimmer_cape", "reveal_dust", "medic_kit"]
+    basta tangalog bobo azrin         role 5 bot   6/ 6/ 5 lvl 16 LH  67 DN  1 nw 12728 | lane 32%, fight 5%, retreat 3%, ward 11%, stack 8%, pull 1%, task 7%, heal 3%, farm 30%, clear 0%
+             items: ["glimmer_cape", "mana_boots", "push_staff", "spell_sword", "medic_kit", "reveal_ward", "reveal_dust", "wizard_staff"]
+    mama mo  ezee          role 3 bot   1/ 6/ 8 lvl 14 LH  37 DN 12 nw  8380 | lane 32%, fight 5%, task 11%, retreat 13%, heal 3%, farm 35%
+             items: ["spell_shield", "blades_attack", "magic_wand", "quelling_blade", "tough_band", "jump_knife"]
+  Black Sun (towers lost 3):
+    08-paolo lang caziel        role 2 mid   7/ 4/ 8 lvl 22 LH  87 DN  6 nw 15627 | lane 30%, fight 7%, retreat 13%, heal 2%, task 10%, farm 39%
+             items: ["spell_shield", "crit_sword", "power_treads", "mask_of_madness", "yasha", "jump_knife", "wraith_band", "quelling_blade", "magic_wand"]
+    tinola ni lito tock          role 5 top   2/ 6/ 3 lvl 16 LH  18 DN  7 nw  6716 | lane 38%, fight 3%, retreat 8%, task 8%, pull 1%, ward 13%, stack 6%, farm 20%, heal 2%, clear 0%
+             items: ["war_drum", "observer_ward", "mana_boots", "reveal_dust", "glimmer_cape", "reveal_ward", "mana_stone"]
+    [CEB] dodong kragg         role 3 bot   8/ 2/10 lvl 18 LH  49 DN  5 nw 13520 | lane 30%, retreat 17%, heal 4%, fight 6%, task 9%, farm 34%
+             items: ["spell_shield", "crash_knife", "magic_wand", "tough_band", "ring_protection", "slip_boots"]
+    soggyguy blood_ranger  role 1 top   1/ 7/ 5 lvl 16 LH  89 DN  6 nw 11192 | lane 40%, fight 5%, retreat 7%, task 11%, farm 36%, heal 1%, clear 0%
+             items: ["magic_wand", "power_treads", "push_staff", "wraith_band", "dragon_lance", "spell_shield"]
+    chibog.exe azrael        role 4 bot  12/ 7/ 8 lvl 16 LH  50 DN  3 nw 12690 | lane 24%, task 6%, fight 7%, ward 10%, retreat 5%, stack 12%, heal 4%, farm 30%, clear 1%
+             items: ["magic_wand", "glimmer_cape", "power_treads", "reveal_ward", "mask_of_madness", "reveal_dust", "salve", "quelling_blade", "wraith_band"]
+  at 10:00 LH/net worth: ank pop 14/3555, ass 31/6280, KOL SLAYER 3/2281, a tangalog bobo 4/2953,  mo 11/2852, aolo lang 20/3842, la ni lito 3/1996, ] dodong 16/4835, yguy 38/4259, og.exe 9/4354 | team net worth 17921 vs 19286
+  at 20:00 LH/net worth: ank pop 50/6571, ass 87/13701, KOL SLAYER 12/4115, a tangalog bobo 42/9215,  mo 31/6803, aolo lang 52/8980, la ni lito 12/4281, ] dodong 35/11885, yguy 64/7931, og.exe 32/10247 | team net worth 40405 vs 43324
+  totals: kills 24 vs 30, net worth 56784 vs 59745
+  stuck: none
+  Fortify pressed 6 times: [6:16] Ancient Light (01-hank pop), [7:20] Black Sun (tinola ni lito), [11:21] Ancient Light (01-hank pop), [13:49] Black Sun (08-paolo lang), [17:17] Ancient Light (01-hank pop), [19:39] Black Sun (08-paolo lang)
+  Ancient Light: counter-ganks called 29 (helpers fought in 14), juked home 7, counter items araki:spell_shield, araki:jump_knife, froster:frost_plate, froster:push_staff, froster:spell_shield, sludge:medic_kit, sludge:glimmer_cape, azrin:glimmer_cape, azrin:medic_kit, ezee:spell_shield, ezee:jump_knife, ezee:sure_hit_staff
+  Black Sun: counter-ganks called 29 (helpers fought in 11), juked home 8, counter items caziel:spell_shield, caziel:jump_knife, tock:glimmer_cape, kragg:spell_shield, blood_ranger:spell_shield, blood_ranger:push_staff, azrael:glimmer_cape
+  chat lines: 401
+    [-1:29] Ancient Light 01-hank pop: I'll farm the bottom lane (safe lane).
+    [-1:29] Ancient Light weakass: I'll go mid.
+    [-1:29] Ancient Light BISAKOL SLAYER: I'll support the top lane.
+    [-1:29] Ancient Light basta tangalog bobo: I'll support 01-hank pop in the bottom lane.
+    [-1:29] Ancient Light mama mo: basta ako bottom
+    [-1:29] Black Sun 08-paolo lang: I'll go mid.
+    [-1:29] Black Sun tinola ni lito: I'll support soggyguy in the top lane.
+    [-1:29] Black Sun [CEB] dodong: I'll go bottom.
+    [-1:29] Black Sun soggyguy: I'll farm the top lane (safe lane).
+    [-1:29] Black Sun chibog.exe: I'll support [CEB] dodong in the bottom lane.
+    [-0:48] Ancient Light basta tangalog bobo: free win
+    [-0:46] (All) Black Sun [CEB] dodong: who's carrying
+    [-0:45] (All) Black Sun 08-paolo lang: mid is mine
+    [0:31] Ancient Light 01-hank pop: Fight! Focus their Kragg.
+    [0:45] Black Sun [CEB] dodong: Lost them in the trees, going home.
+    [0:48] Ancient Light 01-hank pop: Going for Azrael.
+    [0:50] (All) Black Sun 08-paolo lang: denied
+    [0:52] Black Sun tinola ni lito: Sludge is missing from top! Careful.
+    [0:53] (All) Ancient Light 01-hank pop: unang dugo lods
+    [0:55] (All) Ancient Light BISAKOL SLAYER: olats
+    [1:06] Black Sun tinola ni lito: Hold on, soggyguy! Coming.
+    [1:10] (All) Ancient Light BISAKOL SLAYER: go pick up your axe
+    [1:11] Black Sun 08-paolo lang: Lost them in the trees, going home.
+    [1:12] Ancient Light weakass: Going for Caziel.
+    [1:13] Ancient Light 01-hank pop: Hold on, basta tangalog bobo! Coming.
+    [1:18] Black Sun 08-paolo lang: They're hitting our bottom tower. Defend!
+    [1:24] Ancient Light weakass: Caziel is missing from mid! Careful.
+    [1:27] Ancient Light 01-hank pop: Fight! Focus their Azrael.
+    [1:29] Black Sun [CEB] dodong: Hold on, chibog.exe! Coming.
+    [1:32] Ancient Light 01-hank pop: Hold on, mama mo! Coming.
+    [1:34] Black Sun chibog.exe: Going for Araki.
+    [1:36] (All) Black Sun chibog.exe: clinical
+    [1:38] (All) Ancient Light basta tangalog bobo: sorry for your loss
+    [1:42] Black Sun soggyguy: Hold on, tinola ni lito! Coming.
+    [1:53] Ancient Light 01-hank pop: Azrael is missing from bottom! Careful.
+    [1:53] Black Sun 08-paolo lang: Going for Froster.
+    [1:58] Black Sun soggyguy: Going for Sludge.
+    [2:01] (All) Ancient Light BISAKOL SLAYER: missed lol
+    [2:10] Black Sun tinola ni lito: Hold on, soggyguy! Coming.
+    [2:12] Ancient Light mama mo: Hold on, 01-hank pop! Coming.
+    [2:16] (All) Ancient Light BISAKOL SLAYER: san ba yun tinapon mo
+    [2:26] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [2:33] Black Sun chibog.exe: Hold on, 08-paolo lang! Coming.
+    [2:42] Ancient Light weakass: Their Caziel is alone in the mid lane. Going for the kill, BISAKOL SLAYER come too.
+    [2:42] (All) Black Sun soggyguy: denied lol
+    [2:44] (All) Black Sun 08-paolo lang: based
+    [2:49] Black Sun chibog.exe: Azrin is missing from bottom! Careful.
+    [3:01] (All) Ancient Light 01-hank pop: lost to creeps
+    [3:01] Ancient Light weakass: Going for Caziel.
+    [3:03] (All) Ancient Light basta tangalog bobo: that's it?
+    [3:10] Black Sun 08-paolo lang: i clicked
+    [3:15] Ancient Light mama mo: Hold on, 01-hank pop! Coming.
+    [3:16] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [3:20] Black Sun [CEB] dodong: Going for Araki.
+    [3:21] Black Sun [CEB] dodong: Hold on, chibog.exe! Coming.
+    [3:22] Ancient Light 01-hank pop: worth
+    [3:22] Black Sun 08-paolo lang: nice lods
+    [3:23] (All) Black Sun chibog.exe: nice dive, now sit
+    [3:25] (All) Ancient Light weakass: shh
+    [3:35] Black Sun chibog.exe: Running to you, help me turn on them.
+    [3:39] Black Sun tinola ni lito: ang angas
+    [3:39] Ancient Light basta tangalog bobo: may kakampi pa ba ako
+    [3:39] Black Sun soggyguy: Hold on, tinola ni lito! Coming.
+    [3:42] Ancient Light 01-hank pop: Hold on, mama mo! Coming.
+    [3:43] Black Sun [CEB] dodong: Hold on, chibog.exe! Coming.
+    [3:48] Black Sun chibog.exe: Into the door.
+    [3:49] Ancient Light 01-hank pop: Fight! Focus their Azrael.
+    [3:53] Ancient Light basta tangalog bobo: Going for Azrael.
+    [3:57] Black Sun chibog.exe: we need vision
+    [3:58] Ancient Light weakass: Lost them in the trees, going home.
+    [3:58] (All) Ancient Light 01-hank pop: humble pie
+    [4:02] (All) Black Sun 08-paolo lang: babalikan kita
+    [4:06] Black Sun 08-paolo lang: Froster is missing from mid! Careful.
+    [4:08] Ancient Light 01-hank pop: Kragg is missing from bottom! Careful.
+    [4:17] Black Sun [CEB] dodong: Going for Ezee.
+    [4:17] Ancient Light mama mo: Backing off, too dangerous.
+    [4:27] Black Sun 08-paolo lang: Level 6, I can gank now.
+    [4:32] Ancient Light 01-hank pop: Hold on, mama mo! Coming.
+    [4:45] Ancient Light weakass: Going for Caziel.
+    [4:49] Black Sun 08-paolo lang: Lost them in the trees, going home.
+    [4:52] (All) Black Sun [CEB] dodong: that's your ult?
+    [4:56] Ancient Light weakass: Caziel is missing from mid! Careful.
+    [5:00] Ancient Light 01-hank pop: Getting Spell Shield against their stuns.
+    [5:00] Black Sun soggyguy: Getting Spell Shield against their stuns.
+    [5:06] Ancient Light mama mo: Going home to heal.
+    [5:08] (All) Black Sun [CEB] dodong: you're lucky
+    [5:09] Black Sun soggyguy: Hold on, tinola ni lito! Coming.
+    [5:13] Black Sun [CEB] dodong: Araki is missing from bottom! Careful.
+    [5:13] Ancient Light basta tangalog bobo: Kragg is missing from bottom! Careful.
+    [5:19] Black Sun [CEB] dodong: Ezee is missing from bottom! Careful.
+    [5:21] Ancient Light BISAKOL SLAYER: Their Tock is low (39%) in the top lane. Going for the kill, weakass come too.
+    [5:22] Black Sun 08-paolo lang: They're hitting our bottom tower. Defend!
+    [5:31] Ancient Light weakass: Hold on, BISAKOL SLAYER! Coming.
+    [5:33] (All) Ancient Light weakass: Tock is free
+    [5:33] Black Sun tinola ni lito: mb
+    [5:38] Ancient Light 01-hank pop: We have more heroes up. Let's push mid and take their tower.
+    [5:42] Black Sun chibog.exe: Going home to heal.
+    [5:54] Ancient Light 01-hank pop: Hold on, basta tangalog bobo! Coming.
+    [6:00] Black Sun [CEB] dodong: 3 of them together near bottom! Back off.
+    [6:12] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [6:19] Ancient Light BISAKOL SLAYER: Hold on, weakass! Coming.
+    [6:20] (All) Ancient Light weakass: it's so over
+    [6:21] Black Sun soggyguy: Tock libre wave sa top
+    [6:22] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [6:22] (All) Ancient Light BISAKOL SLAYER: no team this time?
+    [6:25] Ancient Light basta tangalog bobo: Hold on, 01-hank pop! Coming.
+    [6:27] Black Sun [CEB] dodong: Going for Araki.
+    [6:28] Ancient Light BISAKOL SLAYER: Coming to defend, 18 s.
+    [6:30] Black Sun chibog.exe: nah
+    [6:30] Ancient Light 01-hank pop: Ezee carry a tp
+    [6:30] (All) Black Sun [CEB] dodong: my bad (not)
+    [6:32] (All) Black Sun 08-paolo lang: nah
+    [6:37] Ancient Light mama mo: Lost them in the trees, going home.
+    [6:38] Black Sun [CEB] dodong: Going for Azrin.
+    [6:40] Black Sun chibog.exe: nice
+    [6:45] Black Sun [CEB] dodong: Ezee is missing from bottom! Careful.
+    [6:55] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [6:55] (All) Ancient Light BISAKOL SLAYER: bro hit the creep instead
+    [7:02] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [7:07] (All) Ancient Light weakass: thanks for feeding me
+    [7:07] Ancient Light BISAKOL SLAYER: Froster the goat
+    [7:10] Ancient Light 01-hank pop: i pressed it i swear
+    [7:23] Ancient Light 01-hank pop: They're hitting our bottom tower. Defend!
+    [7:28] Ancient Light basta tangalog bobo: Coming to defend, 8 s.
+    [7:31] Ancient Light BISAKOL SLAYER: Coming to defend (TP).
+    [7:34] (All) Black Sun [CEB] dodong: LOL missed
+    [7:42] Ancient Light basta tangalog bobo: Coming to defend (TP).
+    [7:50] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [7:51] Ancient Light 01-hank pop: Hold on, basta tangalog bobo! Coming.
+    [7:53] Ancient Light 01-hank pop: Fight! Focus their Azrael.
+    [8:00] Black Sun [CEB] dodong: 3 of them together near bottom! Back off.
+    [8:01] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [8:05] Ancient Light basta tangalog bobo: go without me
+    [8:07] Black Sun [CEB] dodong: Lost them in the trees, going home.
+    [8:14] Black Sun soggyguy: good call
+    [8:14] (All) Black Sun 08-paolo lang: who's godlike now
+    [8:20] Black Sun 08-paolo lang: They're hitting our bottom tower. Defend!
+    [8:23] Black Sun tinola ni lito: Araki is missing from top! Careful.
+    [8:24] Ancient Light mama mo: Hold on, basta tangalog bobo! Coming.
+    [8:30] Ancient Light basta tangalog bobo: Going for Caziel.
+    [8:33] (All) Ancient Light basta tangalog bobo: sorry not sorry
+    [8:33] Ancient Light mama mo: Coming to defend (TP).
+    [8:34] Black Sun 08-paolo lang: i thought you were coming
+    [8:41] Ancient Light 01-hank pop: Fight! Focus their Tock.
+    [8:43] Black Sun soggyguy: Hold on, tinola ni lito! Coming.
+    [8:47] Black Sun tinola ni lito: 3 of them together near top! Back off.
+    [8:49] Ancient Light basta tangalog bobo: di ako sasama
+    [8:52] Ancient Light 01-hank pop: Going for Tock.
+    [8:56] Black Sun soggyguy: Ezee is missing from top! Careful.
+    [9:01] Black Sun chibog.exe: Stacked the large camp for [CEB] dodong.
+    [9:06] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [9:07] Black Sun 08-paolo lang: They're hitting our mid tower. Defend!
+    [9:15] Ancient Light weakass: Going for Jayla.
+    [9:16] Ancient Light weakass: Hold on, BISAKOL SLAYER! Coming.
+    [9:24] Ancient Light BISAKOL SLAYER: Hold on, weakass! Coming.
+    [9:30] Black Sun 08-paolo lang: Going for Froster.
+    [9:33] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [9:37] Ancient Light mama mo: Hold on, 01-hank pop! Coming.
+    [9:40] Ancient Light 01-hank pop: Going for Kragg.
+    [9:40] Black Sun [CEB] dodong: 3 of them together near bottom! Back off.
+    [9:49] Ancient Light weakass: Hold on, BISAKOL SLAYER! Coming.
+    [9:50] Black Sun [CEB] dodong: Lost them in the trees, going home.
+    [9:53] Ancient Light 01-hank pop: Kragg is missing from bottom! Careful.
+    [9:58] Black Sun chibog.exe: No escape from me.
+    [9:59] Ancient Light mama mo: Going for Azrael.
+    [10:00] Ancient Light 01-hank pop: Fight! Focus their Azrael.
+    [10:01] Black Sun tinola ni lito: Stacked the large camp for soggyguy.
+    [10:03] Black Sun chibog.exe: be right back
+    [10:23] Ancient Light mama mo: Their Tock is alone in the mid lane. Going for the kill, BISAKOL SLAYER come too.
+    [10:25] Ancient Light weakass: Fight! Focus their Tock.
+    [10:28] Black Sun tinola ni lito: Their Ezee is alone in the mid lane. Going for the kill, 08-paolo lang come too.
+    [10:29] (All) Black Sun chibog.exe: nub
+    [10:29] Ancient Light basta tangalog bobo: jungle diff
+    [10:29] Black Sun 08-paolo lang: Tock hit creeps
+    [10:31] Ancient Light BISAKOL SLAYER: Bought Reveal Dust, they have invisible heroes.
+    [10:31] Black Sun tinola ni lito: Fight! Focus their Ezee.
+    [10:34] Black Sun tinola ni lito: Hold on, chibog.exe! Coming.
+    [10:36] Ancient Light mama mo: Hold on, BISAKOL SLAYER! Coming.
+    [10:37] Ancient Light basta tangalog bobo: ty for the save
+    [10:38] (All) Black Sun tinola ni lito: it was a good trade
+    [10:39] Ancient Light basta tangalog bobo: Hold on, mama mo! Coming.
+    [10:40] (All) Ancient Light BISAKOL SLAYER: should've bought magic res
+    [10:42] Black Sun [CEB] dodong: Going for Sludge.
+    [10:42] (All) Black Sun soggyguy: xd
+    [10:45] Ancient Light BISAKOL SLAYER: puro ka nood
+    [10:47] Ancient Light weakass: Getting Push Staff against them.
+    [10:49] Ancient Light basta tangalog bobo: Fight! Focus their Azrael.
+    [11:00] Black Sun [CEB] dodong: Going for Ezee.
+    [11:03] Ancient Light basta tangalog bobo: Coming to defend, 9 s.
+    [11:03] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [11:03] Black Sun [CEB] dodong: Fight! Focus their Azrin.
+    [11:04] (All) Black Sun [CEB] dodong: cant stop me
+    [11:06] (All) Black Sun soggyguy: W team
+    [11:07] Black Sun tinola ni lito: busy
+    [11:09] Ancient Light basta tangalog bobo: my ping
+    [11:12] Ancient Light BISAKOL SLAYER: Coming to defend (TP).
+    [11:19] Black Sun 08-paolo lang: stun the air again
+    [11:20] (All) Ancient Light BISAKOL SLAYER: your ult hit 0 heroes
+    [11:23] Black Sun chibog.exe: Got my Frenzy Mask.
+    [11:24] Black Sun soggyguy: Caziel nice
+    [11:32] Black Sun [CEB] dodong: Bought Reveal Dust, they have invisible heroes.
+    [11:34] Ancient Light weakass: Hold on, mama mo! Coming.
+    [11:35] Ancient Light weakass: Fight! Focus their Caziel.
+    [11:36] Black Sun 08-paolo lang: Keep going, their tower next.
+    [11:37] Ancient Light weakass: tower dying
+    [11:47] Black Sun soggyguy: Bought Reveal Dust, they have invisible heroes.
+    [11:49] Ancient Light weakass: Their Caziel is alone in the mid lane. Going for the kill, mama mo come too.
+    [11:54] Black Sun tinola ni lito: Hold on, 08-paolo lang! TP coming.
+    [11:56] Ancient Light 01-hank pop: Their Tock is alone in the top lane. Going for the kill.
+    [12:01] Black Sun 08-paolo lang: Fight! Focus their Froster.
+    [12:01] Ancient Light mama mo: Hold on, weakass! Coming.
+    [12:02] Ancient Light weakass: Fight! Focus their Jayla.
+    [12:04] Black Sun tinola ni lito: Lost them in the trees, going home.
+    [12:08] (All) Ancient Light weakass: leveled off you
+    [12:09] Black Sun soggyguy: it was a bait
+    [12:10] Ancient Light basta tangalog bobo: Bought Reveal Dust, they have invisible heroes.
+    [12:11] Black Sun chibog.exe: Their Araki is low (32%) in the top lane. Going for the kill.
+    [12:14] (All) Ancient Light basta tangalog bobo: mid tower gone
+    [12:14] Ancient Light mama mo: Their Caziel is low (20%) in the mid lane. Going for the kill.
+    [12:19] Black Sun 08-paolo lang: Going home to heal.
+    [12:22] Ancient Light 01-hank pop: They're hitting our bottom tower. Defend!
+    [12:32] Black Sun chibog.exe: Bought Reveal Dust, they have invisible heroes.
+    [12:38] Ancient Light weakass: Hold on, mama mo! Coming.
+    [12:38] Black Sun tinola ni lito: Bought Reveal Ward, they have invisible heroes.
+    [12:46] Black Sun 08-paolo lang: Hold on, [CEB] dodong! Coming.
+    [12:48] Black Sun chibog.exe: Their Ezee is low (25%) in the mid lane. Going for the kill.
+    [12:51] Ancient Light weakass: Their Tock is alone in the top lane. Going for the kill.
+    [12:57] Black Sun tinola ni lito: Their Froster is alone in the top lane. Going for the kill, chibog.exe and [CEB] dodong come too.
+    [13:01] Ancient Light basta tangalog bobo: Stacked the medium camp for 01-hank pop.
+    [13:02] Black Sun chibog.exe: No escape from me.
+    [13:05] Ancient Light 01-hank pop: Fight! Focus their Azrael.
+    [13:09] Ancient Light mama mo: buhay pa ko dahil sayo
+    [13:14] Black Sun [CEB] dodong: Fight! Focus their Azrin.
+    [13:17] Black Sun tinola ni lito: farm muna ako
+    [13:18] Ancient Light 01-hank pop: Their Tock is alone in the top lane. Going for the kill, weakass come too.
+    [13:21] Black Sun 08-paolo lang: Going for Azrin.
+    [13:24] Black Sun 08-paolo lang: Hold on, [CEB] dodong! Coming.
+    [13:24] Ancient Light 01-hank pop: Too slow.
+    [13:29] Black Sun [CEB] dodong: Coming (TP).
+    [13:32] Ancient Light BISAKOL SLAYER: Going home to heal.
+    [13:33] Black Sun 08-paolo lang: Hold on, tinola ni lito! Coming.
+    [13:36] Black Sun tinola ni lito: Lost them in the trees, going home.
+    [13:37] (All) Black Sun [CEB] dodong: nasa kondisyon
+    [13:41] Ancient Light weakass: Lost them in the trees, going home.
+    [13:49] Ancient Light weakass: Getting Spell Shield against their stuns.
+    [13:55] Ancient Light BISAKOL SLAYER: Getting Fade Cape against their magic damage.
+    [14:23] Ancient Light BISAKOL SLAYER: Their Kragg is alone in the top lane. Going for the kill, mama mo come too.
+    [14:27] Black Sun [CEB] dodong: Fight! Focus their Ezee.
+    [14:30] Ancient Light mama mo: Backing off, too dangerous.
+    [14:38] Black Sun tinola ni lito: go without me
+    [14:39] Ancient Light weakass: Their Azrael is low (38%) in the mid lane. Going for the kill.
+    [14:40] Black Sun [CEB] dodong: Going for Ezee.
+    [14:43] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [14:44] (All) Ancient Light weakass: fed and happy
+    [14:47] Black Sun soggyguy: Going for Sludge.
+    [14:50] Black Sun [CEB] dodong: Tock habol farm
+    [14:50] Ancient Light weakass: lane is gone
+    [14:53] Ancient Light BISAKOL SLAYER: Lost them in the trees, going home.
+    [15:01] Black Sun tinola ni lito: Stacked the medium camp for soggyguy.
+    [15:07] Black Sun tinola ni lito: Their Araki is alone in the mid lane. Going for the kill, [CEB] dodong come too.
+    [15:08] Ancient Light 01-hank pop: Too slow.
+    [15:08] Black Sun 08-paolo lang: Fight! Focus their Araki.
+    [15:09] Black Sun [CEB] dodong: airball
+    [15:10] (All) Ancient Light 01-hank pop: too easy to dodge
+    [15:11] Ancient Light weakass: Their Kragg is alone in the top lane. Going for the kill, basta tangalog bobo come too.
+    [15:17] Black Sun tinola ni lito: Going for Araki.
+    [15:20] (All) Black Sun tinola ni lito: you walked into that
+    [15:24] Black Sun chibog.exe: Their Froster is alone in the bottom lane. Going for the kill, [CEB] dodong and tinola ni lito come too.
+    [15:33] Black Sun [CEB] dodong: Backing off, too dangerous.
+    [15:35] Black Sun 08-paolo lang: They're hitting our bottom tower. Defend!
+    [15:57] Black Sun 08-paolo lang: Coming to defend (TP).
+    [16:00] Ancient Light weakass: Their Caziel is alone in the bottom lane. Going for the kill.
+    [16:01] Black Sun chibog.exe: Stacked the large camp for [CEB] dodong.
+    [16:01] Black Sun [CEB] dodong: Hold on, 08-paolo lang! Coming.
+    [16:01] Black Sun 08-paolo lang: Fight! Focus their Froster.
+    [16:05] Ancient Light 01-hank pop: They're hitting our mid tower. Defend!
+    [16:07] Ancient Light mama mo: Coming to defend (TP).
+    [16:09] Ancient Light BISAKOL SLAYER: Hold on, basta tangalog bobo! Coming.
+    [16:10] Black Sun tinola ni lito: Their Azrin is alone in the mid lane. Going for the kill, soggyguy come too.
+    [16:12] Ancient Light weakass: Going for Caziel.
+    [16:14] Black Sun chibog.exe: Hold on, [CEB] dodong! Coming.
+    [16:15] Ancient Light basta tangalog bobo: Going for Tock.
+    [16:16] Black Sun soggyguy: Dusting their Azrin.
+    [16:18] (All) Ancient Light basta tangalog bobo: see you in 30 secs Tock
+    [16:20] Black Sun soggyguy: oops my bad
+    [16:20] (All) Black Sun chibog.exe: talk when you're positive kda
+    [16:26] (All) Black Sun 08-paolo lang: the wolves ate you
+    [16:26] Ancient Light 01-hank pop: you guys left me
+    [16:27] Black Sun [CEB] dodong: Going for Froster.
+    [16:27] Ancient Light mama mo: di mo kaya magisa
+    [16:34] Black Sun [CEB] dodong: Got my Jump Knife.
+    [17:16] Ancient Light basta tangalog bobo: Their Tock is alone in the mid lane. Going for the kill, mama mo come too.
+    [17:16] Ancient Light basta tangalog bobo: Fight! Focus their Tock.
+    [17:19] Black Sun 08-paolo lang: Fight! Focus their Araki.
+    [17:19] (All) Black Sun tinola ni lito: lead your shots bro
+    [17:19] Ancient Light 01-hank pop: 4 of them together near bottom! Back off.
+    [17:22] Black Sun soggyguy: support diff
+    [17:22] Ancient Light weakass: hit the creeps bro
+    [17:22] Black Sun chibog.exe: go without me
+    [17:23] Black Sun chibog.exe: Caziel goated
+    [17:24] Ancient Light 01-hank pop: my mouse died
+    [17:25] (All) Black Sun 08-paolo lang: just hit level up thanks
+    [17:30] Ancient Light mama mo: Coming to defend (TP).
+    [17:30] Black Sun [CEB] dodong: Going for Azrin.
+    [17:32] Ancient Light basta tangalog bobo: Getting Medic Kit against their right clicks.
+    [17:32] Ancient Light basta tangalog bobo: nobody came
+    [17:33] (All) Black Sun [CEB] dodong: legendary
+    [17:36] Black Sun 08-paolo lang: Keep going, their tower next.
+    [17:38] Ancient Light 01-hank pop: megas incoming
+    [17:41] Black Sun [CEB] dodong: Hold on, 08-paolo lang! TP coming.
+    [17:46] Black Sun 08-paolo lang: Fight! Focus their Ezee.
+    [17:49] Black Sun chibog.exe: Going for Ezee.
+    [17:55] Black Sun 08-paolo lang: Got my Jump Knife.
+    [17:55] Ancient Light mama mo: Getting Jump Knife against getting caught.
+    [17:57] (All) Black Sun chibog.exe: that's mine
+    [18:06] Ancient Light weakass: Their Caziel is alone in the mid lane. Going for the kill.
+    [18:18] Ancient Light BISAKOL SLAYER: Hold on, weakass! TP coming.
+    [18:30] Ancient Light weakass: Their Tock is alone in the mid lane. Going for the kill.
+    [18:38] (All) Ancient Light weakass: keep missing
+    [18:38] Black Sun [CEB] dodong: tutok naman lods
+    [18:43] Ancient Light basta tangalog bobo: Their Jayla is alone in the bottom lane. Going for the kill, 01-hank pop come too.
+    [18:43] Ancient Light 01-hank pop: Fight! Focus their Jayla.
+    [18:49] Ancient Light weakass: Going for Tock.
+    [18:50] (All) Ancient Light basta tangalog bobo: melted
+    [18:52] (All) Ancient Light mama mo: speedrun any% death
+    [19:26] Black Sun 08-paolo lang: They're hitting our mid tower. Defend!
+    [19:28] Black Sun [CEB] dodong: Coming to defend, 6 s.
+    [19:34] Black Sun soggyguy: Hold on, [CEB] dodong! TP coming.
+    [19:34] Black Sun [CEB] dodong: Fight! Focus their Froster.
+    [19:38] Ancient Light weakass: 3 of them together near mid! Back off.
+    [19:38] Black Sun 08-paolo lang: They're hitting our bottom tower. Defend!
+    [19:44] (All) Ancient Light weakass: knock knock
+    [19:45] Ancient Light 01-hank pop: carry with no items
+    [19:45] Black Sun 08-paolo lang: still holding tangos at 25 min
+    [19:48] Black Sun soggyguy: Going for Froster.
+    [19:50] Ancient Light basta tangalog bobo: Fight! Focus their Tock.
+    [19:51] Black Sun chibog.exe: Opening the door.
+    [19:55] Black Sun tinola ni lito: bawi lang
+    [19:56] Black Sun soggyguy: stop farming in their jungle
+    [19:59] Black Sun chibog.exe: Their Sludge is low (39%) in the bottom lane. Going for the kill, soggyguy come too.
+    [20:01] Black Sun 08-paolo lang: great call
+    [20:01] (All) Black Sun [CEB] dodong: oops
+    [20:01] Black Sun soggyguy: Coming to defend, 16 s.
+    [20:18] Ancient Light mama mo: Their Jayla is alone in the bottom lane. Going for the kill, basta tangalog bobo come too.
+    [20:18] Ancient Light basta tangalog bobo: Fight! Focus their Jayla.
+    [20:25] Ancient Light 01-hank pop: Getting Jump Knife against getting caught.
+    [20:25] Black Sun [CEB] dodong: Fight! Focus their Ezee.
+    [20:29] Black Sun 08-paolo lang: We're stronger now. Let's push top and take their tower.
+    [20:41] Black Sun soggyguy: Going for Ezee.
+    [20:51] Ancient Light 01-hank pop: They're hitting our top tower. Defend!
+    [20:54] Ancient Light basta tangalog bobo: Coming to defend (TP).
+    [20:55] Black Sun 08-paolo lang: Fight! Focus their Araki.
+    [21:03] Black Sun chibog.exe: gj Tock
+    [21:05] (All) Black Sun tinola ni lito: bobong to
+    [21:05] Ancient Light weakass: Araki buy wards not deaths
+    [21:38] Ancient Light basta tangalog bobo: Hold on, weakass! Coming.
+    [21:39] Black Sun [CEB] dodong: Fight! Focus their Froster.
+    [21:40] Ancient Light weakass: Fight! Focus their Jayla.
+    [22:14] Ancient Light 01-hank pop: We're stronger now. Let's push top and take their tower.
+    [22:18] Ancient Light weakass: Their Tock is alone in the top lane. Going for the kill.
+    [22:26] Black Sun chibog.exe: stop chasing that
+    [22:27] Ancient Light basta tangalog bobo: no farm no damage
+    [22:28] Black Sun 08-paolo lang: timing missed
+    [22:28] Black Sun 08-paolo lang: They're hitting our bottom tower. Defend!
+    [22:33] Ancient Light BISAKOL SLAYER: Fight! Focus their Jayla.
+    [22:34] Black Sun [CEB] dodong: Hold on, soggyguy! TP coming.
+    [22:34] Black Sun 08-paolo lang: Fight! Focus their Sludge.
+    [22:39] Black Sun tinola ni lito: Going for Ezee.
+    [22:41] Ancient Light BISAKOL SLAYER: Azrin are you there
+    [22:45] Ancient Light mama mo: Lost them in the trees, going home.
+    [23:02] Black Sun [CEB] dodong: Going home to heal.
+    [23:07] Ancient Light 01-hank pop: Their Tock is alone in the mid lane. Going for the kill.
+    [23:12] Black Sun chibog.exe: Coming to defend (TP).
+    [23:14] Ancient Light 01-hank pop: Fight! Focus their Tock.
+    [23:17] (All) Ancient Light weakass: creeps > you
+    [23:22] Ancient Light mama mo: Going for Tock.
+    [23:29] Ancient Light mama mo: Got my Jump Knife.
+    [23:31] (All) Ancient Light BISAKOL SLAYER: same guy again lol
+    [23:35] Ancient Light weakass: Their Azrael is alone in the top lane. Going for the kill.
+    [23:40] Ancient Light 01-hank pop: They're hitting our bottom tower. Defend!
+    [23:44] Ancient Light BISAKOL SLAYER: Hold on, weakass! Coming.
+    [23:59] Ancient Light weakass: Hold on, basta tangalog bobo! Coming.
+    [23:59] Ancient Light weakass: Fight! Focus their Caziel.
+    [24:00] Black Sun 08-paolo lang: They're hitting our mid tower. Defend!
+    [24:14] Ancient Light weakass: We have more heroes up. Let's push mid and take their tower.
+    [24:22] Ancient Light basta tangalog bobo: no wards and you walk in?
+    [24:25] Ancient Light weakass: Their Caziel is alone in the mid lane. Going for the kill.
+    [24:28] Ancient Light weakass: Fight! Focus their Caziel.
+    [24:29] Black Sun [CEB] dodong: Their Ezee is alone in the mid lane. Going for the kill, 08-paolo lang and tinola ni lito come too.
+    [24:29] Black Sun 08-paolo lang: Fight! Focus their Froster.
+    [24:32] Black Sun chibog.exe: Going for Ezee.
+    [24:34] Ancient Light BISAKOL SLAYER: Hold on, weakass! Coming.
+    [24:36] Black Sun 08-paolo lang: 2 of them are dead. Let's push top and take their tower.
+    [24:36] (All) Black Sun 08-paolo lang: different breed
+    [24:36] Black Sun tinola ni lito: Hold on, [CEB] dodong! Coming.
+    [24:38] (All) Black Sun chibog.exe: idol?
+    [24:44] Ancient Light BISAKOL SLAYER: Going for Kragg.
+    [24:46] (All) Ancient Light basta tangalog bobo: frequent flyer
+    [24:47] Ancient Light basta tangalog bobo: On my way.
+    [24:51] Black Sun 08-paolo lang: Fight! Focus their Froster.
+    [24:56] Ancient Light weakass: 3 of them together near mid! Back off.
+wins: Ancient Light 0, Black Sun 0

@@ -1,7 +1,7 @@
 extends Control
 ## The Main Menu (remade in run 2026-10-15 g): your hero on the lit stage, and on the left a hanging banner with the
-## title and the menu as blade-shaped plates: Play (Hero Select, then Game Setup), Multiplayer, Hero Creator,
-## Options, Quit. A nameplate shows the hero on the stage, with Choose Hero. Along the bottom: the credit and a tip.
+## title and the menu as blade-shaped plates: Play (Hero Select, then Game Setup), Ranked (run 2026-10-19 b: the
+## Ranked screen), Multiplayer, Hero Creator, Options, Credits, Quit. A nameplate shows the hero on the stage, with Choose Hero. Along the bottom: the credit and a tip.
 ## Drag the hero to turn it. Up / Down and Enter work the menu too.
 ##
 ## The first time the menu opens after the game starts, the animated title (TitleCard) plays over it; when it is
@@ -13,6 +13,7 @@ const U = preload("res://src/ui/ui_kit.gd")
 const HERO_SELECT := "res://src/ui/hero_select.tscn"
 const CREATOR := "res://src/ui/hero_creator.tscn"
 const NET_MENU := "res://src/ui/net_menu.tscn"
+const RANKED := "res://src/ui/ranked_menu.tscn"
 const MATCH := "res://src/game/main.tscn"
 
 const BANNER_X := 64.0
@@ -163,12 +164,13 @@ func _build_ui() -> void:
 	_plate_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_plate_box)
 	var y := 0.0
-	for e in [["Play", "ui/map", true, _on_play, 76.0],
-			["Multiplayer", "ui/talk", false, func(): _go(NET_MENU), 62.0],
-			["Hero Creator", "ui/repair", false, _on_creator, 62.0],
-			["Options", "ui/settings", false, func(): add_child(OptionsPanel.new()), 62.0],
-			["Credits", "ui/info", false, func(): add_child(CreditsPanel.new()), 56.0],
-			["Quit", "ui/close", false, func(): get_tree().quit(), 56.0]]:
+	for e in [["Play", "ui/map", true, _on_play, 70.0],
+			["Ranked", "ui/crown", true, func(): _go(RANKED), 62.0],
+			["Multiplayer", "ui/talk", false, func(): _go(NET_MENU), 54.0],
+			["Hero Creator", "ui/repair", false, _on_creator, 54.0],
+			["Options", "ui/settings", false, func(): add_child(OptionsPanel.new()), 54.0],
+			["Credits", "ui/info", false, func(): add_child(CreditsPanel.new()), 50.0],
+			["Quit", "ui/close", false, func(): get_tree().quit(), 50.0]]:
 		var p := MenuPlate.new()
 		p.text = String(e[0])
 		p.icon_path = String(e[1])
@@ -176,11 +178,11 @@ func _build_ui() -> void:
 		p.action = e[3]
 		p.size = Vector2(PLATE_W, float(e[4]))
 		p.base_y = y
-		p.font_size = 30 if p.gold else 24
+		p.font_size = (30 if p.text == "Play" else 27) if p.gold else 22
 		p.hovered.connect(_on_plate_hover.bind(_plates.size()))
 		_plate_box.add_child(p)
 		_plates.append(p)
-		y += float(e[4]) + 14.0
+		y += float(e[4]) + 10.0
 	_plate_box.size = Vector2(PLATE_W + 40.0, y)
 	# the hero on the stage: a framed nameplate with its name and title, and Choose Hero under it
 	_name_box = Control.new()
@@ -210,7 +212,7 @@ func _place(_dt: float) -> void:
 	var kb := _back_out(clampf(it / 0.7, 0.0, 1.0)) if it >= 0.0 else 0.0
 	_banner.position = Vector2(BANNER_X, lerpf(-_banner.size.y - 20.0, -14.0, kb))
 	# the plates slide in from the left, one after another
-	var top := clampf(vs.y * 0.24, 240.0, 300.0)
+	var top := clampf(vs.y * 0.205, 210.0, 270.0)
 	_plate_box.position = Vector2(BANNER_X + (_banner.size.x - PLATE_W) * 0.5 - 6.0, top)
 	for i in _plates.size():
 		var p: MenuPlate = _plates[i]

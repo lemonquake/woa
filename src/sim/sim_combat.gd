@@ -26,6 +26,7 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 	if mod != "":
 		w.abilities.pay_attack_modifier(u, mod)
 	if u.is_hero():
+		w.abilities.kits7.on_attack_released(u)
 		snap["burst"] = w.abilities.masterful_bonus(u, t)
 		snap["soul"] = w.abilities.kits4.soul_charged(u)
 		if w.abilities.frost_heart_spend(u, t):
@@ -234,11 +235,13 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		dmg += float(s.quell)
 	dmg *= crit
 	dmg += float(s.get("burst", 0.0)) + float(s.get("sneak", 0.0))
+	# Senryukai: Araki's stacks on the target add to his hits (and his ghosts')
+	dmg += w.abilities.kits7.senryukai_bonus(s, t)
 	if s.mod != "":
 		dmg += w.abilities.attack_modifier_damage(s, t)
 	# Beast Form's maul is that attack's bash (bashes never stack); else the items roll
 	var bash := w.abilities.kits6.maul(s, t)
-	if bash.is_empty():
+	if bash.is_empty() and not s.has("ghost"):
 		bash = w.items.roll_bash(s, t)
 	if not bash.is_empty():
 		dmg += float(bash.damage)
@@ -289,8 +292,10 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.kits4.on_attack_landed(s, t, base_dmg)
 	if bool(s.hero) and t.team != s.team:
 		w.abilities.kits5.on_attack_landed(s, t, base_dmg)
+	# Araki's ghosts strike with a share of his damage only: no item procs
 	if bool(s.hero):
-		w.items.on_attack_landed(s, t, base_dmg, pierce)
+		if not s.has("ghost"):
+			w.items.on_attack_landed(s, t, base_dmg, pierce)
 	elif src != null and src.alive:
 		w.ai.on_creep_hit(src, t, base_dmg)
 	if t.alive and t.is_hero() and src != null:

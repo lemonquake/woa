@@ -36,6 +36,7 @@ BACK = {
     "nature": ("#3a6a1a", "#0a1404", "#d0ff8a"),
     "dark": ("#3a2a4a", "#08060c", "#c8a8ff"),
     "wind": ("#2a6a5e", "#04140f", "#c8fff0"),
+    "soul": ("#1f4a24", "#030c05", "#a8ff8a"),       # Araki's green soul-fire (run 2026-10-19 c)
 }
 
 # metals and materials: (light, mid, dark)
@@ -1493,6 +1494,60 @@ def make_skills():
             for j in range(3):
                 x = 64 + k * (36 + j * 7)
                 ic.add(L("M%d,%d L%d,%d" % (x, 96 + j * 3, x + k * 10, 116), "#ffffff", 3, 0.85))
+
+    # Araki (run 2026-10-19 c): a curved katana in green soul-fire, on the soul backdrop
+    KAT = ("#f4fff0", "#9aa8a0", "#1e2a24")
+    HILT = ("#d8ffc0", "#3a8a30", "#08200a")
+    GRIP = ("#6a6a6a", "#262626", "#060606")
+
+    def katana(ic, length=92):
+        return sword(ic, KAT, HILT, length=length, width=8, curve=0.55, grip=GRIP)
+
+    @icon("senryukai", "soul")
+    def _(ic):
+        at(ic, 0, 0, L("M22,104 L88,30", "#a8ff8a", 14, 0.25))
+        at(ic, 56, 70, katana(ic, 96), 42, 0.9)
+        for k, ln in enumerate((12, 18, 24)):
+            x = 84 + k * 11
+            at(ic, 0, 0, L("M%d,%d L%d,%d" % (x - 4, 82 - ln, x + 4, 82), INK, 7) + L("M%d,%d L%d,%d" % (x - 4, 82 - ln, x + 4, 82), "#d8ffb8", 3.5))
+
+    @icon("blur_strike", "soul")
+    def _(ic):
+        for k, op in enumerate((0.25, 0.45, 0.7)):
+            ic.add('<g opacity="%s">' % op)
+            at(ic, 22 + k * 20, 70, figure("#a8ff8a", 0.62))
+            ic.add('</g>')
+        at(ic, 0, 0, L("M10,58 L118,58", "#a8ff8a", 10, 0.3) + L("M14,58 L116,58", "#ffffff", 3, 0.9))
+        at(ic, 0, 0, L("M16,44 L60,44 M10,72 L50,72 M24,86 L58,86", "#d8ffb8", 2.5, 0.75))
+        at(ic, 96, 62, katana(ic, 84), 62, 0.75)
+
+    @icon("djin_bomb", "soul")
+    def _(ic):
+        for x, y, r in ((40, 92, 22), (88, 94, 24), (64, 80, 28), (30, 70, 16), (100, 70, 16)):
+            at(ic, x, y, C(0, 0, r, ic.rad([(0, "#2a3a2c", 0.95), (1, "#0a120c", 0.85)], 0, 0, r), stroke="none", sw=0))
+        at(ic, 64, 54, C(0, 0, 24, ic.rad([(0, "#5a6a5e"), (0.55, "#1a1e1c"), (1, "#050606")], -8, -10, 30), sw=3))
+        at(ic, 0, 0, L("M76,34 Q86,22 96,24", INK, 7) + L("M76,34 Q86,22 96,24", "#c8a070", 3.5))
+        at(ic, 98, 22, star("#d8ff8a", 8, 3, 6))
+        for x in (52, 76):
+            at(ic, x, 84, P("M-7,0 Q0,-6 7,0 Q0,3 -7,0 Z", "#c8ff6a", stroke="#1a3a10", sw=1.5))
+        at(ic, 64, 96, P("M-10,0 Q0,7 10,0", "none", stroke="#a8ff6a", sw=2.5))
+
+    @icon("ghosts_of_the_will", "soul")
+    def _(ic):
+        for k, (x, y, sc, op) in enumerate(((30, 76, 0.7, 0.35), (54, 66, 0.82, 0.55), (82, 60, 0.95, 0.85))):
+            ic.add('<g opacity="%s">' % op)
+            at(ic, x, y, figure("#c8ffb0", sc))
+            ic.add('</g>')
+            at(ic, 0, 0, L("M%d,%d L%d,%d" % (x - 26, y - 6, x - 10, y - 6), "#a8ff8a", 2.5, op * 0.8))
+        at(ic, 104, 52, katana(ic, 56), 40, 0.7)
+        at(ic, 64, 64, E(0, 0, 50, 40, "none", stroke="#a8ff8a", sw=2, extra=' stroke-dasharray="3 6" opacity="0.55"'))
+
+    @icon("the_blur", "soul")
+    def _(ic):
+        at(ic, 64, 64, rings("#a8ff8a", 22, 3, 12, 0.5))
+        at(ic, 64, 34, eye("#a8ff6a"), 0, 1.6)
+        at(ic, 64, 80, katana(ic, 80), 90, 0.75)
+        at(ic, 64, 80, chevrons("#d8ffb8"), 0, 0.6)
 
     return R
 
