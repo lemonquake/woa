@@ -15,6 +15,7 @@ var _templates: OptionButton
 var _name: LineEdit
 var _delete: Button
 var _starting := false
+var _back_btn: Button
 
 func _ready() -> void:
 	theme = U.theme()
@@ -113,9 +114,10 @@ func _ready() -> void:
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", 14)
 	root.add_child(bottom)
-	bottom.add_child(_button("Back", func():
+	_back_btn = _button("Back", func():
 		Keybinds.save()
-		get_tree().change_scene_to_file(HERO_SELECT), 160))
+		Options.go(get_tree(), HERO_SELECT), 160)
+	bottom.add_child(_back_btn)
 	_msg = _label("", 18, U.TEXT)
 	_msg.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_msg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -193,6 +195,12 @@ func _listen(act: String) -> void:
 	_listening = act
 	_say("Press the new key for \"%s\" (Esc cancels)" % Keybinds.label(act), U.GOLD)
 	_refresh_keys()
+
+## Esc goes back, as the Back button does (fields, dropdowns and overlays get the key first).
+func _unhandled_key_input(e: InputEvent) -> void:
+	if U.is_esc(e) and _back_btn != null and _back_btn.is_visible_in_tree() and _listening == "" and not _starting:
+		get_viewport().set_input_as_handled()
+		_back_btn.pressed.emit()
 
 func _input(e: InputEvent) -> void:
 	if _listening == "":

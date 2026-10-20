@@ -1,0 +1,3 @@
+A = new borders (this run), B = baseline (icons run, old slot frames)
+pass 2: X = old, Y = new
+pass 3: P = old, Q = new

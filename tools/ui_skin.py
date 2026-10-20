@@ -1115,6 +1115,9 @@ def build():
         console("hud_console_%d" % n, n)
     minimap_frame()
     topbar_art()
+    # the social screens (Ranked, Profile, Players, Forums; run 2026-10-20)
+    import ui_skin_social
+    ui_skin_social.build(sys.modules[__name__])
     with open(os.path.join(OUT, "skin.json"), "w") as f:
         json.dump({"scale": S, "textures": MANIFEST}, f, indent=1)
 

@@ -47,6 +47,7 @@ var player_hero_id := -1                   # your hero; while watching, the watc
 ## camera, whose sight shows and whose orders and plans are drawn. Nothing the watcher clicks reaches the simulation.
 var spectator := false
 var ranked_match := false                   # a ranked match (Ranked screen): its result moves MMR
+var casual_match := {}                      # Play with ladder players: who was here (Ranked.remember_casual afterwards)
 var watching_match := false                # an All-Bot match (the Watching panel stays while you control a hero)
 var controlling := -1                      # watching: the hero you took over from its bot (take_control), or -1
 var vision_mode := -1                      # -1 your (the watched hero's) team; 0, 1 that team; 2 both; 3 the whole map
@@ -233,12 +234,14 @@ func _ready() -> void:
 	_sync_views()
 	if mp:
 		_start_net()
-	elif not args.has("capture") and not args.has("bench") and (LlmChat.ready_to_run() or args.has("llm")):
+	elif not args.has("capture") and not args.has("bench") and (args.has("llm_endpoint")
+			or LlmChat.ready_to_run() and not LlmChat.automated(get_tree())):
 		# the online chat writer: single player only (every multiplayer machine must show the same lines)
 		var lc := LlmChat.load_config()
 		if args.has("llm_endpoint"):
-			lc["endpoint"] = String(args.llm_endpoint)
-			lc["api_key"] = String(lc.get("api_key", "test"))
+			# a local stand-in (tools/llm_mock.py): your key is never read for it
+			lc = {"api_key": "sk-or-mock", "provider": "openrouter", "endpoint": String(args.llm_endpoint),
+				"usage_path": "user://llm_usage_probe.json"}
 		if not lc.is_empty():
 			llm = LlmChat.new()
 			llm.name = "LlmChat"
@@ -328,6 +331,22 @@ func _exit_tree() -> void:
 
 
 ## Centre the camera on the player's hero (start of the match, respawn, F1 twice, portrait click).
+## A bot said yes to your "add me", or offered to add you (ChatSocial, event "friend"): the ladder makes it real
+## (single player: a ladder player's id is known only here).
+func _on_friend(e: Dictionary) -> void:
+	if multiplayer_match or String(e.get("pid", "")) == "":
+		return
+	var pid := String(e.pid)
+	var nm := String(e.get("name", Ranked.profile(pid).get("name", "")))
+	if String(e.get("what", "")) == "added":
+		var was: bool = pid in (Ranked.me().get("friends", []) as Array)
+		Ranked.befriend(pid)
+		if hud and hud.has_method("notice") and not was:
+			hud.notice("You and %s are now friends" % nm)
+	elif Ranked.send_request(pid, "with" if world.get_unit(int(e.get("u", -1))) != null and world.get_unit(int(e.u)).team == player_team else "vs"):
+		if hud and hud.has_method("notice"):
+			hud.notice("%s sent you a friend request" % nm)
+
 func center_on_hero() -> void:
 	var h := world.get_unit(player_hero_id)
 	if h != null and camera != null:
@@ -357,6 +376,8 @@ func _spawn_heroes() -> void:
 	else:
 		ranked_match = not GameSettings.ranked.is_empty()
 		slots = GameSettings.match_slots(rng)
+		if not ranked_match and bool(Options.get_value("ladder_bots")) and not args.has("watch"):
+			casual_match = Matchmaker.casual_identities(slots, rng)
 		world.xp_rate = GameSettings.xp_rate()
 		world.gold_rate = GameSettings.gold_rate()
 	if args.has("watch"):
@@ -397,6 +418,9 @@ func _spawn_heroes() -> void:
 		mine.player_name = String(Ranked.me().name) if ranked_match else String(NetBrowser.load_prefs().get("name", ""))
 	player_hero_id = mine.id
 	player_team = mine.team
+	if not spectator and not automated:
+		# what the bots know of you: your rank, your last game (were you MVP?) (run 2026-10-19 e)
+		world.player_cards[mine.id] = _your_card()
 	for m in made:
 		var h: SimUnit = m[0]
 		var s: Dictionary = m[1]
@@ -410,6 +434,8 @@ func _spawn_heroes() -> void:
 		world.bots.append(bot)
 		if s.has("rating"):
 			bot.set_rating(float(s.rating), s.get("traits", {}))      # a ranked player: its own skill and manners
+		elif s.has("traits"):
+			bot.set_identity(s.traits)                               # a ladder player in a casual match: who it is
 		if String(s.get("role", "")) != "":
 			world.brain(h.team).fixed_role[h.id] = int(s.role)
 	if spectator:
@@ -991,6 +1017,12 @@ func _drain_events() -> void:
 			"chat_intent":
 				if llm != null:
 					llm.want(e)
+			"friend":
+				_on_friend(e)
+			"save":
+				var sa := world.get_unit(int(e.get("ally", -1)))
+				if int(e.u) == player_hero_id and sa != null:
+					bars.popup("Saved", _head(sa.pos, 2.6), Color(0.55, 1.0, 0.6), 24, 1.4, 1.6, Vector2.ZERO, true)
 			"ping":
 				if int(e.team) == player_team and int(e.u) != player_hero_id:
 					fx.ping(e.pos)
@@ -1724,6 +1756,14 @@ func _start_capture() -> void:
 		world.winner = player_team
 		menus._end_shown = true
 		menus._show_end()
+	if args.has("mvp"):
+		# the MVP screen over the match as it stands (run 2026-10-19 e)
+		world.winner = player_team
+		menus._end_shown = true
+		menus._mvp = MatchMvp.best(world)
+		menus._show_mvp()
+	if args.has("stats_tip"):
+		hud.stats.pinned = true                  # the live stats panel's breakdown, as if hovered
 	_capture_frames = 0
 
 ## Capture demos: --lvl=N levels the player's hero and learns its abilities, --at=x,y moves it, --cast=a,b@F issues
@@ -1953,3 +1993,12 @@ func _save_capture() -> void:
 	print("captured ", path, " at game time ", world.clock_text())
 	if str(_capture_frames) == fl[fl.size() - 1]:
 		get_tree().quit()
+
+## What the bots know of you (SimWorld.player_cards): your rank and MMR, your last game and whether you were its MVP.
+static func _your_card() -> Dictionary:
+	var me_p := Ranked.me()
+	var lg: Dictionary = me_p.get("last_game", {})
+	return {"rank": Ranked.rank_label(me_p), "tier": Ranked.tier_for(me_p), "mmr": int(me_p.get("mmr", 0)),
+		"last_mvp": bool(lg.get("mvp", false)), "mvps": int(me_p.get("mvps", 0)),
+		"last_kda": "%d/%d/%d" % [int(lg.get("k", 0)), int(lg.get("x", 0)), int(lg.get("a", 0))] if not lg.is_empty() else "",
+		"games": int(me_p.get("wins", 0)) + int(me_p.get("losses", 0)), "prof": ProfileTalk.read(me_p)}

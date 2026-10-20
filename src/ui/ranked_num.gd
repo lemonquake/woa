@@ -39,3 +39,15 @@ static func flat(bg: Color, border: Color, rad := 8, bw := 1) -> StyleBoxFlat:
 	s.set_corner_radius_all(rad)
 	s.anti_aliasing = true
 	return s
+
+## "MVP last game": a small gold tag whose right edge is at `at` (top right corner), with a light sweeping across.
+static func mvp_tag(ci: CanvasItem, at: Vector2, a: float, t: float) -> void:
+	var txt := "MVP last game"
+	var f := UiKit.font("bold")
+	var tw := f.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+	var r := Rect2(at.x - tw - 18, at.y, tw + 18, 21)
+	ci.draw_style_box(RankedNum.flat(Color(0.95, 0.75, 0.3, 0.95 * a), Color(1.0, 0.95, 0.7, a), 10, 1), r)
+	var sweep := fposmod(t * 0.6, 1.6) - 0.3
+	if sweep >= 0.0 and sweep <= 1.0:
+		ci.draw_rect(Rect2(r.position.x + r.size.x * sweep - 4, r.position.y + 1, 8, r.size.y - 2), Color(1, 1, 1, 0.35 * a))
+	ci.draw_string(f, r.position + Vector2(9, 15), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.18, 0.11, 0.02, a))

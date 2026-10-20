@@ -95,6 +95,16 @@ func _run() -> void:
 	check(not got.is_empty(), "an insult gets an answer")
 	got = await _say("are you a bot lol", true)
 	check(got.any(func(l): return String(l.name).begins_with("(All)")), "all chat gets an all chat answer")
+	# every line is answered, whatever it is about, even typed fast; trash talk gets trash talk back (run 2026-10-20: "the
+	# player should be TOP PRIORITY ... If the player talks trash they try to pacify the player which is STUPID")
+	var soft := ["relax", "chill", "be nice", "just a game", "kalma", "laro lang", "no need to flame", "stop all chat", "focus game",
+		"dont flame", "just play"]
+	for line in [["ez mid", true], ["ur all trash lmao", true], ["what do u guys eat before ranked", true],
+			["my cat walked on my keyboard", true], ["tangina nyo ang bobo nyo", true], ["anyone watching the finals tonight", false],
+			["u suck " + SimTeamAI.hero_label(mate).to_lower(), false], ["gg ez", true]]:
+		got = await _say(String(line[0]), bool(line[1]), 4.0)
+		check(not got.is_empty(), "answered within 4 s: %s" % line[0])
+		check(not got.any(func(l): return soft.any(func(x): return String(l.text).to_lower().contains(x))), "nobody soothes: %s" % line[0])
 	chat.open(false)
 	await _shot("talk_chat_open.png")
 	chat.close()

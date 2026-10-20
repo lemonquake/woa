@@ -1,0 +1,39 @@
+{
+ "name": "Plain",
+ "scale": 4,
+ "ref": 64,
+ "min": 0.5,
+ "max": 1.6,
+ "pieces": {
+  "skill": {
+   "file": "skill.png",
+   "margins": [
+    8,
+    8,
+    8,
+    8
+   ],
+   "outset": 1
+  },
+  "passive": {
+   "file": "passive.png",
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "outset": 1
+  },
+  "item": {
+   "file": "item.png",
+   "margins": [
+    7,
+    7,
+    7,
+    7
+   ],
+   "outset": 1
+  }
+ }
+}

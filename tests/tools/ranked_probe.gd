@@ -70,6 +70,18 @@ func button_at(p: Vector2, pressed: bool) -> void:
 	ev.global_position = ev.position
 	root.push_input(ev)
 
+func right_click_at(p: Vector2) -> void:
+	move_to(p)
+	await process_frame
+	for pressed in [true, false]:
+		var ev := InputEventMouseButton.new()
+		ev.button_index = MOUSE_BUTTON_RIGHT
+		ev.pressed = pressed
+		ev.position = _to_window(p)
+		ev.global_position = ev.position
+		root.push_input(ev)
+		await process_frame
+
 func click_at(p: Vector2) -> void:
 	move_to(p)
 	await process_frame
@@ -283,13 +295,20 @@ ranked probe: %d passed, %d failed" % [passes, fails])
 	check(not Ranked.has_pending(), "the result is in")
 	check(int(Ranked.me().mmr) > mmr0 and int(Ranked.me().wins) == 1, "a win raised your MMR (%d -> %d)" % [mmr0, int(Ranked.me().mmr)])
 	check(Ranked.hero_xp(Ranked.me(), String(lineup.heroes.me)) >= 100, "and gave your hero XP (%d)" % Ranked.hero_xp(Ranked.me(), String(lineup.heroes.me)))
+	# the MVP screen comes first (run 2026-10-19 e): Continue goes on to the scoreboard
+	await wait(2.0)
+	var cont := button_named("Continue")
+	if cont != null:
+		await shot("probe_mvp")
+		await click(cont)
+		await wait(1.0)
 	await shot("probe_end")
-	var fm := button_named("Find Match")
-	check(fm != null, "the end screen offers Find Match")
+	var fm := button_named("Back to Dashboard")
+	check(fm != null and button_named("Find Match") == null, "the end screen offers Back to Dashboard")
 	await click(fm)
 	await wait(2.0)
 	menu = current_scene
-	check(menu != null and menu.has_method("_find"), "Find Match goes back to the Ranked screen")
+	check(menu != null and menu.has_method("_find"), "Back to Dashboard goes back to the Ranked screen")
 	await _profile_checks()
 	# leaderboard: a row opens that player's profile
 	await click(menu._tab_btns["leaderboard"])
@@ -303,6 +322,30 @@ ranked probe: %d passed, %d failed" % [passes, fails])
 		await wait(0.5)
 		check(menu._tab == "profile" and menu._profile_id == who, "a row opens that player's profile")
 		await shot("probe_bot_profile")
+		# write on their wall: they answer
+		var page2: ProfilePage = menu._ppage
+		if page2._wall_edit != null:
+			await click(page2._wall_edit)
+			await type_text("gg wp")
+			await key(KEY_ENTER)
+			await wait(0.3)
+			var wl: Array = ProfileTalk.wall_of(Ranked.profile(who))
+			check(wl.size() >= 2 and String(wl[1].id) == "me" and String(wl[0].id) == who, "your comment is on their wall and they answered")
+		# right-click a leaderboard row: the player menu; Compare with me
+		await click(menu._tab_btns["leaderboard"])
+		await wait(0.4)
+		var rows2: Array = find_where(menu._board_list, func(n): return n.get("pinned") != null, [])
+		await right_click_at(rows2[5].get_global_rect().get_center())
+		await wait(0.2)
+		var menus: Array = menu.get_tree().get_nodes_in_group("player_menu")
+		check(menus.size() == 1, "right-click opens the player menu")
+		await shot("probe_player_menu")
+		if menus.size() == 1:
+			var pm: PlayerMenu = (menus[0] as Node).get_child(0)
+			await click_at(pm.item_center("compare"))
+			await wait(0.3)
+			check(menu._tab == "profile" and menu._ppage._compare != null, "Compare with me opens the comparison")
+			await shot("probe_compare")
 	await click(menu._tab_btns["guilds"])
 	await wait(0.3)
 	check(menu._pages["guilds"].visible and button_named("Coming soon") != null and button_named("Coming soon").disabled, "Guilds: coming soon")
@@ -344,19 +387,34 @@ func _profile_checks() -> void:
 	await click(menu._tab_btns["profile"])
 	await wait(0.5)
 	check(menu._pages["profile"].visible, "Profile tab")
-	var edits: Array = find_where(menu, func(n): return n is LineEdit and n.is_visible_in_tree(), [])
+	# Edit profile (run 2026-10-20): the name, the picture
+	await click(button_named("Edit profile"))
+	await wait(0.3)
+	var old_name := String(Ranked.me().name)
+	var edits: Array = find_where(menu, func(n): return n is LineEdit and n.is_visible_in_tree() and n.text == old_name, [])
+	check(not edits.is_empty(), "Edit profile shows your name")
 	if not edits.is_empty():
 		var le: LineEdit = edits[0]
 		await click(le)
 		await key(KEY_A, true)
 		await key(KEY_BACKSPACE)
 		await type_text("Probe Name")
+		await click(button_named("Use my hero"))
+		await wait(0.2)
 		await click(button_named("Save"))
 		await wait(0.3)
 	check(String(Ranked.me().name) == "Probe Name", "the name is saved (%s)" % Ranked.me().name)
-	await click(button_named("Use hero"))
-	await wait(0.3)
-	check(String(Ranked.me().avatar.get("k", "")) == "hero", "Use hero sets your picture")
+	check(String(Ranked.me().avatar.get("k", "")) == "hero", "Use my hero sets your picture")
+	# View As: Public hides the behaviour score and the visitors
+	var page: ProfilePage = menu._ppage
+	page.view_as = "public"
+	page.refresh()
+	await wait(0.2)
+	check(not page.private_ok() and button_named("Back to my view") != null, "View As Public")
+	await shot("probe_view_as")
+	await click(button_named("Back to my view"))
+	await wait(0.2)
+	check(page.view_as == "", "back to your own view")
 	var views: Array = find_where(menu, func(n): return n is EmblemView and n.is_visible_in_tree(), [])
 	check(not views.is_empty(), "the 3D emblem is on the profile")
 	if not views.is_empty():

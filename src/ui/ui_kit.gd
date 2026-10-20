@@ -75,7 +75,7 @@ const ITEM_ICONS := {
 	"halberd": "items/shield_2", "hex_staff": "items/quest_tablet", "break_blade": "items/shadow_silk",
 	"kugmo_atuli": "items/aether_greatsword", "igit_atuli": "items/armor_robe_3",
 }
-const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
+const ABILITY_FALLBACKS := {"burst_shot": "skills/multishot", "gale_impact": "skills/power_shot",
 	"masterful_archery": "skills/deadeye", "blood_ranger_ult": "skills/bs_blood_eclipse", "dark_stomp": "skills/tempo_wd_quake",
 	"leap_strike": "skills/leap_slam", "tainted_touch": "skills/shadow_curse", "unholy_might": "skills/dg_black_dominion",
 	"shuriken_hook": "skills/crippling_star", "stench": "skills/venomcraft", "blubber": "skills/iron_skin",
@@ -108,10 +108,41 @@ const ABILITY_ICONS := {"burst_shot": "skills/multishot", "gale_impact": "skills
 	"the_blur": "skills/gen/the_blur"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
-const NEUTRAL_SKILL_ICONS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}
+const NEUTRAL_SKILL_FALLBACKS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}
+const UNIT_SKILL_FALLBACKS := {"weapon_grab": "status/weakened", "pace_aura": "status/aura_might",
+	"pack_aura": "status/aura_might", "magic_armor_aura": "status/aura_might", "break_strike": "status/sundered",
+	"thick_hide_aura": "status/aura_might", "neutral_crit": "skills/lethality", "neutral_splash": "skills/cleave",
+	"ancient": "status/titan", "flying": "status/windstep", "true_sight": "status/keen",
+	"sight": "status/spirit_ward", "backdoor_protection": "status/fortified", "fortify": "status/shielded"}
+
+## Keep each skill's identity in paths passed through the HUD. Dark Stomp and Stomp shared an old SVG.
+static var ABILITY_ICONS := _skill_paths(ABILITY_FALLBACKS)
+static var NEUTRAL_SKILL_ICONS := _skill_paths(NEUTRAL_SKILL_FALLBACKS)
+static var UNIT_SKILL_ICONS := _skill_paths(UNIT_SKILL_FALLBACKS)
+
+static func _skill_paths(fallbacks: Dictionary) -> Dictionary:
+	var paths := {}
+	for id in fallbacks:
+		# Owner chose to retain Death Order's existing icon after the small-size review.
+		paths[id] = fallbacks[id] if id == "death_order" else "art/skills/" + String(id)
+	return paths
 
 static var _fonts := {}
 static var _icons := {}
+
+## Fade an overlay, dialog or menu in over `dur` seconds (also while the game is paused); at once with "Menu
+## animations" off.
+static func pop_in(c: CanvasItem, dur := 0.14) -> void:
+	if not bool(Options.get_value("ui_motion")) or not c.is_inside_tree():
+		return
+	c.modulate.a = 0.0
+	var tw := c.create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(c, "modulate:a", 1.0, dur).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+
+## An Esc key press (not a repeat): every screen's Back and every overlay's Close.
+static func is_esc(e: InputEvent) -> bool:
+	return e is InputEventKey and (e as InputEventKey).pressed and not e.echo and (e as InputEventKey).keycode == KEY_ESCAPE
 
 static func font(kind := "body") -> Font:
 	if _fonts.has(kind):
@@ -135,20 +166,54 @@ static func font(kind := "body") -> Font:
 static func icon(path: String) -> Texture2D:
 	if _icons.has(path):
 		return _icons[path]
-	var full := "res://assets/ui/%s.svg" % path
-	var t: Texture2D = load(full) if ResourceLoader.exists(full) else null
+	var full := icon_path(path)
+	var t: Texture2D = load(full) if full != "" else null
 	_icons[path] = t
 	return t
 
-## An item's icon: the generated one (tools/item_icons.py, assets/ui/items/gen) when it exists, otherwise ITEM_ICONS.
+## Resolve art first while retaining the original SVGs for incomplete art sets and existing callers.
+static func icon_path(path: String) -> String:
+	if path == ABILITY_FALLBACKS["death_order"] or path == "art/skills/death_order":
+		return "res://assets/ui/%s.svg" % ABILITY_FALLBACKS["death_order"]
+	var art_path := path
+	var fallback := path
+	if path.begins_with("art/skills/"):
+		var id := path.get_file()
+		fallback = String(ABILITY_FALLBACKS.get(id, NEUTRAL_SKILL_FALLBACKS.get(id, UNIT_SKILL_FALLBACKS.get(id, "skills/keen_eye"))))
+	elif path.begins_with("art/items/"):
+		fallback = _item_fallback(path.get_file())
+	elif path.begins_with("items/gen/"):
+		art_path = "art/items/" + path.get_file()
+	elif path == "ui/teleport":
+		art_path = "art/items/tp_scroll"
+	elif path == "items/quest_letter":
+		art_path = "art/items/recipe"
+	else:
+		# Legacy aliases have no identity when two skills shared an SVG. Current maps above retain it.
+		for id in ABILITY_FALLBACKS:
+			if ABILITY_FALLBACKS[id] == path:
+				art_path = "art/skills/" + String(id)
+				break
+		if art_path == path:
+			for id in NEUTRAL_SKILL_FALLBACKS:
+				if NEUTRAL_SKILL_FALLBACKS[id] == path:
+					art_path = "art/skills/" + String(id)
+					break
+	var png := "res://assets/ui/%s.png" % art_path
+	if ResourceLoader.exists(png):
+		return png
+	var svg := "res://assets/ui/%s.svg" % fallback
+	return svg if ResourceLoader.exists(svg) else ""
+
+## An item's painted art, then its generated SVG, then its original SVG.
 static func item_icon(id: String) -> Texture2D:
-	if id.begins_with("recipe_"):
-		return icon("items/quest_letter")
 	return icon(item_icon_path(id))
 
 ## The icon of an item someone holds: Switch Boots show the attribute they are set to (power_treads_str / _agi / _int).
 static func held_item_icon(it: Dictionary) -> Texture2D:
 	var id := String(it.get("id", ""))
+	if id == "bottle" and int(it.get("charges", 3)) <= 0 and String(it.get("orb", "")) == "":
+		return icon(item_icon_path("bottle_empty"))
 	if id == "power_treads" and it.has("attr"):
 		var t := icon(item_icon_path("power_treads_" + String(it.attr)))
 		if t:
@@ -156,8 +221,22 @@ static func held_item_icon(it: Dictionary) -> Texture2D:
 	return item_icon(id)
 
 static var _gen_icons := {}
+static var _art_icons := {}
 
 static func item_icon_path(id: String) -> String:
+	if id.begins_with("recipe_") or id == "recipe":
+		return "art/items/recipe"
+	if not _art_icons.has(id):
+		_art_icons[id] = ResourceLoader.exists("res://assets/ui/art/items/%s.png" % id)
+	if _art_icons[id]:
+		return "art/items/" + id
+	return _item_fallback(id)
+
+static func _item_fallback(id: String) -> String:
+	if id == "recipe" or id.begins_with("recipe_"):
+		return "items/quest_letter"
+	if id == "bottle_empty":
+		return _item_fallback("bottle")
 	if not _gen_icons.has(id):
 		_gen_icons[id] = ResourceLoader.exists("res://assets/ui/items/gen/%s.svg" % id)
 	if _gen_icons[id]:
@@ -179,7 +258,7 @@ static func hero_portrait(id: String) -> Texture2D:
 	return t
 
 static func ability_icon(id: String) -> Texture2D:
-	return icon(String(ABILITY_ICONS.get(id, "skills/keen_eye")))
+	return icon(String(ABILITY_ICONS.get(id, NEUTRAL_SKILL_ICONS.get(id, UNIT_SKILL_ICONS.get(id, "skills/keen_eye")))))
 
 # ---- The generated skin (tools/ui_skin.py: assets/ui/skin, described by skin.json) ---------------------------------
 

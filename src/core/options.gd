@@ -24,6 +24,7 @@ const DEFAULTS := {
 	"show_fps": false,
 	"edge_pan": true, "lock_cursor": false, "camera_speed": 32.0, "screen_shake": true, "damage_numbers": true, "center_on_respawn": true,
 	"bots_learn": true, "bot_chat": true, "bot_trash_talk": true, "quick_cast": false, "llm_chat": false,
+	"ladder_bots": true, "icon_border": "default", "ui_motion": true,
 }
 
 static var data := {}
@@ -43,6 +44,8 @@ static func _ensure() -> void:
 			for k in DEFAULTS:
 				if d.has(k) and typeof(d[k]) in [TYPE_FLOAT, TYPE_INT, TYPE_BOOL]:
 					data[k] = d[k]
+				elif d.has(k) and typeof(d[k]) == TYPE_STRING and typeof(DEFAULTS[k]) == TYPE_STRING:
+					data[k] = d[k]
 	_sanitize()
 
 static func _sanitize() -> void:
@@ -56,8 +59,11 @@ static func _sanitize() -> void:
 	data.render_scale = clampf(float(data.render_scale), 0.5, 1.0)
 	data.camera_speed = clampf(float(data.camera_speed), 12.0, 60.0)
 	for k in ["mute_unfocused", "vsync", "show_fps", "edge_pan", "lock_cursor", "screen_shake", "damage_numbers", "center_on_respawn",
-			"bots_learn", "bot_chat", "bot_trash_talk", "llm_chat"]:
+			"bots_learn", "bot_chat", "bot_trash_talk", "llm_chat", "ladder_bots", "ui_motion"]:
 		data[k] = bool(data[k])
+	data.icon_border = String(data.icon_border).validate_filename().strip_edges()
+	if data.icon_border == "":
+		data.icon_border = "default"
 
 static func get_value(key: String):
 	_ensure()
@@ -195,6 +201,15 @@ static func apply_environment(env: Environment, sun: DirectionalLight3D = null) 
 static func click() -> void:
 	if _agent and is_instance_valid(_agent) and _agent.is_inside_tree():
 		_agent.click()
+
+## Go to another screen with a short fade (the match: with the loading screen). Use this for every screen change.
+static func go(tree: SceneTree, path: String) -> void:
+	install(tree)
+	if _agent != null and is_instance_valid(_agent) and _agent.is_inside_tree():
+		_agent.go(path)
+	else:
+		tree.paused = false
+		tree.change_scene_to_file(path)
 
 ## The persistent helper node (background mute, FPS counter, menu clicks). Safe to call repeatedly.
 static func install(tree: SceneTree) -> void:

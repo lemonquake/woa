@@ -131,6 +131,8 @@ static func icon_of(id: String, m: Dictionary) -> Texture2D:
 	if ICONS.has(id):
 		return U.icon(String(ICONS[id]))
 	var b := base_of(id)
+	if U.UNIT_SKILL_ICONS.has(b):
+		return U.ability_icon(b)
 	var x := _lookup(b)
 	if x.has("item"):
 		return U.item_icon(String(x.item))

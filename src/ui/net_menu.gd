@@ -25,6 +25,7 @@ var page_kind := ""
 var _layer: Control                          # dialogs, the connecting overlay
 var _dialog: Control
 var _dialog_ok: Callable
+var _busy_cancel: Button
 var _busy: Control
 var _busy_label: Label
 var _spin: Control
@@ -330,13 +331,19 @@ func dialog(title: String, body: Array, buttons: Array, width := 560.0) -> VBoxC
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	dim.mouse_filter = Control.MOUSE_FILTER_STOP
 	_layer.add_child(dim)
+	U.pop_in(dim)
 	_layer.mouse_filter = Control.MOUSE_FILTER_STOP
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dim.add_child(center)
 	var p := PanelContainer.new()
 	p.add_theme_stylebox_override("panel", frame("panel_menu", 60, 40, 60, 44))
 	p.custom_minimum_size = Vector2(width, 0)
+	# a click on the dimmed screen outside the dialog closes it, as Esc does
+	dim.gui_input.connect(func(e: InputEvent):
+		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] 				and not p.get_global_rect().has_point(dim.get_global_transform() * (e as InputEventMouseButton).position):
+			close_dialog())
 	center.add_child(p)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 16)
@@ -431,10 +438,11 @@ func busy(text: String) -> void:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_child(row)
-	row.add_child(button("Cancel", func():
+	_busy_cancel = button("Cancel", func():
 		net.leave_server("")
 		close_busy()
-		_sync_page(), 180))
+		_sync_page(), 180)
+	row.add_child(_busy_cancel)
 	_busy = dim
 
 func close_busy() -> void:
@@ -444,7 +452,7 @@ func close_busy() -> void:
 	_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE if not dialog_open() else Control.MOUSE_FILTER_STOP
 
 func go_main_menu() -> void:
-	get_tree().change_scene_to_file(MAIN_MENU)
+	Options.go(get_tree(), MAIN_MENU)
 
 # ---- Frame --------------------------------------------------------------------------------------------------------------
 
@@ -473,6 +481,8 @@ func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo and (e as InputEventKey).keycode == KEY_ESCAPE:
 		get_viewport().set_input_as_handled()
 		if _busy != null:
+			if _busy_cancel != null and is_instance_valid(_busy_cancel):
+				_busy_cancel.pressed.emit()
 			return
 		if dialog_open():
 			close_dialog()

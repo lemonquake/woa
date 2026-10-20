@@ -144,7 +144,7 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 		"mend":
 			for o: SimUnit in w.query(u.pos, float(v.radius)):
 				if o.alive and o.team == u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER:
-					w.combat.heal(o, float(v.heal))
+					w.combat.heal(o, float(v.heal), u)
 			w.events.append({"t": "mend", "u": u.id, "radius": float(v.radius)})
 		"spikes":
 			u.add_modifier({"id": "spike_armor", "source": u.id, "expires": w.time + float(v.duration), "fx": "spikes"})
@@ -245,7 +245,7 @@ func use(u: SimUnit, it: Dictionary, d: Dictionary, t: SimUnit, p: Vector2) -> b
 			_basic_dispel(u)
 			for o: SimUnit in w.query(u.pos, float(v.radius)):
 				if o.alive and o.team == u.team and not o.is_building() and not o.is_ward() and o.kind != K.COURIER:
-					w.combat.heal(o, float(v.heal))
+					w.combat.heal(o, float(v.heal), u)
 					o.mana = minf(o.max_mana, o.mana + float(v.mana))
 			w.events.append({"t": "mend", "u": u.id, "radius": float(v.radius)})
 		"guard":

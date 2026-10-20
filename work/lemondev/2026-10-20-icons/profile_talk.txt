@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+map built in 5597 ms: 4396 trees
+PASS test_profile_talk (1404 ms)
+
+1 passed, 0 failed

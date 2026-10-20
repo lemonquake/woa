@@ -46,7 +46,14 @@ var _dragging := false
 var _anim := "idle_bow"
 var _controls := {}                       # look key -> control, refreshed by _sync_controls
 var _name_edit: LineEdit
+var _back_btn: Button
 var _rng := RandomNumberGenerator.new()
+
+## Esc goes back, as the Back button does (fields, dropdowns and overlays get the key first).
+func _unhandled_key_input(e: InputEvent) -> void:
+	if U.is_esc(e) and _back_btn != null and _back_btn.is_visible_in_tree():
+		get_viewport().set_input_as_handled()
+		_back_btn.pressed.emit()
 
 func _ready() -> void:
 	theme = U.theme()
@@ -352,12 +359,13 @@ func _build_ui() -> void:
 		_after_change(true))
 	bar.add_child(reset)
 	var back := Button.new()
+	_back_btn = back
 	back.text = "Hero Select"
 	back.custom_minimum_size = Vector2(150, 46)
 	back.pressed.connect(func():
 		GameSettings.hero = hero.duplicate(true)
 		GameSettings.save_hero()
-		get_tree().change_scene_to_file(SELECT))
+		Options.go(get_tree(), SELECT))
 	bar.add_child(back)
 	var play := Button.new()
 	play.text = "Play"
@@ -673,4 +681,4 @@ func _sync_controls() -> void:
 func _on_play() -> void:
 	GameSettings.hero = hero.duplicate(true)
 	GameSettings.save_hero()
-	get_tree().change_scene_to_file(MATCH)
+	Options.go(get_tree(), MATCH)

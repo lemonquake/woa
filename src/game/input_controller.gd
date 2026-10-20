@@ -243,6 +243,9 @@ func _ray_segment(o: Vector3, d: Vector3, a: Vector3, b: Vector3) -> Vector2:
 
 func _unhandled_input(e: InputEvent) -> void:
 	var h := hero()
+	# the pause menu, Options, the MVP and end screens take the keys (Esc and F10 reach the menus themselves)
+	if game.menus != null and game.menus.blocks_input():
+		return
 	if e is InputEventKey and e.pressed and not e.echo:
 		_key(e as InputEventKey, h)
 	elif e is InputEventMouseButton:

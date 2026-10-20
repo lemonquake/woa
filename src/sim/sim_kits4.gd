@@ -298,7 +298,7 @@ func _update_door(e: Dictionary) -> bool:
 			if not ally.alive or ally.team != int(e.team) or ally.is_building() or ally.is_ward() or ally.kind == K.COURIER or ally.is_invulnerable():
 				continue
 			if ally.pos.distance_to(exit_p) <= float(e.radius) + ally.hull:
-				w.combat.heal(ally, heal_amt)
+				w.combat.heal(ally, heal_amt, w.get_unit(int(e.src)))
 	var hits: Array = []
 	var stun_dur := float(e.get("stun", 1.0))
 	var rloss := float(e.get("resist_loss", 0.0))

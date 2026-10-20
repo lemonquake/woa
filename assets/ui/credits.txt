@@ -47,6 +47,9 @@ By Eldritch Grim. opengameart.org/content/impactsgunsfx. Licence: CC0 1.0.
 [b]UI icons (items, skills, attributes, status, ui), SVG[/b]
 By beyond-heroes project. same. Licence: Owned by the author.
 
+[b]Painted skill and item icons, PNG[/b]
+Created for Warriors of Aether with OpenAI image generation, October 2026. Covers all heroes, item variants and unit skills. Original SVGs remain as fallbacks. Source sheets and provenance: work/lemondev/2026-10-20-icons/.
+
 [b]Trees, plants, grass, rocks[/b]
 By Quaternius, Stylized Nature MegaKit (Standard). quaternius.itch.io/stylized-nature-megakit. Licence: CC0 1.0.
 

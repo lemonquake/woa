@@ -15,10 +15,17 @@ var _rows := [[], []]                      # per team: [{kind, hero, skill, lane
 var _error: Label
 var _learn: Label
 var _start_btn: Button
+var _back_btn: Button
 var _xp_pick: OptionButton
 var _gold_pick: OptionButton
 var _capture_path := ""
 var _frames := 0
+
+## Esc goes back, as the Back button does (fields, dropdowns and overlays get the key first).
+func _unhandled_key_input(e: InputEvent) -> void:
+	if U.is_esc(e) and _back_btn != null and _back_btn.is_visible_in_tree():
+		get_viewport().set_input_as_handled()
+		_back_btn.pressed.emit()
 
 func _ready() -> void:
 	theme = U.theme()
@@ -113,10 +120,11 @@ func _ready() -> void:
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", 12)
 	root.add_child(bottom)
-	bottom.add_child(_button("Back", func():
+	_back_btn = _button("Back", func():
 		Options.click()
 		GameSettings.save_setup()
-		get_tree().change_scene_to_file(HERO_SELECT), 160))
+		Options.go(get_tree(), HERO_SELECT), 160)
+	bottom.add_child(_back_btn)
 	_learn = _label("", 16, U.TEXT_DIM)
 	_learn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_learn.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -391,7 +399,7 @@ func _start() -> void:
 	Options.click()
 	GameSettings.save_setup()
 	GameSettings.save()
-	get_tree().change_scene_to_file(HOTKEYS)
+	Options.go(get_tree(), HOTKEYS)
 
 func _process(_dt: float) -> void:
 	if _capture_path == "":

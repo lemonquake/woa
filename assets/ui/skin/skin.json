@@ -1034,6 +1034,814 @@
     80
    ],
    "kind": "image"
+  },
+  "soc_panel": {
+   "file": "soc_panel.png",
+   "size": [
+    120,
+    120
+   ],
+   "kind": "nine",
+   "margins": [
+    38,
+    38,
+    38,
+    38
+   ],
+   "content": [
+    26,
+    26,
+    26,
+    26
+   ]
+  },
+  "soc_panel_blue": {
+   "file": "soc_panel_blue.png",
+   "size": [
+    120,
+    120
+   ],
+   "kind": "nine",
+   "margins": [
+    38,
+    38,
+    38,
+    38
+   ],
+   "content": [
+    26,
+    26,
+    26,
+    26
+   ]
+  },
+  "soc_card": {
+   "file": "soc_card.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "soc_card_hi": {
+   "file": "soc_card_hi.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "soc_card_gold": {
+   "file": "soc_card_gold.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "soc_card_win": {
+   "file": "soc_card_win.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "soc_card_loss": {
+   "file": "soc_card_loss.png",
+   "size": [
+    96,
+    96
+   ],
+   "kind": "nine",
+   "margins": [
+    14,
+    14,
+    14,
+    14
+   ]
+  },
+  "soc_row": {
+   "file": "soc_row.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_hover": {
+   "file": "soc_row_hover.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_win": {
+   "file": "soc_row_win.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_loss": {
+   "file": "soc_row_loss.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_win_hover": {
+   "file": "soc_row_win_hover.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_loss_hover": {
+   "file": "soc_row_loss_hover.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_you": {
+   "file": "soc_row_you.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_row_gold": {
+   "file": "soc_row_gold.png",
+   "size": [
+    200,
+    52
+   ],
+   "kind": "nine",
+   "margins": [
+    12,
+    10,
+    12,
+    10
+   ]
+  },
+  "soc_menu": {
+   "file": "soc_menu.png",
+   "size": [
+    140,
+    140
+   ],
+   "kind": "nine",
+   "margins": [
+    34,
+    34,
+    34,
+    34
+   ],
+   "content": [
+    20,
+    20,
+    20,
+    20
+   ]
+  },
+  "soc_menu_hi": {
+   "file": "soc_menu_hi.png",
+   "size": [
+    120,
+    32
+   ],
+   "kind": "nine",
+   "margins": [
+    10,
+    8,
+    10,
+    8
+   ]
+  },
+  "soc_tab_on": {
+   "file": "soc_tab_on.png",
+   "size": [
+    160,
+    60
+   ],
+   "kind": "nine",
+   "margins": [
+    24,
+    16,
+    24,
+    8
+   ]
+  },
+  "soc_tab_hover": {
+   "file": "soc_tab_hover.png",
+   "size": [
+    160,
+    60
+   ],
+   "kind": "nine",
+   "margins": [
+    24,
+    16,
+    24,
+    8
+   ]
+  },
+  "soc_chip": {
+   "file": "soc_chip.png",
+   "size": [
+    52,
+    26
+   ],
+   "kind": "nine",
+   "margins": [
+    13,
+    12,
+    13,
+    12
+   ]
+  },
+  "soc_chip_gold": {
+   "file": "soc_chip_gold.png",
+   "size": [
+    52,
+    26
+   ],
+   "kind": "nine",
+   "margins": [
+    13,
+    12,
+    13,
+    12
+   ]
+  },
+  "soc_avatar": {
+   "file": "soc_avatar.png",
+   "size": [
+    128,
+    128
+   ],
+   "kind": "image"
+  },
+  "soc_topbar": {
+   "file": "soc_topbar.png",
+   "size": [
+    1920,
+    96
+   ],
+   "kind": "image"
+  },
+  "soc_banner": {
+   "file": "soc_banner.png",
+   "size": [
+    1840,
+    250
+   ],
+   "kind": "image"
+  },
+  "soc_bg": {
+   "file": "soc_bg.png",
+   "size": [
+    960,
+    540
+   ],
+   "kind": "image"
+  },
+  "ic_kill": {
+   "file": "ic_kill.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_kill": {
+   "file": "gl_kill.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_death": {
+   "file": "ic_death.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_death": {
+   "file": "gl_death.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_assist": {
+   "file": "ic_assist.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_assist": {
+   "file": "gl_assist.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_lh": {
+   "file": "ic_lh.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_lh": {
+   "file": "gl_lh.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_deny": {
+   "file": "ic_deny.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_deny": {
+   "file": "gl_deny.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_gpm": {
+   "file": "ic_gpm.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_gpm": {
+   "file": "gl_gpm.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_xpm": {
+   "file": "ic_xpm.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_xpm": {
+   "file": "gl_xpm.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_mvp": {
+   "file": "ic_mvp.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_mvp": {
+   "file": "gl_mvp.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_rampage": {
+   "file": "ic_rampage.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_rampage": {
+   "file": "gl_rampage.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_triple": {
+   "file": "ic_triple.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_triple": {
+   "file": "gl_triple.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_fb": {
+   "file": "ic_fb.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_fb": {
+   "file": "gl_fb.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_lane": {
+   "file": "ic_lane.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_lane": {
+   "file": "gl_lane.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_ward": {
+   "file": "ic_ward.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_ward": {
+   "file": "gl_ward.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_damage": {
+   "file": "ic_damage.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_damage": {
+   "file": "gl_damage.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_win": {
+   "file": "ic_win.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_win": {
+   "file": "gl_win.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_streak": {
+   "file": "ic_streak.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_streak": {
+   "file": "gl_streak.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_time": {
+   "file": "ic_time.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_time": {
+   "file": "gl_time.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_heal": {
+   "file": "ic_heal.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_heal": {
+   "file": "gl_heal.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_comment": {
+   "file": "ic_comment.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_comment": {
+   "file": "gl_comment.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_visitor": {
+   "file": "ic_visitor.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_visitor": {
+   "file": "gl_visitor.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_friend": {
+   "file": "ic_friend.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_friend": {
+   "file": "gl_friend.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_report": {
+   "file": "ic_report.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_report": {
+   "file": "gl_report.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_commend": {
+   "file": "ic_commend.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_commend": {
+   "file": "gl_commend.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_block": {
+   "file": "ic_block.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_block": {
+   "file": "gl_block.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_copy": {
+   "file": "ic_copy.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_copy": {
+   "file": "gl_copy.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_compare": {
+   "file": "ic_compare.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_compare": {
+   "file": "gl_compare.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_history": {
+   "file": "ic_history.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_history": {
+   "file": "gl_history.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_board": {
+   "file": "ic_board.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_board": {
+   "file": "gl_board.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
+  },
+  "ic_profile": {
+   "file": "ic_profile.png",
+   "size": [
+    64,
+    64
+   ],
+   "kind": "image"
+  },
+  "gl_profile": {
+   "file": "gl_profile.png",
+   "size": [
+    48,
+    48
+   ],
+   "kind": "image"
   }
  }
 }

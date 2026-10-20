@@ -38,6 +38,7 @@ var _chat: ChatBox
 var _banner: TurnBanner
 var _chosen := ""                          # the hero you have selected (not locked yet)
 var _chat_seen := 0
+var _friends_seen := 0
 var _picks_seen := 0
 var _audio: Array = []
 var _capture := ""
@@ -75,6 +76,13 @@ func _ready() -> void:
 	_build()
 	resized.connect(_layout)
 	_layout()
+	# captures of the pick chat (run 2026-10-19 e): --say=text, --want=hero (Alt+click), --suggest=hero (Shift+click)
+	if args.has("say"):
+		draft.say_me(String(args.say))
+	if args.has("want"):
+		draft.want_me(String(args.want))
+	if args.has("suggest"):
+		draft.suggest(String(args.suggest))
 	if args.has("at") or String(args.get("phase", "")) == "versus":
 		# captures: run the pick forward (you pick when your turn comes)
 		var at := float(args.get("at", "999"))
@@ -197,6 +205,8 @@ void fragment() {
 		tile.custom_minimum_size = Vector2(tw, roundf(tw * 1.2))
 		var hid := String(h)
 		tile.pressed.connect(func(): _choose(hid))
+		tile.want.connect(func(): draft.want_me(hid))
+		tile.suggest.connect(func(): draft.suggest(hid))
 		grid.add_child(tile)
 		_tiles[hid] = tile
 	_preview = HeroPreview.new()
@@ -224,8 +234,9 @@ void fragment() {
 			_lock_in())
 	_pick_layer.add_child(_random_btn)
 	_chat = ChatBox.new()
-	_chat.position = Vector2(500, 870)
-	_chat.size = Vector2(904, 170)
+	_chat.position = Vector2(500, 866)
+	_chat.size = Vector2(904, 200)
+	_chat.sent.connect(func(text: String): draft.say_me(text))
 	_pick_layer.add_child(_chat)
 	_vs_layer = VersusLayer.new()
 	_vs_layer.draft = draft
@@ -274,8 +285,15 @@ func _sync(quiet := false) -> void:
 				(_tiles[h] as HeroTile).chosen = false
 	while _chat_seen < draft.chat.size():
 		var c: Dictionary = draft.chat[_chat_seen]
-		_chat.add_line(String(c.name), String(c.text), BLUE, false)
+		_chat.add_line(String(c.name), String(c.text), U.GOLD if bool(c.get("me", false)) else BLUE, false)
 		_chat_seen += 1
+	# teammates who said yes to your "add me" (run 2026-10-19 e)
+	while _friends_seen < draft.friends_made.size():
+		var fid := String(draft.friends_made[_friends_seen])
+		_friends_seen += 1
+		if not (fid in (Ranked.me().get("friends", []) as Array)):
+			Ranked.befriend(fid)
+			_chat.add_line("", "You and %s are now friends" % String(draft.profile(fid).get("name", "")), U.TEXT_DIM, true)
 	for h in _tiles:
 		(_tiles[h] as HeroTile).queue_redraw()
 
@@ -420,13 +438,19 @@ class PickSlot extends Control:
 	var _av: Avatar
 	var _sparks: Array = []
 	func _ready() -> void:
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# right-click a player in the pick: the player menu (their profile opens over the pick) (run 2026-10-20)
+		mouse_filter = Control.MOUSE_FILTER_PASS
+		tooltip_text = "Right-click: profile and more"
 		_av = Avatar.new()
 		_av.size = Vector2(56, 56)
 		_av.position = Vector2(size.x - 56 - 64, 14) if right else Vector2(64, 14)
 		_av.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_av.set_spec(p.get("avatar", {"k": "none"}))
 		add_child(_av)
+	func _gui_input(e: InputEvent) -> void:
+		if SocialUi.is_right(e) and id != "":
+			PlayerMenu.open(self, id, SocialUi.at(self, e))
+			accept_event()
 	func land(strength: float) -> void:
 		_land = 0.0 if strength > 0.0 else 9.0
 		if strength > 0.0:
@@ -509,6 +533,10 @@ class PickSlot extends Control:
 		draw_string(bd, Vector2(xr.call(rk, 15, bd), 62), rk, HORIZONTAL_ALIGNMENT_LEFT, tw, 15, U.TEXT_DIM)
 		var role := RankedNum.role(draft.role_of(id))
 		draw_string(bd, Vector2(xr.call(role, 15, bd), 84), role, HORIZONTAL_ALIGNMENT_LEFT, tw, 15, Color(col, 0.9))
+		if Ranked.mvp_last(p):
+			var rw := bd.get_string_size(role, HORIZONTAL_ALIGNMENT_LEFT, -1, 15).x
+			var px: float = xr.call(role, 15, bd)
+			RankedNum.mvp_tag(self, Vector2(px + rw + 14 + 118 if not right else px - 12, 66), 1.0, _t)
 		var ic := RankEmblem.icon(tier)
 		if ic:
 			draw_texture_rect(ic, Rect2((24.0 if not right else size.x - 24.0 - 52.0), 96, 52, 52), false)
@@ -527,6 +555,8 @@ class PickSlot extends Control:
 ## in the picker's team colour and their pick number.
 class HeroTile extends Control:
 	signal pressed
+	signal want                            # Alt+click: you want this hero
+	signal suggest                         # Shift+click: a teammate should pick it
 	var hero := ""
 	var draft: HeroDraft
 	var chosen := false
@@ -542,7 +572,15 @@ class HeroTile extends Control:
 		mouse_exited.connect(func(): _in = false)
 	func _gui_input(e: InputEvent) -> void:
 		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-			pressed.emit()
+			var mb := e as InputEventMouseButton
+			if mb.alt_pressed and not draft.taken(hero):
+				Options.click()
+				want.emit()
+			elif mb.shift_pressed and not draft.taken(hero):
+				Options.click()
+				suggest.emit()
+			else:
+				pressed.emit()
 			accept_event()
 	func _process(dt: float) -> void:
 		_t += dt
@@ -621,10 +659,7 @@ class HeroPreview extends Control:
 		draw_string(U.font("body"), Vector2(x, 152), "%s  ·  %s" % [attr, rng], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, U.TEXT_DIM)
 		var ax := x
 		for aid in (d.get("abilities", []) as Array).slice(0, 6):
-			var ic := U.ability_icon(String(aid))
-			if ic:
-				draw_texture_rect(ic, Rect2(ax, 172, 64, 64), false)
-				draw_rect(Rect2(ax, 172, 64, 64), Color(1, 1, 1, 0.25), false, 1.0)
+			IconBorder.draw_icon(self, U.ability_icon(String(aid)), Rect2(ax, 174, 60, 60), IconBorder.ability_kind(String(aid)))
 			ax += 72.0
 		var me := Ranked.me()
 		var hs = (me.get("hero_stats", {}) as Dictionary).get(hero, [0, 0])
@@ -673,12 +708,32 @@ class BigLock extends Control:
 
 ## Team chat and the pick log; new lines slide in.
 class ChatBox extends Control:
+	## (run 2026-10-19 e) a line to type in: Enter to send (Enter anywhere starts typing).
+	signal sent(text: String)
 	var lines: Array = []                  # [name, text, color, system, age]
+	var input: LineEdit
+	const ROWS := 5
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		input = LineEdit.new()
+		input.placeholder_text = "Say to your team (Enter)"
+		input.max_length = 120
+		input.position = Vector2(10, size.y - 44)
+		input.size = Vector2(size.x - 20, 36)
+		input.add_theme_font_size_override("font_size", 16)
+		input.text_submitted.connect(func(t: String):
+			if t.strip_edges() != "":
+				sent.emit(t.strip_edges())
+			input.text = ""
+			input.release_focus())
+		add_child(input)
+	func _unhandled_key_input(e: InputEvent) -> void:
+		if e is InputEventKey and e.pressed and not e.echo and (e as InputEventKey).keycode in [KEY_ENTER, KEY_KP_ENTER] and is_visible_in_tree():
+			input.grab_focus()
+			get_viewport().set_input_as_handled()
 	func add_line(nm: String, text: String, col: Color, system: bool) -> void:
 		lines.append([nm, text, col, system, 0.0])
-		while lines.size() > 6:
+		while lines.size() > ROWS:
 			lines.pop_front()
 	func _process(dt: float) -> void:
 		for l in lines:
@@ -687,7 +742,10 @@ class ChatBox extends Control:
 	func _draw() -> void:
 		draw_style_box(RankedNum.flat(Color(0.03, 0.04, 0.06, 0.85), Color(1, 1, 1, 0.08), 8), Rect2(Vector2.ZERO, size))
 		draw_string(U.font("bold"), Vector2(14, 22), "Team chat", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, U.TEXT_DIM)
-		var y := 46.0
+		var hint := "Alt+click a hero: you want it    Shift+click: ask a teammate to pick it"
+		var hw := U.font("body").get_string_size(hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+		draw_string(U.font("body"), Vector2(size.x - hw - 14, 22), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(U.TEXT_DIM, 0.8))
+		var y := 44.0
 		for l in lines:
 			var a := clampf(float(l[4]) / 0.25, 0.0, 1.0)
 			var x := 14.0 - (1.0 - a) * 30.0
@@ -879,3 +937,6 @@ class VersusLayer extends Control:
 			Color(HeroBadge.metal(m) if int(m.medal) > 0 or int(m.top) > 0 else U.TEXT_DIM, a))
 		# a thin line down to the hero
 		_over.draw_line(Vector2(r.get_center().x, r.end.y), pl.pos + Vector2(0, -2), Color(col, 0.5 * a), 1.5)
+		# MVP in their last game (run 2026-10-19 e): a gold tag on the plate
+		if Ranked.mvp_last(p):
+			RankedNum.mvp_tag(_over, Vector2(r.end.x - 4, r.position.y - 6), a, _t)

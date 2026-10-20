@@ -520,3 +520,79 @@ instruction (shared filesystem). No commercial benchmark for bot chat (UNVERIFIE
 | P4 Players tab | 1-2 | working tree | captures 1080p/4K | n/a | IMPLEMENTED | none seen | blind review |
 | P5 Online writer | 1-3 | working tree | llm_probe vs mock | n/a | IMPLEMENTED, UNVERIFIED (no real call) | "150%" broke the system prompt's formatting (fixed); probe wrote to the real usage file (fixed) | owner's key, one match |
 | X Integration | 1 | working tree | full suite, check.sh, talk_probe, export | n/a | see docs/HANDOFF.md | none | none |
+
+## Session 2026-10-19 e (the social world: crowd reactions, trash talk, friends, MVP, live stats, pick chat, Forums) — run `work/lemondev/2026-10-19e-social/`
+
+One fresh-context critic, blind A/B of chat transcripts from the same match with the new social layer on and off
+(`tests/tools/social_probe.gd --off`), two seeds, labels shuffled per pair (`review/mapping_private.json`). No
+commercial benchmark here (UNVERIFIED gate).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| S1 Match stats | 1 | working tree | test_match_stats_counters, snapshot test | n/a | PASS (gate) | ChatSocial without a no-argument constructor broke snapshot restore (fixed) | none |
+| S2 Live stats panel | 1-3 | working tree | captures 1080p | n/a | self-check | hover breakdown never drew (Tip redraws first; registered) | 4K capture |
+| S3 MVP | 1-2 | working tree | test_mvp_support_can_win, test_ranked_mvp_and_memory, captures | n/a | PASS (gate) | hard seam in the MVP screen's shade (gradient) | owner's eye |
+| S4 Social reactions | 1-2 | working tree | 6 tests, critic 1 + recheck.py | new / clear (both seeds) | see handoff | a dominating enemy bot drew no smurf talk, under-reacted multi-kills, a hero quip 4 times a match (pass 2) | owner's ear |
+| S5 Memory, friends | 1 | working tree | test_ranked_mvp_and_memory, test_chat_add_me_makes_a_friend | n/a | PASS (gate) | none | real ranked match by clicks |
+| S6 Pick chat | 1 | working tree | test_draft_pick_chat_and_calls | n/a | IMPLEMENTED | none seen | capture of the pick with chat |
+| S7 Forums | 1-2 | working tree | test_forum_offline, captures | n/a | IMPLEMENTED | repeated titles, generic replies (fixed); a capture used the owner's real key (guarded) | blind review |
+
+## Session 2026-10-20 (the player is always answered; trash talk answered in kind; forums answer you)
+
+Bug fix run on the owner's report ("Bots (using LLM) not replying to any of the player's messages in all-chat ... they
+try to pacify the player"). Root causes found in code and in the owner's own forums.json (two of their replies had no
+answer queued). No critic pass: measured gates only.
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| C1 Match chat answers | 1-2 | working tree | test_chat_player_always_answered (80 lines, quiet busy bots), talk_probe 22/22 offline and with the model | n/a | PASS (gate) | praise in all chat answered in team chat (fixed) | owner's ear |
+| C2 No pacifying | 1 | working tree | test_chat_trash_talk_never_pacified (120 insults), talk_probe | n/a | PASS (gate) | "ur mom" etc. not read as trash talk (added) | owner's ear |
+| C3 Online writer | 1 | working tree | test_llm_answers_the_player_first, llm_probe vs mock 19/19, one live probe with the real model | n/a | PASS (gate) | live probe used the owner's key (guarded: automated() ) | none |
+| C4 Forums | 1 | working tree | forum checks in test_ranked_mvp_and_memory | n/a | PASS (gate) | own-thread replies without a target went to nobody (fixed); old ones answered on the next visit | owner's ear |
+
+## Session 2026-10-20 b (the social makeover: Profile, performance MMR, careers, profile-aware players, right-click menus, themed skin) — run `work/lemondev/2026-10-20-profile/`
+
+No fresh-context critic and no commercial benchmark capture this run (both gates UNVERIFIED); measured gates and
+inspected captures only (`ui/`, before `before/`).
+
+| Component | Pass | Revision | Review | Winner / clear | Verdict | Primary defect | Next |
+|---|---|---|---|---|---|---|---|
+| K1 Career stats | 1 | working tree | test_career_averages, test_ranked_upgrade_careers | n/a | PASS (gate) | none | a real unranked match by the owner |
+| K2 Performance MMR | 1-2 | working tree | test_career_mmr_range, test_ranked_match_result, test_ladder_careers | n/a | PASS (gate) | the ladder inflated +62 over 60 rounds (fixed: rounds evened to zero sum) | owner's feel |
+| K3 AI careers, MVPs | 1 | working tree | test_ladder_careers, captures | n/a | PASS (gate) | none | none |
+| K4 Profile talk | 1 | working tree | test_profile_talk, test_chat_profiles_in_match, test_draft_pick_chat_and_calls | n/a | PASS (gate) | lines only named the last match (added last-five averages) | owner's ear |
+| K5 Walls and acts | 1 | working tree | test_profile_walls | n/a | PASS (gate) | first visit showed an empty wall (seeded) | none |
+| K6 Profile UI | 1-2 | working tree | captures 1080p / 4K, ranked_probe | n/a | self-check | role text clipped, title divider over rows (fixed) | blind review |
+| K7 Right-click menus | 1 | working tree | captures, ranked_probe | n/a | self-check | none seen | forum overlay by clicks |
+| K8 Skin | 1-2 | working tree | preview sheet, captures | n/a | self-check | flame and sword glyphs weak (redrawn) | owner's eye |
+| X Integration | 1 | working tree | full suite 327/0, names, parse checks, ranked_probe, export | n/a | see docs/HANDOFF.md | ranked_probe's end step predated the MVP screen (fixed) | none |
+
+## Session 2026-10-20 c — generated skill and item icons
+
+Run: `work/lemondev/2026-10-20-icons/`. All 17 heroes and 176 item records audited. Built-in generation only. 227 images made; 226 used, original Death Order kept by explicit owner choice after plateau.
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| Skills | 1 | review/skills/review.md | new set preferred | four subjects unclear when small/dim | simplify subjects |
+| Skills | 2 | review/final/review.md | REJECT | tiny action cues | one large subject/action |
+| Skills | 3 | review/focus/review.md | three PASS; Death Order STOPPED — PLATEAU | low-health condition unclear | owner chose original SVG |
+| Items | 1 | review/items/review.md | new set preferred; revise | Blast Rod pips | larger pips |
+| Items | 2 | review/final/review.md | PASS | no mandatory failure | integrated |
+| Routing / imports | 1-2 | accepted_gallery logs, packed_final_probe | 1806 checks / 0 failures | none | owner play |
+| Snapshot regression | 1 | snapshot_tests.txt | PASS | global prof exclusion also dropped ChatProfile | fixed scope |
+| Integration | 1-3 | handoff.md, final_results.txt | IMPLEMENTED — UNVERIFIED | commercial comparison and 60 FPS/lifecycle gates not passed | separate performance work |
+
+## Session 2026-10-20 d — interface smoothness and the official icon border
+
+Run: `work/lemondev/2026-10-20d-ui-smooth/` (handoff.md). Benchmark Dota 2 tiles by name only (commercial gate UNVERIFIED).
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| U1 Popups / Esc | 1-2 | ui_smooth_probe 34/34 x3, ranked_probe 51/51 | PASS (gate) | talent rows filled only at 20 Hz redraw (fixed) | owner play |
+| U2 Fades / loading | 1 | ui_smooth_probe fade checks | PASS (gate) | none | owner's eye |
+| B1-B3 Borders | 1 | critic/ | INVALID packet | state mismatch | matched packet |
+| B1-B3 Borders | 2 | critic2/ | REJECT | frame inside frame (backpack, teleport) | tile-shaped slots |
+| B1-B3 Borders | 3 | critic3/ | PASS | thin innate frame at 28 px | optional |
+| P1 Passive hotkey | 1 | hud_passive capture | self-check | none | none |
+| Integration | 1 | suite, probes, check.sh, export | see handoff | none | owner play |
+

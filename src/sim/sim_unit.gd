@@ -124,6 +124,21 @@ var healed := 0.0                          # health restored by heals and lifest
 var gold_earned := 0                       # heroes: all gold gained (for gold per minute)
 var last_kill_at := C.LONG_AGO                  # heroes: for multi-kills
 var multi_kill := 0
+var best_multi := 0                        # heroes: the biggest multi-kill this match (2 double .. 5 rampage)
+var best_streak := 0                       # heroes: the longest kill streak this match
+var multi_n := [0, 0, 0, 0]                # heroes: double, triple, ultra kills and rampages this match (each counted)
+var first_blood := false                   # heroes: drew this match's first blood
+var lane_secs := {}                        # heroes: seconds near each lane ("safe", "mid", "off") from 0:30 to 10:00
+# heroes: match stats (the live stats panel, the MVP; run 2026-10-19 e)
+var lh_lane := 0                           # last hits on lane creeps
+var lh_neutral := 0                        # last hits on camp creeps
+var lh_other := 0                          # last hits on summons (turrets, beasts) and other units
+var heal_given := 0.0                      # health restored to other allied heroes
+var disable_given := 0.0                   # seconds of stuns, roots, hexes and silences on enemy heroes
+var wards_placed := 0
+var saves := 0                             # a low ally healed or its attacker disabled, and it lived
+var save_watch := {}                       # ally hero id -> [time helped, ally health then] (a save if it lives 4 s)
+var save_last := {}                        # ally hero id -> time of the last save counted (one per ally per 20 s)
 
 # ---- Orders and actions -------------------------------------------------------------------------------------------
 var order := C.Order.NONE

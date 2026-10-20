@@ -1,0 +1,31 @@
+Final Windows artifact, 20 October 2026
+
+Build: A:/Python/woa/build/WarriorsOfAether.exe
+Pack: A:/Python/woa/build/WarriorsOfAether.pck
+EXE SHA256: 7BFBBBAE2DD7D8138C8BE5B747408ED13831C200AB6C6431AF2BED626AEC36B3
+PCK SHA256: 998F2F08BFD50BA0927C79528695583E9587D6BAC5455242799D377ADE914626
+Final export: exit 0, export_final.log / export_final.err (empty stderr).
+
+Active generated PNGs: 92 skills/unit traits +134 item states =226.
+Retained original: Death Order, explicit owner decision.
+Generated image inventory: 227 unique images, one quarantined outside export.
+Names OK. Packaging check: no missing sheets. Targeted changed-file whitespace check clean.
+
+Final runtime galleries: 1080p exit 0, 4K exit 0.
+Final source and packed probes: 1806 checks, 0 failures; 93 skills/traits, 134 item states.
+Packed probe exit 0; stderr empty.
+Final executable cold capture: Caziel, exit 0, match ready 17116ms, ui/export_final_caziel.png.
+Cold-capture teardown reports 1644 ObjectDB instances and25 resources; no script/resource-load errors.
+
+Full regression: 327 passed,0 failed; first run exposed prior ChatProfile snapshot error.
+Post-fix snapshot determinism test:1 passed,0 failed,225786ms; ownership/state assertions pass.
+Post-fix profile-talk:1 passed. Match profiles:1 passed. No script errors after fix.
+Existing teardown resource-cycle warnings documented in handoff.
+
+Exact final pack benchmark: bench_final.log, RTX4060,Vulkan Forward+,1920x1080,
+10 heroes,202 units,level16 fight,t=120,restage15s,warmup3s,measurement30s,uncapped.
+1708 frames,avg17.57ms (57FPS),p50 16.67ms,p95 27.70ms,p99 38.88ms,max71.64ms.
+686 frames over16.7ms. GPU mean8.58ms. Benchmark process exit -1073741819 (0xC0000005)
+after printing all measurements. Prior executable also exits with0xC0000005 in this workload;
+its average58FPS,p95 29.14ms. Ordinary final cold capture exits0.
+60FPS/lifecycle gate failed; commercial matched comparison unverified. No full VERIFIED claim.

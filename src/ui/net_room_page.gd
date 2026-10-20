@@ -246,11 +246,7 @@ func _about(id: String) -> void:
 	hero_kind.text = "%s  ·  %s  ·  %s" % [el, "Ranged" if float(d.get("range", 150.0)) > 300.0 else "Melee",
 		attr.get(String(d.get("primary", "str")), "Strength")]
 	for aid in d.get("abilities", []):
-		var ic := TextureRect.new()
-		ic.texture = U.ability_icon(String(aid))
-		ic.custom_minimum_size = Vector2(46, 46)
-		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		var ic := IconFrame.make(U.ability_icon(String(aid)), IconBorder.ability_kind(String(aid)), 44)
 		var a := SimData.ability(String(aid))
 		ic.tooltip_text = "%s\n%s" % [String(a.get("name", aid)), String(a.get("desc", ""))]
 		abil_row.add_child(ic)

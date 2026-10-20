@@ -22,7 +22,7 @@ extends RefCounted
 ## are upgraded in place: nobody's MMR or record changes.
 
 const PATH := "user://ranked.json"
-const VERSION := 4                          # 2: hero records and rankings; 3: hero mastery, countries
+const VERSION := 5                          # 2: hero records and rankings; 3: hero mastery, countries; 5: careers
 const YOUR_START := 1000
 const BOT_START := 1500
 const K := 50.0
@@ -137,7 +137,7 @@ static func load_data() -> void:
 		path = OS.get_environment("WOA_RANKED_FILE")     # probes and captures keep your own ladder untouched
 	if FileAccess.file_exists(path):
 		var d = JSON.parse_string(FileAccess.get_file_as_string(path))
-		if d is Dictionary and int(d.get("version", 0)) == VERSION and d.get("bots") is Array and d.get("me") is Dictionary \
+		if d is Dictionary and int(d.get("version", 0)) >= 4 and int(d.get("version", 0)) <= VERSION and d.get("bots") is Array and d.get("me") is Dictionary \
 				and (d.bots as Array).size() >= 100:
 			data = d
 			_clean()
@@ -236,6 +236,32 @@ static func _upgrade() -> void:
 		_make_friends(r2, 0)
 	if made:
 		_mark_dirty()
+	_upgrade_careers(seed)
+
+## Careers (run 2026-10-20): a ladder player without one gets its estimate (Career.estimate: games, averages, first
+## bloods, multi-kills, MVPs) and its saved matches their farm; your career counts your saved ranked matches.
+static func _upgrade_careers(seed: int) -> void:
+	for b in data.bots:
+		if not (b.get("career") is Dictionary):
+			Career.estimate(b, seed)
+			var r := RandomNumberGenerator.new()
+			r.seed = absi(hash("old:%d:%s" % [seed, String(b.id)]))
+			for e in b.history:
+				Career.fill_old(e, b, r)
+		else:
+			Career.career(b)
+		b["mvps"] = int(b.get("mvps", 0))
+	var me_p: Dictionary = data.me
+	if not (me_p.get("career") is Dictionary):
+		me_p["career"] = {}
+		for e in me_p.get("history", []):
+			if e is Dictionary and e.has("k"):
+				Career.add(me_p, e, String(e.get("r", "L")) == "W")
+	Career.career(me_p)
+	me_p["mvps"] = int(me_p.get("mvps", 0))
+	if not (me_p.get("unranked") is Array):
+		me_p["unranked"] = []
+	data["version"] = VERSION
 
 static func me() -> Dictionary:
 	load_data()
@@ -286,7 +312,7 @@ static func new_ladder(seed: int) -> void:
 		"me": {"id": "me", "name": you_name, "mmr": YOUR_START, "wins": 0, "losses": 0, "abandons": 0, "streak": 0,
 			"best_streak": 0, "peak": YOUR_START, "history": [], "graph": [YOUR_START], "avatar": {"k": "none"},
 			"behavior": 10000, "roles": [1, 2, 3, 4, 5], "heroes": [], "created": t, "bot": false, "hero_stats": {},
-			"country": "", "met": {}, "friends": [], "requests": []},
+			"country": "", "met": {}, "friends": [], "requests": [], "career": {}, "unranked": []},
 		"bots": []}
 	var i := 0
 	for band in BANDS:
@@ -456,6 +482,7 @@ static func _make_bot(i: int, nm: String, skill: float, r: RandomNumberGenerator
 		"created": t - r.randi_range(3, 900) * 86400, "hero_stats": hero_stats, "country": country,
 		"mood": 0.0, "learning": "", "learn_n": 0, "friends": [], "you": {}}
 	p["persona"] = Persona.make(r.randi(), p)
+	Career.estimate(p, r.randi())
 	return p
 
 ## Play `n` rounds of bot matches: about 60% of the bots (not those in `busy`) play one each, ten at a time in MMR
@@ -482,8 +509,11 @@ static func simulate_rounds(n: int, r: RandomNumberGenerator = null, busy := {})
 			var ta: Array = [group[0], group[3], group[4], group[7], group[8]]
 			var tb: Array = [group[1], group[2], group[5], group[6], group[9]]
 			var won_a := r.randf() < win_chance(_avg(ta, "skill") + r.randfn(0.0, 60.0), _avg(tb, "skill") + r.randfn(0.0, 60.0))
-			var d := elo_delta(_avg(ta, "mmr"), _avg(tb, "mmr"), won_a)
 			var length := r.randi_range(24, 52) * 60 + r.randi_range(0, 59)
+			# every player's line first, then the match's MVP (run 2026-10-19 e), then the records
+			var lines: Array = []
+			var best_i := -1
+			var best_s := -INF
 			for side in 2:
 				var team: Array = ta if side == 0 else tb
 				var won := won_a if side == 0 else not won_a
@@ -491,8 +521,45 @@ static func simulate_rounds(n: int, r: RandomNumberGenerator = null, busy := {})
 					var hero := _sim_hero(p, r)
 					var role := int(p.roles[0])
 					var ex := _sim_line(p, won, role, length, r)
-					_record(p, won, d if side == 0 else -d, hero, role, false, ex)
-					_after_game(p, hero, r)
+					var sc := 3.0 * int(ex.k) + 1.7 * int(ex.a) - 1.5 * int(ex.x) + (5.0 if won else 0.0) \
+						+ r.randf_range(0.0, 6.0) + (4.0 if role >= 4 else 0.0) + float(ex.get("rp", 0)) * 3.0
+					if sc > best_s:
+						best_s = sc
+						best_i = lines.size()
+					lines.append([p, won, side, hero, role, ex])
+			# first blood: one of the players with a kill (more kills, likelier)
+			var fb_pool: Array = []
+			for li in lines.size():
+				for q in mini(6, int((lines[li][5] as Dictionary).get("k", 0))):
+					fb_pool.append(li)
+			if not fb_pool.is_empty():
+				(lines[fb_pool[r.randi_range(0, fb_pool.size() - 1)]][5] as Dictionary)["fb"] = 1
+			# each player's MMR by how well it played (Career.mmr_change: 23 to 41), the winners' gains evened with the
+			# losers' losses so the ladder does not drift (the better side plays better, so its gains run larger)
+			var ds: Array = []
+			var gain := 0
+			var loss := 0
+			for ln0 in lines:
+				var dd := Career.mmr_change(bool(ln0[1]), ln0[5], int(ln0[4]))
+				ds.append(dd)
+				if dd > 0:
+					gain += dd
+				else:
+					loss -= dd
+			var kw := minf(1.0, float(loss) / maxf(1.0, float(gain)))
+			var kl := minf(1.0, float(gain) / maxf(1.0, float(loss)))
+			for li in ds.size():
+				var dd2 := int(ds[li])
+				ds[li] = clampi(int(round(dd2 * kw)), Career.MMR_MIN, Career.MMR_MAX) if dd2 > 0 else \
+					-clampi(int(round(-dd2 * kl)), Career.MMR_MIN, Career.MMR_MAX)
+			for li in lines.size():
+				var ln: Array = lines[li]
+				var ex2: Dictionary = ln[5]
+				if li == best_i:
+					ex2["mvp"] = true
+				_record(ln[0], bool(ln[1]), int(ds[li]), String(ln[3]), int(ln[4]), false, ex2)
+				_after_game(ln[0], String(ln[3]), r)
+				_note_game(ln[0], "ladder", String(ln[3]), ex2, {"multi": 5} if int(ex2.get("rp", 0)) > 0 else {})
 			played += 1
 		data.rounds = int(data.get("rounds", 0)) + 1
 	_check_tops()
@@ -517,7 +584,10 @@ static func _sim_line(p: Dictionary, won: bool, role: int, length: int, r: Rando
 	var k := maxi(0, int(round(r.randfn((0.24 if core else 0.09) * mins * (1.25 if won else 0.75) * (0.8 + sk * 0.4), 2.0))))
 	var x := maxi(0, int(round(r.randfn(0.17 * mins * (0.7 if won else 1.25) * (1.15 - sk * 0.3), 1.8))))
 	var a := maxi(0, int(round(r.randfn((0.28 if core else 0.42) * mins * (1.2 if won else 0.8), 2.5))))
-	return {"k": k, "x": x, "a": a, "len": length}
+	var e := {"k": k, "x": x, "a": a, "len": length, "r": "W" if won else "L"}
+	Career.sim_farm(p, e, role, r)
+	e.erase("r")
+	return e
 
 ## After a ladder match: the bot's mood, the hero it is learning (kept if it goes well), and what the ladder hears
 ## about (a rank reached, a long streak, a new medal).
@@ -610,6 +680,8 @@ static func _avg(team: Array, key: String) -> float:
 static func catch_up() -> int:
 	load_data()
 	var t := now()
+	if ProfileTalk.catch_up(rng) > 0:
+		save()
 	var owed := (t - int(data.last_sim)) / ROUND_SECS
 	if owed <= 0:
 		return 0
@@ -653,6 +725,10 @@ static func _record(p: Dictionary, won: bool, d: int, hero: String, role: int, a
 		p.streak = mini(0, int(p.streak)) - 1
 	if abandon:
 		p.abandons = int(p.abandons) + 1
+	if bool(extra.get("mvp", false)):
+		p["mvps"] = int(p.get("mvps", 0)) + 1
+	if extra.has("k"):
+		Career.add(p, extra, won)
 	p.peak = maxi(int(p.peak), int(p.mmr))
 	if hero != "":
 		if not (p.get("hero_stats") is Dictionary):
@@ -757,9 +833,9 @@ static func finish_match(won: bool, abandon := false, extra := {}) -> Dictionary
 	var old_tier := tier_for(you)
 	var my_hero := String((m.get("heroes", {}) as Dictionary).get("me", ""))
 	var hm_old := hero_medal(you, my_hero) if my_hero != "" else {}
-	var d := elo_delta(_avg(ps[mine], "mmr"), _avg(ps[1 - mine], "mmr"), won)
 	var heroes: Dictionary = m.get("heroes", {})
 	var roles: Dictionary = m.get("roles", {})
+	var d := 0
 	for t in 2:
 		var w := won if t == mine else not won
 		for p in ps[t]:
@@ -767,19 +843,47 @@ static func finish_match(won: bool, abandon := false, extra := {}) -> Dictionary
 			var ex := extra.duplicate() if id == "me" else {}
 			if id == "me":
 				ex["hx"] = hero_xp_gain(w, float(extra.get("perf", 0.5)), abandon)
+				for k2 in ["mvp", "you_multi", "reports", "rel", "you_streak"]:
+					ex.erase(k2)
 			else:
 				# a bot's own line of this match (SimBotChat.relations), for its history
 				var br: Dictionary = (extra.get("rel", {}) as Dictionary).get(id, {})
-				if br.has("k"):
+				if br.get("line") is Dictionary:
+					ex = (br.line as Dictionary).duplicate()
+				elif br.has("k"):
 					ex = {"k": int(br.k), "x": int(br.get("x", 0)), "a": int(br.get("a", 0))}
 					if extra.has("len"):
 						ex["len"] = int(extra.len)
-			_record(p, w, d if t == mine else -d, String(heroes.get(id, "")), int(roles.get(id, 0)), abandon and id == "me", ex)
+			if String(extra.get("mvp", "")) == id and not abandon:
+				ex["mvp"] = true
+			# MMR by how well each played (Career: a win 23 to 41, a loss -41 to -23, leaving -41); no line known: 32
+			var role := int(roles.get(id, 0))
+			var dp := 0
+			if id == "me" and abandon:
+				dp = Career.mmr_change(false, ex, role, true)
+			elif ex.has("k"):
+				dp = Career.mmr_change(w, ex, role)
+			else:
+				dp = 32 if w else -32
+			if id == "me":
+				d = dp
+				ex["perf"] = snappedf(Career.perf(ex, role), 0.01) if ex.has("k") else 0.0
+			_record(p, w, dp, String(heroes.get(id, "")), role, abandon and id == "me", ex)
+			var rel_n: Dictionary = (extra.get("rel", {}) as Dictionary).get(id, {})
+			if id == "me":
+				rel_n = {"multi": int(extra.get("you_multi", 0)), "streak": int(extra.get("you_streak", 0))}
+			_note_game(p, "ranked", String(heroes.get(id, "")), ex, rel_n)
 	if abandon:
 		you.behavior = maxi(0, int(you.behavior) - 400)
 	else:
 		you.behavior = mini(12000, int(you.behavior) + 100)
 	var asked := _remember(ps, mine, won, abandon, extra, heroes)
+	_seen_each_other(ps, extra)
+	# some of the nine look you up afterwards and leave a comment on your profile (ProfileTalk)
+	var ids: Array = (teams[0] as Array) + (teams[1] as Array)
+	ProfileTalk.after_match(ids, extra.get("rel", {}), teams[mine], won, rng)
+	if int(extra.get("reports", 0)) > 0 and not abandon:
+		you.behavior = maxi(0, int(you.behavior) - 60 * int(extra.reports))
 	data.pending = {}
 	# the rest of the ladder played while you did
 	var busy := {}
@@ -791,6 +895,7 @@ static func finish_match(won: bool, abandon := false, extra := {}) -> Dictionary
 	_mark_dirty()
 	save()
 	var out := {"delta": d, "old": old, "new": int(you.mmr), "old_tier": old_tier, "new_tier": tier_for(you),
+		"perf": float((you.history[0] as Dictionary).get("perf", 0.0)) if not (you.history as Array).is_empty() else 0.0,
 		"place": place_of("me"), "abandon": abandon, "won": won, "hero": my_hero, "requests": asked}
 	if my_hero != "":
 		out["hero_old"] = hm_old
@@ -840,6 +945,17 @@ static func _remember(ps: Array, mine: int, won: bool, abandon: bool, extra: Dic
 			y["flamed"] = int(y.get("flamed", 0)) + int(r.get("flamed", 0))
 			y["flamed_you"] = int(y.get("flamed_you", 0)) + int(r.get("flamed_you", 0))
 			y["praised"] = int(y.get("praised", 0)) + int(r.get("praised", 0))
+			# run 2026-10-19 e: your trash talk, its reports and accusations, your best moments
+			for k3 in ["trash_talked", "reported_you", "accused_you", "praised_you"]:
+				if int(r.get(k3, 0)) > 0:
+					y[k3] = int(y.get(k3, 0)) + int(r.get(k3, 0))
+			y["last_you_kda"] = "%d/%d/%d" % [yk, yx, ya]
+			y["last_you_mvp"] = String(extra.get("mvp", "")) == "me"
+			y["last_you_multi"] = int(extra.get("you_multi", 0))
+			if String(extra.get("mvp", "")) == "me":
+				y["you_mvp"] = int(y.get("you_mvp", 0)) + 1
+			if int(extra.get("you_multi", 0)) >= 5:
+				y["you_rampage"] = int(y.get("you_rampage", 0)) + 1
 			y["last_side"] = "with" if with else "vs"
 			y["last_res"] = "W" if bot_won else "L"
 			y["last_kills_on"] = int(r.get("kills_on_you", 0))
@@ -857,6 +973,11 @@ static func _remember(ps: Array, mine: int, won: bool, abandon: bool, extra: Dic
 				dr += 0.06 if good and kind > 0.55 else (-0.04 if bot_won else 0.0)
 			dr -= 0.22 * float(r.get("flamed", 0))
 			dr += 0.12 * float(r.get("praised", 0))
+			dr -= 0.12 * minf(3.0, float(r.get("trash_talked", 0)))
+			if String(extra.get("mvp", "")) == "me":
+				dr += 0.1 if with else (0.05 if kind > 0.6 else -0.03)
+			if bool(r.get("befriended", false)):
+				dr += 0.3
 			dr += (kind - 0.5) * 0.12
 			y["rep"] = snappedf(clampf(float(y.get("rep", 0.0)) + dr, -1.0, 1.0), 0.01)
 			p["you"] = y
@@ -872,6 +993,144 @@ static func _remember(ps: Array, mine: int, won: bool, abandon: bool, extra: Dic
 					(you.requests as Array).append({"id": id, "t": t, "after": "with" if with else "vs"})
 					asked.append(id)
 	return asked
+
+## A profile's last game, whatever kind (run 2026-10-19 e: the versus screen and the bots read it): {kind (ranked,
+## casual, ladder), hero, k, x, a, mvp, t}. Notable games also go into its fame (what the ladder knows it for).
+static func _note_game(p: Dictionary, kind: String, hero: String, ex: Dictionary, rel := {}) -> void:
+	var k := int(ex.get("k", 0))
+	var x := int(ex.get("x", 0))
+	var a := int(ex.get("a", 0))
+	var mvp := bool(ex.get("mvp", false))
+	p["last_game"] = {"kind": kind, "hero": hero, "k": k, "x": x, "a": a, "mvp": mvp, "t": stamp()}
+	var notes: Array = []
+	if int(rel.get("multi", 0)) >= 5:
+		notes.append("rampage")
+	if int(rel.get("streak", 0)) >= 9:
+		notes.append("godlike")
+	if mvp and (kind != "ladder" or k + a >= 22):
+		notes.append("mvp")
+	if x >= 11 and x >= k + a:
+		notes.append("feeder")
+	if int(rel.get("flames", 0)) >= 3:
+		notes.append("flamer")
+	if kind == "ladder" and k >= 16 and x <= 4:
+		notes.append("carry")
+	for n in notes:
+		_fame(p, n, hero)
+
+static func _fame(p: Dictionary, what: String, hero: String) -> void:
+	if not (p.get("fame") is Array):
+		p["fame"] = []
+	(p.fame as Array).push_front({"k": what, "h": hero, "t": stamp()})
+	while (p.fame as Array).size() > 8:
+		(p.fame as Array).pop_back()
+	if what in ["rampage", "godlike"] and bool(p.get("bot", false)):
+		_feed(String(p.get("id", "")), what, hero)
+
+## What a profile is known for lately ("rampage", "mvp", "feeder", "flamer", "godlike", "carry"), newest first.
+static func fame_of(p: Dictionary, within_days := 14) -> Array:
+	var out: Array = []
+	var t := now()
+	for f in p.get("fame", []):
+		if f is Dictionary and t - int(f.get("t", 0)) <= within_days * 86400 and not (String(f.k) in out):
+			out.append(String(f.k))
+	return out
+
+## Whether a profile's last game was an MVP game.
+static func mvp_last(p: Dictionary) -> bool:
+	return bool((p.get("last_game", {}) as Dictionary).get("mvp", false))
+
+## The bots of a match with you remember each other: games together and what stood out about the other one
+## (rampage, MVP, fed, flamed). Each keeps the 40 it met last.
+static func _seen_each_other(ps: Array, extra: Dictionary) -> void:
+	var rel: Dictionary = extra.get("rel", {})
+	var mvp := String(extra.get("mvp", ""))
+	var all: Array = (ps[0] as Array) + (ps[1] as Array)
+	var t := now()
+	for p in all:
+		if String(p.id) == "me":
+			continue
+		if not (p.get("seen") is Dictionary):
+			p["seen"] = {}
+		var seen: Dictionary = p.seen
+		for o in all:
+			var oid := String(o.id)
+			if oid == String(p.id) or oid == "me":
+				continue
+			var r: Dictionary = rel.get(oid, {})
+			var note := ""
+			if int(r.get("multi", 0)) >= 5:
+				note = "rampage"
+			elif oid == mvp:
+				note = "mvp"
+			elif int(r.get("x", 0)) >= 10 and int(r.get("x", 0)) >= int(r.get("k", 0)) + int(r.get("a", 0)):
+				note = "feeder"
+			elif int(r.get("flames", 0)) >= 2:
+				note = "flamer"
+			var e: Dictionary = seen.get(oid, {})
+			e["g"] = int(e.get("g", 0)) + 1
+			e["t"] = t
+			e["with"] = int(e.get("with", 0)) + (1 if (o in ps[0]) == (p in ps[0]) else 0)
+			if note != "":
+				e["note"] = note
+			seen[oid] = e
+		if seen.size() > 40:
+			var keys: Array = seen.keys()
+			keys.sort_custom(func(a, b): return int(seen[a].get("t", 0)) < int(seen[b].get("t", 0)))
+			for i in seen.size() - 40:
+				seen.erase(keys[i])
+
+## A casual match with ladder players (Play with Options "Bots are ladder players"): no MMR, but everyone remembers
+## it like a ranked one (with you or against you, kills, flames, friend requests, the MVP, what they saw of each
+## other). m: {teams: [[ids], [ids]], mine, heroes: {id: hero}}. Returns the ids that sent friend requests.
+static func remember_casual(m: Dictionary, won: bool, extra: Dictionary) -> Array:
+	load_data()
+	var teams: Array = m.get("teams", [[], []])
+	var mine := int(m.get("mine", 0))
+	var ps := [[], []]
+	for t in 2:
+		for id in teams[t]:
+			var p := profile(String(id))
+			if not p.is_empty():
+				(ps[t] as Array).append(p)
+	var heroes: Dictionary = m.get("heroes", {})
+	var rel: Dictionary = extra.get("rel", {})
+	for t in 2:
+		for p in ps[t]:
+			var id := String(p.id)
+			var ex := {"k": int(extra.get("k", 0)), "x": int(extra.get("x", 0)), "a": int(extra.get("a", 0))} if id == "me" else \
+				{"k": int((rel.get(id, {}) as Dictionary).get("k", 0)), "x": int((rel.get(id, {}) as Dictionary).get("x", 0)),
+				"a": int((rel.get(id, {}) as Dictionary).get("a", 0))}
+			if String(extra.get("mvp", "")) == id:
+				ex["mvp"] = true
+				if id != "me":
+					p["mvps"] = int(p.get("mvps", 0)) + 1      # yours is counted with your unranked match (Career)
+			# a ladder player's career counts the match too (yours: Career.record_unranked)
+			var bl = (rel.get(id, {}) as Dictionary).get("line")
+			if id != "me" and bl is Dictionary:
+				Career.add(p, bl, won if t == mine else not won)
+			_note_game(p, "casual", String(heroes.get(id, "")), ex, rel.get(id, {}) if id != "me" else {"multi": int(extra.get("you_multi", 0)), "streak": int(extra.get("you_streak", 0))})
+	var asked := _remember(ps, mine, won, false, extra, heroes)
+	_seen_each_other(ps, extra)
+	ProfileTalk.after_match((teams[0] as Array) + (teams[1] as Array), extra.get("rel", {}), teams[mine], won, rng)
+	_mark_dirty()
+	save()
+	return asked
+
+## A bot became your friend in a match (you asked and it said yes, or it asked and you said yes in chat).
+static func befriend(id: String) -> void:
+	if id == "" or id == "me" or profile(id).is_empty():
+		return
+	accept_request(id)
+
+## A bot sends you a friend request (it said "add me" in a match, or liked the game): shown in Players.
+static func send_request(id: String, after := "with") -> bool:
+	var you := me()
+	if id == "" or id == "me" or profile(id).is_empty() or id in (you.friends as Array) or _requested(id):
+		return false
+	(you.requests as Array).append({"id": id, "t": now(), "after": after})
+	save()
+	return true
 
 static func _requested(id: String) -> bool:
 	for q in me().get("requests", []):
@@ -918,6 +1177,63 @@ static func remove_friend(id: String) -> void:
 		b.you["friend"] = false
 	save()
 
+# ---- Commends, reports, blocks (run 2026-10-20: the player menu) ----------------------------------------------------
+
+static func _acts(k: String) -> Dictionary:
+	var you := me()
+	if not (you.get(k) is Dictionary):
+		you[k] = {}
+	return you[k]
+
+## Whether you may commend (or report) a player now: once a day each.
+static func can_act(k: String, id: String) -> bool:
+	return id != "me" and not profile(id).is_empty() and now() - int(_acts(k).get(id, 0)) >= 86400
+
+## You commend a player: its profile counts it and it likes you more; a kind one may thank you on your wall.
+static func commend(id: String) -> bool:
+	if not can_act("commended", id):
+		return false
+	_acts("commended")[id] = now()
+	var b := profile(id)
+	b["commends"] = int(b.get("commends", 0)) + 1
+	var y: Dictionary = b.get("you", {})
+	y["rep"] = clampf(float(y.get("rep", 0.0)) + 0.08, -1.0, 1.0)
+	y["commended"] = int(y.get("commended", 0)) + 1
+	b["you"] = y
+	if rng.randf() < 0.35 + float((b.get("persona", {}) as Dictionary).get("kind", 0.5)) * 0.4:
+		ProfileTalk.post(me(), {"id": id, "t": now() + rng.randi_range(20, 300),
+			"text": ProfileTalk.say(b, "pf_wall_back_nice", {}, rng), "mood": 1})
+	save()
+	return true
+
+## You report a player: its behaviour score drops (it never learns who reported it).
+static func report(id: String) -> bool:
+	if not can_act("reported", id):
+		return false
+	_acts("reported")[id] = now()
+	var b := profile(id)
+	b["reports"] = int(b.get("reports", 0)) + 1
+	b["behavior"] = maxi(0, int(b.get("behavior", 10000)) - 60)
+	save()
+	return true
+
+## Block or unblock a player: a blocked player's posts and comments are hidden from you. Returns whether blocked now.
+static func toggle_block(id: String) -> bool:
+	var you := me()
+	if not (you.get("blocked") is Array):
+		you["blocked"] = []
+	var bl: Array = you.blocked
+	var now_blocked := not (id in bl)
+	if now_blocked:
+		bl.append(id)
+	else:
+		bl.erase(id)
+	save()
+	return now_blocked
+
+static func blocked(id: String) -> bool:
+	return id in (me().get("blocked", []) as Array)
+
 ## Players you met in ranked, most recent first: [[profile, unix time]].
 static func recent_players(n := 30) -> Array:
 	var out: Array = []
@@ -963,6 +1279,10 @@ static func feed_text(e: Dictionary) -> String:
 			return "%s made the top ten" % nm
 		"friend":
 			return "You and %s are now friends" % nm
+		"rampage":
+			return "%s got a Rampage on %s" % [nm, HeroDraft.hero_name(String(a))]
+		"godlike":
+			return "%s went Godlike on %s" % [nm, HeroDraft.hero_name(String(a))]
 	return nm
 
 static func set_player_name(s: String) -> void:

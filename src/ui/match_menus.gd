@@ -16,6 +16,11 @@ var _end: PanelContainer
 var _end_shown := false
 var _pause_btn: Button
 var _ranked_result := {}                   # a ranked match's MMR result (Ranked.finish_match)
+var _my_line := {}                          # your line of the match (Career.line_of), for the end screen
+var _mvp := {}                             # the match's MVP (MatchMvp.best)
+var _requests: Array = []                  # ladder players who sent you a friend request after this match
+var mvp_screen: MvpScreen
+var _dim: ColorRect
 
 func _ready() -> void:
 	theme = U.theme()
@@ -23,6 +28,15 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var mp: bool = game != null and bool(game.get("multiplayer_match"))
+	# the pause menu dims the game; a click outside the menu resumes
+	_dim = ColorRect.new()
+	_dim.color = Color(0, 0, 0, 0.45)
+	_dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_dim.visible = false
+	add_child(_dim)
+	_dim.gui_input.connect(func(e: InputEvent):
+		if e is InputEventMouseButton and e.pressed and _pause.visible and (e as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			_resume())
 	_pause = _panel("Menu" if mp else "Paused")
 	var col: VBoxContainer = _pause.get_child(0)
 	if mp:
@@ -85,13 +99,20 @@ func _button(text: String, cb: Callable) -> Button:
 func is_open() -> bool:
 	return _pause.visible or (_options != null and is_instance_valid(_options))
 
+## Whether a menu, the MVP screen or the end screen is up (game keys and orders wait).
+func blocks_input() -> bool:
+	return is_open() or _end.visible or (mvp_screen != null and is_instance_valid(mvp_screen))
+
 func toggle() -> void:
-	if _end.visible:
+	if _end.visible or (mvp_screen != null and is_instance_valid(mvp_screen)):
 		return
 	if is_open():
 		_resume()
 	else:
 		_pause.visible = true
+		_dim.visible = true
+		U.pop_in(_pause, 0.1)
+		U.pop_in(_dim, 0.1)
 		mouse_filter = Control.MOUSE_FILTER_STOP
 		if game.net == null and not game.multiplayer_match:
 			game.world.paused = true
@@ -99,6 +120,7 @@ func toggle() -> void:
 
 func _resume() -> void:
 	_pause.visible = false
+	_dim.visible = false
 	if _options and is_instance_valid(_options):
 		_options.queue_free()
 	_options = null
@@ -108,11 +130,13 @@ func _resume() -> void:
 
 func _open_options() -> void:
 	_pause.visible = false
+	_dim.visible = false
 	_options = OptionsPanel.new()
 	_options.game = game
 	_options.closed.connect(func():
 		_options = null
-		_pause.visible = true)
+		_pause.visible = true
+		_dim.visible = true)
 	add_child(_options)
 
 ## Multiplayer: pause or unpause the game for every player (a command every machine runs at the same tick).
@@ -135,14 +159,14 @@ func _leave_game() -> void:
 	if n != null and n.active():
 		n.leave_room()
 		n.back_from_match()
-	get_tree().change_scene_to_file(NET_MENU)
+	Options.go(get_tree(), NET_MENU)
 
 func _back_to_lobby() -> void:
 	get_tree().paused = false
 	var n := NetSession.inst
 	if n != null:
 		n.back_from_match()
-	get_tree().change_scene_to_file(NET_MENU)
+	Options.go(get_tree(), NET_MENU)
 
 ## How well you played, 0..1, for your hero XP (Ranked.hero_xp_gain): kills and assists against deaths (35%), your
 ## net worth's place among the ten (25%), your share of your team's hero damage (25%), last hits for the time (15%).
@@ -168,11 +192,11 @@ func _leave_ranked() -> void:
 	Ranked.abandon_pending()
 	GameSettings.ranked = []
 	get_tree().paused = false
-	get_tree().change_scene_to_file(RANKED)
+	Options.go(get_tree(), RANKED)
 
 func _to_creator() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://src/ui/hero_select.tscn")
+	Options.go(get_tree(), "res://src/ui/hero_select.tscn")
 
 func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo:
@@ -188,16 +212,59 @@ func _process(_dt: float) -> void:
 		_end_shown = true
 		if game.net != null and NetSession.inst != null:
 			NetSession.inst.report_match_over()
+		_mvp = MatchMvp.best(game.world)
+		var me_h: SimUnit = game.world.get_unit(game.player_hero_id)
+		var ex := {}
+		if me_h != null and not bool(game.get("spectator")):
+			var rel: Dictionary = game.world.botchat.relations()
+			var reports := 0
+			for pid in rel:
+				if int((rel[pid] as Dictionary).get("reported_you", 0)) > 0:
+					reports += 1
+			ex = Career.line_of(game.world, me_h)
+			_my_line = ex.duplicate()
+			ex.merge({"perf": _performance(game.world, me_h), "rel": rel, "mvp": _pid_of(int(_mvp.get("u", -1))),
+				"you_multi": me_h.best_multi, "you_streak": me_h.best_streak, "reports": reports}, true)
 		if _ranked() and Ranked.has_pending():
-			var me_h: SimUnit = game.world.get_unit(game.player_hero_id)
-			var ex := {}
-			if me_h != null:
-				ex = {"k": me_h.kills, "x": me_h.deaths, "a": me_h.assists, "nw": me_h.networth(),
-					"len": maxi(0, int(game.world.time)), "perf": _performance(game.world, me_h),
-					"rel": game.world.botchat.relations()}
 			_ranked_result = Ranked.finish_match(game.world.winner == game.player_team, false, ex)
+			_requests = _ranked_result.get("requests", [])
 			GameSettings.ranked = []
-		get_tree().create_timer(3.0).timeout.connect(_show_end)
+		elif not game.multiplayer_match and not (game.get("casual_match") as Dictionary).is_empty() and not ex.is_empty():
+			# Play with ladder players: they remember the match too (no MMR)
+			_requests = Ranked.remember_casual(game.casual_match, game.world.winner == game.player_team, ex)
+		# every unranked match you play counts on your profile (your career: farm, first bloods, multi-kills, MVPs)
+		if not _ranked() and not game.multiplayer_match and not ex.is_empty() and not Options.automated():
+			var line := ex.duplicate()
+			for k3 in ["rel", "mvp", "you_multi", "you_streak", "reports", "perf"]:
+				line.erase(k3)
+			Career.record_unranked(line, game.world.winner == game.player_team, String(me_h.def.get("id", "")),
+				String(ex.get("mvp", "")) == "me")
+		get_tree().create_timer(3.0).timeout.connect(_show_mvp)
+
+## The ladder id of a hero's player: "me" for you, the bot's ladder id, "" for a bot with none.
+func _pid_of(hid: int) -> String:
+	if hid == game.player_hero_id:
+		return "me"
+	for b in game.world.bots:
+		if b.hero_id == hid:
+			return String(b.pid)
+	return ""
+
+## The MVP screen first (Continue goes on to the scoreboard).
+func _show_mvp() -> void:
+	if is_open():
+		_resume()
+	if _mvp.is_empty() or game.world.heroes.size() < 2:
+		_show_end()
+		return
+	mvp_screen = MvpScreen.new()
+	mvp_screen.world = game.world
+	mvp_screen.mine = game.player_team
+	mvp_screen.best = _mvp
+	mvp_screen.honours = MatchMvp.honours(game.world, int(_mvp.get("u", -1)))
+	mvp_screen.finished.connect(_show_end)
+	add_child(mvp_screen)
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _show_end() -> void:
 	var w: SimWorld = game.world
@@ -227,7 +294,8 @@ func _show_end() -> void:
 	var minutes := maxf(w.time / 60.0, 0.25)
 	for h in w.heroes:
 		var tot := Scoreboard.totals(h)
-		for val in [String(h.look.get("display_name", h.name)), SimConst.TEAM_NAMES[h.team], str(h.level),
+		var shown_name := String(h.look.get("display_name", h.name)) + ("  (MVP)" if int(_mvp.get("u", -1)) == h.id else "")
+		for val in [shown_name, SimConst.TEAM_NAMES[h.team], str(h.level),
 				"%d / %d / %d" % [h.kills, h.deaths, h.assists], "%d / %d" % [h.last_hits, h.denies], str(h.networth()),
 				str(int(h.gold_earned / minutes)), str(int(h.xp / minutes)), str(int(tot.hero)), str(int(tot.building)),
 				str(int(tot.taken)), str(int(h.healed))]:
@@ -237,22 +305,53 @@ func _show_end() -> void:
 	v.add_child(grid)
 	if not _ranked_result.is_empty():
 		v.add_child(_mmr_panel(_ranked_result))
+	# friend requests and reports from this match (ladder players)
+	var notes: Array = []
+	# what went on your profile (run 2026-10-20: your record of first bloods, multi-kills and MVPs)
+	if not _my_line.is_empty() and not game.multiplayer_match:
+		var got: Array = []
+		if int(_my_line.get("fb", 0)) > 0:
+			got.append("First Blood")
+		for k in [["rp", "Rampage", "Rampages"], ["ul", "Ultra Kill", "Ultra Kills"], ["tr", "Triple Kill", "Triple Kills"]]:
+			var n := int(_my_line.get(String(k[0]), 0))
+			if n > 0:
+				got.append(String(k[1]) if n == 1 else "%d %s" % [n, String(k[2])])
+		if int(_mvp.get("u", -1)) == game.player_hero_id:
+			got.append("MVP")
+		if not got.is_empty():
+			notes.append("On your profile: " + ", ".join(got))
+	var names: Array = _requests.map(func(id): return String(Ranked.profile(String(id)).get("name", ""))).filter(func(n): return n != "")
+	if not names.is_empty():
+		notes.append("Friend requests from %s (Ranked > Players)" % ", ".join(names))
+	var reps := 0
+	for pid in (game.world.botchat.relations() as Dictionary):
+		if int((game.world.botchat.relations()[pid] as Dictionary).get("reported_you", 0)) > 0:
+			reps += 1
+	if reps > 0 and not game.multiplayer_match:
+		notes.append("%d %s reported you this match" % [reps, "player" if reps == 1 else "players"] + ("  ·  behaviour score -%d" % (60 * reps) if not _ranked_result.is_empty() else ""))
+	for n in notes:
+		var nl := Label.new()
+		nl.text = n
+		nl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nl.add_theme_color_override("font_color", U.TEXT_DIM)
+		v.add_child(nl)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 16)
 	if game.multiplayer_match:
 		var online := NetSession.inst != null and NetSession.inst.active()
 		row.add_child(_button("Back to Lobby" if online else "Multiplayer", _back_to_lobby))
-	elif _ranked() or not _ranked_result.is_empty():
-		row.add_child(_button("Find Match", func():
+	else:
+		# Ranked is the main mode (2026-10-20 b, the owner: "instead of Find Match ... it should be Back to Dashboard"):
+		# every match goes back to the Ranked screen
+		row.add_child(_button("Back to Dashboard", func():
 			get_tree().paused = false
-			get_tree().change_scene_to_file(RANKED)))
+			Options.go(get_tree(), RANKED)))
+		if not _ranked() and _ranked_result.is_empty():
+			row.add_child(_button("Play again", func(): Options.go(get_tree(), "res://src/game/main.tscn")))
 		row.add_child(_button("Main Menu", func():
 			get_tree().paused = false
-			get_tree().change_scene_to_file(MAIN_MENU)))
-	else:
-		row.add_child(_button("Play again", func(): get_tree().reload_current_scene()))
-		row.add_child(_button("Hero Select", _to_creator))
+			Options.go(get_tree(), MAIN_MENU)))
 	row.add_child(_button("Quit", func(): get_tree().quit()))
 	v.add_child(row)
 	_end.visible = true
@@ -283,6 +382,14 @@ func _mmr_panel(r: Dictionary) -> Control:
 	var line := Label.new()
 	line.text = "%d  ->  %d MMR    %s" % [int(r.old), int(r.new), Ranked.rank_label(Ranked.me())]
 	col.add_child(line)
+	# how the change was worked out (run 2026-10-20: 23 to 41 by how well you played)
+	if not bool(r.get("abandon", false)):
+		var why := Label.new()
+		var pf := int(round(float(r.get("perf", 0.0)) * 100.0))
+		why.text = "Your game: %d%%  (kills, assists, deaths, last hits)  ·  a win gives 23 to 41, a loss takes 23 to 41" % pf
+		why.add_theme_color_override("font_color", U.TEXT_DIM)
+		why.add_theme_font_size_override("font_size", 15)
+		col.add_child(why)
 	if int(r.new_tier) != int(r.old_tier):
 		var up := Label.new()
 		up.text = ("Rank up: " if int(r.new_tier) > int(r.old_tier) else "Rank down: ") + Ranked.tier_name(int(r.new_tier))

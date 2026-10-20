@@ -131,6 +131,8 @@ func apply(t: SimUnit, src_id: int, src_team: int, m: Dictionary, pierce := fals
 				or (tp and (m.get("mute", false) or m.get("root", false))):
 			w.orders.cancel_channel(t)
 	var kind := disable_kind(m)
+	if enemy and t.is_hero() and (m.get("stun", false) or m.get("hex", false) or m.get("root", false) or m.get("silence", false)):
+		w.combat.note_disable(w.get_unit(src_id), t, dur)
 	w.events.append({"t": "debuff", "u": t.id, "src": src_id, "id": String(m.id), "kind": kind, "dur": dur,
 		"bash": String(m.id) == "bashed"})
 	return true

@@ -22,8 +22,13 @@ func _ready() -> void:
 	dim.color = Color(0, 0, 0, 0.62)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
+	# a click on the dimmed screen outside the panel closes Options (every change is already applied and saved)
+	dim.gui_input.connect(func(e: InputEvent):
+		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			close())
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(900, 600)
@@ -55,6 +60,7 @@ func _ready() -> void:
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
 	bottom.add_child(_button("Back", close, 200))
+	U.pop_in(self)
 
 func close() -> void:
 	Options.save()
@@ -129,6 +135,8 @@ func _game_tab() -> void:
 	_check(v, "Center camera on hero at respawn", "center_on_respawn", Callable())
 	_check(v, "Screen shake", "screen_shake", Callable())
 	_check(v, "Damage numbers", "damage_numbers", Callable())
+	_border_choice(v)
+	_check(v, "Menu animations", "ui_motion", Callable())
 	_check(v, "Show bot chat", "bot_chat", Callable())
 	_check(v, "Bot trash talk", "bot_trash_talk", Callable())
 	_note(v, "Bots talk like players: they all chat their kills, mock missed spells and roast teammates (you too) who feed or fall behind, in English, Filipino and Taglish. Turn it off to keep only their plain team calls.")
@@ -140,7 +148,9 @@ func _game_tab() -> void:
 		else "No API key yet: put {\"api_key\": \"...\"} in llm.json in the game's data folder, or set OPENROUTER_API_KEY."
 	if not used.is_empty():
 		state += " So far: %d lines, $%.3f." % [int(used.get("calls", 0)), float(used.get("usd", 0.0))]
-	_note(v, "Single player only. An online language model (DeepSeek V4.1 Flash through OpenRouter) writes the bots' lines in their own voice; the bots still decide what to say about, so chat works the same without it. Well under a cent a match (docs/LLM_CHAT.md). " + state)
+	_check(v, "Bots are ladder players", "ladder_bots", Callable())
+	_note(v, "In Play, bots without a name you gave them are players from the ranked ladder who are online now: their own names, manners and memory of you, and they can become your friends. They still play at the skill you set in Game Setup.")
+	_note(v, "Online bot chat also writes the Forums posts. Single player only. An online language model (DeepSeek V4.1 Flash through OpenRouter) writes the bots' lines in their own voice; the bots still decide what to say about, so chat works the same without it. Well under a cent a match (docs/LLM_CHAT.md). " + state)
 	_check(v, "Bots learn from games", "bots_learn", func():
 		BotMemory.active = bool(Options.get_value("bots_learn")) and game != null)
 	_note(v, "Bots learn what worked: their fights and teamfights, their ganks, where they died, which items won, how far their skill shots land and which lane you like. It is saved on this computer.")
@@ -162,7 +172,7 @@ func _controls_tab() -> void:
 		_note(v, "Change any hotkey, save layouts as templates, and see the fixed keys.")
 		var b := _button("Edit hotkeys", func():
 			Options.save()
-			get_tree().change_scene_to_file(HOTKEYS), 240)
+			Options.go(get_tree(), HOTKEYS), 240)
 		b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		v.add_child(b)
 	else:
@@ -260,6 +270,39 @@ func _choice(v: VBoxContainer, label: String, key: String, items: Array, apply: 
 		Options.click()
 		if apply.is_valid():
 			apply.call()
+		Options.save())
+
+## The border pack drawn round skill and item icons (IconBorder), with a preview of an active skill, a passive and an
+## item in it.
+func _border_choice(v: VBoxContainer) -> void:
+	var row := _row(v, "Icon border")
+	var ids := IconBorder.ids()
+	var prev := HBoxContainer.new()
+	prev.add_theme_constant_override("separation", 12)
+	prev.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var samples := [["skill", U.ability_icon("chomp")], ["passive", U.ability_icon("blubber")], ["item", U.item_icon("battle_armor")]]
+	for smp in samples:
+		var f := IconFrame.make(smp[1], smp[0], 40)
+		f.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		prev.add_child(f)
+	row.add_child(prev)
+	var o := OptionButton.new()
+	o.custom_minimum_size = Vector2(260, 44)
+	o.add_theme_font_size_override("font_size", 17)
+	for id in ids:
+		o.add_item(IconBorder.pack_name(String(id)))
+	row.add_child(o)
+	var read := func():
+		o.select(maxi(0, ids.find(IconBorder.current())))
+		for f in prev.get_children():
+			f.queue_redraw()
+	read.call()
+	_refresh.append(read)
+	o.item_selected.connect(func(i):
+		Options.set_value("icon_border", String(ids[i]))
+		Options.click()
+		for f in prev.get_children():
+			f.queue_redraw()
 		Options.save())
 
 func _button(text: String, cb: Callable, w := 200) -> Button:

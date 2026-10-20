@@ -593,7 +593,7 @@ func _on_begin(bytes: PackedByteArray) -> void:
 	match_starting.emit()
 	if not headless_test:
 		get_tree().paused = false
-		get_tree().change_scene_to_file("res://src/game/main.tscn")
+		Options.go(get_tree(), "res://src/game/main.tscn")
 
 ## The match scene finished loading here: the lockstep starts once the server says go.
 func match_loaded(world: SimWorld, slot_heroes: Dictionary) -> NetMatch:

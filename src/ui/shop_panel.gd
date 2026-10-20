@@ -134,13 +134,10 @@ func _draw_grid(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 			var price := w.shop.price(h, id)
 			var afford := h.gold() >= price
 			var sel := id == selected and sell_slot < 0
-			U.slot(self, r, r.has_point(m) or sel)
+			IconBorder.draw_item(self, U.item_icon(id), r, Color(1, 1, 1) if afford else Color(0.5, 0.5, 0.5),
+				Color(1.3, 1.22, 1.05) if r.has_point(m) or sel else Color.WHITE)
 			if sel:
-				draw_rect(r.grow(1), U.GOLD, false, 2.0)
-			var ic: Texture2D = U.item_icon(id)
-			if ic:
-				draw_texture_rect(ic, Rect2(r.position + Vector2((CELL.x - 36) * 0.5, 2), Vector2(36, 36)), false,
-					Color(1, 1, 1) if afford else Color(0.5, 0.5, 0.5))
+				draw_rect(r.grow(3), U.GOLD, false, 2.0)
 			U.text_c(self, str(price), Vector2(r.get_center().x, r.end.y + 15), 13, U.GOLD if afford else Color(0.6, 0.5, 0.4), "bold")
 			if r.has_point(m):
 				hud.show_tip(get_global_mouse_position(), hud.item_tip(id, h))
@@ -161,10 +158,7 @@ func _draw_pane(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 		_draw_bags(h, x, H - 228, m)
 		return
 	var d := SimData.item(selected)
-	var ic: Texture2D = U.item_icon(selected)
-	U.slot(self, Rect2(x, y, 60, 46))
-	if ic:
-		draw_texture_rect(ic, Rect2(x + 9, y + 2, 42, 42), false)
+	IconBorder.draw_item(self, U.item_icon(selected), Rect2(x, y, 60, 46))
 	U.text(self, String(d.name), Vector2(x + 70, y + 20), 18, U.GOLD, "title")
 	U.text(self, "%d gold" % int(d.cost), Vector2(x + 70, y + 42), 14, U.GOLD_DIM, "bold")
 	y += 58
@@ -259,22 +253,19 @@ func _draw_bags(h: SimUnit, x: float, y: float, m: Vector2) -> void:
 	for i in 9:
 		var r := Rect2(x + (i % 5) * 52, y + (i / 5) * 46, 48, 40)
 		var it = h.inventory[i]
-		U.slot(self, r, r.has_point(m) or i == sell_slot)
-		if it != null:
-			var ic: Texture2D = U.held_item_icon(it)
-			if ic:
-				draw_texture_rect(ic, Rect2(r.position + Vector2(8, 2), Vector2(32, 32)), false,
-					Color(1, 1, 1) if i < 6 else Color(0.7, 0.7, 0.7))
+		if it == null:
+			U.slot(self, r, r.has_point(m) or i == sell_slot)
+		else:
+			IconBorder.draw_item(self, U.held_item_icon(it), r, Color(1, 1, 1) if i < 6 else Color(0.7, 0.7, 0.7),
+				Color(1.3, 1.22, 1.05) if r.has_point(m) or i == sell_slot else Color.WHITE)
 			_pane_rects.append([r, "pick", i])
 			if r.has_point(m):
 				hud.show_tip(get_global_mouse_position(), hud.item_tip(it.id, h))
 
 func _mini_icon(id: String, p: Vector2, lit: bool, m: Vector2) -> void:
 	var r := Rect2(p, Vector2(40, 40))
-	U.slot(self, r, r.has_point(m))
-	var ic: Texture2D = U.item_icon(id)
-	if ic:
-		draw_texture_rect(ic, Rect2(p + Vector2(4, 4), Vector2(32, 32)), false, Color(1, 1, 1) if lit else Color(0.45, 0.45, 0.45))
+	IconBorder.draw_item(self, U.item_icon(id), r.grow(-2), Color(1, 1, 1) if lit else Color(0.45, 0.45, 0.45),
+		Color(1.3, 1.22, 1.05) if r.has_point(m) else Color.WHITE)
 	_pane_rects.append([r, "select", id])
 	if r.has_point(m):
 		hud.show_tip(get_global_mouse_position(), hud.item_tip(id, _hero()))
@@ -286,12 +277,11 @@ func _draw_stash(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 	var here := w.shop.in_shop(h)
 	for i in 6:
 		var r := Rect2(90 + i * 66, y, 60, 46)
-		U.slot(self, r, r.has_point(m) and h.stash[i] != null and here)
 		var it = h.stash[i]
-		if it != null:
-			var ic: Texture2D = U.held_item_icon(it)
-			if ic:
-				draw_texture_rect(ic, Rect2(r.position + Vector2(10, 2), Vector2(42, 42)), false)
+		if it == null:
+			U.slot(self, r)
+		else:
+			IconBorder.draw_item(self, U.held_item_icon(it), r, Color.WHITE, Color(1.3, 1.22, 1.05) if r.has_point(m) and here else Color.WHITE)
 			_pane_rects.append([r, "stash", i])
 			if r.has_point(m):
 				hud.show_tip(get_global_mouse_position(), hud.item_tip(it.id, h))

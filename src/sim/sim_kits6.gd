@@ -585,7 +585,7 @@ func _pack(u: SimUnit) -> void:
 func _bless(u: SimUnit, aid: String, t: SimUnit) -> void:
 	if not is_beast_of(u, t):
 		return
-	w.combat.heal(t, t.max_hp * ab.val(u, aid, "heal"))
+	w.combat.heal(t, t.max_hp * ab.val(u, aid, "heal"), u)
 	w.status.dispel(t, false, u.team)
 	for a in t.abilities:
 		t.ability_ready[a] = minf(float(t.ability_ready.get(a, C.LONG_AGO)), w.time)

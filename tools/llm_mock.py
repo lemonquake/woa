@@ -45,6 +45,10 @@ class Handler(BaseHTTPRequestHandler):
         draft = ""
         if 'A line this player might type: "' in user:
             draft = user.split('A line this player might type: "', 1)[1].split('"', 1)[0]
+        elif 'The player just wrote in ' in user:
+            # an answer to the player (run 2026-10-20): echo what they wrote, so the probe can see it was answered
+            said = user.split('The player just wrote in ', 1)[1].split('"', 2)[1]
+            draft = "answer to " + said
         text = "mock " + (draft or "gg")
         if self.path.endswith("/chat/completions"):
             # OpenRouter (OpenAI style), with the cost it reports when usage.include is asked

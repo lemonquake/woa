@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 5494 ms
+match ready in 20786 ms
+PASS the talent button opens the tree
+PASS a click on the tree's own panel keeps it open
+PASS a click on the world closes the tree
+PASS a click on the minimap closes the tree
+PASS Esc closes the tree
+PASS the same Esc does not open the pause menu
+PASS showing another unit closes the tree and clears its click area
+talent row [P: (184.0, -60.0), S: (228.0, 40.0)] open true shown true can true points 1 level 12
+PASS a talent is still learned by clicking its row ({ 0: "sludge_stench_slow" })
+PASS a right click on an item opens its menu
+PASS the mouse wheel leaves the item menu open
+PASS a click away closes the item menu
+PASS a click on the world closes the shop
+PASS Esc opens the pause menu and pauses
+PASS game keys wait while the pause menu is open (Enter opens no chat)
+PASS a click outside the pause menu resumes
+PASS Options opens from the pause menu
+PASS a click outside Options closes it, back to the pause menu
+PASS Esc resumes
+PASS both shipped border packs are found (["default", "plain"])
+PASS the default border is in use
+PASS switching to Plain takes effect at once
+PASS a missing pack falls back to the default
+PASS a pack dropped in user://borders loads
+PASS a kind the pack lacks (item) falls back to its skill frame
+PASS leaving the match fades out
+PASS the main menu fades back in
+PASS the menu behind Options ignores the arrow keys
+PASS Esc closes Options
+PASS Esc on Hero Select goes back to the main menu
+PASS the player menu opens
+PASS the wheel leaves the player menu open
+PASS a left click outside closes the player menu
+PASS Esc closes the player menu and stays on Ranked
+PASS Esc on Ranked goes back to the main menu
+
+34 passed, 0 failed
+WARNING: 507 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 23 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

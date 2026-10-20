@@ -17,7 +17,8 @@ extends Control
 ##     being learned, new Top 1 players) and who is online now (in a match as which hero, or free).
 ##   * Guilds: coming soon (from Licensed rank).
 ## Automation: --capture=path [--tab=play|profile|leaderboard|guilds] [--state=search|found|ready] [--hover=n]
-## [--profile=<id>] [--view=heroes] [--board=heroes --hero=<id>] [--4k] [--frames=n] saves a frame and quits.
+## [--profile=<id>] [--view=heroes] [--board=heroes --hero=<id>] [--4k] [--frames=n] saves a frame and quits; the profile's
+## states: [--view_as=public|<id>] [--side=wall|heroes|mmr|visitors] [--open_match=n] [--compare] [--menu=<id>].
 
 const U = preload("res://src/ui/ui_kit.gd")
 const MAIN_MENU := "res://src/ui/main_menu.tscn"
@@ -63,6 +64,7 @@ var _rank_sub: Label
 var _rank_bar: Bar
 # Match found
 var _offer: Control
+var _back_btn: Button
 var _accept_btn: BigButton
 var _decline_btn: Button
 var _offer_cols: Array = []
@@ -74,7 +76,6 @@ var _launching := false
 var _profile_id := "me"
 var _profile_view := "overview"            # overview, heroes
 var _profile_page: Control
-var _file_dialog: FileDialog
 # Leaderboard
 var _board_list: VBoxContainer
 var _players_page: Control
@@ -169,6 +170,22 @@ func _ready() -> void:
 				mm.accept_t = 3.2
 	if args.has("hover"):
 		_hover_i = int(args.hover)
+	# captures of the profile's states (run 2026-10-20): --view_as=public|<id>, --side=wall|heroes|mmr|visitors,
+	# --open_match=n, --compare, --menu=<id> (the player menu at the screen's centre)
+	if args.has("view_as"):
+		_ppage.view_as = String(args.view_as)
+		_ppage.refresh()
+	if args.has("side"):
+		_ppage.side_tab = String(args.side)
+		_ppage.refresh()
+	if args.has("open_match"):
+		_ppage._open = int(args.open_match)
+		_ppage.refresh()
+	if args.has("compare"):
+		_ppage.open_compare()
+	if args.has("menu"):
+		await get_tree().process_frame
+		PlayerMenu.open(self, String(args.menu), size * 0.5)
 	await get_tree().process_frame
 	LoadingScreen.close(get_tree())
 
@@ -227,36 +244,7 @@ static func role_name(r: int) -> String:
 # ---- Background, top bar, footer ------------------------------------------------------------------------------------
 
 func _build_background() -> void:
-	var bg := TextureRect.new()
-	bg.texture = U.skin_tex("backdrop")
-	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	bg.stretch_mode = TextureRect.STRETCH_SCALE
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.modulate = Color(0.55, 0.6, 0.75)
-	add_child(bg)
-	var sky := ColorRect.new()
-	sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	sky.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sh := Shader.new()
-	sh.code = """
-shader_type canvas_item;
-float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-float n(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
-	return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
-void fragment() {
-	vec2 uv = UV;
-	vec3 col = mix(vec3(0.02, 0.03, 0.06), vec3(0.04, 0.05, 0.09), uv.y);
-	float c = n(uv * vec2(3.0, 2.0) + vec2(TIME * 0.015, 0.0)) * n(uv * vec2(6.0, 4.0) - vec2(0.0, TIME * 0.01));
-	col += vec3(0.16, 0.12, 0.05) * smoothstep(0.2, 0.7, c) * 0.5;
-	col += vec3(0.25, 0.18, 0.06) * exp(-pow(length((uv - vec2(0.5, 0.0)) * vec2(1.2, 2.2)), 2.0)) * 0.35;
-	float vig = smoothstep(1.25, 0.35, length((uv - 0.5) * vec2(1.4, 1.1)));
-	COLOR = vec4(col * (0.55 + 0.45 * vig), 0.82);
-}
-"""
-	var m := ShaderMaterial.new()
-	m.shader = sh
-	sky.material = m
-	add_child(sky)
+	SocialUi.backdrop(self)
 
 func _build_top() -> void:
 	var bar := TopBar.new()
@@ -264,6 +252,7 @@ func _build_top() -> void:
 	bar.size = Vector2(W, 92)
 	_frame.add_child(bar)
 	var back := _button("Back", func(): _leave(), "DarkButton", Vector2(110, 46))
+	_back_btn = back
 	back.position = Vector2(30, 23)
 	bar.add_child(back)
 	var title := _label("Ranked", 38, U.GOLD, "title", bar)
@@ -338,11 +327,17 @@ func _show_tab(id: String) -> void:
 	elif id == "play":
 		_refresh_play()
 
+## Esc goes back, as the Back button does (fields, dropdowns and overlays get the key first).
+func _unhandled_key_input(e: InputEvent) -> void:
+	if U.is_esc(e) and _back_btn != null and _back_btn.is_visible_in_tree() and not (_offer != null and _offer.visible):
+		get_viewport().set_input_as_handled()
+		_back_btn.pressed.emit()
+
 func _leave() -> void:
 	if mm.state in ["searching", "found"]:
 		mm.cancel()
 	GameSettings.save()
-	get_tree().change_scene_to_file(MAIN_MENU)
+	Options.go(get_tree(), MAIN_MENU)
 
 func _notice(text: String) -> void:
 	_toast.text = text
@@ -426,8 +421,11 @@ func _build_play() -> void:
 		mm.cancel()
 		_refresh_play())
 	mid.add_child(_search_box)
-	var hint := _label("Matches are 5 against 5 with experience and gold at 150%. Your MMR moves by about 25 a game.", 15, U.TEXT_DIM, "body", mid)
+	var hint := _label("Matches are 5 against 5 with experience and gold at 150%. A win gives 23 to 41 MMR, a loss takes 23 to 41: kills, assists, last hits and few deaths decide how many.", 15, U.TEXT_DIM, "body", mid)
 	hint.position = Vector2(38, 712)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD
+	hint.size = Vector2(800, 0)
+	hint.custom_minimum_size = Vector2(800, 0)
 	hint.name = "Hint"
 	# right: the top of the ladder and your recent games
 	var top := _glass(Rect2(1450, 118, 430, 520), page, "Top of the ladder")
@@ -700,7 +698,7 @@ func _lineup() -> void:
 func _launch() -> void:
 	_launching = true
 	Matchmaker.accepted_match = mm.lineup.duplicate(true)
-	get_tree().change_scene_to_file(DRAFT)
+	Options.go(get_tree(), DRAFT)
 
 func _hover_player(p: Dictionary, at: Rect2, on: bool) -> void:
 	if not on:
@@ -745,29 +743,23 @@ func _build_profile_page() -> void:
 	_profile_page.size = Vector2(W, H)
 	_frame.add_child(_profile_page)
 	_pages["profile"] = _profile_page
-	_file_dialog = FileDialog.new()
-	_file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	_file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	_file_dialog.use_native_dialog = true
-	_file_dialog.title = "Choose a picture"
-	_file_dialog.filters = PackedStringArray(["*.png, *.jpg, *.jpeg, *.webp ; Pictures"])
-	_file_dialog.file_selected.connect(func(path: String):
-		var err := Avatar.import_picture(path)
-		if err != "":
-			_notice(err)
-		else:
-			Ranked.set_avatar({"k": "custom"})
-			_notice("Picture changed.")
-		_fill_profile("me")
-		_chip.queue_redraw())
-	add_child(_file_dialog)
+	# the profile (run 2026-10-20: ProfilePage; yours and everyone's)
+	_ppage = ProfilePage.new()
+	_ppage.position = Vector2(40, 104)
+	_profile_page.add_child(_ppage)
+	_ppage.back_pressed.connect(func(): _show_tab("players" if _came_from == "players" else "leaderboard"))
+	_ppage.changed.connect(func():
+		_chip.queue_redraw()
+		_refresh_footer())
 
 func _open_profile(id: String) -> void:
-	_came_from = _tab
+	if _tab != "profile":
+		_came_from = _tab
 	_profile_id = id
 	_show_tab("profile")
 
 var _came_from := ""
+var _ppage: ProfilePage
 
 ## A line about a player's games with you: "With you 3 (2 won)  ·  Against 1 (1 lost)  ·  Likes you".
 static func _with_you(p: Dictionary) -> String:
@@ -779,275 +771,51 @@ static func _with_you(p: Dictionary) -> String:
 		parts.append("With you %d (%d won)" % [int(y.with), int(y.get("with_w", 0))])
 	if int(y.get("vs", 0)) > 0:
 		parts.append("Against %d (you won %d)" % [int(y.vs), int(y.vs) - int(y.get("vs_w", 0))])
-	parts.append(_feeling(float(y.get("rep", 0.0))))
+	parts.append(Persona.feeling(float(y.get("rep", 0.0))))
 	return "  ·  ".join(parts)
 
 static func _feeling(rep: float) -> String:
 	return Persona.feeling(rep)
 
 func _fill_profile(id: String) -> void:
-	for c in _profile_page.get_children():
-		c.queue_free()
-	var p := Ranked.profile(id)
-	if p.is_empty():
-		p = Ranked.me()
-		id = "me"
-	var own := id == "me"
-	var mmr := int(p.mmr)
-	var tier := Ranked.tier_for(p)
-	# left: picture, name, behaviour, guild
-	var left := _glass(Rect2(40, 118, 430, 906), _profile_page, "Profile" if own else "Player")
-	var av := Avatar.new()
-	av.position = Vector2(65, 60) if own else Vector2(105, 50)
-	av.size = Vector2(300, 300) if own else Vector2(220, 220)
-	av.frame = U.GOLD
-	av.set_spec(p.get("avatar", {"k": "none"}))
-	left.add_child(av)
-	var y := 384.0 if own else 284.0
-	if own:
-		var row := HBoxContainer.new()
-		row.position = Vector2(30, y)
-		row.size = Vector2(370, 44)
-		row.add_theme_constant_override("separation", 10)
-		left.add_child(row)
-		var up := _button("Change picture", func(): _file_dialog.popup_file_dialog(), "DarkButton", Vector2(180, 44))
-		row.add_child(up)
-		var rm := _button("Use hero", func():
-			var played := Ranked.heroes_played(Ranked.me())
-			Ranked.set_avatar({"k": "hero", "id": String(played[0][0]) if not played.is_empty() else GameSettings.selected})
-			_fill_profile("me")
-			_chip.queue_redraw(), "DarkButton", Vector2(180, 44))
-		row.add_child(rm)
-		y += 64.0
-		var nl := _label("Name", 15, U.TEXT_DIM, "bold", left)
-		nl.position = Vector2(30, y)
-		var name_edit := LineEdit.new()
-		name_edit.text = String(p.name)
-		name_edit.max_length = 20
-		name_edit.position = Vector2(30, y + 24)
-		name_edit.size = Vector2(250, 44)
-		name_edit.add_theme_font_size_override("font_size", 19)
-		left.add_child(name_edit)
-		var save := _button("Save", func():
-			Ranked.set_player_name(name_edit.text)
-			_notice("Name saved.")
-			_fill_profile("me")
-			_chip.queue_redraw(), "DarkButton", Vector2(110, 44))
-		save.position = Vector2(290, y + 24)
-		left.add_child(save)
-		name_edit.text_submitted.connect(func(_t): save.pressed.emit())
-		y += 92.0
+	var from := ""
+	if id != "me":
+		from = {"players": "Players", "leaderboard": "Leaderboard", "play": "Play"}.get(_came_from, "Leaderboard")
+	if _ppage.pid != id or _ppage.came_from != from or _ppage.view_as != "":
+		_ppage.show_id(id, from)
 	else:
-		var nm := _label(String(p.name), 30, U.TEXT, "bold", left)
-		nm.position = Vector2(0, y)
-		nm.size = Vector2(430, 0)
-		nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		nm.clip_text = true
-		y += 46.0
-		# what they are up to: their status, online or in a match or last seen
-		var st := _label(Persona.status(p), 17, U.TEXT, "body", left)
-		st.position = Vector2(20, y)
-		st.size = Vector2(390, 0)
-		st.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		st.clip_text = true
-		y += 30.0
-		var pres := Persona.presence(p, Ranked.now())
-		var pl := PresenceLine.new()
-		pl.state = String(pres.state)
-		pl.text = String(pres.label)
-		pl.position = Vector2(20, y)
-		pl.size = Vector2(390, 26)
-		left.add_child(pl)
-		y += 36.0
-		var row2 := HBoxContainer.new()
-		row2.position = Vector2(30, y)
-		row2.size = Vector2(370, 44)
-		row2.add_theme_constant_override("separation", 10)
-		left.add_child(row2)
-		var back := _button("Back", func(): _show_tab("players" if _came_from == "players" else "leaderboard"), "DarkButton", Vector2(120, 44))
-		row2.add_child(back)
-		var is_friend := id in (Ranked.me().get("friends", []) as Array)
-		var pid := id
-		var fb := _button("Remove friend" if is_friend else "Add friend", func():
-			if id in (Ranked.me().get("friends", []) as Array):
-				Ranked.remove_friend(pid)
-				_notice("Removed from your friends.")
-			elif Ranked.ask_friend(pid):
-				_notice("%s accepted your friend request." % String(Ranked.profile(pid).get("name", "")))
-			else:
-				_notice("%s did not answer your friend request." % String(Ranked.profile(pid).get("name", "")))
-			_fill_profile(pid), "DarkButton", Vector2(240, 44))
-		row2.add_child(fb)
-		y += 58.0
-	var where := Ranked.country_name(String(p.get("country", "")))
-	var joined := _label(("%s  ·  " % where if where != "" else "") + "Playing since %s" % Time.get_date_string_from_unix_time(int(p.get("created", Ranked.now()))), 15, U.TEXT_DIM, "body", left)
-	joined.position = Vector2(30, y)
-	y += 34.0 if own else 28.0
-	var beh := Behavior.new()
-	beh.score = int(p.get("behavior", 10000))
-	beh.position = Vector2(30, y)
-	beh.size = Vector2(370, 70)
-	left.add_child(beh)
-	y += 86.0 if own else 76.0
-	# best heroes: their medals (stars, Bronze .. Diamond, Top 5 .. Top 1)
-	var fav := _label("Best heroes", 15, U.TEXT_DIM, "bold", left)
-	fav.position = Vector2(30, y)
-	var best: Array = []
-	for h in (p.get("hero_stats", {}) as Dictionary):
-		best.append([String(h), Ranked.hero_medal(p, String(h))])
-	best.sort_custom(func(a1, b1): return Ranked._medal_rank(a1[1]) * 1000000 + int(a1[1].xp) > Ranked._medal_rank(b1[1]) * 1000000 + int(b1[1].xp))
-	var hx := 22.0
-	for e in best.slice(0, 3):
-		var hb := HeroBadge.new()
-		hb.hero = String(e[0])
-		hb.info = e[1]
-		hb.label = false
-		hb.position = Vector2(hx, y + 22)
-		hb.size = Vector2(118, 118)
-		left.add_child(hb)
-		var cap := _label("%s
-%s" % [HeroDraft.hero_name(String(e[0])), String(e[1].name)], 13, HeroBadge.metal(e[1]), "bold", left)
-		cap.position = Vector2(hx, y + 140)
-		cap.size = Vector2(118, 0)
-		cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		hx += 128.0
-	if best.is_empty():
-		var none := _label("Play a few matches first.", 15, U.TEXT_DIM, "body", left)
-		none.position = Vector2(30, y + 30)
-	var guild := Glass.new()
-	guild.position = Vector2(20, 906 - 86)
-	guild.size = Vector2(390, 66)
-	guild.quiet = true
-	left.add_child(guild)
-	if own:
-		var gl := _label("Guild: coming soon%s" % ("" if tier >= Ranked.GUILD_TIER else " (from Licensed rank)"), 16, U.TEXT_DIM, "bold", guild)
-		gl.position = Vector2(18, 21)
-	else:
-		# their personality and what they make of you
-		var tags := Persona.labels(p)
-		var tl := _label(" · ".join(tags) if not tags.is_empty() else "", 16, U.GOLD, "bold", guild)
-		tl.position = Vector2(18, 8)
-		tl.size = Vector2(354, 0)
-		tl.clip_text = true
-		var wl := _label(_with_you(p), 14, U.TEXT, "body", guild)
-		wl.position = Vector2(18, 36)
-		wl.size = Vector2(354, 0)
-		wl.clip_text = true
-	# centre: the emblem
-	var mid := _glass(Rect2(500, 118, 600, 906), _profile_page, "")
-	var ev := EmblemView.new(520)
-	ev.position = Vector2(40, 40)
-	ev.size = Vector2(520, 520)
-	ev.show_rank(tier, Ranked.stars(mmr))
-	mid.add_child(ev)
-	var drag := _label("Drag to turn", 14, U.TEXT_DIM, "body", mid)
-	drag.position = Vector2(0, 556)
-	drag.size = Vector2(600, 0)
-	drag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var rn := _label(Ranked.rank_label(p), 44, U.GOLD, "title", mid)
-	rn.position = Vector2(0, 588)
-	rn.size = Vector2(600, 0)
-	rn.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var mm_l := _label("%s MMR" % num(mmr), 30, U.TEXT, "bold", mid)
-	mm_l.position = Vector2(0, 652)
-	mm_l.size = Vector2(600, 0)
-	mm_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var place := Ranked.place_of(id)
-	var pl := _label("Leaderboard place #%d of %d" % [place, Ranked.leaderboard().size()], 17, U.TEXT_DIM, "body", mid)
-	pl.position = Vector2(0, 698)
-	pl.size = Vector2(600, 0)
-	pl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var bar := Bar.new()
-	bar.position = Vector2(60, 750)
-	bar.size = Vector2(480, 64)
-	bar.set_rank(mmr, tier)
-	mid.add_child(bar)
-	if not own:
-		var roles: Array = p.get("roles", [])
-		var rl := _label("Plays %s" % " and ".join(roles.map(func(r): return role_name(int(r)))), 17, U.TEXT, "body", mid)
-		rl.position = Vector2(0, 836)
-		rl.size = Vector2(600, 0)
-		rl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# right: numbers, graph, history; or the heroes
-	var right := _glass(Rect2(1130, 118, 750, 906), _profile_page, "Numbers" if _profile_view == "overview" else "Heroes")
-	var vx := 750.0 - 24.0
-	for v in [["heroes", "Heroes"], ["overview", "Numbers"]]:
-		var vid := String(v[0])
-		var pid := id
-		var vb := _button(String(v[1]), func():
-			_profile_view = vid
-			_fill_profile(pid), "DarkButton", Vector2(120, 34))
-		if _profile_view == vid:
-			vb.add_theme_color_override("font_color", U.GOLD)
-			vb.add_theme_color_override("font_hover_color", U.GOLD)
-		vx -= 128.0
-		vb.position = Vector2(vx, 12)
-		right.add_child(vb)
-	if _profile_view == "heroes":
-		_fill_profile_heroes(right, p)
-		return
-	var games := int(p.wins) + int(p.losses)
-	var tiles := [["Matches", num(games)], ["Wins", num(int(p.wins))], ["Losses", num(int(p.losses))],
-		["Win rate", "%.1f%%" % (Ranked.win_rate(p) * 100.0) if games > 0 else "-"], ["Highest MMR", num(int(p.peak))],
-		["Streak", _streak(int(p.streak))], ["Best streak", RankedNum.count(int(p.best_streak), "win", "wins")], ["Left matches", str(int(p.get("abandons", 0)))]]
-	for i in tiles.size():
-		var tile := StatTile.new()
-		tile.title = String(tiles[i][0])
-		tile.value = String(tiles[i][1])
-		tile.position = Vector2(24 + (i % 4) * 178, 58 + (i / 4) * 92)
-		tile.size = Vector2(166, 80)
-		right.add_child(tile)
-	var gh := _label("MMR over the last %d matches" % maxi(0, (p.get("graph", []) as Array).size() - 1), 17, U.GOLD, "title", right)
-	gh.position = Vector2(26, 252)
-	var graph := Graph.new()
-	graph.values = p.get("graph", [])
-	graph.position = Vector2(24, 284)
-	graph.size = Vector2(702, 230)
-	right.add_child(graph)
-	var hh := _label("Recent matches", 17, U.GOLD, "title", right)
-	hh.position = Vector2(26, 534)
-	var list := VBoxContainer.new()
-	list.position = Vector2(24, 566)
-	list.size = Vector2(702, 320)
-	list.add_theme_constant_override("separation", 5)
-	right.add_child(list)
-	var hist: Array = p.get("history", [])
-	for i in mini(6, hist.size()):
-		var row := HistoryRow.new()
-		row.e = hist[i]
-		row.wide = true
-		row.custom_minimum_size = Vector2(702, 48)
-		list.add_child(row)
-	if hist.is_empty():
-		_label("No ranked matches yet.", 16, U.TEXT_DIM, "body", list)
+		_ppage.refresh()
+	if _profile_view == "heroes" and _ppage.side_tab != "heroes":
+		_ppage.side_tab = "heroes"
+		_ppage.refresh()
 
-## Every hero a player played in ranked: wins, losses, win rate and their place on that hero's ranking.
-func _fill_profile_heroes(panel: Control, p: Dictionary) -> void:
-	var played := Ranked.heroes_played(p)
-	var sub := _label("Every hero played in ranked. Each match gives hero XP for the result and how well you played: five stars to a medal, Bronze to Diamond. The %d Diamonds with the most XP on a hero are its Top Players." % Ranked.TOP_HERO,
-		15, U.TEXT_DIM, "body", panel)
-	sub.autowrap_mode = TextServer.AUTOWRAP_WORD
-	sub.custom_minimum_size = Vector2(700, 0)
-	sub.size = Vector2(700, 0)
-	sub.position = Vector2(26, 58)
-	var sc := ScrollContainer.new()
-	sc.position = Vector2(24, 110)
-	sc.size = Vector2(702, 776)
-	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	panel.add_child(sc)
-	var list := VBoxContainer.new()
-	list.custom_minimum_size = Vector2(690, 0)
-	list.add_theme_constant_override("separation", 6)
-	sc.add_child(list)
-	for e in played:
-		var hr := HeroRow.new()
-		hr.p = p
-		hr.hero = String(e[0])
-		hr.wide = true
-		hr.custom_minimum_size = Vector2(690, 70)
-		list.add_child(hr)
-	if played.is_empty():
-		_label("No ranked matches yet.", 16, U.TEXT_DIM, "body", list)
+# ---- The player menu's host (PlayerMenu: right-click a player anywhere) ------------------------------------------------
+
+func notice(text: String) -> void:
+	_notice(text)
+
+## What the player menu asks for: a profile, its history, a comparison, a comment, View As, a hero's ranking.
+func player_action(action: String, id: String) -> void:
+	_card.visible = false
+	if action.begins_with("hero:"):
+		_board_filter = "heroes"
+		_board_hero = action.substr(5)
+		_show_tab("leaderboard")
+		return
+	_open_profile(id)
+	match action:
+		"compare":
+			_ppage.open_compare()
+		"write":
+			_ppage.side_tab = "wall"
+			_ppage.refresh()
+		"view_as":
+			_ppage.view_as = "public"
+			_ppage.refresh()
+
+## After a menu action (friend, commend, block): the open tab shows it.
+func refresh_social() -> void:
+	_show_tab(_tab)
 
 func _your_heroes() -> Array:
 	var count := {}
@@ -1353,22 +1121,11 @@ class Glass extends Control:
 		mouse_filter = Control.MOUSE_FILTER_PASS
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
-		# shadow
-		draw_style_box(_box(Color(0, 0, 0, 0.35), Color(0, 0, 0, 0), 10), r.grow(6).grow_individual(0, 0, 0, 4))
-		draw_style_box(_box(GLASS if not quiet else Color(0.04, 0.05, 0.08, 0.7), RIM if not quiet else Color(1, 1, 1, 0.08), 8), r)
-		draw_line(Vector2(14, 1.5), Vector2(size.x - 14, 1.5), Color(1, 0.9, 0.7, 0.16 if not quiet else 0.05), 1.0)
-		if not quiet:
-			var c := Color(U.GOLD, 0.85)
-			var L := 16.0
-			for p: Vector2 in [Vector2(0, 0), Vector2(size.x, 0), Vector2(0, size.y), Vector2(size.x, size.y)]:
-				var sx := 1.0 if p.x == 0.0 else -1.0
-				var sy := 1.0 if p.y == 0.0 else -1.0
-				var o: Vector2 = p + Vector2(sx * 3.0, sy * 3.0)
-				draw_line(o, o + Vector2(sx * L, 0), c, 2.0)
-				draw_line(o, o + Vector2(0, sy * L), c, 2.0)
+		# the generated skin (tools/ui_skin_social.py): gold-rimmed enamel, a quiet inset for small boxes
+		U.skin(self, "soc_card" if quiet else "soc_panel", r)
 		if title != "":
-			U.text(self, title, Vector2(24, 36), 21, U.GOLD, "title")
-			draw_line(Vector2(24, 48), Vector2(size.x - 24, 48), Color(U.GOLD, 0.18), 1.0)
+			U.text(self, title, Vector2(26, 40), 22, U.GOLD, "title")
+			draw_line(Vector2(26, 50), Vector2(size.x - 26, 50), Color(U.GOLD, 0.2), 1.0)
 	static func _box(bg: Color, border: Color, rad: int) -> StyleBoxFlat:
 		var s := StyleBoxFlat.new()
 		s.bg_color = bg
@@ -1382,11 +1139,7 @@ class TopBar extends Control:
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_PASS
 	func _draw() -> void:
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.03, 0.04, 0.07, 0.92))
-		var n := 48
-		for i in n:
-			var a := 1.0 - absf(float(i) / float(n - 1) - 0.5) * 2.0
-			draw_line(Vector2(size.x * float(i) / n, size.y - 1), Vector2(size.x * float(i + 1) / n, size.y - 1), Color(U.GOLD, 0.15 + 0.55 * a), 2.0)
+		U.art_rect(self, "soc_topbar", Rect2(Vector2.ZERO, Vector2(size.x, size.y + 4)))
 
 class FooterBar extends Control:
 	func _ready() -> void:
@@ -1421,10 +1174,9 @@ class TabButton extends Control:
 	func _draw() -> void:
 		var col := U.GOLD if active else (Color(1.0, 0.92, 0.75) if _hover else U.TEXT_DIM)
 		if active:
-			draw_rect(Rect2(0, 0, size.x, size.y), Color(1, 0.8, 0.4, 0.06))
-			draw_rect(Rect2(10, size.y - 4, size.x - 20, 3), U.GOLD)
+			U.skin(self, "soc_tab_on", Rect2(Vector2.ZERO, size))
 		elif _hover:
-			draw_rect(Rect2(14, size.y - 3, size.x - 28, 2), Color(U.GOLD, 0.4))
+			U.skin(self, "soc_tab_hover", Rect2(Vector2.ZERO, size))
 		var f := U.font("title")
 		var fs := 22
 		var tw := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
@@ -1455,6 +1207,10 @@ class ProfileChip extends Control:
 			_hover = false
 			queue_redraw())
 	func _gui_input(e: InputEvent) -> void:
+		if SocialUi.is_right(e):
+			PlayerMenu.open(self, "me", SocialUi.at(self, e))
+			accept_event()
+			return
 		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 			Options.click()
 			clicked.emit()
@@ -1834,6 +1590,10 @@ class MatchCard extends Control:
 			_hot = false
 			hover_card.emit(p, get_global_rect(), false)
 			queue_redraw())
+	func _gui_input(e: InputEvent) -> void:
+		if SocialUi.is_right(e) and not p.is_empty():
+			PlayerMenu.open(self, String(p.get("id", "")), SocialUi.at(self, e))
+			accept_event()
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
 		var you := String(p.get("id", "")) == "me"
@@ -1927,6 +1687,11 @@ class BoardRow extends Control:
 		_av.size = Vector2(s, s)
 		_av.position = Vector2(56 if compact else 96, (size.y - s) * 0.5)
 	func _gui_input(e: InputEvent) -> void:
+		if SocialUi.is_right(e) and not p.is_empty():
+			# the player menu (run 2026-10-20)
+			PlayerMenu.open(self, String(p.get("id", "")), SocialUi.at(self, e))
+			accept_event()
+			return
 		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 			Options.click()
 			clicked.emit()
@@ -1936,20 +1701,9 @@ class BoardRow extends Control:
 		var you := String(p.get("id", "")) == "me"
 		var tier := Ranked.tier_of(int(p.mmr), place)
 		var top := tier == Ranked.TIERS - 1
-		var bg := Color(0.07, 0.085, 0.12, 0.9)
-		if top:
-			bg = Color(0.16, 0.12, 0.05, 0.92)
-		if you:
-			bg = Color(0.06, 0.14, 0.24, 0.95)
-		if _hot:
-			bg = bg.lightened(0.08)
-		var s := StyleBoxFlat.new()
-		s.bg_color = bg
-		s.border_color = BLUE if you else (Color(U.GOLD, 0.55) if top else Color(1, 1, 1, 0.06))
-		s.set_border_width_all(1 if not pinned else 2)
-		s.set_corner_radius_all(6)
-		s.anti_aliasing = true
-		draw_style_box(s, r)
+		U.skin(self, "soc_row_you" if you else ("soc_row_gold" if top else ("soc_row_hover" if _hot else "soc_row")), r)
+		if _hot and (you or top):
+			draw_rect(r.grow(-2), Color(1, 0.9, 0.6, 0.05))
 		var cy := size.y * 0.5
 		var f := U.font("bold")
 		# place
@@ -2032,8 +1786,7 @@ class HistoryRow extends Control:
 		var r := Rect2(Vector2.ZERO, size)
 		var res := String(e.get("r", "L"))
 		var col := GREEN if res == "W" else (RED if res == "L" else Color(0.7, 0.5, 0.2))
-		draw_rect(r, Color(0.07, 0.085, 0.12, 0.9))
-		draw_rect(Rect2(0, 0, 5, size.y), col)
+		U.skin(self, "soc_row_win" if res == "W" else "soc_row_loss", r)
 		var cy := size.y * 0.5
 		var f := U.font("bold")
 		draw_string(f, Vector2(16, cy + 6), {"W": "Won", "L": "Lost", "A": "Left"}.get(res, res), HORIZONTAL_ALIGNMENT_LEFT, -1, 17, col.lightened(0.2))
@@ -2166,7 +1919,7 @@ class PlayerCard extends Control:
 	var _av: Avatar
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
-		size = Vector2(380, 420)
+		size = Vector2(380, 520)
 		_av = Avatar.new()
 		_av.position = Vector2(18, 18)
 		_av.size = Vector2(84, 84)
@@ -2180,15 +1933,7 @@ class PlayerCard extends Control:
 		if p.is_empty():
 			return
 		var r := Rect2(Vector2.ZERO, size)
-		var s := StyleBoxFlat.new()
-		s.bg_color = Color(0.05, 0.065, 0.1, 0.98)
-		s.border_color = Color(U.GOLD, 0.8)
-		s.set_border_width_all(1)
-		s.set_corner_radius_all(8)
-		s.shadow_color = Color(0, 0, 0, 0.5)
-		s.shadow_size = 12
-		s.anti_aliasing = true
-		draw_style_box(s, r)
+		U.skin(self, "soc_menu", r.grow(10))
 		var f := U.font("bold")
 		var b := U.font("body")
 		draw_string(f, Vector2(116, 42), String(p.get("name", "")), HORIZONTAL_ALIGNMENT_LEFT, 250, 21, U.TEXT)
@@ -2236,16 +1981,32 @@ class PlayerCard extends Control:
 				draw_string(b, sq.position + Vector2(6, 14), "W" if res == "W" else "L", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0, 0, 0, 0.75))
 			else:
 				draw_rect(sq, Color(1, 1, 1, 0.07))
+		# averages and big moments (run 2026-10-20: averages are everything)
+		draw_line(Vector2(18, 322), Vector2(size.x - 18, 322), Color(U.GOLD, 0.25), 1.0)
+		var av := Career.averages(p)
+		draw_string(b, Vector2(18, 346), "Averages", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, U.TEXT_DIM)
+		draw_string(f, Vector2(100, 346), Career.kda_text(av), HORIZONTAL_ALIGNMENT_LEFT, 150, 16, U.TEXT)
+		var farm := "%s LH  ·  %s GPM" % [SocialUi.whole(float(av.get("lh", -1.0))), SocialUi.whole(float(av.get("gpm", -1.0)))]
+		draw_string(b, Vector2(240, 346), farm, HORIZONTAL_ALIGNMENT_LEFT, size.x - 258, 14, U.TEXT)
+		var mo := Career.moments(p)
+		var tx := 18.0
+		for t in [["mvp", int(mo.mvp)], ["rampage", int(mo.rp)], ["triple", int(mo.tr)], ["fb", int(mo.fb)]]:
+			var ic2 := SocialUi.icon(String(t[0]))
+			if ic2:
+				draw_texture_rect(ic2, Rect2(tx, 360, 30, 30), false)
+			draw_string(f, Vector2(tx + 34, 382), RankedNum.num(int(t[1])), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, U.GOLD if int(t[1]) > 0 else U.TEXT_DIM)
+			tx += 88.0
 		if not bool(p.get("bot", false)):
 			return
 		# who they are and what they make of you (run 2026-10-19 d)
-		draw_line(Vector2(18, 322), Vector2(size.x - 18, 322), Color(U.GOLD, 0.25), 1.0)
+		draw_line(Vector2(18, 408), Vector2(size.x - 18, 408), Color(U.GOLD, 0.25), 1.0)
 		var pres := Persona.presence(p, Ranked.now())
-		PresenceLine.dot(self, Vector2(26, 344), String(pres.state))
-		draw_string(b, Vector2(40, 350), String(pres.label), HORIZONTAL_ALIGNMENT_LEFT, size.x - 58, 15, U.TEXT)
+		PresenceLine.dot(self, Vector2(26, 430), String(pres.state))
+		draw_string(b, Vector2(40, 436), String(pres.label), HORIZONTAL_ALIGNMENT_LEFT, size.x - 58, 15, U.TEXT)
 		var tags := Persona.labels(p)
-		draw_string(f, Vector2(18, 376), " · ".join(tags), HORIZONTAL_ALIGNMENT_LEFT, size.x - 36, 15, U.GOLD)
-		draw_string(b, Vector2(18, 400), _with_you_line(p), HORIZONTAL_ALIGNMENT_LEFT, size.x - 36, 14, U.TEXT_DIM)
+		draw_string(f, Vector2(18, 462), " · ".join(tags), HORIZONTAL_ALIGNMENT_LEFT, size.x - 36, 15, U.GOLD)
+		draw_string(b, Vector2(18, 486), _with_you_line(p), HORIZONTAL_ALIGNMENT_LEFT, size.x - 36, 14, U.TEXT_DIM)
+		draw_string(b, Vector2(18, 508), "Right-click for more", HORIZONTAL_ALIGNMENT_LEFT, size.x - 36, 12, Color(U.TEXT_DIM, 0.7))
 	static func _with_you_line(pp: Dictionary) -> String:
 		var y: Dictionary = pp.get("you", {})
 		if y.is_empty() or int(y.get("games", 0)) == 0:
@@ -2318,19 +2079,18 @@ class PersonRow extends Control:
 			hover_card.emit(p, get_global_rect(), false)
 			queue_redraw())
 	func _gui_input(e: InputEvent) -> void:
+		if SocialUi.is_right(e) and not p.is_empty():
+			# the player menu (run 2026-10-20)
+			PlayerMenu.open(self, String(p.get("id", "")), SocialUi.at(self, e))
+			accept_event()
+			return
 		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 			Options.click()
 			clicked.emit()
 			accept_event()
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
-		var s := StyleBoxFlat.new()
-		s.bg_color = Color(0.07, 0.085, 0.12, 0.9).lightened(0.08 if _hot else 0.0)
-		s.border_color = Color(U.GOLD, 0.6) if request else Color(1, 1, 1, 0.06)
-		s.set_border_width_all(1)
-		s.set_corner_radius_all(6)
-		s.anti_aliasing = true
-		draw_style_box(s, r)
+		U.skin(self, "soc_row_gold" if request else ("soc_row_hover" if _hot else "soc_row"), r)
 		var st := String(Persona.presence(p, Ranked.now()).state)
 		PresenceLine.dot(self, Vector2(52, 52), st)
 		var f := U.font("bold")
@@ -2360,16 +2120,17 @@ class FeedRow extends Control:
 		_av.size = Vector2(40, 40)
 		add_child(_av)
 	func _gui_input(e: InputEvent) -> void:
+		if SocialUi.is_right(e) and not p.is_empty():
+			# the player menu (run 2026-10-20)
+			PlayerMenu.open(self, String(p.get("id", "")), SocialUi.at(self, e))
+			accept_event()
+			return
 		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
 			Options.click()
 			clicked.emit()
 			accept_event()
 	func _draw() -> void:
-		var s := StyleBoxFlat.new()
-		s.bg_color = Color(0.07, 0.085, 0.12, 0.85)
-		s.set_corner_radius_all(6)
-		s.anti_aliasing = true
-		draw_style_box(s, Rect2(Vector2.ZERO, size))
+		U.skin(self, "soc_row", Rect2(Vector2.ZERO, size))
 		var col: Color = {"rank": U.GOLD, "top": U.GOLD, "top10": U.GOLD, "streak": GREEN_HI, "medal": Color(0.75, 0.85, 1.0),
 			"friend": BLUE}.get(kind, U.TEXT)
 		draw_rect(Rect2(0, 8, 3, size.y - 16), Color(col, 0.8))
@@ -2414,10 +2175,10 @@ class HeroRow extends Control:
 			queue_redraw()
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
-		draw_rect(r, Color(0.07, 0.085, 0.12, 0.9))
+		U.skin(self, "soc_row", r)
 		var tex := U.hero_portrait(hero)
 		if tex:
-			draw_texture_rect(tex, Rect2(4, 4, size.y - 8, size.y - 8), false)
+			draw_texture_rect(tex, Rect2(6, 6, size.y - 12, size.y - 12), false)
 		var hs = (p.get("hero_stats", {}) as Dictionary).get(hero, [0, 0, 0])
 		var w := int(hs[0])
 		var l := int(hs[1])
@@ -2425,12 +2186,13 @@ class HeroRow extends Control:
 		var x := size.y + 8.0
 		var cy := size.y * 0.5
 		draw_string(U.font("bold"), Vector2(x, cy - 3), HeroDraft.hero_name(hero), HORIZONTAL_ALIGNMENT_LEFT, 150, 18, U.TEXT)
-		draw_string(U.font("body"), Vector2(x, cy + 17), RankedNum.count(g, "match", "matches"), HORIZONTAL_ALIGNMENT_LEFT, 150, 14, U.TEXT_DIM)
+		var rec := RankedNum.count(g, "match", "matches") if wide else "%d-%d  ·  %.0f%%" % [w, l, float(w) / maxf(1.0, float(g)) * 100.0]
+		draw_string(U.font("body"), Vector2(x, cy + 17), rec, HORIZONTAL_ALIGNMENT_LEFT, 150, 14, U.TEXT_DIM)
 		var wr := float(w) / maxf(1.0, float(g))
-		var x2 := 190.0 if not wide else 230.0
-		draw_string(U.font("bold"), Vector2(x2, cy - 3), "%s W - %s L" % [RankedNum.num(w), RankedNum.num(l)], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, U.TEXT)
-		draw_string(U.font("body"), Vector2(x2, cy + 17), "%.0f%% wins" % (wr * 100.0), HORIZONTAL_ALIGNMENT_LEFT, -1, 14,
-			GREEN_HI if wr > 0.52 else (RED if wr < 0.48 else U.TEXT_DIM))
+		if wide:
+			draw_string(U.font("bold"), Vector2(230, cy - 3), "%s W - %s L" % [RankedNum.num(w), RankedNum.num(l)], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, U.TEXT)
+			draw_string(U.font("body"), Vector2(230, cy + 17), "%.0f%% wins" % (wr * 100.0), HORIZONTAL_ALIGNMENT_LEFT, -1, 14,
+				GREEN_HI if wr > 0.52 else (RED if wr < 0.48 else U.TEXT_DIM))
 		var m := Ranked.hero_medal(p, hero)
 		var bs := size.y - 4.0
 		HeroBadge.paint(self, Rect2(size.x - bs - 2, 2, bs, bs), hero, m, _t)

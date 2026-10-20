@@ -20,3 +20,5 @@ work/lemondev/2026-10-19c-araki/model/nosplit/
 # API keys stay on this computer (the game reads them from llm.json in its data folder)
 openrouter.txt
 llm.json
+# run 2026-10-20 c: a copy of the previous export (712 MB pack, over GitHub's 100 MB limit)
+work/lemondev/2026-10-20-icons/previous_build/

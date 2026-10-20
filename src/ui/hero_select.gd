@@ -48,6 +48,7 @@ const INFO := {
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }
 
+var _back_btn: Button
 var stage: HeroStage
 var _cards := {}
 var _right: VBoxContainer
@@ -181,13 +182,14 @@ func _build_ui() -> void:
 	bar.add_theme_constant_override("separation", 16)
 	add_child(bar)
 	var back := _button("Back", "", 170, func(): _go(MENU))
+	_back_btn = back
 	bar.add_child(back)
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bar.add_child(sp)
 	_cust = _button("Customize look", "", 240, func():
 		GameSettings.save()
-		get_tree().change_scene_to_file(CREATOR))
+		Options.go(get_tree(), CREATOR))
 	bar.add_child(_cust)
 	var play := _button("Play", "GoldButton", 300, _on_play)
 	play.add_theme_font_size_override("font_size", 32)
@@ -349,16 +351,9 @@ func _ability_row(aid: String) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	row.mouse_filter = Control.MOUSE_FILTER_STOP
-	var slot := Control.new()
-	slot.custom_minimum_size = Vector2(64, 64)
+	var slot := IconFrame.make(U.ability_icon(aid), IconBorder.ability_kind(aid), 60)
+	slot.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	slot.draw.connect(func():
-		var r := Rect2(Vector2.ZERO, slot.size)
-		slot.draw_rect(r.grow(-3), Color(0.03, 0.035, 0.05))
-		var ic := U.ability_icon(aid)
-		if ic:
-			slot.draw_texture_rect(ic, r.grow(-6), false)
-		U.skin(slot, "slot_ability", r.grow(3), Color.WHITE, false))
 	row.add_child(slot)
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -366,7 +361,8 @@ func _ability_row(aid: String) -> Control:
 	row.add_child(v)
 	var kind := {"autocast_attack": "Attack modifier", "point": "Point target", "passive": "Passive", "unit": "Unit target",
 		"no_target": "No target", "toggle": "Toggle", "innate": "Innate"}
-	var head := _label("%s   [%s]   %s%s" % [String(a.name), String(a.key), String(kind.get(String(a.behavior), "")),
+	var passive := String(a.behavior) in ["passive", "innate"]
+	var head := _label("%s   %s%s%s" % [String(a.name), "" if passive or String(a.key) == "" else "[%s]   " % String(a.key), String(kind.get(String(a.behavior), "")),
 		"   Ultimate" if a.has("required_level") else ""], 17, U.GOLD, "bold")
 	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(head)
@@ -419,9 +415,15 @@ func _gui_input(e: InputEvent) -> void:
 	elif e is InputEventMouseMotion and stage.dragging:
 		stage.drag((e as InputEventMouseMotion).relative.x)
 
+## Esc goes back, as the Back button does (fields, dropdowns and overlays get the key first).
+func _unhandled_key_input(e: InputEvent) -> void:
+	if U.is_esc(e) and _back_btn != null and _back_btn.is_visible_in_tree():
+		get_viewport().set_input_as_handled()
+		_back_btn.pressed.emit()
+
 func _go(path: String) -> void:
 	GameSettings.save()
-	get_tree().change_scene_to_file(path)
+	Options.go(get_tree(), path)
 
 ## Play: Game Setup comes next (who plays on each team), then the Hotkeys screen ("Are you good to go?") and the match.
 func _on_play() -> void:

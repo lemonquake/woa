@@ -350,6 +350,12 @@ func _set_speed(sp: float, btn: Button) -> void:
 func toggle() -> void:
 	panel.visible = not panel.visible
 
+## Esc closes the panel (it stays open while you click the world: its tools act on what you select).
+func _input(e: InputEvent) -> void:
+	if panel.visible and e is InputEventKey and e.pressed and not e.echo and (e as InputEventKey).keycode == KEY_ESCAPE:
+		panel.visible = false
+		get_viewport().set_input_as_handled()
+
 ## Whether a screen point is over the panel or its button (orders are not issued through it).
 func covers(p: Vector2) -> bool:
 	return toggle_btn.get_global_rect().has_point(p) or (panel.visible and panel.get_global_rect().has_point(p))

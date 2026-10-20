@@ -42,7 +42,8 @@ const KEYS := ["victim", "killer", "ally", "hero", "lane", "item", "n"]
 const MOCKING := ["casual_short_mockery", "missed_skillshot_and_whiffs", "killed_enemy_all_chat", "ragebait_and_trolling",
 	"gen_z_brainrot_and_slang", "rival", "miss_named", "ks_player", "revenge", "escape_enemy", "wipe", "meet_won_vs"]
 ## Lines aimed at one teammate (who may answer back).
-const AT_ALLY := ["teammate_roast_and_blame", "dying_too_much_and_feeding", "failing_lane_and_no_farm", "ks"]
+const AT_ALLY := ["teammate_roast_and_blame", "dying_too_much_and_feeding", "failing_lane_and_no_farm", "ks", "feed_ally_flame",
+	"kda_awful_ally"]
 
 var w: SimWorld
 var _rng := RandomNumberGenerator.new()
@@ -78,15 +79,26 @@ var _rel := {}                              # bot hero id -> what passed between
 var _recent_calls := [[], []]               # per team: the team calls typed lately (no word-for-word echoes)
 var _my_calls := {}                         # hero id -> {call text: time} (no one repeats a call within 150 s)
 var _used := {}                             # every line of 3+ words said this match -> who said it first (no echoes)
+var _own := {}                              # hero id -> {ChatMind line: times this player typed it}
 var _next_lid := 1                          # line ids (the online chat writer, LlmChat, rewrites lines by id)
 var _said_now := ""                         # the player's line being answered (for LlmChat)
+var _said_by := -1                          # the player hero who typed it
+## The player comes first (the owner, 2026-10-20: "the player should be TOP PRIORITY to have them reply at all
+## means"): while a player's line is being answered, the next line queued skips the dice, the gap since the bot's
+## last line and the one-line-at-a-time rule; every line answering the player jumps the chat queue.
+var _must := false
+var _answered := false
 var _intents: Array = []                    # "chat_intent" events for this step (added after the events are read)
 var said := 0                               # report counter (tests, bot games)
+var social: ChatSocial                      # the crowd: multi-kills, feeding, KDA, trash talk, friends, MVP (run 2026-10-19 e)
+var prof: ChatProfile                       # profiles: they look you (and each other) up (run 2026-10-20)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
 	if w != null:
 		_rng.seed = w.rng.seed ^ 0x5ca7
+	social = ChatSocial.new(self)
+	prof = ChatProfile.new(self)
 
 # ---- Voices and personas -----------------------------------------------------------------------------------------------
 
@@ -250,10 +262,17 @@ func _mark(text: String, h: SimUnit) -> void:
 ## A ChatMind line of `sit` that nobody else typed this match ("" if every try was taken).
 func _fresh(h: SimUnit, sit: String, fill: Dictionary, avoid: Array) -> String:
 	var tl := _rng.randf() < float(voice(h).tl)
-	for i in 5:
+	# a player does not type the same line a third time in a match (the review of run 2026-10-19 e)
+	var mine: Dictionary = _own.get(h.id, {})
+	for i in 6:
 		var t := ChatMind.pick(sit, fill, tl, _rng, avoid)
-		if t == "" or not _echo(t, h):
+		if t == "":
 			return t
+		if _echo(t, h) or (int(mine.get(t, 0)) >= 2 and i < 5):
+			continue
+		mine[t] = int(mine.get(t, 0)) + 1
+		_own[h.id] = mine
+		return t
 	return ""
 
 ## A line naming a minute ("still holding tangos at 25 min", "20 mins no boots") fits only a game that long.
@@ -272,6 +291,8 @@ func _can_talk(h: SimUnit, gap := 4.0) -> bool:
 	var b = _bot_of(h)
 	if b == null or b.passive or b.human:
 		return false
+	if _must:
+		return true                         # answering the player: never too busy
 	if w.time - float(_bot_last.get(h.id, C.LONG_AGO)) < gap:
 		return false
 	for q in _queue:
@@ -281,6 +302,8 @@ func _can_talk(h: SimUnit, gap := 4.0) -> bool:
 
 ## How likely `h` speaks up, for a moment worth `chance`.
 func _roll(h: SimUnit, chance: float) -> bool:
+	if _must:
+		return true
 	var v := voice(h)
 	return _rng.randf() <= chance * (0.55 + float(v.salt) * 0.6) * (0.45 + _trait(h, "talk") * 0.85)
 
@@ -321,11 +344,16 @@ func _queue_line(h: SimUnit, text: String, all: bool, cat: String, delay: float,
 	var at := w.time + (delay if delay >= 0.0 else _rng.randf_range(0.6, 2.2) + float(typed.length()) * 0.03)
 	var lid := _next_lid
 	_next_lid += 1
-	_queue.append({"at": at, "team": h.team, "u": h.id, "text": typed, "all": all, "cat": cat, "target": target, "lid": lid})
-	_bot_last[h.id] = at
+	var pri := _said_by >= 0                # an answer to the player
+	if pri:
+		_answered = true
+		_must = false
+	_queue.append({"at": at, "team": h.team, "u": h.id, "text": typed, "all": all, "cat": cat, "target": target, "lid": lid,
+		"pri": pri})
+	_bot_last[h.id] = maxf(at, float(_bot_last.get(h.id, C.LONG_AGO)))
 	# for the online chat writer (presentation only: nothing in the match reads it)
 	_intents.append({"t": "chat_intent", "lid": lid, "u": h.id, "team": h.team, "all": all, "cat": cat, "text": typed,
-		"fill": fill.duplicate(), "said": _said_now})
+		"fill": fill.duplicate(), "said": _said_now if pri else "", "by": _said_by if pri else -1})
 
 ## Post what is due (all chat at most every 1.5 s, a team's chat every 1.2 s).
 func _flush() -> void:
@@ -339,7 +367,10 @@ func _flush() -> void:
 		if h == null:
 			_queue.remove_at(i)
 			continue
-		if bool(q.all) and w.time - _last_all < 1.5 or not bool(q.all) and w.time - float(_last_team[int(q.team)]) < 1.2:
+		# answers to the player go out almost at once; other lines keep chat readable
+		var all_gap := 0.6 if bool(q.get("pri", false)) else 1.5
+		var team_gap := 0.6 if bool(q.get("pri", false)) else 1.2
+		if bool(q.all) and w.time - _last_all < all_gap or not bool(q.all) and w.time - float(_last_team[int(q.team)]) < team_gap:
 			q.at = float(q.at) + 0.5
 			i += 1
 			continue
@@ -358,6 +389,7 @@ func _after_line(h: SimUnit, q: Dictionary) -> void:
 	var cat := String(q.cat)
 	var target := w.get_unit(int(q.get("target", -1)))
 	if target != null and cat in AT_ALLY:
+		_note(h, "flames")
 		if not target.bot:
 			_note(h, "flamed_you")
 		else:
@@ -401,6 +433,12 @@ func casual(h: SimUnit, kind: String, f: Dictionary, text: String, urgent := fal
 	if kind == "voice":
 		if _rng.randf() < 0.35 + (0.3 - talk if talk < 0.3 else 0.0) or _echo(text, h):
 			return ""
+		# a hero quip once in a while, not the same one again and again (the blind review: 4 times a match)
+		var said_v: Dictionary = _my_calls.get(h.id, {})
+		if w.time - float(said_v.get(text, C.LONG_AGO)) < 900.0:
+			return ""
+		said_v[text] = w.time
+		_my_calls[h.id] = said_v
 		_mark(text, h)
 		return ChatStyle.apply(text, _style(h), float(mind(h).tilt), _rng, true)
 	# calls a player often would not type (the plan still happens); answers to the player's pings and the lane calls
@@ -436,7 +474,7 @@ func casual(h: SimUnit, kind: String, f: Dictionary, text: String, urgent := fal
 			return text
 	var mine: Dictionary = _my_calls.get(h.id, {})
 	var said_at := float(mine.get(t, C.LONG_AGO))
-	if w.time - said_at < 150.0 and not must:
+	if w.time - said_at < 420.0 and not must:
 		return ""
 	mine[t] = w.time
 	_my_calls[h.id] = mine
@@ -591,6 +629,7 @@ func _on_kill(e: Dictionary) -> void:
 		else:
 			say(_talker(_bots(1 - victim.team)), "died_to_creeps_or_tower", true, fill, 0.7)
 		_after_death(victim, null)
+		social.on_kill(e, null, victim)
 		return
 	var km := mind(killer)
 	var times := int((km.kills_on as Dictionary).get(victim.id, 0)) + 1
@@ -622,8 +661,10 @@ func _on_kill(e: Dictionary) -> void:
 			speak(victim, "revenge_reply", true, {}, 0.4, _rng.randf_range(2.0, 4.0))
 	elif int(e.get("ended_streak", 0)) >= 3:
 		spoke = say(killer, "shutdown", true, fill, 0.9)
-	elif int(e.get("multi", 0)) >= 2:
+	elif int(e.get("multi", 0)) >= 2 and (int(e.multi) < 5 or ChatSocial.off):
 		spoke = speak(killer, "double" if int(e.multi) == 2 else "multi", true, {"n": int(e.multi)}, 0.7)
+	elif int(e.get("multi", 0)) >= 5:
+		spoke = true                           # a rampage: ChatSocial has the killer's line
 	elif times >= 3 and _rng.randf() < 0.7:
 		spoke = speak(killer, "rival", true, kfill, 0.75)
 		if spoke and victim.bot:
@@ -669,6 +710,7 @@ func _on_kill(e: Dictionary) -> void:
 	if not vspoke:
 		say(victim, "own_death_excuses", _rng.randf() < 0.2, {}, 0.3)
 	_after_death(victim, killer)
+	social.on_kill(e, killer, victim)
 	# a fed enemy, an enemy core down long enough to push
 	if killer.kills >= 7 and killer.kills >= killer.deaths * 2 and w.time - float(_fed_said[victim.team]) > 150.0:
 		var focus := _talker(_bots(victim.team, victim), "focus")
@@ -838,9 +880,52 @@ func _on_escape(e: Dictionary) -> void:
 ## A line the player typed: understood (ChatMind.intent), answered by the bot it was meant for, with what the bot
 ## knows (its rank, its town, its next item, where it saw a hero, what it was doing, the player's own score).
 func _on_chat(e: Dictionary) -> void:
+	var u := w.get_unit(int(e.get("u", -1)))
+	var human := u != null and not u.bot and not bool(e.get("bot_line", false))
 	_said_now = String(e.get("text", ""))
+	_said_by = u.id if human else -1
+	_must = human
+	_answered = false
 	_answer_chat(e)
+	if human and not _answered:
+		_answer_anything(u, e)
+	_must = false
 	_said_now = ""
+	_said_by = -1
+
+## Nothing above answered the player (a line the brain has no answer for, or the bot it was for had no line left):
+## someone still does. The bot it was meant for, else whoever spoke last in that channel, else an enemy in all chat or
+## a teammate in team chat. An insult or trash talk gets a comeback, never silence.
+func _answer_anything(u: SimUnit, e: Dictionary) -> void:
+	var all := bool(e.get("all", false))
+	var low := String(e.text).to_lower()
+	var foes := _bots(1 - u.team)
+	var listeners: Array = _bots(u.team) if not all else foes + _bots(u.team)
+	if listeners.is_empty():
+		return
+	var to := _addressed(low, listeners)
+	if to == null:
+		var last: Dictionary = _speaker[2 if all else u.team]
+		if not last.is_empty() and w.time - float(last.t) < 20.0:
+			var lu := w.get_unit(int(last.u))
+			if lu != null and lu in listeners:
+				to = lu
+	if to == null:
+		to = _talker(foes if all and not foes.is_empty() else listeners, "ego" if all else "talk")
+	var it := ChatMind.intent(low)
+	var foe := to.team != u.team
+	var sit := "r_back" if it in ["insult", "taunt"] else ("r_any_foe" if foe else "r_any")
+	var fill := {"name": pname(u), "kda": _kda(u), "lh": u.last_hits, "min": maxi(1, int(w.time / 60.0))}
+	var d := _rng.randf_range(1.0, 2.4)
+	var order: Array = [to] + listeners.filter(func(x): return x != to)
+	for h in order:
+		_must = true
+		if speak(h, sit, all or foe, fill, 1.0, d, -1, 0.0):
+			return
+	# every line of that kind was used up this match: the first one that fits, used or not
+	var t := ChatMind.pick(sit, fill, _rng.randf() < float(voice(to).tl), _rng, [])
+	if t != "":
+		_queue_line(to, t, all or foe, sit, d, -1, fill.values(), fill)
 
 func _answer_chat(e: Dictionary) -> void:
 	var u := w.get_unit(int(e.u))
@@ -853,7 +938,23 @@ func _answer_chat(e: Dictionary) -> void:
 	if listeners.is_empty():
 		return
 	var it := ChatMind.intent(low)
+	if ChatSocial.off and it in ["add", "taunt"]:
+		it = "insult" if ChatMind.RUDE.any(func(x): return low.contains(String(x))) else ""
 	var to := _addressed(low, listeners)
+	if it == "add":
+		social.friend_ask(u, to, listeners, all)
+		return
+	if it in ["profile_me", "profile_you"] and not ChatSocial.off:
+		if prof.ask(u, to, listeners, all, it == "profile_me"):
+			return
+	if not ChatSocial.off and it in ["taunt", "insult"] and (all or (to != null and to.team != u.team)):
+		# trash talk the enemy reads: answered with the facts, piled on (ChatSocial)
+		if to != null:
+			_note(to, "flamed")
+		social.trash_talk(u, to, all)
+		return
+	if it == "taunt":
+		it = "insult"
 	if to == null and it in ["insult", "praise", "thanks", "sorry", "huh"]:
 		# "?" and "thanks" go to whoever spoke last in that channel
 		var last: Dictionary = _speaker[2 if all else u.team]
@@ -917,10 +1018,13 @@ func _answer_chat(e: Dictionary) -> void:
 			_note(r5, "flamed")
 			mind(r5).tilt = minf(1.0, float(mind(r5).tilt) + 0.12)
 			var bad := u.deaths >= u.kills + u.assists / 2 + 2
+			# a nice one jokes at the player's expense; nobody tells the player to relax (the owner, 2026-10-20)
 			if _trait(r5, "kind") > 0.7 and float(mind(r5).tilt) < 0.6:
-				speak(r5, "r_insult_calm", r5.team != u.team or all, fill, 0.9, d, -1, 1.5)
+				speak(r5, "r_insult_witty", r5.team != u.team or all, fill, 0.9, d, -1, 1.5)
 			elif bad and _rng.randf() < 0.7:
 				speak(r5, "r_insult_fact", r5.team != u.team or all, fill, 1.0, d, -1, 1.5)
+			elif _rng.randf() < 0.5:
+				speak(r5, "r_back", r5.team != u.team or all, fill, 1.0, d, -1, 1.5)
 			else:
 				say(r5, "responses_and_comebacks", r5.team != u.team or all, {}, 0.9, d)
 			if all:
@@ -930,14 +1034,14 @@ func _answer_chat(e: Dictionary) -> void:
 			if r6 != null:
 				_note(r6, "praised")
 				mind(r6).tilt = maxf(0.0, float(mind(r6).tilt) - 0.15)
-				speak(r6, "r_praise", r6.team != u.team, fill, 0.8, d, -1, 1.5)
+				speak(r6, "r_praise", all or r6.team != u.team, fill, 0.8, d, -1, 1.5)
 		"thanks":
-			speak(to if to != null else _talker(mates), "r_thanks", false, fill, 0.7, d, -1, 1.5)
+			speak(to if to != null else _talker(mates), "r_thanks", all, fill, 0.7, d, -1, 1.5)
 		"sorry":
 			var r7 := to if to != null else _talker(mates)
 			if r7 != null:
 				var rude := _trait(r7, "kind") < 0.35 or float(mind(r7).tilt) > 0.7
-				speak(r7, "r_sorry_rude" if rude else "r_sorry_kind", false, fill, 0.8, d, -1, 1.5)
+				speak(r7, "r_sorry_rude" if rude else "r_sorry_kind", all, fill, 0.8, d, -1, 1.5)
 		"gg":
 			if w.winner < 0 and w.time > 60.0:
 				var ahead := _team_nw(1 - u.team) > _team_nw(u.team)
@@ -968,12 +1072,10 @@ func _answer_chat(e: Dictionary) -> void:
 			var g2 := _talker(listeners.filter(func(x): return x != g))
 			speak(g2, "r_greet", all, fill, 0.35, d + _rng.randf_range(1.0, 2.5), -1, 1.5)
 		_:
-			if to != null:
-				speak(to, "r_name", all, {}, 0.5, d, -1, 2.0)
-			elif all:
-				# the other team answers (and sometimes its own team laughs along)
-				if not say(_talker(_bots(1 - u.team)), "responses_and_comebacks", true, {}, 0.3):
-					say(_talker(_bots(1 - u.team)), "gen_z_brainrot_and_slang", true, {}, 0.25)
+			# just the name ("ezee", "ezee?"): "yes?"; anything else is answered by _answer_anything (the bot it was
+			# meant for, whoever spoke last, an enemy in all chat)
+			if to != null and low.split(" ", false).size() <= 2:
+				speak(to, "r_name", all or to.team != u.team, {}, 1.0, d, -1, 2.0)
 
 ## The bot in `list` the player named: its player name, the first word of it, or its hero.
 func _addressed(low: String, list: Array) -> SimUnit:
@@ -1078,6 +1180,8 @@ func _review() -> void:
 					_nw_said[team] = w.time
 		# a bored bot now and then
 		say(_talker(_bots(team)), "gen_z_brainrot_and_slang", _rng.randf() < 0.4, {}, 0.2)
+	social.review()
+	prof.review()
 
 func _missing_item(h: SimUnit) -> String:
 	for id in ["boots", "power_treads", "slip_boots", "mana_boots"]:
@@ -1106,8 +1210,11 @@ func _memories() -> void:
 		var same := h.team == p.team
 		var sit := ""
 		var fill := {"name": pname(p), "n": int(rec.get("kills_on", 0))}
+		var ms := social.memory_sit(rec)
 		if bool(rec.get("friend", false)):
 			sit = "meet_friend"
+		elif ms != "":
+			sit = ms
 		elif float(rec.get("rep", 0.0)) < -0.3 and int(rec.get("flamed", 0)) > 0:
 			sit = "meet_flamer"
 		elif String(rec.get("last_side", "")) == "vs" and int(rec.get("last_kills_on", 0)) >= 4 and _rng.randf() < 0.5:
@@ -1122,6 +1229,7 @@ func _memories() -> void:
 		var chance := 0.95 if sit == "meet_friend" else 0.6
 		if speak(h, sit, not same, fill, chance, t0 + _rng.randf_range(0.0, 4.0)):
 			t0 += _rng.randf_range(2.0, 5.0)
+	prof.meet(p, social.meet(p, t0 + 2.0) + 1.5)
 
 ## A count of what passed between bot `h` and the player (kills_on_you, deaths_to_you, flamed, flamed_you, praised).
 func _note(h: SimUnit, k: String) -> void:
@@ -1143,6 +1251,9 @@ func relations() -> Dictionary:
 		r["k"] = h.kills
 		r["x"] = h.deaths
 		r["a"] = h.assists
+		r["multi"] = h.best_multi
+		r["streak"] = h.best_streak
+		r["line"] = Career.line_of(w, h)          # its whole line (Ranked: its career, its MMR by how it played)
 		out[String(b.pid)] = r
 	return out
 
@@ -1156,6 +1267,7 @@ func _on_end(winner: int) -> void:
 		if _rng.randf() < 0.6:
 			_say_now(h, "game_lost", _rng.randf() < 0.6, t0)
 			t0 += 0.6
+	social.on_end(winner)
 	# what the bots thought of the player this game
 	for p in _humans():
 		var good := float(p.kills) + float(p.assists) * 0.5 >= float(p.deaths) + 2.0
@@ -1179,6 +1291,21 @@ func _on_end(winner: int) -> void:
 					_queue.append({"at": w.time, "team": h.team, "u": h.id, "text": ChatStyle.apply(text, _style(h), 0.0, _rng),
 						"all": h.team != p.team, "cat": sit})
 	_flush_all()
+
+## The game is over and the world no longer steps (SimWorld.step), but the player can still type on the end screen:
+## what they type is answered at once (the online chat writer's version first: its requests go out before the lines).
+func after_end() -> void:
+	for e in w.events.duplicate():
+		if String(e.get("t", "")) == "chat" and not bool(e.get("after_end", false)):
+			e["after_end"] = true
+			_on_chat(e)
+	if not _intents.is_empty():
+		w.events.append_array(_intents)
+		_intents.clear()
+	for q in _queue:
+		w.chat(int(q.team), int(q.u), String(q.text), bool(q.all), true, int(q.get("lid", -1)))
+		said += 1
+	_queue.clear()
 
 ## The game is over (the world stops stepping): end lines go out at once.
 func _say_now(h: SimUnit, cat: String, all: bool, _delay: float) -> void:

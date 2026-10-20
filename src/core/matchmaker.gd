@@ -290,7 +290,62 @@ static func slots_for(l: Dictionary) -> Array:
 				s["traits"] = {"coop": float(p.get("coop", 1.0)), "disrupt": float(p.get("disrupt", 0.0)),
 					"toxic": float(p.get("toxic", 0.0)), "rage": bool(p.get("rage", false)), "voice": p.get("voice", {}),
 					"persona": p.get("persona", {}), "pid": id, "you": y,
-					"card": {"rank": Ranked.rank_label(p), "mmr": int(p.get("mmr", 0)), "country": String(p.get("country", "")),
-						"mood": float(p.get("mood", 0.0))}}
+					"card": card_of(p)}
 			out.append(s)
 	return out
+
+## What a ladder player brings into a match about itself (SimBot.card): rank, MMR, country, mood, its last game (MVP?),
+## what it is known for, its MVP count and the players it met before (run 2026-10-19 e).
+static func card_of(p: Dictionary) -> Dictionary:
+	var lg: Dictionary = p.get("last_game", {})
+	return {"rank": Ranked.rank_label(p), "mmr": int(p.get("mmr", 0)), "country": String(p.get("country", "")),
+		"mood": float(p.get("mood", 0.0)), "tier": Ranked.tier_for(p), "last_mvp": bool(lg.get("mvp", false)),
+		"last_hero": String(lg.get("hero", "")), "last_kda": "%d/%d/%d" % [int(lg.get("k", 0)), int(lg.get("x", 0)), int(lg.get("a", 0))] if not lg.is_empty() else "",
+		"mvps": int(p.get("mvps", 0)), "fame": Ranked.fame_of(p), "seen": (p.get("seen", {}) as Dictionary).duplicate(true),
+		"games": int(p.get("wins", 0)) + int(p.get("losses", 0)), "name": String(p.get("name", "")),
+		"prof": ProfileTalk.read(p)}
+
+## Play (casual) with Options "Bots are ladder players" (run 2026-10-19 e): bot slots that kept a default name (not Bot
+## Gerald, not one you typed) become ladder players who are online now, nearest your MMR first: their names, manners,
+## chat voice, card and memory of you; they keep the Game Setup skill. Returns the match to remember afterwards
+## (Ranked.remember_casual: {teams, mine, heroes}), or {} when no slot changed.
+static func casual_identities(slots: Array, rng: RandomNumberGenerator) -> Dictionary:
+	var you := Ranked.me()
+	var t := Ranked.now()
+	var mine := 0
+	for s in slots:
+		if String(s.kind) == "you":
+			mine = int(s.team)
+	var pool: Array = Ranked.bots().filter(func(b): return Persona.queueable(b, t))
+	if pool.size() < 12:
+		pool = Ranked.bots().filter(func(b): return Persona.online(b, t))
+	if pool.size() < 12:
+		pool = Ranked.bots().duplicate()
+	var my := int(you.get("mmr", Ranked.YOUR_START))
+	pool.sort_custom(func(a, b): return absi(int(a.mmr) - my) < absi(int(b.mmr) - my))
+	pool = pool.slice(0, 40)
+	var teams := [[], []]
+	var heroes := {}
+	var changed := false
+	for s in slots:
+		if String(s.kind) == "you":
+			(teams[int(s.team)] as Array).append("me")
+			heroes["me"] = String(s.hero)
+			continue
+		var nm := String(s.get("name", ""))
+		if String(s.kind) != "bot" or nm == "Bot Gerald" or not (nm == "" or nm in GameSettings.BOT_NAMES) or pool.is_empty():
+			continue
+		var p: Dictionary = pool.pop_at(rng.randi_range(0, mini(pool.size() - 1, 14)))
+		var id := String(p.id)
+		var y: Dictionary = (p.get("you", {}) as Dictionary).duplicate()
+		y["friend"] = id in (you.get("friends", []) as Array)
+		s["name"] = String(p.name)
+		s["id"] = id
+		s["traits"] = {"toxic": float(p.get("toxic", 0.0)), "voice": p.get("voice", {}), "persona": p.get("persona", {}),
+			"pid": id, "you": y, "card": card_of(p)}
+		(teams[int(s.team)] as Array).append(id)
+		heroes[id] = String(s.hero)
+		changed = true
+	if not changed:
+		return {}
+	return {"teams": teams, "mine": mine, "heroes": heroes}

@@ -51,6 +51,8 @@ Optional settings in `llm.json`:
 | `max_calls` | 150 | most lines rewritten in one match |
 | `share` | 0.5 | share of ordinary lines rewritten (0..1). Answers to you, memories of earlier matches, revenge, kill steals and arguments are always tried |
 | `timeout` | 4 | seconds to wait for an answer before the bot's own line is shown |
+| `max_replies` | 400 | most answers to what you type in one match (they never count against `max_calls`) |
+| `reply_timeout` | 9 | seconds an answer to you may wait for the model |
 
 Every match prints its cost in the log ("Online bot chat: N lines, ... $0.00xx this match"); the running total is in
 `llm_usage.json` next to `llm.json`. With OpenRouter the cost is the amount OpenRouter itself reports for each call.
@@ -108,8 +110,30 @@ month, about $130-450 a month with DeepSeek at the default settings, much less w
 4. **Grow the line library offline** some day: ask the model once (batch prices are half) for thousands of new lines
    per situation in each voice, review them, and ship them as data: no running cost, works in multiplayer.
 
+## Answers to you come first (run 2026-10-20)
+
+Every line you type gets at least one answer from the chat brain, and that answer is always sent to the model, past
+`share`, `max_calls` and the three-at-a-time limit. The prompt for it holds who you are (hero, score, last hits, rank),
+exactly what you wrote, and the instruction to answer that: a question gets a real answer, trash talk gets a witty
+comeback (never "relax" or "chill"). If the model is slow, the brain's own answer shows after `reply_timeout`.
+
+A test script driving the game (`godot -s ...`) never uses your key: only a stand-in given with `--llm_endpoint=`.
+
 ## Testing without a key
 
 `python tools/llm_mock.py --port=8765` runs a stand-in for both APIs (Anthropic and OpenRouter). Then
 `godot --headless --path . -s tests/tools/llm_probe.gd -- --port=8765` checks the requests, the answers, the cap, slow
 and failed answers, and the cost counting. No real API was called in this run.
+
+## The Forums (run 2026-10-19 e)
+
+Main Menu > **Forums** works without a key: `src/core/forum.gd` (Forum) writes the posts and replies of the ladder's
+players from what really happened (ranks reached, rampages, Top 1 players, losing streaks, the matches they played with
+you, the feeder they met) and from their persona and rank (kind ones help, high-rank show-offs sneer, trolls troll,
+jokers joke, shot callers give real tips). With **Online bot chat** on and your key set, `src/core/forum_writer.gd`
+(ForumWriter) asks the same model to write the replies to your posts and the two newest threads in each player's
+voice; Forum's own text is the fallback if no answer comes within about 9 s. At most 40 calls a visit; each reply sends
+the forum rules (about 700 tokens, cached), who the writer is and the thread so far (about 400-900 tokens) and gets
+about 40-90 tokens back: with DeepSeek V4.1 Flash about $0.0001-0.0002 a reply, so a busy visit costs well under a cent.
+Usage is added to `llm_usage.json` like the match writer's. Captures and probes never use your key (they need the local
+stand-in, `WOA_FORUM_LLM=http://127.0.0.1:8765/...` with `tools/llm_mock.py`).

@@ -137,6 +137,20 @@ func _run() -> void:
 	var cb := cheap.request_body({"lid": 3, "u": h.id, "team": h.team, "all": false, "cat": "r_greet", "text": "hi", "fill": {}})
 	check(String(cb.model) == "anthropic/claude-haiku-5.5" and String(cb.messages[0].content[0].cache_control.type) == "ephemeral",
 		"another OpenRouter model by name (Claude gets its cache mark)")
+	# an answer to what the player typed (run 2026-10-20): sent past the cap and the share, the model's answer used
+	var ans := LlmChat.new()
+	root.add_child(ans)
+	ans.setup(w, C.DAWN, {"api_key": "sk-or-test", "endpoint": base + "/api/v1/chat/completions", "share": 0.0, "max_calls": 0,
+		"usage_path": "user://llm_usage_probe.json"})
+	var me := w.heroes[0]
+	ans.want({"lid": 900020, "u": h.id, "team": h.team, "all": true, "cat": "r_back", "text": "sit", "fill": {}, "said": "ur all trash",
+		"by": me.id})
+	ans.want({"lid": 900021, "u": h.id, "team": h.team, "all": true, "cat": "casual_short_mockery", "text": "lol", "fill": {}})
+	await _wait(1.5)
+	var at: Dictionary = ans.text_for(900020)
+	check(String(at.state) == "ready" and String(at.text) == "mock answer to ur all trash",
+		"an answer to the player goes out with share 0 and no calls left, and the model's text is used (%s)" % str(at))
+	check(String(ans.text_for(900021).state) == "none", "an ordinary line still keeps to the cap")
 	llm.save_usage()
 	print("%s: %d failed" % ["DONE" if _fails == 0 else "FAILED", _fails])
 	quit(1 if _fails > 0 else 0)

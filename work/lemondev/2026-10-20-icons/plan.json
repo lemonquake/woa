@@ -1,0 +1,376 @@
+[
+  {
+    "key": "sheet01",
+    "kind": "skills",
+    "ids": [
+      "burst_shot",
+      "gale_impact",
+      "masterful_archery",
+      "blood_ranger_ult",
+      "dark_stomp",
+      "leap_strike",
+      "tainted_touch",
+      "unholy_might",
+      "shuriken_hook",
+      "stench",
+      "blubber",
+      "chomp",
+      "fiery_javelin",
+      "touch_of_ember",
+      "spirit_of_fire",
+      "divine_smite"
+    ],
+    "prompt": "Create one production game icon sprite sheet for an original fantasy MOBA. Exact square 4 columns x 4 rows = 16 square icons, equal cell dimensions, cells flush edge-to-edge, each fills its own square, no gutters, no borders, no labels, no letters, no numerals, no UI mockup. Crisp painterly realism like hand painted classic PC fantasy ability icons: deep dark background, dimensional materials, powerful close-up silhouette, rich restrained colors, bright focal action, clean at 44 pixels. Each subject occupies 75-85% of its cell; critical parts stay within safe 8% margins. Entirely original artwork. Consistent style and lighting. Do not copy existing game icons. Precise row-major contents:\nROW 1 archery hero, green/bronze with crimson ultimate:\n1. A bow loosing a dense fan of many steel arrows, five layered waves, arrows flying toward lower right; represents channelled 30-arrow barrage.\n2. One enormous silver arrow ripping forward through green wind, a small enemy silhouette thrown sideways and splintered tree; arrow knocks targets aside.\n3. Extreme close-up of a taut bow and clean arrowhead with precise bright physical-impact burst; agility-powered archery critical bonus, no eye symbol alone.\n4. Crimson-lit bow with two blood-red life ribbons flowing from a distant struck target back toward the archer, ghosted backward escape step; lifesteal, extended range, reactive back leap.\nROW 2 dark armored paladin, violet/black steel:\n1. Heavy armored boot slamming stone, circular purple ground shockwave hurling nearby silhouettes outward.\n2. Black armored swordsman airborne descending sword-first onto one hurt enemy, powerful white-violet strike and arcing leap trail. Not a generic sword icon.\n3. Large black steel sword receiving jagged PURPLE LIGHTNING from above, purple curse glow at blade; lightning weapon enchant that reveals attacked enemies.\n4. Dark armored chest and roaring helmet engulfed in violet aura, incoming bright blow partly absorbed and a second violet energy bolt redirected toward a different enemy. Defensive damage sharing, not healing.\nROW 3 obese butcher, corroded metal, toxic green/pink:\n1. FOUR-POINT SPINNING STEEL SHURIKEN attached to a thick iron CHAIN stretching back, hooked enemy pulled toward viewer, no conventional fishhook.\n2. Swirling dense toxic yellow-green gas billowing from massive fleshy belly; sickly silhouetted enemies nearby, no poison bottle.\n3. Close-up massive thick pink-grey belly folds with a steel projectile stopped at skin, thick fleshy protection, non-graphic, no armor plate.\n4. Huge monstrous open toothy mouth biting an enemy silhouette with a red life ribbon returning into mouth; channelled bite lifesteal. Non-graphic.\nROW 4 fire caster, orange/charcoal:\n1. Long flaming JAVELIN flying diagonally, fiery tether dragging two small enemy silhouettes behind along its path. Spear, not sword.\n2. One raised hand igniting orange spirit flames around a dark enemy silhouette, bright delayed explosion core around target.\n3. A cluster of FIVE distinct flame spirits swirling then rushing toward a single distant impact point, warm orange-white light.\n4. Large burning WAR HAMMER flying toward a small enemy, impact ground ring ablaze and prolonged burning tongues; hammer not sword.\nNo text anywhere. Exact 16 equal square cells."
+  },
+  {
+    "key": "sheet02",
+    "kind": "skills",
+    "ids": [
+      "breath_of_cold",
+      "ice_pulse",
+      "frost_heart",
+      "endless_winter",
+      "swift_dagger",
+      "sweet_poison",
+      "master_of_shadows",
+      "death_order",
+      "time_bolt",
+      "fast_forward",
+      "rewind",
+      "stop_time",
+      "iron_grip",
+      "repel",
+      "overload",
+      "magnet_field"
+    ],
+    "prompt": "Production original fantasy MOBA ability icon sprite sheet. Square canvas exactly 4 columns x 4 rows, 16 equal square cells flush edge-to-edge, no gutters, borders, lettering, numerals, titles or UI. Each icon is a rich hand-painted close-up illustration with realistic dimensional materials, dark atmospheric background, dramatic luminous focal action, strong differentiated silhouettes readable at 44px. Main subject large 80% cell, 8% safe margins, no crossing cell boundaries. Consistent high-detail classic PC fantasy game painterly art. Do not copy existing icons. The grid positions below are mandatory, row-major left to right. Mechanic is explanatory: prioritize the stated visual brief in one immediately readable central action, no infographics. Exact contents:\nROW 1 COLUMN 1: Froster / Breath of Cold. VISUAL: Broad icy breath cone spreading from a caster toward foes; blue frost mist widens forward, no circular explosion. EFFECT: Froster breathes a cone of bitter cold up to 800 ahead. Every enemy in it takes magic damage and is slowed for 3 seconds.\nROW 1 COLUMN 2: Froster / Ice Pulse. VISUAL: Enemy enclosed in a cracked blue ice curse, armor splitting before a circular outward ice blast; marked target and bursting ring. EFFECT: Curses an enemy: its defense drops (armor and every resistance count less, so it takes more physical and magic damage) for 3.5 seconds. Then the curse bursts in an ice blast that deals 100 magic damage to it and every enemy within 300.\nROW 1 COLUMN 3: Froster / Frost Heart. VISUAL: Three crystalline ice hearts gathering around an empowered arrow, one breaking into its frosty strike; heart silhouette clear. EFFECT: Damage Froster deals to enemies builds a Frost Heart (one per 500 / 450 / 400 / 350 damage, up to 3). His next attack spends one: 200 extra magic damage and a 40% slow for 1.5 seconds.\nROW 1 COLUMN 4: Froster / Endless Winter. VISUAL: Stationary ice caster inside a broad sustained blizzard; surrounding foes freezing solid in falling ice. EFFECT: Froster stands still and calls a blizzard for up to 7 seconds. Enemies within 600 take magic damage every second; one that stays inside for 2 seconds is Frosted, frozen solid for 2 seconds (once every 1.5 seconds after that). Channelled.\nROW 2 COLUMN 1: Caziel / Swift Dagger. VISUAL: Dark assassin flashing directly into a dagger stab along a purple trail; cracked armor at one impact point. EFFECT: Caziel flashes to an enemy in a trail of shadows and stabs it at once with his attack plus bonus physical damage, cutting its armor for 3 seconds.\nROW 2 COLUMN 2: Caziel / Sweet Poison. VISUAL: Dagger making a second green poisoned cut; droplets spreading along a lingering poison trail on one target. EFFECT: Each attack has a chance to land a second, poisoned blow: the target takes poison damage every second for 2 seconds. A new poison renews the old one; they do not stack.\nROW 2 COLUMN 3: Caziel / Master of Shadows. VISUAL: Dark assassin stepping through smoky afterimages while arrows miss; speed and evasion, no empty invisible silhouette. EFFECT: Caziel wraps himself in shadows for 12 seconds: he vanishes from the enemy minimap, evades attacks more often and moves faster.\nROW 2 COLUMN 4: Caziel / Death Order. VISUAL: Dagger delivering a clean finishing strike to a weakened enemy with a near-empty red life shape; no summoned reaper. EFFECT: Caziel strikes hardest when an enemy is about to die: his attacks deal pure damage to enemies below 10 / 12 / 14% health.\nROW 3 COLUMN 1: Tock / Time Bolt. VISUAL: Gold clock-faced bolt streaking through enemy silhouettes, leaving slowed clock hands on its trail. EFFECT: Tock fires a bolt of slowed time up to 1000 ahead. Every enemy it passes takes magic damage, and for 4 seconds its spell and item cooldowns run 30 / 40 / 50 / 60% slower.\nROW 3 COLUMN 2: Tock / Fast Forward. VISUAL: Friendly figure in warm gold, two forward time arrows and a rapidly turning clock; movement flowing forward. EFFECT: Winds an ally (or Tock) forward: 2 / 3.5 / 5 / 6.5 seconds come off the cooldowns of its basic spells (not its ultimate, not items), and it moves 10 / 14 / 18 / 22% faster for 5 seconds.\nROW 3 COLUMN 3: Tock / Rewind. VISUAL: Clock hand curving backward toward a translucent previous position of a tinkerer; green and blue restored energy returning. EFFECT: Tock steps back to where he stood 3 seconds ago, with the health and mana he had then if he had more. Removes slows and silences (a basic dispel) and dodges projectiles on the way.\nROW 3 COLUMN 4: Tock / Stop Time. VISUAL: Large stopped clock above enemies frozen mid-swing inside a gold circle; friendly figure still moving outside. EFFECT: Time stops in a 400 area: every enemy there is frozen (stunned) and its cooldowns stand still for 2.5 / 3 / 3.5 seconds. Tock's allies keep moving.\nROW 4 COLUMN 1: Kragg / Iron Grip. VISUAL: Iron gauntlet and enemy pulled toward a bright magnetic meeting point; opposing inward arcs show both moving. EFFECT: Kragg magnetizes an enemy: the two snap together and meet halfway. The enemy takes magic damage, is stunned and gets 2 Charges.\nROW 4 COLUMN 2: Kragg / Repel. VISUAL: Iron gauntlet releasing blue magnetic force outward, shoving nearby enemies away and one against a rock. EFFECT: A magnetic blast throws enemies near Kragg away, 25% further for each Charge they carry, and slows them. One that crashes into a tree, wall or unit takes more damage and is stunned. Adds a Charge.\nROW 4 COLUMN 3: Kragg / Overload. VISUAL: Armored fist releasing a short-range blue electric circular burst; small charge beads feed a sudden discharge around the knight. EFFECT: Every 6th / 5th / 4th / 3rd attack, Kragg overloads and bursts electric charge around him: enemies within 200 are slowed by 80% for 0.8 seconds and take 60 / 75 / 90 / 105 electric magic damage (Lightning element).\nROW 4 COLUMN 4: Kragg / Magnet Field. VISUAL: Magnetic armored knight at center of broad blue field lines drawing enemies inward; compact final blast at his feet. EFFECT: For 6 seconds Kragg is a giant magnet: enemies within 700 are dragged toward him (harder with each Charge) and gain a Charge every second. When it ends, enemies within 300 take magic damage and are stunned.\nNo text anywhere. Exact 4 by 4 grid."
+  },
+  {
+    "key": "sheet03",
+    "kind": "skills",
+    "ids": [
+      "grip_of_the_ruler",
+      "void_rush",
+      "dark_matter_skin",
+      "anomaly",
+      "bounce_shot",
+      "summon_boulders",
+      "lay_trap",
+      "place_turret",
+      "soul_tap",
+      "door_of_the_end",
+      "death_scythe",
+      "divine_darkness",
+      "gust",
+      "tailwind",
+      "wind_wall",
+      "hurricane"
+    ],
+    "prompt": "Production original fantasy MOBA ability icon sprite sheet. Square canvas exactly 4 columns x 4 rows, 16 equal square cells flush edge-to-edge, no gutters, borders, lettering, numerals, titles or UI. Each icon is a rich hand-painted close-up illustration with realistic dimensional materials, dark atmospheric background, dramatic luminous focal action, strong differentiated silhouettes readable at 44px. Main subject large 80% cell, 8% safe margins, no crossing cell boundaries. Consistent high-detail classic PC fantasy game painterly art. Do not copy existing icons. The grid positions below are mandatory, row-major left to right. Mechanic is explanatory: prioritize the stated visual brief in one immediately readable central action, no infographics. Exact contents:\nROW 1 COLUMN 1: Roydo / Grip of the Ruler. VISUAL: Gravity hand lifting one enemy and throwing it in an arc to a central ground impact circle. EFFECT: Roydo's gravity seizes one unit in a 400 area, enemy heroes first, and throws it to the middle over 0.8 seconds. Then every enemy there takes magic damage and is stunned for 1 second. With no enemy in the area, an ally is thrown instead and comes to no harm.\nROW 1 COLUMN 2: Roydo / Void Rush. VISUAL: Violet gravity wave strengthening friendly armor while enemies slump under pressure; circular team benefit and enemy weakening. EFFECT: A wave of gravity rolls out 650 around Roydo for 7 seconds. Enemies lose 20 / 30 / 40 / 50% status resistance and deal 10 / 15 / 20 / 25% less damage. Allies gain 7 / 9 / 11 / 13 armor and move 7 / 9 / 11 / 13% faster.\nROW 1 COLUMN 3: Roydo / Dark Matter Skin. VISUAL: Dark alien torso taking a hit then pulsing violet impact energy outward toward several enemies; reactive skin burst. EFFECT: Damage Roydo takes has a 9 / 13 / 17 / 21% chance to burst back out: 25 / 28 / 31 / 34% of it hits every enemy within 650 as magic damage and slows their movement and attacks by 80% for 0.3 seconds.\nROW 1 COLUMN 4: Roydo / Anomaly. VISUAL: Small alien transforming into a hulking muscular purple creature, massive arm launching a ranged energy attack. EFFECT: Roydo becomes the Anomaly, a hulking monster, for 30 seconds: his base attack time is 0.25 seconds shorter, he deals 60 / 120 / 180 more attack damage and he attacks from range (650).\nROW 2 COLUMN 1: Blau / Bounce Shot. VISUAL: Rifle bullet ricocheting in a clear zigzag between rock and tree, then passing through an enemy; angled reflections. EFFECT: Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times; each ricochet lets it fly 400 further. A tree it ricochets off is knocked down. Each enemy it passes takes magic damage, at most twice.\nROW 2 COLUMN 2: Blau / Summon Boulders. VISUAL: Several substantial gray round boulders rolling forward in a fan, collision sparks and a knocked-back enemy; no falling meteors. EFFECT: 3 / 4 / 5 / 6 boulders roll out toward the target point at random angles, as far as it (at most 700), bouncing off each other, walls and units. An enemy they hit takes magic damage once and is knocked 200 back. They stay for 10 seconds and block every unit, even phased ones. Bounce Shot ricochets off them.\nROW 2 COLUMN 3: Blau / Lay Trap. VISUAL: Open metal ground trap beneath a fading gunner position, gunner leaping backward; toothed jaws and retreat arc. EFFECT: Blau leaps 400 backwards and leaves a hidden trap where he stood. The first enemy to step on it is caught and cannot move for 1.2 / 1.6 / 2 / 2.4 seconds. The trap lasts 25 seconds.\nROW 2 COLUMN 4: Blau / Place Turret. VISUAL: Compact solid gun turret on stable mechanical base firing toward a distant enemy; barrel and mount dominate. EFFECT: Blau builds a turret that shoots enemies within 650 every 1.5 seconds for 25 / 30 / 35% of his attack damage (40% at level 3 with the Upgrade Staff); his attack effects work with its shots. It has 900 / 1500 / 2100 health, no regeneration and lasts 35 seconds.\nROW 3 COLUMN 1: Azrael / Soul Tap. VISUAL: White soul wisps drawn into a black scythe, charging one broad white cleaving strike; gathering then striking, no direct life drain. EFFECT: Toggle. Every 4.5 seconds Azrael scans 600 around her for souls (every unit but herself, allies and enemies alike). If at least one unit is found, it spends 80 mana and grants bonus attack damage on her next strike for each unit and each hero scanned. Her next attack deals pure damage in a 100% cleave over a 400 area, slowing hit enemies by 80% for 0.8 seconds.\nROW 3 COLUMN 2: Azrael / Door of the End. VISUAL: Two upright spirit doors joined by a pale path; allied silhouettes emerging beside a white blast with green healing light. EFFECT: Azrael opens a door to the spirit world. She and up to two allied heroes can walk into it, hidden and unharmed, and may move to step out early without setting off the blast. Cast again to place the exit, up to 800 away. When the door closes, everyone inside steps out in a spirit blast that heals nearby allies, deals magic damage to enemies, stuns them for 1 second, and strips their elemental resistances for 4 seconds.\nROW 3 COLUMN 3: Azrael / Death Scythe. VISUAL: Black scythe with brilliant white edge cutting a foe; white-red healing stream returning along the haft. EFFECT: Azrael's attacks and spells have a chance to strike as pure damage, adding bonus pure damage and healing her for 50% of the damage done. 1 second cooldown after each strike.\nROW 3 COLUMN 4: Azrael / Divine Darkness. VISUAL: Hooded white-flame soul spreading white wings above terrain, dark ring dimming enemies below; free flight and sight aura. EFFECT: Azrael spreads her white wings for 25 seconds: she flies over cliffs and trees, moves 15% faster, sees further day and night and attacks faster. Enemies within 700 of her lose part of their sight.\nROW 4 COLUMN 1: Airah / Gust. VISUAL: Blue-white wind stream sweeping forward and curling back toward its caster, dragging an enemy along its moving head. EFFECT: A blast of wind rushes 900 ahead, then turns back to Airah wherever she is. Every enemy it hits takes magic damage and is dragged along toward its head; enemies can still move and act, and can pull free by walking away. An enemy dragged into a tree, cliff, building or unit takes more damage. Trees it hits fall.\nROW 4 COLUMN 2: Airah / Tailwind. VISUAL: Friendly runner with a bright wind ribbon at its back while arrows bend away; movement and ranged defense. EFFECT: Wind at an ally's back (or Airah's) for 5 seconds: it moves 16 / 22 / 28 / 34% faster, walks through units, and ranged attacks against it miss 25 / 30 / 35 / 40% of the time. Removes slows when cast.\nROW 4 COLUMN 3: Airah / Wind Wall. VISUAL: Tall translucent blue-white wind barrier catching and stopping incoming arrows; clear vertical barrier plane. EFFECT: A wall of wind 600 wide rises across Airah's aim for 4 / 4.5 / 5 / 5.5 seconds. Enemy ranged attacks that touch it stop. Enemies walking through it are slowed by 30%.\nROW 4 COLUMN 4: Airah / Hurricane. VISUAL: Broad upright tornado pulling enemies toward its center; debris circling and outward release streaks; no channeling caster pose. EFFECT: A hurricane 450 wide for 6 seconds; Airah keeps moving and casting. Trees inside fall. Enemies inside are dragged toward its middle and take magic damage every second; allies inside move 25% faster. When it ends, every enemy still inside is thrown 450 straight out, and one that crashes into a tree, cliff, building or unit is stunned for 1 second.\nNo text anywhere. Exact 4 by 4 grid."
+  },
+  {
+    "key": "sheet04",
+    "kind": "skills",
+    "ids": [
+      "axe_throw",
+      "reckless_swing",
+      "unstoppable",
+      "berserk",
+      "overhead_cut",
+      "sweep",
+      "steel_stance",
+      "giant_swing",
+      "knife_juggle",
+      "joke_box",
+      "swap",
+      "shuffle",
+      "tame",
+      "roar",
+      "pack_leader",
+      "beast_form"
+    ],
+    "prompt": "Production original fantasy MOBA ability icon sprite sheet. Square canvas exactly 4 columns x 4 rows, 16 equal square cells flush edge-to-edge, no gutters, borders, lettering, numerals, titles or UI. Each icon is a rich hand-painted close-up illustration with realistic dimensional materials, dark atmospheric background, dramatic luminous focal action, strong differentiated silhouettes readable at 44px. Main subject large 80% cell, 8% safe margins, no crossing cell boundaries. Consistent high-detail classic PC fantasy game painterly art. Do not copy existing icons. The grid positions below are mandatory, row-major left to right. Mechanic is explanatory: prioritize the stated visual brief in one immediately readable central action, no infographics. Exact contents:\nROW 1 COLUMN 1: Burak / Axe Throw. VISUAL: Heavy thrown axe lodged in a target, curved berserker leap trail toward its haft; axe and follow-up jump. EFFECT: Burak throws an axe up to 1000. The first enemy hit takes physical damage and is slowed by 30% for 2 seconds; the axe sticks in it, or in the first tree or cliff, or drops at the end. For 4 seconds he can cast it again for free to leap to the axe, landing beside it and attacking at once. Walking over a dropped axe picks it up and halves the cooldown left. While the axe is gone he deals 20% less attack damage. A hero hit gives 15 Rage. Upgrade Staff: both axes fly in a fork; he can leap to either.\nROW 1 COLUMN 2: Burak / Reckless Swing. VISUAL: Wide axe sweep cleaving through foes behind its first target, red life energy returning; exposed torso suggests risk. EFFECT: For 8 seconds Burak's attacks cleave 50 / 60 / 70 / 80% of their damage to the enemies behind his target and heal him for 15 / 20 / 25 / 30% of the damage, but he takes 15% more damage.\nROW 1 COLUMN 3: Burak / Unstoppable. VISUAL: Berserker tearing through a snare and breaking a stun ring using stored red energy; reduced restraint, no immunity bubble. EFFECT: When a stun, root or hex lands on Burak while he has 40 Rage or more, he spends 40 Rage and it lasts 40 / 50 / 60 / 70% shorter. Break stops it.\nROW 1 COLUMN 4: Burak / Berserk. VISUAL: Dual-axe fighter glowing red with full energy; part of an incoming impact held in dark red bands behind him. EFFECT: For 12 seconds Burak's Rage stays full, he deals 40 / 60 / 80 more attack damage, moves 10% faster and slows do nothing to him. Half of the damage he takes is held back and comes back as pure damage over 6 seconds after Berserk ends. Every enemy hero he kills or helps kill during Berserk clears the held damage.\nROW 2 COLUMN 1: Ser Emelrich / Overhead Cut. VISUAL: Massive steel greatsword descending straight down onto a narrow red ground line; heavy vertical blow, stunned enemy. EFFECT: Ser Emelrich raises his sword (this part can still be called off), then winds up for 0.6 seconds with a red line on the ground for everyone to see; from then on only a stun, hex or silence stops the swing. The cut, 450 long and 160 wide, deals physical damage plus 60% of his attack damage and stuns. Trees on the line fall.\nROW 2 COLUMN 2: Ser Emelrich / Sweep. VISUAL: Broad sword sweeping horizontally across a half circle, pushing enemies together toward the swordsman's left. EFFECT: A wide swing through the half circle in front of him (300): his attack damage plus 40 / 70 / 100 / 130 as physical damage. Enemies hit are shoved 200 to his left, so they pile up; one shoved into a tree, cliff, building or unit takes 40 / 60 / 80 / 100 more and is stunned for 0.5 seconds.\nROW 2 COLUMN 3: Ser Emelrich / Steel Stance. VISUAL: Armored swordsman braced behind a heavy blade deflecting arrows from directly ahead; front protection wedge. EFFECT: Toggle (1 second between toggles). While on, Ser Emelrich moves 20% slower and turns half as fast, but has 4 / 6 / 8 / 10 more armor and takes 25 / 35 / 45 / 55% less damage from attacks and line shots that come from his front 120 degrees. Other slows do nothing to him. How he faces matters.\nROW 2 COLUMN 4: Ser Emelrich / Giant Swing. VISUAL: Huge greatsword carving a broad forward cone through enemies and trees, knocking foes down; wide rather than straight strike. EFFECT: Ser Emelrich winds up for 1.2 seconds (a red cone for everyone to see), then cuts through a cone 700 long and 100 degrees wide: physical damage that ignores 65% of armor, and every enemy hit is knocked down (stunned). Every tree in the cone falls. A stun, hex or silence breaks the wind-up; with Steel Stance on only a hex or silence does. Upgrade Staff: 0.5 seconds later he swings back the other way (a smaller cone, half damage).\nROW 3 COLUMN 1: Feran Mock / Knife Juggle. VISUAL: Jester hand releasing a fan of separate throwing knives in close staggered paths; sharp metal and successive throws. EFFECT: Feran throws 4 / 5 / 6 / 7 knives 0.1 seconds apart, each at a random angle within 25 degrees of his aim, 800 far. Each knife deals magic damage to the first enemy it hits; one enemy is hit by at most 5 knives a cast.\nROW 3 COLUMN 2: Feran Mock / Joke Box. VISUAL: Open wooden prank box popping with a pie, coiled spring, confetti and sticky glue; box central, varied prank contents. EFFECT: Feran throws a box that lands and pops after a 0.8 second fuse: enemies within 275 take magic damage and each rolls its own prank. Pie: its attacks miss half the time for 3 seconds. Spring: thrown 350 in a random direction (a crash into a tree, cliff or unit stuns for 0.6 seconds). Confetti: silenced. Glue: rooted.\nROW 3 COLUMN 3: Feran Mock / Swap. VISUAL: Two different figures exchanging positions along opposing curved violet arrows; reciprocal movement clear. EFFECT: Feran and any hero, ally or enemy, trade places at once; projectiles aimed at either of them miss. A swapped enemy is turned to face away and slowed by 40% for 1.5 seconds. Upgrade Staff: cast it on an allied hero to mark it, then on an enemy hero: those two trade places and Feran stays put.\nROW 3 COLUMN 4: Feran Mock / Shuffle. VISUAL: Several enemies exchanging places around a circular swirl while knives fly outward from its center; multiple rearranged targets. EFFECT: Every enemy hero and creep in the area trades places with another random enemy there, is stunned, then is dizzy for 3 seconds (turns half as fast and moves 25% slower). Then knives fly out of the middle in every direction: 6 Knife Juggles at its level, each hitting one enemy at most 5 times. With one enemy inside, it trades places with Feran instead.\nROW 4 COLUMN 1: Ghorman / Tame. VISUAL: Beast leader's open hand reaching toward a wolf with a friendly green collar glow; creature joining, no cage or damage. EFFECT: A neutral creep (not from the ancient camp) or an enemy lane creep becomes Ghorman's beast for good, with 20 / 30 / 40 / 50% more health and attack damage, and keeps its own ability. He can lead 1 / 2 / 3 / 5 at once; taming past that releases the oldest (it dies). Upgrade Staff: ancient creeps too, one of them at a time.\nROW 4 COLUMN 2: Ghorman / Roar. VISUAL: Beast leader roaring a pressure wave at foes, friendly wolves behind him surging forward; roaring mouth and pack. EFFECT: Enemies within 500 are slowed by 35 / 40 / 45 / 50% and deal 15 / 20 / 25 / 30% less attack damage for 6 seconds. His beasts within 900 attack 30 faster (and 2% more for each beast he leads) and move 20% faster for 6 seconds.\nROW 4 COLUMN 3: Ghorman / Pack Leader. VISUAL: Beast leader with several close wolves, their shared warm energy strengthening his weapon and armor; group pack composition. EFFECT: Each of his beasts within 900 gives Ghorman 3 / 4 / 5 / 6 attack damage and 1 / 1.5 / 2 / 2.5 armor. When one of his beasts dies, he heals 8 / 10 / 12 / 14% of his health.\nROW 4 COLUMN 4: Ghorman / Beast Form. VISUAL: Human beast leader transforming into a huge clawed beast, smaller friendly pack beasts growing beside him. EFFECT: Ghorman becomes a huge beast for 25 seconds: 300 / 600 / 900 more health, 40 / 60 / 80 more attack damage and 40 more speed; every 3rd attack is a maul for 100 / 150 / 200 more physical damage and a 0.6 second bash. His beasts grow too: 25% more health, and their abilities come back 25% faster.\nNo text anywhere. Exact 4 by 4 grid."
+  },
+  {
+    "key": "sheet05",
+    "kind": "skills",
+    "ids": [
+      "blur_strike",
+      "djin_bomb",
+      "ghosts_of_the_will",
+      "the_blur",
+      "growing_gut",
+      "slow_field",
+      "quick_hands",
+      "magnetize",
+      "pilot_turret",
+      "rage",
+      "blessing_of_the_beast_king",
+      "senryukai",
+      "snarl",
+      "stomp",
+      "smash",
+      "ancient"
+    ],
+    "prompt": "Production original fantasy MOBA ability icon sprite sheet. Square canvas exactly 4 columns x 4 rows, 16 equal square cells flush edge-to-edge, no gutters, borders, lettering, numerals, titles or UI. Each icon is a rich hand-painted close-up illustration with realistic dimensional materials, dark atmospheric background, dramatic luminous focal action, strong differentiated silhouettes readable at 44px. Main subject large 80% cell, 8% safe margins, no crossing cell boundaries. Consistent high-detail classic PC fantasy game painterly art. Do not copy existing icons. The grid positions below are mandatory, row-major left to right. Mechanic is explanatory: prioritize the stated visual brief in one immediately readable central action, no infographics. Exact contents:\nROW 1 COLUMN 1: Blur Strike, Araki. VISUAL: Katana fighter flashing through several foes in one straight dash, broad blade trail and faint second dash afterimage.\nROW 1 COLUMN 2: Djin Bomb, Araki. VISUAL: Small thrown bomb opening into dense purple smoke with a demon face; enemies slowed inside, no fiery blast.\nROW 1 COLUMN 3: Ghosts of the Will, Araki. VISUAL: Several translucent katana ghosts flying in sequence toward one marked foe; foremost strikes once then dissolves.\nROW 1 COLUMN 4: The Blur, Araki. VISUAL: Focused katana fighter surrounded by rapid sword afterimages and accelerating cooldown arcs; concentration, no invisibility.\nROW 2 COLUMN 1: Growing Gut, Sludge. VISUAL: Broad fleshy belly growing beneath a butcher belt as a departing enemy soul becomes warm strength energy; organic fat.\nROW 2 COLUMN 2: Slow Field, Tock. VISUAL: Circular gold ground field holding slowed enemy silhouettes under drooping clock hands; stationary area, no ice.\nROW 2 COLUMN 3: Quick Hands, Tock. VISUAL: Tinkerer hands rapidly turning clock gears while several small cooldown dials advance; hand and gear motion.\nROW 2 COLUMN 4: Magnetize, Kragg. VISUAL: Iron weapon touching an enemy and leaving several bright electric charge beads on its body; applied charges, no burst.\nROW 3 COLUMN 1: Pilot Turret, Blau. VISUAL: Gunner seated inside his armored turret with hands on controls; occupied cockpit distinct from empty turret.\nROW 3 COLUMN 2: Rage, Burak. VISUAL: Red-orange clenched fist with ten rising hot energy segments, fueled by received and landed blows; growing attack speed resource.\nROW 3 COLUMN 3: Blessing of the Beast King, Ghorman. VISUAL: Large hand casting green-gold healing on one friendly wolf; broken restraints fall away as claws brighten with strength.\nROW 3 COLUMN 4: Senryukai, Araki. VISUAL: Sharp katana repeatedly cutting one marked enemy, three accumulating slash marks deepening at the same point.\nROW 4 COLUMN 1: Snarl, Wolf. VISUAL: Snarling wolf muzzle emitting a low blue pressure wave toward weakened enemy weapon silhouettes; no fear symbols.\nROW 4 COLUMN 2: Stomp, Orc Shaman. VISUAL: Broad orc foot striking earth, compact brown shockwave lifting stunned enemies; distinct from Ezee's dark outward throw.\nROW 4 COLUMN 3: Smash, Ogre. VISUAL: Huge ogre club raised overhead then slamming a ground circle with rock fragments and stunned enemies; blunt club.\nROW 4 COLUMN 4: Ancient, Fire Imp; Lava Golem. VISUAL: Large old stone creature beneath a solid protective crest shape; sturdy creature classification, no active invulnerability bubble.\nNo text. Exact 4 by 4 equal grid."
+  },
+  {
+    "key": "sheet06",
+    "kind": "skills",
+    "ids": [
+      "weapon_grab",
+      "pace_aura",
+      "pack_aura",
+      "magic_armor_aura",
+      "break_strike",
+      "thick_hide_aura",
+      "neutral_crit",
+      "neutral_splash",
+      "flying",
+      "true_sight",
+      "sight",
+      "backdoor_protection",
+      "fortify"
+    ],
+    "prompt": "Production original fantasy MOBA ability icon sprite sheet. Square canvas exactly 4 columns x 4 rows, 16 equal square cells flush edge-to-edge, no gutters, borders, lettering, numerals, titles or UI. Each icon is a rich hand-painted close-up illustration with realistic dimensional materials, dark atmospheric background, dramatic luminous focal action, strong differentiated silhouettes readable at 44px. Main subject large 80% cell, 8% safe margins, no crossing cell boundaries. Consistent high-detail classic PC fantasy game painterly art. Do not copy existing icons. The grid positions below are mandatory, row-major left to right. Mechanic is explanatory: prioritize the stated visual brief in one immediately readable central action, no infographics. Exact contents:\nROW 1 COLUMN 1: Weapon Grab, Goblin Digger. VISUAL: Goblin hand wrenching a sword away from an enemy fist, blade tilted out of control; lost attack ability, no armor fracture.\nROW 1 COLUMN 2: Pace Aura, Goblin Boss. VISUAL: Several goblin feet running together inside a shared green circular breeze; movement speed aura, no sword damage symbol.\nROW 1 COLUMN 3: Pack Aura, Alpha Wolf. VISUAL: Alpha wolf head leading smaller wolves, their bright teeth joined by a red circular energy band; shared pack attack strength.\nROW 1 COLUMN 4: Magic Armor Aura, Orc. VISUAL: Orc silhouette inside a blue protective ring deflecting a glowing magic bolt, with smaller allies sharing the ring; magical defense.\nROW 2 COLUMN 1: Break Strike, Swamp Troll. VISUAL: A swamp troll projectile shattering a small glowing passive power circle on an enemy; suppressed inner power, no broken physical armor.\nROW 2 COLUMN 2: Thick Hide Aura, Lava Golem. VISUAL: Large stone-skinned creature radiating a brown protective ring around allies, their hides or armor thickening; shared physical armor.\nROW 2 COLUMN 3: Crit, Alpha Wolf. VISUAL: Wolf jaws delivering one powerful bright red critical bite, sharp doubled fang impact; single high-damage hit, no bleed.\nROW 2 COLUMN 4: Splash, Lava Golem. VISUAL: Burning lava projectile bursting around its struck target in a circular orange splash that hits nearby foes; circular impact, no melee cone.\nROW 3 COLUMN 1: Flying, Flying unit. VISUAL: A large feathered wing and a small flying creature soaring above treetops and a cliff, clear airborne movement.\nROW 3 COLUMN 2: True Sight, Detection. VISUAL: Large golden open eye casts a revealing beam onto a translucent hidden enemy silhouette, invisible enemy becomes visible.\nROW 3 COLUMN 3: Sight, Ward. VISUAL: One tall wooden lookout ward with glowing blue watching eye illuminating a circular patch of forest, ordinary vision.\nROW 3 COLUMN 4: Backdoor Protection, Building. VISUAL: Stone tower inside a translucent blue protective dome, incoming arrow deflects, fortress protection.\nROW 4 COLUMN 1: Fortify, Team buildings. VISUAL: Three stone towers surrounded by one strong gold-white protective light ring, team building invulnerability.\nCells 14 through 16 plain dark charcoal empty squares; no invented extra icons.\nNo text. Exact 4 by 4 equal grid."
+  },
+  {
+    "key": "items01",
+    "kind": "items",
+    "ids": [
+      "tp_scroll",
+      "bottle",
+      "tango",
+      "salve",
+      "clarity",
+      "mango",
+      "faerie_fire",
+      "observer_ward",
+      "reveal_ward",
+      "reveal_dust",
+      "bottle_empty",
+      "recipe"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Teleport Scroll. Rolled parchment opening into a blue teleport circle.\nROW 1 COLUMN 2: Flask. Clear stoppered round glass flask filled with blue-green restorative liquid, health and mana glints.\nROW 1 COLUMN 3: Vegan Picker. Small handheld plant picker clasping a fresh leaf, green healing glow; show an implement and leaf rather than a generic status symbol.\nROW 1 COLUMN 4: Healing Paste. Open small pot of thick green healing paste with dab on lid.\nROW 2 COLUMN 1: Mana Potion. Small corked blue mana potion with luminous liquid.\nROW 2 COLUMN 2: Ripe Mango. Ripe yellow-orange mango with green leaf and blue mana glint.\nROW 2 COLUMN 3: Firefly Jar. Clear jar containing luminous healing fireflies; unmistakable glass jar.\nROW 2 COLUMN 4: Eye Ward. Wooden stake topped by a large watchful golden eye and sight halo.\nROW 3 COLUMN 1: Reveal Ward. Distinct blue eye-topped stake with an outward reveal halo; differ from Eye Ward.\nROW 3 COLUMN 2: Reveal Dust. Open pouch spilling pale sparkling dust that outlines a faint hidden figure.\nROW 3 COLUMN 3: Flask (empty). Same clear stoppered glass Flask, visibly empty with no liquid; faint residual blue-green glow only.\nROW 3 COLUMN 4: Recipe scroll (shared). Rolled parchment sheet with simple equipment sketch and wax seal; no readable lettering.\nRemaining cells 13 through 16 completely plain dark charcoal squares, unused, no objects.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items02",
+    "kind": "items",
+    "ids": [
+      "branch",
+      "slippers",
+      "gauntlets",
+      "mantle",
+      "circlet",
+      "boots_elves",
+      "belt_str",
+      "robe",
+      "blade_alacrity",
+      "giant_axe",
+      "wizard_staff",
+      "gold_band",
+      "wraith_band",
+      "tough_band",
+      "smart_band"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Tree Twig. Forked brown twig with two green leaves and exposed plantable end.\nROW 1 COLUMN 2: Slippers. Pair of soft green cloth slippers, light and supple.\nROW 1 COLUMN 3: Heavy Gloves. Pair of heavy iron gloves with red strength accent.\nROW 1 COLUMN 4: Thinking Cap. Soft blue thinking cap with subtle sparks.\nROW 2 COLUMN 1: Headband. Simple circular metal headband and small neutral jewel, no royal crown.\nROW 2 COLUMN 2: Elf Band. Slim green arm band with leaf detail; band rather than boots.\nROW 2 COLUMN 3: Heavy Belt. Broad leather belt with heavy iron buckle and red strength accent.\nROW 2 COLUMN 4: Wizard Robe. Draped blue wizard robe with clear cloth folds.\nROW 3 COLUMN 1: Quick Blade. Light narrow green-tinted blade with a quick motion trail.\nROW 3 COLUMN 2: Giant Axe. Large broad iron axe, heavy wood handle, red strength accent.\nROW 3 COLUMN 3: Wizard Staff. Tall wood staff with a blue gem head.\nROW 3 COLUMN 4: Gold Band. Broad gold head band with small red-green-blue stones.\nROW 4 COLUMN 1: Swift Band. Slim gold wrist band with green inset stone and slight speed trail.\nROW 4 COLUMN 2: Tough Band. Broad iron wrist band with red stone and health glow.\nROW 4 COLUMN 3: Smart Band. Gold wrist band with blue stone and mana sparkle.\nRemaining cells 16 through 16 completely plain dark charcoal squares, unused, no objects.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items03",
+    "kind": "items",
+    "ids": [
+      "blades_attack",
+      "broadsword",
+      "gloves",
+      "quelling_blade",
+      "greatsword",
+      "steel_hammer",
+      "spear",
+      "rust_stone",
+      "brass_knuckles",
+      "huge_sword",
+      "war_axe",
+      "relic",
+      "feather",
+      "swift_stone"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Fist Blades. Two short fist-mounted steel blades with visible hand grips.\nROW 1 COLUMN 2: Long Sword. Long straight steel sword with leather grip.\nROW 1 COLUMN 3: Fast Gloves. Pair of fitted leather gloves with fast motion streaks.\nROW 1 COLUMN 4: Mini-Axe. Compact wood-handled single-headed axe beside a cut twig.\nROW 2 COLUMN 1: Greatsword. Broad two-handed steel greatsword, substantial weight.\nROW 2 COLUMN 2: Steel Hammer. Heavy rectangular steel hammer on wood handle.\nROW 2 COLUMN 3: Spear. Long wooden spear with a sharp steel point and piercing flash.\nROW 2 COLUMN 4: Rust Stone. Rough rust-red stone shedding flakes onto corroding metal.\nROW 3 COLUMN 1: Brass Knuckles. Four connected brass finger rings, unmistakable knuckle silhouette.\nROW 3 COLUMN 2: Huge Sword. Massive broad steel sword, visibly heavier than Greatsword.\nROW 3 COLUMN 3: War Axe. Massive double-edged red-iron axe, heavy haft, red strength gem.\nROW 3 COLUMN 4: Relic. Old ornate gold weapon fragment with a sharp white damage gleam.\nROW 4 COLUMN 1: Feather. Large green feather with gold quill and agile trail.\nROW 4 COLUMN 2: Swift Stone. Green faceted stone with rapid sweeping motion trails.\nRemaining cells 15 through 16 completely plain dark charcoal squares, unused, no objects.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items04",
+    "kind": "items",
+    "ids": [
+      "ring_protection",
+      "chainmail",
+      "plate_vest",
+      "plate_armor",
+      "iron_helm",
+      "ring_regen",
+      "big_healing_ring",
+      "troll_ring",
+      "health_crystal",
+      "fur_hat",
+      "shawl",
+      "cloak",
+      "lifesteal",
+      "sneak_charm",
+      "dodge_charm",
+      "giant_heart"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Armor Ring. Thick iron ring with protective metal sheen.\nROW 1 COLUMN 2: Chain Shirt. Short shirt made of visible linked steel rings.\nROW 1 COLUMN 3: Plate Vest. Plain steel torso plate vest with straps.\nROW 1 COLUMN 4: Plate Armor. Heavy full steel breastplate with layered shoulders, stronger than Plate Vest.\nROW 2 COLUMN 1: Iron Helm. Dark iron helmet with clear face opening and green regeneration gleam.\nROW 2 COLUMN 2: Healing Ring. Small gold ring with green healing gem.\nROW 2 COLUMN 3: Big Healing Ring. Large gold ring with large green healing stone, clearly larger than Healing Ring.\nROW 2 COLUMN 4: Troll Ring. Thick worn green-gem ring with strong regeneration wisps.\nROW 3 COLUMN 1: Health Crystal. Red faceted crystal with warm health glow.\nROW 3 COLUMN 2: Fur Hat. Brown fur cap with thick fur trim and red health accent.\nROW 3 COLUMN 3: Scarf. Wrapped violet wool scarf with faint protective ring.\nROW 3 COLUMN 4: Spell Cloak. Full violet cloak with protective magic sheen and opaque cloth.\nROW 4 COLUMN 1: Leech Mask. Dark crimson face mask with small fangs and blood droplets.\nROW 4 COLUMN 2: Sneak Charm. Small dark pendant half disappearing into translucent wisps; component only, no standalone active implied.\nROW 4 COLUMN 3: Dodge Charm. Hanging charm with displaced green afterimage evading a strike.\nROW 4 COLUMN 4: Giant Heart. Large red anatomical heart with pulse light and regeneration trail.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items05",
+    "kind": "items",
+    "ids": [
+      "sobi_mask",
+      "mana_stone",
+      "big_gem",
+      "pointy_hat",
+      "long_staff",
+      "mana_tiara",
+      "mana_gem",
+      "wide_stone",
+      "magic_stick",
+      "magic_wand",
+      "mana_ring",
+      "leaf_hat",
+      "steady_ring",
+      "boots",
+      "speed_ribbon"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Calm Mask. Blue calm face mask with closed peaceful eyes, soft mana glow.\nROW 1 COLUMN 2: Mana Stone. Rough blue stone with steady blue mana glow.\nROW 1 COLUMN 3: Big Gem. Large red-blue faceted gem with equal health and mana colors.\nROW 1 COLUMN 4: Pointy Hat. Small blue pointed cloth hat with mana gem.\nROW 2 COLUMN 1: Long Staff. Long slender blue-gem staff emphasizing shaft and intelligence glow.\nROW 2 COLUMN 2: Mana Tiara. Fine silver-blue tiara with blue mana stones, distinct from Headband.\nROW 2 COLUMN 3: Mana Gem. Large clear blue eight-sided gem filled with mana light.\nROW 2 COLUMN 4: Wide Stone. Broad violet-gray stone releasing expanding area circles.\nROW 3 COLUMN 1: Zap Stick. Plain short wooden stick gathering stored sparks at tip.\nROW 3 COLUMN 2: Zap Wand. Wooden wand with violet head and many stored bright sparks.\nROW 3 COLUMN 3: Mana Ring. Gold blue-gem ring sending concentric blue mana waves.\nROW 3 COLUMN 4: Leaf Hat. Green hat decorated with leaves, outward green healing waves.\nROW 4 COLUMN 1: Steady Ring. Two linked gold rings carrying red and blue gems for dual regeneration.\nROW 4 COLUMN 2: Running Shoes. Brown leather running shoes with short movement trail.\nROW 4 COLUMN 3: Speed Ribbon. Long teal ribbon trailing in a fast curve.\nRemaining cells 16 through 16 completely plain dark charcoal squares, unused, no objects.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items06",
+    "kind": "items",
+    "ids": [
+      "power_treads",
+      "slip_boots",
+      "mana_boots",
+      "travel_boots",
+      "guard_boots",
+      "medic_kit",
+      "small_shield",
+      "block_shield",
+      "team_shield",
+      "war_drum",
+      "gold_glove",
+      "leech_totem",
+      "power_treads_str",
+      "power_treads_int",
+      "power_treads_agi"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Switch Boots. Brown boot surrounded by red, blue, green gems and curved switching arrows.\nROW 1 COLUMN 2: Slip Boots. Light leather boot with cyan translucent afterimages passing through faint figure.\nROW 1 COLUMN 3: Mana Boots. Blue boot releasing outward blue mana pulse.\nROW 1 COLUMN 4: Travel Boots. Golden winged boots over blue teleport circle.\nROW 2 COLUMN 1: Guard Boots. Heavy iron boots, gold trim, green healing cross and healing-mana aura.\nROW 2 COLUMN 2: Medic Kit. Bronze medallion with green cross and healing pulse; preserve established medallion representation.\nROW 2 COLUMN 3: Small Shield. Small round iron shield, bronze rim, outward protective aura.\nROW 2 COLUMN 4: Block Shield. Solid broad iron shield with gold rim stopping a blow.\nROW 3 COLUMN 1: Team Shield. Large red shield backed by two smaller allied shields and shared defense light.\nROW 3 COLUMN 2: War Drum. Red wood hand drum with pale skin and gold trim, circular rhythm waves.\nROW 3 COLUMN 3: Gold Glove. Gold glove lifting several gold coins in its palm.\nROW 3 COLUMN 4: Leech Totem. Wooden skull-topped totem inside red lifesteal aura.\nROW 4 COLUMN 1: Switch Boots (Strength). Red boot with matching gem; small fist detail.\nROW 4 COLUMN 2: Switch Boots (Intelligence). Blue boot with matching gem; blue sparks.\nROW 4 COLUMN 3: Switch Boots (Agility). Green boot with matching gem; feather and fast trail.\nRemaining cells 16 through 16 completely plain dark charcoal squares, unused, no objects.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items07",
+    "kind": "items",
+    "ids": [
+      "heavy_sword",
+      "yasha",
+      "spell_sword",
+      "twin_swords",
+      "kugmo_atuli",
+      "igit_atuli",
+      "dragon_lance",
+      "battle_staff",
+      "crit_sword",
+      "crit_bow",
+      "armor_breaker",
+      "cleave_axe",
+      "leech_blade",
+      "moth_blade",
+      "mask_of_madness"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Kugmo. Heavy crimson sword with gold hilt and red health gem.\nROW 1 COLUMN 2: Igit. Slim curved green blade with gold grip and speed streaks.\nROW 1 COLUMN 3: Atuli. Open blue spellbook with bright burst above; Atuli is a book despite internal id.\nROW 1 COLUMN 4: Kugmo and Igit. Crossed heavy crimson sword and slim curved green blade.\nROW 2 COLUMN 1: Kugmo and Atuli. Heavy crimson sword crossing open blue spellbook.\nROW 2 COLUMN 2: Igit and Atuli. Slim curved green blade crossing open blue spellbook.\nROW 2 COLUMN 3: Long Spear. Long steel-tipped wood spear with extended forward reach trail.\nROW 2 COLUMN 4: Battle Staff. Black staff with violet orb and gold fittings, short attack-speed streaks.\nROW 3 COLUMN 1: Crit Sword. Steel sword with gold hilt and sharp red impact flash.\nROW 3 COLUMN 2: Crit Bow. Dark recurved bow with taut string and strong red-gold impact flash.\nROW 3 COLUMN 3: Armor Breaker. Dark heavy axe striking cracked steel armor; established representation is an axe.\nROW 3 COLUMN 4: Cleave Axe. Large double-headed steel axe with broad curved sweep trail.\nROW 4 COLUMN 1: Leech Blade. Jagged dark-red blade, red gem, blood droplets flowing toward grip.\nROW 4 COLUMN 2: Moth Blade. Slim steel blade between green-cyan moth wings.\nROW 4 COLUMN 3: Frenzy Mask. Angular red face mask, aggressive mouth, fast attack streaks.\nRemaining cells 16 through 16 completely plain dark charcoal squares, unused, no objects.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items08",
+    "kind": "items",
+    "ids": [
+      "jump_knife",
+      "crash_knife",
+      "push_staff",
+      "spell_shield",
+      "glimmer_cape",
+      "sneak_blade",
+      "break_blade",
+      "stun_club",
+      "stun_blade",
+      "sure_hit_staff",
+      "silence_staff",
+      "root_staff",
+      "halberd",
+      "hex_staff",
+      "net_staff",
+      "burning_cape"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Jump Knife. Short steel knife with violet grip, displaced afterimage and small teleport ring.\nROW 1 COLUMN 2: Crash Knife. Red knife landing point-first on cracked ground with broad orange-white shock ring.\nROW 1 COLUMN 3: Push Staff. Wood staff with cyan head projecting a forward force wave.\nROW 1 COLUMN 4: Spell Shield. Gold shield inside a continuous gold protective magic sphere.\nROW 2 COLUMN 1: Fade Cape. Violet cape with one side fading to sparks inside protective ring.\nROW 2 COLUMN 2: Sneak Blade. Slim steel blade with violet translucent duplicate and fading edge.\nROW 2 COLUMN 3: Break Blade. Heavy steel blade, violet gem, fading duplicate and fractured effect ring.\nROW 2 COLUMN 4: Stun Club. Short heavy iron club, blunt head and circling yellow stun sparks.\nROW 3 COLUMN 1: Stun Blade. Broad crimson blade, black hilt and circling yellow stun sparks.\nROW 3 COLUMN 2: Sure Hit Staff. Gold-tipped wooden staff piercing a target circle with straight clean impact.\nROW 3 COLUMN 3: Silence Staff. Black staff with violet orb and small crossed-out mouth effect.\nROW 3 COLUMN 4: Root Staff. Wooden green-gem staff with living roots curling from its base.\nROW 4 COLUMN 1: Halberd. Steel polearm with axe blade and spear point, severed attack trail for disarm.\nROW 4 COLUMN 2: Hex Staff. Black-violet staff beside clearly recognizable little white sheep.\nROW 4 COLUMN 3: Net Staff. Wooden green-gem staff casting visible weighted rope net.\nROW 4 COLUMN 4: Burning Cape. Orange-red cape burning along hem inside heat ring.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "key": "items09",
+    "kind": "items",
+    "ids": [
+      "upgrade_staff",
+      "upgrade_gem",
+      "dagon",
+      "dagon_2",
+      "dagon_3",
+      "dagon_4",
+      "dagon_5",
+      "shock_hammer",
+      "storm_hammer",
+      "soul_gem",
+      "time_crystal",
+      "refresh_stone",
+      "long_lens",
+      "spike_armor",
+      "battle_armor",
+      "frost_plate"
+    ],
+    "prompt": "Create a production original fantasy MOBA ITEM ICON SPRITE SHEET. Exact square canvas 4 columns x4 rows, 16 equal square cells flush edge-to-edge. No gutters, no borders, no titles, no labels, no letters or numerals anywhere. Every icon a rich dimensional hand-painted realistic close-up of ONE distinct equipment object, believable steel, leather, cloth, gems, brushed highlights, colored magical light appropriate to effect, dark atmospheric background. Strong large silhouette occupies 80% square, 8% safe margin, easy to distinguish at 44 pixels. Cohesive high quality classic PC fantasy art. Avoid generic symbols in place of physical items. Entirely original, do not copy other game icons. Precise row-major grid:\nROW 1 COLUMN 1: Upgrade Staff. Tall gold staff, blue main gem, smaller red and green side gems.\nROW 1 COLUMN 2: Upgrade Gem. Large blue six-sided gem with upward improvement light, distinct from Mana Gem.\nROW 1 COLUMN 3: Blast Rod. Black rod with orange head firing red-hot beam; 1 bright level dots, progressively stronger beam.\nROW 1 COLUMN 4: Blast Rod 2. Black rod with orange head firing red-hot beam; 2 bright level dots, progressively stronger beam.\nROW 2 COLUMN 1: Blast Rod 3. Black rod with orange head firing red-hot beam; 3 bright level dots, progressively stronger beam.\nROW 2 COLUMN 2: Blast Rod 4. Black rod with orange head firing red-hot beam; 4 bright level dots, progressively stronger beam.\nROW 2 COLUMN 3: Blast Rod 5. Black rod with orange head firing red-hot beam; 5 bright level dots, progressively stronger beam.\nROW 2 COLUMN 4: Shock Hammer. Iron hammer with blue-white lightning splitting toward several points.\nROW 3 COLUMN 1: Storm Hammer. Large blue hammer surrounded by many branching blue-white lightning bolts.\nROW 3 COLUMN 2: Soul Gem. Bound pair of red and blue gems with bright shared center.\nROW 3 COLUMN 3: Time Crystal. Tall cyan crystal with clear small clock-face light effect.\nROW 3 COLUMN 4: Refresh Stone. Round blue polished stone inside curved reset arrows, clock detail.\nROW 4 COLUMN 1: Long Lens. Large blue convex lens in gold frame, projecting a long straight beam.\nROW 4 COLUMN 2: Spike Armor. Steel breastplate with long outward spikes and red reflected impact streak.\nROW 4 COLUMN 3: Battle Armor. Gold-steel breastplate, gold allied aura, cracked enemy armor detail.\nROW 4 COLUMN 4: Frost Plate. Pale icy blue breastplate with snowflake relief releasing spreading frost wave.\nNo text or numbers anywhere, no stamped letters. Exact 4x4 grid."
+  },
+  {
+    "ids": [
+      "death_order",
+      "beast_form",
+      "break_strike",
+      "weapon_grab"
+    ],
+    "key": "sheet07",
+    "prompt": "Readability revision: one dominant bright subject on dark background.",
+    "kind": "skills",
+    "grid": 2,
+    "replace": true
+  },
+  {
+    "ids": [
+      null,
+      null,
+      "dagon",
+      "dagon_2",
+      "dagon_3",
+      "dagon_4",
+      "dagon_5"
+    ],
+    "key": "items10",
+    "prompt": "Readability revision: countable 1 to 5 pips; only five rod cells extracted.",
+    "kind": "items",
+    "grid": 4,
+    "replace": true
+  },
+  {
+    "prompt": "Third pass: depleted heart and knife, half-human half-wolf face, broken passive gear, sword leaving an open hand. Big simple silhouettes.",
+    "replace": true,
+    "grid": 2,
+    "key": "sheet08",
+    "kind": "skills",
+    "ids": [
+      "death_order",
+      "beast_form",
+      "break_strike",
+      "weapon_grab"
+    ]
+  }
+]

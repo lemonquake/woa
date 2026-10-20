@@ -1891,6 +1891,7 @@ func _use_item(u: SimUnit, slot: int, t: SimUnit, p: Vector2) -> void:
 		"ward":
 			var ward := w.spawn(String(v.get("unit", "ward_observer")), u.team, p)
 			ward.ward_expires = w.time + float(v.lifetime)
+			u.wards_placed += 1
 			ward.add_modifier({"id": "ward_invis", "source": u.id, "expires": INF, "invisible": true})
 			if ward.def.get("true_sight", 0.0) > 0.0:
 				# a Reveal Ward gives 150 ground sight around itself for its first 12 s

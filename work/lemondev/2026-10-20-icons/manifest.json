@@ -1,0 +1,3412 @@
+{
+  "generator": "Built-in image generation",
+  "size": 256,
+  "icons": [
+    {
+      "id": "burst_shot",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/burst_shot.png",
+      "sha256": "ea214356e6dd22a3927278dcae964653bf8d0e48cb1f436df68026beccfa6f90"
+    },
+    {
+      "id": "gale_impact",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/gale_impact.png",
+      "sha256": "d4453cf41aeb1d1ae1a307a1f1da002f29f737783141618b6d0dd78a6ee3b85f"
+    },
+    {
+      "id": "masterful_archery",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/masterful_archery.png",
+      "sha256": "d7bd31564c0c5f4918ef8f56fedea78b9751401815fd24d37680e7ee6e2f64a3"
+    },
+    {
+      "id": "blood_ranger_ult",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/blood_ranger_ult.png",
+      "sha256": "ba85856276d4f1ab198658d764c29e29027841a6349692d63263d559cfd568ff"
+    },
+    {
+      "id": "dark_stomp",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/dark_stomp.png",
+      "sha256": "bdc64b4b689d901ef9d438834afb18805efebcaf7185bb34f7a5ba56794f5f48"
+    },
+    {
+      "id": "leap_strike",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/leap_strike.png",
+      "sha256": "0e3e00d8b11722296cabd01be5922cac3fc4881a7c77a0adad0553ab36aa4c64"
+    },
+    {
+      "id": "tainted_touch",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/tainted_touch.png",
+      "sha256": "6aec979eb49fcfa9f15909af342f03c841c5b1d03fea023d46bc1451dea5dd68"
+    },
+    {
+      "id": "unholy_might",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/unholy_might.png",
+      "sha256": "3eca6442cf459fdc3df26bd75249661fe637cac81c7a6dc456f3d2e4898119ac"
+    },
+    {
+      "id": "shuriken_hook",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/shuriken_hook.png",
+      "sha256": "551d32d75b280f6639c06ecc288cb80940bf02bd04d419f0485ddecf67d207cd"
+    },
+    {
+      "id": "stench",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/stench.png",
+      "sha256": "8e39170a3423bbe206ca1d7d1b5da378f1d50168c1a17c4372d3ae2c21850a52"
+    },
+    {
+      "id": "blubber",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/blubber.png",
+      "sha256": "bf0a34d5d4bf64d8fe839bd7e19e3ea09a3748064e5e63f04bbfb253d5cac6d1"
+    },
+    {
+      "id": "chomp",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/chomp.png",
+      "sha256": "54a2667a8315373b2e78ee1514254411ec4aecdcffa31b61f6729d086a46edd1"
+    },
+    {
+      "id": "fiery_javelin",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/fiery_javelin.png",
+      "sha256": "12b153447b4b11eff10914628a70a7d5d2aca2a411c531d53c6b8b5e4ed9226e"
+    },
+    {
+      "id": "touch_of_ember",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/touch_of_ember.png",
+      "sha256": "ca4bfc9081cc719c36fd677dc03e2c9a98bb244d34bbd5232dd8c043eb26c649"
+    },
+    {
+      "id": "spirit_of_fire",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/spirit_of_fire.png",
+      "sha256": "599552d3eb3dfe0fae8769c5929e9bbb9186c4a808b551d17dd71b78e8ce9833"
+    },
+    {
+      "id": "divine_smite",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "aa5835d0db68c311bacdb9e9becac8735c0d27f5503c35e4beae101869194ef3",
+      "path": "assets/ui/art/skills/divine_smite.png",
+      "sha256": "ae2683aad33227acc25e1c68411060973cad60a778a269bceaeec2a9b3e6570a"
+    },
+    {
+      "id": "breath_of_cold",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/breath_of_cold.png",
+      "sha256": "56d1e027b6bf945226c7806b55e250814836b10e9ce0cad79ca13502003cdd97"
+    },
+    {
+      "id": "ice_pulse",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/ice_pulse.png",
+      "sha256": "46ad71b274f7a1eedc14683eee2f5dd8db37efd8efb7726878a2636b14c22dbd"
+    },
+    {
+      "id": "frost_heart",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/frost_heart.png",
+      "sha256": "fcfed458560f4ae25579e76bb1b545370345c6d461e0574a6de4bacb77133347"
+    },
+    {
+      "id": "endless_winter",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/endless_winter.png",
+      "sha256": "422e0a964f51ea19649d4b3e1142f878f91a2848e1aea86a908c30392ce2a241"
+    },
+    {
+      "id": "swift_dagger",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/swift_dagger.png",
+      "sha256": "b69fd92cbee75a43b29ac9a8484bf1521358e1c805f923a8087167379b8f9f96"
+    },
+    {
+      "id": "sweet_poison",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/sweet_poison.png",
+      "sha256": "c7affea82a5fe1fa62d6396b2527d92a5e086d0e260b4ddae6d0ac9c39349d53"
+    },
+    {
+      "id": "master_of_shadows",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/master_of_shadows.png",
+      "sha256": "4770b99d424bba563712ba1eb47dabb326d3960bbc2c24e447d4c5ef4f8ddfdd"
+    },
+    {
+      "id": "time_bolt",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/time_bolt.png",
+      "sha256": "d49d19ed3e027f230fc5bdc44f5bc9c4e306714ba0a3050697c03dddf48cc4a5"
+    },
+    {
+      "id": "fast_forward",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/fast_forward.png",
+      "sha256": "9642fd1f294992d48684b8868645f2771432f67c391e9dacc9b92b9564aab287"
+    },
+    {
+      "id": "rewind",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/rewind.png",
+      "sha256": "8cb007dba87ac2cdaa9f702a7cdaf7c25b15d8993ad66f7f85be2524b240c622"
+    },
+    {
+      "id": "stop_time",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/stop_time.png",
+      "sha256": "7d9070ea5679ce8a7e559ca82b0eb5fb52a5d5ac3e561f50fa317dd678d6d3dd"
+    },
+    {
+      "id": "iron_grip",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/iron_grip.png",
+      "sha256": "0c06c6e189278fe6601d856d858ceb01c8cfc68645017e02b1b7abd060144415"
+    },
+    {
+      "id": "repel",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/repel.png",
+      "sha256": "fb25a4d568e3b57c794d486b3e9a5aef5fa355117930d50aea038d94b6ac59b7"
+    },
+    {
+      "id": "overload",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/overload.png",
+      "sha256": "403e308a3d25c1adb6eb7b70410772ae2af092705bb3d543788945c336a0afd4"
+    },
+    {
+      "id": "magnet_field",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "ef52949995459ac5d4ace41cd82231b1b77d34c39898ac61968c22135d32b549",
+      "path": "assets/ui/art/skills/magnet_field.png",
+      "sha256": "ecbcbacae632d9079f6043c08a5c28fee5e507dee7fe019d837462bdd94bc4ef"
+    },
+    {
+      "id": "grip_of_the_ruler",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/grip_of_the_ruler.png",
+      "sha256": "cb5f39f439e9abe144e8489b5ed9989852473437af08eec3b4b1b1adfe1d244b"
+    },
+    {
+      "id": "void_rush",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/void_rush.png",
+      "sha256": "d3d4ef05744376cb9ab83d572021442b3a4d9fb7fb235ef483773e51fe5fe6a0"
+    },
+    {
+      "id": "dark_matter_skin",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/dark_matter_skin.png",
+      "sha256": "603bc24657b111aae23baef8f96bd416a576461ca2c357e6cc1097b482558286"
+    },
+    {
+      "id": "anomaly",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/anomaly.png",
+      "sha256": "67f00a415735c0419cdc1a6e3fb0116121ffd841ee0e946469cca793547f3f69"
+    },
+    {
+      "id": "bounce_shot",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/bounce_shot.png",
+      "sha256": "3d838814be2bee84209120c3c7349192ec07798dc50e9510192d0d69a37d27c7"
+    },
+    {
+      "id": "summon_boulders",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/summon_boulders.png",
+      "sha256": "56d51e878fbc956465fa0446aa3ce1aa2057355f97e06b92702bf0bfe1558485"
+    },
+    {
+      "id": "lay_trap",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/lay_trap.png",
+      "sha256": "c16d07088540819a61e620965ca5b7fe01c6bc36157bbe08d7471b9613a014cc"
+    },
+    {
+      "id": "place_turret",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/place_turret.png",
+      "sha256": "a9591c6e7f1c321d707039f566a8fd69d96cec8bc7258a4fd57503494af1cf92"
+    },
+    {
+      "id": "soul_tap",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/soul_tap.png",
+      "sha256": "4d4d6a3397a014530c01622dbce936e5e7ef3f3a1e15a1b6e50c5a790c1e12f4"
+    },
+    {
+      "id": "door_of_the_end",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/door_of_the_end.png",
+      "sha256": "7411111dc759fec9054ee24ccc8ca49613deee862257b4d43e390ae1272f7250"
+    },
+    {
+      "id": "death_scythe",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/death_scythe.png",
+      "sha256": "b65c449c40ed0cdd831c1fa3f5b096faa31add3861e0c8c72ce06d94f4e46f33"
+    },
+    {
+      "id": "divine_darkness",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/divine_darkness.png",
+      "sha256": "de822c4e67b83cc2505686c67a628a660157391be5a703810473b7075c8c2e52"
+    },
+    {
+      "id": "gust",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/gust.png",
+      "sha256": "5210c4269d8430df65116153edba2c9ead6652f468c8e364f3cfe57ca98cd31e"
+    },
+    {
+      "id": "tailwind",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/tailwind.png",
+      "sha256": "dc9dcbd59b1c816d365d950af698f1985aa3a3233a5bab173d9e511cbc1a7f2e"
+    },
+    {
+      "id": "wind_wall",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/wind_wall.png",
+      "sha256": "713dc2d4eb5a374b806efb6cad894b618db15f6b774ecad2410dec1628772c62"
+    },
+    {
+      "id": "hurricane",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "a2ee74856c1c34da3c4162e1d9a441e0e769b0b701cb164cc51f1ed37e8238fc",
+      "path": "assets/ui/art/skills/hurricane.png",
+      "sha256": "89bf07275cb6294a19d00abff0ad3fabdda54131df187b36420b764c449ae669"
+    },
+    {
+      "id": "axe_throw",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/axe_throw.png",
+      "sha256": "418e0e64b8de3ece79a1d4ad02bd4a83fadb936f17fa11e1bf4e3f501684d4b6"
+    },
+    {
+      "id": "reckless_swing",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/reckless_swing.png",
+      "sha256": "dbd645eee4a099e47f9f80c7899f9849c2c142e2ede6c46e19985ac2193259bb"
+    },
+    {
+      "id": "unstoppable",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/unstoppable.png",
+      "sha256": "31ad2c2ffb23fe0e14887534f7a39f6e39e9a68b160e977f5b5a6a8d73da411c"
+    },
+    {
+      "id": "berserk",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/berserk.png",
+      "sha256": "e93642bf8c61e3e073bef79c1a62d7cd7c028ba180064da2c7c43eeb6682aa19"
+    },
+    {
+      "id": "overhead_cut",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/overhead_cut.png",
+      "sha256": "8045b6362313ad970f265b4a18252fbb274a6bc83a492eebe28e5348fa7c44a2"
+    },
+    {
+      "id": "sweep",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/sweep.png",
+      "sha256": "4c07805966c38234735ddae20498902b910b41d519af72b7e3b4aa1bc2ae0a4e"
+    },
+    {
+      "id": "steel_stance",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/steel_stance.png",
+      "sha256": "e5cdb499c02b53c1ac6571601b2f1ad0127700df16d2f0b41bc3a3dfbb38db37"
+    },
+    {
+      "id": "giant_swing",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/giant_swing.png",
+      "sha256": "3f05cc3f30f46ebe982c95eddc01b205d689e85679469ce87e4901157e4cddee"
+    },
+    {
+      "id": "knife_juggle",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/knife_juggle.png",
+      "sha256": "077a357ebffdd0385753f316163d751c30c1604157eb0e7f914586ef3b0daf7c"
+    },
+    {
+      "id": "joke_box",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/joke_box.png",
+      "sha256": "98122d66e32a3a171f485bbdae4dc78500fa2cb667a33a26e185f08b1fbfc309"
+    },
+    {
+      "id": "swap",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/swap.png",
+      "sha256": "98a8fbf4547d4f0757514d8e84c87edcc3eee7e6ba8604380b08901271dc84ae"
+    },
+    {
+      "id": "shuffle",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/shuffle.png",
+      "sha256": "c7a4b51f5bfb529970e13ef0c919494f6bd9ee23d51a463c1b4759ea35331e5d"
+    },
+    {
+      "id": "tame",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/tame.png",
+      "sha256": "8b0c95e904cff90d8efc7b0e33d4082e3952f4b8d1e6060fa43043b87c239db8"
+    },
+    {
+      "id": "roar",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/roar.png",
+      "sha256": "a1a69b5aa4af065d0552e0a949c838b8ad1a8143bb23bacec6fbe0134aec0b38"
+    },
+    {
+      "id": "pack_leader",
+      "kind": "skills",
+      "sheet": "sheet04",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "bd48f7c73f5a2ccc53c80be1791b8c1c70ca07e4a13b2b7d013c1d78d737cde8",
+      "path": "assets/ui/art/skills/pack_leader.png",
+      "sha256": "ebd2642b01acef2a5cb74529ec81512a6b8f0ac3d982bd60470bbd9646c5a220"
+    },
+    {
+      "id": "blur_strike",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/blur_strike.png",
+      "sha256": "28b874c86bf675b0673f6d7cc5c913883c6b1b1ffb50f09776df5630c5114599"
+    },
+    {
+      "id": "djin_bomb",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/djin_bomb.png",
+      "sha256": "ee6a0f7a3072e414075e98db69ad6899b2f7f71e3cc7857032ed0c946439d54b"
+    },
+    {
+      "id": "ghosts_of_the_will",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/ghosts_of_the_will.png",
+      "sha256": "4fbe71265c539b0f70263b8e333a8c09894e4692428f04cd73067c84192fafe7"
+    },
+    {
+      "id": "the_blur",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/the_blur.png",
+      "sha256": "4113d5cb03ed4e45444f18b4e4d7e46f11fb9de4d4b4c1b19b96b788c66d99c9"
+    },
+    {
+      "id": "growing_gut",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/growing_gut.png",
+      "sha256": "b7a4ae5760fd45500c2d991206aed0d815ca0f4c3afbbbe223f56d16a25e15c9"
+    },
+    {
+      "id": "slow_field",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/slow_field.png",
+      "sha256": "163dc1d536050ccecd8869be88490d4b14e87d06193802b5d46df7621ae1323b"
+    },
+    {
+      "id": "quick_hands",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/quick_hands.png",
+      "sha256": "1b7ba31f00da3963435f70d6d80796c209c34e9a887ea793b702ef93c1b22ea8"
+    },
+    {
+      "id": "magnetize",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/magnetize.png",
+      "sha256": "e50b804c0dabb9b11144ca7e249f2e7a760657702609d881960f2e0a99f7a496"
+    },
+    {
+      "id": "pilot_turret",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/pilot_turret.png",
+      "sha256": "75c60589cf208a53e2579e4887a466da7e76e8fdcf208b6b8aa0a1b748c03ec1"
+    },
+    {
+      "id": "rage",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/rage.png",
+      "sha256": "c5f05e28dc3555c71f090a5fbdf9b93e03478a4db081af3b98defa8c6f6fbbdc"
+    },
+    {
+      "id": "blessing_of_the_beast_king",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/blessing_of_the_beast_king.png",
+      "sha256": "3020d7c8146f4f53e674846fee8405251e6cc2e8188d7e77eccecf72c2d6a786"
+    },
+    {
+      "id": "senryukai",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/senryukai.png",
+      "sha256": "34884046fd45ef5e328b6b03d3284c663d0d81720bd997faa5fd1ba189d25905"
+    },
+    {
+      "id": "snarl",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/snarl.png",
+      "sha256": "cfd5d78a8d9b2851013e71cb4b42e6b9ce3c2c51861ec18a7ed04db2aadb11d2"
+    },
+    {
+      "id": "stomp",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/stomp.png",
+      "sha256": "2c2d556c1c53a1a03c15f108e3b19238de5b3ed2bf376f93e7c67703a836c201"
+    },
+    {
+      "id": "smash",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/smash.png",
+      "sha256": "c3843b0b9ac52bc7d8cce9d72dcdc8c532beb9c75870eab873fa570b340fbdf9"
+    },
+    {
+      "id": "ancient",
+      "kind": "skills",
+      "sheet": "sheet05",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "fd365d55fa5baeec75ba084fbc7f6b6b009c8067d4dae3cfd8d518ca281621de",
+      "path": "assets/ui/art/skills/ancient.png",
+      "sha256": "b259c7b976f9cd2c772427c24bf44b743181501abb679c55f714e41e48f665b2"
+    },
+    {
+      "id": "pace_aura",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/pace_aura.png",
+      "sha256": "336280cd48d2adc51237251e6443a7b03ee90fe1a0c456a3b5d3330ee094cb34"
+    },
+    {
+      "id": "pack_aura",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/pack_aura.png",
+      "sha256": "553026d331653a9963b9e1341a369401c3a6c461de288222a6c8a65f7a6a9d97"
+    },
+    {
+      "id": "magic_armor_aura",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/magic_armor_aura.png",
+      "sha256": "f216129ec751dea861c1bde796c78bab0029ebe9383bd4e1756f4cdb1fc9d1bc"
+    },
+    {
+      "id": "thick_hide_aura",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/thick_hide_aura.png",
+      "sha256": "fdcd354ba0224107cca5e75d4d2a74f167853b1dfa959c255a6d8c1c859e359c"
+    },
+    {
+      "id": "neutral_crit",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/neutral_crit.png",
+      "sha256": "bd71e7c75a5dfc4186582ef0735c326ed5720b9eb6a01920634a267e102ad79d"
+    },
+    {
+      "id": "neutral_splash",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/neutral_splash.png",
+      "sha256": "82c45f25922c9a6f2efdaa71434b95e9f00671cf39558052fef6dbb96ff72320"
+    },
+    {
+      "id": "flying",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/flying.png",
+      "sha256": "b48bba2daf9e116e12232912c6b537d15afcf97e2f66cfd1dafa7facc4788c0b"
+    },
+    {
+      "id": "true_sight",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/true_sight.png",
+      "sha256": "748f5fd972fe23944a8ad731961fa3c8f3d5c8d4498746af7216b1660bc0516c"
+    },
+    {
+      "id": "sight",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/sight.png",
+      "sha256": "5d3a9a3534269e4289214e93680e4b8b721151e3dcaddba3e180cb804db02e63"
+    },
+    {
+      "id": "backdoor_protection",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/backdoor_protection.png",
+      "sha256": "3af4e7ef1181c8c629d106deabfb8bb18233d38a491d102b454f27d92583a93d"
+    },
+    {
+      "id": "fortify",
+      "kind": "skills",
+      "sheet": "sheet06",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "ac20a04c601500d7247127ce09ad006c422abaadc2053f968efed59b749c23f8",
+      "path": "assets/ui/art/skills/fortify.png",
+      "sha256": "7f5ddce924553d54d81ef158b7f88f381b46b61a83a9119b3dde5c2ebdc46e24"
+    },
+    {
+      "id": "tp_scroll",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/tp_scroll.png",
+      "sha256": "7968834d1d10a5b779be6afbd7f4622091a47bd920a234144031375cf3330f27"
+    },
+    {
+      "id": "bottle",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/bottle.png",
+      "sha256": "7c69f9b26275fe7ead81142b0ad1812beefe40dce117c5754e07b166a7084da9"
+    },
+    {
+      "id": "tango",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/tango.png",
+      "sha256": "3ec9d92232cabe7614e430c8552e9de3c9f085b63f559a4b2990696f888c832e"
+    },
+    {
+      "id": "salve",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/salve.png",
+      "sha256": "1d007b4f284c3a6212caeada7673f53b3a276248dbbe0ca979cc60f48fc7e717"
+    },
+    {
+      "id": "clarity",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/clarity.png",
+      "sha256": "97ed74731f375000f8d06975994d2351fd41c5158bd59d8fa60c2b350bc88ee4"
+    },
+    {
+      "id": "mango",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/mango.png",
+      "sha256": "e35281cba24a7aeba542e8c710ecdd5f148c6a7ae416ad3ebce0b5914cdd881f"
+    },
+    {
+      "id": "faerie_fire",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/faerie_fire.png",
+      "sha256": "87aebf94465c86a9619f5a12fc2b57dbebc6491b0381be0fb9127089ebbe5ab3"
+    },
+    {
+      "id": "observer_ward",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/observer_ward.png",
+      "sha256": "9faf72415c91f133d2a30c594adcc1b49f648a31968621fb2ac1087405fd8cb1"
+    },
+    {
+      "id": "reveal_ward",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/reveal_ward.png",
+      "sha256": "f6b0695130d002c4c978ff954ac97781c4691f81978370e75b1ae672959e85f2"
+    },
+    {
+      "id": "reveal_dust",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/reveal_dust.png",
+      "sha256": "3e367adfd50947d4cb82e049f8a895c2c0d6b35b044a00c88300f391e0d94528"
+    },
+    {
+      "id": "bottle_empty",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/bottle_empty.png",
+      "sha256": "6300d19b66aa7ae23422eb9dd20e5974675b07e58da348453342f5e6d8d2e0d7"
+    },
+    {
+      "id": "recipe",
+      "kind": "items",
+      "sheet": "items01",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "9aa3ae2747184fdbb249853bfc41d5a2c45051c012f4110d3fa193d2a5830b37",
+      "path": "assets/ui/art/items/recipe.png",
+      "sha256": "aaf7d48419e24ee12e5fd11e67ba4003bbe23697bd5f943e494f55d5eacd3bdb"
+    },
+    {
+      "id": "branch",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/branch.png",
+      "sha256": "19caf3d65cb6e1eef4dd33f467cdebe338fd1f59db0c9fa75bfe9cde01330a33"
+    },
+    {
+      "id": "slippers",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/slippers.png",
+      "sha256": "72be37f2589df1f9a87038e346d053ba169b2fe9f437738d2b2df303bd911241"
+    },
+    {
+      "id": "gauntlets",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/gauntlets.png",
+      "sha256": "679e0334384ac16eb9d645afe2f8ba8124184fd2fa0b60035c95d9d327854365"
+    },
+    {
+      "id": "mantle",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/mantle.png",
+      "sha256": "a72ce1563a8667f216ad3e7903914921898e8a800ddba054b99d0835c0137056"
+    },
+    {
+      "id": "circlet",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/circlet.png",
+      "sha256": "21da4d473d71bf1a24be7d17023ba65083dff2b09adad3e2a31c7fa68e27ba31"
+    },
+    {
+      "id": "boots_elves",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/boots_elves.png",
+      "sha256": "9fa23557961916ce4d1a3970c93565df8b3175e7cefff36f6e7d2f7b9827c5b5"
+    },
+    {
+      "id": "belt_str",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/belt_str.png",
+      "sha256": "a0ddfcd2e6faa6c5bbe152b54d0e72b316e6b26aa557f3b3b38c3bd0996df433"
+    },
+    {
+      "id": "robe",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/robe.png",
+      "sha256": "0229a0dc1c9df7db26af173ff891d72de93d084ddfdf593477e25ffe224bd44b"
+    },
+    {
+      "id": "blade_alacrity",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/blade_alacrity.png",
+      "sha256": "21599a5eeafcb041446ef68346fed6ad7dd785d80fb67f46c979a45cadd523b4"
+    },
+    {
+      "id": "giant_axe",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/giant_axe.png",
+      "sha256": "38c78552378447a79fc37f96a6a4e278bef8d833d670495a9216d6ae2383448c"
+    },
+    {
+      "id": "wizard_staff",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/wizard_staff.png",
+      "sha256": "b637c6829397a866f140c33ecbb015a6be06d20c744e4116d387509de18461c5"
+    },
+    {
+      "id": "gold_band",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/gold_band.png",
+      "sha256": "da2846527be11df5977951d5fd367012152b3aec5592561626a8140f861c5fb6"
+    },
+    {
+      "id": "wraith_band",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/wraith_band.png",
+      "sha256": "b66efa2e20f7e2de1c2608152b524db265613c63f9826bbd993ce80d32efe4fd"
+    },
+    {
+      "id": "tough_band",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/tough_band.png",
+      "sha256": "04a879b60a757dcc3053a073b3e07dad9acd3204b92ff8f4a505e51ed9d343ec"
+    },
+    {
+      "id": "smart_band",
+      "kind": "items",
+      "sheet": "items02",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "9498520eaf17531f2ae2d4dbcf7906bbf4ea19688065e5017df170dd27c67291",
+      "path": "assets/ui/art/items/smart_band.png",
+      "sha256": "d40d294abfcfd03dda2e41f6a3ec6aa37c5d7c365853081b1394808fba892ad8"
+    },
+    {
+      "id": "blades_attack",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/blades_attack.png",
+      "sha256": "4acf9b4bc7c18f224b05c044a85f1b7d998ee533887bfb946e356d29d1252972"
+    },
+    {
+      "id": "broadsword",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/broadsword.png",
+      "sha256": "2f8e2a31f4d9b9075d3da78e535357e8c52feb7027059dbd7d5c4383af55ef9b"
+    },
+    {
+      "id": "gloves",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/gloves.png",
+      "sha256": "29cf732f5d58076951159c4f4cdea86155ceb7956a8cfacaa1408941ab8b9625"
+    },
+    {
+      "id": "quelling_blade",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/quelling_blade.png",
+      "sha256": "37e90d9cbc680cbe85e27a5a581f99385e72a6bddf4602ffe81f776401fab979"
+    },
+    {
+      "id": "greatsword",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/greatsword.png",
+      "sha256": "48cbb82a067bef926f1c0ecde5d733be612360cab7fb84ec7f840f8969ff08ec"
+    },
+    {
+      "id": "steel_hammer",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/steel_hammer.png",
+      "sha256": "2d2f4c6b22e4f3b80d3e0520ac6132350925b327f6293411dd13570697c62aa6"
+    },
+    {
+      "id": "spear",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/spear.png",
+      "sha256": "75ff3a68e6ea20bcf13c3c645c60486d385497e8eb9ce47031b8fc8ceb4a169b"
+    },
+    {
+      "id": "rust_stone",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/rust_stone.png",
+      "sha256": "6f433c81f32539be00a9aa657b0fa7c54dde05e1eb28ac0cef8a17b8da09e486"
+    },
+    {
+      "id": "brass_knuckles",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/brass_knuckles.png",
+      "sha256": "0cc07045304d5123b9c1f7d69dacdc9a56a581422f79a456ae344d1b76234bf2"
+    },
+    {
+      "id": "huge_sword",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/huge_sword.png",
+      "sha256": "0f352b6b77b0a4fe3f2fd40c4bd2e32d786650a2af55424374ffc86c485c3e7a"
+    },
+    {
+      "id": "war_axe",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/war_axe.png",
+      "sha256": "f12c84c11831612d96d076bfc4c8263c82f4da0c194d5e2a0e2275346cfc8486"
+    },
+    {
+      "id": "relic",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/relic.png",
+      "sha256": "6d1c3b98b289b7285693aec02ca48746871a091582479d733419ae6491e871cf"
+    },
+    {
+      "id": "feather",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/feather.png",
+      "sha256": "26d99fe6a999a89fdc7c9d4114df9b87e58954e12b5a533099f81f1513eea94e"
+    },
+    {
+      "id": "swift_stone",
+      "kind": "items",
+      "sheet": "items03",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "024e2652fefcb4060930229ce8bd980ff3e3d2f0574a97fe42d3d410a5248ecd",
+      "path": "assets/ui/art/items/swift_stone.png",
+      "sha256": "ccfcee966ab9e9053a5e94bdfc7a3f1b398f6e1d732a817ede4421f060a811da"
+    },
+    {
+      "id": "ring_protection",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/ring_protection.png",
+      "sha256": "5191fca70214975ddac7860485909f06c7f3946a6f0a9d72329f5fd6a20596c0"
+    },
+    {
+      "id": "chainmail",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/chainmail.png",
+      "sha256": "3270a25284178cf68729bc0654c7d2495fbbf3fb99e5d8c4e09a24bea4284565"
+    },
+    {
+      "id": "plate_vest",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/plate_vest.png",
+      "sha256": "23a23f9187c34ae71a7dfae62095e56b826429bdb5fae2e79210e12969fe35fb"
+    },
+    {
+      "id": "plate_armor",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/plate_armor.png",
+      "sha256": "5811cffa9257da07be0e48dfdf33fbaf72f2d5cc31ee721210fea7d14825847c"
+    },
+    {
+      "id": "iron_helm",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/iron_helm.png",
+      "sha256": "4ec409670279daca91e79bcc055b6eba501278d51b5149b183aed1c8c992722b"
+    },
+    {
+      "id": "ring_regen",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/ring_regen.png",
+      "sha256": "e1fe43a04559d1d81325e8d162f4dc0ee49d84b8a660abef9ce314fa7477fc6a"
+    },
+    {
+      "id": "big_healing_ring",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/big_healing_ring.png",
+      "sha256": "f41ffabc3ca36449fb3ca40b139ac3771b2f522fc5c30d24f6eddd6da29aa646"
+    },
+    {
+      "id": "troll_ring",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/troll_ring.png",
+      "sha256": "a9757d07030cee2fcd5cd786b0180b749b244feaa2c5fd36d581ea57dd1802eb"
+    },
+    {
+      "id": "health_crystal",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/health_crystal.png",
+      "sha256": "5f7fd04b7b2a990e1c2e2c4c86010103b0bf250ba05ae2beed047c3dd060efef"
+    },
+    {
+      "id": "fur_hat",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/fur_hat.png",
+      "sha256": "55cef5d3660ed04e148725cceb520ba657fc5bdc9a66b715766a671d616068ef"
+    },
+    {
+      "id": "shawl",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/shawl.png",
+      "sha256": "9670b5b0a83078a857f021cb017a9e6cc6547e7a6be2386f93688e290979758a"
+    },
+    {
+      "id": "cloak",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/cloak.png",
+      "sha256": "54f7a983745aac55cd3bb486f4684f44f546e0604a9108bad6b2c0e80823ac3d"
+    },
+    {
+      "id": "lifesteal",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/lifesteal.png",
+      "sha256": "18c611968be441dace28b6c0ab1dd864f6256976112a0de2e9dd2ceea84b6dc9"
+    },
+    {
+      "id": "sneak_charm",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/sneak_charm.png",
+      "sha256": "92f8a0f1c2da2d3fd63997c1f04b13f2cdb02595f7276521283ed9478321a749"
+    },
+    {
+      "id": "dodge_charm",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/dodge_charm.png",
+      "sha256": "3936908a453ca1d1bc6d202f5dc7ba46de16edf0a2cf88828049fb9f3dd11c18"
+    },
+    {
+      "id": "giant_heart",
+      "kind": "items",
+      "sheet": "items04",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "356eab4c913e3c22b3bafde2cdd1cc4de03f1ff98854dd8d3b8479dc992baaf3",
+      "path": "assets/ui/art/items/giant_heart.png",
+      "sha256": "014b0f8ea47be61396acbc9cfff21f46192c2d2244229606f41358b6bb16053c"
+    },
+    {
+      "id": "sobi_mask",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/sobi_mask.png",
+      "sha256": "0b3d498e152122bd0f98e01875c5ea874f6396d3a24b9a8e992ec9b287c37f6b"
+    },
+    {
+      "id": "mana_stone",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/mana_stone.png",
+      "sha256": "022985f1b4d821202a17fbe87603aca61fbd69aed001cdcda229d1e9e9674f1b"
+    },
+    {
+      "id": "big_gem",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/big_gem.png",
+      "sha256": "67d4dcdccbeb2a369c3f41b0ea2df218225758c291b4ed1966fd90086d48fc46"
+    },
+    {
+      "id": "pointy_hat",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/pointy_hat.png",
+      "sha256": "615049df4d2d50e4415524a92b7922a93ce1c5d9b89f41038a8815abb7c7bdcc"
+    },
+    {
+      "id": "long_staff",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/long_staff.png",
+      "sha256": "7710e3ec344905cc4900d33ce052a4c3cbd147be96da486f4ee524c6200c8884"
+    },
+    {
+      "id": "mana_tiara",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/mana_tiara.png",
+      "sha256": "f5e07026363cf9e5dd835921947bb72779280e359f291fa1f4176ca7880dbadb"
+    },
+    {
+      "id": "mana_gem",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/mana_gem.png",
+      "sha256": "2a7cb0a603cabea8b367b4ccd67a889628c2d7cd85cc174bd52a9142ef06752e"
+    },
+    {
+      "id": "wide_stone",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/wide_stone.png",
+      "sha256": "86004ea392506f73176834dedd763ad974703c7523bc07f955d4a248c8213943"
+    },
+    {
+      "id": "magic_stick",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/magic_stick.png",
+      "sha256": "2c0a5dc289f210e0afd0840540925cbd46b38b607c4ccb65ff1dd539a936a121"
+    },
+    {
+      "id": "magic_wand",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/magic_wand.png",
+      "sha256": "c288e8a4e898abc6a8f96292c2fecea4b0ee62a6f39500b3d43a0b0ffe7057f1"
+    },
+    {
+      "id": "mana_ring",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/mana_ring.png",
+      "sha256": "eb9648d439a02c54326980e60ccf913da360cc0776c04e8077188ac50059559b"
+    },
+    {
+      "id": "leaf_hat",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/leaf_hat.png",
+      "sha256": "03f4a5a73b1feffc9e7e8268c738431ac73e39a52c2c89f49baa6839c32e4cf0"
+    },
+    {
+      "id": "steady_ring",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/steady_ring.png",
+      "sha256": "8a9696dd900694e02d4de805d542f41d764679e8082671721008e47da498215d"
+    },
+    {
+      "id": "boots",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/boots.png",
+      "sha256": "b5b1fc843678ae9e118da830abc89ee130961944353b1bb59b0a6de7d26d3086"
+    },
+    {
+      "id": "speed_ribbon",
+      "kind": "items",
+      "sheet": "items05",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "906f3f23a9fb7718ee47d6460f95910cce8f6a86172a0d8c61f42c3086797faf",
+      "path": "assets/ui/art/items/speed_ribbon.png",
+      "sha256": "6b8d724df1a8d8735c89f18928ccd27b9a23b732329be6ad9f875bdb04d440bf"
+    },
+    {
+      "id": "power_treads",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/power_treads.png",
+      "sha256": "b828a2c1a208143887f6f229f4f24953ff0486a37b0c5f0c1c3a7ffce6792402"
+    },
+    {
+      "id": "slip_boots",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/slip_boots.png",
+      "sha256": "f37e440ca80226d00ce8010b1c090eb3b251a9cfa23b9b3770b71e8ebb41a224"
+    },
+    {
+      "id": "mana_boots",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/mana_boots.png",
+      "sha256": "cc5170dc3ca38fb18763c8c31b96b5196518074798425271558d08adb9adc438"
+    },
+    {
+      "id": "travel_boots",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/travel_boots.png",
+      "sha256": "420aff46e415692e2d21cebdf88ed371dba2f320cfd0037aa6ccc765dda6d4b1"
+    },
+    {
+      "id": "guard_boots",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/guard_boots.png",
+      "sha256": "979dc1f72b7a153200ccc2bce79fed69aac43d753713839d1d893e13d4afed7d"
+    },
+    {
+      "id": "medic_kit",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/medic_kit.png",
+      "sha256": "3e212ab4d0b66767df94500211293151e2d4082c67eed2c5ec7a007d14a05029"
+    },
+    {
+      "id": "small_shield",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/small_shield.png",
+      "sha256": "b0082361986d977b3a61f78bbcd7edfbd06fc88f383895b487a85696fc70a9fe"
+    },
+    {
+      "id": "block_shield",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/block_shield.png",
+      "sha256": "b7122ece57575dc4ddab36b13f39a56da7b2b652c672f1ba2ae242d654ec3806"
+    },
+    {
+      "id": "team_shield",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/team_shield.png",
+      "sha256": "1668c8ece520c0a8870fcbfea36e00411ec2c50eff5e66bd9a724dbb9b069c13"
+    },
+    {
+      "id": "war_drum",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/war_drum.png",
+      "sha256": "4f8f23bf8ccff9910ddae06379374e54ef139795777bf7014ca496c588237d35"
+    },
+    {
+      "id": "gold_glove",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/gold_glove.png",
+      "sha256": "455a2d1b01e2e20ca2a66c98d0e40e5bb8a8c1d8564dad0e6c2419a88134ee47"
+    },
+    {
+      "id": "leech_totem",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/leech_totem.png",
+      "sha256": "22ee9b046c60b3558c501073b892ab9d3f8588cb3ebdbc641bf43e829838fdfa"
+    },
+    {
+      "id": "power_treads_str",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/power_treads_str.png",
+      "sha256": "1f1cf6b9acb9d07f8b560c7047765cce55fb041e3479945ec5ba07a51334f0b7"
+    },
+    {
+      "id": "power_treads_int",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/power_treads_int.png",
+      "sha256": "264fcc88e6e21b89643e2796f475fca9c6a5ea7658214fe92df62242a7f69b0f"
+    },
+    {
+      "id": "power_treads_agi",
+      "kind": "items",
+      "sheet": "items06",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "eedf3b0d966ae149fa34562a5779ff6faa7c5e3eb92103097482a9f9ccc58cbe",
+      "path": "assets/ui/art/items/power_treads_agi.png",
+      "sha256": "173ebff3ea39a943352654b6e3adc935651cff4d4aeb3ffea0897a141258a8a7"
+    },
+    {
+      "id": "heavy_sword",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/heavy_sword.png",
+      "sha256": "cf5a8340d047c0458e2eda1b5ef0c0a2e168da6a83914406bb040c22b2f47334"
+    },
+    {
+      "id": "yasha",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/yasha.png",
+      "sha256": "b659acdc196b49c11b3ce02250266d2f1172a654be709d65e21eb15a49138429"
+    },
+    {
+      "id": "spell_sword",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/spell_sword.png",
+      "sha256": "3ed9979772f69a3c682d42401013e2db2a252a0db7f78834180bbf5f1042dd2b"
+    },
+    {
+      "id": "twin_swords",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/twin_swords.png",
+      "sha256": "00ca242b39418589a07ee91449300a3ff2dc388fa0ccab7436d5c27b68e8e133"
+    },
+    {
+      "id": "kugmo_atuli",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/kugmo_atuli.png",
+      "sha256": "5915bee80e9fdf12392213ba679cf4338d35cb214b6df4d94cdf2858fd6ce8a3"
+    },
+    {
+      "id": "igit_atuli",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/igit_atuli.png",
+      "sha256": "d9e4e00bb5a72ff325be8dea262a968cac39cde8ed7b6c63bff6c3fd44158cb8"
+    },
+    {
+      "id": "dragon_lance",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/dragon_lance.png",
+      "sha256": "76f1104f828a21d33dc4c29d987cca50b3e19fd5f1599e0c2f9804b563493893"
+    },
+    {
+      "id": "battle_staff",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/battle_staff.png",
+      "sha256": "6aef6201f4ce4009ef1d057675b70cc3395a6354fa55f95cec7266284a181923"
+    },
+    {
+      "id": "crit_sword",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/crit_sword.png",
+      "sha256": "7837062114d6724b60ec10c0ac85b981ef0ed804bea622ad26bbc5f332ce1605"
+    },
+    {
+      "id": "crit_bow",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/crit_bow.png",
+      "sha256": "0d7a1b2330622d756be1362645b8a39b3585ba764a14bc213ea36e22dfc25c7c"
+    },
+    {
+      "id": "armor_breaker",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/armor_breaker.png",
+      "sha256": "c43e7ba3db30e2e1a8852568b78693c80ec0b4473d343b155d6137561216aa0d"
+    },
+    {
+      "id": "cleave_axe",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/cleave_axe.png",
+      "sha256": "7a0029686e7dfeee9f829f2c283033e0a3a3b4f09c5c996636e905ffca162854"
+    },
+    {
+      "id": "leech_blade",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/leech_blade.png",
+      "sha256": "f1f9f0659081b9dd2970443f30bede5cf7d84e2c81f9832dd792bb78cdc022e4"
+    },
+    {
+      "id": "moth_blade",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/moth_blade.png",
+      "sha256": "b57f63d9f15ac87b6d888a31542ebef73bd66e2d48a7d8d78a4989bf3d39dfdc"
+    },
+    {
+      "id": "mask_of_madness",
+      "kind": "items",
+      "sheet": "items07",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "530f8b540191527d1b3421cc5e8c14bd54360c18084d84f8bf47256b51a4a7f6",
+      "path": "assets/ui/art/items/mask_of_madness.png",
+      "sha256": "ae6926e3a50594e91e744215f7b3ee822135190d6d568f47ae715f7ed81407d9"
+    },
+    {
+      "id": "jump_knife",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/jump_knife.png",
+      "sha256": "866a6c50c4b18c5f990d091ffb16c5f8ead26c06891bd57aa1339c7f2117a5ba"
+    },
+    {
+      "id": "crash_knife",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/crash_knife.png",
+      "sha256": "82a6621d15df400892a76f7f87bf5ade77803f74bdcfe5234f0b604403c15a7f"
+    },
+    {
+      "id": "push_staff",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/push_staff.png",
+      "sha256": "27fee31b39bf15c8f4dc2376b76ce51d6657cfc0bf0429048597d9b78bcb1e0e"
+    },
+    {
+      "id": "spell_shield",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/spell_shield.png",
+      "sha256": "28cbc13a126f867560b529beb1ad60bea88b42bf664d0648a54023fc66586250"
+    },
+    {
+      "id": "glimmer_cape",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/glimmer_cape.png",
+      "sha256": "79b46d1e07ee214e32f18ef0c852c189403f1c93305379ba48461cb8440863ec"
+    },
+    {
+      "id": "sneak_blade",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/sneak_blade.png",
+      "sha256": "286554804592cb3ffbc2075f988871d1e7ffa418d7220c76b895731cd860301d"
+    },
+    {
+      "id": "break_blade",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/break_blade.png",
+      "sha256": "b2c59443430882461d76371e07fe42d1e7e758766b123635c09289667da2c257"
+    },
+    {
+      "id": "stun_club",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/stun_club.png",
+      "sha256": "ee702eff947d9073d588289cfe7f31b399b002a30efaec0cb5ce147c37a187c4"
+    },
+    {
+      "id": "stun_blade",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/stun_blade.png",
+      "sha256": "47bba8694d92cdb6d48d8bfcdd8603a666eaf59a80accdbe906208b27376869e"
+    },
+    {
+      "id": "sure_hit_staff",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/sure_hit_staff.png",
+      "sha256": "2fab813dcb620c2e0bad5aa3fda2df6902eb5b6b6158be17024335bc25b7473e"
+    },
+    {
+      "id": "silence_staff",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/silence_staff.png",
+      "sha256": "8b8fcbcb1749ecf136358f24c406bb3142be39f3a44ec0758518a743a52adba8"
+    },
+    {
+      "id": "root_staff",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/root_staff.png",
+      "sha256": "c86871ed7fe1c6807e513f994f98761718aff7b77428791d4a2c7f7571159042"
+    },
+    {
+      "id": "halberd",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/halberd.png",
+      "sha256": "8635e3d9082aa20be74bc8e7c8c22cf483ffbfabaca06e16bc10c2e9eb576d9c"
+    },
+    {
+      "id": "hex_staff",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/hex_staff.png",
+      "sha256": "de512754e03b7345f1bc56b0c255dccddc6f99a6127399249a6f84e05cfcd208"
+    },
+    {
+      "id": "net_staff",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/net_staff.png",
+      "sha256": "3d05a2a94694b3632b971d20bdf09747e15f2e3eeb12d28e9aa5b5e6316ab3ac"
+    },
+    {
+      "id": "burning_cape",
+      "kind": "items",
+      "sheet": "items08",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "0adfb376f5e625cf0694e16e1365deb4698f92435ab755e370cc4e1b7ef86194",
+      "path": "assets/ui/art/items/burning_cape.png",
+      "sha256": "b981cb032e25d7974e503be72d78d5b64718826867857aac7d192b33228915e9"
+    },
+    {
+      "id": "upgrade_staff",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/upgrade_staff.png",
+      "sha256": "d828a32124a1f50378e2014e9e6eecf63575d4f82c30582078026b65e840a06f"
+    },
+    {
+      "id": "upgrade_gem",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/upgrade_gem.png",
+      "sha256": "daf08d8baf4aa6331600ec409b2c7d47722027a4ba84a371986b9306c911f58c"
+    },
+    {
+      "id": "shock_hammer",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/shock_hammer.png",
+      "sha256": "469c0da6ee9eaa5d7f7d9e8763e953d80b3aa2439110094a530523128e73d4e5"
+    },
+    {
+      "id": "storm_hammer",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/storm_hammer.png",
+      "sha256": "2e570f60445e780a79fef67e2912948b22194ffd3aa1d91a46017fea10c8c904"
+    },
+    {
+      "id": "soul_gem",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/soul_gem.png",
+      "sha256": "0230bc6c8c5a4989acd291cb8e10e61e61ce70690679ff49349bba7437a977f3"
+    },
+    {
+      "id": "time_crystal",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/time_crystal.png",
+      "sha256": "adc3c2505d2cf743a231ac7776c76c1e41bc5062f61ad4742034d15811b8dfae"
+    },
+    {
+      "id": "refresh_stone",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/refresh_stone.png",
+      "sha256": "6033c0c96a3c27d9f5ab7a37dbe062541e85fdc32f0776bc8af56e8946b574d3"
+    },
+    {
+      "id": "long_lens",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 13,
+      "crop": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/long_lens.png",
+      "sha256": "7353909745b7c89775b85e215596e5c70cc64721efaa94b88b471786d3f1fce6"
+    },
+    {
+      "id": "spike_armor",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 14,
+      "crop": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/spike_armor.png",
+      "sha256": "d62f22f401b4737e92311c5ae3f8043a3064bb9c7cb8b2dc2d65074c29a1a31e"
+    },
+    {
+      "id": "battle_armor",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 15,
+      "crop": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/battle_armor.png",
+      "sha256": "bd7cf81174261768addb2eaaa4a251c729a69c5e4cb9b6c4afc16f1688b59fb8"
+    },
+    {
+      "id": "frost_plate",
+      "kind": "items",
+      "sheet": "items09",
+      "cell": 16,
+      "crop": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_sha256": "0e57581e2bdcfb8fd47044c2cf01799a1cd8b8aa6820b2aad3cbb7b1321c7afa",
+      "path": "assets/ui/art/items/frost_plate.png",
+      "sha256": "aea904bc7170f57a2a806fcbecd41addfd967705a836222827d069fcf7064384"
+    },
+    {
+      "id": "dagon",
+      "kind": "items",
+      "sheet": "items10",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "94890f186be569549d33be01422118f968e1531a1713de7e2d1d2b7e0e075225",
+      "path": "assets/ui/art/items/dagon.png",
+      "sha256": "0367651598b77887da549c1d446ea9406d9ce56ae291539ef01235a221c66526"
+    },
+    {
+      "id": "dagon_2",
+      "kind": "items",
+      "sheet": "items10",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "94890f186be569549d33be01422118f968e1531a1713de7e2d1d2b7e0e075225",
+      "path": "assets/ui/art/items/dagon_2.png",
+      "sha256": "f9c28e97f35cd7d45863982b9277fa2950c166d426d68d85f2d7d5ea0ad8a33f"
+    },
+    {
+      "id": "dagon_3",
+      "kind": "items",
+      "sheet": "items10",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "94890f186be569549d33be01422118f968e1531a1713de7e2d1d2b7e0e075225",
+      "path": "assets/ui/art/items/dagon_3.png",
+      "sha256": "349c7d365767b383920d697fd2727a0f1908c8172aceac8a16c80fd7e3aecf66"
+    },
+    {
+      "id": "dagon_4",
+      "kind": "items",
+      "sheet": "items10",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "94890f186be569549d33be01422118f968e1531a1713de7e2d1d2b7e0e075225",
+      "path": "assets/ui/art/items/dagon_4.png",
+      "sha256": "0c43778d63cbee434911f22e1fdcaca7fa3ba4e167a4bb855bea93ba0080c5a9"
+    },
+    {
+      "id": "dagon_5",
+      "kind": "items",
+      "sheet": "items10",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "94890f186be569549d33be01422118f968e1531a1713de7e2d1d2b7e0e075225",
+      "path": "assets/ui/art/items/dagon_5.png",
+      "sha256": "ee654a408502ca8c16fe806dbcf2059c2c1b52201892b681dd1b2da81480e44f"
+    },
+    {
+      "id": "death_order",
+      "kind": "skills",
+      "sheet": "sheet08",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "source_sha256": "964e64628170ac1124263d656a01db1d41c75caaf77cde84d5e78c67aadebd9e",
+      "path": "work/lemondev/2026-10-20-icons/quarantine/death_order.png",
+      "sha256": "c72daae6170e11ad908f88bb97597d4799b6624456c61e246c739ab8e9a35b9e"
+    },
+    {
+      "id": "beast_form",
+      "kind": "skills",
+      "sheet": "sheet08",
+      "cell": 2,
+      "crop": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "source_sha256": "964e64628170ac1124263d656a01db1d41c75caaf77cde84d5e78c67aadebd9e",
+      "path": "assets/ui/art/skills/beast_form.png",
+      "sha256": "ea0e107ffc0299fbad7711d48b584e4b59afea034e9717fc906af0f4dc919ef4"
+    },
+    {
+      "id": "break_strike",
+      "kind": "skills",
+      "sheet": "sheet08",
+      "cell": 3,
+      "crop": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "source_sha256": "964e64628170ac1124263d656a01db1d41c75caaf77cde84d5e78c67aadebd9e",
+      "path": "assets/ui/art/skills/break_strike.png",
+      "sha256": "cb5014e8255414eb7f677aa59e2368c299adfa47f8a4ea10a1a9817dc07ac75c"
+    },
+    {
+      "id": "weapon_grab",
+      "kind": "skills",
+      "sheet": "sheet08",
+      "cell": 4,
+      "crop": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "source_sha256": "964e64628170ac1124263d656a01db1d41c75caaf77cde84d5e78c67aadebd9e",
+      "path": "assets/ui/art/skills/weapon_grab.png",
+      "sha256": "76fbb15b473d94eab6c2a75cd6395eb980a04251c06336394cf9779598f0fc2b"
+    }
+  ],
+  "missing_sheets": []
+}

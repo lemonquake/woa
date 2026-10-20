@@ -4489,6 +4489,9 @@ func test_snapshot_restores_an_identical_match() -> void:
 	while a.time < 360.0:
 		a.step()
 		a.events.clear()
+	a.botchat.prof._live["worse:%d" % hs[0].id] = true
+	a.botchat.prof.said = 17
+	a.prof["snapshot_test"] = 123
 	var t0 := Time.get_ticks_msec()
 	var bytes := SimSnapshot.capture(a)
 	var t1 := Time.get_ticks_msec()
@@ -4500,6 +4503,9 @@ func test_snapshot_restores_an_identical_match() -> void:
 	check(b != null, "the snapshot loads")
 	if b == null:
 		return
+	check(b.botchat.prof.w == b and b.botchat.prof.bc == b.botchat, "profile chat keeps its restored world and chat owner")
+	check(b.botchat.prof._live == a.botchat.prof._live and b.botchat.prof.said == 17, "profile chat keeps its per-match review state")
+	check(b.prof.is_empty(), "world timing counters stay out of the snapshot")
 	check(a.state_hash() == b.state_hash(), "loaded world has the same fingerprint")
 	var me: SimUnit = hs[0]
 	var bad := -1
@@ -4960,7 +4966,7 @@ func test_items_15b_recipes_match_dota() -> void:
 		check(int(d.cost) == int(expect[id]), "%s costs %d (got %d)" % [id, int(expect[id]), int(d.cost)])
 		if not (d.components as Array).is_empty():
 			check(parts + int(d.recipe_cost) == int(d.cost), "%s: parts + recipe = cost (%d + %d)" % [id, parts, int(d.recipe_cost)])
-		check(UiKit.item_icon_path(id).begins_with("items/gen/"), "%s has a generated icon" % id)
+		check(UiKit.item_icon_path(id).begins_with("art/items/") or UiKit.item_icon_path(id).begins_with("items/gen/"), "%s has a generated icon" % id)
 
 func test_items_15b_buy_and_combine() -> void:
 	var w := empty_world()
@@ -5745,7 +5751,7 @@ func test_magic_defence_items() -> void:
 	for id in expect:
 		var d := SimData.item(id)
 		check(int(d.cost) == int(expect[id]), "%s costs %d" % [id, int(expect[id])])
-		check(UiKit.item_icon_path(id).begins_with("items/gen/"), "%s has a generated icon" % id)
+		check(UiKit.item_icon_path(id).begins_with("art/items/") or UiKit.item_icon_path(id).begins_with("items/gen/"), "%s has a generated icon" % id)
 	var gc := SimData.item("glimmer_cape")
 	var parts := 0
 	for c in gc.components:
@@ -6960,7 +6966,7 @@ func test_switch_boots_icon_follows_attribute() -> void:
 	for k in 3:
 		var tex := UiKit.held_item_icon(it)
 		check(tex != null and tex != UiKit.item_icon("power_treads"), "%s: its own icon" % String(it.attr))
-		check(tex != null and tex.resource_path.ends_with("power_treads_%s.svg" % String(it.attr)), "the %s icon (%s)" % [String(it.attr), tex.resource_path if tex else "none"])
+		check(tex != null and tex.resource_path.get_basename().ends_with("power_treads_%s" % String(it.attr)), "the %s icon (%s)" % [String(it.attr), tex.resource_path if tex else "none"])
 		seen[tex] = true
 		w.command(h.id, {"type": O.CAST_NO_TARGET, "ability": "", "item_slot": 0})
 		run(w, 0.1)
@@ -7799,12 +7805,15 @@ func test_ranked_match_result() -> void:
 	check(int(res.hero_xp) == Ranked.hero_xp_gain(true, 0.5) and Ranked.hero_xp(Ranked.me(), String(l.heroes.me)) == int(res.hero_xp),
 		"your hero earned XP for the win (%d)" % int(res.get("hero_xp", -1)))
 	check(int(res.delta) > 0 and int(res.new) == Ranked.YOUR_START + int(res.delta), "a win adds MMR (%+d)" % int(res.delta))
-	check(int(Ranked.profile(ally).mmr) == a0 + int(res.delta) and int(Ranked.profile(foe).mmr) == f0 - int(res.delta), "the other nine moved too")
+	var da := int(Ranked.profile(ally).mmr) - a0
+	var df := f0 - int(Ranked.profile(foe).mmr)
+	check(da >= Career.MMR_MIN and da <= Career.MMR_MAX and df >= Career.MMR_MIN and df <= Career.MMR_MAX,
+		"the other nine moved by their own games (ally %+d, enemy %+d)" % [da, -df])
 	check(int(Ranked.me().wins) == 1 and (Ranked.me().history as Array).size() == 1, "your record")
 	check(not Ranked.has_pending(), "nothing pending after the result")
 	Ranked.begin_match({"teams": teams, "mine": l.mine, "heroes": l.heroes, "roles": l.roles})
 	var left := Ranked.abandon_pending()
-	check(int(left.delta) < 0 and int(Ranked.me().abandons) == 1 and String(Ranked.me().history[0].r) == "A", "leaving is a loss")
+	check(int(left.delta) == -Career.MMR_MAX and int(Ranked.me().abandons) == 1 and String(Ranked.me().history[0].r) == "A", "leaving is a loss of 41")
 	_end_ladder()
 
 func test_matchmaker_lineup() -> void:
@@ -8261,7 +8270,7 @@ func test_chat_answers_the_player() -> void:
 	check(q.any(func(x): return int(x.u) == ezee.id and String(x.cat) == "r_from"), "asked where from, it says")
 	me.deaths = 7
 	q = ask.call("ezee noob")
-	check(q.any(func(x): return int(x.u) == ezee.id and String(x.cat) in ["r_insult_fact", "r_insult_calm", "responses_and_comebacks"]), "an insult gets an answer")
+	check(q.any(func(x): return int(x.u) == ezee.id and String(x.cat) in ["r_insult_fact", "r_insult_witty", "r_back", "responses_and_comebacks"]), "an insult gets an answer")
 	q = ask.call("where is froster")
 	check(q.any(func(x): return String(x.cat) in ["r_where_seen", "r_where_lost", "p_dead"]), "asked where a hero is, a teammate says (%s)" % str(q.map(func(x): return x.cat)))
 	q = ask.call("are you a bot", true)
@@ -8517,3 +8526,685 @@ func test_araki_data() -> void:
 	near(float(SimData.ability("ghosts_of_the_will").cooldown[3]), 18.0, 0.01, "18 s at level 4")
 	near(float(SimData.ability("the_blur").cooldown[2]), 40.0, 0.01, "The Blur 40 s at level 3")
 	near(float(SimData.ability("djin_bomb").values.slow_per_second[3]), 0.14, 1e-6, "Djin Bomb 14% a second at level 4")
+
+# ---- The social world (run 2026-10-19 e) --------------------------------------------------------------------------------
+
+func test_match_stats_counters() -> void:
+	var w := world(600.0)
+	var h := w.spawn_hero("sludge", C.DAWN)
+	var mate := w.spawn_hero("ezee", C.DAWN)
+	var foe := w.spawn_hero("froster", C.DUSK)
+	h.pos = Vector2(-2000, -4000)
+	mate.pos = Vector2(-1900, -4000)
+	foe.pos = Vector2(-1700, -4000)
+	var lane := w.spawn("dusk_melee", C.DUSK, Vector2(-1600, -4000))
+	var camp := w.spawn("mudling", C.NEUTRAL, Vector2(-1600, -4100))
+	w.combat.deal_damage(h.id, h.team, true, lane, 5000.0, C.DamageType.PURE)
+	w.combat.deal_damage(h.id, h.team, true, camp, 5000.0, C.DamageType.PURE)
+	w.combat.process_deaths()
+	check(h.lh_lane == 1 and h.lh_neutral == 1 and h.last_hits == 2, "a lane creep and a camp creep count apart (%d / %d)" % [h.lh_lane, h.lh_neutral])
+	# a low ally under attack, healed by a teammate, lives: heal given and a save
+	mate.hp = mate.max_hp * 0.2
+	mate.hero_damage_log[foe.id] = w.time
+	var got := w.combat.heal(mate, 150.0, h)
+	near(h.heal_given, got, 0.01, "healing an ally counts as heal given")
+	for i in 5 * C.TICK_RATE:
+		w.time += C.DT
+		w.tick += 1
+		if w.tick % 15 == 0:
+			w.combat.check_saves()
+	check(h.saves == 1, "the healed ally lived 4 s: a save (%d)" % h.saves)
+	# a stun on an enemy hero counts its seconds
+	w.status.apply(foe, h.id, h.team, {"id": "stunned", "stun": true, "dur": 2.0, "fx": "stun"})
+	near(h.disable_given, 2.0 * (1.0 - foe.status_resist), 0.05, "a stun on an enemy hero counts as disable time")
+
+func test_mvp_support_can_win() -> void:
+	var w := world(1800.0)
+	var carry := w.spawn_hero("araki", C.DAWN)
+	var sup := w.spawn_hero("azrael", C.DAWN)
+	var foe := w.spawn_hero("froster", C.DUSK)
+	carry.kills = 5
+	carry.deaths = 6
+	carry.assists = 4
+	carry.last_hits = 160
+	carry.dmg_out = {"slash": [9000.0, 0.0, 0.0]}
+	sup.kills = 2
+	sup.deaths = 3
+	sup.assists = 19
+	sup.heal_given = 5200.0
+	sup.wards_placed = 14
+	sup.saves = 4
+	sup.disable_given = 38.0
+	foe.kills = 7
+	foe.deaths = 7
+	w.winner = C.DAWN
+	var best := MatchMvp.best(w)
+	check(int(best.u) == sup.id, "a support with heals, wards, assists and saves is the MVP (%s)" % str(best))
+	check((best.reasons as Array).size() >= 2 and String(best.tag) == "Support", "with reasons from its numbers (%s)" % str(best.reasons))
+	var hon := MatchMvp.honours(w, int(best.u))
+	check(hon.size() == 3, "three honours beside the MVP")
+
+func test_chat_multikill_crowd() -> void:
+	var w := _chat_world()
+	var k := w.heroes[0]
+	var v := w.heroes[3]
+	var count := func(m: int) -> Array:
+		w.botchat._queue.clear()
+		w.botchat._bot_last.clear()
+		w.botchat.social._multi(k, v, m)
+		var teams := {}
+		for q in w.botchat._queue:
+			teams[int(q.team)] = true
+		return [w.botchat._queue.size(), teams.size()]
+	var dbl: Array = [0, 0]
+	var ramp: Array = [0, 0]
+	for i in 4:
+		var d: Array = count.call(2)
+		var r: Array = count.call(5)
+		dbl[0] += int(d[0])
+		ramp[0] += int(r[0])
+		ramp[1] = maxi(int(ramp[1]), int(r[1]))
+	check(ramp[0] > dbl[0] * 2, "a rampage draws far more reactions than a double (%d vs %d)" % [ramp[0], dbl[0]])
+	check(int(ramp[1]) == 2, "both teams react to a rampage")
+
+func test_chat_feeding_and_kda_reviews() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	var foes: Array = [w.heroes[3], w.heroes[4], w.heroes[5]]
+	# five deaths with nothing to show: the enemy mocks the free gold
+	me.deaths = 5
+	w.botchat.social._feeding(me)
+	check(w.botchat._queue.any(func(q): return String(q.cat) == "feed_enemy_mock" and foes.has(w.get_unit(int(q.u)))),
+		"an enemy mocks a player who keeps dying")
+	_next_moment(w)
+	# a stand-out score: smurf / cheat / respect from the enemy, praise from the team
+	me.deaths = 1
+	me.kills = 12
+	me.assists = 6
+	w.time = 900.0
+	w.botchat.social.review()
+	var cats: Array = w.botchat._queue.map(func(q): return String(q.cat))
+	check(cats.any(func(c): return c in ["kda_smurf", "kda_cheat", "kda_respect", "kda_arrogant"]), "the enemy reacts to 12/1/6 (%s)" % str(cats))
+	check(cats.has("kda_praise"), "the team praises it (%s)" % str(cats))
+	var rel_any := false
+	for f in foes:
+		var r: Dictionary = w.botchat._rel.get(f.id, {})
+		rel_any = rel_any or int(r.get("accused_you", 0)) > 0
+	check(rel_any or cats.has("kda_respect") or cats.has("kda_arrogant"), "an accusation is remembered for Ranked")
+	_next_moment(w)
+	# a terrible score on a bot: mocked
+	me.kills = 2
+	me.deaths = 2
+	me.assists = 2
+	var bad := w.heroes[1]
+	bad.deaths = 11
+	bad.kills = 0
+	bad.assists = 1
+	w.time = 1300.0
+	var mocked := false
+	for i in 6:
+		w.botchat.social._kda_said.clear()
+		w.botchat.social.review()
+		mocked = mocked or w.botchat._queue.any(func(q): return String(q.cat) in ["kda_awful_enemy", "kda_awful_ally"])
+		_next_moment(w)
+	check(mocked, "a 0/11/1 is mocked")
+
+func test_chat_trash_talk_answered() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	me.deaths = 7
+	me.kills = 1
+	w.botchat._on_chat({"t": "chat", "u": me.id, "text": "ez noobs", "all": true})
+	var q: Array = w.botchat._queue.filter(func(x): return w.get_unit(int(x.u)).team != me.team and bool(x.all))
+	check(not q.is_empty(), "the enemy answers trash talk in all chat")
+	check(q.any(func(x): return String(x.cat) in ["tt_fact", "tt_after_death"]) , "with the facts of a 1/7 (%s)" % str(q.map(func(x): return [x.cat, x.text])))
+	var noted := 0
+	for i in range(3, 6):
+		noted += int((w.botchat._rel.get(w.heroes[i].id, {}) as Dictionary).get("trash_talked", 0))
+	check(noted >= 3, "every enemy remembers the trash talk (%d)" % noted)
+	check(ChatMind.intent("gg ez") == "taunt" and ChatMind.intent("add me pls") == "add" and ChatMind.intent("gg wp") == "gg",
+		"gg ez is trash talk, add me a friend request, gg wp still gg")
+
+## The player always gets an answer (the owner, 2026-10-20: "the player should be TOP PRIORITY to have them reply at
+## all means"): quiet bots, bots busy typing, lines the brain does not know, all chat and team chat.
+func test_chat_player_always_answered() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	for h in w.heroes:
+		if h.bot:
+			w.botchat._ps[h.id].talk = 0.0
+			w.botchat._voice[h.id] = {"tl": 0.0, "salt": 0.0, "rough": 0.0}
+	var lines := ["what do u guys think of this patch", "ezee", "lol whatever", "where is the carry", "push bot", "anyone here from manila",
+		"my cat is on my keyboard", "gg", "hi", "nice weather", "who is your favorite hero", "ok", "ezee nice", "froster u good?"]
+	var missed: Array = []
+	for i in 40:
+		for all in [true, false]:
+			var text: String = lines[i % lines.size()]
+			# every bot already busy typing a line and having just spoken
+			w.botchat._queue.clear()
+			for h in w.heroes:
+				if h.bot:
+					w.botchat._queue.append({"at": w.time + 3.0, "team": h.team, "u": h.id, "text": "busy", "all": false, "cat": "x"})
+					w.botchat._bot_last[h.id] = w.time
+			w.botchat._on_chat({"t": "chat", "u": me.id, "text": text, "all": all})
+			var ans: Array = w.botchat._queue.filter(func(q): return bool(q.get("pri", false)))
+			if ans.is_empty():
+				missed.append([text, all])
+			elif all and not ans.any(func(q): return bool(q.all)):
+				missed.append([text, "all chat answered in team chat"])
+			w.time += 5.0
+	check(missed.is_empty(), "every line the player types is answered, even by quiet, busy bots (missed: %s)" % str(missed.slice(0, 6)))
+	# the answer jumps the queue: it goes out before older lines waiting for the channel
+	w.botchat._queue.clear()
+	w.botchat._bot_last.clear()
+	w.botchat._last_all = w.time
+	w.botchat._queue.append({"at": w.time, "team": 1, "u": w.heroes[3].id, "text": "old line", "all": true, "cat": "x"})
+	w.botchat._on_chat({"t": "chat", "u": me.id, "text": "anyone awake", "all": true})
+	var lid := -1
+	for q in w.botchat._queue:
+		if bool(q.get("pri", false)):
+			q.at = w.time
+			lid = int(q.lid)
+	w.time += 0.7
+	w.events.clear()
+	w.botchat._flush()
+	var posted: Array = w.events.filter(func(e): return String(e.t) == "chat")
+	check(not posted.is_empty() and int(posted[0].lid) == lid, "the answer to the player goes out first (%s)" % str(posted.map(func(e): return e.text)))
+	# the online writer is told who asked and what they wrote
+	check(w.botchat._intents.any(func(x): return String(x.said) == "anyone awake" and int(x.by) == me.id), "the answer carries what the player wrote")
+
+## Trash talk is answered with trash talk, never "relax", "chill", "be nice" or "its just a game" (the owner,
+## 2026-10-20: "If the player talks trash they try to pacify the player which is STUPID").
+func test_chat_trash_talk_never_pacified() -> void:
+	var soft := ["relax", "chill", "be nice", "just a game", "kalma", "laro lang", "no need to flame", "stop all chat", "dont flame",
+		"focus game", "dont bm", "just play"]
+	var bad: Array = []
+	var answered := 0
+	for seed in 12:
+		var w := _chat_world(true)
+		w.botchat._rng.seed = seed * 31 + 7
+		var me := w.heroes[0]
+		for h in w.heroes:
+			if h.bot:
+				w.botchat._ps[h.id].kind = 1.0 if seed % 2 == 0 else 0.6
+				w.botchat._mind[h.id] = {"tilt": 0.0, "last_killer": -1, "killer_t": C.LONG_AGO, "kills_on": {}, "deaths_to": {},
+					"stun": 0.0, "stun_t": C.LONG_AGO}
+		me.kills = 6 if seed % 3 == 0 else 1
+		me.deaths = 1 if seed % 3 == 0 else 6
+		for text in ["ez noobs", "ur all trash", "ezee noob", "gago kayo", "sit dogs"]:
+			for all in [true, false]:
+				w.botchat._queue.clear()
+				w.botchat._bot_last.clear()
+				w.botchat._on_chat({"t": "chat", "u": me.id, "text": text, "all": all})
+				if not w.botchat._queue.is_empty():
+					answered += 1
+				for q in w.botchat._queue:
+					var low := String(q.text).to_lower()
+					if soft.any(func(x): return low.contains(x)) or String(q.cat) in ["r_insult_calm", "tt_kind", "tt_ally_stop", "t_calm"]:
+						bad.append([text, q.cat, q.text])
+				w.time += 6.0
+	check(answered == 12 * 5 * 2, "every insult and taunt is answered (%d of %d)" % [answered, 12 * 5 * 2])
+	check(bad.is_empty(), "nobody tells the player to calm down (%s)" % str(bad.slice(0, 5)))
+
+## The online writer sends every answer to the player, past its share, cap and parallel limit, waits longer for it,
+## and asks the model to answer what the player wrote (and to hit back at trash talk).
+func test_llm_answers_the_player_first() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	var llm := LlmChat.new()
+	llm.setup(w, 0, {"api_key": "sk-or-test", "endpoint": "http://127.0.0.1:9/none", "share": 0.0, "max_calls": 0,
+		"usage_path": "user://llm_usage_test.json"})
+	w.botchat._on_chat({"t": "chat", "u": me.id, "text": "ur mom plays better than u ezee", "all": true})
+	var ev: Array = w.botchat._intents.filter(func(x): return LlmChat.is_answer(x))
+	check(not ev.is_empty(), "the answer is marked as one")
+	if not ev.is_empty():
+		for i in 4:
+			llm._pending[1000 + i] = {"req": null, "at": Time.get_ticks_msec(), "wait": 4.0}
+		var wait := llm.wait_for(ev[0])
+		check(wait >= 0.0, "sent even with the cap at 0, share 0 and the parallel limit full")
+		check(wait >= 8.0, "and it may wait longer than an ordinary line (%.1f s)" % wait)
+		var prompt := llm.user_prompt(ev[0])
+		check(prompt.contains("ur mom plays better than u ezee") and prompt.contains("Talk back") and prompt.contains("Do not calm them down"),
+			"the prompt has what the player wrote and asks for a comeback")
+		check(not llm._system.contains("apologises,") and llm._system.contains("Never act like a moderator"), "the rules forbid calming the player down")
+	var quiet: Dictionary = ev[0].duplicate() if not ev.is_empty() else {}
+	quiet["said"] = ""
+	quiet["by"] = -1
+	quiet["lid"] = 99999
+	quiet["cat"] = "casual_short_mockery"
+	check(llm.wait_for(quiet) < 0.0, "an ordinary line still follows the cap")
+	llm._pending.clear()
+	llm.free()
+
+func test_chat_add_me_makes_a_friend() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	var fan := w.heroes[1]
+	var hater := w.heroes[2]
+	var bf = w.botchat._bot_of(fan)
+	var bh = w.botchat._bot_of(hater)
+	bf.pid = "b7"
+	bf.you_rec = {"rep": 0.8}
+	bh.pid = "b8"
+	bh.you_rec = {"rep": -0.9}
+	_loud(w, fan, 0.9)
+	_loud(w, hater, 0.1)
+	w.botchat._on_chat({"t": "chat", "u": me.id, "text": "ezee add me", "all": false})
+	w.botchat.tick()
+	check(w.botchat._queue.any(func(x): return int(x.u) == fan.id and String(x.cat) == "add_yes") or
+		w.botchat._intents.any(func(x): return int(x.u) == fan.id and String(x.cat) == "add_yes"), "a bot that likes you says yes")
+	check(w.events.any(func(e): return String(e.t) == "friend" and String(e.pid) == "b7" and String(e.what) == "added"),
+		"and a friend event goes out for the ladder")
+	w.events.clear()
+	w.botchat._queue.clear()
+	w.botchat._bot_last.clear()
+	w.botchat._on_chat({"t": "chat", "u": me.id, "text": "azrin add me", "all": false})
+	check(w.botchat._queue.any(func(x): return int(x.u) == hater.id and String(x.cat) == "add_no"), "one that does not like you says no")
+	check(not w.events.any(func(e): return String(e.t) == "friend"), "and no friend event")
+
+func test_chat_mvp_last_game() -> void:
+	var w := _chat_world(true)
+	var me := w.heroes[0]
+	w.player_cards[me.id] = {"rank": "Expert 2", "tier": 3, "last_mvp": true}
+	w.botchat.social.meet(me, 1.0)
+	var cats: Array = w.botchat._queue.map(func(q): return String(q.cat))
+	check(cats.has("meet_mvp_ally") or cats.has("meet_mvp_enemy"), "last game's MVP is called out at the start (%s)" % str(cats))
+	_next_moment(w)
+	me.deaths = 8
+	me.kills = 1
+	w.time = 700.0
+	w.botchat.social.review()
+	check(w.botchat._queue.any(func(q): return String(q.cat) == "mvp_expect_fail"), "an MVP doing badly is mocked for it")
+
+func test_ranked_mvp_and_memory() -> void:
+	_test_ladder()
+	var mvps := 0
+	var lasts := 0
+	for b in Ranked.bots():
+		mvps += int(b.get("mvps", 0))
+		if (b.get("last_game", {}) as Dictionary).has("hero"):
+			lasts += 1
+	check(mvps > 50, "ladder rounds give MVPs (%d)" % mvps)
+	check(lasts > 100, "every player keeps its last game (%d)" % lasts)
+	var r := RandomNumberGenerator.new()
+	r.seed = 9
+	var l := Matchmaker.build_lineup(Ranked.bots(), Ranked.me(), [2], r)
+	var teams := [[], []]
+	var heroes := {}
+	var i := 0
+	for t in 2:
+		for p in l.teams[t]:
+			teams[t].append(String(p.id))
+			heroes[String(p.id)] = String(GameSettings.random_pool()[i])
+			i += 1
+	var mate := String(teams[l.mine][1])
+	var foe := String(teams[1 - l.mine][0])
+	var foe2 := String(teams[1 - l.mine][1])
+	Ranked.begin_match({"teams": teams, "mine": l.mine, "heroes": heroes, "roles": l.roles})
+	var rel := {mate: {"k": 3, "x": 2, "a": 9}, foe: {"k": 2, "x": 12, "a": 1, "trash_talked": 2, "reported_you": 1}, foe2: {"k": 14, "x": 3, "a": 4, "multi": 5}}
+	Ranked.finish_match(true, false, {"perf": 0.9, "k": 15, "x": 1, "a": 8, "rel": rel, "mvp": "me", "you_multi": 5, "reports": 1})
+	check(Ranked.mvp_last(Ranked.me()) and int(Ranked.me().get("mvps", 0)) == 1, "your MVP is kept")
+	var fy: Dictionary = Ranked.profile(foe).you
+	check(int(fy.get("trash_talked", 0)) == 2 and int(fy.get("you_rampage", 0)) == 1 and bool(fy.get("last_you_mvp", false)),
+		"an enemy remembers your trash talk, your rampage and your MVP (%s)" % str(fy))
+	var seen: Dictionary = Ranked.profile(mate).get("seen", {})
+	check(String((seen.get(foe2, {}) as Dictionary).get("note", "")) == "rampage" and String((seen.get(foe, {}) as Dictionary).get("note", "")) == "feeder",
+		"bots remember each other: the rampage and the feeder (%s)" % str(seen.get(foe2, {})))
+	check("rampage" in Ranked.fame_of(Ranked.profile(foe2)), "the rampage is what that player is known for now")
+	var card := Matchmaker.card_of(Ranked.profile(mate))
+	check((card.seen as Dictionary).has(foe2), "the match card carries who it met")
+	# a casual match remembers too, and a bot can become your friend
+	Ranked.befriend(mate)
+	check(mate in (Ranked.me().friends as Array), "a yes in chat makes a friend")
+	check(Ranked.send_request(foe2, "vs") and not Ranked.send_request(foe2, "vs"), "a request is sent once")
+	_end_ladder()
+
+func test_forum_offline() -> void:
+	_test_ladder()
+	Forum.reset("user://forum_test.json")
+	if FileAccess.file_exists(Forum.path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(Forum.path))
+	Forum.rng.seed = 5
+	Forum.catch_up()
+	var ths := Forum.threads()
+	check(ths.size() >= 8, "a new forum has threads (%d)" % ths.size())
+	var replies := 0
+	var authors := {}
+	for th in ths:
+		replies += (th.replies as Array).size()
+		authors[String(th.a)] = true
+		check(not String(th.title).contains("{") and not String(th.body).contains("{"), "no unfilled field in '%s'" % th.title)
+	check(replies >= ths.size(), "threads have replies (%d)" % replies)
+	check(authors.size() >= 6, "many different players post (%d)" % authors.size())
+	var th := Forum.post("how do you play Froster?", "i keep dying in lane", "Help")
+	check((th.pending as Array).size() >= 4, "your post will get answers (%d on the way)" % (th.pending as Array).size())
+	Forum.resolve(Ranked.now() + 600)
+	check((th.replies as Array).size() >= 4 and (th.pending as Array).is_empty(), "the answers come in (%d)" % (th.replies as Array).size())
+	var target := String(th.replies[0].a)
+	var before := float((Ranked.profile(target).get("you", {}) as Dictionary).get("rep", 0.0))
+	Forum.reply(th, "shut up noob", 0)
+	var after := float((Ranked.profile(target).get("you", {}) as Dictionary).get("rep", 0.0))
+	check(after < before, "an insult in the forum makes them like you less (%.2f -> %.2f)" % [before, after])
+	Forum.resolve(Ranked.now() + 600)
+	check((th.replies as Array).any(func(r): return String(r.a) == target and int(r.to) >= 0), "the one you answered talks back")
+	# a reply in your own thread with no target goes to the last one who wrote, and is always answered
+	var last := String(th.replies[-1].a)
+	Forum.reply(th, "nagsalita ang rookie pota")
+	var mine := (th.replies as Array).size() - 1
+	check((th.pending as Array).any(func(q): return String(q.a) == last and int(q.to) == mine), "in your own thread, the last writer answers you")
+	Forum.resolve(Ranked.now() + 600)
+	var back: Array = (th.replies as Array).filter(func(r): return int(r.to) == mine)
+	check(back.size() >= 2, "trash talk in the forum draws more than one answer (%d)" % back.size())
+	var soft := ["you got this", "keep going", "dont listen to the haters", "take a break", "calm down", "relax"]
+	check(not back.any(func(r): return soft.any(func(x): return String(r.text).to_lower().contains(x))),
+		"nobody soothes your trash talk (%s)" % str(back.map(func(r): return r.text)))
+	# in someone else's thread, the writer always answers, many times over
+	var other: Dictionary = {}
+	for x in Forum.threads():
+		if String(x.a) != "me":
+			other = x
+			break
+	var ok := 0
+	for i in 10:
+		Forum.reply(other, "this is a bad take")
+		var k := (other.replies as Array).size() - 1
+		if (other.pending as Array).any(func(q): return String(q.a) == String(other.a) and int(q.to) == k):
+			ok += 1
+		Forum.resolve(Ranked.now() + 600)
+	check(ok == 10, "the thread's writer answers every reply (%d of 10)" % ok)
+	# replies saved without an answer (before this fix) get one on the next visit
+	(other.replies as Array).append({"a": "me", "text": "hello?", "t": Ranked.now() - 60, "votes": 1, "voted": true, "to": -1})
+	check(Forum.answer_ignored() == 1 and (other.pending as Array).any(func(q): return int(q.to) == (other.replies as Array).size() - 1),
+		"an old unanswered reply of yours gets an answer")
+	check(Forum.listed("hot").size() == Forum.threads().size() and Forum.listed("new", "Help").all(func(x): return String(x.tag) == "Help"),
+		"lists sort and filter")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Forum.path))
+	Forum.reset()
+	_end_ladder()
+
+func test_draft_pick_chat_and_calls() -> void:
+	_test_ladder()
+	var r := RandomNumberGenerator.new()
+	r.seed = 3
+	var l := Matchmaker.build_lineup(Ranked.bots(), Ranked.me(), [2], r)
+	var d := HeroDraft.new(l, 11)
+	var mates: Array = d._mates()
+	check(mates.size() == 4, "four teammates in the pick")
+	# Alt+click the hero a teammate wants: it picks another
+	var mid := String(mates[0])
+	var h := String(d.wants[mid])
+	d.want_me(h)
+	check(String(d.wants[mid]) != h and d.mine_wants == h, "the teammate who wanted %s goes for another" % h)
+	check(d.chat.any(func(c): return bool(c.get("me", false)) and String(c.text).contains(HeroDraft.hero_name(h))), "your call shows in team chat")
+	# Shift+click: a teammate takes it up (or says why not)
+	var free: Array = d.pool().filter(func(x): return not d.taken(String(x)) and String(x) != h and not d.wants.values().has(x))
+	var sug := String(free[0])
+	var n0 := d._later.size()
+	d.suggest(sug)
+	check(d.wants.values().has(sug) or d._later.size() > n0, "someone answers 'Pick %s'" % sug)
+	# typing: teammates answer a greeting a moment later
+	var lines := d.chat.size()
+	d.say_me("hi guys")
+	for i in 40:
+		d._clock += 0.1
+		for e in d._later.duplicate():
+			if d._clock >= float(e[0]):
+				d._later.erase(e)
+				d._say(String(e[1]), String(e[2]))
+	check(d.chat.size() >= lines + 2, "your line and an answer (%d new)" % (d.chat.size() - lines))
+	_end_ladder()
+
+
+# ---- Careers, performance MMR, profiles (run 2026-10-20) ----------------------------------------------------------
+
+## A win gives 23 (poor) to 41 (perfect: no deaths, 10+ kills, 10+ assists, 150 last hits); a loss takes 23 to 41.
+func test_career_mmr_range() -> void:
+	var perfect := {"k": 10, "x": 0, "a": 10, "lh": 150}
+	check(Career.mmr_change(true, perfect) == 41, "a perfect game: +41 (%d)" % Career.mmr_change(true, perfect))
+	check(Career.mmr_change(true, {"k": 25, "x": 0, "a": 30, "lh": 400}) == 41, "more than perfect is still +41")
+	var awful := {"k": 0, "x": 12, "a": 0, "lh": 0}
+	check(Career.mmr_change(true, awful) == 23, "a carried win still gives 23 (%d)" % Career.mmr_change(true, awful))
+	check(Career.mmr_change(false, awful) == -41 and Career.mmr_change(false, perfect) == -23, "a loss takes 41 (poor) to 23 (great)")
+	check(Career.mmr_change(false, perfect, 1, true) == -41, "leaving takes 41")
+	var mid := Career.mmr_change(true, {"k": 5, "x": 5, "a": 8, "lh": 90})
+	check(mid > 23 and mid < 41, "an average game is in between (%d)" % mid)
+	# a support's wards, healing and assists stand in for last hits
+	var sup := {"k": 2, "x": 2, "a": 22, "lh": 20, "wd": 14, "heal": 4000}
+	check(Career.mmr_change(true, sup, 5) > Career.mmr_change(true, sup, 1), "a support is not punished for few last hits")
+	var r := RandomNumberGenerator.new()
+	r.seed = 3
+	for i in 300:
+		var e := {"k": r.randi_range(0, 30), "x": r.randi_range(0, 20), "a": r.randi_range(0, 30), "lh": r.randi_range(0, 500)}
+		var w := Career.mmr_change(true, e, r.randi_range(1, 5))
+		var l := Career.mmr_change(false, e, r.randi_range(1, 5))
+		if w < 23 or w > 41 or l > -23 or l < -41:
+			check(false, "out of range: %s %d %d" % [str(e), w, l])
+			return
+	check(true, "300 random games stay within 23..41")
+
+## Lines, careers, averages, lanes and the form.
+func test_career_averages() -> void:
+	var p := {"id": "x", "mmr": 1000, "wins": 0, "losses": 0, "history": [], "unranked": [], "mvps": 0}
+	var games := [{"r": "W", "k": 10, "x": 2, "a": 8, "lh": 200, "dn": 10, "gpm": 600, "xpm": 700, "len": 2400, "ln": "mid", "t": 5, "tr": 1, "fb": 1},
+		{"r": "L", "k": 2, "x": 8, "a": 4, "lh": 100, "dn": 2, "gpm": 400, "xpm": 450, "len": 1800, "ln": "safe", "t": 4, "rp": 1},
+		{"r": "W", "k": 6, "x": 5, "a": 12, "lh": 150, "dn": 6, "gpm": 500, "xpm": 600, "len": 3000, "ln": "mid", "t": 3, "kind": "casual"}]
+	for e in games:
+		if String(e.get("kind", "")) == "casual":
+			(p.unranked as Array).append(e)
+		else:
+			(p.history as Array).append(e)
+		Career.add(p, e, String(e.r) == "W")
+	var av := Career.averages(p)
+	check(int(av.n) == 3 and is_equal_approx(float(av.k), 6.0) and is_equal_approx(float(av.lh), 150.0), "averages over every match (%s)" % str(av))
+	check(is_equal_approx(float(av.lhm), 450.0 / 120.0), "last hits a minute over the time played (%.2f)" % float(av.lhm))
+	check(String(av.form) == "WLW", "the form, newest first (%s)" % String(av.form))
+	var lanes := Career.fav_lanes(p)
+	check(String(lanes[0][0]) == "mid" and is_equal_approx(float(lanes[0][1]), 2.0 / 3.0), "the favourite lane (%s)" % str(lanes))
+	var mo := Career.moments(p)
+	check(int(mo.tr) == 1 and int(mo.rp) == 1 and int(mo.fb) == 1 and int(mo.g) == 3, "first bloods, triple kills, rampages counted")
+	check(Career.matches(p, "casual").size() == 1 and Career.matches(p, "ranked").size() == 2, "ranked and unranked matches apart")
+	p["career_base"] = {"rp": 20, "tr": 30, "fb": 12}
+	mo = Career.moments(p)
+	check(int(mo.rp) == 21 and int(mo.tr) == 31 and int(mo.fb) == 13, "your earlier record adds to the totals")
+
+## Every ladder player has a career (games, averages, first bloods, multi-kills) and MVPs; the best have hundreds.
+func test_ladder_careers() -> void:
+	_test_ladder()
+	var no_career := 0
+	var top_mvps := 999999
+	for p in Ranked.leaderboard().slice(0, 10):
+		if String(p.id) != "me":
+			top_mvps = mini(top_mvps, int(p.get("mvps", 0)))
+	for b in Ranked.bots():
+		var c := Career.career(b)
+		if int(c.g) < int(b.wins) + int(b.losses) - 5 or (int(c.g) > 50 and (int(c.k) == 0 or int(c.lh) == 0)):
+			no_career += 1
+	check(no_career == 0, "every ladder player has a career that counts its games (%d without)" % no_career)
+	check(top_mvps >= 100, "the top ten have hundreds of MVPs (fewest %d)" % top_mvps)
+	var board := Ranked.leaderboard()
+	var low := board.slice(board.size() - 60).filter(func(p): return int(p.get("wins", 0)) + int(p.get("losses", 0)) >= 100)
+	check(not low.is_empty() and low.all(func(p): return int(p.get("mvps", 0)) >= 4), "low ranks with 100+ games have MVPs too")
+	var b0: Dictionary = Ranked.bots()[5]
+	var h0: Dictionary = (b0.history as Array)[0]
+	check(h0.has("lh") and h0.has("gpm") and h0.has("ln"), "a ladder match keeps farm and the lane (%s)" % str(h0.keys()))
+	# the MMR of the ladder does not drift with the new rule
+	var before := _avg_mmr()
+	var r := RandomNumberGenerator.new()
+	r.seed = 4
+	Ranked.simulate_rounds(60, r)
+	var after := _avg_mmr()
+	check(absf(after - before) < 60.0, "the ladder's average MMR stays put over 60 rounds (%.0f -> %.0f)" % [before, after])
+	_end_ladder()
+
+func _avg_mmr() -> float:
+	var s := 0.0
+	for b in Ranked.bots():
+		s += float(b.mmr)
+	return s / float(Ranked.bots().size())
+
+## A ladder saved before careers (version 4) gets them: estimates, farm on old matches, your career from your history.
+func test_ranked_upgrade_careers() -> void:
+	_test_ladder()
+	for b in Ranked.data.bots:
+		b.erase("career")
+		b["mvps"] = 1
+		for e in b.history:
+			for k in ["lh", "dn", "gpm", "xpm", "hd", "ln", "fb", "db", "tr", "ul", "rp", "wd"]:
+				e.erase(k)
+	Ranked.data.me.erase("career")
+	Ranked.data.me.erase("unranked")
+	Ranked.data.me.history = [{"r": "W", "k": 12, "x": 1, "a": 9, "len": 1800, "d": 25, "m": 1025, "t": 1, "h": "azrin", "o": 2}]
+	Ranked.data.version = 4
+	var mmr0 := int(Ranked.data.bots[7].mmr)
+	Ranked.save()
+	Ranked.reset(Ranked.path)
+	Ranked.load_data()
+	check(int(Ranked.data.version) == Ranked.VERSION, "the file is upgraded to version %d" % Ranked.VERSION)
+	check(int(Ranked.data.bots[7].mmr) == mmr0, "nobody's MMR changes")
+	var b: Dictionary = Ranked.data.bots[7]
+	check(b.get("career") is Dictionary and int(b.career.g) == int(b.wins) + int(b.losses), "a ladder player gets its career")
+	check(int(b.mvps) > 1 or int(b.wins) + int(b.losses) < 10, "and its MVPs (%d)" % int(b.mvps))
+	check((b.history as Array)[0].has("lh"), "its saved matches get farm")
+	check(int(Ranked.me().career.g) == 1 and int(Ranked.me().career.k) == 12, "your career counts your saved ranked matches")
+	_end_ladder()
+
+## What a profile shows, and what different players say about it.
+func _facts(good: bool) -> Dictionary:
+	var l5: Array = []
+	for i in 5:
+		l5.append({"r": "W" if good or i == 4 else "L", "h": "azrin", "k": 14 if good else 1, "x": 1 if good else 11, "a": 9 if good else 2,
+			"lh": 220 if good else 40, "mvp": good and i == 0, "rp": 0, "tr": 0, "kind": "ranked"})
+	return {"name": "Bea", "id": "me", "rank": "Expert 2", "tier": 3, "mmr": 1900, "games": 200, "career_g": 200,
+		"k": 11.0 if good else 2.0, "x": 3.0 if good else 9.5, "a": 10.0 if good else 3.0, "kda": 7.0 if good else 0.53,
+		"lh": 210.0 if good else 45.0, "lhm": 7.2 if good else 1.6, "gpm": 620.0 if good else 250.0, "wr": 0.6 if good else 0.4,
+		"wr20": 0.8 if good else 0.2, "last5": l5, "w5": 5 if good else 1, "l5": 0 if good else 4, "form": "WWWWW" if good else "LLLLW",
+		"mvps": 60 if good else 2, "rp": 6 if good else 0, "tr": 40 if good else 1, "fb": 25 if good else 3, "ul": 3, "lane": "mid",
+		"streak": 5 if good else -4, "abandons": 0, "behavior": 9000, "support": false}
+
+func test_profile_talk() -> void:
+	var r := RandomNumberGenerator.new()
+	r.seed = 11
+	var good := _facts(true)
+	var bad := _facts(false)
+	check(ProfileTalk.verdict(good) > 0 and ProfileTalk.verdict(bad) < 0, "a good and a bad profile read as such")
+	var fl := ProfileTalk.fill(good)
+	check(String(fl.kda) == "11/3/10" and String(fl.last) == "14/1/9" and String(fl.lhero) == "azrin", "the fields: averages and the last match (%s)" % str(fl))
+	var kind_good := 0
+	var kind_flame := 0
+	var rough_flame := 0
+	var rough_good := 0
+	var rough_credit := 0
+	var troll := 0
+	for i in 200:
+		var a := String(ProfileTalk.opinion("kind", good, r)[0])
+		if a.begins_with("pf_good") or a == "pf_kind_good":
+			kind_good += 1
+		if String(ProfileTalk.opinion("kind", bad, r)[0]).begins_with("pf_bad"):
+			kind_flame += 1
+		var b := String(ProfileTalk.opinion("rough", bad, r)[0])
+		if b.begins_with("pf_bad") or b == "pf_fact" or b == "pf_new":
+			rough_flame += 1
+		var c := String(ProfileTalk.opinion("rough", good, r)[0])
+		if c in ["pf_accuse", "pf_grudge"]:
+			rough_good += 1
+		elif c.begins_with("pf_good"):
+			rough_credit += 1
+		if String(ProfileTalk.opinion("troll", good, r)[0]).begins_with("pf_troll"):
+			troll += 1
+	check(kind_good >= 150, "kind players acknowledge a good profile (%d/200)" % kind_good)
+	check(kind_flame == 0, "kind players never flame a bad one")
+	check(rough_flame >= 180, "rough players flame bad averages (%d/200)" % rough_flame)
+	check(rough_good >= 100 and rough_credit > 0, "rough players call good numbers a smurf, and give credit now and then (%d / %d)" % [rough_good, rough_credit])
+	check(troll >= 110, "trolls troll even a great profile (%d/200)" % troll)
+	# lines can be filled from real profiles
+	_test_ladder()
+	var empty := 0
+	for i in 60:
+		var v: Dictionary = Ranked.bots()[i * 4]
+		var t: Dictionary = Ranked.bots()[(i * 7 + 3) % Ranked.bots().size()]
+		if ProfileTalk.line_about(v, t, r) == "":
+			empty += 1
+	check(empty <= 3, "players find something to say about each other's profiles (%d of 60 said nothing)" % empty)
+	check(ProfileTalk.summary(ProfileTalk.read(Ranked.bots()[3])).contains("MVPs"), "the online writer gets the profile in words")
+	_end_ladder()
+
+## Walls, visitors, writing on a profile, commends, reports, blocks, View As.
+func test_profile_walls() -> void:
+	_test_ladder()
+	var r := RandomNumberGenerator.new()
+	r.seed = 5
+	var you := Ranked.me()
+	you.history = [{"r": "W", "k": 15, "x": 1, "a": 10, "lh": 230, "len": 2000, "t": Ranked.now(), "h": "azrin", "mvp": true}]
+	var ids: Array = []
+	for i in 9:
+		ids.append(String(Ranked.bots()[i * 3].id))
+	var n := 0
+	for k in 5:
+		n += ProfileTalk.after_match(ids, {}, ids.slice(0, 4), true, r)
+	check(n > 0 and (you.get("wall", []) as Array).size() == n, "players leave comments after a match (%d)" % n)
+	check(n <= 20, "at most four a match")
+	check((you.get("visitors", []) as Array).size() > 0, "and look at your profile")
+	var b := Ranked.profile(String(ids[2]))
+	var rep0 := float((b.get("you", {}) as Dictionary).get("rep", 0.0))
+	var back := ProfileTalk.write_on(b, "ur trash uninstall", r)
+	check(not back.is_empty() and String(back.text) != "", "a rude comment gets an answer")
+	check(float(b.you.rep) < rep0, "and costs their liking")
+	var wl: Array = ProfileTalk.wall_of(b)
+	check(String(wl[0].id) == String(b.id) and String(wl[1].id) == "me", "your comment and their answer are on their wall")
+	var c0 := int(b.get("commends", 0))
+	check(Ranked.commend(String(b.id)) and int(b.commends) == c0 + 1, "a commend counts")
+	check(not Ranked.commend(String(b.id)), "once a day")
+	var bh := int(b.behavior)
+	check(Ranked.report(String(b.id)) and int(b.behavior) == bh - 60 and not Ranked.can_act("reported", String(b.id)), "a report costs 60 behaviour, once a day")
+	check(Ranked.toggle_block(String(b.id)) and Ranked.blocked(String(b.id)), "block")
+	check(not Ranked.toggle_block(String(b.id)) and not Ranked.blocked(String(b.id)), "unblock")
+	var other: Dictionary = Ranked.bots()[40]
+	var w1 := JSON.stringify(ProfileTalk.wall_of(other))
+	check(w1 == JSON.stringify(ProfileTalk.wall_of(other)), "a ladder player's wall stays the same")
+	# View As: the private parts show only on your own view
+	var pp := ProfilePage.new()
+	pp.pid = "me"
+	check(pp.own_edit() and pp.private_ok(), "your own view shows the private parts")
+	pp.view_as = "public"
+	check(not pp.own_edit() and not pp.private_ok(), "View As Public hides them")
+	pp.view_as = String(b.id)
+	check(not pp.private_ok(), "View As a player hides them")
+	pp.free()
+	_end_ladder()
+
+## In a match they look up your profile, hold your game against your averages, and answer "check my profile".
+func test_chat_profiles_in_match() -> void:
+	for good in [true, false]:
+		var w := _chat_world(true)
+		var me := w.heroes[0]
+		w.player_cards[me.id] = {"rank": "Expert 2", "prof": _facts(good)}
+		for b in w.bots:
+			b.card = {"rank": "Expert 1", "prof": _facts(not good)}
+		for h in w.heroes:
+			if h.bot:
+				w.botchat._ps[h.id].talk = 1.0
+		w.botchat._queue.clear()
+		w.botchat.prof.meet(me, 1.0)
+		var cats: Array = w.botchat._queue.map(func(q): return String(q.cat)).filter(func(c): return c.begins_with("pf_"))
+		check(cats.size() >= 2, "they look you up at the start (%s)" % str(cats))
+		var about_you: Array = w.botchat._queue.filter(func(q): return String(q.cat).begins_with("pf_") and int(q.get("target", -1)) == me.id)
+		var praise := about_you.filter(func(q): return String(q.cat).begins_with("pf_good") or String(q.cat) == "pf_kind_good").size()
+		var flame := about_you.filter(func(q): return String(q.cat).begins_with("pf_bad")).size()
+		if good:
+			check(flame == 0, "a great profile is not flamed as bad (%s)" % str(cats))
+		else:
+			check(praise == 0, "a bad profile is not praised (%s)" % str(cats))
+	var w2 := _chat_world(true)
+	var me2 := w2.heroes[0]
+	w2.player_cards[me2.id] = {"rank": "Expert 2", "prof": _facts(true)}
+	w2.botchat._queue.clear()
+	w2.botchat._on_chat({"t": "chat", "u": me2.id, "text": "check my profile", "all": false})
+	var ans: Array = w2.botchat._queue.filter(func(q): return bool(q.get("pri", false)) and String(q.cat).begins_with("pf_"))
+	check(not ans.is_empty(), "'check my profile' gets a read of it (%s)" % str(w2.botchat._queue.map(func(q): return q.cat)))
+	var w3 := _chat_world(true)
+	var me3 := w3.heroes[0]
+	w3.player_cards[me3.id] = {"rank": "Expert 2", "prof": _facts(true)}
+	me3.deaths = 9
+	w3.botchat._queue.clear()
+	w3.botchat.prof.review()
+	check(w3.botchat._queue.any(func(q): return String(q.cat) == "pf_live_worse"), "dying far above your average is noticed")

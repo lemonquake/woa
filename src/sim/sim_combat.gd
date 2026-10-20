@@ -583,14 +583,68 @@ func _ledger(src: SimUnit, t: SimUnit, key: String, dtype: int, amount: float, s
 
 ## Restore health, raised by the unit's health restoration amplification and lowered by healing reduction (both
 ## also scale regeneration and lifesteal, as in Dota). Returns the health actually restored.
-func heal(t: SimUnit, amount: float) -> float:
+## src: the hero who heals (heal_given and saves count it when the target is another allied hero).
+func heal(t: SimUnit, amount: float, src: SimUnit = null) -> float:
 	if not t.alive or amount <= 0.0:
 		return 0.0
 	amount *= (1.0 + t.heal_amp) * (1.0 - t.heal_reduction())
 	var before := t.hp
 	t.hp = minf(t.max_hp, t.hp + amount)
 	t.healed += t.hp - before
+	if src != null and src != t and src.is_hero() and t.is_hero() and src.team == t.team:
+		src.heal_given += t.hp - before
+		help(src, t, before)
 	return t.hp - before
+
+# ---- Saves (the MVP's support side, run 2026-10-19 e) ------------------------------------------------------------------
+
+## `helper` healed `ally` or disabled one of its attackers while the ally was low (under 30% at `hp_then`): if the
+## ally is still alive 4 s later, the helper made a save (SimWorld steps check_saves).
+func help(helper: SimUnit, ally: SimUnit, hp_then := -1.0) -> void:
+	if helper == null or ally == null or helper == ally or not ally.is_hero() or not helper.is_hero():
+		return
+	var hp := ally.hp if hp_then < 0.0 else hp_then
+	if not ally.alive or hp > ally.max_hp * 0.3 or ally.hero_damage_log.is_empty():
+		return
+	var recent := false
+	for hid in ally.hero_damage_log:
+		if w.time - float(ally.hero_damage_log[hid]) < 3.0:
+			recent = true
+	if not recent:
+		return                                 # nobody is on it: not a save
+	if w.time - float(helper.save_last.get(ally.id, C.LONG_AGO)) < 20.0 or helper.save_watch.has(ally.id):
+		return
+	helper.save_watch[ally.id] = w.time
+
+## `src` disabled enemy hero `t` for `dur` seconds (SimStatus.apply): the disable counts, and stopping an enemy that
+## was hitting a low ally can be a save.
+func note_disable(src: SimUnit, t: SimUnit, dur: float) -> void:
+	if src == null or t == null or not t.is_hero() or src.team == t.team:
+		return
+	if not src.is_hero():
+		src = w.get_unit(src.owner_id) if src.owner_id >= 0 else null
+		if src == null or not src.is_hero():
+			return
+	src.disable_given += dur
+	for a in w.heroes:
+		if a.team == src.team and a != src and a.alive and a.hp < a.max_hp * 0.3 \
+				and w.time - float(a.hero_damage_log.get(t.id, C.LONG_AGO)) < 3.0:
+			help(src, a)
+
+## Twice a second: watched allies that lived 4 s are saves; dead ones are not.
+func check_saves() -> void:
+	for h in w.heroes:
+		if h.save_watch.is_empty():
+			continue
+		for aid in h.save_watch.keys():
+			var a := w.get_unit(int(aid))
+			if a == null or not a.alive:
+				h.save_watch.erase(aid)
+			elif w.time - float(h.save_watch[aid]) >= 4.0:
+				h.save_watch.erase(aid)
+				h.saves += 1
+				h.save_last[aid] = w.time
+				w.events.append({"t": "save", "u": h.id, "ally": a.id})
 
 # ---- Death --------------------------------------------------------------------------------------------------------------
 
@@ -666,6 +720,12 @@ func _creep_death(t: SimUnit, killer: SimUnit, deny: bool) -> void:
 				give_xp(st, floorf(_xp_value(t) * C.STACKER_SHARE))
 		var paid := give_gold(hero_killer, g, false, t.pos)
 		hero_killer.last_hits += 1
+		if t.is_lane_creep():
+			hero_killer.lh_lane += 1
+		elif t.kind == K.NEUTRAL_CREEP:
+			hero_killer.lh_neutral += 1
+		else:
+			hero_killer.lh_other += 1
 		w.events.append({"t": "last_hit", "u": hero_killer.id, "target": t.id, "gold": paid})
 	# flagbearers pay their bounty to every enemy hero around them
 	if t.kind == K.CREEP_FLAG and killer != null and killer.team != t.team:
@@ -761,6 +821,12 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 		var paid := give_gold(credit, int(base) + fb, false, t.pos)
 		credit.multi_kill = credit.multi_kill + 1 if w.time - credit.last_kill_at <= 18.0 else 1
 		credit.last_kill_at = w.time
+		credit.best_multi = maxi(credit.best_multi, mini(credit.multi_kill, 5))
+		if credit.multi_kill >= 2:
+			credit.multi_n[mini(credit.multi_kill, 5) - 2] += 1     # every kill past five is another rampage, as in Dota
+		if fb > 0:
+			credit.first_blood = true
+		credit.best_streak = maxi(credit.best_streak, credit.streak)
 		w.events.append({"t": "hero_kill", "u": credit.id, "victim": t.id, "first_blood": fb > 0, "streak": credit.streak,
 			"multi": credit.multi_kill, "ended_streak": victim_streak, "gold": paid})
 	else:

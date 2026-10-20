@@ -1,0 +1,13 @@
+SCRIPT ERROR: Invalid access to property or key 'time' on a base object of type 'Nil'.
+   at: ChatProfile.review (res://src/sim/chat_profile.gd:114)
+   GDScript backtrace (most recent call first):
+       [0] review (res://src/sim/chat_profile.gd:114)
+       [1] _review (res://src/sim/sim_bot_chat.gd:1184)
+       [2] tick (res://src/sim/sim_bot_chat.gd:540)
+       [3] step (res://src/sim/sim_world.gd:357)
+       [4] test_snapshot_restores_an_identical_match (res://tests/run_tests.gd:4512)
+       [5] _init (res://tests/run_tests.gd:29)
+WARNING: 48530 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 25 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

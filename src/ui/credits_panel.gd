@@ -1,7 +1,7 @@
 class_name CreditsPanel
 extends Control
 ## The Credits screen: who made the models, sounds, textures and fonts the game uses (assets/ui/credits.txt, written
-## by tools/build_credits.py from docs/ASSET_CREDITS.md). Back (or Esc) closes it.
+## by tools/build_credits.py from docs/ASSET_CREDITS.md). Back, Esc or a click outside closes it.
 
 signal closed
 
@@ -16,8 +16,13 @@ func _ready() -> void:
 	dim.color = Color(0, 0, 0, 0.62)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
+	# a click outside the panel closes it
+	dim.gui_input.connect(func(e: InputEvent):
+		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			close())
 	var center := CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(900, 640)
@@ -52,6 +57,7 @@ func _ready() -> void:
 	back.custom_minimum_size = Vector2(200, 44)
 	back.pressed.connect(close)
 	bottom.add_child(back)
+	U.pop_in(self)
 
 func close() -> void:
 	closed.emit()

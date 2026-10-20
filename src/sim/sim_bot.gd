@@ -169,6 +169,16 @@ func set_rating(r: float, traits := {}) -> void:
 		_rate_build()
 	_plan_knife()
 
+## A ladder player in a casual match (run 2026-10-19 e, Options "Bots are ladder players"): its name, persona, chat
+## voice, memory of you and card, while it plays at the Game Setup skill it was given.
+func set_identity(traits := {}) -> void:
+	toxic = clampf(float(traits.get("toxic", 0.0)), 0.0, 1.0)
+	voice = (traits.get("voice", {}) as Dictionary).duplicate() if traits.get("voice", {}) is Dictionary else {}
+	persona = (traits.get("persona", {}) as Dictionary).duplicate(true) if traits.get("persona", {}) is Dictionary else {}
+	pid = String(traits.get("pid", ""))
+	you_rec = (traits.get("you", {}) as Dictionary).duplicate(true) if traits.get("you", {}) is Dictionary else {}
+	card = (traits.get("card", {}) as Dictionary).duplicate(true) if traits.get("card", {}) is Dictionary else {}
+
 ## Items a scrambled build draws from: finished items and big parts, 900-6000 gold.
 func _random_items(n: int) -> Array:
 	var pool: Array = []

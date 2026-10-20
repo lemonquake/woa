@@ -1,7 +1,9 @@
 extends Control
 ## The Main Menu (remade in run 2026-10-15 g): your hero on the lit stage, and on the left a hanging banner with the
-## title and the menu as blade-shaped plates: Play (Hero Select, then Game Setup), Ranked (run 2026-10-19 b: the
-## Ranked screen), Multiplayer, Hero Creator, Options, Credits, Quit. A nameplate shows the hero on the stage, with Choose Hero. Along the bottom: the credit and a tip.
+## title and the menu as blade-shaped plates: Ranked (the main mode and the first, gold plate since 2026-10-20 b, the
+## owner: "Remove the PLAY button at the main menu because RANKED will always be the PLAY button now"), Forums,
+## Multiplayer, Hero Creator, Options, Credits, Quit. A nameplate shows the hero on the stage, with Choose Hero. Along
+## the bottom: the credit and a tip.
 ## Drag the hero to turn it. Up / Down and Enter work the menu too.
 ##
 ## The first time the menu opens after the game starts, the animated title (TitleCard) plays over it; when it is
@@ -14,6 +16,7 @@ const HERO_SELECT := "res://src/ui/hero_select.tscn"
 const CREATOR := "res://src/ui/hero_creator.tscn"
 const NET_MENU := "res://src/ui/net_menu.tscn"
 const RANKED := "res://src/ui/ranked_menu.tscn"
+const FORUMS := "res://src/ui/forums.tscn"
 const MATCH := "res://src/game/main.tscn"
 
 const BANNER_X := 64.0
@@ -164,8 +167,8 @@ func _build_ui() -> void:
 	_plate_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_plate_box)
 	var y := 0.0
-	for e in [["Play", "ui/map", true, _on_play, 70.0],
-			["Ranked", "ui/crown", true, func(): _go(RANKED), 62.0],
+	for e in [["Ranked", "ui/crown", true, func(): _go(RANKED), 70.0],
+			["Forums", "ui/quest", false, func(): _go(FORUMS), 54.0],
 			["Multiplayer", "ui/talk", false, func(): _go(NET_MENU), 54.0],
 			["Hero Creator", "ui/repair", false, _on_creator, 54.0],
 			["Options", "ui/settings", false, func(): add_child(OptionsPanel.new()), 54.0],
@@ -178,7 +181,7 @@ func _build_ui() -> void:
 		p.action = e[3]
 		p.size = Vector2(PLATE_W, float(e[4]))
 		p.base_y = y
-		p.font_size = (30 if p.text == "Play" else 27) if p.gold else 22
+		p.font_size = 30 if p.gold else 22
 		p.hovered.connect(_on_plate_hover.bind(_plates.size()))
 		_plate_box.add_child(p)
 		_plates.append(p)
@@ -264,10 +267,7 @@ func _on_plate_hover(i: int) -> void:
 
 func _go(path: String) -> void:
 	GameSettings.save()
-	get_tree().change_scene_to_file(path)
-
-func _on_play() -> void:
-	_go(HERO_SELECT)
+	Options.go(get_tree(), path)
 
 func _on_creator() -> void:
 	if GameSettings.selected in GameSettings.OWN_BODY:
@@ -284,6 +284,10 @@ func _gui_input(e: InputEvent) -> void:
 func _unhandled_key_input(e: InputEvent) -> void:
 	if _title != null and is_instance_valid(_title) or _intro < 0.5 or not (e is InputEventKey) or not e.pressed:
 		return
+	# Options or Credits is open over the menu: the keys are theirs
+	for c in get_children():
+		if c is OptionsPanel or c is CreditsPanel:
+			return
 	var k := (e as InputEventKey).keycode
 	if k == KEY_DOWN or k == KEY_UP:
 		_focus = posmod(_focus + (1 if k == KEY_DOWN else -1), _plates.size())
@@ -315,7 +319,7 @@ func _process(dt: float) -> void:
 			print("captured ", path)
 			get_tree().quit()
 
-## One menu entry: the blade plate (steel, or gold for Play) with its icon in the socket and its name. Hover lifts
+## One menu entry: the blade plate (steel, or gold for Ranked) with its icon in the socket and its name. Hover lifts
 ## it toward the right with a warm glow and a light that runs along the blade; pressing pushes it in.
 class MenuPlate extends Control:
 	signal hovered

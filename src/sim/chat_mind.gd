@@ -171,8 +171,6 @@ const T := {
 	"r_insult_fact": [["says the {kda} {me_hero}", "en"], ["{kda} and talking?", "en"], ["look at ur score first", "en"],
 		["{lh} cs at {min} min btw", "en"], ["{kda} lol", "en"], ["{kda} ka tapos ganyan ka", "tl"],
 		["tingnan mo score mo", "tl"], ["{lh} cs ka lang", "tl"]],
-	"r_insult_calm": [["relax", "en"], ["chill bro its a game", "en"], ["ok", "en"], ["focus game", "en"],
-		["no need to flame", "en"], ["chill lang", "tl"], ["kalma", "tl"], ["laro lang to", "tl"]],
 	"r_praise": [["ty", "en"], ["thanks", "en"], ["ty {name}", "en"], ["ez", "en"], ["thx", "en"], ["i know", "en"],
 		["salamat", "tl"], ["salamat lods", "tl"], ["thank u po", "tl"]],
 	"r_thanks": [["np", "en"], ["welcome", "en"], ["anytime", "en"], ["np {name}", "en"], ["walang anuman", "tl"],
@@ -293,14 +291,25 @@ const CITIES := {"PH": ["manila", "cebu", "davao", "qc", "laguna", "cavite", "pa
 ## Words that mark a line as rude (a flame at someone).
 const RUDE := ["noob", "trash", "report", "stfu", "bobo", "tanga", "gago", "ulol", "pota", "tangina", "weak", "feed",
 	"feeder", "loser", "uninstall", "idiot", "stupid", "dumb", "useless", "bano", "inutil", "putang", "bulok", "kupal",
-	"engot", "ampota", "shut up", "wtf", "worst", "garbage", "pathetic", "dogshit", "fck", "fuck"]
+	"engot", "ampota", "shut up", "wtf", "worst", "garbage", "pathetic", "dogshit", "fck", "fuck",
+	# run 2026-10-20 (the owner's own trash talk went unanswered): no word here may hide inside an ordinary word
+	"ur mom", "your mom", "ur mother", "yo mama", "suck", "clown", "bozo", "braindead", "brain dead", "crybaby", "boosted",
+	"hardstuck", "hard stuck", "low iq", "scrub", "potato", "tarantado", "ungas", "bwisit", "pakyu", "putangina", "baho",
+	"panget", "pangit", "shit", "bitch", "asshole", "moron", "jerk", "kingina", "leche", "peste", "walang kwenta"]
+## Words of trash talk ("ez", "sit", "too easy", "1v9"): the enemy answers (ChatSocial.trash_talk).
+const TAUNT := ["ez", "ezz", "ezzz", "ezzzz", "eazy", "too easy", "gg ez", "ggez", "sit", "sit down", "rekt", "get rekt",
+	"1v9", "1v5", "outplayed", "cry", "cope", "so bad", "too bad", "bye bye", "byebye", "noobs", "trash team", "free win",
+	"no match", "walang laban", "dali", "ang dali", "hina", "ang hina", "mahina", "talo kayo", "lampa", "boring", "where is your",
+	"wheres ur", "uninstall", "go next", "ez game", "ez mid", "ez lane", "dog", "kids", "bots", "skill issue", "diff",
+	"ezpz", "ez pz", "too ez", "get good", "git gud", "get gud", "l2p", "learn to play", "stay mad", "cry more", "mad?", "ratio",
+	"free mmr", "1v1 me", "noob team", "u mad", "who's ez", "sit dog", "sit dogs"]
 const PRAISE := ["nice", "gj", "wp", "good job", "well played", "galing", "lodi", "idol", "ganda", "clean", "solid",
 	"great", "awesome", "ayos", "lakas", "thanks", "ty", "salamat", "thx", "tnx", "sheesh"]
 
 ## A random line of `sit` (from T or CALLS) in the speaker's language, with every field filled from `fill`; "" when none
 ## fits. want_tl: prefer Filipino and Taglish lines.
 static func pick(sit: String, fill: Dictionary, want_tl: bool, rng: RandomNumberGenerator, avoid: Array = []) -> String:
-	var lines: Array = T.get(sit, CALLS.get(sit, []))
+	var lines: Array = T.get(sit, CALLS.get(sit, ChatMore.T.get(sit, ProfileLines.T.get(sit, []))))
 	if lines.is_empty():
 		return ""
 	for attempt in 16:
@@ -339,10 +348,21 @@ static func intent(t: String) -> String:
 			if s.contains(" " + String(wd) + " ") or (String(wd).contains(" ") and s.contains(String(wd))):
 				return true
 		return false
+	# a friend request ("add me", "pa add", "duo after?") (run 2026-10-19 e)
+	if has.call(["add me", "add u", "add you", "add ya", "add kita", "pa add", "paadd", "add mo ako", "add ko", "friend me",
+			"can i add", "lets duo", "let's duo", "duo after", "duo?", "friend request", "be friends", "add each other", "add na"]):
+		return "add"
 	if has.call(["where", "san si", "saan", "nasaan", "asan", "wer"]) and not has.call(["where you from", "where u from", "where r u from"]):
 		return "where"
 	if has.call(["ss", "mia", "missing", "nawala"]):
 		return "ss"
+	# profiles (run 2026-10-20): "check my profile", "my stats?", "stalk me" / "check ur own profile"
+	if has.call(["check ur profile", "check your profile", "ur profile", "your profile", "ur stats", "your stats", "ur avg",
+			"your avg", "profile mo", "stats mo", "check ur own", "check your own"]):
+		return "profile_you"
+	if has.call(["my profile", "my stats", "my avg", "my average", "my history", "my record", "check me", "stalk me", "look me up",
+			"check my", "profile ko", "stats ko", "tignan mo profile", "silipin mo profile", "my kda avg", "my mmr"]):
+		return "profile_me"
 	if has.call(["rank", "mmr", "what rank", "anong rank", "rank mo", "ur rank", "your rank"]):
 		return "rank"
 	if has.call(["where you from", "where u from", "from where", "taga saan", "taga san", "san ka", "country", "where r u from", "wer u from"]):
@@ -359,6 +379,9 @@ static func intent(t: String) -> String:
 		return "thanks"
 	if has.call(["why", "bakit", "bat", "where were you", "no help", "help me", "walang tulong", "di nyo ko tinulungan", "wtf team"]):
 		return "why"
+	# trash talk: "ez", "gg ez", "too easy", "sit" ... (insults are "insult", below)
+	if has.call(TAUNT):
+		return "taunt"
 	if has.call(["ff", "surrender", "suko", "end it"]):
 		return "ff"
 	if has.call(["gg", "ggwp", "gg wp"]):

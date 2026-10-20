@@ -57,6 +57,7 @@ func bot_for(hid: int) -> SimBot:
 	return null
 var brains := [null, null]                 # SimTeamAI per team (made when the team's first bot joins)
 var chat_log: Array = []                   # [{team, u, name, text, t}] team chat, newest last (all teams)
+var player_cards := {}                     # player hero id -> what bots know of the player (rank, last game MVP ...; single player)
 var pings: Array = []                      # [{id, team, pos, kind, target, from, t}] newest last
 var _next_ping := 1
 
@@ -280,6 +281,8 @@ func enemies(a: int, b: int) -> bool:
 
 func step() -> void:
 	if paused or winner >= 0:
+		if winner >= 0 and not paused:
+			botchat.after_end()             # the end screen: the player is still answered
 		return
 	tick += 1
 	time += C.DT
@@ -341,6 +344,8 @@ func step() -> void:
 	sites.update()
 	if profiling: t = _prof("effects", t)
 	combat.process_deaths()
+	if tick % 15 == 0:
+		combat.check_saves()
 	_respawns()
 	if profiling: t = _prof("deaths", t)
 	if tick % C.VISION_UPDATE_TICKS == 0:
@@ -381,7 +386,26 @@ func _prof(key: String, t0: int) -> int:
 	prof[key] = float(prof.get(key, 0.0)) + (t1 - t0) / 1000.0
 	return t1
 
+## A second near a lane for every hero there (not at its fountain): its team's "safe", "mid" or "off".
+func _note_lanes() -> void:
+	for h in heroes:
+		if not h.alive or h.team < 0 or h.team > 1 or h.pos.distance_to(map.fountains[h.team]) < 3200.0:
+			continue
+		var best := ""
+		var bd := INF
+		for ln in ["top", "mid", "bot"]:
+			var d := SimMap._polyline_distance(h.pos, map.lane_path(ln, h.team))
+			if d < bd:
+				bd = d
+				best = ln
+		if bd <= 1100.0:
+			var k := SimTeamAI.lane_kind(best, h.team)
+			h.lane_secs[k] = int(h.lane_secs.get(k, 0)) + 1
+
 func _clock() -> void:
+	# where each hero lanes (Career: the profile's favourite lanes): once a second from 0:30 to 10:00
+	if tick % C.TICK_RATE == 0 and time >= 30.0 and time <= 600.0:
+		_note_lanes()
 	# lane creep waves every 30 s from 0:00
 	if time >= next_wave_at and time >= 0.0:
 		wave += 1

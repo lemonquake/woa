@@ -4,6 +4,327 @@
 
 ## Status (keep this section current)
 
+**2026-10-20 d: smoother interface everywhere, and the official icon border (your request: "the Talent UI ... doesn't
+fucking close when you click away", "create our Official and Default BORDER for item/skill icons ... replaceable at
+any time").** Run `work/lemondev/2026-10-20d-ui-smooth/` (handoff.md, captures, probe logs).
+* **Popups close the way you expect** (an audit of every popup, menu and screen found the talent tree was not alone):
+  * Talent tree: closes on a click anywhere outside it (world, minimap, top bar, the rest of the panel), on Esc (which
+    no longer opens the pause menu behind it) and when you select another unit. Clicks in its gaps no longer move the
+    hero; its invisible click area after selecting a creep is gone; an ally's tree is read-only (a click there used to
+    learn the talent for your own hero).
+  * Item menu: the mouse wheel no longer closes it. Pause menu: dims the game, a click outside it resumes, and game
+    keys (Enter, hotkeys) wait while it, Options, the MVP or the end screen is up; Esc during the MVP screen no longer
+    opens a pause menu under it. Debug panel: Esc closes it.
+  * Options, Credits, multiplayer dialogs, the profile overlay: a click outside closes them. Profile: Esc closes
+    Compare, then Edit profile (as Cancel), then the overlay; the overlay and right-click menus now close with their
+    screen (they used to stay up after a scene change). Forums: the New post dialog dims and blocks the list behind
+    it; a click outside puts it away and keeps your draft (Cancel throws it away). Multiplayer: Esc cancels Connecting.
+  * Right-click player menu: a right click elsewhere closes it and opens the next one at once (it took two clicks), a
+    left click outside closes it without pressing what is underneath, the wheel leaves it open.
+  * Esc goes back on Hero Select, Game Setup, Hero Creator, Ranked (not while a match offer is up) and Hotkeys. The
+    main menu no longer reacts to arrows / Enter behind Options or Credits.
+* **Screens fade** instead of cutting (0.12 s out, 0.2 s in, clicks wait meanwhile); every way into a match now shows
+  the loading screen (Hero Creator's Play, multiplayer, Play again used to freeze on the old screen). Overlays and menus
+  fade in (0.09-0.14 s). Options > Game > **Menu animations** turns all of it off. Every button clicks (several were
+  silent: Credits, Hotkeys, Hero Creator, Debug, the Watching panel).
+* **Icon borders** (`src/ui/icon_border.gd`, `src/ui/icon_frame.gd`, generator `tools/icon_borders.py`): border packs
+  are folders with `border.json` and PNGs, in `assets/ui/borders/<id>/` (shipped) or `user://borders/<id>/` (added
+  later: bought, downloaded or made; a user pack with a shipped id replaces it). The format is documented at the top of
+  `tools/icon_borders.py`. Kinds: skill (active), passive (passive and innate), item, optional ultimate; a missing kind
+  falls back to skill. **Default**: a gold bevelled rim with cut corners and a bright inner line for active skills; a
+  sunken bronze rim with round corners for passives (as Dota tells passives apart); a slimmer gold rim for items. A
+  soft light-from-above sheen sits under each. **Plain**: a thin dark line. Options > Game > **Icon border** picks the
+  pack (preview beside it) and it changes at once. Every skill and item icon goes through it: HUD abilities, innate,
+  unit skills, inventory, backpack, stash, courier, To Buy, the whole shop, talent tree, Hero Select, the ranked pick,
+  the multiplayer lobby. Item art now fills its slot (cropped to the slot like Dota's tiles; backpack slots keep a
+  square). Preview any pack: `godot --path . -s tests/tools/icon_border_sheet.gd -- --out=x.png [--scale=2]`.
+* Evidence: `ui_smooth_probe.gd` 34/34 through real input events (talents, item menu, shop, pause, Options, fades,
+  Esc on screens, player menu, border packs incl. a user:// pack); `ranked_probe.gd` 51/51; `item_flow_probe.gd` 13/13
+  (its 150-gold step now zeroes reliable gold: passive income pushed it past 155 before this run); captures at 1080p
+  and a 2x (4K-scale) border sheet; names OK; full suite 327 passed, 0 failed (one stale Switch Boots
+  check updated: it expected the old .svg); the Windows export rebuilt and its pack shows the new frames in a match. The real 4K window was not captured
+  (1080p monitor); Dota itself was not captured as a benchmark.
+* New names (veto any): options **Icon border**, **Menu animations**; border packs **Default**, **Plain**. Code:
+  `IconBorder`, `IconFrame`, `icon_borders.py`, `icon_border_sheet.gd`, `ui_smooth_probe.gd`, options keys
+  `icon_border`, `ui_motion`; `Options.go`, `UiKit.pop_in`, `UiKit.is_esc`, `blocks_input`, `close_talents`,
+  `over_talents`, `overlay_mode`, `_hide_dialog`, `_back_btn`.
+* Also: **passive skills show no hotkey** (HUD skill bar and Hero Select; your request mid-run). Backpack slots are
+  now smaller tiles (48 x 36) and the Teleport slot one tile (Deliver got the room), so every item is one frame with
+  its art filling it; hotkey tags on items are slimmer. Top-bar hero tiles glow under the mouse. The talent tree
+  shows the moment you click (it waited for the next 20 Hz redraw).
+* Blind review (fresh critic, same game state, raw crops): pass 1 invalid (my capture did not match the baseline's
+  state), pass 2 new preferred but REJECT (frame inside a frame in the backpack and Teleport slot: fixed), pass 3 new
+  preferred, **PASS**; leftover note: the innate icon's frame is thin at 28 px.
+
+**2026-10-20 c: generated skill and item artwork (owner's request).** All 17 heroes audited against current
+SimData and implementation, including innates and extra skills; all 176 item records (129 items, 47 recipes),
+held states and neutral passives inspected. Built-in image generation produced 227 distinct 256px PNGs;
+226 are used: 92 skill/unit-trait icons and 134 item/state icons in `assets/ui/art/`. The owner chose to keep
+Death Order's existing SVG after its low-health cue failed the 32px review twice; its generated candidate is
+preserved outside the game in the run's `quarantine/`. Recipes share a scroll. Switch Boots
+have three attribute images; empty Flask is separate. Original SVGs remain recoverable fallbacks.
+* `UiKit` routes the HUD, Hero Select, Shop, inventories, tooltips, buff bar, unit panel and teleport through
+  the new art. No gameplay values or existing names changed. `tools/icon_art.py` packages the original sheets
+  according to the explicit cell plan and writes a SHA-256 manifest; `--check` validates packaging/uniqueness.
+* Audits, source sheets, prompts, cell mappings, baseline and final galleries, reviews and build evidence:
+  `work/lemondev/2026-10-20-icons/`. All 227 resources passed the runtime probe's 1,806 checks. Full suite:
+  327 passed, 0 failed. The suite exposed a pre-existing snapshot omission: a global `prof` exclusion dropped
+  ChatProfile along with timing counters. It is now scoped to SimWorld; targeted snapshot determinism and
+  restored references/state pass, as do match-profile and profile-talk tests. Some existing test/UI teardown
+  resource leaks remain; these are recorded in the run handoff.
+* Fresh critics preferred the generated sets over the project's old sets. Pass 2 adds large ascending Blast Rod
+  pips; pass 3 gives Beast Form a half-human/half-wolf face, Break Strike a broken passive-power emblem and Weapon
+  Grab a sword visibly leaving an open hand. These three passed the focused 32px normal/dimmed review. Death
+  Order stopped at the skill's plateau rule; the owner's explicit choice is recorded in the contract.
+  Commercial reference inspected (official Dota hero page),
+  but no matched commercial A/B superiority claim. Final evidence/state is in this run's `handoff.md`.
+* New player-visible names: **none**. New code/diagnostic names: `ABILITY_FALLBACKS`,
+  `NEUTRAL_SKILL_FALLBACKS`, `UNIT_SKILL_FALLBACKS`, `UNIT_SKILL_ICONS`, `_skill_paths`, `icon_path`,
+  `_item_fallback`, `_art_icons`, `icon_art.py`, `icon_art_probe.gd`, `icon_art_dump.gd`, `icon_art_focus.gd`, `bottle_empty`,
+  `neutral_crit`, `neutral_splash`, `ancient`, `flying`, `true_sight`, `sight`, `backdoor_protection`, `fortify`.
+
+**2026-10-20 b: the social makeover: a new Profile (averages, LH/D, KDA, favourite lanes, First Bloods, Triple Kills,
+Rampages, MVPs, match history, a wall, View As, Compare), MMR by how well you play (23 to 41), AI players who read
+your profile and each other's (your last five matches, your averages) and react kindly, toxically or as trolls,
+right-click menus on every player, and a generated themed skin for Ranked, Profile, Players and Forums (your
+request).** Run `work/lemondev/2026-10-20-profile/` (contract.md, handoff.md; captures `ui/`, before `before/`).
+* **Your record** (`src/core/career.gd`): every match you finish now counts on your profile, ranked or not (Play vs
+  bots too): K/D/A, last hits and denies, gold and experience a minute, hero and building damage, healing, wards, the
+  lane you played (watched 0:30-10:00), first blood, double / triple / ultra kills and rampages (every kill past five
+  is another rampage, as in Dota), MVP. Matches before today were never recorded (your 8 ranked ones kept K/D/A only),
+  so your First Bloods, Triple Kills and Rampages start at 0: **Edit profile > Earlier record** adds your own count
+  from before (your 20+ / 30+ / 12) to the totals.
+* **MMR by performance** (`Career.perf`, `Career.mmr_change`): a win gives **23** (a carried game) to **41** (a perfect
+  game: no deaths, 10+ kills, 10+ assists, 150 last hits; a support's wards, healing and assists may stand in for last
+  hits); a loss takes 41 (poor) to 23 (great); leaving takes 41. Score = 25% kills/10 + 20% assists/10 + 30% (1 -
+  deaths/10) + 25% last hits/150. The end screen shows "Your game: N%". The other nine move by their own games; the
+  ladder's own rounds even out gains and losses so it does not drift (tested: average MMR within 60 over 60 rounds).
+* **AI players' careers** (`Career.estimate`): all 300 get lifetime numbers from their games, skill and main role
+  (top players: 400-600 MVPs, hundreds of triple kills, dozens of rampages; low ranks with 100+ games have MVPs too),
+  commends, and their saved matches get farm, lanes and GPM. Ladder matches now record all of it. Your save upgrades in
+  place on first load (version 5); nobody's MMR or record changes.
+* **They read profiles** (`src/core/profile_talk.gd`, lines `src/core/profile_lines.gd`, match chat
+  `src/sim/chat_profile.gd`): what anyone sees (averages over 20 matches, the last five with K/D/A, LH and MVP, the
+  form, streak, MVPs, rampages, triples, first bloods, favourite lane, abandons). Kind players acknowledge good games
+  ("saw ur 12/1/9 last game, gj") and cheer up bad ones; fair ones say what they see; rough ones flame bad averages
+  ("9.5 deaths a game avg, pls dont", "lost 4 of ur last 5") and call good ones smurfs ("7/1/10 avg at expert 2?
+  smurf"), now and then giving credit; show-offs compare; trolls troll even a great profile ("ur mvps are fake"). What
+  they already think of you shades it. Where: the hero pick (a teammate or two looks you up; one reads an enemy or a
+  teammate, who answers), the match start (teammates in team chat, an enemy in all chat; bots look each other up too),
+  every few minutes your game against your averages ("9 deaths, right on ur avg", "whos playing on ur account"),
+  "check my profile" / "my stats?" / "check ur profile" in any chat, forum replies to you (60% when you brag, ask, rant
+  or trash talk), and the online writers (match chat and Forums) get your whole profile in words.
+* **Profile walls**: after a match some of the nine look you up and leave a comment (+rep / -rep, "smurf reported",
+  "talks a lot for 2/9/1"); players drop by while you are away (your **Visitors**, private). Write on anyone's wall and
+  they answer (rude words cost their liking). Ladder players' walls have comments from the players they met.
+* **Profile page** (`src/ui/profile_page.gd`, the Ranked Profile tab and an overlay anywhere else): banner (picture,
+  name, status, presence, labels, what they think of you; trophies MVPs, Rampages, Triple Kills, First Bloods,
+  Commends; 3D rank emblem, MMR, place, the way to the next rank); **Averages** (Last 20 / All matches: K/D/A, KDA,
+  LH / DN, LH a minute, GPM, XPM, hero damage, win rate; favourite lanes as bars); **Match history** (All / Ranked /
+  Unranked, the last ten as W/L plates, badges for MVP, Rampage, Triple Kill, First Blood; click a match for every
+  number, right-click for more); **Wall / Heroes / MMR / Visitors**. Yours: **Edit profile** (name, picture, earlier
+  record) and **View As** (Yourself, Public, or a friend / a player you met: their read of your profile and what they
+  think of you; behaviour score, reports and visitors stay private). Theirs: Add friend, **Compare** (side by side, the
+  better number lit), Write, More.
+* **Right-click any player** (`src/ui/player_menu.gd`): leaderboard, top of the ladder, Players tab (friends, recent,
+  activity, online), the match offer, the hero pick, your chip, profile walls and visitors, forum threads and authors:
+  View profile, Match history, Compare with me, Write on profile, Add / Remove friend, Accept friend request, Commend
+  (once a day), Report (once a day, -60 behaviour), Block (hides their posts and comments), Copy name. Forum names and
+  pictures open the profile on a click.
+* **The skin** (`tools/ui_skin_social.py`, run by `tools/ui_skin.py` too): the page backdrop, top bar, profile banner,
+  ornate panels, stat cards, list rows (plain, hover, won, lost, yours, gold), the menu and its highlight, tabs, chips,
+  the avatar frame, and 29 relief icons (medallions and bare gold glyphs) for every stat. Ranked (all tabs), the hover
+  card (now with averages and trophies), Forums and the profile use it.
+* Chosen where open (veto any): the MMR score weights above; ladder rounds scaled to zero sum; a comment after a match
+  from up to 4 of the nine (25-50% each, more after flames or trash talk); a visit about every 90 minutes away (4 at
+  most); estimates: MVP rate 4-24% of games by skill and role, commends 3-30% by manners; a lane counts from 60 seconds
+  near it; profile reads: "good" = MVP / 3+ KDA with 8+ kills / a rampage last match, 4 of 5 won, 3.6+ KDA with 5.5 or
+  fewer deaths, MVPs in 18%+ of games, 3+ rampages, 6+ LH a minute, 10+ first bloods; "bad" = 10+ deaths last match, 4
+  of 5 lost, 8+ deaths a game, under 2.4 LH a minute (cores), under 1.9 KDA at Commander or higher, 2+ abandons;
+  "smurf" = new or low-ranked with 4+ KDA and 60%+ wins lately.
+* New names (veto any): **Back to Dashboard** (your words), **Edit profile**, **View As**, "View As: Yourself", **Public**, "Public: anyone", "As X",
+  "As X (friend)", **Back to my view**, "Viewing as X: this is what they see", "Public: this is what any player sees",
+  **Averages**, **Last 20**, **All matches**, **K / D / A**, **KDA**, **Last hits / denies**, **Last hits a minute**,
+  **Gold a minute**, **Experience a minute**, **Hero damage**, **Win rate**, **Favourite lanes**, lanes **Safe lane**,
+  **Middle lane**, **Off lane**, **Jungle**, **Roaming** (short **Safe**, **Mid**, **Off**, **Roam**), "X player",
+  **Match history**, **All**, **Ranked**, **Unranked**, "Last N", "N won, N lost", **Wall**, **Heroes**, **MMR**,
+  **Visitors**, "Write on your wall (Enter)", "Write a comment (Enter)", **Post**, trophies **MVPs**, **Rampages**,
+  **Triple Kills**, **First Bloods**, **Commends**, **Compare**, **Write**, **More**, **Close**; menu **View profile**,
+  **Match history**, **View As someone else**, **Compare with me**, **Write on profile**, **Add friend**, **Remove
+  friend**, **Accept friend request**, **Commend**, **Report**, **Block**, **Unblock**, **Copy name**, "today", **Show
+  details**, **Hide details**, **Copy this match**, "X ranking"; Edit profile **Name**, **Picture**, **Upload a
+  picture**, **Use my hero**, **None**, "Earlier record (matches before 20 October 2026)", **Save**, **Cancel**; match
+  details **Length**, **Net worth**, **XPM**, **Building damage**, **Healing**, **Wards**, **MMR after**, **Your game**,
+  **Multi-kills**, **Double**, **Triple**, **Ultra**, **Rampage**; MMR tab **Highest MMR**, **Streak**, **Best
+  streak**, **Left matches**, **Behaviour score**, **Private**, **Reports this season**, **Leaderboard**, "MMR over the
+  last N matches"; visitors "looked N ago", "Players who looked at your profile lately (only you see this)."; compare
+  rows **Ranked matches**, **Kills a match**, **Deaths a match**, **Assists a match**, **Last hits a match**; notes "You
+  commended X.", "You already commended this player today.", "You reported X. Thank you.", "You already reported this
+  player today.", "You blocked X: their posts and comments are hidden.", "You unblocked X.", "Name copied.", "Match
+  copied.", "Profile saved.", "Picture changed.", "X answered on the wall."; end screen "Your game: N% (kills, assists,
+  deaths, last hits) · a win gives 23 to 41, a loss takes 23 to 41", "On your profile: First Blood, Rampage, N Triple
+  Kills, MVP"; Forums "N/N/N avg", "N MVP", "N replies from players you blocked hidden", "Click: profile · Right-click:
+  more"; hover card **Averages**, "Right-click for more"; chips **Friend**, **Blocked**, "Known for: X"; Play tab "A win
+  gives 23 to 41 MMR, a loss takes 23 to 41: kills, assists, last hits and few deaths decide how many." Code: `Career`,
+  `ProfileTalk`, `ProfileLines`, `ChatProfile`, `SocialUi`, `PlayerMenu`, `ProfilePage`; skin `soc_*`, `ic_*`, `gl_*`;
+  save fields `career`, `career_base`, `unranked`, `wall`, `wall_made`, `wall_t`, `visitors`, `commends`, `reports`,
+  `commended`, `reported`, `blocked`; chat intents `profile_me`, `profile_you`; line kinds `pf_*`; unit counters
+  `multi_n`, `first_blood`, `lane_secs`.
+* **Ranked is the main mode** (your request, same day): the Main Menu has no **Play** any more; **Ranked** is its first,
+  gold plate (Up / Down / Enter start on it). Casual matches are still one click away from **Choose Hero** (Hero Select >
+  Play > Game Setup). Every match's end screen offers **Back to Dashboard** (the Ranked screen) instead of Find Match;
+  an unranked match also keeps **Play again**; then **Main Menu** and **Quit** ("Hero Select" left the end screen).
+* Also fixed: the Play tab's hero rows drew the record over the medal; a pick-chat answer to trash talk said "chill" /
+  "relax" (now a comeback, your rule); right-click menus open where you click (they used the last known mouse
+  position, which a click without a move does not update: the menu opened off-screen and blocked later clicks).
+* Evidence: headless tests 327 passed, 0 failed (`tests.txt`; the profile, chat and pick tests again after the last
+  changes); `ranked_probe.gd` 51/51 through real clicks and a real ranked match (offer, pick, match, +28 MMR for a win
+  by performance, MVP screen, Back to Dashboard, Edit profile, View As, a wall post answered, right-click > Compare);
+  captures at 1080p and 4K (`ui/`); `check_names.py` Names OK; the Windows export rebuilt (`build/WarriorsOfAether.exe`)
+  and its pack opens the Main Menu and a profile with the new skin (`ui/pck_menu.png`, `ui/pck_profile.png`).
+  Not verified: no fresh-context critic and no Dota 2 profile screenshot as a benchmark; the Forums profile overlay and
+  the hero-pick right-click were not clicked through; no unranked match played by hand through to the profile.
+
+**2026-10-20: the player is always answered, and trash talk gets trash talk back (your request: "the player should be
+TOP PRIORITY to have them reply at all means ... If the player talks trash they try to pacify the player which is
+STUPID", "even in the forums they dont reply to the player").**
+* **Why they ignored you**: every answer went through the same dice as idle chatter (an unknown line had about a 1 in
+  5 chance), a bot that was typing or had spoken in the last 2 s could not answer, and the online writer only reworded
+  the brain's own line (often just "?"), so it never answered what you wrote. Lines after the Throne fell were never
+  read.
+* **Now** (`src/sim/sim_bot_chat.gd`): every line you type gets at least one answer: the bot you named, else the last
+  one who spoke, else an enemy in all chat or a teammate in team chat. Answers skip the dice, the busy check and the
+  one-line-at-a-time rule, and jump the chat queue (0.6 s gap instead of 1.5 s). The end screen answers too.
+* **Trash talk** (`chat_social.gd`, `chat_more.gd`): "relax", "chill bro its a game", "be nice", "stop all chat",
+  "just play" and "muted" are gone. A nice bot jabs back ("ez? the game isnt over", "love u too {name}"), the rest roast
+  you with your numbers ("all that chat and still 0/6/0", "{lh} cs at {min} min and u talk?"); your rough teammates
+  join in instead of telling you to stop. More of what you type counts as trash talk ("ur mom", "u suck", "git gud",
+  "clown", "putangina", "baho" ...).
+* **Online writer** (`src/core/llm_chat.gd`): every answer to you is sent to the model, past the share, the per-match
+  cap (its own cap: `max_replies`, 400) and the three-at-a-time limit, and may wait 9 s (`reply_timeout`). The prompt
+  gives the model who you are (hero, score, last hits, rank) and exactly what you wrote, and tells it to answer that;
+  on trash talk to hit back with a witty comeback and never calm you down. Seen with the real model in a live probe:
+  "0/6/0 ka nga tas kami pa trash? sheesh bea, last hit ka muna bago ka magsalita", "at least ur cat plays better than
+  u 0/6".
+* **Forums** (`src/core/forum.gd`, `forum_writer.gd`): the one you answer always answers back (it was 90%, and a reply
+  in your own thread without picking someone went to nobody: now it goes to whoever you named, else the last writer);
+  someone else joins in, and trash talk draws a second one. Flames are answered with roasts ("you flame better than you
+  farm"), never "you got this". Your replies from the last three days that nobody answered get answered on your next
+  visit. The model gets the same rule, and replies to you have 108 of the visit's 120 calls.
+* **Key safety**: a test script driving the game (`godot -s ...`) never uses your key now, only a local stand-in
+  (`--llm_endpoint=...`). This run's first live probe did use it once: 22 lines, $0.0041 (in `llm_usage.json`).
+* New code names (chat kinds, not shown to players): `r_back`, `r_any`, `r_any_foe`, `r_insult_witty` (was
+  `r_insult_calm`), `tt_witty` (was `tt_kind`); `tt_ally_stop` removed. New tests: `test_chat_player_always_answered`,
+  `test_chat_trash_talk_never_pacified`, `test_llm_answers_the_player_first`, forum checks in
+  `test_ranked_mvp_and_memory`; `talk_probe.gd` now types 8 more lines (22/22 with and without the model).
+
+**2026-10-19 e: the social world: the crowd reacts to anyone owning or feeding (double .. rampage), stand-out and
+terrible KDAs (smurf, cheating, boosted, report threats), your trash talk gets answered with your own numbers, "add me"
+really adds you, MVP after every match (supports too) with a 3D MVP screen, MVP last game on the versus screen and in
+chat, bots remember you and each other, live stats panel top left, chat in the hero pick with Alt+click / Shift+click,
+and a Forums section (your request).** Run `work/lemondev/2026-10-19e-social/` (contract.md, handoff.md; transcripts
+`review/`, captures `ui/`, `shots/`).
+* **The crowd** (`src/sim/chat_social.gd`, lines `src/sim/chat_more.gd`): for **anyone**, a Double Kill draws a word
+  or two, a Triple a few, an Ultra Kill more, a **Rampage** the whole lobby (the killer's team: "RAMPAGEEE", "+rep",
+  "clip it"; the victims: "report", "{name} is hacking", "smurf", "no way {name} is {rank}", then they blame each other).
+  Streaks of 5/7/9/11 are cheered and called out ("someone kill azrin"); a shutdown of 5+ is cheered. 5, 8, 11 ...
+  deaths with a poor score: the enemy mocks the free gold ("thanks for the gold"), teammates flame (or, kind ones, help),
+  the bot itself says sorry.
+* **KDA review** every couple of minutes: a stand-out score (yours first) draws smurf accusations ("12/1/6 at expert 2?
+  smurf"), cheating ("maphack", when you are far ahead or got an ultra kill) and report threats from the enemy; a
+  high-rank show-off dismisses it ("im mythic 3, ur nothing"); a kind one respects it; your team praises it. A terrible
+  one: "how are u {rank}", "boosted", "who boosted u". Ranks come from the ladder (both yours and theirs).
+* **Your trash talk** ("ez", "gg ez", "sit", "too easy", insults) in all chat or at an enemy is answered with what they
+  know: your score ("ez with 1/3/0?", "2/7/1 and talking"), the gold gap ("ez? ur 6k behind"), your death a moment ago
+  ("says the guy who just died"), "lucky" when you really are winning; a second voice piles on (2026-10-20: nobody
+  tells you to stop any more; a rough teammate joins in). They remember it: next time "{name} the trash talker", and
+  at the end "who's ez now". Reports against you are listed on the end screen and cost 60 behaviour each in ranked.
+* **"add me"** (also "duo after?", "pa add") to a bot by name, or the last one who spoke: it says yes or no by what it
+  thinks of you (its memory, this match's praise or flames, your score) and a yes **makes you friends** on the ladder
+  ("You and mika are now friends"); a no is a no ("after u stop feeding"). At the end, players who enjoyed the game
+  offer ("{name} add me after") and send a real friend request. Works in the hero pick too.
+* **MVP** (`src/sim/match_mvp.gd`): every match, from kills / assists / deaths, hero and building damage, **healing
+  given, disables, wards, saves**, farm and the win; a support can win it (tested). The **MVP screen** (`src/ui/mvp_screen.gd`)
+  comes before the scoreboard: the MVP in 3D on the versus field in gold light, MVP slamming down, name, hero, rank,
+  K/D/A, the numbers it led the match in, and the other honours (Top support, Most damage, Best farm); Continue goes on.
+  The scoreboard marks the MVP. Ranked keeps every player's MVPs and last game (ladder rounds give MVPs to bots too).
+* **MVP last game**: a gold tag on the versus plates and pick slots; your team says it in the pick ("{you} was MVP last
+  game, carry us", "careful, {enemy} was MVP last game"), both teams at the start ("lets test the MVP"), and if you
+  then do badly: "MVP last game? lol", "boosted MVP"; do well: "MVP for a reason".
+* **Memory**: bots remember your rampages, MVPs, trash talk, reports and accusations (Ranked "you"), and **each other**
+  ("seen": the feeder, the rampage guy, the flamer, the MVP): at the start "{name} the feeder from last time" and the
+  other answers. Each player has a "known for" (rampage, MVP, feeding, flaming, godlike) on the profile with its MVP
+  count; rampages and godlike streaks go into the ladder activity.
+* **Play uses ladder players** (Options > Game > "Bots are ladder players", on): bot slots you did not name are ladder
+  players online now near your MMR, with their names, manners and memory; they play at your Game Setup skill; the match
+  is remembered (no MMR), friends included.
+* **Live stats** (top left): K / D / A, last hits / denies, GPM, XPM, LH per minute; hover for lane creeps, camp creeps,
+  other units, denies, best streak and multi-kill, hero and building damage, healing to allies, disables, wards, saves,
+  net worth. New counters in the simulation (`SimUnit.lh_lane / lh_neutral / lh_other / heal_given / disable_given /
+  wards_placed / saves / best_multi / best_streak`); "Saved" pops over an ally you saved.
+* **Hero pick chat**: type in team chat (Enter); teammates answer greetings, trash talk, rank, role calls, "add me";
+  **Alt+click** a hero: "I want to play X" (a teammate who wanted it picks another, a rough one complains first; nobody
+  on your team goes for it); **Shift+click**: "Pick X" (the teammate it suits takes it up, or says no). Typing a hero
+  name works too ("froster me", "pick araki").
+* **Forums** (Main Menu > Forums; `src/core/forum.gd`, `src/ui/forums.gd`): threads by the ladder's players while you are
+  away, from what happened (ranks reached, rampages, Top 1, losing streaks, matches with **you**: "Just played against
+  {you}, 14/2 on Araki, smurf?", "{you} trash talked all game"), the feeder or rampage they met, help, duo search, tier
+  lists, items, jokes; replies by persona and rank (high-rank show-offs sneer, kind ones help, trolls troll, shot callers
+  give real tips). Your post gets answers over the next minute ("... is typing"), a reply to someone gets them talking
+  back, insults make them like you less (and remember you as a trash talker), praise more, a duo post can bring friend
+  requests; votes, Hot / New, sections. With Online bot chat on, **ForumWriter** has the model (your OpenRouter /
+  DeepSeek setting) write the replies to you and the newest threads; offline text otherwise (`docs/LLM_CHAT.md`).
+* Online bot chat (in match) now also rewrites the new moments (trash talk answers, KDA, MVP, add, rampage) with their
+  facts.
+* Chosen where open (veto any): the MVP score weights (kill 3, assist 1.7, death -1.5, up to 9 for hero damage share, 4
+  building, 9 healing at 350 a point, 6 disables, 7 wards, 2.5 a save, 4 farm, 5 a win, 3 a rampage); a save = a low
+  ally (under 30%, hit in the last 3 s) healed or its attacker disabled, alive 4 s later, once per ally per 20 s;
+  feeding thresholds 5/8/11/14/17/20 deaths; streak reactions 5/7/9/11/13/15/18/20/25+; review every 100-170 s,
+  "great" = 6+ kills at 4+ (kills + half assists) per death, "terrible" = 7+ deaths at 0.45 or less; 60 behaviour a
+  report (ranked); the "add me" yes threshold; casual ladder players from the 40 nearest your MMR who are online;
+  a hero quip once per 15 minutes and team calls once per 7 minutes per player (was 150 s), no line a third time;
+  forum: a new thread per 25 minutes away (6 at most a visit), 14 on a new forum, replies 4-7 to your post in the
+  first minutes; 40 model calls a visit.
+* New names (veto any): menu **Forums**; sections **Discussion**, **Heroes**, **Help**, **Looking for group**,
+  **Match stories**, **Funny**; buttons **Hot**, **New**, **New post**, **Reply**, **Upvote**, **Voted**, **Post**,
+  **Cancel**, **Continue**; "Replying to ...", "... is typing", "Write a reply (Enter to post)", "N threads · N players
+  online", "Nothing here yet. Be the first to post."; **MVP**, "Most valuable player", **Core** / **Support**,
+  honours **Top support**, **Most damage**, **Best farm**, reasons **Most kills**, **Most hero damage**, **Most
+  healing**, **Saves**, **Most assists**, **Most wards**, **Most disables**, **Most building damage**, **Most last hits**,
+  **Highest net worth**, **Deaths**, **Rampage**, **Ultra Kill**, **Triple Kill**; tag **MVP last game**; "(MVP)" on
+  the scoreboard; "Friend requests from ...", "N players reported you this match", "You and X are now friends", "X sent
+  you a friend request"; popup **Saved**; stats panel "K / D / A", "LH", "GPM", "XPM", "LH/min", tooltip **Your
+  match** with "Creep kills", "Lane creeps", "Camp creeps", "Other units", "Denies", "Per minute", "Best streak", "Best
+  multi-kill", "Hero damage", "Building damage", "Healing to allies", "Disables on heroes", "Wards placed", "Saves", "Net
+  worth"; pick chat "Say to your team (Enter)", "Alt+click a hero: you want it    Shift+click: ask a teammate to pick
+  it", "I want to play X", "Pick X"; profile "MVP N times", "Last game MVP", "Known for: Rampage, Godlike streak, MVP,
+  Feeding, Flaming, Carrying"; feed "X got a Rampage on Y", "X went Godlike on Y"; option **Bots are ladder players**
+  and its note; every line in `ChatMore.T`, `Forum.THREAD`, `Forum.REPLY` and the pick chat lines in `hero_draft.gd`;
+  code `ChatSocial`, `ChatMore`, `MatchMvp`, `MvpScreen`, `Forum`, `ForumWriter`, `StatsPanel`, `Ranked.befriend /
+  send_request / remember_casual / fame_of / mvp_last`, `Matchmaker.card_of / casual_identities`, `SimBot.set_identity`,
+  `SimWorld.player_cards`, `SimCombat.help / note_disable / check_saves`, events `friend`, `save`, option
+  `ladder_bots`, files `user://forums.json`, tools `tests/tools/social_probe.gd`, `work/.../recheck.py`, tests
+  `test_match_stats_counters`, `test_mvp_support_can_win`, `test_chat_multikill_crowd`, `test_chat_feeding_and_kda_reviews`,
+  `test_chat_trash_talk_answered`, `test_chat_add_me_makes_a_friend`, `test_chat_mvp_last_game`,
+  `test_ranked_mvp_and_memory`, `test_forum_offline`, `test_draft_pick_chat_and_calls`.
+Evidence: headless tests **317 passed, 0 failed** (307 + 10 new); `sh tools/check.sh` no script errors, "Names OK";
+blind A/B by a fresh critic (same match, the new layer on vs off, two seeds, labels shuffled): **the new chat won both
+with a clear advantage** (answers trash talk with the player's real score, MVP talk, a reasoned no to "add me"); its
+largest gap (a dominating enemy bot drew no smurf talk, multi-kills under-reacted, a hero quip 4 times) measured by
+`recheck.py`: before: accusations at the 25 / 29 streak enemy 0 / 0, under-reacted triple+ kills 0 / 2, lines said 3+
+times by one player 2 / 2; after pass 2-3: accusations 5 / 2-3, under-reacted 0 / 0-1, repeats 0. Captures: live stats
+panel and its breakdown, MVP screen (5v5 at 10 min and the duel), Forums at 1080p and 4K (offline and with replies),
+the pick with chat (`ui/`, `shots/`). Forum writer tested against the local stand-in (8 requests, the stand-in key
+only, your usage file untouched).
+**Your key was used by mistake once**: the first Forums captures ran with Online bot chat on in your Options and your
+key in `llm.json`, so ForumWriter made 8-10 real OpenRouter calls (about $0.0013-0.002, logged in your
+`llm_usage.json`: 8 calls, "matches" +1). Captures and probes can no longer reach the real service (fixed in
+`forum_writer.gd`).
+Not verified: no Dota 2 comparison; the Forums and the pick chat had no blind review; no real ranked match played by
+clicks this run (the ranked flow is covered by tests); reactions measured on bot-driven matches, not your play.
+Release build: `build/WarriorsOfAether.exe` rebuilt 2026-10-20 00:02 (exit 0, pack 710 MB); the pack cold-starts into the
+Forums and into a match with the MVP screen and no script errors (`shots/exe_forums.png`, `exe_mvp.png`).
+
 **2026-10-19 d: living players: every bot has a personality, a typing style, a daily schedule, moods, friends and a
 memory of you; a chat brain that knows the match (revenge, rivals, kill steals, abilities, ultimates, items, gold,
 tilt) and answers what you type; team calls in players' words; a Players tab (friends, requests, recent players,
@@ -1347,7 +1668,11 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   and name, and the lane you want. Presets: 5 vs 5, 1 vs 1 mid. **Start** goes to the Hotkeys screen and the match.
 * Exported builds ignore scene paths on the command line: `build/WarriorsOfAether.exe -- --match [capture flags]` jumps straight into a match (for automation; `--match` must come after `--`).
 * Ranked (2026-10-19 b): Main Menu > Ranked, or `godot --path . res://src/ui/ranked_menu.tscn -- [--capture=x.png --tab=play|profile|leaderboard|guilds --state=search|found|ready --hover=n --profile=b12 --view=heroes --board=heroes --hero=azrael --4k]`; the pick and versus alone: `godot --path . res://src/ui/ranked_draft.tscn -- [--capture=x.png --at=8 | --phase=versus --frames=330] [--4k]`; live probe `godot --path . -s tests/tools/ranked_probe.gd -- --out=dir` (its own ladder file); emblems `godot --path . -s tests/tools/emblem_sheet.gd -- --out=x.png`; set `WOA_RANKED_FILE=user://other.json` to keep your ladder untouched.
-* Tests (headless, about 1 minute): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 155 tests.
+* Profile and social screens (2026-10-20 b): the Ranked screen's capture flags above plus `--view_as=public|<id>
+  --side=wall|heroes|mmr|visitors --open_match=n --compare --menu=<id>`; Forums `godot --path . res://src/ui/forums.tscn
+  -- --capture=x.png` (set `WOA_FORUM_FILE=user://other.json` and `WOA_RANKED_FILE` to keep yours untouched); the social
+  skin `python tools/ui_skin_social.py [--preview x.png]` (then `godot --headless --path . --import`).
+* Tests (headless, about 8 minutes, most of it the vision-cache test): `godot --headless --path . -s tests/run_tests.gd`. Add `-- --only=<name>` for a subset. 327 tests (2026-10-20 b).
 * Teamfight benchmark (the one that matters for lag in fights): `godot --path . res://src/game/main.tscn -- --bench=40
   --t=600 --fight --autoplay --lineup=ezee,azrin,froster,sludge,tock,blood_ranger,caziel,kragg,azrin,froster
   [--bench_shot=png]`: prints frame times and the cost of every part (see `work/lemondev/2026-10-15c-perf-feel-ai/

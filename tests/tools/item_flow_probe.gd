@@ -97,7 +97,8 @@ func _run() -> void:
 	await frames(20)
 	check(h.to_buy.size() == 3, "no gold: still waiting")
 	h.gold_unreliable = 150
-	await frames(20)
+	h.gold_reliable = 0                      # passive gold earned meanwhile would push it past 155
+	await frames(4)
 	check(h.to_buy.size() == 3, "150 gold: still short of the Headband's 155")
 	h.gold_unreliable = 155
 	await frames(30)
