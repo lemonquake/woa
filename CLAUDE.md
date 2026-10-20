@@ -22,6 +22,21 @@ code identifiers.
 * Run `python tools/check_names.py` (also part of `sh tools/check.sh`). It must print "Names OK".
 * List every new name in `docs/HANDOFF.md` so the owner can veto it.
 
+## Custom UI (strict, applies to every interface change)
+
+The owner is opening the game to **custom UIs, free and paid** (borders first, then skins, colours, fonts, cursors,
+profile cosmetics, layouts). Read `docs/CUSTOM_UI.md` before you touch anything players see in the interface.
+
+* Draw every skill and item icon through `IconBorder` / `IconFrame` (`src/ui/icon_border.gd`), never as a raw
+  texture with a hard-wired frame.
+* Load interface art by name through `UiKit` (`skin`, `box`, `art`, `skin_tex`), use `UiKit` colours and fonts.
+  Never load skin PNGs directly in a screen.
+* A new customisable piece follows the pack pattern: a folder with a JSON manifest and images in
+  `res://assets/ui/<kind>s/<id>/` or `user://<kind>s/<id>/`, a complete `default`, fallbacks, an Options key.
+* Popups close on a click outside and on Esc; screens change with `Options.go()`; "Menu animations" turns off motion.
+* Nothing paid exists yet (no accounts, store or ownership checks). Never build payment code, prices or store
+  accounts without the owner; never commit art meant for sale to a public repository.
+
 ## Other house rules
 
 * Use the lemondev Gauntlet Loop (`lemondev/SKILL.md`, ledger in `work/lemondev/ledger.md`).

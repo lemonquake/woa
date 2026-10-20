@@ -6,7 +6,9 @@
 
 **2026-10-20 d: smoother interface everywhere, and the official icon border (your request: "the Talent UI ... doesn't
 fucking close when you click away", "create our Official and Default BORDER for item/skill icons ... replaceable at
-any time").** Run `work/lemondev/2026-10-20d-ui-smooth/` (handoff.md, captures, probe logs).
+any time").** Run `work/lemondev/2026-10-20d-ui-smooth/` (handoff.md, captures, probe logs). **Why: the owner is
+opening the game to custom UIs, free and paid. `docs/CUSTOM_UI.md` is the guide for every agent (the pack pattern,
+the border reference, rules, roadmap, what paid needs).**
 * **Popups close the way you expect** (an audit of every popup, menu and screen found the talent tree was not alone):
   * Talent tree: closes on a click anywhere outside it (world, minimap, top bar, the rest of the panel), on Esc (which
     no longer opens the pause menu behind it) and when you select another unit. Clicks in its gaps no longer move the
