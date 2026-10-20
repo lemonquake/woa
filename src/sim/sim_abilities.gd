@@ -490,8 +490,11 @@ func _cv(src_id: int, aid: String, key: String, lv: int) -> float:
 	return _lvl_val(SimData.ability(aid), key, lv)
 
 ## Whether an effect from `src_team` may put a debuff (stun, push, slow, curse) on `t`: never on a debuff-immune
-## enemy (Spell Shield) unless the effect pierces it (Shuriken Hook, Chomp).
-func can_debuff(t: SimUnit, src_team: int, pierces := false) -> bool:
+## enemy (Spell Shield) unless the effect pierces it (Shuriken Hook, Chomp). Ser Emelrich winding up Giant Swing is
+## spared even piercing ones, unless `aid` is on SimKits5.SWING_GUARD_PIERCE.
+func can_debuff(t: SimUnit, src_team: int, pierces := false, aid := "") -> bool:
+	if t.team != src_team and t.debuff_immune and t.has_flag(SimKits5.SWING_GUARD):
+		return aid != "" and aid in SimKits5.SWING_GUARD_PIERCE
 	return pierces or t.team == src_team or not t.debuff_immune
 
 ## Every hero spell cast charges enemy Spark Rods / Wands within range.

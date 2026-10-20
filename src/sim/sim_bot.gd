@@ -422,6 +422,9 @@ func think() -> void:
 	if SimBot16.tick(self, h):
 		return
 	if w.profiling: pt = w._prof("  bot:turret", pt)
+	# out of an enemy Ser Emelrich's red cone or line before the blow lands
+	if bool(sk.spells) and SimBot18.dodge_windups(self, h):
+		return
 	# the five heroes of run 2026-10-18 f (Burak's axe leap, Steel Stance, Ghorman's taming)
 	if SimBot18.tick(self, h):
 		return

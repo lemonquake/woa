@@ -9,8 +9,9 @@ extends RefCounted
 ## Blur Strike: an instant dash (up to 600) that gives every enemy within 250 of the path an attack with all its
 ## effects, magic damage and a 60% slow for 1 s. A cast that hits any enemy refreshes the cooldown once (6 s to use it).
 ## Djin Bomb: a cloud (450) for 5 s: enemies inside lose magic and status resistance and are slowed more every second.
-## Ghosts of the Will: ghosts (summons with 1 health) fly out one by one, phased and over terrain, strike the target once
-## with a share of his attack (Senryukai included) and vanish.
+## Ghosts of the Will: ghosts (summons with 1 health) fly out one by one at 800, phased and over terrain, strike the
+## target the moment they reach it (no wind-up: a running target cannot step out of the blow) with a share of his attack
+## (Senryukai included) and vanish in a puff (no death).
 ## The Blur: half cooldowns for Blur Strike and Djin Bomb for 19 s (running ones halved), and attack speed for a number
 ## of attacks.
 
@@ -24,7 +25,7 @@ const AGAIN := "blur_strike_again"          # on Araki: Blur Strike was refreshe
 const BLUR := "the_blur"                    # on Araki: halved cooldowns
 const BLUR_SPEED := "the_blur_speed"        # on Araki: the attack speed, with the attacks left as charges
 const HALVED := ["blur_strike", "djin_bomb"]
-const GHOST_STRIKE := 0.25                  # a ghost's swing before its blow lands (its attack point)
+const GHOST_FADE := 0.2                     # after its blow a ghost follows the target this long (its swing), then is gone
 const GHOST_REACH := 60.0                   # a ghost strikes from this far beyond the two hulls
 
 var w: SimWorld
@@ -323,6 +324,9 @@ func _update_ghost(gid: int) -> void:
 	var g := w.get_unit(gid)
 	var d: Dictionary = ghosts[gid]
 	if g == null or not g.alive:
+		# destroyed by a hit: it goes up in a puff like the rest, never a body on the ground
+		if g != null:
+			w.events.append({"t": "ghost_poof", "ghost": g.id, "pos": g.pos})
 		ghosts.erase(gid)
 		return
 	var owner := w.get_unit(int(d.owner))
@@ -330,7 +334,9 @@ func _update_ghost(gid: int) -> void:
 		_poof(g)
 		return
 	var t := w.get_unit(int(d.target))
-	if not _valid_target(t, g.team):
+	# its own target it hunts like a homing blow: out of sight too, but not invisible (unless seen through it)
+	var locked := t != null and _enemy(g.team, t) and (not t.has_flag("invisible") or w.vision.sees(g.team, t))
+	if not locked:
 		t = _retarget(g, float(d.retarget))
 		if t == null:
 			_poof(g)
@@ -338,23 +344,26 @@ func _update_ghost(gid: int) -> void:
 		d.target = t.id
 		d.strike_at = -1.0
 	var reach := g.hull + t.hull + GHOST_REACH
+	var to := t.pos - g.pos
 	if float(d.strike_at) >= 0.0:
-		g.facing = (t.pos - g.pos).angle() if g.pos.distance_to(t.pos) > 1.0 else g.facing
+		# the blow has landed: it clings to the target through its swing, then puffs away
+		if to.length() > reach:
+			g.pos += to.normalized() * minf(float(d.speed) * C.DT, to.length() - reach + 1.0)
+		g.facing = to.angle() if to.length() > 1.0 else g.facing
 		if w.time + 1e-6 >= float(d.strike_at):
-			if g.pos.distance_to(t.pos) <= reach + 120.0:
-				_ghost_hit(g, owner, t, float(d.pct))
 			_poof(g)
 		return
-	var to := t.pos - g.pos
-	if to.length() <= reach:
-		d.strike_at = w.time + GHOST_STRIKE
-		g.facing = to.angle()
+	# fly, then strike in the same tick it gets close, moving target or not (stopping at the edge of reach and checking
+	# next tick let a runner step out of it every time: the ghosts trailed behind and never struck)
+	if to.length() > reach:
+		g.pos += to.normalized() * minf(float(d.speed) * C.DT, to.length() - reach + 1.0)
+		g.moving = true
+	g.facing = to.angle() if to.length() > 1.0 else g.facing
+	if g.pos.distance_to(t.pos) <= reach + 1e-3:
+		d.strike_at = w.time + GHOST_FADE
+		g.moving = false
 		w.events.append({"t": "ghost_strike", "ghost": g.id, "target": t.id})
-		return
-	var step := minf(float(d.speed) * C.DT, to.length() - reach + 1.0)
-	g.pos += to.normalized() * step
-	g.facing = to.angle()
-	g.moving = true
+		_ghost_hit(g, owner, t, float(d.pct))
 
 # ---- The Blur -----------------------------------------------------------------------------------------------------------
 

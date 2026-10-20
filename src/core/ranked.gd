@@ -20,8 +20,17 @@ extends RefCounted
 ## send friend requests. The ladder's activity (rank ups, streaks, medals, new heroes, the top of each hero) is kept
 ## in "feed". The ladder holds 300 players and new accounts keep joining (two a day, up to 420). Older ladder files
 ## are upgraded in place: nobody's MMR or record changes.
+##
+## Accounts (run 2026-10-20 e; the owner: "Allow the player to create Multiple accounts (fresh 1500 MMR and fresh
+## profile, with the same player database) ... Login/Logout to their accounts anytime"): up to MAX_ACCOUNTS profiles
+## of yours on one ladder. The one logged in is "me"; the others wait in data.accounts under their own ids ("u1",
+## "u2"...), on the leaderboard and openable like anyone, but never played by the ladder or the bots. Logging in swaps
+## the ids everywhere (walls, the feed, the forums), and each ladder player keeps a memory of each account ("you" is
+## the one logged in, "yous" the rest).
 
 const PATH := "user://ranked.json"
+const MAX_ACCOUNTS := 20
+const ACCOUNT_START := 1500                 # a new account's MMR (the first one started at YOUR_START)
 const VERSION := 5                          # 2: hero records and rankings; 3: hero mastery, countries; 5: careers
 const YOUR_START := 1000
 const BOT_START := 1500
@@ -183,6 +192,13 @@ static func _clean() -> void:
 		data[k] = int(data.get(k, 0))
 	if not (data.get("pending") is Dictionary):
 		data["pending"] = {}
+	if not (data.get("accounts") is Dictionary):
+		data["accounts"] = {}
+	if String(data.me.get("acc", "")) == "":
+		data.me["acc"] = "u1"                    # the first account, from before accounts existed
+		for e in data.get("feed", []):
+			if String(e.get("k", "")) == "friend" and not e.has("by"):
+				e["by"] = "me"
 	_upgrade()
 
 ## Living players (run 2026-10-19 d) on a ladder saved before them: a persona for every bot (from the ladder's seed and
@@ -273,6 +289,8 @@ static func bots() -> Array:
 
 static func all_profiles() -> Array:
 	var out: Array = [data.me] if data.has("me") else []
+	if data.get("accounts") is Dictionary:
+		out.append_array((data.accounts as Dictionary).values())
 	if data.has("bots"):
 		out.append_array(data.bots)
 	return out
@@ -281,10 +299,120 @@ static func profile(id: String) -> Dictionary:
 	load_data()
 	if id == "me":
 		return data.me
+	if (data.get("accounts", {}) as Dictionary).has(id):
+		return data.accounts[id]
 	for b in data.bots:
 		if String(b.id) == id:
 			return b
 	return {}
+
+# ---- Accounts -------------------------------------------------------------------------------------------------------
+
+## Every account of yours on this computer: the one logged in first, then the others by when they were made.
+static func accounts() -> Array:
+	load_data()
+	var out: Array = [data.me]
+	var rest: Array = (data.get("accounts", {}) as Dictionary).values()
+	rest.sort_custom(func(a, b): return int(a.get("created", 0)) < int(b.get("created", 0)))
+	out.append_array(rest)
+	return out
+
+## The logged-in account's own id ("u1", "u2"...): what "me" becomes when you log out of it.
+static func account_id() -> String:
+	return String(me().get("acc", "u1"))
+
+## Whether `id` is one of your accounts that is not logged in (a person, never played by the ladder or the bots).
+static func is_account(id: String) -> bool:
+	return id != "me" and (data.get("accounts", {}) as Dictionary).has(id)
+
+## Whether `id` is you or one of your other accounts.
+static func is_yours(id: String) -> bool:
+	return id == "me" or is_account(id)
+
+## Make a new account (fresh profile, 1500 MMR, no record) on this ladder. Returns its id, or "" when the name is
+## empty or taken or there are MAX_ACCOUNTS already. It is not logged in.
+static func create_account(nm: String) -> String:
+	load_data()
+	var n := nm.strip_edges().substr(0, 20)
+	if n == "" or accounts().size() >= MAX_ACCOUNTS or name_taken(n):
+		return ""
+	var i := 2
+	while is_account("u%d" % i) or account_id() == "u%d" % i:
+		i += 1
+	var id := "u%d" % i
+	var t := now()
+	if not (data.get("accounts") is Dictionary):
+		data["accounts"] = {}
+	data.accounts[id] = {"id": id, "acc": id, "account": true, "name": n, "mmr": ACCOUNT_START, "wins": 0, "losses": 0,
+		"abandons": 0, "streak": 0, "best_streak": 0, "peak": ACCOUNT_START, "history": [], "graph": [ACCOUNT_START],
+		"avatar": {"k": "none"}, "behavior": 10000, "roles": [1, 2, 3, 4, 5], "heroes": [], "created": t, "bot": false,
+		"hero_stats": {}, "country": String(me().get("country", "")), "met": {}, "friends": [], "requests": [],
+		"career": {}, "unranked": [], "mvps": 0}
+	Career.career(data.accounts[id])
+	_mark_dirty()
+	save()
+	return id
+
+## Whether a name is used by anyone on the ladder (your accounts included).
+static func name_taken(nm: String) -> bool:
+	var low := nm.strip_edges().to_lower()
+	for p in all_profiles():
+		if String(p.get("name", "")).to_lower() == low:
+			return true
+	return false
+
+## Log in to another of your accounts: the one logged in now keeps its own id ("u1"...) and stays on the ladder; the
+## other becomes "me". Every id in the save and the forums is swapped, and each ladder player's memory of you follows
+## the account. Refused (false) during a ranked match.
+static func login(id: String) -> bool:
+	load_data()
+	if not is_account(id) or has_pending():
+		return false
+	var old := account_id()
+	# each ladder player's memory: of the account leaving, kept; of the account coming, made current
+	for b in data.bots:
+		var yous: Dictionary = b.get("yous", {}) if b.get("yous") is Dictionary else {}
+		var cur: Dictionary = b.get("you", {}) if b.get("you") is Dictionary else {}
+		if not cur.is_empty():
+			yous[old] = cur
+		b["you"] = yous.get(id, {})
+		yous.erase(id)
+		b["yous"] = yous
+	var coming: Dictionary = data.accounts[id]
+	data.accounts.erase(id)
+	var leaving: Dictionary = data.me
+	leaving["account"] = true
+	leaving["last_login"] = now()
+	coming["account"] = false
+	data.accounts[old] = leaving
+	data.me = coming
+	var swap := {"me": old, id: "me"}
+	swap_ids(data, swap)
+	# each account's own id is not a reference to swap
+	data.me["acc"] = id
+	data.accounts[old]["acc"] = old
+	Forum.swap_ids(swap)
+	_board_rounds = -1
+	_mark_dirty()
+	save()
+	return true
+
+## Every string value equal to a key of `swap` becomes its value, through dictionaries and arrays (keys untouched).
+static func swap_ids(x, swap: Dictionary) -> void:
+	if x is Dictionary:
+		for k in x:
+			var v = x[k]
+			if v is String and swap.has(v):
+				x[k] = swap[v]
+			elif v is Dictionary or v is Array:
+				swap_ids(v, swap)
+	elif x is Array:
+		for i in (x as Array).size():
+			var v = x[i]
+			if v is String and swap.has(v):
+				x[i] = swap[v]
+			elif v is Dictionary or v is Array:
+				swap_ids(v, swap)
 
 static func now() -> int:
 	if clock_override > 0:
@@ -312,8 +440,8 @@ static func new_ladder(seed: int) -> void:
 		"me": {"id": "me", "name": you_name, "mmr": YOUR_START, "wins": 0, "losses": 0, "abandons": 0, "streak": 0,
 			"best_streak": 0, "peak": YOUR_START, "history": [], "graph": [YOUR_START], "avatar": {"k": "none"},
 			"behavior": 10000, "roles": [1, 2, 3, 4, 5], "heroes": [], "created": t, "bot": false, "hero_stats": {},
-			"country": "", "met": {}, "friends": [], "requests": [], "career": {}, "unranked": []},
-		"bots": []}
+			"country": "", "met": {}, "friends": [], "requests": [], "career": {}, "unranked": [], "acc": "u1"},
+		"bots": [], "accounts": {}}
 	var i := 0
 	for band in BANDS:
 		for n in _band_count(band):
@@ -766,7 +894,7 @@ static var _board_mmr := -1
 static func leaderboard() -> Array:
 	load_data()
 	var key := int(data.rounds) * 100000 + int(data.me.mmr)
-	if _board_rounds == key and _board.size() == data.bots.size() + 1:
+	if _board_rounds == key and _board.size() == data.bots.size() + 1 + (data.get("accounts", {}) as Dictionary).size():
 		return _board
 	_board = all_profiles()
 	_board.sort_custom(func(a, b): return int(a.mmr) > int(b.mmr) if int(a.mmr) != int(b.mmr) else String(a.id) < String(b.id))
@@ -1123,6 +1251,20 @@ static func befriend(id: String) -> void:
 		return
 	accept_request(id)
 
+## Your other account as a friend: both lists at once (it is you on the other side).
+static func befriend_account(id: String) -> void:
+	if not is_account(id):
+		return
+	var you := me()
+	if not (id in (you.friends as Array)):
+		(you.friends as Array).append(id)
+	var other: Dictionary = data.accounts[id]
+	if not (other.get("friends") is Array):
+		other["friends"] = []
+	if not ("me" in (other.friends as Array)):
+		(other.friends as Array).append("me")
+	save()
+
 ## A bot sends you a friend request (it said "add me" in a match, or liked the game): shown in Players.
 static func send_request(id: String, after := "with") -> bool:
 	var you := me()
@@ -1149,6 +1291,7 @@ static func accept_request(id: String) -> void:
 			(b.get("you", {}) as Dictionary)["friend"] = true
 			b.you["rep"] = maxf(0.4, float(b.you.get("rep", 0.0)))
 		_feed(id, "friend", 0)
+		(data.feed as Array)[0]["by"] = "me"
 	save()
 
 ## You ask a player to be friends: one who likes you, or a kind one who has nothing against you, says yes.
@@ -1156,6 +1299,9 @@ static func ask_friend(id: String) -> bool:
 	var b := profile(id)
 	if b.is_empty() or id == "me":
 		return false
+	if is_account(id):
+		befriend_account(id)
+		return true
 	var y: Dictionary = b.get("you", {})
 	var kind := float((b.get("persona", {}) as Dictionary).get("kind", 0.5))
 	var rep := float(y.get("rep", 0.0))
@@ -1172,6 +1318,9 @@ static func ignore_request(id: String) -> void:
 static func remove_friend(id: String) -> void:
 	var you := me()
 	you.friends = (you.friends as Array).filter(func(x): return String(x) != id)
+	if is_account(id):
+		var other: Dictionary = data.accounts[id]
+		other["friends"] = (other.get("friends", []) as Array).filter(func(x): return String(x) != "me")
 	var b := profile(id)
 	if not b.is_empty() and b.get("you") is Dictionary:
 		b.you["friend"] = false
@@ -1234,6 +1383,38 @@ static func toggle_block(id: String) -> bool:
 static func blocked(id: String) -> bool:
 	return id in (me().get("blocked", []) as Array)
 
+## What every player knows about the top of the ladder (run 2026-10-20 e; the owner: "AI players really know who the
+## current players are, like they have complete access to the Top 20 players"): for the first `n` by MMR, {name, id,
+## place, rank, mmr, kda (average K/D/A), kda_v (KDA), mvps, hero (most played), wr (%), you (one of your accounts),
+## prof (ProfileTalk.read)}. Plain data: it travels into a match (SimWorld.ladder).
+static func ladder_card(n := 20) -> Array:
+	var out: Array = []
+	var board := leaderboard()
+	for i in mini(n, board.size()):
+		var p: Dictionary = board[i]
+		var av := Career.averages(p)
+		var hp := heroes_played(p)
+		out.append({"name": String(p.name), "id": String(p.id), "place": i + 1, "rank": rank_label(p), "mmr": int(p.mmr),
+			"kda": Career.kda_text(av).replace(" ", ""), "kda_v": snappedf(maxf(0.0, float(av.get("kda", 0.0))), 0.1),
+			"mvps": int(Career.moments(p).mvp), "hero": HeroDraft.hero_name(String(hp[0][0])) if not hp.is_empty() else "",
+			"wr": int(round(win_rate(p) * 100.0)), "you": is_yours(String(p.id)), "prof": ProfileTalk.read(p)})
+	return out
+
+## The ladder player (or account of yours) a chat line names, at least 4 letters of the name or the whole of it: the
+## profile, or {}.
+static func named_in(text: String) -> Dictionary:
+	var low := " " + text.to_lower() + " "
+	var best := {}
+	var best_len := 0
+	for p in all_profiles():
+		var nm := String(p.get("name", "")).to_lower()
+		if nm.length() < 4 or nm.length() <= best_len:
+			continue
+		if low.contains(" " + nm + " ") or low.contains(" " + nm + "?") or low.contains(" " + nm + "'") or low.contains("@" + nm):
+			best = p
+			best_len = nm.length()
+	return best
+
 ## Players you met in ranked, most recent first: [[profile, unix time]].
 static func recent_players(n := 30) -> Array:
 	var out: Array = []
@@ -1278,6 +1459,8 @@ static func feed_text(e: Dictionary) -> String:
 		"top10":
 			return "%s made the top ten" % nm
 		"friend":
+			if String(e.get("by", "me")) != "me":
+				return ""                          # a friend of another of your accounts
 			return "You and %s are now friends" % nm
 		"rampage":
 			return "%s got a Rampage on %s" % [nm, HeroDraft.hero_name(String(a))]

@@ -13,8 +13,7 @@ var spec := {"k": "none"}
 var frame := Color(0.55, 0.43, 0.2)
 var _tex: Texture2D
 
-static var _custom_tex: Texture2D
-static var _custom_stamp := -1
+static var _custom := {}                    # file -> [texture, modified time]
 
 func set_spec(s: Dictionary) -> void:
 	spec = s if s is Dictionary else {"k": "none"}
@@ -23,25 +22,30 @@ func set_spec(s: Dictionary) -> void:
 		"hero":
 			_tex = U.hero_portrait(String(spec.get("id", "")))
 		"custom":
-			_tex = custom_texture()
+			_tex = custom_texture(String(spec.get("file", CUSTOM)))
 	queue_redraw()
 
-## The picture you uploaded (reloaded when the file changes).
-static func custom_texture() -> Texture2D:
-	if not FileAccess.file_exists(CUSTOM):
+## Where an account keeps its uploaded picture (the first account's is the file from before accounts existed).
+static func custom_path(acc: String) -> String:
+	return CUSTOM if acc == "" or acc == "u1" else "user://ranked_avatar_%s.png" % acc.validate_filename()
+
+## A picture you uploaded (reloaded when the file changes).
+static func custom_texture(file := CUSTOM) -> Texture2D:
+	if not FileAccess.file_exists(file):
 		return null
-	var stamp := int(FileAccess.get_modified_time(CUSTOM))
-	if _custom_tex != null and stamp == _custom_stamp:
-		return _custom_tex
-	var img := Image.load_from_file(ProjectSettings.globalize_path(CUSTOM))
+	var stamp := int(FileAccess.get_modified_time(file))
+	var c: Array = _custom.get(file, [])
+	if not c.is_empty() and int(c[1]) == stamp:
+		return c[0]
+	var img := Image.load_from_file(ProjectSettings.globalize_path(file))
 	if img == null or img.is_empty():
 		return null
-	_custom_tex = ImageTexture.create_from_image(img)
-	_custom_stamp = stamp
-	return _custom_tex
+	var tex := ImageTexture.create_from_image(img)
+	_custom[file] = [tex, stamp]
+	return tex
 
-## Load a picture from disk, crop it to a centred square, scale it to 256 px and keep it as your picture. "" or an
-## error message.
+## Load a picture from disk, crop it to a centred square, scale it to 256 px and keep it as the picture of the account
+## logged in (custom_path). "" or an error message.
 static func import_picture(path: String) -> String:
 	var img := Image.new()
 	var err := img.load(path)
@@ -51,9 +55,10 @@ static func import_picture(path: String) -> String:
 	img = img.get_region(Rect2i((img.get_width() - s) / 2, (img.get_height() - s) / 2, s, s))
 	img.convert(Image.FORMAT_RGBA8)
 	img.resize(256, 256, Image.INTERPOLATE_LANCZOS)
-	if img.save_png(CUSTOM) != OK:
+	var dest := custom_path(Ranked.account_id())
+	if img.save_png(dest) != OK:
 		return "The picture could not be saved."
-	_custom_stamp = -1
+	_custom.erase(dest)
 	return ""
 
 func _ready() -> void:

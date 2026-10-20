@@ -363,6 +363,11 @@ static func intent(t: String) -> String:
 	if has.call(["my profile", "my stats", "my avg", "my average", "my history", "my record", "check me", "stalk me", "look me up",
 			"check my", "profile ko", "stats ko", "tignan mo profile", "silipin mo profile", "my kda avg", "my mmr"]):
 		return "profile_me"
+	# the top of the ladder (run 2026-10-20 e): "who is top 1", "top 10?", "best player", "leaderboard"
+	if has.call(["top 1", "top1", "top 5", "top 10", "top 20", "top10", "top20", "who is top", "whos top", "who's top",
+			"number 1", "number one", "best player", "best players", "leaderboard", "sino top", "sino top 1", "pinaka magaling",
+			"aetherium+ players", "top players", "highest mmr"]):
+		return "ladder_top"
 	if has.call(["rank", "mmr", "what rank", "anong rank", "rank mo", "ur rank", "your rank"]):
 		return "rank"
 	if has.call(["where you from", "where u from", "from where", "taga saan", "taga san", "san ka", "country", "where r u from", "wer u from"]):

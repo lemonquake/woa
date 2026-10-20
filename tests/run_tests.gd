@@ -24,6 +24,7 @@ func _init() -> void:
 		var n: String = m.name
 		if n.begins_with("test_") and (only == "" or n.contains(only)):
 			_current = n
+			_reblock_buildings()
 			var before := _fails
 			var t1 := Time.get_ticks_msec()
 			call(n)
@@ -32,6 +33,13 @@ func _init() -> void:
 				_passes += 1
 	print("\n%d passed, %d failed" % [_passes, _fails])
 	quit(1 if _fails > 0 else 0)
+
+## Tests share one map, and a destroyed building opens its ground: every test starts with all footprints blocked.
+func _reblock_buildings() -> void:
+	for b in _map.buildings:
+		var def := SimData.unit(b.unit)
+		if not def.is_empty() and def.kind != K.FOUNTAIN:
+			_map.set_block_circle(b.pos, def.hull * 0.85, false)
 
 func check(cond: bool, msg: String) -> void:
 	if not cond:
@@ -549,6 +557,48 @@ func test_tower_invulnerability_chain() -> void:
 	check(not t2.invulnerable, "tier 2 becomes vulnerable after tier 1 falls")
 	var anc: SimUnit = w.units.filter(func(u): return u.team == C.DUSK and u.kind == K.ANCIENT)[0]
 	check(anc.invulnerable, "the Ancient stays invulnerable")
+
+## A destroyed building leaves nothing that blocks: its ground opens for walking and paths (trees and cliffs nearby
+## stay blocked), and the moved mid tier 3 leaves the head of the mid ramp clear.
+func test_destroyed_building_opens_ground() -> void:
+	var w := SimWorld.new(1, _map)
+	w.setup_match()
+	# the top tier 4 tower overlaps the top ranged barracks: its fall must not open ground the barracks still holds
+	var rax: SimUnit = null
+	var t4: SimUnit = null
+	for u in w.units:
+		if u.team == C.DAWN and u.def.id == "ranged_rax" and u.building_lane == "top":
+			rax = u
+		elif u.team == C.DAWN and u.def.id == "tower4" and (t4 == null or u.pos.distance_to(Vector2(-6200, -4550)) < 200):
+			t4 = u
+	w.combat.kill(t4, null)
+	w.combat.process_deaths()
+	check(not _map.is_walkable(rax.pos), "a standing barracks keeps its ground when the tower beside it falls")
+	_reblock_buildings()
+	w = SimWorld.new(1, _map)
+	w.setup_match()
+	var fallen: Array[SimUnit] = []
+	for u in w.units:
+		if u.kind != K.TOWER and u.kind != K.BARRACKS:
+			continue
+		check(not _map.is_walkable(u.pos), "%s %s blocks its ground while it stands" % [u.def.id, str(u.pos)])
+		fallen.append(u)
+	for u in fallen:
+		w.combat.kill(u, null)
+		w.combat.process_deaths()
+	for u in fallen:
+		check(_map.is_walkable(u.pos), "%s %s: its ground opens when it falls" % [u.def.id, str(u.pos)])
+		check(_map.is_walkable(u.pos + Vector2(u.def.hull * 0.6, 0)), "%s: the edge of its footprint opens" % u.def.id)
+	# a path through where the Dusk mid tier 3 stood, and the head of each mid ramp is open ground
+	for team in [C.DAWN, C.DUSK]:
+		var sgn := 1.0 if team == C.DAWN else -1.0
+		var head := Vector2(-4700, -4250) * sgn
+		check(_map.is_walkable(head), "team %d: the head of the mid ramp is open" % team)
+	_reblock_buildings()
+	for team in [C.DAWN, C.DUSK]:
+		var sgn := 1.0 if team == C.DAWN else -1.0
+		for off in [Vector2(0, 0), Vector2(100, 0), Vector2(0, 100), Vector2(-100, 0), Vector2(0, -100)]:
+			check(_map.is_walkable(Vector2(-4700, -4250) * sgn + off), "team %d: mid ramp head open at %s while the tower stands" % [team, str(off)])
 
 ## Side-lane creeps go into the enemy base once its tier 3 tower falls (run 2026-10-18 h: top and bottom waves paced at
 ## the base's gate), for both teams and both side lanes.
@@ -7493,11 +7543,83 @@ func test_emelrich_giant_swing_and_stance() -> void:
 			break
 	check(bool(e.channel.get("locked", false)), "the wind-up begins (after he turns, slowly in the stance)")
 	w.status.apply(e, 999, C.DUSK, {"id": "stunned", "stun": true, "dur": 0.3, "fx": "stun", "no_resist": true})
-	run(w, 1.4)
-	var exp_dmg := 350.0 * C.armor_multiplier(foe.armor * 0.35)
-	near(hp0 - foe.hp, exp_dmg, 3.0, "350 physical ignoring 65% armor (stance: a stun did not break it)")
+	run(w, 1.6)
+	var exp_dmg := 500.0 * C.armor_multiplier(foe.armor * 0.35)
+	near(hp0 - foe.hp, exp_dmg, 3.0, "500 physical ignoring 65% armor (a stun did not break it)")
 	check(not foe.get_modifier("stunned").is_empty(), "knocked down")
+	near(float(foe.get_modifier("stunned").get("dur", 0.0)), 4.5, 0.01, "for 4.5 seconds at level 3")
 	near(behind.hp, hb, 0.1, "nothing behind him is hit")
+
+## Giant Swing (owner's rework, 2026-10-20 e): a 1.8 / 1.6 / 1.4 s wind-up with Spell Immunity. The debuffs on him go
+## when it starts, no stun, hex, silence or slow lands during it (piercing ones neither), enemy pushes and pulls are
+## dropped, the blow always lands, and the guard ends with it. 2.5 / 3.5 / 4.5 s stun.
+func test_emelrich_giant_swing_guard() -> void:
+	near(float(SimData.ability("giant_swing").values.windup[0]), 1.8, 0.001, "1.8 s wind-up at level 1")
+	near(float(SimData.ability("giant_swing").values.windup[1]), 1.6, 0.001, "1.6 s at level 2")
+	near(float(SimData.ability("giant_swing").values.windup[2]), 1.4, 0.001, "1.4 s at level 3")
+	near(float(SimData.ability("giant_swing").values.stun[0]), 2.5, 0.001, "2.5 s stun at level 1")
+	near(float(SimData.ability("giant_swing").values.stun[1]), 3.5, 0.001, "3.5 s at level 2")
+	near(float(SimData.ability("giant_swing").values.stun[2]), 4.5, 0.001, "4.5 s at level 3")
+	check(SimKits5.SWING_GUARD_PIERCE.is_empty() and not SimKits5.pierces_guard({"id": "stunned"}),
+		"the pierce list starts empty (the owner fills it)")
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var e := _hero16(w, "emelrich", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(400, 0))
+	var hexer := _hero16(w, "ezee", o + Vector2(-300, 0), C.DUSK)
+	run(w, 0.1)
+	e.facing = 0.0
+	w.status.apply(e, hexer.id, C.DUSK, {"id": "test_slow", "dur": 10.0, "slow": 0.5, "fx": "slow"})
+	check(not e.get_modifier("test_slow").is_empty(), "slowed before the swing")
+	w.command(e.id, {"type": O.CAST_POINT, "ability": "giant_swing", "point": o + Vector2(700, 0)})
+	for i in 60:
+		w.step()
+		if bool(e.channel.get("locked", false)):
+			break
+	check(bool(e.channel.get("locked", false)), "the wind-up begins")
+	check(e.debuff_immune and e.has_flag(SimKits5.SWING_GUARD), "Spell Immunity through the wind-up")
+	check(e.get_modifier("test_slow").is_empty(), "the slow on him is gone")
+	check(not w.status.apply(e, hexer.id, C.DUSK, {"id": "stunned", "stun": true, "dur": 2.0, "fx": "stun"}),
+		"a stun does not land")
+	check(not w.status.apply(e, hexer.id, C.DUSK, {"id": "hex", "hex": true, "dur": 2.0}, true),
+		"a piercing hex does not land either")
+	check(not w.status.apply(e, hexer.id, C.DUSK, {"id": "silenced", "silence": true, "dur": 2.0}), "nor a silence")
+	check(not w.abilities.can_debuff(e, C.DUSK, true, "shuriken_hook"), "a piercing hook cannot take him")
+	# a modifier slipped on without asking SimStatus is swept off on the next tick
+	e.add_modifier({"id": "sneaky_root", "source": hexer.id, "expires": w.time + 5.0, "root": true, "debuff": true})
+	w.step()
+	check(e.get_modifier("sneaky_root").is_empty(), "a debuff added directly is swept off")
+	var hp0 := foe.hp
+	run(w, 1.6)
+	check(hp0 - foe.hp > 400.0, "the blow lands (%.0f)" % (hp0 - foe.hp))
+	check(not e.has_flag(SimKits5.SWING_GUARD) and not e.debuff_immune, "the guard ends with the swing")
+	check(w.status.apply(e, hexer.id, C.DUSK, {"id": "stunned", "stun": true, "dur": 1.0, "fx": "stun"}),
+		"after the swing he can be stunned again")
+
+## Bots step out of an enemy Ser Emelrich's Giant Swing cone once they see the wind-up (after their reaction time),
+## and the blow misses them.
+func test_bots_dodge_giant_swing() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var e := _hero16(w, "emelrich", o)
+	var h := _hero16(w, "ezee", o + Vector2(350, 220), C.DUSK)
+	var b := SimBot.new(w, h.id, "mid", "Bot Pip")
+	e.ability_level["giant_swing"] = 1                # 1.8 s to get out
+	run(w, 0.1)
+	e.facing = 0.0
+	w.command(e.id, {"type": O.CAST_POINT, "ability": "giant_swing", "point": o + Vector2(700, 0)})
+	for i in 30:
+		w.step()
+		if bool(e.channel.get("locked", false)):
+			break
+	check(bool(e.channel.get("locked", false)), "the wind-up begins")
+	b._foes = [e]
+	check(not SimBot18.dodge_windups(b, h), "not before its reaction time")
+	run(w, 0.4)
+	check(SimBot18.dodge_windups(b, h), "then it steps out")
+	run(w, 1.6)
+	check(h.get_modifier("stunned").is_empty(), "and the swing misses it")
+	check(not SimKits5.in_cone(o, Vector2.RIGHT, 700.0, deg_to_rad(50.0), h.pos, h.hull), "it stands outside the cone")
 
 func test_emelrich_steel_stance() -> void:
 	var w := empty_world()
@@ -7734,6 +7856,62 @@ func _test_ladder() -> void:
 func _end_ladder() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Ranked.path))
 	Ranked.reset()
+
+## Accounts (run 2026-10-20 e): up to 20 on one ladder. A new one starts fresh at 1500; logging in swaps "me" with the
+## account's own id everywhere (walls, forum posts), the account left stays on the leaderboard (offline, never played by
+## the ladder), each ladder player remembers each account apart, and logging back gives everything back.
+func test_ranked_accounts() -> void:
+	_test_ladder()
+	Forum.reset("user://forum_acc_test.json")
+	if FileAccess.file_exists(Forum.path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(Forum.path))
+	Forum.load_data()
+	var main := Ranked.me()
+	main["name"] = "Main Guy"
+	var first := Ranked.account_id()
+	check(first == "u1", "the first account is u1")
+	var b: Dictionary = Ranked.bots()[3]
+	b["you"] = {"games": 7, "rep": 0.8}
+	ProfileTalk.post(b, {"id": "me", "t": Ranked.now(), "text": "hi from main", "mood": 0})
+	var th: Dictionary = {"id": 999, "a": "me", "title": "mine", "body": "x", "kind": "help", "t": Ranked.now(), "replies": [],
+		"pending": [], "votes": 1, "voted": true, "seen": 1, "f": {}}
+	(Forum.data.threads as Array).append(th)
+	check(Ranked.create_account("") == "", "a name is needed")
+	check(Ranked.create_account(String(b.name)) == "", "a name in use is refused")
+	var alt := Ranked.create_account("Alt Guy")
+	check(alt != "" and Ranked.is_account(alt), "a new account is made: " + alt)
+	near(float(Ranked.profile(alt).mmr), 1500.0, 0.1, "it starts at 1500 MMR")
+	check(int(Ranked.profile(alt).wins) + int(Ranked.profile(alt).losses) == 0, "with no record")
+	check(Ranked.leaderboard().any(func(p): return String(p.id) == alt), "it is on the leaderboard")
+	check(not Persona.online(Ranked.profile(alt), Ranked.now()), "offline while not logged in")
+	check(Ranked.login(alt), "log in to it")
+	check(String(Ranked.me().name) == "Alt Guy" and Ranked.account_id() == alt, "now playing as the new account")
+	check(Ranked.is_account(first) and String(Ranked.profile(first).name) == "Main Guy", "the main account waits under u1")
+	check((b.you as Dictionary).is_empty(), "ladder players do not know the new account")
+	check(String((b.wall as Array)[0].id) == first, "the main account's wall comment is now by u1")
+	check(String(th.a) == first, "the main account's forum thread is now by u1")
+	check(Ranked.leaderboard().any(func(p): return String(p.id) == first), "the main account is on the leaderboard")
+	# the new account answers the main account's thread: nobody answers in the main account's name
+	Forum.reply(th, "nice post me", -1)
+	check((th.pending as Array).all(func(q): return not Ranked.is_yours(String(q.a))), "bots never write as your accounts")
+	check(Forum.target_of(th, "hello", -1) != first, "a reply on your other account's thread is not for it to answer")
+	var n := 0
+	while Ranked.accounts().size() < Ranked.MAX_ACCOUNTS:
+		n += 1
+		check(Ranked.create_account("Spare %d" % n) != "", "account %d" % Ranked.accounts().size())
+	check(Ranked.accounts().size() >= 10, "at least 10 accounts")
+	check(Ranked.create_account("One Too Many") == "", "no more than %d" % Ranked.MAX_ACCOUNTS)
+	check(Ranked.login(first), "log back in to the main account")
+	check(String(Ranked.me().name) == "Main Guy" and Ranked.account_id() == first, "the main account is back")
+	check(int((b.you as Dictionary).get("games", 0)) == 7, "ladder players remember the main account again")
+	check(String((b.wall as Array)[0].id) == "me" and String(th.a) == "me", "its posts are its own again")
+	check(String((th.replies as Array)[0].a) == alt, "the reply made on the other account is by that account")
+	Ranked.reset(Ranked.path)
+	Ranked.load_data()
+	check(Ranked.accounts().size() == Ranked.MAX_ACCOUNTS and String(Ranked.me().name) == "Main Guy", "accounts are saved")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Forum.path))
+	Forum.reset()
+	_end_ladder()
 
 func test_ranked_ladder() -> void:
 	_test_ladder()
@@ -8470,6 +8648,34 @@ func test_araki_ghosts() -> void:
 		run(w, 0.1)
 		check(not g.alive, "one hit and it is gone")
 
+## Ghosts fly at 800 and strike the moment they reach the target: a hero running away at full speed is still hit by
+## every ghost (they used to wind up 0.25 s and miss once it stepped out of reach), and they leave no body.
+func test_araki_ghosts_hit_runners() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var a := _hero16(w, "araki", o)
+	var foe := _hero16(w, "froster", o + Vector2(550, 0), C.DUSK)
+	near(float(SimData.unit("araki_ghost").move_speed), 800.0, 0.1, "ghosts move at 800")
+	near(float(SimData.ability("ghosts_of_the_will").values.speed[0]), 800.0, 0.1, "Ghosts of the Will flies at 800")
+	run(w, 0.1)
+	w.command(a.id, {"type": O.CAST_UNIT, "ability": "ghosts_of_the_will", "target": foe.id})
+	run(w, 0.35)
+	w.command(foe.id, {"type": O.MOVE, "point": o + Vector2(3000, 0)})
+	var dirs := 0
+	for i in int(7.0 * C.TICK_RATE):
+		foe.hp = foe.max_hp                    # keep it running: a kill would send the rest to another target
+		w.step()
+		for e in w.events:
+			if e.t == "ghost_hit":
+				dirs += 1
+		w.events.clear()
+		if foe.order != O.MOVE:
+			w.command(foe.id, {"type": O.MOVE, "point": foe.pos + Vector2(2000, 0)})
+	check(foe.moving or foe.pos.x > o.x + 1000.0, "the target ran")
+	check(dirs == 9, "every ghost hits a running hero (%d of 9)" % dirs)
+	check(w.units.filter(func(u): return String(u.def.id) == "araki_ghost" and not u.removed and u.alive).is_empty(),
+		"and they are gone")
+
 func test_araki_the_blur() -> void:
 	var w := empty_world()
 	var o := Vector2(-2000, -4000)
@@ -9081,6 +9287,51 @@ func _facts(good: bool) -> Dictionary:
 		"mvps": 60 if good else 2, "rp": 6 if good else 0, "tr": 40 if good else 1, "fb": 25 if good else 3, "ul": 3, "lane": "mid",
 		"streak": 5 if good else -4, "abandons": 0, "behavior": 9000, "support": false}
 
+## A pro's profile (run 2026-10-20 e): huge averages, MVP after MVP. Everyone reads it as one: kind and fair players are
+## in awe, tell them to go pro, root for them as a teammate and are honoured to face them; show-offs compare them with
+## the real top of the ladder; rough ones hate on it and trolls troll it. Walls get "+rep go pro". The bots know the top
+## 20 of the ladder and anyone in it by name.
+func test_profile_pro() -> void:
+	_test_ladder()
+	var me := Ranked.me()
+	me["history"] = []
+	me["career"] = {}
+	for i in 40:
+		var e := {"r": "W", "h": "araki", "k": 28, "x": 0, "a": 15, "lh": 300, "mvp": true, "len": 1800, "t": Ranked.now() - i * 4000, "d": 30}
+		(me.history as Array).append(e)
+		Career.add(me, e, true)
+	me["wins"] = 40
+	me["mvps"] = 40
+	var f := ProfileTalk.read(me)
+	check(ProfileTalk.elite_facts(f), "40 wins at 28/0/15, all MVP: a pro")
+	var plain: Dictionary = Ranked.bots()[40]
+	check(not ProfileTalk.elite(plain), "an ordinary ladder player is not")
+	var r := RandomNumberGenerator.new()
+	r.seed = 5
+	var seen := {}
+	for m in ["kind", "fair", "ego", "rough", "troll"]:
+		for side in ["with", "vs", ""]:
+			for i in 30:
+				var op := ProfileTalk.opinion(m, f, r, 0.0, side)
+				seen[String(op[0])] = true
+				var line := ChatMind.pick(String(op[0]), op[1], r.randf() < 0.3, r)
+				check(line != "" and not line.contains("{"), "%s/%s: a full line for %s (%s)" % [m, side, op[0], line])
+	for k in ["pf_pro_awe", "pf_pro_gopro", "pf_pro_root", "pf_pro_vs", "pf_pro_compare", "pf_pro_hater", "pf_pro_troll", "pf_pro_respect"]:
+		check(seen.has(k), "someone says " + k)
+	check(not seen.has("pf_bad_feeder") and not seen.has("pf_troll"), "nobody reads a pro as a feeder")
+	var fl := ProfileTalk.fill(f)
+	check(String(fl.get("top", "")) != "" and String(fl.top) != String(me.name), "compared with the real top 1 (%s)" % String(fl.get("top", "")))
+	var c := ProfileTalk.wall_comment(Ranked.bots()[3], me, r, {})
+	check(String(c.text) != "", "a wall comment for a pro: " + String(c.text))
+	# the top of the ladder, as the bots know it
+	var card := Ranked.ladder_card(20)
+	check(card.size() == 20 and int(card[0].mmr) >= int(card[19].mmr), "the top 20, best first")
+	check(String(card[0].name) != "" and String(card[0].kda) != "" and card[0].prof is Dictionary, "with names, averages and profiles")
+	var named := Ranked.named_in("is %s any good?" % String(card[3].name).to_lower())
+	check(String(named.get("id", "")) == String(card[3].id), "a ladder player named in chat is found")
+	check(ChatMind.intent("who is top 1") == "ladder_top" and ChatMind.intent("top 10 players?") == "ladder_top", "asking for the top")
+	_end_ladder()
+
 func test_profile_talk() -> void:
 	var r := RandomNumberGenerator.new()
 	r.seed = 11
@@ -9208,3 +9459,18 @@ func test_chat_profiles_in_match() -> void:
 	w3.botchat._queue.clear()
 	w3.botchat.prof.review()
 	check(w3.botchat._queue.any(func(q): return String(q.cat) == "pf_live_worse"), "dying far above your average is noticed")
+	# the top of the ladder (run 2026-10-20 e): "who is top 1" and a ladder player by name are answered with the facts
+	var w4 := _chat_world(true)
+	var me4 := w4.heroes[0]
+	w4.ladder = [{"name": "bunso94", "id": "b7", "place": 1, "rank": "Aetherium+ #1", "mmr": 6800, "kda": "9.1/2.0/11.3",
+		"kda_v": 10.2, "mvps": 410, "hero": "Araki", "wr": 64, "you": false, "prof": _facts(true)},
+		{"name": "sensei ni jericho", "id": "b9", "place": 2, "rank": "Aetherium+ #2", "mmr": 6700, "kda": "8.0/3.0/9.0",
+		"kda_v": 5.7, "mvps": 300, "hero": "Jayla", "wr": 60, "you": false, "prof": _facts(true)}]
+	w4.botchat._queue.clear()
+	w4.botchat._on_chat({"t": "chat", "u": me4.id, "text": "who is top 1", "all": false})
+	var top_ans: Array = w4.botchat._queue.filter(func(q): return String(q.cat) == "ladder")
+	check(not top_ans.is_empty() and String(top_ans[0].text).to_lower().contains("bunso94"), "'who is top 1' is answered (%s)" % str(top_ans.map(func(q): return q.text)))
+	w4.botchat._queue.clear()
+	w4.botchat._on_chat({"t": "chat", "u": me4.id, "text": "is sensei ni jericho good?", "all": false})
+	var who_ans: Array = w4.botchat._queue.filter(func(q): return String(q.cat) == "ladder")
+	check(not who_ans.is_empty() and String(who_ans[0].text).contains("#2"), "a ladder player by name is looked up (%s)" % str(who_ans.map(func(q): return q.text)))

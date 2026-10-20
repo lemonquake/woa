@@ -80,6 +80,10 @@ func build(p_seed := 1) -> void:
 	_pathing()
 	_vision_grid()
 
+## Buildings moved after the forest was laid out: new spot (Dawn's) -> the old one, which the forest still keeps clear
+## of, so every tree stands where it stood (the forest's random numbers depend on which spots it may use).
+const GROVE_SPOT := {Vector2(-4600, -4550): Vector2(-4700, -4250)}
+
 ## Building sites, lanes, camps. Everything is stated for Dawn and mirrored for Dusk.
 func _layout() -> void:
 	var dawn_lanes := {
@@ -107,7 +111,8 @@ func _layout() -> void:
 		["ranged_rax", "ranged_rax", "top", 0, Vector2(-6200, -4550)],
 		["tower2", "tower2", "top", 2, Vector2(-6300, -900)],
 		["tower1", "tower1", "top", 1, Vector2(-6300, 1900)],
-		["tower3", "tower3", "mid", 3, Vector2(-4700, -4250)],
+		# beside the lane, back from the top of the mid ramp (it stood in the ramp's mouth, at the head of the stairs)
+		["tower3", "tower3", "mid", 3, Vector2(-4600, -4550)],
 		["melee_rax", "melee_rax", "mid", 0, Vector2(-4950, -4800)],
 		["ranged_rax", "ranged_rax", "mid", 0, Vector2(-5350, -4400)],
 		["tower2", "tower2", "mid", 2, Vector2(-3400, -2900)],
@@ -128,7 +133,8 @@ func _layout() -> void:
 			var p: Vector2 = b[4] if team == C.DAWN else -(b[4] as Vector2)
 			# rotated 180 degrees, Dawn's bottom lane becomes the north edge: Dusk's end of the top lane
 			var lane: String = b[2] if team == C.DAWN else mirror_lane[b[2]]
-			buildings.append({"unit": b[0], "team": team, "lane": lane, "tier": b[3], "pos": p})
+			buildings.append({"unit": b[0], "team": team, "lane": lane, "tier": b[3], "pos": p,
+				"grove": p if not GROVE_SPOT.has(b[4]) else (GROVE_SPOT[b[4]] if team == C.DAWN else -(GROVE_SPOT[b[4]] as Vector2))})
 	# Neutral camps, as in Dota 2 (7.41): 14 a side, 3 small, 7 medium, 3 large, 1 ancient. The south-east jungle
 	# (between mid and the bottom lane) is Dawn's main jungle, the "triangle" between the top lane and mid its off-lane
 	# jungle; Dusk's are the same rotated 180 degrees. [kind, centre, spawn box half size, pull camp]. Pull camps sit
@@ -305,7 +311,7 @@ func _on_plateau(p: Vector2) -> bool:
 		if not _lane_clear(p, 560.0):
 			return false
 		for b in buildings:
-			if p.distance_to(b.pos) < 700.0:
+			if p.distance_to(b.grove) < 700.0:
 				return false
 		return true
 	return false
@@ -586,7 +592,7 @@ func _tree_allowed(p: Vector2) -> bool:
 		if q.distance_to(fountains[0]) < 1700.0 or not _lane_clear(q, 650.0):
 			return false
 		for b in buildings:
-			if q.distance_to(b.pos if b.team == C.DAWN else -(b.pos as Vector2)) < 700.0:
+			if q.distance_to(b.grove if b.team == C.DAWN else -(b.grove as Vector2)) < 700.0:
 				return false
 	for k in lanes:
 		if _polyline_distance(p, lanes[k]) < 430.0:
@@ -598,7 +604,7 @@ func _tree_allowed(p: Vector2) -> bool:
 		if p.distance_to(c.pos) < 520.0:
 			return false
 	for b in buildings:
-		if p.distance_to(b.pos) < 520.0:
+		if p.distance_to(b.grove) < 520.0:
 			return false
 	for r in ramps:
 		if p.distance_to(r.pos) < r.radius + 200.0:
@@ -661,6 +667,31 @@ func set_block_circle(center: Vector2, radius: float, open: bool) -> void:
 				walkable[cy * N + cx] = 1 if open else 0
 				if astar.region.size.x > 0:
 					astar.set_point_solid(Vector2i(cx, cy), not open)
+
+## A destroyed building leaves no footprint: its cells open again unless the border, a cliff, a living tree, a
+## resting boulder or a building still standing (`standing`: [[pos, radius]]) holds them.
+func open_building(center: Vector2, radius: float, standing: Array = []) -> void:
+	var c0 := world_to_cell(center - Vector2(radius, radius))
+	var c1 := world_to_cell(center + Vector2(radius, radius))
+	for cy in range(maxi(2, c0.y), mini(N - 3, c1.y) + 1):
+		for cx in range(maxi(2, c0.x), mini(N - 3, c1.x) + 1):
+			if cell_center(cx, cy).distance_to(center) > radius + CELL * 0.5:
+				continue
+			var i := cy * N + cx
+			var ti := tree_cell[i]
+			if ti >= 0 and trees[ti].alive or rock_at(Vector2i(cx, cy)) > 0:
+				continue
+			if is_cliff_cell(cx, cy) or level[i] == MOUNTAIN:
+				continue
+			var held := false
+			for sb: Array in standing:
+				if cell_center(cx, cy).distance_to(sb[0]) <= float(sb[1]) + CELL * 0.5:
+					held = true
+					break
+			if held:
+				continue
+			walkable[i] = 1
+			astar.set_point_solid(Vector2i(cx, cy), false)
 
 ## Cut down a tree (it regrows after `regrow_time` seconds when that is > 0; planted trees never regrow). Returns
 ## false if there was none.

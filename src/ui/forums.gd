@@ -369,7 +369,8 @@ func _author_line(id: String, t: int, tag := "") -> HBoxContainer:
 	av.custom_minimum_size = Vector2(40, 40)
 	av.set_spec(p.get("avatar", {"k": "none"}))
 	row.add_child(av)
-	var nm := _label(String(p.get("name", "?")) + ("  (you)" if id == "me" else ""), 18, U.GOLD if id == "me" else U.TEXT, "bold")
+	var tagline := "  (you)" if id == "me" else ("  (your account)" if Ranked.is_account(id) else "")
+	var nm := _label(String(p.get("name", "?")) + tagline, 18, U.GOLD if Ranked.is_yours(id) else U.TEXT, "bold")
 	row.add_child(nm)
 	# the picture and name open the profile (click) or the player menu (right-click) (run 2026-10-20)
 	for c in [av, nm]:
@@ -390,7 +391,7 @@ func _author_line(id: String, t: int, tag := "") -> HBoxContainer:
 	em.custom_minimum_size = Vector2(34, 34)
 	row.add_child(em)
 	var info := Ranked.rank_label(p)
-	if id != "me":
+	if not Ranked.is_yours(id):
 		var labels: Array = Persona.labels(p)
 		if not labels.is_empty():
 			info += "  ·  " + ", ".join(labels)
@@ -432,10 +433,10 @@ func _reply_row(th: Dictionary, i: int) -> Control:
 		_fill_view(th), "DarkButton", Vector2(120, 32))
 	vb.add_theme_font_size_override("font_size", 14)
 	row.add_child(vb)
-	if not mine:
-		var rb := _button("Reply", func(): _set_reply_to(th, i), "DarkButton", Vector2(90, 32))
-		rb.add_theme_font_size_override("font_size", 14)
-		row.add_child(rb)
+	# you may answer anyone, yourself included (a post of another of your accounts, or your own)
+	var rb := _button("Reply", func(): _set_reply_to(th, i), "DarkButton", Vector2(90, 32))
+	rb.add_theme_font_size_override("font_size", 14)
+	row.add_child(rb)
 	inner.add_child(row)
 	return box
 

@@ -75,6 +75,13 @@ static func _clean() -> void:
 			q["at"] = int(q.get("at", 0))
 			q["to"] = int(q.get("to", -1))
 
+## You logged in to another account (Ranked.login): the posts of the one leaving keep its own id, the one coming
+## writes as "me".
+static func swap_ids(swap: Dictionary) -> void:
+	load_data()
+	Ranked.swap_ids(data, swap)
+	save()
+
 static func threads() -> Array:
 	load_data()
 	return data.threads
@@ -211,6 +218,13 @@ const THREAD := {
 		["{you} is a smurf", "{kda}, MVP. reported. there is no way"]],
 	"you_carry": [["{you} carried me today", "+rep, best {hero} i've played with"], ["Shoutout to {you}", "{kda} on {hero}, MVP. add me pls"]],
 	"you_bad": [["{you} fed my game", "{kda} on {hero}. how is this guy {rank}"], ["Avoid {you}", "{kda}. then flamed us. reported"]],
+	# a pro on the ladder (run 2026-10-20 e): the whole forum talks about them, fans and haters
+	"you_pro": [["Is {you} the best player on the ladder?", "{kda} on {hero} against us. {mvps} MVPs on the profile. what is this"],
+		["{you} should go pro", "played with him today. {kda}. nobody at {myrank} plays like that"],
+		["{you} is overrated, change my mind", "yes the stats are good. vs who though"],
+		["Played against {you} today", "{kda} on {hero}. honored to lose honestly"],
+		["{you}'s profile is unreal", "{mvps} MVPs, almost no deaths. aetherium+ players don't even have that"],
+		["Who else got stomped by {you}", "{kda} on {hero}. i want to quit"]],
 	"you_toxic": [["{you} trash talked all game", "typed ez the whole game. lost anyway {laugh}"], ["{you} is so toxic", "ez this, ez that. muted and reported"]],
 	"bot_feeder": [["{name} is the worst {hero} i've seen", "0 wards, 12 deaths, still flamed us"], ["Avoid {name}", "fed and blamed everyone"]],
 	"bot_rampage": [["{name} rampaged us", "on {hero}. we had no chance"], ["{name} is a monster", "rampage on {hero} in my game today"]],
@@ -298,6 +312,8 @@ static func _pools(kind: String, st: String) -> Array:
 			return {"troll": ["troll", "funny_reply"]}.get(st, ["funny_reply", "joker"])
 		"you_good", "you_bad", "you_toxic", "bot_feeder":
 			return {"troll": ["troll", "doubt"], "kind": ["kind", "agree"], "arrogant": ["arrogant"]}.get(st, ["agree", "joker", "disagree"])
+		"you_pro":
+			return {"troll": ["troll", "doubt"], "kind": ["congrats", "agree"], "arrogant": ["arrogant", "doubt"]}.get(st, ["agree", "congrats", "doubt"])
 	return {"arrogant": ["arrogant"], "troll": ["troll"], "joker": ["joker"], "kind": ["kind", "agree"], "helpful": ["agree", "help_tip"]}.get(st, ["agree", "disagree"])
 
 # ---- Making threads ---------------------------------------------------------------------------------------------------------
@@ -495,6 +511,9 @@ static func _met_you() -> Dictionary:
 		var key := ""
 		if int(y.get("trash_talked", 0)) >= 2 and rng.randf() < 0.7:
 			key = "you_toxic"
+		elif ProfileTalk.elite(Ranked.me()) and rng.randf() < 0.55:
+			key = "you_pro"
+			f["mvps"] = str(int(Career.moments(Ranked.me()).mvp))
 		elif (float(k) + a * 0.5) / maxf(1.0, x) >= 3.0 and k >= 6:
 			key = "you_carry" if String(y.get("last_side", "")) == "with" else "you_good"
 		elif x >= 8 and x >= k + a:
@@ -559,7 +578,7 @@ static func _reply_text(th: Dictionary, author: String, to := -1) -> String:
 	# a thread about this author: it defends itself
 	if String(th.get("about", "")) == author:
 		pool = "defend"
-	elif kind in ["you_good", "you_carry", "you_bad", "you_toxic"] and (person(author).get("you", {}) as Dictionary).has("games") and rng.randf() < 0.5:
+	elif kind in ["you_good", "you_carry", "you_bad", "you_toxic", "you_pro"] and (person(author).get("you", {}) as Dictionary).has("games") and rng.randf() < 0.5:
 		pool = "about_you_mate" if String((person(author).get("you", {}) as Dictionary).get("last_side", "")) == "with" else "about_you_foe"
 	else:
 		var ps: Array = _pools(kind, st)
@@ -625,7 +644,7 @@ static func reply(th: Dictionary, text: String, to := -1) -> void:
 	(th.replies as Array).append(r)
 	var my_i := (th.replies as Array).size() - 1
 	var used: Array = ["me"]
-	if target != "" and target != "me" and not person(target).is_empty():
+	if target != "" and not Ranked.is_yours(target) and not person(target).is_empty():
 		(th.pending as Array).append({"a": target, "at": t + rng.randi_range(5, 14), "to": my_i})
 		used.append(target)
 	var rude := ChatMind.intent(" " + text.to_lower() + " ") in ["insult", "taunt"]
@@ -655,16 +674,16 @@ static func target_of(th: Dictionary, text: String, to := -1) -> String:
 		if not (String(x.a) in seen):
 			seen.append(String(x.a))
 	for id in seen:
-		if id == "me":
+		if Ranked.is_yours(id):
 			continue
 		var nm := name_of(id).to_lower()
 		if nm.length() >= 3 and (low.contains("@" + nm) or low.contains(" " + nm + " ") or low.contains(" " + nm + ",")
 				or low.contains(" " + nm + "?") or low.contains(" " + nm + "!")):
 			return id
-	if String(th.a) != "me":
+	if not Ranked.is_yours(String(th.a)):
 		return String(th.a)
 	for i in range(rs.size() - 1, -1, -1):
-		if String(rs[i].a) != "me":
+		if not Ranked.is_yours(String(rs[i].a)):
 			return String(rs[i].a)
 	return ""
 
@@ -685,7 +704,7 @@ static func answer_ignored(t := 0) -> int:
 			if answered:
 				continue
 			var who := target_of({"a": th.a, "replies": rs.slice(0, i)}, String(r.text), int(r.get("to", -1)))
-			if who == "" or who == "me" or person(who).is_empty():
+			if who == "" or Ranked.is_yours(who) or person(who).is_empty():
 				who = _joiner(th, ["me"])
 			if who == "":
 				continue
@@ -700,9 +719,9 @@ static func _joiner(th: Dictionary, used: Array) -> String:
 	var inside: Array = []
 	for x in th.replies:
 		var id := String(x.a)
-		if id != "me" and not (id in used) and not (id in inside) and not person(id).is_empty():
+		if not Ranked.is_yours(id) and not (id in used) and not (id in inside) and not person(id).is_empty():
 			inside.append(id)
-	if String(th.a) != "me" and not (String(th.a) in used) and not (String(th.a) in inside):
+	if not Ranked.is_yours(String(th.a)) and not (String(th.a) in used) and not (String(th.a) in inside):
 		inside.append(String(th.a))
 	if not inside.is_empty() and rng.randf() < 0.6:
 		return String(inside[rng.randi_range(0, inside.size() - 1)])
@@ -746,7 +765,7 @@ static func _facts_in(text: String) -> Dictionary:
 ## praise more.
 static func _my_words(text: String, target: String) -> void:
 	var it := ChatMind.intent(" " + text.to_lower() + " ")
-	if target == "" or target == "me":
+	if target == "" or Ranked.is_yours(target):
 		return
 	var p := person(target)
 	if p.is_empty():

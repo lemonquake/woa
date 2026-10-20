@@ -4,6 +4,69 @@
 
 ## Status (keep this section current)
 
+**2026-10-20 e: accounts, quick stats in the hero pick, players who know a pro when they see one, a new Players tab
+with friend chat, destroyed buildings that leave nothing, Araki's ghosts and a new Giant Swing (your request).** Run
+`work/lemondev/2026-10-20e-social-accounts/` (handoff.md, captures).
+* **Accounts** (`Ranked.create_account`, `login`, `accounts`; `src/ui/accounts_panel.gd`): Ranked > **Accounts** (top
+  bar) or right-click your chip > Accounts. Up to 20 accounts on the same ladder; a new one starts at 1,500 MMR with a
+  fresh profile. **Log in** to any of them, **Log out** (then pick one). The accounts you are not on stay on the
+  leaderboard and can be opened like anyone ("Your account · Last on ..."); the ladder never plays them and bots never
+  write as them. Logging in swaps the ids in the save and the forums, so your walls, posts and friends follow each
+  account, and every ladder player remembers each account apart. Each account has its own uploaded picture. On the
+  Forums you can **reply to anyone, yourself included** (another of your accounts' posts, or your own).
+* **Hero pick quick stats** (`src/ui/player_peek.gd`): rest the mouse on any player in the pick: rank, MMR and place,
+  record and streak, the last 5 games (hero, won or lost, K/D/A, MVP), best heroes (games, W-L, win rate, medal),
+  averages (K/D/A, KDA, last hits and gold a minute), MVPs / Rampages / Triples, and for ladder players what they are
+  like and think of you.
+* **They know a pro** (`ProfileTalk.elite`, `_pro_sit`; lines `pf_pro_*` in `profile_lines.gd`): a profile far past
+  its rank (yours is) gets its own reading everywhere players look you up (the pick, match chat, walls, the online
+  writer, forums): awe ("{mvpr}% mvp rate. thats not human"), **go pro**, teammates root for you ("carry us king", "im
+  so proud to be on ur team"), enemies are honoured ("honored to lose to u"), show-offs compare you with the real top
+  of the ladder ("{top} is top 1 and has worse numbers than u", "aetherium+ players avg like {topkda}"), rough ones
+  hate ("stat padder", "overrated"), trolls troll ("bro bought the account", "report for scripts"). More teammates look
+  you up in the pick when you are a pro. Forums: new threads about you ("Is {you} the best player on the ladder?",
+  "{you} should go pro", "{you} is overrated, change my mind").
+* **They know the ladder** (`Ranked.ladder_card`, `Ranked.named_in`, `SimWorld.ladder`, `ChatProfile.ladder_ask`):
+  bots get the top 20 at match start and answer "who is top 1", "top 10?", "best player", or a question naming anyone
+  on the ladder ("is dealer2007 good?"), with the facts and their take, in match chat, the pick and friend chat.
+* **Players tab** (rebuilt): **Friends** with counts (friends, online, in a match, offline, requests), filters (All,
+  Online, In a match, Offline, Requests), unread counts and a **Chat** button per friend; the middle panel is **Chat**
+  (the conversation, typing, Send, your conversations) or **Ladder activity**; the right is **Online now**, **Recent**,
+  **Top 20** and **Find player** (anyone by name). **Friend chat** (`src/core/friend_chat.gd`): friends answer what you
+  write by its meaning and by who they are (online in seconds, in a match after it, away when back), and now and then
+  write first (your last game, a duo, their streak). New messages show as a notice anywhere on the Ranked screen.
+* **Destroyed buildings** leave nothing: the ground opens for walking and paths (a building still standing keeps its
+  own; trees and cliffs stay), and the rubble sinks out of sight. **The mid tier 3** stood at the head of the mid stairs
+  (Black Sun's, and Ancient Light's mirror): moved beside the lane, the stairs' top is open (forest unchanged).
+* **Araki's Ghosts of the Will**: they stopped at the edge of reach each tick and a runner stepped out of it every time,
+  so they trailed and never struck. Now they fly at **800** and strike the moment they reach the target, moving or
+  not, keep their target out of sight (not through invisibility), and vanish in a puff (no death fall).
+* **Giant Swing** (Ser Emelrich): wind-up **1.8 / 1.6 / 1.4 s**, stun **2.5 / 3.5 / 4.5 s**, damage 250 / 375 / 500.
+  Through the wind-up he has **Spell Immunity**: debuffs on him are removed, none lands (piercing ones neither), enemy
+  pushes and pulls are dropped, nothing stops the swing; he looms 30% larger under a gold shell, and the blow shakes
+  the ground. **Your list**: `SWING_GUARD_PIERCE` at the top of `src/sim/sim_kits5.gd` (empty): put modifier ids
+  ("stunned", "hex", "silenced") or ability / item ids ("shuriken_hook") there and those get through (and may break
+  the swing). Every bot steps out of the red cone (or Overhead Cut's line) once it sees it.
+* Evidence: tests (the new `test_ranked_accounts`, `test_profile_pro`, `test_araki_ghosts_hit_runners`,
+  `test_emelrich_giant_swing_guard`, `test_bots_dodge_giant_swing`, `test_destroyed_building_opens_ground`, and in
+  `test_chat_profiles_in_match`), captures in the run folder. Not verified: no fresh critic or Dota benchmark, no 4K
+  capture, the Accounts panel and friend chat were not clicked through by a probe, the export was not rebuilt.
+* Chosen where open (veto any): Giant Swing damage (above); its cooldown stays your 20 / 15 / 10 s; 20 accounts at
+  most; a "pro" = 30+ games and KDA 7+ with 2.5 or fewer deaths a game, or MVP in 35%+ with KDA 5+; friend answer
+  times 3-8 s / 40-150 s / 4-25 min.
+* New names (veto any): **Accounts**, **Log in**, **Log out**, **Logged in**, **New account**, "New account name",
+  "Log in to this account", "N of 20", "Your account", "(your account)", "Another of your accounts", "Logged out.
+  Choose an account to log in."; Players **Friends**, **Online**, **In a match**, **Offline**, **Requests**, **All**,
+  **Chat**, **Ladder activity**, **Online now**, **Recent**, **Top 20**, **Find player**, **Send**, **Back**, "Write to
+  X (Enter)", "X is typing...", "Say hi to X."; pick card **Last 5 games**, **Best heroes**, **Averages**, **MVPs**,
+  **Rampages**, **Triples**, "#N on the ladder", "Right-click for the profile and more". Code: `AccountsPanel`,
+  `PlayerPeek`, `FriendChat`, `FriendCounts`, `ChatHead`, `Bubble`, `SWING_GUARD`, `SWING_GUARD_PIERCE`, `guard_sweep`,
+  `pierces_guard`, `dodge_windups`, `open_building`, `GROVE_SPOT`, `ladder_card`, `named_in`, `ladder_ask`, `elite`,
+  `elite_facts`; save fields `accounts`, `acc`, `account`, `last_login`, `yous`, `chats`, `unread`, `typing`,
+  `chat_first`; line kinds `pf_pro_awe`, `pf_pro_gopro`, `pf_pro_compare`, `pf_pro_root`, `pf_pro_vs`,
+  `pf_pro_respect`, `pf_pro_hater`, `pf_pro_troll`, `pf_wall_pro`, `pf_wall_pro_hate`; forum kind `you_pro`; chat
+  intent `ladder_top`.
+
 **2026-10-20 d: smoother interface everywhere, and the official icon border (your request: "the Talent UI ... doesn't
 fucking close when you click away", "create our Official and Default BORDER for item/skill icons ... replaceable at
 any time").** Run `work/lemondev/2026-10-20d-ui-smooth/` (handoff.md, captures, probe logs). **Why: the owner is

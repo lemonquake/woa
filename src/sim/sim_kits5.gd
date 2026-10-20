@@ -12,7 +12,9 @@ extends RefCounted
 ## Reckless Swing cleaves and heals but he takes more; Unstoppable spends Rage to shorten a stun, root or hex; Berserk
 ## holds half the damage back and returns it later, unless he takes a hero down.
 ## Ser Emelrich's big hits have wind-ups everyone can see (a locked channel: orders wait, a stun, hex or silence breaks
-## it); Sweep shoves enemies to his left so they pile up; Steel Stance blocks from the front.
+## Overhead Cut's); Sweep shoves enemies to his left so they pile up; Steel Stance blocks from the front. While he winds
+## up Giant Swing he is spell immune: no debuff lands or stays on him (SWING_GUARD_PIERCE lists the exceptions), so
+## nothing stops the blow but his death.
 
 const C = preload("res://src/sim/sim_const.gd")
 const K = C.Kind
@@ -21,6 +23,11 @@ const CASTS := ["gust", "tailwind", "wind_wall", "hurricane", "axe_throw", "reck
 	"overhead_cut", "sweep", "giant_swing"]
 const EFFECTS := ["gust", "wind_wall", "hurricane", "giant_swing_back"]
 const WINDUPS := ["overhead_cut", "giant_swing"]
+## Debuffs that still land on Ser Emelrich (and may break the swing) while he winds up Giant Swing. Each entry is a
+## modifier id ("stunned", "hex", "silenced"...) or the id of the ability or item that puts it on ("shuriken_hook").
+## Everything else is ignored while the guard lasts. Empty on purpose: the owner fills it.
+const SWING_GUARD_PIERCE: Array[String] = []
+const SWING_GUARD := "swing_guard"          # the modifier on him for the wind-up (flag "swing_guard", debuff immune)
 ## Pushes whose crash this kit scores (SimAbilities._impact): [damage key, stun key].
 const CRASHES := {"hurricane": ["", "crash_stun"], "sweep": ["impact_damage", "impact_stun"]}
 const WALL_BAND := 60.0                     # the Wind Wall slows walkers within this of its line
@@ -127,6 +134,8 @@ func tick() -> void:
 	if not returns.is_empty():
 		_update_returns()
 	for h in w.heroes:
+		if not h.channel.is_empty() and String(h.channel.get("ability", "")) == "giant_swing":
+			guard_sweep(h)
 		if h.ability_level.has("rage"):
 			_rage_tick(h)
 		if h.stacks.has("berserk_until"):
@@ -844,8 +853,9 @@ func on_hero_death(t: SimUnit, killer: SimUnit, credit: SimUnit) -> void:
 # ---- Ser Emelrich: wind-ups ---------------------------------------------------------------------------------------------
 
 ## Overhead Cut and Giant Swing: after the cast point (which the player can still call off) comes a wind-up everyone can
-## see. It is a locked channel: orders wait until it is over (SimOrders.issue), a stun, hex or silence breaks it, with
-## Steel Stance on only a hex or silence breaks Giant Swing's. The blow lands when it ends (channel_done).
+## see. It is a locked channel: orders wait until it is over (SimOrders.issue). A stun, hex or silence breaks Overhead
+## Cut's; through Giant Swing's he is spell immune (the guard), so only a debuff on SWING_GUARD_PIERCE can. The blow
+## lands when it ends (channel_done).
 func _start_windup(u: SimUnit, aid: String, lv: int, p: Vector2) -> void:
 	var dir := _aim(u, p)
 	u.facing = dir.angle()
@@ -854,6 +864,13 @@ func _start_windup(u: SimUnit, aid: String, lv: int, p: Vector2) -> void:
 	w.orders.cancel_channel(u)
 	u.channel = {"ability": aid, "until": w.time + dur, "locked": true, "aim": dir, "lv": lv, "seq": _seq,
 		"from": u.pos}
+	if aid == "giant_swing":
+		# spell immune through the wind-up: the debuffs on him go now (but the listed ones), new ones never land
+		u.add_modifier({"id": SWING_GUARD, "source": u.id, "expires": w.time + dur + 0.1, SWING_GUARD: true,
+			"debuff_immune": true, "fx": "spell_shield"})
+		guard_sweep(u)
+		u.refresh_stats()
+		w.events.append({"t": "swing_guard", "u": u.id, "dur": dur})
 	var ev := {"t": "windup", "u": u.id, "ability": aid, "dir": dir, "from": u.pos, "dur": dur, "seq": _seq,
 		"distance": ab.val(u, aid, "distance")}
 	if aid == "overhead_cut":
@@ -864,6 +881,12 @@ func _start_windup(u: SimUnit, aid: String, lv: int, p: Vector2) -> void:
 
 ## Whether a wind-up breaks now (SimOrders asks every tick).
 func windup_breaks(u: SimUnit, ch: Dictionary) -> bool:
+	if String(ch.ability) == "giant_swing" and u.has_flag(SWING_GUARD):
+		# spell immune: only a stun, hex or silence from the owner's list gets through
+		for m: Dictionary in u.modifiers:
+			if (m.get("stun", false) or m.get("hex", false) or m.get("silence", false)) and pierces_guard(m):
+				return true
+		return false
 	if u.has_flag("hex") or u.has_flag("silence"):
 		return true
 	if not u.is_stunned():
@@ -873,6 +896,9 @@ func windup_breaks(u: SimUnit, ch: Dictionary) -> bool:
 ## The wind-up ended: the blow lands (cancelled: it is called off and the marks fade).
 func windup_done(u: SimUnit, ch: Dictionary, cancelled: bool) -> void:
 	var aid := String(ch.ability)
+	if u.has_flag(SWING_GUARD):
+		u.remove_modifier(SWING_GUARD)
+		u.refresh_stats()
 	if cancelled or not u.alive:
 		w.events.append({"t": "windup_end", "u": u.id, "ability": aid, "seq": int(ch.seq), "cancelled": true})
 		return
@@ -891,6 +917,34 @@ func windup_done(u: SimUnit, ch: Dictionary, cancelled: bool) -> void:
 					"dir": dir, "distance": ab.val(u, aid, "back_distance"), "angle": ab.val(u, aid, "back_angle"),
 					"damage": dmg * 0.5, "stun": stun, "armor_ignore": ign, "seq": int(ch.seq)})
 	w.events.append({"t": "windup_end", "u": u.id, "ability": aid, "seq": int(ch.seq), "cancelled": false})
+
+## Whether a debuff (a modifier, or a forced move's dictionary) gets through Giant Swing's guard: its id, or the
+## ability or item that made it, is on SWING_GUARD_PIERCE.
+static func pierces_guard(m: Dictionary) -> bool:
+	if SWING_GUARD_PIERCE.is_empty():
+		return false
+	for k in ["id", "ability", "key", "item"]:
+		if m.has(k) and String(m[k]) in SWING_GUARD_PIERCE:
+			return true
+	return false
+
+## Giant Swing's guard: every debuff an enemy (or a neutral) put on him goes, but the listed ones, and so does an
+## enemy's push, pull or throw. Runs when the wind-up starts and every tick of it (some effects add modifiers without
+## asking SimStatus).
+func guard_sweep(u: SimUnit) -> void:
+	for i in range(u.modifiers.size() - 1, -1, -1):
+		var m: Dictionary = u.modifiers[i]
+		var hostile := bool(m.get("debuff", false)) or int(m.get("from_team", u.team)) != u.team
+		if not hostile:
+			var src := w.get_unit(int(m.get("by", m.get("source", -1))))
+			hostile = src != null and src.team != u.team
+		if hostile and not pierces_guard(m):
+			u.modifiers.remove_at(i)
+			u.stats_dirty = true
+	if not u.knock.is_empty():
+		var by := w.get_unit(int(u.knock.get("src", -1)))
+		if by != null and by.team != u.team and not pierces_guard(u.knock):
+			u.knock = {}
 
 ## His attack damage for spells that add it (the middle of his damage range plus bonus damage).
 static func attack_damage(u: SimUnit) -> float:

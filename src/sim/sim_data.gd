@@ -453,11 +453,12 @@ static func _add_heroes_19() -> void:
 		"talents": [["araki_senryukai", "araki_strike_damage"], ["araki_ghosts", "araki_bomb_cooldown"],
 			["araki_ghost_damage", "araki_bomb_resist"], ["araki_blur_attacks", "araki_strike_refresh"]],
 		"model": "hero_araki"})
-	# a ghost of Ghosts of the Will: Araki's look, see-through; flies (phased, over cliffs and trees) at 650, strikes
-	# its target once and is gone; any hit destroys it (1 health). No bounty. SimKits7 moves it.
+	# a ghost of Ghosts of the Will: Araki's look, see-through; flies (phased, over cliffs and trees) at 800, strikes
+	# its target the moment it reaches it and is gone in a puff; any hit destroys it (1 health). No bounty. SimKits7
+	# moves it.
 	_add("araki_ghost", {"name": "Ghost", "kind": K.SUMMON, "hull": 16.0, "hp": 1.0, "hp_regen": 0.0, "mana": 0.0,
 		"armor": 0.0, "dmg_min": 0.0, "dmg_max": 0.0, "bat": 1.7, "attack_speed": 100.0, "attack_point": 0.25,
-		"backswing": 0.3, "acquire": 0.0, "range": 150.0, "projectile_speed": 0.0, "move_speed": 650.0,
+		"backswing": 0.3, "acquire": 0.0, "range": 150.0, "projectile_speed": 0.0, "move_speed": 800.0,
 		"can_move": false, "can_attack": false, "turn_rate": 3.0, "vision_day": 200.0, "vision_night": 200.0,
 		"xp": 0.0, "gold_min": 0, "gold_max": 0, "flying": true, "element": EL.NONE, "model": "araki_ghost"})
 
@@ -923,11 +924,11 @@ static func _build_abilities_18() -> void:
 	_abilities["giant_swing"] = {"id": "giant_swing", "name": "Giant Swing", "behavior": "point", "key": "R",
 		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [20, 15, 10],
 		"cast_point": 0.3, "range": 700, "anim": "greatsword_power", "damage_type": "physical", "direction": true,
-		"values": {"windup": [1.2, 1.2, 1.2], "distance": [700, 700, 700], "angle": [100, 100, 100],
-		"damage": [150, 250, 350], "armor_ignore": [0.65, 0.65, 0.65], "stun": [1.2, 1.5, 1.8],
+		"values": {"windup": [1.8, 1.6, 1.4], "distance": [700, 700, 700], "angle": [100, 100, 100],
+		"damage": [250, 375, 500], "armor_ignore": [0.65, 0.65, 0.65], "stun": [2.5, 3.5, 4.5],
 		"back_delay": [0.5, 0.5, 0.5], "back_distance": [500, 500, 500], "back_angle": [70, 70, 70]},
 		"hidden_values": ["back_delay", "back_distance", "back_angle"],
-		"desc": "Ser Emelrich winds up for 1.2 seconds (a red cone for everyone to see), then cuts through a cone 700 long and 100 degrees wide: physical damage that ignores 65% of armor, and every enemy hit is knocked down (stunned). Every tree in the cone falls. A stun, hex or silence breaks the wind-up; with Steel Stance on only a hex or silence does. Upgrade Staff: 0.5 seconds later he swings back the other way (a smaller cone, half damage)."}
+		"desc": "Ser Emelrich winds up for 1.8 / 1.6 / 1.4 seconds (a red cone for everyone to see: get out of it), then brings the sword down through a cone 700 long and 100 degrees wide: 250 / 375 / 500 physical damage that ignores 65% of armor, and every enemy hit is knocked down (stunned) for 2.5 / 3.5 / 4.5 seconds. Every tree in the cone falls. While he winds up he has Spell Immunity: the debuffs on him are removed and no new one lands, so nothing but death stops the swing. Upgrade Staff: 0.5 seconds later he swings back the other way (a smaller cone, half damage)."}
 	# Feran Mock, the Jester: chaos he can steer
 	_abilities["knife_juggle"] = {"id": "knife_juggle", "name": "Knife Juggle", "behavior": "point", "key": "Q",
 		"max_level": 4, "mana": [80, 90, 100, 110], "cooldown": [9, 9, 9, 9], "cast_point": 0.3, "range": 700,
@@ -1016,9 +1017,9 @@ static func _build_abilities_19() -> void:
 		"key": "E", "target_team": "enemy", "max_level": 4, "mana": [110, 110, 110, 110], "cooldown": [21, 20, 19, 18],
 		"cast_point": 0.3, "range": 650, "anim": "greatsword_cast", "damage_type": "physical",
 		"values": {"ghosts": [3, 5, 7, 9], "damage_pct": [0.25, 0.35, 0.45, 0.55], "interval": [0.3, 0.3, 0.3, 0.3],
-		"speed": [650, 650, 650, 650], "lifetime": [6, 6, 6, 6], "retarget": [700, 700, 700, 700]},
+		"speed": [800, 800, 800, 800], "lifetime": [6, 6, 6, 6], "retarget": [700, 700, 700, 700]},
 		"hidden_values": ["lifetime", "retarget"],
-		"desc": "Araki calls 3 / 5 / 7 / 9 ghosts from the Undead realm, one every 0.3 seconds. Each flies out at 650 (through units, over cliffs and trees), strikes the target once for 25 / 35 / 45 / 55% of Araki's attack damage, and is gone. Their hits add Senryukai stacks and renew them. One hit destroys a ghost. If the target dies, the ghosts left go for the nearest enemy."}
+		"desc": "Araki calls 3 / 5 / 7 / 9 ghosts from the Undead realm, one every 0.3 seconds. Each flies out at 800 (through units, over cliffs and trees) and strikes the target the moment it reaches it, even on the run, for 25 / 35 / 45 / 55% of Araki's attack damage, then vanishes. Their hits add Senryukai stacks and renew them. One hit destroys a ghost. If the target dies, the ghosts left go for the nearest enemy."}
 	_abilities["the_blur"] = {"id": "the_blur", "name": "The Blur", "behavior": "no_target", "key": "R", "max_level": 3,
 		"required_level": [6, 12, 18], "mana": [75, 100, 125], "cooldown": [80, 60, 40], "cast_point": 0.0,
 		"range": 0, "anim": "greatsword_power", "immediate": true,

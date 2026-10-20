@@ -947,6 +947,10 @@ func _answer_chat(e: Dictionary) -> void:
 	if it in ["profile_me", "profile_you"] and not ChatSocial.off:
 		if prof.ask(u, to, listeners, all, it == "profile_me"):
 			return
+	# the top of the ladder, or any player on it named in the line (run 2026-10-20 e)
+	if not ChatSocial.off and (it == "ladder_top" or prof.names_ladder(low)):
+		if prof.ladder_ask(u, to, listeners, all, low, it == "ladder_top"):
+			return
 	if not ChatSocial.off and it in ["taunt", "insult"] and (all or (to != null and to.team != u.team)):
 		# trash talk the enemy reads: answered with the facts, piled on (ChatSocial)
 		if to != null:

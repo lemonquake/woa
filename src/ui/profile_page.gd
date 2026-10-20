@@ -56,7 +56,7 @@ func _ready() -> void:
 		if err != "":
 			_notice(err)
 		else:
-			Ranked.set_avatar({"k": "custom"})
+			Ranked.set_avatar({"k": "custom", "file": Avatar.custom_path(Ranked.account_id())})
 			_notice("Picture changed.")
 		changed.emit()
 		refresh())

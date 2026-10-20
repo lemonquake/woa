@@ -36,6 +36,9 @@ var _lock: BigLock
 var _random_btn: Button
 var _chat: ChatBox
 var _banner: TurnBanner
+var _peek: PlayerPeek                      # a player's quick stats while the mouse rests on their slot
+var _peek_slot: PickSlot
+var _peek_wait := 0.0
 var _chosen := ""                          # the hero you have selected (not locked yet)
 var _chat_seen := 0
 var _friends_seen := 0
@@ -83,6 +86,13 @@ func _ready() -> void:
 		draft.want_me(String(args.want))
 	if args.has("suggest"):
 		draft.suggest(String(args.suggest))
+	# captures of the quick stats (run 2026-10-20 e): --peek=n (the n-th player: yours 0-4, the enemy 5-9)
+	if args.has("peek"):
+		var all: Array = _slots.values()
+		all.sort_custom(func(a, b): return (a.position.x * 10000.0 + a.position.y) < (b.position.x * 10000.0 + b.position.y))
+		var ps: PickSlot = all[clampi(int(args.peek), 0, all.size() - 1)]
+		_peek_slot = ps
+		_peek_wait = 1.0
 	if args.has("at") or String(args.get("phase", "")) == "versus":
 		# captures: run the pick forward (you pick when your turn comes)
 		var at := float(args.get("at", "999"))
@@ -186,6 +196,12 @@ void fragment() {
 			s.size = Vector2(430, 168)
 			_pick_layer.add_child(s)
 			_slots[String(p.id)] = s
+			s.mouse_entered.connect(func():
+				_peek_slot = s
+				_peek_wait = 0.0)
+			s.mouse_exited.connect(func():
+				if _peek_slot == s:
+					_peek_slot = null)
 			y += 178.0
 	# the heroes
 	# two rows over the preview's width (904): 8 a row for 16 heroes; with more the tiles narrow (17: 9 of 93 x 112)
@@ -238,6 +254,9 @@ void fragment() {
 	_chat.size = Vector2(904, 200)
 	_chat.sent.connect(func(text: String): draft.say_me(text))
 	_pick_layer.add_child(_chat)
+	_peek = PlayerPeek.new()
+	_peek.visible = false
+	_pick_layer.add_child(_peek)
 	_vs_layer = VersusLayer.new()
 	_vs_layer.draft = draft
 	_vs_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -317,6 +336,7 @@ func _process(dt: float) -> void:
 				phase = "done"
 				_t = 0.0
 				_banner.all_done = true
+			_update_peek(dt)
 		"done":
 			if _t > 1.6:
 				_start_versus()
@@ -341,6 +361,25 @@ func _process(dt: float) -> void:
 			img.save_png(path)
 			print("captured ", path)
 			get_tree().quit()
+
+## The quick stats of the player under the mouse, after it rests there a moment, beside the slot (toward the middle).
+func _update_peek(dt: float) -> void:
+	if _peek_slot == null or not is_instance_valid(_peek_slot):
+		_peek.visible = false
+		return
+	_peek_wait += dt
+	if _peek_wait < 0.25:
+		return
+	var pp: Dictionary = Ranked.profile(_peek_slot.id) if _peek_slot.id == "me" else _peek_slot.p
+	var full := Ranked.profile(String(pp.get("id", "")))
+	if not full.is_empty():
+		pp = full
+	if not _peek.visible or _peek.p != pp:
+		_peek.show_for(pp)
+	var x := _peek_slot.position.x + _peek_slot.size.x + 14.0 if not _peek_slot.right else _peek_slot.position.x - PlayerPeek.PW - 14.0
+	var y := clampf(_peek_slot.position.y - 30.0, 20.0, H - PlayerPeek.PH - 20.0)
+	_peek.position = Vector2(x, y)
+	_pick_layer.move_child(_peek, _pick_layer.get_child_count() - 1)
 
 func _start_versus() -> void:
 	phase = "versus"
@@ -439,8 +478,7 @@ class PickSlot extends Control:
 	var _sparks: Array = []
 	func _ready() -> void:
 		# right-click a player in the pick: the player menu (their profile opens over the pick) (run 2026-10-20)
-		mouse_filter = Control.MOUSE_FILTER_PASS
-		tooltip_text = "Right-click: profile and more"
+		mouse_filter = Control.MOUSE_FILTER_PASS        # hover: the quick stats (PlayerPeek), drawn by the pick
 		_av = Avatar.new()
 		_av.size = Vector2(56, 56)
 		_av.position = Vector2(size.x - 56 - 64, 14) if right else Vector2(64, 14)

@@ -596,3 +596,16 @@ Run: `work/lemondev/2026-10-20d-ui-smooth/` (handoff.md). Benchmark Dota 2 tiles
 | P1 Passive hotkey | 1 | hud_passive capture | self-check | none | none |
 | Integration | 1 | suite, probes, check.sh, export | see handoff | none | owner play |
 
+## Session 2026-10-20 e — accounts, pick quick stats, pro reactions, Players and friend chat, structures, Araki, Emelrich
+
+Run: `work/lemondev/2026-10-20e-social-accounts/` (handoff.md, captures). No commercial benchmark capture (gate UNVERIFIED).
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| S1/S2 Structures | 1 | test_destroyed_building_opens_ground, t3 captures | tests pass | none | owner play |
+| A1 Araki ghosts | 1 | test_araki_ghosts_hit_runners | tests pass (0/9 -> 9/9 on a runner) | none | owner play |
+| E1 Giant Swing | 1 | guard, stance and dodge tests; swing captures | tests pass | cooldown left at owner's 20/15/10 | owner veto |
+| R1 Accounts | 1 | test_ranked_accounts; accounts captures | tests pass | no click-through probe | probe |
+| P1 Pick quick stats | 1 | peek captures | self-check | no critic | critic |
+| B1/B2 Pro reactions, ladder | 1 | test_profile_pro, test_chat_profiles_in_match | tests pass | none | owner play |
+| U1 Players / friend chat | 1 | players captures | self-check | no critic, no probe | critic, probe |

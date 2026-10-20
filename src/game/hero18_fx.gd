@@ -342,7 +342,11 @@ func event(e: Dictionary) -> void:
 					var at := gp + dv.rotated(ang) * dist * 0.6
 					fx.debris(fx.ground3(at, 0.1), 4, Color(0.45, 0.4, 0.35), 4.5, 0.8)
 				fx.flash_light(fx.ground3(gp + dv * 200.0, 1.2), GOLD, 7.0, 9.0, 0.35)
-				fx._shake(gp, 0.45 if not bool(e.back) else 0.25, 0.4)
+				fx._shake(gp, 0.75 if not bool(e.back) else 0.3, 0.5)
+				if not bool(e.back):
+					# the full blow: a ring of force across the cone and a burst of sparks where the blade bites
+					fx.shockwave(fx.ground3(gp + dv * dist * 0.35, 0.05), dist * View.S * 0.55, GOLD, 0.55, 0.22, 3.0)
+					fx.sparks(fx.ground3(gp + dv * 150.0, 0.3), Vector3.UP, 28, GOLD, 6.0)
 			for id in e.get("hits", []):
 				fx.impact(fx._chest(int(id), 0.5), GOLD, 0.5)
 		"sweep":

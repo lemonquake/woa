@@ -185,6 +185,10 @@ static func feeling(rep: float) -> String:
 ## minute (of the match), seen (when last online, for "offline")}.
 static func presence(p: Dictionary, t: int) -> Dictionary:
 	var ps: Dictionary = p.get("persona", {})
+	if bool(p.get("account", false)):
+		# another of your accounts: offline while you play on this one
+		var last := int(p.get("last_login", p.get("created", t)))
+		return {"state": "offline", "label": "Your account  ·  Last on " + RankedNum.ago(last), "seen": last}
 	if ps.is_empty() or not bool(p.get("bot", true)):
 		return {"state": "online", "label": "Online"}
 	var tz := int(TZ.get(String(p.get("country", "")), 8))
@@ -230,6 +234,8 @@ static func _match_hash(p: Dictionary, t: int) -> int:
 
 ## Online at unix time `t` (in a match or not): cheaper than presence() (no last seen).
 static func online(p: Dictionary, t: int) -> bool:
+	if bool(p.get("account", false)):
+		return false                             # another of your accounts, not logged in
 	var ps: Dictionary = p.get("persona", {})
 	if ps.is_empty() or not bool(p.get("bot", true)):
 		return true

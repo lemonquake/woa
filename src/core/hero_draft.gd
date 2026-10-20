@@ -322,6 +322,43 @@ func hero_in(low: String) -> String:
 	return ""
 
 ## You typed a line in team chat: it shows, and your teammates answer what they understood.
+## A teammate answers about the ladder: who is top 1 (or the top 5 / 10 / 20), or a player you named, with the facts
+## and what it thinks of them.
+func _ladder_reply(low: String, top: bool, named: Dictionary, mates: Array, d: float) -> void:
+	var who: String = mates[rng.randi_range(0, mates.size() - 1)]
+	var card := Ranked.ladder_card(20)
+	var about := {}
+	var text := ""
+	if top:
+		var want := 10 if (low.contains("10") or low.contains("leaderboard") or low.contains("players")) else (5 if low.contains("5") else (20 if low.contains("20") else 1))
+		if want == 1:
+			about = Ranked.profile(String(card[0].id))
+			text = "%s is top 1, %s mmr, %s avg, mostly %s" % [String(card[0].name), str(int(card[0].mmr)), String(card[0].kda), String(card[0].hero)]
+			if String(card[0].id) == "me":
+				text = "its u lol, top 1"
+				about = {}
+		else:
+			var names: Array = []
+			for e in card.slice(0, want):
+				names.append("%d %s" % [int(e.place), String(e.name)])
+			text = "top %d: %s" % [want, ", ".join(names)]
+	else:
+		about = named
+		var pl := Ranked.place_of(String(named.id))
+		var hp := Ranked.heroes_played(named)
+		text = "%s? %s, %d mvps%s" % [String(named.name), FriendChat.about_line({}, named).split(". ")[0],
+			int(Career.moments(named).mvp), (", plays " + HeroDraft.hero_name(String(hp[0][0]))) if not hp.is_empty() else ""]
+		if Ranked.is_yours(String(named.id)):
+			text = "%s? thats ur other account right? #%d" % [String(named.name), pl] if String(named.id) != "me" else "thats u lol"
+			about = {}
+	_later_say(who, text, d)
+	if not about.is_empty() and rng.randf() < 0.8:
+		var f := ProfileTalk.read(about)
+		var sit := "pf_other_good" if ProfileTalk.verdict(f) >= 0 or ProfileTalk.elite_facts(f) else "pf_other_bad"
+		var line := ProfileTalk.say(profile(who), sit, ProfileTalk.fill(f), rng)
+		if line != "":
+			_later_say(who, line, d + rng.randf_range(1.4, 2.6))
+
 func say_me(text: String) -> void:
 	var t := text.strip_edges().substr(0, 120)
 	if t == "":
@@ -349,6 +386,16 @@ func say_me(text: String) -> void:
 			_later_say(who, _pick_line(["sure", "added", "sige add kita", "ok, duo after", "g"]), d)
 		else:
 			_later_say(who, _pick_line(["no", "win first", "nah", "after the game maybe", "pass"]), d)
+		return
+	# the top of the ladder, or a ladder player you named who is not in this match (run 2026-10-20 e)
+	var named := Ranked.named_in(low)
+	var in_match := false
+	for side in 2:
+		for p in lineup.teams[side]:
+			if not named.is_empty() and String(p.id) == String(named.get("id", "")):
+				in_match = true
+	if it == "ladder_top" or (not named.is_empty() and not in_match and h == ""):
+		_ladder_reply(low, it == "ladder_top" and (named.is_empty() or in_match), named, mates, d)
 		return
 	if h != "" and (low.begins_with("pick ") or low.contains("u pick") or low.contains("you pick") or low.contains("someone pick") or low.contains("play ")):
 		suggest(h, false)
@@ -379,13 +426,13 @@ func say_me(text: String) -> void:
 				if mn.length() >= 3 and low.contains(mn.split(" ")[0]):
 					pm = String(m)
 			if it == "profile_me":
-				var line := ProfileTalk.line_about(profile(pm), Ranked.me(), rng)
+				var line := ProfileTalk.line_about(profile(pm), Ranked.me(), rng, "with")
 				if line != "":
 					_later_say(pm, line, d)
 				if mates.size() > 1 and rng.randf() < 0.55:
 					var pm2: String = mates[rng.randi_range(0, mates.size() - 1)]
 					if pm2 != pm:
-						var line2 := ProfileTalk.line_about(profile(pm2), Ranked.me(), rng)
+						var line2 := ProfileTalk.line_about(profile(pm2), Ranked.me(), rng, "with")
 						if line2 != "":
 							_later_say(pm2, line2, d + rng.randf_range(1.2, 2.4))
 			else:
@@ -510,12 +557,16 @@ func _react_to_profiles() -> void:
 	var pool := mates.duplicate()
 	var n := 0
 	var want := 1 + (1 if rng.randf() < 0.45 else 0)
+	# a pro on the team: nearly everyone has looked them up already, and says so
+	var pro := ProfileTalk.elite(Ranked.me())
+	if pro:
+		want = 2 + (1 if rng.randf() < 0.6 else 0)
 	while n < want and not pool.is_empty():
 		var m: String = pool.pop_at(rng.randi_range(0, pool.size() - 1))
 		var ps: Dictionary = profile(m).get("persona", {})
-		if rng.randf() > 0.45 + float(ps.get("talk", 0.5)) * 0.45:
+		if rng.randf() > (0.8 if pro else 0.45) + float(ps.get("talk", 0.5)) * 0.45:
 			continue
-		var line := ProfileTalk.line_about(profile(m), Ranked.me(), rng)
+		var line := ProfileTalk.line_about(profile(m), Ranked.me(), rng, "with")
 		if line != "":
 			_later.append([t, m, line])
 			t += rng.randf_range(1.6, 3.2)

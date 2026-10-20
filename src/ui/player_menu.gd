@@ -91,6 +91,7 @@ func _build(at: Vector2) -> void:
 	items.append({"a": "history", "t": "Match history", "ic": "history"})
 	if own:
 		items.append({"a": "view_as", "t": "View As someone else", "ic": "visitor"})
+		items.append({"a": "accounts", "t": "Accounts", "ic": "profile"})
 	else:
 		items.append({"a": "compare", "t": "Compare with me", "ic": "compare"})
 		items.append({"a": "write", "t": "Write on profile", "ic": "comment"})
@@ -102,9 +103,12 @@ func _build(at: Vector2) -> void:
 		if asked:
 			items.append({"a": "accept", "t": "Accept friend request", "ic": "friend"})
 		items.append({"a": "unfriend" if friend else "friend", "t": "Remove friend" if friend else "Add friend", "ic": "friend"})
-		items.append({"a": "commend", "t": "Commend", "ic": "commend", "off": not Ranked.can_act("commended", id)})
-		items.append({"a": "report", "t": "Report", "ic": "report", "red": true, "off": not Ranked.can_act("reported", id)})
-		items.append({"a": "block", "t": "Unblock" if Ranked.blocked(id) else "Block", "ic": "block", "red": not Ranked.blocked(id)})
+		if Ranked.is_account(id):
+			items.append({"a": "login", "t": "Log in to this account", "ic": "profile"})
+		else:
+			items.append({"a": "commend", "t": "Commend", "ic": "commend", "off": not Ranked.can_act("commended", id)})
+			items.append({"a": "report", "t": "Report", "ic": "report", "red": true, "off": not Ranked.can_act("reported", id)})
+			items.append({"a": "block", "t": "Unblock" if Ranked.blocked(id) else "Block", "ic": "block", "red": not Ranked.blocked(id)})
 	items.append({"a": "copy", "t": "Copy name", "ic": "copy"})
 	_place(at)
 	_av = Avatar.new()
@@ -213,6 +217,17 @@ func _do(a: String) -> void:
 		"copy":
 			DisplayServer.clipboard_set(nm)
 			_note("Name copied.")
+		"accounts":
+			_close()
+			AccountsPanel.open(_host if _host != null else self)
+			return
+		"login":
+			_close()
+			if Ranked.login(id):
+				AccountsPanel.after_login(get_tree())
+			else:
+				_note("Finish your ranked match first.")
+			return
 		_:
 			_close()
 			if _host != null and _host.has_method("player_action"):

@@ -13,6 +13,11 @@ extends RefCounted
 ##     offs compare, trolls troll whatever they see; the line's kind and its fields (ProfileLines);
 ##   * walls: the comments players leave on a profile (yours after matches and while you are away; a ladder player's
 ##     from the players it met), and the answers to what you write.
+##   * pros (run 2026-10-20 e; the owner: "my profile is playing uber good and beyond pro, so AI players should
+##     definitely know and react to that ... in awe ... go Pro ... root for you ... proud to be playing with you or
+##     against you ... comparable to Aetherium+ ... and of course trolls and haters"): a profile far past its rank
+##     (elite()) gets its own reading: awe, "go pro", cheering on a teammate, honour against an enemy, comparisons with
+##     the real top of the ladder; rough ones hate on it, trolls troll it.
 
 const LINES = preload("res://src/core/profile_lines.gd")
 const WALL_MAX := 30
@@ -86,7 +91,25 @@ static func signals(f: Dictionary) -> Dictionary:
 		bad.append("leaver")
 	var is_new := int(f.games) < 25
 	var smurf := (is_new or int(f.tier) <= 2) and float(f.kda) >= 4.0 and float(f.get("wr20", 0.0)) >= 0.6 and n5 >= 3
-	return {"good": good, "bad": bad, "new": is_new, "smurf": smurf}
+	return {"good": good, "bad": bad, "new": is_new, "smurf": smurf, "elite": elite_facts(f)}
+
+## A profile far beyond any rank (the pros): 30+ matches and either a huge KDA with few deaths, or MVP in over a third of
+## its games with a strong KDA, or the last five all won with a huge KDA.
+static func elite_facts(f: Dictionary) -> bool:
+	if f.is_empty() or int(f.get("games", 0)) + int(f.get("career_g", 0)) < 30:
+		return false
+	var kda := float(f.get("kda", -1.0))
+	var x := float(f.get("x", 99.0))
+	var g := maxf(1.0, float(f.get("career_g", 0)))
+	var mvpr := float(f.get("mvps", 0)) / g
+	if kda >= 7.0 and x >= 0.0 and x <= 2.5:
+		return true
+	if mvpr >= 0.35 and kda >= 5.0:
+		return true
+	return int(f.get("w5", 0)) >= 5 and kda >= 8.0
+
+static func elite(p: Dictionary) -> bool:
+	return elite_facts(read(p))
 
 ## Fields for the lines (ProfileLines).
 static func fill(f: Dictionary) -> Dictionary:
@@ -112,6 +135,12 @@ static func fill(f: Dictionary) -> Dictionary:
 		if String(e.h) != "":
 			out["lhero"] = HeroDraft.hero_name(String(e.h)).to_lower()
 	# the last five together: their average K/D/A and MVPs
+	# the pros' comparisons: the ladder's number one (someone else) and how the top ten average
+	if elite_facts(f):
+		out["mvpr"] = int(round(float(f.get("mvps", 0)) * 100.0 / maxf(1.0, float(f.get("career_g", 1)))))
+		var top := _top_facts(String(f.get("id", "")))
+		out["top"] = String(top.name)
+		out["topkda"] = "%.1f" % float(top.kda)
 	if l5.size() >= 3:
 		var k5 := 0.0
 		var x5 := 0.0
@@ -128,6 +157,34 @@ static func fill(f: Dictionary) -> Dictionary:
 		if m5 > 0:
 			out["mvp5"] = m5
 	return out
+
+static var _tops := {}
+static var _tops_key := -1
+
+## The ladder's number one (not `except`) and the top ten's average KDA: {name, kda}. Cached per ladder round.
+static func _top_facts(except: String) -> Dictionary:
+	var key := int(Ranked.data.get("rounds", 0)) * 1000 + int(Ranked.data.get("last_sim", 0)) % 1000
+	if _tops_key == key and _tops.has(except):
+		return _tops[except]
+	if _tops_key != key:
+		_tops = {}
+		_tops_key = key
+	var board: Array = Ranked.leaderboard()
+	var nm := ""
+	var sum := 0.0
+	var n := 0
+	for p in board.slice(0, 12):
+		if String(p.id) == except or Ranked.is_yours(String(p.id)):
+			continue
+		if nm == "":
+			nm = String(p.name)
+		if n < 10:
+			var av := Career.averages(p)
+			if float(av.get("kda", -1.0)) >= 0.0:
+				sum += float(av.kda)
+				n += 1
+	_tops[except] = {"name": nm if nm != "" else "the top 1", "kda": sum / maxf(1.0, float(n)) if n > 0 else 4.2}
+	return _tops[except]
 
 # ---- Who is looking ---------------------------------------------------------------------------------------------------
 
@@ -150,9 +207,12 @@ static func manner_of(p: Dictionary) -> String:
 	return manner(p.get("persona", {}), float(p.get("toxic", 0.3)), bool(p.get("rage", false)))
 
 ## What a viewer says about a profile: [line kind, fields]. like: what the viewer already thinks of the player (-1..1);
-## a liked player gets the kinder reading, a disliked one the harsher.
-static func opinion(manner_s: String, f: Dictionary, rng: RandomNumberGenerator, like := 0.0) -> Array:
+## a liked player gets the kinder reading, a disliked one the harsher. side: "with" (a teammate looks), "vs" (an
+## enemy), "" (anyone).
+static func opinion(manner_s: String, f: Dictionary, rng: RandomNumberGenerator, like := 0.0, side := "") -> Array:
 	var sg := signals(f)
+	if bool(sg.get("elite", false)):
+		return [_pro_sit(manner_s, side, like, rng), fill(f)]
 	var good: Array = sg.good
 	var bad: Array = sg.bad
 	var fl := fill(f)
@@ -193,6 +253,37 @@ static func opinion(manner_s: String, f: Dictionary, rng: RandomNumberGenerator,
 		return ["pf_kind_good" if rng.randf() < 0.5 else "pf_fact", fl]
 	return ["pf_fact", fl]
 
+## How a viewer takes a pro's profile: kind and fair ones are in awe, tell them to go pro, root for them as a teammate
+## and are honoured to face them; show-offs compare them with the top of the ladder; rough ones hate (or, grudgingly,
+## give credit); trolls troll.
+static func _pro_sit(m: String, side: String, like: float, rng: RandomNumberGenerator) -> String:
+	if like < -0.45 and m in ["kind", "fair"] and rng.randf() < 0.5:
+		m = "rough"
+	var x := rng.randf()
+	match m:
+		"troll":
+			return "pf_pro_troll" if x < 0.6 else ("pf_pro_hater" if x < 0.85 else "pf_pro_awe")
+		"rough":
+			if x < 0.45:
+				return "pf_pro_hater"
+			if x < 0.6:
+				return "pf_accuse"
+			return "pf_pro_respect" if side != "with" or x < 0.85 else "pf_pro_root"
+		"ego":
+			return "pf_pro_compare" if x < 0.6 else ("pf_pro_respect" if x < 0.8 else "pf_pro_awe")
+		"kind":
+			if side == "with":
+				return "pf_pro_root" if x < 0.5 else ("pf_pro_awe" if x < 0.75 else "pf_pro_gopro")
+			if side == "vs":
+				return "pf_pro_vs" if x < 0.6 else "pf_pro_awe"
+			return "pf_pro_awe" if x < 0.5 else "pf_pro_gopro"
+	# fair
+	if side == "with":
+		return "pf_pro_root" if x < 0.35 else ("pf_pro_awe" if x < 0.6 else ("pf_pro_gopro" if x < 0.8 else "pf_pro_compare"))
+	if side == "vs":
+		return "pf_pro_vs" if x < 0.5 else ("pf_pro_awe" if x < 0.7 else "pf_pro_compare")
+	return "pf_pro_awe" if x < 0.35 else ("pf_pro_gopro" if x < 0.65 else "pf_pro_compare")
+
 static func _good_sit(s: String) -> String:
 	return {"hot": "pf_good_hot", "good_last": "pf_good_last", "good_avg": "pf_good_avg", "mvp": "pf_good_mvp",
 		"rampage": "pf_good_rampage", "farm": "pf_good_farm", "fb": "pf_good_fb"}.get(s, "pf_good_avg")
@@ -215,12 +306,13 @@ static func say(p: Dictionary, sit: String, fl: Dictionary, rng: RandomNumberGen
 		return ""
 	return ChatStyle.apply(text, (p.get("persona", {}) as Dictionary).get("style", {}), 0.0, rng, false, 0.08)
 
-## What `viewer` (a ladder profile) says about `target`'s profile: the text, in its typing ("" if nothing fits).
-static func line_about(viewer: Dictionary, target: Dictionary, rng: RandomNumberGenerator) -> String:
+## What `viewer` (a ladder profile) says about `target`'s profile: the text, in its typing ("" if nothing fits). side:
+## "with" (a teammate), "vs" (an enemy), "" (anyone).
+static func line_about(viewer: Dictionary, target: Dictionary, rng: RandomNumberGenerator, side := "") -> String:
 	var f := read(target)
 	var like := float((viewer.get("you", {}) as Dictionary).get("rep", 0.0)) if String(target.get("id", "")) == "me" else 0.0
 	for attempt in 3:
-		var op := opinion(manner_of(viewer), f, rng, like)
+		var op := opinion(manner_of(viewer), f, rng, like, side)
 		var t := say(viewer, String(op[0]), op[1], rng)
 		if t != "":
 			return t
@@ -236,6 +328,15 @@ static func wall_comment(viewer: Dictionary, target: Dictionary, rng: RandomNumb
 	var like := float((viewer.get("you", {}) as Dictionary).get("rep", 0.0)) if String(target.get("id", "")) == "me" else 0.0
 	var v := verdict(f)
 	var sit := ""
+	if bool(signals(f).get("elite", false)) and int(ctx.get("tt", 0)) == 0:
+		# a pro's wall: honoured, +rep and "go pro" from most, hate from the rough ones and the trolls
+		if m in ["rough", "troll"] and like < 0.4:
+			sit = "pf_wall_pro_hate" if rng.randf() < 0.7 else "pf_wall_pro"
+		else:
+			sit = "pf_wall_pro"
+		var tp := say(viewer, sit, fill(f), rng)
+		if tp != "":
+			return {"id": String(viewer.get("id", "")), "t": Ranked.now(), "text": tp, "mood": 1 if sit == "pf_wall_pro" else -1}
 	if int(ctx.get("tt", 0)) > 0 and m != "kind":
 		sit = "pf_wall_tt"
 	elif m == "troll" and rng.randf() < 0.6:
@@ -349,8 +450,8 @@ static func catch_up(r: RandomNumberGenerator) -> int:
 ## A ladder player's wall as you see it: the comments the players it met left (made once from the ladder's seed and
 ## its id, then kept), with yours and its answers.
 static func wall_of(p: Dictionary) -> Array:
-	if String(p.get("id", "")) == "me":
-		return _wall(p)
+	if Ranked.is_yours(String(p.get("id", ""))):
+		return _wall(p)                         # yours (any account): only what was really written there
 	if not bool(p.get("wall_made", false)):
 		p["wall_made"] = true
 		var r := RandomNumberGenerator.new()
@@ -379,8 +480,8 @@ static func wall_of(p: Dictionary) -> Array:
 static func write_on(p: Dictionary, text: String, rng: RandomNumberGenerator) -> Dictionary:
 	var t := Ranked.now()
 	post(p, {"id": "me", "t": t, "text": text.strip_edges().substr(0, 140), "mood": 0})
-	if String(p.get("id", "")) == "me":
-		return {}
+	if Ranked.is_yours(String(p.get("id", ""))):
+		return {}                               # your own wall, or another of your accounts: nobody answers for you
 	var it := ChatMind.intent(text.to_lower())
 	var y: Dictionary = p.get("you", {})
 	var rude := it in ["insult", "taunt"]

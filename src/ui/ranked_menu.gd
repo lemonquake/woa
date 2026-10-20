@@ -79,6 +79,14 @@ var _profile_page: Control
 # Leaderboard
 var _board_list: VBoxContainer
 var _players_page: Control
+var _friend_filter := "all"                # Players: All, online, match, offline, requests
+var _middle := "chat"                      # Players' middle panel: chat or activity
+var _right := "online"                     # Players' right panel: online, recent, top, find
+var _chat_id := ""                         # the friend whose conversation is open
+var _find_text := ""
+var _chat_draft := ""                      # what you are typing to a friend (kept when the tab redraws)
+var _chat_scroll: ScrollContainer
+var _chat_t := 0.0
 var _board_filter := "all"
 var _board_hero := ""
 var _hero_strip: HBoxContainer
@@ -145,7 +153,24 @@ func _ready() -> void:
 	_profile_view = String(args.get("view", "overview"))
 	_board_filter = String(args.get("board", "all"))
 	_board_hero = String(args.get("hero", ""))
+	# captures of the Players tab (run 2026-10-20 e): --filter=online|match|offline|requests --right=online|recent|top|find
+	# --find=text --middle=chat|activity --chat=<friend id>|first --chat_say=text (answered at once) --accounts
+	_friend_filter = String(args.get("filter", _friend_filter))
+	_right = String(args.get("right", _right))
+	_find_text = String(args.get("find", ""))
+	_middle = String(args.get("middle", _middle))
+	if args.has("chat"):
+		var fr: Array = Ranked.me().get("friends", [])
+		_chat_id = String(fr[0]) if String(args.chat) == "first" and not fr.is_empty() else String(args.chat)
+		if args.has("chat_say"):
+			for line in String(args.chat_say).split("|"):
+				FriendChat.send(_chat_id, line)
+				for q in Ranked.me().get("typing", []):
+					q["at"] = 0
+				FriendChat.tick()
 	_show_tab(String(args.get("tab", "play")))
+	if args.has("accounts"):
+		AccountsPanel.open(self)
 	if not left.is_empty():
 		_notice("Your last ranked match was left before it ended: a loss (%+d MMR)." % int(left.delta))
 	if args.has("profile"):
@@ -269,6 +294,11 @@ func _build_top() -> void:
 		bar.add_child(tb)
 		_tab_btns[id] = tb
 		x += tb.size.x + 8.0
+	# your accounts: log in to another, log out, make a new one (run 2026-10-20 e)
+	var acc := _button("Accounts", func(): AccountsPanel.open(self), "DarkButton", Vector2(150, 46))
+	acc.position = Vector2(W - 640, 23)
+	acc.tooltip_text = "Log in to another account, log out, or make a new account"
+	bar.add_child(acc)
 	_chip = ProfileChip.new()
 	_chip.position = Vector2(W - 470, 12)
 	_chip.size = Vector2(440, 68)
@@ -292,7 +322,7 @@ func _refresh_footer() -> void:
 			near += 1
 	var on := Ranked.online_counts()
 	_footer.text = "Season 1   ·   %d players on the ladder   ·   %d online, %d in a match   ·   %d near your MMR   ·   Ladder updated %s   ·   Leaving a ranked match counts as a loss" % [
-		Ranked.bots().size() + 1, int(on[0]), int(on[1]), near, ago(int(Ranked.data.get("last_sim", Ranked.now())))]
+		Ranked.leaderboard().size(), int(on[0]), int(on[1]), near, ago(int(Ranked.data.get("last_sim", Ranked.now())))]
 
 func _layout() -> void:
 	var vs := size
@@ -565,6 +595,20 @@ func _process(dt: float) -> void:
 		_notice(mm.note)
 	if _offer.visible:
 		_update_offer(dt)
+	# friend chat (run 2026-10-20 e): answers arrive while you are on this screen
+	_chat_t += dt
+	if _chat_t >= 1.0:
+		_chat_t = 0.0
+		var got := FriendChat.tick()
+		if not got.is_empty():
+			if _tab == "players":
+				_fill_players()
+			for gid in got:
+				if not (_tab == "players" and _middle == "chat" and _chat_id == String(gid)):
+					var gp := Ranked.profile(String(gid))
+					var ms := FriendChat.messages(String(gid))
+					if not ms.is_empty():
+						_notice("%s: %s" % [String(gp.get("name", "")), String(ms[ms.size() - 1].x)])
 	if _toast_t > 0.0:
 		_toast_t -= dt
 		_toast.modulate.a = clampf(minf(_toast_t, 4.5 - _toast_t) / 0.3, 0.0, 1.0)
@@ -995,82 +1039,298 @@ func _person(p: Dictionary, sub: String, right := "", right_col := U.TEXT_DIM) -
 	r.hover_card.connect(_hover_player)
 	return r
 
+## The Players tab (run 2026-10-20 e; the owner: "Overhaul and GREATLY ENHANCE ... the PLAYERS UI, like showing how many
+## friends and online friends and offline friends and others, Friend chat"). Three panels:
+##   * Friends: how many, online, in a match, offline, requests; filters (All, Online, In a match, Offline, Requests);
+##     each friend with presence, status, rank, unread messages and a Chat button; requests with Accept and Ignore.
+##   * Chat (a conversation with a friend: their messages and yours, typing, Send; the conversations list) or Ladder
+##     activity.
+##   * Online now, Recently played with, Top 20 (the ladder as every player knows it) and Find player (anyone by name).
 func _fill_players() -> void:
 	for c in _players_page.get_children():
 		c.queue_free()
 	Ranked.catch_up()
+	FriendChat.tick()
 	var you := Ranked.me()
 	var t := Ranked.now()
-	# friends and friend requests
-	var fr := _glass(Rect2(40, 118, 600, 440), _players_page, "Friends")
-	var fl := _list_in(fr, 56, 370)
-	for q in you.get("requests", []):
-		var qp := Ranked.profile(String(q.get("id", "")))
-		if qp.is_empty():
-			continue
-		var row := _person(qp, "Wants to be friends  ·  after a game %s you" % ("with" if String(q.get("after", "")) == "with" else "against"))
-		row.request = true
-		var qid := String(qp.id)
-		row.accept.connect(func():
-			Ranked.accept_request(qid)
-			_notice("You and %s are now friends." % String(Ranked.profile(qid).get("name", "")))
-			_fill_players())
-		row.ignore.connect(func():
-			Ranked.ignore_request(qid)
-			_fill_players())
-		fl.add_child(row)
 	var friends: Array = (you.get("friends", []) as Array).map(func(id): return Ranked.profile(String(id))).filter(func(x): return not x.is_empty())
-	friends.sort_custom(func(a, b): return _presence_rank(a, t) < _presence_rank(b, t))
+	friends.sort_custom(func(a, b): return _presence_rank(a, t) * 1000 - FriendChat.unread(String(a.id)) < _presence_rank(b, t) * 1000 - FriendChat.unread(String(b.id)))
+	var n_on := 0
+	var n_match := 0
 	for fp in friends:
-		var pr := Persona.presence(fp, t)
-		fl.add_child(_person(fp, "%s  ·  %s" % [String(pr.label), Persona.status(fp)], Ranked.rank_label(fp)))
-	if friends.is_empty() and (you.get("requests", []) as Array).is_empty():
-		_hint("No friends yet. Players who enjoy a game with you send friend requests, and they show here. You can also add a player from their profile.", fl)
-	# players you met
-	var rp := _glass(Rect2(40, 576, 600, 448), _players_page, "Recently played with")
-	var rl := _list_in(rp, 56, 378)
-	var met := Ranked.recent_players(25)
-	for e in met:
-		var mp: Dictionary = e[0]
-		var y: Dictionary = mp.get("you", {})
-		var side := "With you" if String(y.get("last_side", "")) == "with" else "Against you"
-		var res := ("won" if String(y.get("last_res", "")) == "W" else "lost") if String(y.get("last_side", "")) == "with" else \
-			("you lost" if String(y.get("last_res", "")) == "W" else "you won")
-		var feel := _feeling(float(y.get("rep", 0.0)))
-		var fc := GREEN_HI if float(y.get("rep", 0.0)) > 0.15 else (RED if float(y.get("rep", 0.0)) < -0.15 else U.TEXT_DIM)
-		rl.add_child(_person(mp, "%s (%s)  ·  %d games  ·  %s" % [side, res, int(y.get("games", 0)), ago(int(e[1]))], feel, fc))
-	if met.is_empty():
-		_hint("The players from your ranked matches show here, with what they think of you.", rl)
-	# the ladder's news
-	var act := _glass(Rect2(660, 118, 600, 906), _players_page, "Ladder activity")
-	var al := _list_in(act, 56, 834)
-	var feed: Array = Ranked.data.get("feed", [])
-	for i in mini(40, feed.size()):
-		var fe: Dictionary = feed[i]
-		var row := FeedRow.new()
-		row.p = Ranked.profile(String(fe.get("id", "")))
-		row.text = Ranked.feed_text(fe)
-		row.when = ago(int(fe.get("t", t)))
-		row.kind = String(fe.get("k", ""))
-		row.custom_minimum_size = Vector2(540, 54)
-		var fid := String(fe.get("id", ""))
-		row.clicked.connect(func(): _open_profile(fid))
-		al.add_child(row)
-	if feed.is_empty():
-		_hint("What happens on the ladder shows here: ranks reached, streaks, medals, heroes being learned.", al)
-	# who is online now, nearest your MMR first
-	var on := _glass(Rect2(1280, 118, 600, 906), _players_page, "Online now")
-	var counts := Ranked.online_counts()
-	var cl := _label("%d online  ·  %d in a match  ·  %d on the ladder" % [int(counts[0]), int(counts[1]), Ranked.bots().size() + 1],
-		16, U.TEXT, "bold", on)
-	cl.position = Vector2(20, 54)
-	var ol := _list_in(on, 88, 802)
-	var mine := int(you.mmr)
-	var online: Array = Ranked.bots().filter(func(b): return Persona.online(b, t))
-	online.sort_custom(func(a, b): return absi(int(a.mmr) - mine) < absi(int(b.mmr) - mine))
-	for op in online.slice(0, 40):
-		var pr2 := Persona.presence(op, t)
-		ol.add_child(_person(op, String(pr2.label), Ranked.rank_label(op)))
+		var st := String(Persona.presence(fp, t).state)
+		n_on += 1 if st == "online" else 0
+		n_match += 1 if st == "match" else 0
+	var n_off := friends.size() - n_on - n_match
+	var reqs: Array = you.get("requests", [])
+	# ---- friends
+	var fr := _glass(Rect2(40, 118, 600, 906), _players_page, "Friends")
+	var counts := FriendCounts.new()
+	counts.position = Vector2(20, 60)
+	counts.size = Vector2(560, 64)
+	counts.vals = [friends.size(), n_on, n_match, n_off, reqs.size()]
+	fr.add_child(counts)
+	var fx := 20.0
+	for fdef in [["all", "All"], ["online", "Online"], ["match", "In a match"], ["offline", "Offline"], ["requests", "Requests"]]:
+		var key := String(fdef[0])
+		var lbl := String(fdef[1]) + ("  %d" % reqs.size() if key == "requests" and not reqs.is_empty() else "")
+		var fb := _button(lbl, func():
+			_friend_filter = key
+			_fill_players(), "DarkButton", Vector2(0, 38))
+		if _friend_filter == key:
+			_chip_on(fb)
+		fb.add_theme_font_size_override("font_size", 15)
+		fb.position = Vector2(fx, 134)
+		fr.add_child(fb)
+		fb.reset_size()
+		fx += fb.size.x + 8.0
+	var fl := _list_in(fr, 186, 704)
+	if _friend_filter in ["all", "requests"]:
+		for q in reqs:
+			var qp := Ranked.profile(String(q.get("id", "")))
+			if qp.is_empty():
+				continue
+			var row := _person(qp, "Wants to be friends  ·  after a game %s you" % ("with" if String(q.get("after", "")) == "with" else "against"))
+			row.request = true
+			var qid := String(qp.id)
+			row.accept.connect(func():
+				Ranked.accept_request(qid)
+				_notice("You and %s are now friends." % String(Ranked.profile(qid).get("name", "")))
+				_fill_players())
+			row.ignore.connect(func():
+				Ranked.ignore_request(qid)
+				_fill_players())
+			fl.add_child(row)
+	var shown := 0
+	if _friend_filter != "requests":
+		for fp in friends:
+			var pr := Persona.presence(fp, t)
+			if _friend_filter != "all" and String(pr.state) != _friend_filter:
+				continue
+			var fid := String(fp.id)
+			var row2 := _person(fp, "%s  ·  %s" % [String(pr.label), Persona.status(fp) if bool(fp.get("bot", false)) else "Your account"], Ranked.rank_label(fp))
+			row2.chat = true
+			row2.unread = FriendChat.unread(fid)
+			row2.open_chat.connect(func(): _open_chat(fid))
+			if fid == _chat_id and _middle == "chat":
+				row2.lit = true
+			fl.add_child(row2)
+			shown += 1
+	if shown == 0 and (_friend_filter != "all" or reqs.is_empty()) and not (_friend_filter in ["all", "requests"] and not reqs.is_empty()):
+		var none := {"all": "No friends yet. Players who enjoy a game with you send friend requests, and they show here. Add anyone from Find player or their profile.",
+			"online": "None of your friends is online and free right now.", "match": "None of your friends is in a match right now.",
+			"offline": "All your friends are on.", "requests": "No friend requests."}
+		_hint(String(none.get(_friend_filter, "")), fl)
+	# ---- the middle: friend chat or the ladder's news
+	var mid := _glass(Rect2(660, 118, 600, 906), _players_page, "")
+	var mx := 20.0
+	var unread_all := FriendChat.unread_total()
+	for mdef in [["chat", "Chat" + ("  %d" % unread_all if unread_all > 0 else "")], ["activity", "Ladder activity"]]:
+		var mkey := String(mdef[0])
+		var mb := _button(String(mdef[1]), func():
+			_middle = mkey
+			_fill_players(), "DarkButton", Vector2(0, 42))
+		if _middle == mkey:
+			_chip_on(mb)
+		mb.position = Vector2(mx, 18)
+		mid.add_child(mb)
+		mb.reset_size()
+		mx += mb.size.x + 10.0
+	if _middle == "chat":
+		_fill_chat(mid)
+	else:
+		var al := _list_in(mid, 76, 814)
+		var feed: Array = Ranked.data.get("feed", [])
+		var n_feed := 0
+		for fe in feed:
+			if n_feed >= 50:
+				break
+			var txt := Ranked.feed_text(fe)
+			if txt == "":
+				continue
+			var frow := FeedRow.new()
+			frow.p = Ranked.profile(String(fe.get("id", "")))
+			frow.text = txt
+			frow.when = ago(int(fe.get("t", t)))
+			frow.kind = String(fe.get("k", ""))
+			frow.custom_minimum_size = Vector2(540, 54)
+			var feid := String(fe.get("id", ""))
+			frow.clicked.connect(func(): _open_profile(feid))
+			al.add_child(frow)
+			n_feed += 1
+		if n_feed == 0:
+			_hint("What happens on the ladder shows here: ranks reached, streaks, medals, heroes being learned.", al)
+	# ---- the right: who is on, who you met, the top 20, anyone by name
+	var rt := _glass(Rect2(1280, 118, 600, 906), _players_page, "")
+	var rx := 20.0
+	for rdef in [["online", "Online now"], ["recent", "Recent"], ["top", "Top 20"], ["find", "Find player"]]:
+		var rkey := String(rdef[0])
+		var rb := _button(String(rdef[1]), func():
+			_right = rkey
+			_fill_players(), "DarkButton", Vector2(0, 42))
+		if _right == rkey:
+			_chip_on(rb)
+		rb.add_theme_font_size_override("font_size", 16)
+		rb.position = Vector2(rx, 18)
+		rt.add_child(rb)
+		rb.reset_size()
+		rx += rb.size.x + 8.0
+	match _right:
+		"online":
+			var oc := Ranked.online_counts()
+			var cl := _label("%s online  ·  %s in a match  ·  %s on the ladder" % [num(int(oc[0])), num(int(oc[1])), num(Ranked.leaderboard().size())],
+				16, U.TEXT, "bold", rt)
+			cl.position = Vector2(20, 74)
+			var ol := _list_in(rt, 106, 784)
+			var mine := int(you.mmr)
+			var online: Array = Ranked.bots().filter(func(bp): return Persona.online(bp, t))
+			online.sort_custom(func(x, y): return absi(int(x.mmr) - mine) < absi(int(y.mmr) - mine))
+			for op in online.slice(0, 40):
+				var pr2 := Persona.presence(op, t)
+				ol.add_child(_person(op, String(pr2.label), Ranked.rank_label(op)))
+		"recent":
+			var rl := _list_in(rt, 76, 814)
+			var met := Ranked.recent_players(30)
+			for e in met:
+				var mp: Dictionary = e[0]
+				var y: Dictionary = mp.get("you", {})
+				var side := "With you" if String(y.get("last_side", "")) == "with" else "Against you"
+				var res := ("won" if String(y.get("last_res", "")) == "W" else "lost") if String(y.get("last_side", "")) == "with" else \
+					("you lost" if String(y.get("last_res", "")) == "W" else "you won")
+				var feel := _feeling(float(y.get("rep", 0.0)))
+				var fc := GREEN_HI if float(y.get("rep", 0.0)) > 0.15 else (RED if float(y.get("rep", 0.0)) < -0.15 else U.TEXT_DIM)
+				rl.add_child(_person(mp, "%s (%s)  ·  %d games  ·  %s" % [side, res, int(y.get("games", 0)), ago(int(e[1]))], feel, fc))
+			if met.is_empty():
+				_hint("The players from your ranked matches show here, with what they think of you.", rl)
+		"top":
+			var tl := _list_in(rt, 76, 814)
+			for e in Ranked.ladder_card(20):
+				var tp := Ranked.profile(String(e.id))
+				var sub := "#%d  ·  %s MMR  ·  %s avg  ·  %s" % [int(e.place), num(int(e.mmr)), String(e.kda), String(e.hero)]
+				tl.add_child(_person(tp, sub, Ranked.rank_label(tp), U.GOLD if int(e.place) <= Ranked.TOP else U.TEXT_DIM))
+		"find":
+			var box := LineEdit.new()
+			box.placeholder_text = "Type a name (2 letters or more)"
+			box.text = _find_text
+			box.position = Vector2(20, 76)
+			box.size = Vector2(560, 46)
+			rt.add_child(box)
+			var res_list := _list_in(rt, 136, 754)
+			var fill_find := func(q: String):
+				for c in res_list.get_children():
+					c.queue_free()
+				_find_text = q
+				var ql := q.strip_edges().to_lower()
+				if ql.length() < 2:
+					_hint("Find anyone on the ladder by name: see their profile, add them, or write to them once you are friends.", res_list)
+					return
+				var hits: Array = Ranked.all_profiles().filter(func(fp2): return String(fp2.get("name", "")).to_lower().contains(ql))
+				hits.sort_custom(func(x, y): return int(String(x.name).to_lower().begins_with(ql)) > int(String(y.name).to_lower().begins_with(ql)) \
+					if String(x.name).to_lower().begins_with(ql) != String(y.name).to_lower().begins_with(ql) else int(x.mmr) > int(y.mmr))
+				for hp in hits.slice(0, 30):
+					var friend := String(hp.id) in (Ranked.me().get("friends", []) as Array)
+					var tag := "You" if String(hp.id) == "me" else ("Your account" if Ranked.is_account(String(hp.id)) else ("Friend" if friend else ""))
+					res_list.add_child(_person(hp, "%s  ·  %s MMR  ·  #%s" % [String(Persona.presence(hp, t).label), num(int(hp.mmr)),
+						num(Ranked.place_of(String(hp.id)))], tag if tag != "" else Ranked.rank_label(hp), U.GOLD if tag != "" else U.TEXT_DIM))
+				if hits.is_empty():
+					_hint("Nobody on the ladder has a name like that.", res_list)
+			box.text_changed.connect(func(q: String): fill_find.call(q))
+			fill_find.call(_find_text)
+			box.grab_focus.call_deferred()
+
+## A chip that is on: the lit tab skin and gold words.
+func _chip_on(b: Button) -> void:
+	for st in ["normal", "hover", "pressed"]:
+		b.add_theme_stylebox_override(st, U.box("soc_tab_on", 8.0))
+	for c in ["font_color", "font_hover_color", "font_pressed_color"]:
+		b.add_theme_color_override(c, U.GOLD)
+
+## Open a conversation with a friend (middle panel).
+func _open_chat(id: String) -> void:
+	_chat_id = id
+	_middle = "chat"
+	FriendChat.mark_read(id)
+	_fill_players()
+
+## The middle panel's chat: the conversation with the chosen friend, or the list of conversations.
+func _fill_chat(mid: Control) -> void:
+	var friends: Array = Ranked.me().get("friends", [])
+	if _chat_id != "" and not (_chat_id in friends):
+		_chat_id = ""
+	if _chat_id == "":
+		var cl := _list_in(mid, 76, 814)
+		var convs := FriendChat.recent()
+		for c in convs:
+			var cp := Ranked.profile(String(c[0]))
+			var last: Dictionary = c[1]
+			var who := "You: " if String(last.f) == "y" else ""
+			var row := PersonRow.new()
+			row.p = cp
+			row.sub = who + String(last.x)
+			row.right = ago(int(last.t))
+			row.custom_minimum_size = Vector2(540, 64)
+			row.unread = FriendChat.unread(String(c[0]))
+			var cid := String(c[0])
+			row.clicked.connect(func(): _open_chat(cid))
+			cl.add_child(row)
+		if convs.is_empty():
+			_hint("Your conversations show here. Press Chat on a friend to write to them: online friends answer in seconds, friends in a match after it, away friends when they are back.", cl)
+		return
+	FriendChat.mark_read(_chat_id)
+	var p := Ranked.profile(_chat_id)
+	var head := ChatHead.new()
+	head.p = p
+	head.position = Vector2(20, 72)
+	head.size = Vector2(560, 72)
+	head.back.connect(func():
+		_chat_id = ""
+		_fill_players())
+	head.profile.connect(func(): _open_profile(String(p.id)))
+	mid.add_child(head)
+	var sc := ScrollContainer.new()
+	sc.position = Vector2(20, 154)
+	sc.size = Vector2(560, 650)
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	mid.add_child(sc)
+	var list := VBoxContainer.new()
+	list.custom_minimum_size = Vector2(540, 0)
+	list.add_theme_constant_override("separation", 6)
+	sc.add_child(list)
+	var ms := FriendChat.messages(_chat_id)
+	for m in ms:
+		var bub := Bubble.new()
+		bub.mine = String(m.f) == "y"
+		bub.text = String(m.x)
+		bub.when = ago(int(m.t))
+		bub.custom_minimum_size = Vector2(540, Bubble.height_for(String(m.x)))
+		list.add_child(bub)
+	if ms.is_empty():
+		_hint("Say hi to %s." % String(p.get("name", "")), list)
+	if FriendChat.typing(_chat_id):
+		_label("%s is typing..." % String(p.get("name", "")), 14, U.TEXT_DIM, "body", list)
+	_chat_scroll = sc
+	(func(): sc.scroll_vertical = int(list.size.y) + 1000).call_deferred()
+	var edit := LineEdit.new()
+	edit.placeholder_text = "Write to %s (Enter)" % String(p.get("name", ""))
+	edit.max_length = 300
+	edit.text = _chat_draft
+	edit.caret_column = _chat_draft.length()
+	edit.text_changed.connect(func(x: String): _chat_draft = x)
+	edit.position = Vector2(20, 822)
+	edit.size = Vector2(440, 48)
+	mid.add_child(edit)
+	var send := func():
+		var x := edit.text.strip_edges()
+		if x == "":
+			return
+		FriendChat.send(_chat_id, x)
+		_chat_draft = ""
+		_fill_players()
+	edit.text_submitted.connect(func(_s): send.call())
+	var sb := _button("Send", send, "GoldButton", Vector2(110, 48))
+	sb.position = Vector2(470, 822)
+	mid.add_child(sb)
+	edit.grab_focus.call_deferred()
 
 ## Friends first online and free, then in a match, then away.
 static func _presence_rank(p: Dictionary, t: int) -> int:
@@ -2034,12 +2294,16 @@ class PersonRow extends Control:
 	signal clicked
 	signal accept
 	signal ignore
+	signal open_chat
 	signal hover_card(p: Dictionary, at: Rect2, on: bool)
 	var p := {}
 	var sub := ""
 	var right := ""
 	var right_col := U.TEXT_DIM
 	var request := false
+	var chat := false                      # a friend: a Chat button (and the unread count)
+	var unread := 0
+	var lit := false                       # the friend whose conversation is open
 	var _av: Avatar
 	var _hot := false
 	func _ready() -> void:
@@ -2051,6 +2315,20 @@ class PersonRow extends Control:
 		_av.position = Vector2(8, 8)
 		_av.size = Vector2(48, 48)
 		add_child(_av)
+		if chat:
+			var cb := Button.new()
+			cb.text = "Chat"
+			cb.theme_type_variation = "DarkButton"
+			if unread > 0:
+				cb.add_theme_color_override("font_color", U.GOLD)
+			cb.focus_mode = Control.FOCUS_NONE
+			cb.size = Vector2(80, 38)
+			cb.position = Vector2(size.x - 88, 13)
+			cb.pressed.connect(func():
+				Options.click()
+				open_chat.emit())
+			add_child(cb)
+			resized.connect(func(): cb.position = Vector2(size.x - 88, 13))
 		if request:
 			for k in 2:
 				var b := Button.new()
@@ -2090,17 +2368,108 @@ class PersonRow extends Control:
 			accept_event()
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
-		U.skin(self, "soc_row_gold" if request else ("soc_row_hover" if _hot else "soc_row"), r)
+		U.skin(self, "soc_row_gold" if request or lit else ("soc_row_hover" if _hot else "soc_row"), r)
 		var st := String(Persona.presence(p, Ranked.now()).state)
 		PresenceLine.dot(self, Vector2(52, 52), st)
 		var f := U.font("bold")
 		var b := U.font("body")
+		var cw := 96.0 if chat else 0.0
 		var rw := 200.0 if request else (f.get_string_size(right, HORIZONTAL_ALIGNMENT_LEFT, -1, 15).x + 16.0 if right != "" else 0.0)
-		draw_string(f, Vector2(68, 28), String(p.get("name", "")), HORIZONTAL_ALIGNMENT_LEFT, size.x - 80 - rw, 18, U.TEXT)
-		draw_string(b, Vector2(68, 50), sub, HORIZONTAL_ALIGNMENT_LEFT, size.x - 80 - rw, 14, U.TEXT_DIM)
+		draw_string(f, Vector2(68, 28), String(p.get("name", "")), HORIZONTAL_ALIGNMENT_LEFT, size.x - 80 - rw - cw, 18, U.TEXT)
+		draw_string(b, Vector2(68, 50), sub, HORIZONTAL_ALIGNMENT_LEFT, size.x - 80 - rw - cw, 14, U.TEXT_DIM)
 		if right != "" and not request:
 			var tw := f.get_string_size(right, HORIZONTAL_ALIGNMENT_LEFT, -1, 15).x
-			draw_string(f, Vector2(size.x - 12 - tw, 38), right, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, right_col)
+			draw_string(f, Vector2(size.x - 12 - tw - cw, 38), right, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, right_col)
+		if unread > 0:
+			# unread messages: a gold count on the picture's corner
+			var c := Vector2(54, 12)
+			draw_circle(c, 11, U.GOLD)
+			var us := str(mini(unread, 99))
+			draw_string(f, c + Vector2(-f.get_string_size(us, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x * 0.5, 5), us, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.1, 0.06, 0.02))
+
+## The friend counts at the top of Friends: friends, online, in a match, offline, requests, each with its dot.
+class FriendCounts extends Control:
+	var vals: Array = [0, 0, 0, 0, 0]
+	func _draw() -> void:
+		U.skin(self, "soc_card", Rect2(Vector2.ZERO, size))
+		var defs := [["Friends", "", U.GOLD], ["Online", "online", GREEN_HI], ["In a match", "match", BLUE], ["Offline", "offline", U.TEXT_DIM],
+			["Requests", "", U.GOLD]]
+		var cw := size.x / 5.0
+		for i in 5:
+			var cx := cw * i + cw * 0.5
+			var v := int(vals[i]) if i < vals.size() else 0
+			var col: Color = defs[i][2] if v > 0 or i == 0 else U.TEXT_DIM
+			SocialUi.text_c(self, str(v), cx, 30, 24, col, "title")
+			SocialUi.text_c(self, String(defs[i][0]), cx + (8 if String(defs[i][1]) != "" else 0), 52, 13, U.TEXT_DIM)
+			if String(defs[i][1]) != "":
+				var tw := U.font("body").get_string_size(String(defs[i][0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+				PresenceLine.dot(self, Vector2(cx - tw * 0.5 - 4, 47), String(defs[i][1]))
+			if i > 0:
+				draw_line(Vector2(cw * i, 12), Vector2(cw * i, size.y - 12), Color(U.GOLD, 0.15), 1.0)
+
+## The head of a conversation: Back, the friend's picture, name, rank and presence; a click on the name opens the
+## profile.
+class ChatHead extends Control:
+	signal back
+	signal profile
+	var p := {}
+	var _av: Avatar
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_PASS
+		var bb := Button.new()
+		bb.text = "Back"
+		bb.theme_type_variation = "DarkButton"
+		bb.focus_mode = Control.FOCUS_NONE
+		bb.position = Vector2(0, 14)
+		bb.size = Vector2(80, 44)
+		bb.pressed.connect(func():
+			Options.click()
+			back.emit())
+		add_child(bb)
+		_av = Avatar.new()
+		_av.position = Vector2(94, 6)
+		_av.size = Vector2(60, 60)
+		_av.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_av.set_spec(p.get("avatar", {"k": "none"}))
+		add_child(_av)
+		var hit := Control.new()
+		hit.position = Vector2(94, 0)
+		hit.size = Vector2(size.x - 94, size.y)
+		hit.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		hit.tooltip_text = "Open the profile"
+		hit.gui_input.connect(func(e: InputEvent):
+			if SocialUi.is_left(e):
+				Options.click()
+				profile.emit()
+			elif SocialUi.is_right(e):
+				PlayerMenu.open(self, String(p.get("id", "")), SocialUi.at(hit, e)))
+		add_child(hit)
+	func _draw() -> void:
+		var pres := Persona.presence(p, Ranked.now())
+		draw_string(U.font("bold"), Vector2(168, 30), String(p.get("name", "")), HORIZONTAL_ALIGNMENT_LEFT, size.x - 180, 20, U.TEXT)
+		draw_string(U.font("body"), Vector2(168, 52), Ranked.rank_label(p), HORIZONTAL_ALIGNMENT_LEFT, 170, 15, U.GOLD)
+		PresenceLine.dot(self, Vector2(346, 47), String(pres.state))
+		draw_string(U.font("body"), Vector2(360, 52), String(pres.label), HORIZONTAL_ALIGNMENT_LEFT, size.x - 366, 14, U.TEXT_DIM)
+		draw_line(Vector2(0, size.y - 1), Vector2(size.x, size.y - 1), Color(U.GOLD, 0.2), 1.0)
+
+## A chat message: yours on the right in gold, theirs on the left, with when.
+class Bubble extends Control:
+	var mine := false
+	var text := ""
+	var when := ""
+	const BW := 400.0
+	static func height_for(t: String) -> float:
+		var lines := ceili(U.font("body").get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x / (BW - 28.0))
+		return 34.0 + 21.0 * maxi(1, lines)
+	func _draw() -> void:
+		var h := size.y - 6.0
+		var r := Rect2(size.x - BW if mine else 0.0, 0, BW, h)
+		draw_style_box(RankedNum.flat(Color(0.2, 0.15, 0.06, 0.92) if mine else Color(0.08, 0.1, 0.14, 0.92),
+			Color(U.GOLD, 0.55) if mine else Color(1, 1, 1, 0.12), 10, 1), r)
+		var b := U.font("body")
+		draw_multiline_string(b, r.position + Vector2(14, 24), text, HORIZONTAL_ALIGNMENT_LEFT, BW - 28, 16, -1, U.TEXT)
+		draw_string(b, Vector2(r.end.x - 14 - b.get_string_size(when, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x, h - 6), when,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 11, U.TEXT_DIM)
 
 ## A line of ladder news: the player's picture, what happened, when.
 class FeedRow extends Control:

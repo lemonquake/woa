@@ -57,6 +57,7 @@ func bot_for(hid: int) -> SimBot:
 	return null
 var brains := [null, null]                 # SimTeamAI per team (made when the team's first bot joins)
 var chat_log: Array = []                   # [{team, u, name, text, t}] team chat, newest last (all teams)
+var ladder: Array = []                     # the top 20 of the ladder as everyone knows it (Ranked.ladder_card; single player)
 var player_cards := {}                     # player hero id -> what bots know of the player (rank, last game MVP ...; single player)
 var pings: Array = []                      # [{id, team, pos, kind, target, from, t}] newest last
 var _next_ping := 1
@@ -930,6 +931,13 @@ func on_building_destroyed(u: SimUnit) -> void:
 	if u.kind == K.ANCIENT:
 		winner = 1 - u.team
 		events.append({"t": "victory", "team": winner})
+	# its ground is free to walk on again (the fountain never blocked)
+	if u.kind != K.FOUNTAIN:
+		var standing: Array = []
+		for o in units:
+			if o.alive and o.is_building() and o.kind != K.FOUNTAIN and o.pos.distance_to(u.pos) < 800.0:
+				standing.append([o.pos, o.def.hull * 0.85])
+		map.open_building(u.pos, u.def.hull * 0.85, standing)
 	_update_invulnerability()
 	vision.static_dirty = true
 

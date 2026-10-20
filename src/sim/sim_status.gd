@@ -90,6 +90,9 @@ func apply(t: SimUnit, src_id: int, src_team: int, m: Dictionary, pierce := fals
 	var enemy := src_team != t.team
 	if enemy and (t.is_invulnerable() or (t.debuff_immune and not pierce)):
 		return false
+	# Ser Emelrich winding up Giant Swing: even piercing debuffs miss him, unless the owner's list names them
+	if enemy and t.debuff_immune and t.has_flag(SimKits5.SWING_GUARD) and not SimKits5.pierces_guard(m):
+		return false
 	var dur := float(m.get("dur", 0.0))
 	if enemy and not m.get("no_resist", false):
 		dur *= 1.0 - t.status_resist

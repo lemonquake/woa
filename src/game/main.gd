@@ -421,6 +421,7 @@ func _spawn_heroes() -> void:
 	if not spectator and not automated:
 		# what the bots know of you: your rank, your last game (were you MVP?) (run 2026-10-19 e)
 		world.player_cards[mine.id] = _your_card()
+		world.ladder = Ranked.ladder_card(20)          # the bots know the top of the ladder (run 2026-10-20 e)
 	for m in made:
 		var h: SimUnit = m[0]
 		var s: Dictionary = m[1]

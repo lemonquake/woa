@@ -345,7 +345,8 @@ var _fade_amt := 0.0
 ## Lasting item states: Spell Shield makes the hero 30% bigger (as in Dota); an invisible unit of the player's team is
 ## drawn faded (enemies never see it at all).
 func _item_states(u: SimUnit) -> void:
-	var big := not u.get_modifier("spell_shield").is_empty()
+	# Ser Emelrich winding up Giant Swing looms as large: he is spell immune too
+	var big := not u.get_modifier("spell_shield").is_empty() or not u.get_modifier("swing_guard").is_empty()
 	if big != _big:
 		_big = big
 		var tw := create_tween()
@@ -474,6 +475,9 @@ func tick(u: SimUnit) -> void:
 			_play(_delayed_clip, false, 1.0, 0.03, true)
 		_delayed_clip = ""
 	if not u.alive:
+		if cfg.has("ghost"):
+			model.visible = false               # a spirit has no body to fall: it goes up in a puff (SimKits7 ghost_poof)
+			return
 		if _knock_t >= 0.0:
 			return
 		if _dead_at < 0.0:

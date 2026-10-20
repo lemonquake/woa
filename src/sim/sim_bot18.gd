@@ -400,6 +400,52 @@ static func tick(b: SimBot, h: SimUnit) -> bool:
 			return _ghorman_tick(b, h)
 	return false
 
+## Every bot (whatever its hero) that stands where an enemy Ser Emelrich's wind-up will land (Giant Swing's cone,
+## Overhead Cut's line) and sees him steps out of it, after its reaction time: the red marks are there to be dodged.
+## Returns true while it is getting out (nothing else this think).
+static func dodge_windups(b: SimBot, h: SimUnit) -> bool:
+	if b._foes.is_empty() or h.is_stunned() or not h.channel.is_empty():
+		return false
+	var ab := b.w.abilities
+	for f: SimUnit in b._foes:
+		if f.channel.is_empty() or not bool(f.channel.get("locked", false)):
+			continue
+		var aid := String(f.channel.ability)
+		if not aid in SimKits5.WINDUPS:
+			continue
+		var left := float(f.channel.until) - b.w.time
+		var spent := ab.val(f, aid, "windup") - left
+		if left < 0.12 or spent < float(b.sk.react) * 0.6:
+			continue
+		var aim: Vector2 = f.channel.aim
+		var from: Vector2 = f.channel.get("from", f.pos)
+		if not _in_windup(ab, f, aid, from, aim, h.pos, h.hull + 40.0):
+			continue
+		# out to the side it is already on, else straight back out of reach; the nearest open spot wins
+		var rel := h.pos - from
+		var side := aim.orthogonal() * (1.0 if rel.dot(aim.orthogonal()) >= 0.0 else -1.0)
+		var best := Vector2.INF
+		for d: Vector2 in [side, (side + aim * 0.5).normalized(), (side - aim * 0.3).normalized(), aim, -side]:
+			for step in [250.0, 400.0, 600.0]:
+				var p: Vector2 = h.pos + d * step
+				if b.w.map.is_walkable(p) and not _in_windup(ab, f, aid, from, aim, p, h.hull + 60.0):
+					if best == Vector2.INF or p.distance_to(h.pos) < best.distance_to(h.pos):
+						best = p
+					break
+		if best != Vector2.INF:
+			b._order(h, {"type": O.MOVE, "point": best})
+			return true
+	return false
+
+## Whether a circle at `p` of radius `r` is inside the area a wind-up will strike.
+static func _in_windup(ab: SimAbilities, f: SimUnit, aid: String, from: Vector2, aim: Vector2, p: Vector2, r: float) -> bool:
+	var dist := ab.val(f, aid, "distance")
+	if aid == "giant_swing":
+		return SimKits5.in_cone(from, aim, dist, deg_to_rad(ab.val(f, aid, "angle")) * 0.5, p, r)
+	var to := from + aim * (dist + f.hull)
+	var cp := Geometry2D.get_closest_point_to_segment(p, from, to)
+	return cp.distance_to(p) <= ab.val(f, aid, "width") * 0.5 + r
+
 ## Steel Stance on when a ranged or line-shot hero stands in front of him and he is not chasing; off to move.
 static func _stance(b: SimBot, h: SimUnit) -> void:
 	var ab := b.w.abilities

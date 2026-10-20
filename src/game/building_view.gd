@@ -255,6 +255,10 @@ func _destroy() -> void:
 	tw.parallel().tween_property(model, "rotation:z", 0.12, 1.6)
 	if light:
 		tw.parallel().tween_property(light, "light_energy", 0.0, 0.8)
+	# then the rubble sinks out of sight: nothing is left standing where units now walk
+	tw.tween_property(model, "position:y", model.position.y - 8.0, 1.8).set_trans(Tween.TRANS_QUAD) \
+		.set_ease(Tween.EASE_IN)
+	tw.tween_callback(func() -> void: model.visible = false)
 	for c in _crystals:
 		c.set_shader_parameter("dim", 0.92)
 	for f in _floaters:

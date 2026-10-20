@@ -9,6 +9,8 @@ extends RefCounted
 ##   * review: every few minutes your game is held against your averages ("better than ur profile", "{n} deaths, right
 ##     on ur avg", "whos playing on ur account");
 ##   * ask: you ask them to check your profile ("check my profile", "my stats?"), or ask one about its own.
+##   * ladder: they know the top 20 of the ladder (SimWorld.ladder) and answer "who is top 1", "top 10?", "best
+##     player", and a question naming anyone in it ("is bunso94 good?", "check sensei"), with what they think of them.
 ## Everything draws from the chat's seeded generator.
 
 var bc: SimBotChat
@@ -42,12 +44,85 @@ func like(h: SimUnit) -> float:
 	var b = bc._bot_of(h)
 	return float(b.you_rec.get("rep", 0.0)) if b != null else 0.0
 
+## The ladder entry a line names (a top-20 player, at least 4 letters of the name), or {}.
+func named(low: String) -> Dictionary:
+	var best := {}
+	for e: Dictionary in w.ladder:
+		var nm := String(e.name).to_lower()
+		if nm.length() >= 4 and (low.contains(nm) or (nm.split(" ")[0].length() >= 5 and low.contains(nm.split(" ")[0]))):
+			if best.is_empty() or nm.length() > String(best.name).length():
+				best = e
+	return best
+
+func names_ladder(low: String) -> bool:
+	if w.ladder.is_empty():
+		return false
+	var e := named(" " + low + " ")
+	if e.is_empty():
+		return false
+	# a name in the match is about that player, not the ladder
+	for u in w.heroes:
+		if bc.pname(u).to_lower() == String(e.name).to_lower():
+			return false
+	return true
+
+## Answer a question about the top of the ladder (top: the top 1, the top 5 or 10 listed) or about a ladder player the
+## line names: the facts, then what this bot thinks of them (ProfileTalk.opinion), in its typing. Returns whether it spoke.
+func ladder_ask(u: SimUnit, to: SimUnit, listeners: Array, all: bool, low: String, top: bool) -> bool:
+	if w.ladder.is_empty():
+		return false
+	var h: SimUnit = to if to != null else bc._talker(listeners, "ego" if all else "talk")
+	if h == null:
+		return false
+	var r := _r()
+	var d := r.randf_range(1.0, 2.2)
+	var text := ""
+	var about := {}
+	if top and not names_ladder(low):
+		var want := 10 if (low.contains("10") or low.contains("leaderboard") or low.contains("players")) else (5 if low.contains("5") else (20 if low.contains("20") else 1))
+		if want == 1:
+			about = w.ladder[0]
+			text = "%s is top 1, %s mmr, %s avg, mostly %s" % [String(about.name), str(int(about.mmr)), String(about.kda), String(about.hero)]
+			if bool(about.get("you", false)) and String(about.id) == "me":
+				text = "its u lol. top 1, %s mmr" % str(int(about.mmr))
+		else:
+			var names: Array = []
+			for e: Dictionary in w.ladder.slice(0, want):
+				names.append("%d %s" % [int(e.place), String(e.name)])
+			text = "top %d: %s" % [want, ", ".join(names)]
+		# where the player stands, if they are up there
+		for e: Dictionary in w.ladder:
+			if String(e.id) == "me" and text.find("its u") < 0:
+				text += "  (ur #%d btw)" % int(e.place)
+				break
+	else:
+		about = named(" " + low + " ")
+		if about.is_empty():
+			return false
+		var rk := String(about.rank).to_lower()
+		text = "%s? %s, %s avg, %d mvps, plays %s" % [String(about.name), rk if int(about.place) <= 10 else "#%d, %s" % [int(about.place), rk],
+			String(about.kda), int(about.mvps), String(about.hero)]
+		if String(about.id) == "me":
+			text = "thats u lol. #%d, %s avg" % [int(about.place), String(about.kda)]
+	bc._must = true
+	bc._queue_line(h, text, all or h.team != u.team, "ladder", d, u.id, [], {})
+	# and what it thinks of them (the top 1 or the one named)
+	if not about.is_empty() and String(about.id) != "me" and r.randf() < 0.8:
+		# its take on them (about them, not to the one who asked)
+		var fa: Dictionary = about.prof
+		var fl := ProfileTalk.fill(fa)
+		fl["name"] = String(about.name)
+		var sit := "pf_other_good" if ProfileTalk.verdict(fa) >= 0 or ProfileTalk.elite_facts(fa) else "pf_other_bad"
+		bc.speak(h, sit, all or h.team != u.team, fl, 1.0, d + r.randf_range(1.2, 2.4), u.id, 0.0)
+	said += 1
+	return true
+
 ## `h` says what it sees in `about`'s profile. Returns whether it spoke.
 func comment(h: SimUnit, about: SimUnit, all: bool, delay: float, chance := 1.0) -> bool:
 	var f := prof(about)
 	if h == null or f.is_empty() or int(f.get("games", 0)) + int(f.get("career_g", 0)) == 0:
 		return false
-	var op := ProfileTalk.opinion(manner(h), f, _r(), like(h) if not about.bot else 0.0)
+	var op := ProfileTalk.opinion(manner(h), f, _r(), like(h) if not about.bot else 0.0, "with" if h.team == about.team else "vs")
 	var sit := String(op[0])
 	var fl: Dictionary = op[1]
 	fl["name"] = bc.pname(about)
@@ -57,9 +132,10 @@ func comment(h: SimUnit, about: SimUnit, all: bool, delay: float, chance := 1.0)
 	if not about.bot:
 		if sit == "pf_accuse":
 			bc._note(h, "accused_you")
-		elif sit.begins_with("pf_good") or sit == "pf_kind_good":
+		elif sit.begins_with("pf_good") or sit == "pf_kind_good" or sit in ["pf_pro_awe", "pf_pro_gopro", "pf_pro_root",
+				"pf_pro_vs", "pf_pro_compare", "pf_pro_respect"]:
 			bc._note(h, "praised_you")
-		elif sit.begins_with("pf_bad") or sit.begins_with("pf_troll"):
+		elif sit.begins_with("pf_bad") or sit.begins_with("pf_troll") or sit in ["pf_pro_hater", "pf_pro_troll"]:
 			bc._note(h, "flamed_you")
 	return true
 
