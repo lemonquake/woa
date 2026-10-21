@@ -105,7 +105,12 @@ const ABILITY_FALLBACKS := {"burst_shot": "skills/multishot", "gale_impact": "sk
 	"pack_leader": "skills/gen/pack_leader", "blessing_of_the_beast_king": "skills/gen/blessing_of_the_beast_king",
 	"beast_form": "skills/gen/beast_form", "senryukai": "skills/gen/senryukai", "blur_strike": "skills/gen/blur_strike",
 	"djin_bomb": "skills/gen/djin_bomb", "ghosts_of_the_will": "skills/gen/ghosts_of_the_will",
-	"the_blur": "skills/gen/the_blur"}
+	"the_blur": "skills/gen/the_blur",
+	# Blackfire and Thyrandael (run 2026-10-21)
+	"underworld_presence": "skills/gen/underworld_presence", "sacrificial_grip": "skills/gen/sacrificial_grip",
+	"rise_up": "skills/gen/rise_up", "fiend_edge": "skills/gen/fiend_edge", "unfallen": "skills/gen/unfallen",
+	"divine_touch": "skills/gen/divine_touch", "holy_beam": "skills/gen/holy_beam", "quick_flash": "skills/gen/quick_flash",
+	"spirit_step": "skills/gen/spirit_step", "false_judgement": "skills/gen/false_judgement"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
 const NEUTRAL_SKILL_FALLBACKS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}

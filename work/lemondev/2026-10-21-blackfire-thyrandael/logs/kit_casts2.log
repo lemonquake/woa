@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3: no winner at 25:00, 305527 ms
+  blackfire  L16 K/D/A 0/5/13 LH  42  casts { "sacrificial_grip": 30, "rise_up": 16 }  | soul_drain 282, fiend_edge 53, undead_rise 95, unfallen_fall 4, unfallen_rise 4, unfallen_blast 4
+  thyrandael L28 K/D/A 27/1/5 LH 132  casts { "quick_flash": 143, "spirit_step": 39, "holy_beam": 32, "false_judgement": 19 }  | barrier_gain 231, holy_beam_aim 378, judgement_charge 121
+  ezee       L17 K/D/A 7/7/5 LH  29  casts { "dark_stomp": 29, "tainted_touch": 20, "leap_strike": 7, "unholy_might": 8 }
+  azrin      L15 K/D/A 2/6/8 LH  52  casts { "touch_of_ember": 27, "fiery_javelin": 22, "spirit_of_fire": 12, "divine_smite": 3 }
+  tock       L15 K/D/A 6/6/5 LH  21  casts { "time_bolt": 43, "rewind": 6, "stop_time": 4, "slow_field": 8, "fast_forward": 4 }
+  araki      L16 K/D/A 3/5/8 LH  62  casts { "blur_strike": 39, "djin_bomb": 12, "ghosts_of_the_will": 4, "the_blur": 8 }
+  froster    L17 K/D/A 5/12/3 LH  59  casts { "breath_of_cold": 40, "ice_pulse": 23, "endless_winter": 4 }
+  kragg      L15 K/D/A 1/7/9 LH  31  casts { "iron_grip": 20, "repel": 15, "magnet_field": 5 }
+  caziel     L15 K/D/A 9/11/5 LH  10  casts { "swift_dagger": 36, "master_of_shadows": 18 }
+  sludge     L14 K/D/A 6/7/4 LH  19  casts { "shuriken_hook": 18, "stench": 32, "blubber": 12, "chomp": 9 }
+seed 7: no winner at 25:00, 296221 ms
+  blackfire  L21 K/D/A 6/6/19 LH  51  casts { "sacrificial_grip": 35, "rise_up": 17 }  | soul_drain 366, fiend_edge 50, undead_rise 127, unfallen_fall 5, unfallen_rise 5, unfallen_blast 5
+  thyrandael L23 K/D/A 17/1/8 LH  87  casts { "quick_flash": 105, "spirit_step": 30, "holy_beam": 26, "false_judgement": 21 }  | barrier_gain 180, holy_beam_aim 325, judgement_charge 124
+  ezee       L17 K/D/A 3/5/11 LH  48  casts { "dark_stomp": 33, "tainted_touch": 14, "leap_strike": 10, "unholy_might": 9 }
+  azrin      L21 K/D/A 15/4/4 LH  89  casts { "touch_of_ember": 41, "fiery_javelin": 27, "spirit_of_fire": 25, "divine_smite": 8 }
+  tock       L17 K/D/A 9/6/11 LH  25  casts { "time_bolt": 44, "rewind": 5, "stop_time": 8, "slow_field": 9, "fast_forward": 5 }
+  araki      L11 K/D/A 0/13/3 LH  40  casts { "blur_strike": 40, "djin_bomb": 14, "ghosts_of_the_will": 9, "the_blur": 7 }
+  froster    L16 K/D/A 7/8/3 LH  58  casts { "breath_of_cold": 44, "ice_pulse": 28, "endless_winter": 6 }
+  kragg      L14 K/D/A 5/9/6 LH  42  casts { "iron_grip": 23, "repel": 15, "magnet_field": 7 }
+  caziel     L11 K/D/A 3/12/4 LH  21  casts { "swift_dagger": 27, "master_of_shadows": 17 }
+  sludge     L16 K/D/A 6/9/5 LH  14  casts { "shuriken_hook": 21, "stench": 27, "blubber": 14, "chomp": 10 }
+WARNING: 10972 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 27 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

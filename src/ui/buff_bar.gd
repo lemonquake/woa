@@ -20,7 +20,7 @@ const BUFF_COL := Color(0.45, 0.9, 0.4)
 const DEBUFF_COL := Color(1.0, 0.36, 0.3)
 
 ## Marks that only feed other visuals or are shown another way ("burning" sums the burns, which show one by one).
-const HIDDEN := {"burning": true, "hook_lock": true}
+const HIDDEN := {"burning": true, "hook_lock": true, "grip_mark": true}
 
 ## Names for effects that are not an ability, item or aura of their own.
 const NAMES := {"stunned": "Stunned", "bashed": "Bashed", "frosted": "Frozen", "burning": "Burning",
@@ -32,7 +32,9 @@ const NAMES := {"stunned": "Stunned", "bashed": "Bashed", "frosted": "Frozen", "
 	"fortify_mark": "Fortify Mark", "ensnared": "Caught", "piloting": "In a Turret", "piloted": "Piloted",
 	"void_rush_buff": "Void Rush", "dark_matter_slow": "Dark Matter Skin", "axe_out": "Axe Away", "joke_pie": "Pie",
 	"joke_confetti": "Confetti", "joke_glue": "Glue", "shuffle_dizzy": "Dizzy", "tamed": "Tamed",
-	"blur_strike_again": "Second Dash", "the_blur_speed": "Fast Attacks"}
+	"blur_strike_again": "Second Dash", "the_blur_speed": "Fast Attacks", "grip_weak": "Weakened",
+	"grip_hold": "Holding On", "unfallen_fallen": "Fallen", "unfallen_risen": "Last Life", "undead": "Undead",
+	"quick_flash_mark": "Flash Mark", "holy_beam_turn": "Holding the Beam", "spirit_step_silence": "Silenced"}
 
 ## Icons for those (assets/ui/<path>.svg); abilities and items use their own.
 const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "frosted": "status/frozen",
@@ -71,7 +73,10 @@ const ALIAS := {"blood_ranger": "blood_ranger_ult", "void_rush_buff": "void_rush
 	"darkness_blind": "divine_darkness", "berserk": "mask_of_madness", "burak_berserk": "berserk",
 	"hurricane_wind": "hurricane", "axe_out": "axe_throw", "joke_pie": "joke_box", "joke_confetti": "joke_box",
 	"joke_glue": "joke_box", "shuffle_dizzy": "shuffle", "roar_pack": "roar", "beast_growth": "beast_form",
-	"tamed": "tame", "blur_strike_again": "blur_strike", "the_blur_speed": "the_blur", "ghost_form": "ghosts_of_the_will"}
+	"tamed": "tame", "blur_strike_again": "blur_strike", "the_blur_speed": "the_blur", "ghost_form": "ghosts_of_the_will",
+	"grip_weak": "sacrificial_grip", "grip_hold": "sacrificial_grip", "unfallen_fallen": "unfallen",
+	"unfallen_risen": "unfallen", "undead": "rise_up", "quick_flash_mark": "quick_flash", "holy_beam_turn": "holy_beam",
+	"spirit_step_silence": "spirit_step"}
 
 static var _index := {}                    # effect id -> {name, item | icon}: auras, creep attack effects, item uses
 
@@ -328,6 +333,17 @@ static func effects(e: Dictionary, u: SimUnit) -> Array:
 		out.append("Healing and regen %d%% weaker." % roundi(float(m.heal_reduction) * 100.0))
 	if float(m.get("barrier", 0.0)) > 0.0:
 		out.append("A shield takes the next %d damage." % roundi(float(m.barrier)))
+	# barriers (SimBarrier)
+	if float(m.get("barrier_all", 0.0)) > 0.0:
+		out.append("All-damage Barrier: takes the next %d damage of every kind." % roundi(float(m.barrier_all)))
+	if float(m.get("barrier_phys", 0.0)) > 0.0:
+		out.append("Physical Barrier: takes the next %d physical damage." % roundi(float(m.barrier_phys)))
+	if float(m.get("barrier_magic", 0.0)) > 0.0:
+		out.append("Magic Barrier: takes the next %d magic damage." % roundi(float(m.barrier_magic)))
+	if m.get("fallen", false):
+		out.append("Lying dead for a moment: he rises again.")
+	if float(m.get("weak_pct", 0.0)) > 0.0 and not m.has("stats"):
+		out.append("Will deal %d%% less attack damage once the stun ends." % roundi(float(m.weak_pct) * 100.0))
 	if float(m.get("cdr", 0.0)) > 0.0:
 		out.append("Cooldowns %d%% shorter." % roundi(float(m.cdr) * 100.0))
 	if float(m.get("mana_cut", 0.0)) > 0.0:

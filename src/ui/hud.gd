@@ -99,8 +99,19 @@ func _portrait() -> void:
 	var env: Environment = game.atmosphere.env.duplicate() if game and game.get("atmosphere") else Environment.new()
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color(0.07, 0.08, 0.1)
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY if env.sky != null else Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.55, 0.58, 0.65)
+	# the same light by day and by night (the owner, 2026-10-21): its own daytime sky for ambient light and the
+	# reflections metal needs, not the world's sky, which darkens at night (the duplicate shared it)
+	var sky_mat := ProceduralSkyMaterial.new()
+	sky_mat.sky_top_color = Color(0.5, 0.6, 0.8)
+	sky_mat.sky_horizon_color = Color(0.85, 0.86, 0.88)
+	sky_mat.ground_horizon_color = Color(0.7, 0.68, 0.66)
+	sky_mat.ground_bottom_color = Color(0.32, 0.3, 0.28)
+	env.sky = Sky.new()
+	env.sky.sky_material = sky_mat
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	env.ambient_light_energy = 1.0
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+	env.adjustment_saturation = 1.08
 	env.ssao_enabled = false
 	env.ssil_enabled = false
 	env.sdfgi_enabled = false
@@ -110,6 +121,22 @@ func _portrait() -> void:
 	env.ssr_enabled = false
 	portrait_cam.environment = env
 	portrait_vp.add_child(portrait_cam)
+	# its own studio lights, turning with the camera: a camera's cull mask also culls lights, so the portrait never saw
+	# the sun or moon (it was lit by the sky alone), and only the portrait camera sees these
+	for l in [[Vector3(-28.0, -32.0, 0.0), 1.6, Color(1.0, 0.96, 0.9)], [Vector3(-8.0, 38.0, 0.0), 0.75, Color(0.85, 0.9, 1.0)],
+			[Vector3(-20.0, 165.0, 0.0), 0.9, Color(1.0, 0.95, 0.88)]]:
+		var light := DirectionalLight3D.new()
+		light.rotation_degrees = l[0]
+		light.light_energy = l[1]
+		light.light_color = l[2]
+		light.layers = PORTRAIT_LAYER
+		light.light_cull_mask = PORTRAIT_LAYER
+		light.shadow_enabled = false
+		light.sky_mode = DirectionalLight3D.SKY_MODE_LIGHT_ONLY
+		portrait_cam.add_child(light)
+	# and the battlefield camera does not see them
+	if game and game.get("camera") and game.camera.cam:
+		game.camera.cam.cull_mask &= ~PORTRAIT_LAYER
 
 ## The render layer only the portrait camera draws (layer 20); the shown unit's meshes carry it as well as layer 1.
 const PORTRAIT_LAYER := 1 << 19
@@ -362,6 +389,10 @@ func _channel_bar(h: SimUnit, vs: Vector2) -> void:
 	U.panel(self, r.grow(4), U.GOLD_DIM, 4)
 	U.bar(self, r, 1.0 - left / maxf(0.01, total), Color(0.95, 0.78, 0.3))
 	U.text_c(self, "%s   %.1f" % [name, left], r.get_center() + Vector2(0, 6), 14, U.TEXT, "bold")
+	if aid == "holy_beam":
+		# the owner: "will inform the player to press S to stop"
+		U.text_c(self, "Right-click to turn the beam   ·   Press %s to stop" % Keybinds.key_name("stop"),
+			r.get_center() + Vector2(0, -22), 15, Color(1.0, 0.92, 0.6), "bold")
 
 func error(msg: String) -> void:
 	_msg = msg
@@ -1415,7 +1446,10 @@ class BottomPanel extends Control:
 		var rates: Vector4 = hud.game.world.regen_rates(h)
 		var hr := Rect2(ABIL_X, BARS_Y, bw, 24)
 		U.bar(self, hr, h.hp / maxf(1.0, h.max_hp), U.HP)
-		U.text_c(self, "%d / %d" % [int(h.hp), int(h.max_hp)], hr.get_center() + Vector2(0, 7), 16, U.TEXT, "bold")
+		var bt := SimBarrier.total(h) if not h.modifiers.is_empty() else Vector3.ZERO
+		if bt != Vector3.ZERO:
+			BarrierBar.draw(self, hr.grow(-2.0), h.hp / maxf(1.0, h.max_hp), h.max_hp, bt)
+		U.text_c(self, "%d / %d%s" % [int(h.hp), int(h.max_hp), BarrierBar.text(bt)], hr.get_center() + Vector2(0, 7), 16, U.TEXT, "bold")
 		# a healing cut (Stench with the Upgrade Staff) shows as its own red term: before the cut = total / (1 - cut)
 		var red := h.heal_reduction()
 		var hcut := 0.0

@@ -14,15 +14,18 @@ const ACCENTS := {
 	"tock": Color(1.0, 0.8, 0.38), "kragg": Color(0.4, 0.65, 1.0), "roydo": Color(0.62, 0.42, 1.0),
 	"blau": Color(0.35, 0.82, 1.0), "azrael": Color(0.92, 0.12, 0.16), "airah": Color(0.55, 0.92, 0.85),
 	"burak": Color(1.0, 0.32, 0.18), "emelrich": Color(1.0, 0.88, 0.55), "feran": Color(0.95, 0.25, 0.45),
-	"ghorman": Color(0.55, 0.85, 0.35), "araki": Color(0.5, 1.0, 0.35)}
+	"ghorman": Color(0.55, 0.85, 0.35), "araki": Color(0.5, 1.0, 0.35),
+	"blackfire": Color(0.62, 0.32, 1.0), "thyrandael": Color(1.0, 0.86, 0.45)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
 	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
 	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy", "airah": "cast_area",
-	"burak": "war_cry", "emelrich": "boss_roar", "feran": "cast_quick", "ghorman": "war_cry", "araki": "boss_roar"}
+	"burak": "war_cry", "emelrich": "boss_roar", "feran": "cast_quick", "ghorman": "war_cry", "araki": "boss_roar",
+	"blackfire": "boss_roar", "thyrandael": "cast_area"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_staff", "sludge": "idle_1h",
 	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
 	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff", "airah": "idle_mage",
-	"burak": "idle_dual", "emelrich": "idle_2h", "feran": "idle_dagger", "ghorman": "idle_1h", "araki": "idle_2h"}
+	"burak": "idle_dual", "emelrich": "idle_2h", "feran": "idle_dagger", "ghorman": "idle_1h", "araki": "idle_2h",
+	"blackfire": "idle_2h", "thyrandael": "idle_2h"}
 
 var hero_id := ""
 var model: Node3D

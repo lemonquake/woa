@@ -1,0 +1,21 @@
+FBX version: 7400
+[extract_prop] prop: 166415 faces cut out
+00:20.125  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\extract_prop.py:152: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  pm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:38:41 | INFO: Starting glTF 2.0 export
+04:38:41 | INFO: Extracting primitive: tripo_mesh_ca66fc79.001
+04:38:41 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:38:41 | INFO: Primitives created: 1
+04:38:41 | INFO: Finished glTF 2.0 export in 0.21361088752746582 s
+
+[extract_prop] wrote A:/Python/woa/work/lemondev/2026-10-21-blackfire-thyrandael/bodies/weap/thyrandael_sword_raw.glb: 7000 faces, 1.64 m long
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

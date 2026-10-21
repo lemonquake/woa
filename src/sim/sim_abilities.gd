@@ -17,6 +17,12 @@ var kits4: SimKits4                         # Azrael's kit (2026-10-17)
 var kits5: SimKits5                         # Airah's, Burak's and Ser Emelrich's kits (run 2026-10-18 f)
 var kits6: SimKits6                         # Feran Mock's and Ghorman's kits (run 2026-10-18 f)
 var kits7: SimKits7                         # Araki's kit (run 2026-10-19 c)
+var kits8: SimKits8                         # Blackfire's kit (run 2026-10-21)
+var kits9: SimKits9                         # Thyrandael's kit (run 2026-10-21)
+
+## Units hero `h` commands besides itself and its courier: Ghorman's beasts, Blackfire's Undead.
+func commands(h: SimUnit, o: SimUnit) -> bool:
+	return kits6.is_beast_of(h, o) or kits8.is_undead_of(h, o)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
@@ -26,6 +32,8 @@ func _init(world: SimWorld = null) -> void:
 	kits5 = SimKits5.new(world, self)
 	kits6 = SimKits6.new(world, self)
 	kits7 = SimKits7.new(world, self)
+	kits8 = SimKits8.new(world, self)
+	kits9 = SimKits9.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -205,6 +213,14 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		var k7 := kits7.cast_error(u, aid, target, point, check_target)
 		if k7 != "":
 			return k7
+	if kits8.handles(aid):
+		var k8 := kits8.cast_error(u, aid, target, point, check_target)
+		if k8 != "":
+			return k8
+	if kits9.handles(aid):
+		var k9 := kits9.cast_error(u, aid, target, point, check_target)
+		if k9 != "":
+			return k9
 	if a.behavior == "unit" and check_target:
 		var te := _target_error(u, a, target)
 		if te != "":
@@ -327,6 +343,8 @@ func cast_range(u: SimUnit, aid: String, slot: int, t: SimUnit = null) -> float:
 		return INF                               # aimed by direction only: cast from where the hero stands
 	if aid == "door_of_the_end" and kits4.exit_pending(u):
 		return val(u, aid, "exit_range") + u.cast_range_bonus
+	if aid == "false_judgement":
+		return kits9.judgement_range(u) + u.cast_range_bonus      # it follows his charges
 	var r := val(u, aid, "range")                # talents and upgrades that change the range count
 	return r + u.cast_range_bonus if r > 0.0 else r
 
@@ -378,6 +396,9 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 	# Spirit of Fire: every other spell Azrin casts adds a spirit
 	if aid != "spirit_of_fire" and u.ability_level_of("spirit_of_fire") > 0:
 		_add_spirit(u)
+	# Divine Touch: every spell Thyrandael casts adds a charge of his barrier
+	if u.ability_level.has("divine_touch"):
+		kits9.on_spell_cast(u, aid)
 	if kits2.handles(aid):
 		kits2.cast(u, aid, lv, t, p)
 		return
@@ -395,6 +416,12 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	if kits7.handles(aid):
 		kits7.cast(u, aid, lv, t, p)
+		return
+	if kits8.handles(aid):
+		kits8.cast(u, aid, lv, t, p)
+		return
+	if kits9.handles(aid):
+		kits9.cast(u, aid, lv, t, p)
 		return
 	match aid:
 		"fiery_javelin":
@@ -936,6 +963,10 @@ func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, 
 		if ti >= 0:
 			w.cut_tree(ti, u.pos, true)
 	var aid := String(k.ability)
+	if aid == SimKits8.BLAST:
+		# Unfallen's last blast: whoever slams into something is stunned, allies too; no damage
+		k.stun = kits8.blast_stun(int(k.src))
+		return
 	var crash: Array = SimKits5.CRASHES.get(aid, SimKits6.CRASHES.get(aid, []))
 	if u.team == int(k.team) or not (aid in ["dark_stomp", "gale_impact", "repel"] or not crash.is_empty()):
 		return
@@ -1190,6 +1221,8 @@ func channel_tick(u: SimUnit) -> void:
 			_update_winter(u)
 		"overhead_cut", "giant_swing":
 			pass                                 # a wind-up: the blow lands when it ends (SimKits5.windup_done)
+		"holy_beam":
+			kits9.beam_tick(u)
 
 ## A channel ended (finished, or cancelled by an order, stun, silence, push or death): undo what it holds.
 func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
@@ -1202,6 +1235,8 @@ func channel_cleanup(u: SimUnit, ch: Dictionary, _cancelled: bool) -> void:
 				_remove_mod(t, "chomp", u.id)
 		"overhead_cut", "giant_swing":
 			kits5.windup_done(u, ch, _cancelled)
+		"holy_beam":
+			kits9.beam_end(u, _cancelled)
 
 func _remove_mod(t: SimUnit, mid: String, source: int) -> void:
 	for i in range(t.modifiers.size() - 1, -1, -1):

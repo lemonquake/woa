@@ -34,7 +34,7 @@ static func _apply(w: SimWorld, hero_id: int, c: Dictionary) -> String:
 	match k:
 		"order":
 			var uid := int(c.get("u", hero_id))
-			if uid != h.id and uid != h.courier_id and not w.abilities.kits6.is_beast_of(h, w.get_unit(uid)):
+			if uid != h.id and uid != h.courier_id and not w.abilities.commands(h, w.get_unit(uid)):
 				return ""
 			var o = c.get("o", {})
 			if not (o is Dictionary):

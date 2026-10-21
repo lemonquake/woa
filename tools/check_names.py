@@ -82,6 +82,10 @@ OWNER_NAMES = [
     "the Master Tactician", "Master Tactician", "Bounce Shot", "Summon Boulders", "Lay Trap", "Place Turret",
     # 2026-10-19 b: the ranked ranks (Rookie .. Transcendent are plain words; Aetherium and Aetherium+ are the owner's)
     "Aetherium",
+    # 2026-10-21: Blackfire and Thyrandael with their titles and abilities
+    "Blackfire", "the Unfallen", "Unfallen", "Thyrandael", "the Forsaken Seraph", "Underworld Presence",
+    "Sacrificial Grip", "Rise Up", "Fiend Edge", "Divine Touch", "Holy Beam", "Quick Flash", "Spirit Step",
+    "False Judgement",
 ]
 # The owner named the pure damage type "Aether" (2026-10-14). Only these exact texts may use it, so a new
 # "Aether ..." compound is still caught.

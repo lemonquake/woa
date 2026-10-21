@@ -6,11 +6,11 @@ extends RefCounted
 
 const PATH := "user://hero.json"
 const HEROES := ["blood_ranger", "ezee", "sludge", "azrin", "froster", "caziel", "tock", "kragg", "roydo", "blau",
-	"azrael", "airah", "burak", "emelrich", "feran", "ghorman", "araki"]
+	"azrael", "airah", "burak", "emelrich", "feran", "ghorman", "araki", "blackfire", "thyrandael"]
 ## Heroes with their own body: no Hero Creator look, outfit or dyes.
 ## heroes with a model of their own (no Hero Creator look); 2026-10-17: Ezee, Azrin and Caziel got theirs, then Azrael
 const OWN_BODY := ["sludge", "roydo", "blau", "ezee", "azrin", "caziel", "azrael", "airah", "burak", "emelrich", "feran",
-	"ghorman", "araki"]
+	"ghorman", "araki", "blackfire", "thyrandael"]
 
 static var selected := "blood_ranger"        # the hero you play
 static var opponent := "random"            # the bot's hero: "random" or a hero id

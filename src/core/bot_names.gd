@@ -44,7 +44,7 @@ const PHRASES := ["ikaw na bahala", "di ako feeder", "carry mo ko", "bawi next g
 	"basta ako carry", "pakyu lag", "tanga ng team"]
 const TAGS := ["PH", "GG", "MNL", "CEB", "DVO", "QC", "XD", "EZ", "SEA", "OG", "TNT", "BBQ", "LOL", "AFK"]
 const HEROES := ["Jayla", "Ezee", "Sludge", "Azrin", "Froster", "Caziel", "Tock", "Kragg", "Roydo", "Blau", "Azrael",
-	"Airah", "Burak", "Emelrich", "Feran", "Ghorman", "Araki"]
+	"Airah", "Burak", "Emelrich", "Feran", "Ghorman", "Araki", "Blackfire", "Thyrandael"]
 
 ## `n` names, all different (case and spaces ignored), the owner's examples first.
 static func make_many(n: int, rng: RandomNumberGenerator) -> Array:

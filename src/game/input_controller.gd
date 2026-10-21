@@ -296,7 +296,7 @@ func _unhandled_input(e: InputEvent) -> void:
 
 func _owned(u: SimUnit) -> bool:
 	var h := hero()
-	return u != null and h != null and (u.id == h.id or u.id == h.courier_id or game.world.abilities.kits6.is_beast_of(h, u))
+	return u != null and h != null and (u.id == h.id or u.id == h.courier_id or game.world.abilities.commands(h, u))
 
 ## Ghorman's beasts among the selected units (they take right clicks, minimap moves, Stop and Hold).
 func _beasts_selected() -> Array:
@@ -306,7 +306,7 @@ func _beasts_selected() -> Array:
 		return out
 	for id in game.selected:
 		var u: SimUnit = game.world.get_unit(id)
-		if u != null and u.alive and game.world.abilities.kits6.is_beast_of(h, u):
+		if u != null and u.alive and game.world.abilities.commands(h, u):
 			out.append(u)
 	return out
 

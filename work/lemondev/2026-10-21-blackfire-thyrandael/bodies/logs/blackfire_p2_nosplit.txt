@@ -1,0 +1,68 @@
+04:50:08 | INFO: Data are loaded, start creating Blender stuff
+04:50:08 | INFO: Blender create Mesh node hero
+04:50:09 | INFO: glTF import finished in 1.64s
+[hero_body   2.2s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   6.2s] imported 1 objects from A:/Python/woa/work/downloads/sf_heroes/blackfire_the_unfallen/source/x/tripo_convert_8efd28a3-4f4e-4ce8-8cbd-8badf6a511f1.fbx
+[hero_body   6.2s] kept 1 mesh pieces (1961318 faces), rig: none
+[hero_body  65.1s]   cut 1660 more vertices: loose remnants of the cut prop (tripo_node_8efd28a3)
+[hero_body  66.9s]   cut 49880 vertices from tripo_node_8efd28a3
+[hero_body  66.9s] joined 1 pieces into one mesh (1860909 faces)
+Info: Removed: 4 vertices, 4 edges, 0 faces
+[hero_body  91.6s] low mesh 43999 triangles, unwrapped
+01:34.015  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\hero_body.py:485: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  96.9s]   baked color (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 101.0s]   baked rough (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 105.1s]   baked metal (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 107.3s]   baked normal
+[hero_body 108.1s] scaled x2.092 to 2.050 m
+[hero_body 108.1s]   joint hips         (0.0, 0.0, 0.899) -> (0.0, 0.0, 1.109)
+[hero_body 108.1s]   joint head         (0.0, -0.052, 1.747) -> (0.0, -0.073, 1.987)
+[hero_body 108.1s]   joint upper_arm.L  (0.324, 0.042, 1.59) -> (0.429, 0.021, 1.286)
+[hero_body 108.1s]   joint hand.L       (0.498, -0.115, 1.056) -> (0.502, -0.157, 0.899)
+[hero_body 108.1s]   joint thigh.L      (0.178, -0.021, 0.899) -> (0.262, -0.126, 0.565)
+[hero_body 108.1s]   joint foot.L       (0.324, -0.094, 0.157) -> (0.345, -0.209, 0.052)
+[hero_body 108.1s]   hand.R rolled 25 deg to the grip; weapon bone in the fist
+[hero_body 108.1s]   native upper_arm.L  (0.321, 0.065, 1.58) -> (0.426, 0.044, 1.276) (model (0.324, 0.042, 1.59))
+[hero_body 108.1s]   native forearm.L    (0.426, 0.044, 1.276) -> (0.495, -0.092, 1.046) (model (0.429, 0.021, 1.286))
+[hero_body 108.1s]   native hand.L       (0.495, -0.092, 1.046) -> (0.497, -0.115, 0.96) (model (0.498, -0.115, 1.056))
+[hero_body 108.1s]   native thigh.L      (0.178, -0.021, 0.899) -> (0.262, -0.126, 0.565) (model (0.178, -0.021, 0.899))
+[hero_body 109.0s]   blackfire: automatic weights on 100.0% of vertices
+[hero_body 109.2s]   island gating: 1 pieces, 0 kept to their nearest limb
+[hero_body 109.4s] mesh: 43999 faces -> 43999 triangles
+[hero_body 109.5s] reach: 3554 vertices freed from limbs too far away
+[hero_body 109.5s] cloth: 1576 hanging vertices follow the hips more than the legs
+[hero_body 109.5s] arms: 0 hand and forearm vertices freed from the trunk and legs
+[hero_body 109.7s] smoothed all weights (4 passes)
+[hero_body 110.0s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body 110.0s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body 110.3s] unmix: 2189 vertices made wholly arm or body, 231 edges split (228 new vertices)
+Info: 8164 vertex weights limited
+[hero_body 113.7s] retargeted 132 clips (4216 frames) onto the native rest in 3.5s
+01:57.172  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_rest_front.png'
+01:57.515  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_rest_side.png'
+01:57.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_idle_front.png'
+01:58.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_idle_side.png'
+01:58.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_hero_run_front.png'
+01:58.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_hero_run_side.png'
+01:59.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_gs_1_front.png'
+01:59.422  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\prev_blackfire_p2_nosplit\blackfire_gs_1_side.png'
+[hero_body 117.1s] previews in A:/Python/woa/work/lemondev/2026-10-21-blackfire-thyrandael/bodies/prev_blackfire_p2_nosplit
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+04:52:04 | INFO: Starting glTF 2.0 export
+04:52:04 | INFO: Extracting primitive: blackfire
+04:52:05 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+04:52:05 | INFO: Primitives created: 1
+04:52:22 | INFO: Finished glTF 2.0 export in 17.0721595287323 s
+
+[hero_body 134.3s] wrote A:/Python/woa/work/lemondev/2026-10-21-blackfire-thyrandael/bodies/try/blackfire.glb (19.7 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

@@ -1,0 +1,6 @@
+== thyrandael (thyrandael.glb; idle greatsword_idle, run greatsword_run)
+  FAIL join greatsword_idle        -> greatsword_cast        blend 0.08s: snap 17.7 deg (hand.L at +0.08s), gap 21 deg (from 2.78s)
+  FAIL join greatsword_run         -> greatsword_cast        blend 0.08s: snap 15.0 deg (hand.L at +0.08s), gap 50 deg (from 0.55s)
+  ok   slide greatsword_run: planted foot at 0.97x the ground speed (2.48 m/s)
+  -> 52 joins and 4 loops checked, worst snap 17.7 deg (greatsword_idle -> greatsword_cast), 2 failures
+TOTAL failures 2

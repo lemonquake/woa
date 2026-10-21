@@ -10,6 +10,7 @@ const FORTIFY_MARK_SRC := -70              # one Fortify Mark per unit, whicheve
 var w: SimWorld
 var _deaths: Array = []                    # [{u, killer}]
 var _next_proj := 1
+var last_crit_key := ""                    # the source of the last critical strike roll_crit gave ("" for none)
 
 func _init(world: SimWorld = null) -> void:
 	w = world
@@ -90,7 +91,7 @@ func _snapshot(u: SimUnit, mod: String) -> Dictionary:
 	return {"src": u.id, "team": u.team, "hero": u.is_hero(), "kind": u.kind, "dmg_min": u.dmg_min, "dmg_max": u.dmg_max,
 		"bonus": u.bonus_damage, "class": u.weapon, "element": u.element, "level_h": w.map.level_at(u.pos), "mod": mod,
 		"lifesteal": u.lifesteal, "lifesteal_ab": u.lifesteal_ability, "ranged": u.is_ranged(), "quell": _quelling(u),
-		"taint": _taint(u), "crit": u.atk_crit, "out_pct": u.attack_out_pct, "flying": bool(u.def.flying)}
+		"taint": _taint(u), "crit": u.atk_crit, "crit_key": u.atk_crit_key, "out_pct": u.attack_out_pct, "flying": bool(u.def.flying)}
 
 ## A spell arrow (Burst Shot): a projectile that homes on `t`, or flies to `spot` when t is null, and deals `dmg`
 ## physical spell damage (no lifesteal, cannot miss; Dota's rule for spells).
@@ -272,6 +273,9 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		heal(src, dmg * C.armor_multiplier(t.armor) * ls)
 		if src.hp - before >= 1.0:
 			w.events.append({"t": "lifesteal", "u": src.id, "target": t.id, "amount": src.hp - before})
+	# Fiend Edge: Blackfire's critical heals his allies around him from the blow
+	if crit > 1.0 and String(s.get("crit_key", "")) == "fiend_edge" and dealt > 0.0 and t.team != int(s.team):
+		w.abilities.kits8.fiend_drain(src, t, dealt)
 	if not bash.is_empty() and t.alive:
 		# the bash stun pierces debuff immunity; bashes share one modifier and refresh to the longer time
 		if w.status.apply(t, s.src, s.team, {"id": "bashed", "stun": true, "dur": float(bash.dur), "fx": "stun"}, true):
@@ -333,6 +337,7 @@ func _evaded(s: Dictionary, t: SimUnit) -> bool:
 ## multiplier down and stop at the first proc, so two never stack and weaker ones keep their pseudo-random counters.
 ## Never against buildings or wards (and no roll is counted there).
 func roll_crit(u: SimUnit, t: SimUnit) -> float:
+	last_crit_key = ""
 	if t == null or t.is_building() or t.is_ward():
 		return 1.0
 	var srcs := crit_sources(u)
@@ -341,6 +346,7 @@ func roll_crit(u: SimUnit, t: SimUnit) -> float:
 	srcs.sort_custom(func(x, y): return float(x.mult) > float(y.mult))
 	for c in srcs:
 		if w.status.roll(u, "crit:" + String(c.key), float(c.chance)):
+			last_crit_key = String(c.key)
 			return float(c.mult)
 	return 1.0
 
@@ -361,6 +367,10 @@ func crit_sources(u: SimUnit) -> Array:
 	var own: Dictionary = u.def.get("crit", {})
 	if not own.is_empty() and not u.is_broken():
 		out.append({"key": "own", "chance": float(own.chance), "mult": float(own.mult)})
+	if u.is_hero() and u.ability_level.has("fiend_edge"):
+		var fe := w.abilities.kits8.crit_source(u)       # Blackfire's Fiend Edge
+		if not fe.is_empty():
+			out.append(fe)
 	return out
 
 ## An attack's multiplier against `t`: its weapon against the target's armor type (SimConst.DAMAGE_TABLE), times its
@@ -509,6 +519,12 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	# Stealth Orb resistance and the Shield Orb's barrier
 	if t.is_hero():
 		amount = w.orbs.absorb(t, amount, src_hero, dtype == C.DamageType.MAGICAL)
+	# False Judgement: damage from enemies builds Thyrandael's charges (barriers or not)
+	if src_team != t.team and t.is_hero() and t.ability_level.has("false_judgement"):
+		w.abilities.kits9.on_damaged(t, amount)
+	# barriers (SimBarrier): the kind's own pool first, then all-damage ones (Thyrandael's Divine Touch)
+	if not t.modifiers.is_empty():
+		amount = SimBarrier.absorb(w, t, amount, dtype)
 	if opts.get("non_lethal", false):
 		amount = clampf(amount, 0.0, maxf(0.0, t.hp - 1.0))
 	# Berserk holds half of every blow back (it returns later as pure damage)
@@ -651,6 +667,9 @@ func check_saves() -> void:
 func kill(t: SimUnit, killer: SimUnit) -> void:
 	if not t.alive:
 		return
+	# Unfallen: Blackfire falls for a few seconds and rises once before he dies for good
+	if t.is_hero() and t.ability_level.has("unfallen") and w.abilities.kits8.catch_death(t, killer):
+		return
 	t.alive = false
 	t.hp = 0.0
 	t.death_at = w.time
@@ -677,6 +696,7 @@ func process_deaths() -> void:
 		var killer: SimUnit = d.killer
 		var deny := killer != null and killer.team == t.team
 		w.events.append({"t": "death", "u": t.id, "killer": killer.id if killer else -1, "deny": deny})
+		w.abilities.kits8.on_death(t, killer)       # Underworld Presence, bodies for Rise Up
 		if t.is_hero():
 			w.abilities.on_hero_death(t, killer, null if deny else kill_credit(t, killer))
 			w.items.on_hero_death(t, killer)
@@ -695,7 +715,7 @@ func process_deaths() -> void:
 						give_gold(eh, C.COURIER_BOUNTY_BASE + C.COURIER_BOUNTY_PER_LEVEL * lvl, false, t.pos)
 		elif t.is_creep():
 			_creep_death(t, killer, deny)
-		elif t.kind == K.SUMMON and killer != null:
+		elif t.kind == K.SUMMON and killer != null and not t.has_flag("no_bounty"):
 			# a summon (Blau's turret) pays its bounty like a creep; one that ran out of time pays nothing
 			_creep_death(t, killer, deny)
 		elif t.is_building():

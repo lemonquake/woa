@@ -1,0 +1,44 @@
+== thyrandael.glb (thyrandael): 17 shapes, height 2.15 m
+   hips       -0.27-0.20 m along, 0.181 x 0.150
+   chest      0.03-0.32 m along, 0.246 x 0.189
+   head       0.00-0.36 m along, 0.095 x 0.093
+   forearm.L  0.03-0.23 m along, 0.043 x 0.048
+   thigh.L    0.00-0.34 m along, 0.098 x 0.084
+  greatsword_idle    before: worst  0.0 cm (-), 0/112 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_1 before: worst 44.3 cm (weapon.R in floor f69), 35/73 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_cast    before: worst  0.5 cm (weapon.R in head f15), 0/35 frames over 1 cm | after: worst  0.5 cm (weapon.R in head f15), 0 frames
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_2 before: worst 10.3 cm (weapon.R in head f7), 9/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst  8.6 cm (fore.L in spine f4), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_area          before: worst 57.5 cm (weapon.R in floor f19), 12/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  knockback          before: worst 45.0 cm (weapon.R in floor f26), 20/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 45.0 cm (weapon.R in floor f0), 13/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  1.1 cm (weapon.R in chest f1), 1/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst 11.1 cm (hand.L in chest f5), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst  9.0 cm (weapon.R in hips f7), 16/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  4.5 cm (weapon.R in hips f4), 1/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst 10.5 cm (weapon.R in head f6), 3/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  8.1 cm (weapon.R in head f9), 5/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst 10.5 cm (weapon.R in head f18), 5/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst 10.9 cm (weapon.R in head f39), 7/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit     before: worst  8.3 cm (weapon.R in head f13), 5/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_leap    before: worst  0.0 cm (-), 0/51 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 45.0 cm (weapon.R in floor f46), 23/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 23.5 cm (elbow.L in chest f14), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_2               before: worst 21.1 cm (hand.L in chest f21), 21/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 25.9 cm (fore.L in chest f6), 24/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 113.5 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_death_2 before: worst 17.1 cm (hand.L in floor f46), 37/79 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/thyrandael_collide.res (OK); worst 113.5 cm -> 0.5 cm
+  wrote res://assets/characters/hero/mocap/collide/thyrandael.res (OK): 16 mocap clips

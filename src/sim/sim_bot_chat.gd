@@ -528,6 +528,8 @@ func tick() -> void:
 					say(dh, "denied", true, {}, 0.6 if dt.is_hero() else 0.5)
 			"tp_end":
 				_on_escape(e)
+			"unfallen_rise", "rise_up", "false_judgement":
+				_on_kit(e)
 			"chat":
 				_on_chat(e)
 			"victory":
@@ -542,6 +544,42 @@ func tick() -> void:
 	if not _intents.is_empty():
 		w.events.append_array(_intents)
 		_intents.clear()
+
+## The big moments of the 2026-10-21 kits: Blackfire up again from Unfallen, a crowd raised by Rise Up, False Judgement
+## on two or more heroes. The ones it happened to say so; now and then the hero brags.
+func _on_kit(e: Dictionary) -> void:
+	var h := w.get_unit(int(e.get("u", -1)))
+	if h == null:
+		return
+	var hero := String(h.def.name)
+	match String(e.t):
+		"unfallen_rise":
+			var foes: Array = _bots(1 - h.team).filter(func(f): return f.alive and f.pos.distance_to(h.pos) < 1400.0)
+			if not foes.is_empty():
+				speak(_talker(foes), "unfallen_enemy", false, {"hero": hero.to_lower()}, 0.7, _rng.randf_range(0.3, 1.2))
+			if h.bot:
+				speak(h, "unfallen_self", true, {}, 0.35, _rng.randf_range(0.5, 1.5))
+		"rise_up":
+			if int(e.get("raised", 0)) < 3:
+				return
+			var near: Array = _bots(1 - h.team).filter(func(f): return f.alive and f.pos.distance_to(h.pos) < 1600.0)
+			if not near.is_empty():
+				speak(_talker(near), "rise_up_enemy", false, {}, 0.45, _rng.randf_range(0.8, 2.0))
+			if h.bot:
+				speak(h, "rise_up_self", true, {}, 0.2, _rng.randf_range(0.5, 1.5))
+		"false_judgement":
+			var heroes: Array = []
+			for id in e.get("hits", []):
+				var o := w.get_unit(int(id))
+				if o != null and o.is_hero() and o.team != h.team:
+					heroes.append(o)
+			if heroes.size() < 2:
+				return
+			var judged: Array = heroes.filter(func(o): return o.bot)
+			if not judged.is_empty():
+				speak(_talker(judged), "judged", false, {"skill": "judgement"}, 0.6, _rng.randf_range(1.0, 2.5))
+			if h.bot:
+				speak(h, "judged_self", true, {"n": str(heroes.size())}, 0.3, _rng.randf_range(0.8, 2.0))
 
 ## Twice a second: tilt cools, near deaths that got away.
 func _beat() -> void:

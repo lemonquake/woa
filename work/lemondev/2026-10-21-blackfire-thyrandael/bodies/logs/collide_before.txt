@@ -1,0 +1,86 @@
+== blackfire.glb (blackfire): 17 shapes, height 2.05 m
+   hips       -0.25-0.20 m along, 0.187 x 0.180
+   chest      0.00-0.31 m along, 0.205 x 0.143
+   head       0.00-0.29 m along, 0.079 x 0.081
+   forearm.L  0.00-0.28 m along, 0.069 x 0.066
+   thigh.L    0.00-0.36 m along, 0.080 x 0.093
+  greatsword_idle    before: worst  0.0 cm (-), 0/112 frames over 1 cm
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  greatsword_death_1 before: worst 30.6 cm (weapon.R in floor f69), 31/73 frames over 1 cm
+  greatsword_cast    before: worst  4.6 cm (weapon.R in head f21), 11/35 frames over 1 cm
+  greatsword_slash_1 before: worst  0.8 cm (weapon.R in hand.L f17), 0/39 frames over 1 cm
+  greatsword_slash_2 before: worst  9.4 cm (weapon.R in chest f12), 9/48 frames over 1 cm
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  idle_2h            before: worst 12.6 cm (fore.L in hips f74), 81/81 frames over 1 cm
+  boss_roar          before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  knockback          before: worst 48.0 cm (weapon.R in floor f26), 21/37 frames over 1 cm
+  getup              before: worst 48.0 cm (weapon.R in floor f0), 8/30 frames over 1 cm
+  launch             before: worst  6.5 cm (weapon.R in chest f1), 7/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  7.2 cm (fore.L in spine f35), 61/61 frames over 1 cm
+  leap_slam          before: worst 10.0 cm (hand.L in thigh.L f29), 14/37 frames over 1 cm
+  blink              before: worst  3.1 cm (hand.L in hips f4), 1/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm
+  stagger_back       before: worst  9.6 cm (weapon.R in head f8), 6/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  9.6 cm (weapon.R in head f2), 8/19 frames over 1 cm
+  hit_from_back      before: worst  7.0 cm (weapon.R in head f8), 4/41 frames over 1 cm
+  greatsword_hit     before: worst  6.7 cm (elbow.L in thigh.L f19), 6/37 frames over 1 cm
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  greatsword_leap    before: worst  1.3 cm (weapon.R in hand.L f25), 2/51 frames over 1 cm
+  death              before: worst 48.0 cm (weapon.R in floor f46), 13/47 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  gs_1               before: worst 22.7 cm (fore.L in chest f10), 22/22 frames over 1 cm
+  gs_2               before: worst 13.1 cm (weapon.R in spine f6), 18/22 frames over 1 cm
+  gs_3               before: worst 22.1 cm (fore.L in chest f5), 24/25 frames over 1 cm
+  gs_4               before: worst 22.3 cm (weapon.R in floor f20), 30/30 frames over 1 cm
+  greatsword_death_2 before: worst 20.5 cm (hand.L in floor f46), 35/79 frames over 1 cm
+  worst 48.0 cm
+== thyrandael.glb (thyrandael): 17 shapes, height 2.15 m
+   hips       -0.27-0.20 m along, 0.181 x 0.150
+   chest      0.02-0.32 m along, 0.580 x 0.277
+   head       0.00-0.36 m along, 0.095 x 0.093
+   forearm.L  0.03-0.23 m along, 0.043 x 0.048
+   thigh.L    0.00-0.34 m along, 0.098 x 0.084
+  greatsword_idle    before: worst 17.5 cm (elbow.L in chest f24), 64/112 frames over 1 cm
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  greatsword_death_1 before: worst 44.3 cm (weapon.R in floor f69), 40/73 frames over 1 cm
+  greatsword_cast    before: worst 27.4 cm (elbow.L in chest f5), 32/35 frames over 1 cm
+  greatsword_slash_1 before: worst  6.1 cm (elbow.L in chest f0), 11/39 frames over 1 cm
+  greatsword_slash_2 before: worst 41.5 cm (weapon.R in chest f12), 28/48 frames over 1 cm
+  greatsword_slash_4 before: worst 10.8 cm (elbow.L in chest f28), 18/37 frames over 1 cm
+  idle_2h            before: worst 35.9 cm (elbow.L in chest f6), 81/81 frames over 1 cm
+  cast_area          before: worst 57.5 cm (weapon.R in floor f19), 31/31 frames over 1 cm
+  cast_channel       before: worst  9.4 cm (elbow.L in chest f19), 31/31 frames over 1 cm
+  cast_quick         before: worst 29.3 cm (elbow.L in chest f0), 16/16 frames over 1 cm
+  knockback          before: worst 45.0 cm (weapon.R in floor f26), 37/37 frames over 1 cm
+  getup              before: worst 45.0 cm (weapon.R in floor f0), 30/30 frames over 1 cm
+  launch             before: worst 19.9 cm (weapon.R in chest f1), 26/26 frames over 1 cm
+  wall_impact        before: worst 29.7 cm (elbow.L in chest f1), 34/34 frames over 1 cm
+  hit_heavy          before: worst 29.6 cm (elbow.L in chest f6), 20/20 frames over 1 cm
+  hit_light          before: worst 29.5 cm (elbow.L in chest f10), 13/13 frames over 1 cm
+  hit_front          before: worst 29.5 cm (elbow.L in chest f7), 16/16 frames over 1 cm
+  idle_hurt          before: worst 17.9 cm (elbow.L in chest f25), 61/61 frames over 1 cm
+  leap_slam          before: worst 21.6 cm (elbow.L in chest f7), 37/37 frames over 1 cm
+  blink              before: worst 29.5 cm (elbow.L in chest f15), 16/16 frames over 1 cm
+  dodge_step         before: worst 29.5 cm (elbow.L in chest f0), 16/16 frames over 1 cm
+  stagger_back       before: worst 23.0 cm (elbow.L in chest f13), 35/35 frames over 1 cm
+  stagger_recover    before: worst 15.6 cm (elbow.L in chest f37), 34/40 frames over 1 cm
+  stagger_air        before: worst 23.0 cm (elbow.L in chest f7), 19/19 frames over 1 cm
+  hit_from_back      before: worst 21.0 cm (elbow.L in chest f10), 28/41 frames over 1 cm
+  greatsword_hit     before: worst  8.3 cm (weapon.R in head f13), 23/37 frames over 1 cm
+  greatsword_hit_small before: worst  8.8 cm (weapon.R in chest f6), 6/27 frames over 1 cm
+  dizzy              before: worst 26.5 cm (elbow.L in chest f3), 129/129 frames over 1 cm
+  greatsword_leap    before: worst  6.9 cm (elbow.L in chest f6), 8/51 frames over 1 cm
+  death              before: worst 45.0 cm (weapon.R in floor f46), 47/47 frames over 1 cm
+  gs_1               before: worst 57.2 cm (elbow.L in chest f10), 22/22 frames over 1 cm
+  gs_2               before: worst 44.7 cm (elbow.L in chest f5), 22/22 frames over 1 cm
+  gs_3               before: worst 56.6 cm (elbow.L in chest f2), 25/25 frames over 1 cm
+  gs_4               before: worst 113.5 cm (weapon.R in floor f20), 30/30 frames over 1 cm
+  greatsword_death_2 before: worst 17.1 cm (hand.L in floor f46), 49/79 frames over 1 cm
+  worst 113.5 cm

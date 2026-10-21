@@ -1,0 +1,4 @@
+== blackfire (blackfire.glb; idle greatsword_idle, run greatsword_run)
+  ok   slide greatsword_run: planted foot at 0.96x the ground speed (2.48 m/s)
+  -> 48 joins and 4 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+TOTAL failures 0

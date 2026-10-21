@@ -65,6 +65,23 @@ const T := {
 		["buhay pa", "tl"], ["kaba ko dun", "tl"], ["di pa oras ko", "tl"], ["hingal", "tl"]],
 	"escape_enemy": [["how did he live", "en"], ["1 hp...", "en"], ["so lucky", "en"], ["next time", "en"],
 		["run {victim} run", "en"], ["ang swerte", "tl"], ["isa na lang sana", "tl"], ["takbo {victim}", "tl"]],
+	# ---- the kits of run 2026-10-21 (SimBotChat._on_kit) -------------------------------------------------------------
+	# Blackfire rose from Unfallen: his enemies, then himself
+	"unfallen_enemy": [["why is he still alive", "en"], ["kill him AGAIN", "en"], ["he got up??", "en"],
+		["back off he blows up", "en"], ["{hero} wont stay dead", "en"], ["run hes gonna explode", "en"],
+		["patay na yan diba", "tl"], ["bumangon pa", "tl"], ["layo kayo sasabog yan", "tl"]],
+	"unfallen_self": [["not yet", "en"], ["u thought", "en"], ["im not done", "en"], ["one more round", "en"],
+		["death is a suggestion", "en"], ["di pa tapos", "tl"], ["balik ako", "tl"]],
+	# Rise Up raised a crowd
+	"rise_up_enemy": [["zombie wave lol", "en"], ["where did those creeps come from", "en"], ["he raised the whole wave", "en"],
+		["kill the dead ones first", "en"], ["undead everywhere", "en"], ["ang daming zombie", "tl"], ["bumangon lahat", "tl"]],
+	"rise_up_self": [["rise", "en"], ["my army", "en"], ["they work for me now", "en"], ["free creeps", "en"],
+		["tara mga bata", "tl"]],
+	# False Judgement blinded several of them
+	"judged": [["cant hit anything", "en"], ["im blind", "en"], ["{skill} again??", "en"], ["all my hits miss", "en"],
+		["get out of the light", "en"], ["bulag ako", "tl"], ["wala tumatama", "tl"]],
+	"judged_self": [["judged", "en"], ["miss all u want", "en"], ["{n} blind {laugh}", "en"], ["sorry cant see?", "en"],
+		["bulag kayo lahat", "tl"]],
 	"tower_dive": [["worth", "en"], ["tower aggro sucks", "en"], ["too greedy", "en"], ["was worth it", "en"],
 		["sulit naman", "tl"], ["takaw ko", "tl"], ["tower pala", "tl"]],
 	"wipe": [["wipe", "en"], ["team wipe {laugh}", "en"], ["{n} for {n2}", "en"], ["ace", "en"], ["gg?", "en"],

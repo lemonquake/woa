@@ -1,0 +1,178 @@
+== ezee (ezee.glb; idle greatsword_idle, run greatsword_run)
+  ok   join greatsword_idle        -> greatsword_run         blend 0.40s: snap 3.7 deg (head at +0.28s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_idle        blend 0.40s: snap 2.7 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_slash_1     blend 0.16s: snap 8.1 deg (head at +0.15s), gap 63 deg (from 1.85s)
+  ok   join greatsword_run         -> greatsword_slash_1     blend 0.30s: snap 6.4 deg (hand.R at +0.25s), gap 63 deg (from 0.37s)
+  ok   join greatsword_slash_1     -> greatsword_idle        blend 0.25s: snap 1.1 deg (forearm.L at +0.25s), gap 19 deg
+  ok   join greatsword_slash_1     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slash_2     blend 0.30s: snap 10.2 deg (forearm.R at +0.22s), gap 92 deg (from 2.78s)
+  ok   join greatsword_run         -> greatsword_slash_2     blend 0.30s: snap 10.6 deg (forearm.R at +0.22s), gap 114 deg (from 0.55s)
+  ok   join greatsword_slash_2     -> greatsword_idle        blend 0.25s: snap 0.8 deg (shoulder.R at +0.25s), gap 23 deg
+  ok   join greatsword_slash_2     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slash_4     blend 0.30s: snap 7.7 deg (hand.L at +0.25s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_slash_4     blend 0.12s: snap 9.2 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_4     -> greatsword_idle        blend 0.40s: snap 1.4 deg (hand.L at +0.40s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_slash_1     -> greatsword_slash_2     blend 0.30s: snap 9.8 deg (forearm.R at +0.22s), gap 91 deg
+  ok   join greatsword_slash_2     -> greatsword_slash_4     blend 0.12s: snap 6.9 deg (forearm.L at +0.12s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_slash_1     blend 0.12s: snap 9.5 deg (weapon.L at +0.12s), gap 30 deg
+  ok   join greatsword_idle        -> greatsword_cast        blend 0.08s: snap 7.8 deg (hand.L at +0.08s), gap 21 deg (from 2.78s)
+  ok   join greatsword_run         -> greatsword_cast        blend 0.12s: snap 8.5 deg (upper_arm.L at +0.12s), gap 44 deg (from 0.00s)
+  ok   join greatsword_cast        -> greatsword_idle        blend 0.25s: snap 0.8 deg (forearm.L at +0.25s), gap 23 deg
+  ok   join greatsword_cast        -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slam        blend 0.40s: snap 8.8 deg (upper_arm.L at +0.07s), gap 180 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_slam        blend 0.40s: snap 7.3 deg (forearm.L at +0.07s), gap 180 deg (from 0.18s)
+  ok   join greatsword_slam        -> greatsword_idle        blend 0.40s: snap 2.0 deg (forearm.R at +0.40s), gap 45 deg
+  ok   join greatsword_slam        -> greatsword_run         blend 0.40s: snap 2.6 deg (forearm.R at +0.12s), gap 60 deg
+  ok   join greatsword_idle        -> greatsword_power       blend 0.40s: snap 3.5 deg (upper_arm.L at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_power       blend 0.30s: snap 2.8 deg (toe.R at +0.08s), gap 63 deg (from 0.37s)
+  ok   join greatsword_power       -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 0 deg
+  ok   join greatsword_power       -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_hit         blend 0.30s: snap 5.3 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_hit         -> greatsword_idle        blend 0.25s: snap 1.1 deg (upper_arm.L at +0.25s), gap 7 deg
+  ok   join greatsword_idle        -> greatsword_hit_small   blend 0.30s: snap 7.7 deg (upper_arm.L at +0.02s), gap 145 deg (from 0.93s)
+  ok   join greatsword_hit_small   -> greatsword_idle        blend 0.40s: snap 4.3 deg (upper_arm.L at +0.40s), gap 96 deg
+  ok   join greatsword_run         -> greatsword_hit         blend 0.25s: snap 4.4 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_1     -> greatsword_hit         blend 0.30s: snap 7.2 deg (forearm.R at +0.25s), gap 119 deg
+  ok   join greatsword_hit         -> dizzy                  blend 0.40s: snap 3.9 deg (neck at +0.03s), gap 97 deg
+  ok   join dizzy                  -> greatsword_idle        blend 0.40s: snap 2.8 deg (weapon.R at +0.13s), gap 74 deg (from 3.20s)
+  ok   join greatsword_idle        -> stagger_back           blend 0.25s: snap 8.1 deg (upper_arm.L at +0.02s), gap 124 deg (from 0.93s)
+  ok   join greatsword_run         -> stagger_back           blend 0.25s: snap 6.3 deg (forearm.L at +0.02s), gap 106 deg (from 0.18s)
+  ok   join stagger_back           -> stagger_recover        blend 0.40s: snap 6.5 deg (forearm.R at +0.38s), gap 34 deg
+  ok   join stagger_recover        -> greatsword_idle        blend 0.40s: snap 5.0 deg (weapon.L at +0.23s), gap 118 deg
+  ok   join stagger_recover        -> greatsword_run         blend 0.40s: snap 4.2 deg (hand.L at +0.07s), gap 101 deg
+  ok   join greatsword_idle        -> stagger_air            blend 0.25s: snap 7.3 deg (head at +0.17s), gap 88 deg (from 1.85s)
+  ok   join stagger_air            -> stagger_back           blend 0.25s: snap 7.1 deg (hand.L at +0.02s), gap 100 deg (from 0.45s)
+  ok   join stagger_back           -> hit_from_back          blend 0.20s: snap 10.9 deg (upper_arm.R at +0.07s), gap 164 deg
+  ok   join hit_from_back          -> stagger_recover        blend 0.40s: snap 3.7 deg (upper_arm.R at +0.27s), gap 134 deg
+  ok   join greatsword_idle        -> greatsword_death_1     blend 0.40s: snap 3.7 deg (head at +0.07s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_death_1     blend 0.25s: snap 4.3 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_death_2     blend 0.40s: snap 3.8 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_death_2     blend 0.40s: snap 2.7 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_leap        blend 0.08s: snap 8.6 deg (hand.L at +0.08s), gap 44 deg (from 2.78s)
+  ok   join greatsword_run         -> greatsword_leap        blend 0.08s: snap 10.6 deg (shin.L at +0.08s), gap 2 deg (from 0.00s)
+  ok   join greatsword_leap        -> greatsword_idle        blend 0.40s: snap 5.8 deg (foot.R at +0.02s), gap 138 deg
+  ok   join greatsword_leap        -> greatsword_run         blend 0.40s: snap 6.0 deg (shin.R at +0.17s), gap 143 deg
+  ok   join greatsword_idle        -> greatsword_power       blend 0.40s: snap 3.9 deg (head at +0.07s), gap 98 deg (from 0.93s)
+  ok   join greatsword_power       -> greatsword_idle        blend 0.00s: snap 0.0 deg (toe.L at +0.02s), gap 0 deg
+  ok   seam greatsword_idle        0.0 deg (spine; its steps p95 12.2) hips 0.0 cm
+  ok   seam greatsword_run         0.5 deg (hand.R; its steps p95 31.0) hips 0.0 cm
+  ok   seam dizzy                  0.0 deg (shin.R; its steps p95 2.5) hips 0.0 cm
+  ok   seam bow_draw_hold          0.1 deg (foot.L; its steps p95 0.6) hips 0.0 cm
+  ok   slide greatsword_run: planted foot at 1.15x the ground speed (2.48 m/s)
+  -> 56 joins and 4 loops checked, worst snap 10.9 deg (stagger_back -> hit_from_back), 0 failures
+== blackfire (blackfire.glb; idle greatsword_idle, run greatsword_run)
+  ok   join greatsword_idle        -> greatsword_run         blend 0.40s: snap 3.7 deg (head at +0.28s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_idle        blend 0.40s: snap 2.7 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_slash_1     blend 0.25s: snap 9.1 deg (hand.R at +0.25s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_slash_1     blend 0.16s: snap 6.1 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_1     -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 19 deg
+  ok   join greatsword_slash_1     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slash_2     blend 0.40s: snap 7.5 deg (forearm.R at +0.27s), gap 92 deg (from 2.78s)
+  ok   join greatsword_run         -> greatsword_slash_2     blend 0.40s: snap 7.6 deg (forearm.R at +0.27s), gap 108 deg (from 0.37s)
+  ok   join greatsword_slash_2     -> greatsword_idle        blend 0.25s: snap 0.8 deg (shoulder.R at +0.25s), gap 23 deg
+  ok   join greatsword_slash_2     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slash_4     blend 0.16s: snap 6.7 deg (head at +0.15s), gap 63 deg (from 1.85s)
+  ok   join greatsword_run         -> greatsword_slash_4     blend 0.16s: snap 6.9 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_4     -> greatsword_idle        blend 0.40s: snap 1.4 deg (hand.L at +0.40s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_slash_1     -> greatsword_slash_2     blend 0.40s: snap 7.2 deg (forearm.R at +0.27s), gap 91 deg
+  ok   join greatsword_slash_2     -> greatsword_slash_4     blend 0.12s: snap 5.5 deg (weapon.L at +0.10s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_slash_1     blend 0.12s: snap 8.0 deg (weapon.L at +0.12s), gap 30 deg
+  ok   join greatsword_idle        -> greatsword_cast        blend 0.08s: snap 8.1 deg (hand.L at +0.08s), gap 23 deg (from 0.00s)
+  ok   join greatsword_run         -> greatsword_cast        blend 0.25s: snap 7.1 deg (weapon.L at +0.25s), gap 44 deg (from 0.00s)
+  ok   join greatsword_cast        -> greatsword_idle        blend 0.25s: snap 0.9 deg (forearm.L at +0.25s), gap 23 deg
+  ok   join greatsword_cast        -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_power       blend 0.40s: snap 3.7 deg (head at +0.07s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_power       blend 0.30s: snap 2.9 deg (toe.R at +0.08s), gap 63 deg (from 0.37s)
+  ok   join greatsword_power       -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 0 deg
+  ok   join greatsword_power       -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_hit         blend 0.30s: snap 5.3 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_hit         -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 0 deg
+  ok   join greatsword_idle        -> greatsword_hit_small   blend 0.30s: snap 7.9 deg (upper_arm.L at +0.02s), gap 149 deg (from 0.93s)
+  ok   join greatsword_hit_small   -> greatsword_idle        blend 0.40s: snap 4.4 deg (upper_arm.L at +0.40s), gap 96 deg
+  ok   join greatsword_run         -> greatsword_hit         blend 0.25s: snap 4.4 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_1     -> greatsword_hit         blend 0.30s: snap 7.3 deg (weapon.R at +0.25s), gap 119 deg
+  ok   join greatsword_hit         -> dizzy                  blend 0.40s: snap 3.9 deg (neck at +0.03s), gap 97 deg
+  ok   join dizzy                  -> greatsword_idle        blend 0.40s: snap 2.8 deg (hand.R at +0.02s), gap 72 deg (from 2.13s)
+  ok   join greatsword_idle        -> stagger_back           blend 0.25s: snap 8.7 deg (forearm.L at +0.02s), gap 127 deg (from 0.93s)
+  ok   join greatsword_run         -> stagger_back           blend 0.25s: snap 6.3 deg (weapon.R at +0.25s), gap 99 deg (from 0.37s)
+  ok   join stagger_back           -> stagger_recover        blend 0.08s: snap 5.7 deg (upper_arm.R at +0.08s), gap 0 deg
+  ok   join stagger_recover        -> greatsword_idle        blend 0.40s: snap 5.0 deg (weapon.L at +0.23s), gap 118 deg
+  ok   join stagger_recover        -> greatsword_run         blend 0.40s: snap 4.2 deg (weapon.L at +0.07s), gap 101 deg
+  ok   join greatsword_idle        -> stagger_air            blend 0.25s: snap 7.3 deg (head at +0.17s), gap 88 deg (from 1.85s)
+  ok   join stagger_air            -> stagger_back           blend 0.25s: snap 7.1 deg (weapon.L at +0.02s), gap 100 deg (from 0.45s)
+  ok   join stagger_back           -> hit_from_back          blend 0.20s: snap 10.7 deg (upper_arm.R at +0.07s), gap 164 deg
+  ok   join hit_from_back          -> stagger_recover        blend 0.40s: snap 3.7 deg (upper_arm.R at +0.27s), gap 88 deg
+  ok   join greatsword_idle        -> greatsword_death_1     blend 0.40s: snap 3.7 deg (head at +0.07s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_death_1     blend 0.25s: snap 4.3 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_death_2     blend 0.40s: snap 3.8 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_death_2     blend 0.40s: snap 2.7 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_power       blend 0.40s: snap 3.9 deg (head at +0.07s), gap 98 deg (from 0.93s)
+  ok   join greatsword_power       -> greatsword_idle        blend 0.00s: snap 0.0 deg (toe.L at +0.03s), gap 0 deg
+  ok   seam greatsword_idle        0.0 deg (upper_arm.L; its steps p95 12.2) hips 0.0 cm
+  ok   seam greatsword_run         0.0 deg (hips; its steps p95 31.0) hips 0.0 cm
+  ok   seam dizzy                  0.0 deg (upper_arm.R; its steps p95 2.6) hips 0.0 cm
+  ok   seam bow_draw_hold          0.1 deg (shoulder.L; its steps p95 0.6) hips 0.0 cm
+  ok   slide greatsword_run: planted foot at 0.96x the ground speed (2.48 m/s)
+  -> 48 joins and 4 loops checked, worst snap 10.7 deg (stagger_back -> hit_from_back), 0 failures
+== thyrandael (thyrandael.glb; idle greatsword_idle, run greatsword_run)
+  ok   join greatsword_idle        -> greatsword_run         blend 0.40s: snap 3.7 deg (head at +0.28s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_idle        blend 0.40s: snap 2.7 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_slash_1     blend 0.40s: snap 6.9 deg (hand.R at +0.32s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_slash_1     blend 0.16s: snap 5.2 deg (hand.R at +0.15s), gap 47 deg (from 0.55s)
+  ok   join greatsword_slash_1     -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 19 deg
+  ok   join greatsword_slash_1     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slash_2     blend 0.40s: snap 7.2 deg (forearm.R at +0.25s), gap 92 deg (from 2.78s)
+  ok   join greatsword_run         -> greatsword_slash_2     blend 0.40s: snap 7.8 deg (forearm.R at +0.25s), gap 114 deg (from 0.55s)
+  ok   join greatsword_slash_2     -> greatsword_idle        blend 0.25s: snap 0.8 deg (shoulder.R at +0.25s), gap 23 deg
+  ok   join greatsword_slash_2     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> greatsword_slash_4     blend 0.12s: snap 6.3 deg (forearm.L at +0.12s), gap 30 deg (from 0.00s)
+  ok   join greatsword_run         -> greatsword_slash_4     blend 0.16s: snap 6.9 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_4     -> greatsword_idle        blend 0.40s: snap 1.4 deg (hand.L at +0.40s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_slash_1     -> greatsword_slash_2     blend 0.40s: snap 7.0 deg (forearm.R at +0.25s), gap 91 deg
+  ok   join greatsword_slash_2     -> greatsword_slash_4     blend 0.12s: snap 6.2 deg (forearm.L at +0.12s), gap 30 deg
+  ok   join greatsword_slash_4     -> greatsword_slash_1     blend 0.12s: snap 8.7 deg (weapon.L at +0.12s), gap 30 deg
+  FAIL join greatsword_idle        -> greatsword_cast        blend 0.08s: snap 17.7 deg (hand.L at +0.08s), gap 21 deg (from 2.78s)
+  FAIL join greatsword_run         -> greatsword_cast        blend 0.08s: snap 15.0 deg (hand.L at +0.08s), gap 50 deg (from 0.55s)
+  ok   join greatsword_cast        -> greatsword_idle        blend 0.25s: snap 0.9 deg (forearm.L at +0.25s), gap 23 deg
+  ok   join greatsword_cast        -> greatsword_run         blend 0.30s: snap 2.4 deg (foot.L at +0.08s), gap 44 deg
+  ok   join greatsword_idle        -> cast_channel           blend 0.25s: snap 6.3 deg (upper_arm.L at +0.02s), gap 96 deg (from 0.93s)
+  ok   join greatsword_run         -> cast_channel           blend 0.25s: snap 4.5 deg (foot.L at +0.08s), gap 57 deg (from 0.00s)
+  ok   join cast_channel           -> greatsword_idle        blend 0.40s: snap 2.0 deg (forearm.L at +0.40s), gap 50 deg
+  ok   join cast_channel           -> greatsword_run         blend 0.30s: snap 2.7 deg (shoulder.L at +0.13s), gap 57 deg
+  ok   join greatsword_idle        -> cast_area              blend 0.30s: snap 8.5 deg (weapon.L at +0.22s), gap 118 deg (from 0.93s)
+  ok   join greatsword_run         -> cast_area              blend 0.30s: snap 7.4 deg (weapon.L at +0.22s), gap 78 deg (from 0.37s)
+  ok   join cast_area              -> greatsword_idle        blend 0.40s: snap 3.2 deg (forearm.L at +0.40s), gap 68 deg
+  ok   join cast_area              -> greatsword_run         blend 0.40s: snap 3.7 deg (weapon.L at +0.30s), gap 83 deg
+  ok   join greatsword_idle        -> greatsword_hit         blend 0.30s: snap 5.3 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_hit         -> greatsword_idle        blend 0.25s: snap 1.2 deg (forearm.L at +0.25s), gap 0 deg
+  ok   join greatsword_idle        -> greatsword_hit_small   blend 0.30s: snap 7.9 deg (upper_arm.L at +0.02s), gap 149 deg (from 0.93s)
+  ok   join greatsword_hit_small   -> greatsword_idle        blend 0.40s: snap 4.4 deg (upper_arm.L at +0.40s), gap 96 deg
+  ok   join greatsword_run         -> greatsword_hit         blend 0.25s: snap 4.4 deg (foot.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_slash_1     -> greatsword_hit         blend 0.30s: snap 6.2 deg (upper_arm.R at +0.28s), gap 119 deg
+  ok   join greatsword_hit         -> dizzy                  blend 0.40s: snap 3.9 deg (neck at +0.03s), gap 97 deg
+  ok   join dizzy                  -> greatsword_idle        blend 0.40s: snap 2.8 deg (hand.R at +0.02s), gap 72 deg (from 2.13s)
+  ok   join greatsword_idle        -> stagger_back           blend 0.25s: snap 8.7 deg (forearm.L at +0.02s), gap 127 deg (from 0.93s)
+  ok   join greatsword_run         -> stagger_back           blend 0.25s: snap 6.3 deg (forearm.L at +0.02s), gap 106 deg (from 0.18s)
+  ok   join stagger_back           -> stagger_recover        blend 0.08s: snap 5.7 deg (upper_arm.R at +0.08s), gap 0 deg
+  ok   join stagger_recover        -> greatsword_idle        blend 0.40s: snap 5.0 deg (hand.L at +0.23s), gap 118 deg
+  ok   join stagger_recover        -> greatsword_run         blend 0.40s: snap 4.2 deg (hand.L at +0.07s), gap 101 deg
+  ok   join greatsword_idle        -> stagger_air            blend 0.25s: snap 7.3 deg (head at +0.17s), gap 108 deg (from 1.85s)
+  ok   join stagger_air            -> stagger_back           blend 0.25s: snap 7.1 deg (weapon.L at +0.02s), gap 100 deg (from 0.45s)
+  ok   join stagger_back           -> hit_from_back          blend 0.20s: snap 10.7 deg (upper_arm.R at +0.07s), gap 164 deg
+  ok   join hit_from_back          -> stagger_recover        blend 0.40s: snap 3.7 deg (upper_arm.R at +0.27s), gap 88 deg
+  ok   join greatsword_idle        -> greatsword_death_1     blend 0.40s: snap 3.7 deg (head at +0.07s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_death_1     blend 0.25s: snap 4.3 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> greatsword_death_2     blend 0.40s: snap 3.8 deg (head at +0.02s), gap 98 deg (from 0.93s)
+  ok   join greatsword_run         -> greatsword_death_2     blend 0.40s: snap 2.7 deg (toe.L at +0.08s), gap 44 deg (from 0.00s)
+  ok   join greatsword_idle        -> cast_area              blend 0.25s: snap 6.9 deg (hand.L at +0.25s), gap 66 deg (from 1.85s)
+  ok   join cast_area              -> greatsword_idle        blend 0.00s: snap 0.0 deg (foot.R at +0.03s), gap 68 deg
+  ok   seam greatsword_idle        0.0 deg (forearm.L; its steps p95 12.2) hips 0.0 cm
+  ok   seam greatsword_run         0.0 deg (hips; its steps p95 31.0) hips 0.0 cm
+  ok   seam dizzy                  0.0 deg (shin.L; its steps p95 2.5) hips 0.0 cm
+  ok   seam bow_draw_hold          0.0 deg (; its steps p95 0.6) hips 0.0 cm
+  ok   slide greatsword_run: planted foot at 0.97x the ground speed (2.48 m/s)
+  -> 52 joins and 4 loops checked, worst snap 17.7 deg (greatsword_idle -> greatsword_cast), 2 failures
+TOTAL failures 2

@@ -23,8 +23,8 @@ profiles).
 | U1 Players tab and friend chat | `captures/players_chat.png`, `players_find.png` | owner's eye |
 
 Not done: no fresh-context critic and no Dota 2 benchmark capture (owner's-eye items above are self-checked only);
-no 4K capture; no live click-through probe of the Accounts panel or friend chat (captures use flags); the export
-was not rebuilt.
+no 4K capture; no live click-through probe of the Accounts panel or friend chat (captures use flags). Export rebuilt
+2026-10-21 after 333/0 tests and check.sh; cold start into a match clean (`export/exe_match.png`, `exe_log.txt`).
 
 ## Numbers chosen where the owner gave none (veto any)
 

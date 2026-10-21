@@ -256,6 +256,10 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 	var fill := Rect2(r.position, Vector2(width * frac, height))
 	draw_rect(fill, col)
 	draw_rect(Rect2(fill.position, Vector2(fill.size.x, height * 0.35)), Color(1, 1, 1, 0.18))
+	if not u.modifiers.is_empty():
+		var bt := SimBarrier.total(u)
+		if bt != Vector3.ZERO:
+			BarrierBar.draw(self, r, frac, u.max_hp, bt)
 	var rage_on := u.is_hero() and u.ability_level.has("rage")
 	if rage_on:
 		# Berserk's held damage: a dark stretch at the end of his health, what will come back

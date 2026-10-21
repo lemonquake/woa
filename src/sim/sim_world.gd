@@ -338,6 +338,8 @@ func step() -> void:
 	abilities.kits5.tick()
 	abilities.kits6.tick()
 	abilities.kits7.tick()
+	abilities.kits8.tick()
+	abilities.kits9.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()

@@ -163,7 +163,10 @@ func _system() -> String:
 			var nm := String(SimData.ability(String(a)).get("name", ""))
 			if nm != "":
 				abil.append(nm)
-		heroes.append("- %s: %s" % [String(d.get("name", id)), ", ".join(abil)])
+		var line := "- %s: %s" % [String(d.get("name", id)), ", ".join(abil)]
+		if SimBotKits.HOW_TO_PLAY.has(String(id)):
+			line += " (" + String(SimBotKits.HOW_TO_PLAY[String(id)]) + ")"
+		heroes.append(line)
 	_sys = """You write posts on the player forum of Warriors of Aether, a 5 v 5 lane battle game played exactly like Dota 2 (three lanes, towers, barracks, a Throne, creeps, last hits, denies, neutral camps, wards, items, buyback, MMR ranks: Rookie, Advanced, Licensed, Expert, Commander, Chief Commander, Legendary, Mythic, Hero, Transcendent, Aetherium; the top ten are Aetherium+). The forum is like a busy subreddit for the game: people brag, rant, ask for help, look for a duo, argue about heroes and items, troll and flame each other, and talk about players they met.
 
 Heroes and abilities:

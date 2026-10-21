@@ -395,6 +395,9 @@ func think() -> void:
 	if _unstick(h):
 		return
 	if w.profiling: pt = w._prof("  bot:track", pt)
+	# Thyrandael holding Holy Beam: the beam is aimed, flashed through and stopped by its own plan (SimBot21)
+	if SimBot21.channel_tick(self, h):
+		return
 	if _busy(h):
 		# a Town Portal is committed to (run 2026-10-18 h: bots broke nearly every escape teleport to walk off and died
 		# on foot). It is broken only for a ready way out that is surer than the channel: a Jump Knife, with an enemy
@@ -424,6 +427,9 @@ func think() -> void:
 	if w.profiling: pt = w._prof("  bot:turret", pt)
 	# out of an enemy Ser Emelrich's red cone or line before the blow lands
 	if bool(sk.spells) and SimBot18.dodge_windups(self, h):
+		return
+	# and out of an enemy Thyrandael's Holy Beam
+	if bool(sk.spells) and SimBot21.dodge_beam(self, h):
 		return
 	# the five heroes of run 2026-10-18 f (Burak's axe leap, Steel Stance, Ghorman's taming)
 	if SimBot18.tick(self, h):
@@ -757,6 +763,7 @@ const CLEAR_SPELLS := {
 	"azrael": [["soul_tap", "toggle"], ["door_of_the_end", "point"]], "airah": [["gust", "line"]],
 	"emelrich": [["sweep", "self"]], "feran": [["joke_box", "point"], ["knife_juggle", "line"]],
 	"burak": [["reckless_swing", "self"]], "ghorman": [["roar", "self"]], "araki": [["blur_strike", "line"]],
+	"thyrandael": [["quick_flash", "self"]],
 }
 const CLEAR_DAMAGE_KEYS := ["damage", "explode_damage", "blast_damage", "impact_damage", "crash_damage"]
 
@@ -1171,6 +1178,8 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 		return SimBot18.escape(self, h, fd)
 	if SimBot19.handles(kit):
 		return SimBot19.escape(self, h, fd)
+	if SimBot21.handles(kit):
+		return SimBot21.escape(self, h, fd)
 	var ab := w.abilities
 	match kit:
 		"tock":
@@ -1895,6 +1904,8 @@ func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 		return SimBot18.aoe_farm(self, h, ns, centre)
 	if _spells_ok() and SimBot19.handles(kit):
 		return SimBot19.aoe_farm(self, h, ns, centre)
+	if _spells_ok() and SimBot21.handles(kit):
+		return SimBot21.aoe_farm(self, h, ns, centre)
 	if _spells_ok():
 		var ab := w.abilities
 		match kit:
@@ -2922,6 +2933,8 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		SimBot18.spells(self, h, e)
 	elif SimBot19.handles(kit):
 		SimBot19.spells(self, h, e)
+	elif SimBot21.handles(kit):
+		SimBot21.spells(self, h, e)
 	else:
 		_ranger_spells(h, e)
 

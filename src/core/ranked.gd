@@ -78,6 +78,7 @@ static var _loaded := false
 static var path := PATH                    # tests point this elsewhere
 static var _clock := 0                     # the time results are stamped with (0: now; the pre-season sets it)
 static var clock_override := 0             # tests: the time "now" returns (0: the real clock)
+static var seed_override := 0              # tests: a fixed ladder seed (0: random)
 
 # ---- Ranks --------------------------------------------------------------------------------------------------------
 
@@ -141,7 +142,10 @@ static func load_data() -> void:
 	if _loaded:
 		return
 	_loaded = true
-	rng.randomize()
+	if seed_override != 0:
+		rng.seed = seed_override
+	else:
+		rng.randomize()
 	if path == PATH and OS.get_environment("WOA_RANKED_FILE") != "":
 		path = OS.get_environment("WOA_RANKED_FILE")     # probes and captures keep your own ladder untouched
 	if FileAccess.file_exists(path):

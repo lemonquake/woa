@@ -159,6 +159,7 @@ var atk_timer := 0.0
 var atk_target := -1
 var atk_modifier := ""                     # ability id riding on the current attack (orb)
 var atk_crit := 1.0                        # critical strike multiplier rolled when this attack started (1 = none)
+var atk_crit_key := ""                     # which source rolled it ("fiend_edge", an item id, "own")
 var orb_manual := ""                       # an attack modifier cast by hand: rides on the next attack, draws no aggro
 var next_attack_at := C.LONG_AGO
 var prev_attack_at := C.LONG_AGO

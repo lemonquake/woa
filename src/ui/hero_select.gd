@@ -44,6 +44,10 @@ const INFO := {
 		"story": "Ghorman rules the wild. He tames the creeps of the forest and the lanes, and the more beasts follow him the harder he hits. When he roars they all charge, and when he becomes the beast himself, his pack grows with him."},
 	"araki": {"title": "the Blur", "role": "Melee  ·  Agility  ·  Carry, Escape, Nuker",
 		"story": "Araki has fought for centuries in the Undead realm, and his katana, Senryukai, cuts deeper the longer a fight goes on. He flashes through his enemies faster than they can turn, sets a demon loose in a cloud of smoke, and calls the ghosts of the dead to strike beside him. When he falls into complete concentration, he is only a blur."},
+	"blackfire": {"title": "the Unfallen", "role": "Melee  ·  Strength  ·  Durable, Initiator, Pusher",
+		"story": "Blackfire came back from the Underworld and never quite left it. Every soul that dies near him feeds him, his great sword heals his allies with the blows it lands, and the dead creeps around him rise again at his roar. Kill him once and he only gets up angrier; kill him twice and he takes everyone near him down with a blast."},
+	"thyrandael": {"title": "the Forsaken Seraph", "role": "Melee  ·  Intelligence  ·  Nuker, Disabler, Escape",
+		"story": "Thyrandael was cast out of the light he served, and he brought it with him. Every spell he casts wraps him in a barrier of light; he burns enemies with a beam he can turn on them, flashes among them, and steps through space to silence them. The more they hurt him, the harder his False Judgement falls."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }

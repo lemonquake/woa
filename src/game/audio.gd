@@ -464,5 +464,38 @@ func event(e: Dictionary, w: SimWorld) -> void:
 			at("shade_hiss", _pos(w, e.ghost), -14.0, 0, 0.15, 0.15)
 		"the_blur":
 			at("boss_charge", _pos(w, e.u), -5.0, 0, 0.3)
+		# Blackfire and Thyrandael (run 2026-10-21)
+		"soul_drain":
+			at("drain", _pos(w, e.u), -12.0 if not bool(e.get("hero", false)) else -5.0, 0, 0.2, 0.1)
+		"sacrificial_grip":
+			at("dark_curse", _pos(w, e.target), -3.0, 0, 0.1)
+			at("hit_heavy", _pos(w, e.target), -6.0, 1, 0.1)
+		"rise_up":
+			at("boss_roar", _pos(w, e.u), -2.0, 0, 0.15)
+		"undead_rise":
+			at("ghoul_growl", View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.6, 0), -10.0, 0, 0.25, 0.15)
+		"fiend_edge":
+			at("dark_cast", _pos(w, e.target), -8.0, 0, 0.15)
+		"unfallen_fall":
+			at("shade_hiss", _pos(w, e.u), -4.0, 0, 0.1)
+		"unfallen_rise":
+			at("war_cry", _pos(w, e.u), -3.0, 0, 0.1)
+			at("dark_cast", _pos(w, e.u), -4.0, 0, 0.1)
+		"unfallen_blast":
+			var pb := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 0.8, 0)
+			at("explode", pb, -1.0, 0, 0.15)
+			at("earth_quake", pb, -4.0, 0, 0.2)
+		"holy_beam_start":
+			at("holy_cast", _pos(w, e.u), -3.0, 0, 0.1)
+			at("arcane_charge", _pos(w, e.u), -7.0, 0, 0.1)
+		"quick_flash":
+			at("holy_strike", _pos(w, e.u), -6.0, 0, 0.2)
+		"spirit_step":
+			at("teleport_whoosh", View.to3(e.from, game.terrain.height_at(e.from)) + Vector3(0, 1.0, 0), -6.0, 0, 0.1)
+			at("holy_strike", View.to3(e.to, game.terrain.height_at(e.to)) + Vector3(0, 0.6, 0), -3.0, 0, 0.15)
+		"false_judgement":
+			var pj := View.to3(e.pos, game.terrain.height_at(e.pos)) + Vector3(0, 1.0, 0)
+			at("thunder_strike", pj, -2.0, 0, 0.1)
+			at("holy_cast", pj, -3.0, 0, 0.15)
 		"attack_start":
 			pass

@@ -1,0 +1,42 @@
+== thyrandael.glb (thyrandael): 17 shapes, height 2.15 m
+   hips       -0.27-0.20 m along, 0.183 x 0.145
+   chest      0.03-0.32 m along, 0.237 x 0.156
+   head       0.00-0.36 m along, 0.095 x 0.093
+   forearm.L  0.03-0.23 m along, 0.043 x 0.048
+   thigh.L    0.00-0.34 m along, 0.098 x 0.084
+  greatsword_idle    before: worst  0.0 cm (-), 0/112 frames over 1 cm
+  greatsword_run     before: worst  0.0 cm (-), 0/23 frames over 1 cm
+  greatsword_death_1 before: worst  0.0 cm (-), 0/73 frames over 1 cm
+  greatsword_cast    before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  greatsword_slash_1 before: worst  0.0 cm (-), 0/39 frames over 1 cm
+  greatsword_slash_2 before: worst  0.0 cm (-), 0/48 frames over 1 cm
+  greatsword_slash_4 before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  idle_2h            before: worst  0.0 cm (-), 0/81 frames over 1 cm
+  cast_area          before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  cast_channel       before: worst  0.0 cm (-), 0/31 frames over 1 cm
+  cast_quick         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  knockback          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  getup              before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  launch             before: worst  0.0 cm (-), 0/26 frames over 1 cm
+  wall_impact        before: worst  0.0 cm (-), 0/34 frames over 1 cm
+  hit_heavy          before: worst  0.0 cm (-), 0/20 frames over 1 cm
+  hit_light          before: worst  0.0 cm (-), 0/13 frames over 1 cm
+  hit_front          before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  idle_hurt          before: worst  0.0 cm (-), 0/61 frames over 1 cm
+  leap_slam          before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  blink              before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  dodge_step         before: worst  0.0 cm (-), 0/16 frames over 1 cm
+  stagger_back       before: worst  0.0 cm (-), 0/35 frames over 1 cm
+  stagger_recover    before: worst  0.0 cm (-), 0/40 frames over 1 cm
+  stagger_air        before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  hit_from_back      before: worst  0.0 cm (-), 0/41 frames over 1 cm
+  greatsword_hit     before: worst  0.0 cm (-), 0/37 frames over 1 cm
+  greatsword_hit_small before: worst  0.0 cm (-), 0/27 frames over 1 cm
+  dizzy              before: worst  0.0 cm (-), 0/129 frames over 1 cm
+  greatsword_leap    before: worst  0.0 cm (-), 0/51 frames over 1 cm
+  death              before: worst  0.0 cm (-), 0/47 frames over 1 cm
+  gs_1               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_2               before: worst  0.0 cm (-), 0/22 frames over 1 cm
+  gs_4               before: worst  0.0 cm (-), 0/30 frames over 1 cm
+  greatsword_death_2 before: worst  0.0 cm (-), 0/79 frames over 1 cm
+  worst 0.0 cm

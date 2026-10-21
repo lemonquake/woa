@@ -1,0 +1,218 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+PASS the Ranked screen opens
+PASS a ladder of 303 bots
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_play.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_play
+PASS five role cards
+PASS role clicks: only Hard Support ticked ([5])
+PASS your roles are saved
+PASS Find Match starts the search
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_search.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_search
+PASS Cancel stops it
+PASS a match is found and offered after 4.0 s
+PASS your role is one you ticked (1)
+PASS ten players shown on the offer
+FAIL hovering a player shows their stats
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_offer_hover.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_offer_hover
+PASS Decline searches again
+PASS the next offer has none of the declined nine (0)
+PASS Accept accepts
+PASS everyone accepted
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_ready.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_ready
+PASS the hero pick opens after everyone accepts
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_pick.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_pick
+PASS your turn comes (pick 5)
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_pick_mine.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_pick_mine
+PASS a click on a hero and Lock in picks it
+PASS after the last pick: the versus
+PASS all ten heroes stand on the field (10)
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_versus.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_versus
+unit meshes prebuilt: 51 models in 5138 ms
+match ready in 27058 ms
+PASS the match starts
+PASS you play the hero you picked
+PASS the match is remembered (leaving counts as a loss)
+PASS the match is a ranked one
+PASS ten heroes
+PASS the matched players and heroes are in the game (10, 10)
+PASS the nine bots play at their own skill (9)
+PASS your name is on your hero
+PASS your role is kept by the team (role 1, matched 1)
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_match.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_match
+PASS the result is in
+PASS a win raised your MMR (1000 -> 1028)
+PASS and gave your hero XP (115)
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_mvp.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_mvp
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_end.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_end
+  (no visible button named Find Match)
+PASS the end screen offers Back to Dashboard
+PASS Back to Dashboard goes back to the Ranked screen
+PASS Profile tab
+PASS Edit profile shows your name
+PASS the name is saved (Probe Name)
+PASS Use my hero sets your picture
+PASS View As Public
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_view_as.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_view_as
+PASS back to your own view
+PASS the 3D emblem is on the profile
+PASS dragging turns the emblem (0.00 -> 2.18)
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_profile.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_profile
+PASS the leaderboard lists everyone (304)
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_board.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_board
+PASS a row opens that player's profile
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_bot_profile.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_bot_profile
+PASS your comment is on their wall and they answered
+PASS right-click opens the player menu
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_player_menu.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_player_menu
+PASS Compare with me opens the comparison
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_compare.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_compare
+PASS Guilds: coming soon
+ERROR: Could not create directory: 'A:/Python/woa/C:'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:44)
+ERROR: Can't save PNG at path: 'A:/Python/woa/C:/Users/LEMONP~1/AppData/Local/Temp/claude/A--Python-woa/a0dc9723-eaa3-4c6a-a00e-c7c488fc7fc4/scratchpad/ranked2/probe_guilds.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] shot (res://tests/tools/ranked_probe.gd:45)
+saved probe_guilds
+PASS a second match is found (found)
+unit meshes prebuilt: 51 models in 251 ms
+match ready in 15758 ms
+PASS Leave match is a loss
+PASS and goes back to the Ranked screen
+
+ranked probe: 50 passed, 1 failed
+WARNING: 545 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 27 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

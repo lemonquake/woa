@@ -1,12 +1,15 @@
 class_name Matchmaker
 extends RefCounted
 ## Finding a ranked match (run 2026-10-19 b). Like Dota's role queue: you tick the roles you will play, the search
-## looks for nine players near your MMR and widens its window the longer it takes (100 MMR, then +45 a second), then
+## looks for nine players near your MMR and widens its window the longer it takes (100 MMR, then +150 a second), then
 ## splits the ten into two teams of even average MMR with every role 1-5 covered on each side (players kept on roles
 ## they like where possible) and you on one of the roles you ticked. Heroes are picked after everyone accepts (HeroDraft,
 ## the owner: nobody picks a hero before matchmaking). Then the match is offered: every player has 15 seconds to
-## accept; a bot with a poor behaviour score sometimes fails to, and you go back into the queue. Declining puts the
-## search back on and keeps those nine out of your next few offers.
+## accept; the bots accept within about two seconds. A bot with a poor behaviour score rarely fails to (about one offer
+## in fifty), and you go straight back into the queue, searching twice as fast; after a failed accept nobody fails
+## again until you are in a match or leave the queue (the owner, 2026-10-21). Declining puts the search back on and
+## keeps those nine out of your next few offers.
+## The owner (2026-10-21): the players are bots, so no long waits. A search takes 2-7 seconds.
 ##
 ## The screen calls start(), step(dt) every frame, accept(), decline() and cancel(), and reads `state`, `stage`,
 ## `progress()`, `found` and `lineup`.
@@ -18,6 +21,10 @@ const ACCEPT_SECS := 15.0
 var state := "idle"                        # idle, searching, found (the offer), ready, failed
 var t := 0.0                               # seconds in the queue
 var expect := 10.0                         # seconds this search will take
+## A short search keeps to players in the queue, then takes players finishing their games, then anyone (seconds past
+## the search's time).
+const QUEUE_GRACE := 1.5
+const ONLINE_GRACE := 3.0
 var roles: Array = [1, 2, 3, 4, 5]         # roles you ticked (1 carry .. 5 hard support)
 ## The match everyone accepted, handed from the Ranked screen to the hero pick (ranked_draft.gd).
 static var accepted_match := {}
@@ -30,6 +37,7 @@ var accept_t := 0.0                        # seconds since the offer
 var you_accepted := false
 var rng := RandomNumberGenerator.new()
 var _avoid := {}                           # bot id -> searches left it stays out of offers (you declined it)
+var _after_fail := false                   # a bot failed to accept in this queue: everyone accepts from now on
 
 func _init() -> void:
 	rng.randomize()
@@ -42,22 +50,24 @@ func start(p_roles: Array) -> void:
 	lineup = {}
 	you_accepted = false
 	state = "searching"
+	_after_fail = false
 	var my := int(Ranked.me().mmr)
 	var near := 0
 	for b in Ranked.bots():
 		if absi(int(b.mmr) - my) <= 300:
 			near += 1
 	# fewer players near you (very high or very low MMR) and the cores' roles take longer, as in Dota
-	expect = clampf(5.0 + 70.0 / float(near + 2) + rng.randf_range(-1.5, 3.5), 5.0, 28.0)
+	expect = clampf(2.0 + 18.0 / float(near + 2) + rng.randf_range(-0.5, 1.0), 2.0, 6.0)
 	if roles.size() <= 2 and (1 in roles or 2 in roles) and not (4 in roles or 5 in roles):
-		expect += 3.0
+		expect += 1.0
 	elif 5 in roles or 4 in roles:
-		expect -= 1.0
+		expect = maxf(2.0, expect - 0.5)
 
 func cancel() -> void:
 	state = "idle"
 	note = ""
 	lineup = {}
+	_after_fail = false
 
 ## Seconds left to accept.
 func accept_left() -> float:
@@ -73,7 +83,7 @@ func step(dt: float) -> void:
 	match state:
 		"searching":
 			t += dt
-			window = 100 + int(45.0 * t)
+			window = 100 + int(150.0 * t)
 			var cands := _candidates()
 			var f := progress()
 			found = mini(9, mini(cands.size(), int(floor(9.0 * f / 0.85))))
@@ -97,18 +107,25 @@ func step(dt: float) -> void:
 			if all_in:
 				state = "ready"
 				note = ""
+			elif you_accepted and not lineup.fails.is_empty() and accept_t >= _last_accept() + 1.5:
+				# a player failed to accept: no waiting out the timer, straight back into the queue
+				note = "A player failed to accept. You are back in the queue."
+				for id in lineup.fails:
+					_avoid[id] = 3
+				start(roles)
+				expect *= 0.5                       # a re-queue finds players twice as fast
+				_after_fail = true
 			elif accept_t >= ACCEPT_SECS:
-				if not you_accepted:
-					note = "You did not accept the match."
-					state = "failed"
-				else:
-					# a player failed to accept: back into the queue, ahead of where you were
-					note = "A player failed to accept. You are back in the queue."
-					for id in lineup.fails:
-						_avoid[id] = 3
-					var keep := roles
-					start(keep)
-					expect = maxf(4.0, expect * 0.6)
+				note = "You did not accept the match."
+				state = "failed"
+
+## When the last bot that accepts does (seconds after the offer).
+func _last_accept() -> float:
+	var last := 0.0
+	for id in lineup.accept_at:
+		if not lineup.fails.has(id):
+			last = maxf(last, float(lineup.accept_at[id]))
+	return last
 
 ## Has this bot accepted yet (the offer's ten lights)?
 func accepted(id: String) -> bool:
@@ -131,7 +148,9 @@ func decline() -> void:
 			if String(p.id) != "me":
 				_avoid[String(p.id)] = 2
 	note = "You declined. Searching again."
+	var failed_before := _after_fail
 	start(roles)
+	_after_fail = failed_before
 
 ## Players near your MMR who are in the queue: online and not in a match (Persona's schedule). A long search takes
 ## players finishing their games too, and then anyone (no search waits forever).
@@ -142,9 +161,9 @@ func _candidates() -> Array:
 	for b in Ranked.bots():
 		if absi(int(b.mmr) - my) > window or int(_avoid.get(String(b.id), 0)) > 0:
 			continue
-		if t < expect + 12.0 and not Persona.queueable(b, now):
+		if t < expect + QUEUE_GRACE and not Persona.queueable(b, now):
 			continue
-		if t < expect + 25.0 and not Persona.online(b, now):
+		if t < expect + ONLINE_GRACE and not Persona.online(b, now):
 			continue
 		out.append(b)
 	return out
@@ -156,6 +175,8 @@ func _offer(cands: Array) -> void:
 		if int(_avoid[id]) <= 0:
 			_avoid.erase(id)
 	lineup = build_lineup(cands, Ranked.me(), roles, rng)
+	if _after_fail:
+		lineup.fails = {}
 	accept_t = 0.0
 	you_accepted = false
 	state = "found"
@@ -196,13 +217,13 @@ static func build_lineup(cands: Array, you: Dictionary, p_roles: Array, r: Rando
 	var roles: Dictionary = (best.ra as Dictionary).duplicate()
 	roles.merge(best.rb)
 	var order: Array = (best.a as Array).slice(1) + (best.b as Array)
-	# accept timings: most within a few seconds; a bot with a poor behaviour score is slower and sometimes never does
+	# accept timings: within about two seconds; a bot with a poor behaviour score is slower and rarely never does
 	var accept_at := {}
 	var fails := {}
 	for p in order:
 		var bh := float(p.get("behavior", 10000))
-		accept_at[String(p.id)] = r.randf_range(0.6, 6.5) * (1.4 if bh < 4000.0 else 1.0)
-		if r.randf() < 0.012 + (12000.0 - bh) / 12000.0 * 0.07:
+		accept_at[String(p.id)] = r.randf_range(0.3, 2.2) * (1.3 if bh < 4000.0 else 1.0)
+		if r.randf() < 0.001 + (12000.0 - bh) / 12000.0 * 0.006:
 			fails[String(p.id)] = true
 	var mine := r.randi_range(0, 1)
 	var teams := [[], []]

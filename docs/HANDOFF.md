@@ -4,6 +4,104 @@
 
 ## Status (keep this section current)
 
+**2026-10-21: two new heroes, Blackfire, the Unfallen and Thyrandael, the Forsaken Seraph (your kits and models),
+barriers, Forums moved into the Ranked bar, 25% shorter matchmaking (your requests).** Run
+`work/lemondev/2026-10-21-blackfire-thyrandael/` (contract.md, handoff.md, logs, shots, ui, bodies).
+* **Blackfire** (dark, melee, strength; 3 / 1.1 / 2.9 a level; `src/sim/sim_kits8.gd`): **Underworld Presence** (a
+  death within 1000 heals him 4%, a hero's 10%; a black soul with a violet core flies into his chest), **Sacrificial
+  Grip** (both stunned 2-2.6 s, 25% of the target's current health as pure damage, never lethal; then both -30% attack
+  damage for 2 s; his Undead go for it), **Rise Up** (bodies within 1000 rise as his **Undead** for 20 s, his to
+  select and command; the roar's aura raises what dies near him for 20 s; not ancients, heroes, buildings, summons or
+  tamed beasts), **Fiend Edge** (10-25% for a 2x crit; a crit heals every ally within 800 by 20-35% of it), **Unfallen**
+  (a killing blow drops him for 3 s, he rises with full health and +25% damage, armor, move and attack speed for 3 / 4 /
+  5 s, then dies for good with a blast that throws every unit within 400, allies too, 300 away; a slam into a wall,
+  tree or unit stuns 0.5 s; the kill goes to whoever dropped him).
+* **Thyrandael** (light, melee, intelligence; 2.8 / 2 / 4 a level; `src/sim/sim_kits9.gd`): **Divine Touch** (every
+  spell adds an All-damage Barrier charge as large as his intelligence), **Holy Beam** (up to 7 s; right-click turns
+  him and the beam, 60% slower turning; S stops it and the HUD says so: "Right-click to turn the beam · Press S to
+  stop"; 50-110 magic and 30-60 mana burn a second, 30% slow in it), **Quick Flash** (500 around him, 30-90 magic, a 10 s
+  mark; each mark adds 10-25 to the next Flash; it does not stop the beam), **Spirit Step** (there at once, 400-940;
+  silence 1-2.2 s and 40% slow 1 s round where he lands), **False Judgement** (a charge per 300 / 250 / 200 damage taken,
+  up to 10 / 11 / 12, circling over his head as small suns; the blast blinds, slows and burns by the share of charges;
+  range and cooldown follow the charges).
+* **Barriers** (new, `src/sim/sim_barrier.gd`): Magic, Physical and All-damage barriers are pools that take damage of
+  their kind after armor and resistances, before health (All-damage takes pure too). Health bars draw them past the
+  health (All-damage gold, Physical orange, Magic blue), the HUD shows "+N", the buff bar names them, and a soft shell
+  in the barrier's colour wraps the unit. The Shield Orb's and Fade Cape's shields show on the bars too.
+* **Bodies**: your two models on the hero skeleton with their swords as weapons (`assets/characters/heroes17/
+  blackfire.glb`, `thyrandael.glb`, `assets/weapons/blackfire_sword.glb`, `thyrandael_sword.glb`; build script
+  `work/lemondev/2026-10-21-blackfire-thyrandael/bodies/build.sh`). Thyrandael's wings and halo are locked to his chest
+  and head; his sword is shrunk to 1.49 m (full size cut through the wings). Collision 0 cm in every clip after the fix
+  (worst before 48 / 79.5 cm); joins: Blackfire 0 failures, Thyrandael 2 (idle and run into his cast, left hand 17.7
+  deg). Not covered: the blade can pass through his wings in big swings (the collision check does not include wings).
+  Skill icons drawn in `tools/item_icons.py` (dark and new "holy" backdrops); portraits baked.
+* **Bots** (`src/sim/sim_bot21.gd`): Blackfire grips when someone can punish the held target (an ally, two Undead, a
+  tower) or for the kill, grips enemies hitting a low ally, raises bodies in fights, pushes and camps, and fears death
+  less with Unfallen up. Thyrandael spends charges at half full (any for a kill), steps in to silence, flashes enemy
+  heroes in reach (keeping the beam's mana), beams held or lined-up targets, turns the beam onto the best target and
+  flashes during it, stops it to run; escapes with Spirit Step. Every bot steps out of an enemy beam. Builds, roles,
+  talents, spell damage estimates. Chat: enemies react to Blackfire getting up ("why is he still alive", "back off he
+  blows up"), to a raised crowd and to being judged; the online chat and forum writers get a "how it plays" line for
+  each (`SimBotKits.HOW_TO_PLAY`).
+* **Forums** are now a tab in the Ranked top bar (Play, Profile, Leaderboard, Players, **Forums**, Guilds), the same
+  forum inside the Ranked screen; the main menu plate is gone.
+* **Matchmaking is fast now** (your follow-up: "this aint even a real online matchmaking so why the long waits"; "no
+  failed accepts in a row"; "requeueing means 50% faster finding"; `src/core/matchmaker.gd`): a search takes 2-7 s, the
+  bots accept within about 2 s, a bot fails an accept in about 1 offer in 50 (was about 1 in 4 on your ladder, which is
+  what kept cancelling your matches), a failed accept goes back to the queue as soon as everyone else has accepted
+  (no waiting out the 15 s timer), the re-queue searches twice as fast, and after one failed accept nobody fails again
+  until you are in a match or leave the queue (declining keeps that). Measured on a copy of your ladder (4092 MMR, 400
+  offers, `tests/tools/mm_probe.gd`): 3% of offers failed, never two in one queue, Find Match to everyone accepted
+  8.8 s on average, 17.8 s at worst. Test `test_matchmaker_failed_accept`. The estimate on the Play tab matches.
+* **Hero portrait lit the same by day and night** (your follow-up; `src/ui/hud.gd` `_portrait`): a camera's cull mask also
+  culls lights, so the HUD portrait never saw the sun or moon and was lit by the world's sky alone, which darkens at
+  night. It now has its own studio key, fill and rim lights (turning with the portrait camera; only the portrait camera
+  sees them, the battlefield camera skips their layer) and its own daytime sky for ambient light and metal
+  reflections. Captures `shots/portrait_compare.png` (Thyrandael day, night; Blackfire night), `portrait_azrin_night.png`,
+  `export/exe_night.png`. The other portraits (top bar, kill feed, menus) are baked pictures and do not change at night.
+* **Both heroes checked again** (your follow-up): four bot games with the two heroes on each side
+  (`logs/kit_casts2.log`, `kit_casts3.log`): every skill cast by bots, and every passive fired (per game: Unfallen 3-5
+  times, Fiend Edge 45-57 crits, Underworld Presence 280-370 heals, 76-127 Undead raised, Divine Touch 150-230 barriers,
+  76-124 False Judgement charges). Thyrandael bots are strong (27/1, 17/1, 10/2, 15/4); Blackfire bots fight and assist
+  but take few kills (0/5/13, 6/6/19, 1/8/9, 1/7/18 in these games, where every bot is sent mid; in a laned 5v5 he went
+  12/4/27 as carry). Live captures of the two skills not seen before: `shots/unfallen_sheet.png` (falls, rises 3 s later,
+  fights 5 s, dies with the blast) and `shots/judgement_sheet.png` (12 charges over his head, the blast). Capture
+  options added: `--charges=N` and `--cast=die@F`.
+* Evidence: tests `test_blackfire_thyrandael_data`, `test_barrier_kinds`, `test_blackfire_grip`, `_rise_up`,
+  `_presence_and_edge`, `_unfallen`, `test_thyrandael_touch_and_flash`, `_holy_beam`, `_step_and_judgement`; full suite
+  before the bodies landed 341 passed, 1 failed (the model check waiting for them, `logs/tests1.log`); after them
+  340 passed, 2 failed (`logs/tests2.log`): `test_ladder_careers` and `test_ranked_upgrade_careers` read a random
+  ladder and were flaky; they now build a fixed ladder (`Ranked.seed_override`, tests only), and the suite then passed
+  342 of 342 (`logs/tests3.log`); every new test passes;
+  `sh tools/check.sh` no script errors, Names OK; bot games (`logs/kit_casts1.log`: every skill cast by bots;
+  `bot_game_a/b.txt`: the side with the two heroes won the kills 58-31 and, traded, 48-34); captures in `shots/`, `ui/`;
+  the Windows export rebuilt, a cold start into a match with Blackfire has no script errors (`export/exe_match.png`).
+  Not verified: no fresh critic, no Dota benchmark, no 4K capture, the exe's menus not clicked through.
+  Final state (after the follow-ups): suite 343 passed, 0 failed (`logs/tests5.log`); `sh tools/check.sh` Names OK;
+  ranked_probe 51/51 twice; export rebuilt 2026-10-21 06:27 (exit 0), cold start into a night match with Thyrandael
+  has no script errors (`export/exe_night.png`).
+* Known, not from this run: two bots got stuck at (-5065, 5308) in one game (the same spot as in run 2026-10-19 c).
+* Chosen where open (veto any): base attributes and attack timing (melee strength / intelligence templates: Blackfire
+  25 / 15 / 18, 30-36 damage, 2 armor, 300 speed; Thyrandael 21 / 16 / 24, 26-32, 1 armor, 305); Spirit Step 80 mana,
+  stomp 300; False Judgement 100 / 125 / 150 mana, radius 400, range never under 300; Holy Beam 150 wide; Divine Touch
+  up to 3 charges, gone 12 s after his last spell; bodies can be raised for 8 s after death; Undead give no gold or
+  experience; Fiend Edge heals Blackfire too; Unfallen rises with full health and has no cooldown; Quick Flash marks
+  have no cap (as written; a cap is easy if it is too strong); barrier colours; talents (Blackfire: -2s Grip cooldown /
+  +2% Underworld Presence heal, +10s Undead time / +35 Damage, +10% Fiend Edge chance / +15% Fiend Edge heal, +3s
+  Unfallen time / +1s Grip stun; Thyrandael: +30 Holy Beam damage / +2 Mana Regen, +40 Quick Flash damage / +250 Spirit
+  Step range, +2 Divine Touch charges / +1s Spirit Step silence, -50 damage per False Judgement charge / +150 False
+  Judgement radius).
+* New names (veto any): **Undead** (and "Undead Melee Creep" etc.), **Weakened**, **Holding On**, **Fallen**, **Last
+  Life**, **Flash Mark**, **Holding the Beam**, **Silenced**, "Right-click to turn the beam · Press S to stop", "No
+  charges yet", "Target is immune to spells", **All-damage Barrier** / **Physical Barrier** / **Magic Barrier** (your
+  words), the talents above, Hero Select roles "Durable, Initiator, Pusher" and "Nuker, Disabler, Escape" and both
+  stories. Code: `SimKits8`, `SimKits9`, `SimBot21`, `SimBarrier`, `BarrierBar`, `Hero21Fx`, `commands`, `catch_death`,
+  `untargetable`, `atk_crit_key`, `last_crit_key`, `HOW_TO_PLAY`, `QUEUE_GRACE`, `ONLINE_GRACE`, `seed_override`, `embedded`, `close_dialog`, fire ramp
+  `underworld`, icon backdrop `holy`; weapons `blackfire_sword`, `thyrandael_sword`; tools
+  `tools/blender/blackfire_sword_roll.py`, `tools/blender/thyrandael_rigid.py`.
+* Credits: both models credit the artist profile (sketchfab.com/s8819296); the model page links were not in the
+  downloads, so add them if you have them.
+
 **2026-10-20 e: accounts, quick stats in the hero pick, players who know a pro when they see one, a new Players tab
 with friend chat, destroyed buildings that leave nothing, Araki's ghosts and a new Giant Swing (your request).** Run
 `work/lemondev/2026-10-20e-social-accounts/` (handoff.md, captures).
@@ -50,7 +148,9 @@ with friend chat, destroyed buildings that leave nothing, Araki's ghosts and a n
 * Evidence: tests (the new `test_ranked_accounts`, `test_profile_pro`, `test_araki_ghosts_hit_runners`,
   `test_emelrich_giant_swing_guard`, `test_bots_dodge_giant_swing`, `test_destroyed_building_opens_ground`, and in
   `test_chat_profiles_in_match`), captures in the run folder. Not verified: no fresh critic or Dota benchmark, no 4K
-  capture, the Accounts panel and friend chat were not clicked through by a probe, the export was not rebuilt.
+  capture, the Accounts panel and friend chat were not clicked through by a probe. 2026-10-21: full suite 333 passed, 0
+  failed; `sh tools/check.sh` no script errors, Names OK; the Windows export rebuilt (`build/WarriorsOfAether.exe`), a
+  cold start into a match has no script errors (`export/exe_match.png` in the run folder).
 * Chosen where open (veto any): Giant Swing damage (above); its cooldown stays your 20 / 15 / 10 s; 20 accounts at
   most; a "pro" = 30+ games and KDA 7+ with 2.5 or fewer deaths a game, or MVP in 35%+ with KDA 5+; friend answer
   times 3-8 s / 40-150 s / 4-25 min.

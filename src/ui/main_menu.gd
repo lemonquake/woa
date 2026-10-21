@@ -1,7 +1,7 @@
 extends Control
 ## The Main Menu (remade in run 2026-10-15 g): your hero on the lit stage, and on the left a hanging banner with the
 ## title and the menu as blade-shaped plates: Ranked (the main mode and the first, gold plate since 2026-10-20 b, the
-## owner: "Remove the PLAY button at the main menu because RANKED will always be the PLAY button now"), Forums,
+## owner: "Remove the PLAY button at the main menu because RANKED will always be the PLAY button now"),
 ## Multiplayer, Hero Creator, Options, Credits, Quit. A nameplate shows the hero on the stage, with Choose Hero. Along
 ## the bottom: the credit and a tip.
 ## Drag the hero to turn it. Up / Down and Enter work the menu too.
@@ -16,7 +16,6 @@ const HERO_SELECT := "res://src/ui/hero_select.tscn"
 const CREATOR := "res://src/ui/hero_creator.tscn"
 const NET_MENU := "res://src/ui/net_menu.tscn"
 const RANKED := "res://src/ui/ranked_menu.tscn"
-const FORUMS := "res://src/ui/forums.tscn"
 const MATCH := "res://src/game/main.tscn"
 
 const BANNER_X := 64.0
@@ -168,7 +167,6 @@ func _build_ui() -> void:
 	add_child(_plate_box)
 	var y := 0.0
 	for e in [["Ranked", "ui/crown", true, func(): _go(RANKED), 70.0],
-			["Forums", "ui/quest", false, func(): _go(FORUMS), 54.0],
 			["Multiplayer", "ui/talk", false, func(): _go(NET_MENU), 54.0],
 			["Hero Creator", "ui/repair", false, _on_creator, 54.0],
 			["Options", "ui/settings", false, func(): add_child(OptionsPanel.new()), 54.0],

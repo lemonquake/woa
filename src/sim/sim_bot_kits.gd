@@ -29,7 +29,18 @@ const ROLES := {
 	"ghorman": [3, 4],
 	# Araki (the owner's hero, run 2026-10-19 c): a melee agility carry who can play mid or off lane
 	"araki": [1, 2, 3],
+	# Blackfire and Thyrandael (the owner's heroes, run 2026-10-21): an off lane strength hero who carries too, and a
+	# melee caster for mid, the off lane or roaming
+	"blackfire": [3, 1, 4],
+	"thyrandael": [2, 3, 4],
 }
+## How a hero plays, in a player's words: the online chat and forum writers (LlmChat, ForumWriter) get it so the
+## players they write for know the hero (run 2026-10-21, the owner: "AI should also know how to use these heroes").
+const HOW_TO_PLAY := {
+	"blackfire": "a tanky dark knight who wins long fights: Sacrificial Grip stuns him AND the target and takes 25% of its current health, so grip when a teammate can hit it; every death near him heals him (Underworld Presence); Rise Up raises dead creeps as his army; Fiend Edge crits heal his whole team; Unfallen makes him get up once after dying for a few seconds and explode, so back off when he rises",
+	"thyrandael": "a melee light caster who gets a barrier from every spell (Divine Touch): Spirit Step in to silence, spam Quick Flash (its marks stack), turn Holy Beam onto enemies (move clicks aim it, S stops it), and the more damage he takes the stronger False Judgement gets (blinds, slows and burns); focus him before he fills his charges",
+}
+
 ## Heroes without their own item builds yet borrow those of a hero who fights the same way.
 const BUILD_LIKE := {"airah": "froster", "burak": "azrael", "emelrich": "kragg", "feran": "azrin", "ghorman": "ezee"}
 ## Lane by role, from the team's side: "safe" (long lane with the tier 1 far out), "mid", "off".
@@ -99,6 +110,16 @@ const SKILLS := {
 	"araki": ["blur_strike", "djin_bomb", "blur_strike", "ghosts_of_the_will", "blur_strike", "the_blur",
 		"blur_strike", "ghosts_of_the_will", "ghosts_of_the_will", "ghosts_of_the_will", "the_blur", "djin_bomb",
 		"djin_bomb", "djin_bomb", "the_blur"],
+	# Blackfire (SimBot21): the Grip first (the lane kill threat), Fiend Edge for sustain and farm, Rise Up at 4 for
+	# pushing and camps, the Grip to 4, then the sword
+	"blackfire": ["sacrificial_grip", "fiend_edge", "sacrificial_grip", "rise_up", "sacrificial_grip", "unfallen",
+		"sacrificial_grip", "fiend_edge", "fiend_edge", "fiend_edge", "unfallen", "rise_up", "rise_up", "rise_up",
+		"unfallen"],
+	# Thyrandael (SimBot21): Quick Flash first (lane harass and farm, a Divine Touch charge every cast), the step at 2,
+	# the beam at 4, Flash to 4, then the beam
+	"thyrandael": ["quick_flash", "spirit_step", "quick_flash", "holy_beam", "quick_flash", "false_judgement",
+		"quick_flash", "holy_beam", "holy_beam", "holy_beam", "false_judgement", "spirit_step", "spirit_step",
+		"spirit_step", "false_judgement"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -112,7 +133,8 @@ const SUPPORT_SKILLS := {
 const TALENTS := {"blood_ranger": [1, 1, 0, 1], "ezee": [0, 0, 1, 0], "sludge": [0, 0, 0, 1], "azrin": [0, 0, 1, 0], "froster": [0, 0, 1, 0], "caziel": [0, 0, 0, 0],
 	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0],
 	"azrael": [0, 1, 1, 0], "airah": [0, 0, 1, 0], "burak": [0, 0, 0, 0], "emelrich": [0, 0, 1, 1], "feran": [0, 1, 1, 0],
-	"ghorman": [0, 0, 0, 0], "araki": [0, 0, 0, 1]}
+	"ghorman": [0, 0, 0, 0], "araki": [0, 0, 0, 1],
+	"blackfire": [0, 1, 0, 0], "thyrandael": [1, 0, 0, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -195,6 +217,37 @@ const BUILDS := {
 			["tango", "salve", "clarity", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
 				"magic_wand", "gloves", "boots_elves", "mask_of_madness", "yasha", "armor_breaker", "spell_shield",
 				"crit_bow", "moth_blade", "leech_blade"],
+		],
+	},
+	# Blackfire: Fiend Edge crits heal his whole fight, so damage and crits first (Frenzy Mask or Armor Breaker), the
+	# Spell Shield to grip through stuns, health and armor to last until Unfallen
+	"blackfire": {
+		"core": [
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "slip_boots", "mask_of_madness", "armor_breaker", "spell_shield", "crit_sword",
+				"battle_armor", "giant_heart"],
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "block_shield", "slip_boots", "cleave_axe", "spike_armor", "spell_shield", "crit_sword",
+				"giant_heart"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
+				"medic_kit", "war_drum", "team_shield", "spell_shield", "guard_boots"],
+		],
+	},
+	# Thyrandael: mana for Quick Flash and the beam (Mana Boots, Atuli), then cooldowns and the Spell Shield; health
+	# for the barriers to sit on
+	"thyrandael": {
+		"core": [
+			["tango", "salve", "clarity", "mantle", "circlet", "smart_band", "magic_stick", "boots", "magic_wand",
+				"mana_boots", "spell_sword", "kugmo_atuli", "time_crystal", "spell_shield", "giant_heart", "hex_staff"],
+			["tango", "salve", "clarity", "mantle", "circlet", "smart_band", "magic_stick", "boots", "magic_wand",
+				"slip_boots", "spell_sword", "silence_staff", "spell_shield", "kugmo_atuli", "hex_staff",
+				"refresh_stone"],
+		],
+		"support": [
+			["tango", "tango", "salve", "clarity", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
+				"medic_kit", "push_staff", "spell_sword", "guard_boots", "team_shield", "spell_shield"],
 		],
 	},
 	"tock": {
@@ -334,6 +387,10 @@ static func disable_power(hero: String) -> float:
 			return 0.45
 		"araki":
 			return 0.35
+		"blackfire":
+			return 0.55
+		"thyrandael":
+			return 0.6
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
@@ -513,6 +570,25 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 				total += g * ab.val(h, "ghosts_of_the_will", "damage_pct") * (avg + st + g * 0.5 * ab.val(h, "senryukai", "damage_per_stack")) * arm * 0.85
 			if h.ability_level_of("the_blur") > 0 and ab.cooldown_left(h, "the_blur") <= 0.0:
 				total += dps(w, h, t) * 2.5
+		"blackfire":
+			# the Grip's quarter of its health; Fiend Edge's crits on his attacks; his Undead hitting along
+			if ready.call("sacrificial_grip") and t != null:
+				total += t.hp * ab.val(h, "sacrificial_grip", "hp_pct")
+			if h.ability_level_of("fiend_edge") > 0:
+				total += dps(w, h, t) * 5.0 * ab.val(h, "fiend_edge", "chance") * (ab.val(h, "fiend_edge", "crit") - 1.0)
+			for ud: SimUnit in w.abilities.kits8.undead_of(h):
+				if t == null or ud.pos.distance_to(t.pos) < 900.0:
+					total += ((ud.dmg_min + ud.dmg_max) * 0.5 + ud.bonus_damage) * arm * 2.0
+		"thyrandael":
+			# Quick Flash with its marks, a few seconds of the beam, the judgement by its charges
+			if ready.call("quick_flash"):
+				var marks := float(w.abilities.kits9.flash_marks(h, t)) if t != null else 0.0
+				total += (ab.val(h, "quick_flash", "damage") + ab.val(h, "quick_flash", "stack_damage") * marks) * mr * 2.0
+			if ready.call("holy_beam"):
+				total += ab.val(h, "holy_beam", "damage") * 3.0 * mr
+			if h.ability_level_of("false_judgement") > 0 and ab.cooldown_left(h, "false_judgement") <= 0.0:
+				total += ab.val(h, "false_judgement", "dps") * w.abilities.kits9.judgement_frac(h) * 4.0 * mr
+			total *= 1.0 + h.magic_amp
 		"ghorman":
 			var pack := w.abilities.kits6.beasts_of(h)
 			for bst: SimUnit in pack:
@@ -547,6 +623,11 @@ static func power(w: SimWorld, h: SimUnit, vs: SimUnit) -> float:
 		return got
 	var dmg := burst(w, h, vs) + dps(w, h, vs) * 5.0
 	var ehp := h.hp / maxf(0.2, C.armor_multiplier(h.armor) * 0.5 + (1.0 - h.magic_resist) * 0.5)
+	# barriers count as health (Divine Touch); Blackfire's Unfallen gives him a second life for its seconds
+	var bar := SimBarrier.total(h)
+	ehp += bar.x + (bar.y + bar.z) * 0.5
+	if h.ability_level_of("unfallen") > 0 and w.abilities.kits8.risen_left(h) <= 0.0:
+		ehp *= 1.45
 	var pw := sqrt(maxf(1.0, dmg) * maxf(1.0, ehp))
 	w._power_cache[key] = pw
 	return pw

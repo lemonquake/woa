@@ -474,6 +474,18 @@ func tick(u: SimUnit) -> void:
 		if _state == "":
 			_play(_delayed_clip, false, 1.0, 0.03, true)
 		_delayed_clip = ""
+	# Blackfire lying dead before Unfallen raises him (SimKits8): his death, held; he gets up when it ends
+	if u.alive and not u.modifiers.is_empty() and u.has_flag("fallen"):
+		if _fallen_at < 0.0:
+			_fallen_at = _now()
+			_state = ""
+			_play(_death_clip(), false, 1.0, 0.1)
+		return
+	if _fallen_at >= 0.0:
+		_fallen_at = -1.0
+		_state = ""
+		_play("getup", false, 1.1, 0.12, true)
+		_lock_until = _now() + 0.85
 	if not u.alive:
 		if cfg.has("ghost"):
 			model.visible = false               # a spirit has no body to fall: it goes up in a puff (SimKits7 ghost_poof)
@@ -584,6 +596,7 @@ func tick(u: SimUnit) -> void:
 
 var _stun_loop_at := 0.0
 var _moving := false
+var _fallen_at := -1.0                      # Unfallen: when the view began its held death (-1 when standing)
 
 func _stun_clip() -> String:
 	if anim and anim.has_animation("idle_hurt"):

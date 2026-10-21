@@ -56,6 +56,11 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 			if type != O.STOP and type != O.HOLD:
 				u.order_queue = [o]
 			return
+	# Holy Beam: a move (or attack) order turns Thyrandael and his beam instead of ending it; Stop ends it
+	if not u.channel.is_empty() and String(u.channel.ability) == "holy_beam" 			and type in [O.MOVE, O.ATTACK_MOVE, O.MOVE_TO_UNIT, O.ATTACK_UNIT]:
+		var at := w.get_unit(int(o.get("target", -1)))
+		w.abilities.kits9.aim(u, at.pos if at != null and type != O.MOVE and type != O.ATTACK_MOVE else o.get("point", u.pos))
+		return
 	# any new order breaks a channel, except something that acts at once without a target: an item, a toggle (Stench)
 	# or an immediate spell (Blubber), as in Dota
 	if not u.channel.is_empty():
@@ -500,6 +505,8 @@ func _attackable(u: SimUnit, t: SimUnit) -> bool:
 		return false
 	if t.is_invulnerable() and t.is_building():
 		return false
+	if t.team != u.team and not t.modifiers.is_empty() and t.has_flag("untargetable"):
+		return false                               # Blackfire lying dead before Unfallen raises him
 	if not w.vision.sees(u.team, t):
 		return false
 	if t.team == u.team and not can_deny(u, t):
@@ -513,7 +520,7 @@ func _acquire(u: SimUnit, r: float) -> SimUnit:
 	for o: SimUnit in w.query(u.pos, r + 200.0, true):
 		if o.team == u.team or o.is_invulnerable() and o.is_building() or o.is_ward() and not o.alive:
 			continue
-		if o.kind == K.FOUNTAIN:
+		if o.kind == K.FOUNTAIN or (not o.modifiers.is_empty() and o.has_flag("untargetable")):
 			continue
 		if not w.vision.sees(u.team, o):
 			continue
@@ -549,6 +556,7 @@ func _attack(u: SimUnit, t: SimUnit, chase: bool) -> void:
 	u.atk_modifier = w.abilities.attack_modifier_for(u, t)
 	# Dota decides a critical strike when the attack starts, not when it lands
 	u.atk_crit = w.combat.roll_crit(u, t)
+	u.atk_crit_key = w.combat.last_crit_key
 	w.events.append({"t": "attack_start", "u": u.id, "target": t.id, "point": u.atk_timer,
 		"interval": u.attack_interval(), "mod": u.atk_modifier, "crit": u.atk_crit > 1.0})
 	w.ai.on_attack_start(u, t, u.atk_modifier != "" and u.atk_modifier == u.orb_manual)

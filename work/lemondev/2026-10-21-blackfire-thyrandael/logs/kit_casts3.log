@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 11: no winner at 25:00, 311707 ms
+  araki      L16 K/D/A 2/12/6 LH  61  casts { "blur_strike": 32, "djin_bomb": 8, "ghosts_of_the_will": 6, "the_blur": 7 }
+  froster    L21 K/D/A 8/9/5 LH 136  casts { "breath_of_cold": 53, "ice_pulse": 26, "endless_winter": 6 }
+  kragg      L14 K/D/A 6/6/7 LH  45  casts { "iron_grip": 16, "repel": 10, "magnet_field": 7 }
+  caziel     L13 K/D/A 8/10/8 LH   9  casts { "swift_dagger": 33, "master_of_shadows": 18 }
+  sludge     L12 K/D/A 0/7/9 LH  18  casts { "shuriken_hook": 19, "stench": 18, "blubber": 10, "chomp": 7 }
+  blackfire  L18 K/D/A 1/8/9 LH  55  casts { "sacrificial_grip": 22, "rise_up": 17 }  | soul_drain 330, fiend_edge 45, undead_rise 106, unfallen_fall 5, unfallen_rise 5, unfallen_blast 5
+  thyrandael L23 K/D/A 10/2/22 LH  79  casts { "quick_flash": 126, "spirit_step": 28, "holy_beam": 26, "false_judgement": 14 }  | barrier_gain 192, holy_beam_aim 273, judgement_charge 82
+  ezee       L15 K/D/A 2/6/12 LH  55  casts { "dark_stomp": 32, "tainted_touch": 13, "leap_strike": 6, "unholy_might": 5 }
+  azrin      L20 K/D/A 24/3/8 LH  50  casts { "touch_of_ember": 37, "fiery_javelin": 26, "spirit_of_fire": 25, "divine_smite": 10 }
+  tock       L16 K/D/A 5/6/8 LH  12  casts { "time_bolt": 33, "stop_time": 6, "rewind": 3, "fast_forward": 6, "slow_field": 9 }
+seed 13: no winner at 25:00, 294939 ms
+  araki      L18 K/D/A 3/12/8 LH  34  casts { "blur_strike": 37, "djin_bomb": 18, "ghosts_of_the_will": 10, "the_blur": 9 }
+  froster    L23 K/D/A 9/7/5 LH 109  casts { "breath_of_cold": 55, "ice_pulse": 25, "endless_winter": 4 }
+  kragg      L13 K/D/A 5/9/3 LH  38  casts { "iron_grip": 23, "repel": 16, "magnet_field": 7 }
+  caziel     L12 K/D/A 4/10/6 LH  16  casts { "swift_dagger": 21, "master_of_shadows": 15 }
+  sludge     L14 K/D/A 6/7/3 LH  21  casts { "shuriken_hook": 17, "stench": 29, "blubber": 13, "chomp": 10 }
+  blackfire  L19 K/D/A 1/7/18 LH  52  casts { "sacrificial_grip": 31, "rise_up": 11 }  | soul_drain 333, fiend_edge 57, undead_rise 76, unfallen_fall 3, unfallen_rise 3, unfallen_blast 3
+  thyrandael L23 K/D/A 15/4/9 LH  54  casts { "quick_flash": 97, "spirit_step": 23, "holy_beam": 21, "false_judgement": 14 }  | barrier_gain 151, holy_beam_aim 285, judgement_charge 76
+  ezee       L19 K/D/A 8/5/10 LH  89  casts { "dark_stomp": 39, "tainted_touch": 16, "leap_strike": 8, "unholy_might": 11 }
+  azrin      L18 K/D/A 17/6/5 LH  85  casts { "touch_of_ember": 41, "fiery_javelin": 28, "spirit_of_fire": 22, "divine_smite": 8 }
+  tock       L19 K/D/A 3/6/13 LH  27  casts { "time_bolt": 41, "fast_forward": 8, "stop_time": 6, "slow_field": 9, "rewind": 6 }
+WARNING: 11018 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 27 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

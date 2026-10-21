@@ -46,9 +46,11 @@ static func _ensure() -> void:
 	_build_abilities_17()
 	_build_abilities_18()
 	_build_abilities_19()
+	_build_abilities_21()
 	_build_talents()
 	_build_talents_18()
 	_build_talents_19()
+	_build_talents_21()
 
 static func unit(id: String) -> Dictionary:
 	_ensure()
@@ -308,6 +310,7 @@ static func _build_units() -> void:
 	_add_heroes_17()
 	_add_heroes_18()
 	_add_heroes_19()
+	_add_heroes_21()
 
 static func _add_heroes_15b() -> void:
 	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
@@ -461,6 +464,34 @@ static func _add_heroes_19() -> void:
 		"backswing": 0.3, "acquire": 0.0, "range": 150.0, "projectile_speed": 0.0, "move_speed": 800.0,
 		"can_move": false, "can_attack": false, "turn_rate": 3.0, "vision_day": 200.0, "vision_night": 200.0,
 		"xp": 0.0, "gold_min": 0, "gold_max": 0, "flying": true, "element": EL.NONE, "model": "araki_ghost"})
+
+static func _add_heroes_21() -> void:
+	# Blackfire, the Unfallen and Thyrandael, the Forsaken Seraph (the owner's heroes, 2026-10-21). The owner gave the
+	# kits, attack types, primary attributes, elements and attribute gains; base attributes, damage, armor, speed and
+	# attack timing follow the melee strength and melee intelligence templates (chosen, see docs/HANDOFF.md). Bodies:
+	# the owner's two models (tools/blender/hero_body.py).
+	_add("blackfire", {"name": "Blackfire", "title": "the Unfallen", "kind": K.HERO, "hull": 24.0,
+		"hp": SimConst.HERO_BASE_HP, "hp_regen": 0.5, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 2.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 30.0, "dmg_max": 36.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.5, "backswing": 0.5, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 300.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "str", "str": 25.0, "str_gain": 3.0, "agi": 15.0, "agi_gain": 1.1, "int": 18.0,
+		"int_gain": 2.9, "element": EL.DARK,
+		"abilities": ["sacrificial_grip", "rise_up", "fiend_edge", "unfallen"], "innate": "underworld_presence",
+		"talents": [["blackfire_grip_cooldown", "blackfire_presence"], ["blackfire_undead_time", "blackfire_damage"],
+			["blackfire_edge_chance", "blackfire_edge_heal"], ["blackfire_unfallen_time", "blackfire_grip_stun"]],
+		"model": "hero_blackfire"})
+	_add("thyrandael", {"name": "Thyrandael", "title": "the Forsaken Seraph", "kind": K.HERO, "hull": 24.0,
+		"hp": SimConst.HERO_BASE_HP, "hp_regen": 0.25, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 1.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 26.0, "dmg_max": 32.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.45, "backswing": 0.5, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "int", "str": 21.0, "str_gain": 2.8, "agi": 16.0, "agi_gain": 2.0, "int": 24.0,
+		"int_gain": 4.0, "element": EL.LIGHT,
+		"abilities": ["holy_beam", "quick_flash", "spirit_step", "false_judgement"], "innate": "divine_touch",
+		"talents": [["thyrandael_beam_damage", "thyrandael_mana_regen"], ["thyrandael_flash_damage", "thyrandael_step_range"],
+			["thyrandael_touch_charges", "thyrandael_step_silence"], ["thyrandael_judgement_charges", "thyrandael_judgement_radius"]],
+		"model": "hero_thyrandael"})
 
 static func _named(d: Dictionary, name: String, model: String) -> Dictionary:
 	var o := d.duplicate()
@@ -1026,6 +1057,85 @@ static func _build_abilities_19() -> void:
 		"values": {"duration": [19, 19, 19], "attack_speed": [60, 80, 100], "attacks": [9, 15, 21],
 		"cooldown_pct": [0.5, 0.5, 0.5]},
 		"desc": "Araki falls into complete concentration for 19 seconds: Blur Strike and Djin Bomb have half their cooldowns (the ones already running are halved too), and his next 9 / 15 / 21 attacks are 60 / 80 / 100 faster."}
+
+# ---- Blackfire, the Unfallen and Thyrandael, the Forsaken Seraph (the owner's kits, 2026-10-21; their numbers; chosen
+# fill-ins listed in docs/HANDOFF.md) ---------------------------------------------------------------------------------------
+
+static func _build_abilities_21() -> void:
+	_abilities["underworld_presence"] = {"id": "underworld_presence", "name": "Underworld Presence", "behavior": "innate",
+		"key": "", "max_level": 1, "mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0,
+		"values": {"heal_pct": [0.04], "hero_mult": [2.5], "radius": [1000]},
+		"desc": "Every unit that dies within 1000 of Blackfire gives its soul to him: he heals 4% of his maximum health, 10% for a hero (150% more)."}
+	_abilities["sacrificial_grip"] = {"id": "sacrificial_grip", "name": "Sacrificial Grip", "behavior": "unit", "key": "Q",
+		"target_team": "enemy", "max_level": 4, "mana": [100, 110, 120, 130], "cooldown": [8, 8, 8, 8],
+		"cast_point": 0.3, "range": 650, "anim": "greatsword_cast", "damage_type": "pure",
+		"values": {"stun": [2.0, 2.2, 2.4, 2.6], "hp_pct": [0.25, 0.25, 0.25, 0.25], "weaken": [0.30, 0.30, 0.30, 0.30],
+		"weaken_duration": [2, 2, 2, 2]},
+		"desc": "Blackfire grips an enemy unit with the Underworld: the target and Blackfire are both stunned for 2 / 2.2 / 2.4 / 2.6 seconds, and the target loses 25% of its current health as pure damage (this never kills). After the stun both deal 30% less attack damage for 2 seconds. Meanwhile his Undead go for the target first."}
+	_abilities["rise_up"] = {"id": "rise_up", "name": "Rise Up", "behavior": "no_target", "key": "W", "max_level": 4,
+		"mana": [100, 100, 100, 100], "cooldown": [38, 36, 34, 32], "cast_point": 0.0, "range": 0, "immediate": true,
+		"anim": "boss_roar",
+		"values": {"radius": [1000, 1000, 1000, 1000], "duration": [20, 20, 20, 20], "undead_duration": [20, 20, 20, 20]},
+		"desc": "Blackfire lets out a deafening roar: the fresh bodies within 1000 rise at once as his Undead for 20 seconds, his to command. The roar stays on him for 20 seconds and raises whatever dies within 1000 meanwhile; the raised stay their 20 seconds after it ends. Ancient creeps, heroes, buildings, summoned units and tamed beasts do not rise. The Undead give no gold or experience."}
+	_abilities["fiend_edge"] = {"id": "fiend_edge", "name": "Fiend Edge", "behavior": "passive", "key": "E", "max_level": 4,
+		"mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"chance": [0.10, 0.15, 0.20, 0.25], "crit": [2.0, 2.0, 2.0, 2.0], "drain": [0.20, 0.25, 0.30, 0.35],
+		"radius": [800, 800, 800, 800]},
+		"desc": "Blackfire's great sword is corrupted with the Underworld: a 10 / 15 / 20 / 25% chance to strike a critical hit for 2x damage. A critical hit heals every ally within 800 (Blackfire too) for 20 / 25 / 30 / 35% of its damage."}
+	_abilities["unfallen"] = {"id": "unfallen", "name": "Unfallen", "behavior": "passive", "key": "R", "max_level": 3,
+		"required_level": [6, 12, 18], "mana": [0, 0, 0], "cooldown": [0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"delay": [3, 3, 3], "duration": [3, 4, 5], "bonus": [0.25, 0.25, 0.25], "radius": [400, 400, 400],
+		"push": [300, 300, 300], "crash_stun": [0.5, 0.5, 0.5]},
+		"desc": "Blackfire cannot stay dead. When he dies he lies still for 3 seconds, then springs back to life with full health and 25% more damage, armor, movement speed and attack speed for 3 / 4 / 5 seconds, and then dies for good (sooner if he is killed again). As his life ends he lets out a blast: every unit within 400, allies too, is thrown 300 away from him, and any that slams into a wall, a tree or another unit is stunned for 0.5 seconds."}
+	_abilities["divine_touch"] = {"id": "divine_touch", "name": "Divine Touch", "behavior": "innate", "key": "",
+		"max_level": 1, "mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0,
+		"values": {"int_mult": [1.0], "max_charges": [3], "duration": [12]},
+		"desc": "Every spell Thyrandael casts gives him a charge of Divine Touch: an All-damage Barrier as large as his intelligence (it takes damage of every kind before his health). Up to 3 charges; the barrier fades 12 seconds after his last spell."}
+	_abilities["holy_beam"] = {"id": "holy_beam", "name": "Holy Beam", "behavior": "point", "key": "Q", "max_level": 4,
+		"mana": [120, 120, 120, 120], "cooldown": [15, 15, 15, 15], "cast_point": 0.3, "range": 800,
+		"anim": "cast_channel", "damage_type": "magical", "channel": true,
+		"values": {"damage": [50, 70, 90, 110], "mana_burn": [30, 40, 50, 60], "slow": [0.3, 0.3, 0.3, 0.3],
+		"width": [150, 150, 150, 150], "max_channel": [7, 7, 7, 7], "turn_slow": [0.6, 0.6, 0.6, 0.6]},
+		"hidden_values": ["width"],
+		"desc": "Thyrandael shoots a beam of light 800 long for up to 7 seconds. Enemies in the beam take 50 / 70 / 90 / 110 magic damage and lose 30 / 40 / 50 / 60 mana every second, and are slowed by 30% while it touches them. He cannot move while he holds it; a move order turns him (60% slower than usual) and the beam turns with him. Press S (Stop) to end it."}
+	_abilities["quick_flash"] = {"id": "quick_flash", "name": "Quick Flash", "behavior": "no_target", "key": "W",
+		"max_level": 4, "mana": [60, 60, 60, 60], "cooldown": [2.2, 2.2, 2.2, 2.2], "cast_point": 0.0, "range": 0,
+		"immediate": true, "anim": "cast_quick", "damage_type": "magical",
+		"values": {"radius": [500, 500, 500, 500], "damage": [30, 50, 70, 90], "stack_damage": [10, 15, 20, 25],
+		"mark_duration": [10, 10, 10, 10]},
+		"desc": "A quick blast of light around Thyrandael (500): 30 / 50 / 70 / 90 magic damage, and a mark on every enemy hit for 10 seconds. The marks stack and renew: each mark an enemy already has adds 10 / 15 / 20 / 25 magic damage to the next Quick Flash. It does not stop Holy Beam."}
+	_abilities["spirit_step"] = {"id": "spirit_step", "name": "Spirit Step", "behavior": "point", "key": "E", "max_level": 4,
+		"mana": [80, 80, 80, 80], "cooldown": [15, 13, 11, 9], "cast_point": 0.1, "range": [400, 580, 760, 940],
+		"anim": "cast_quick", "aoe": true,
+		"values": {"radius": [300, 300, 300, 300], "silence": [1.0, 1.4, 1.8, 2.2], "slow": [0.4, 0.4, 0.4, 0.4],
+		"slow_duration": [1, 1, 1, 1]},
+		"desc": "Thyrandael steps to the target spot at once and stomps the ground with divine light: enemies within 300 are silenced for 1 / 1.4 / 1.8 / 2.2 seconds and slowed by 40% for 1 second."}
+	_abilities["false_judgement"] = {"id": "false_judgement", "name": "False Judgement", "behavior": "point", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [100, 125, 150], "cooldown": [10, 9, 8],
+		"cast_point": 0.35, "range": [800, 1200, 1600], "anim": "cast_area", "damage_type": "magical", "aoe": true,
+		"values": {"damage_per_charge": [300, 250, 200], "max_charges": [10, 11, 12], "min_cooldown": [6, 5, 4],
+		"radius": [400, 400, 400], "duration": [5, 5, 5], "miss": [0.4, 0.7, 1.0], "slow": [0.55, 0.55, 0.55],
+		"dps": [60, 80, 100], "min_range": [300, 300, 300]},
+		"hidden_values": ["min_range"],
+		"desc": "Thyrandael gains a charge for every 300 / 250 / 200 damage he takes, up to 10 / 11 / 12. He spends them all on a violent burst of light at a spot (400): for 5 seconds enemies miss up to 40 / 70 / 100% of their attacks, are slowed by up to 55% and take up to 60 / 80 / 100 magic damage a second, each by the share of charges he held. Its range (up to 800 / 1200 / 1600) also follows the charges, and its cooldown runs from 10 / 9 / 8 seconds down to 6 / 5 / 4 at full charges. Needs a charge."}
+
+static func _build_talents_21() -> void:
+	_talent("blackfire_grip_cooldown", "-2s Sacrificial Grip cooldown", [{"ability": "sacrificial_grip", "add": {"cooldown": -2.0}}])
+	_talent("blackfire_presence", "+2% Underworld Presence heal", [{"ability": "underworld_presence", "add": {"heal_pct": 0.02}}])
+	_talent("blackfire_undead_time", "+10s Undead time", [{"ability": "rise_up", "add": {"undead_duration": 10.0}}])
+	_talent("blackfire_damage", "+35 Damage", [], {"damage": 35.0})
+	_talent("blackfire_edge_chance", "+10% Fiend Edge chance", [{"ability": "fiend_edge", "add": {"chance": 0.10}}])
+	_talent("blackfire_edge_heal", "+15% Fiend Edge heal", [{"ability": "fiend_edge", "add": {"drain": 0.15}}])
+	_talent("blackfire_unfallen_time", "+3s Unfallen time", [{"ability": "unfallen", "add": {"duration": 3.0}}])
+	_talent("blackfire_grip_stun", "+1s Sacrificial Grip stun", [{"ability": "sacrificial_grip", "add": {"stun": 1.0}}])
+	_talent("thyrandael_beam_damage", "+30 Holy Beam damage", [{"ability": "holy_beam", "add": {"damage": 30.0}}])
+	_talent("thyrandael_mana_regen", "+2 Mana Regen", [], {"mana_regen": 2.0})
+	_talent("thyrandael_flash_damage", "+40 Quick Flash damage", [{"ability": "quick_flash", "add": {"damage": 40.0}}])
+	_talent("thyrandael_step_range", "+250 Spirit Step range", [{"ability": "spirit_step", "add": {"range": 250.0}}])
+	_talent("thyrandael_touch_charges", "+2 Divine Touch charges", [{"ability": "divine_touch", "add": {"max_charges": 2.0}}])
+	_talent("thyrandael_step_silence", "+1s Spirit Step silence", [{"ability": "spirit_step", "add": {"silence": 1.0}}])
+	_talent("thyrandael_judgement_charges", "-50 damage per False Judgement charge", [{"ability": "false_judgement", "add": {"damage_per_charge": -50.0}}])
+	_talent("thyrandael_judgement_radius", "+150 False Judgement radius", [{"ability": "false_judgement", "add": {"radius": 150.0}}])
 
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
 	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}

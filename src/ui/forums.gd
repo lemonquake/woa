@@ -5,6 +5,9 @@ extends Control
 ## someone), "... is typing" while answers to you are on the way, and New post (title, section, text). Replies to you
 ## come in while the page is open (Forum.resolve every second; ForumWriter writes them with the language model when
 ## Online bot chat is on).
+## Since 2026-10-21 (the owner: "Forums should be moved in here", the Ranked top bar) it is also the Ranked screen's
+## Forums tab: RankedMenu adds it with `embedded` on (no backdrop, top bar, Back or capture of its own; its section bar
+## sits under the Ranked bar). The scene still opens alone for captures.
 ## Automation: --capture=path [--thread=n | --open=first] [--post=text] [--wait=seconds] [--4k] [--frames=n].
 
 const U = preload("res://src/ui/ui_kit.gd")
@@ -41,6 +44,9 @@ var _capture := ""
 var _cap_frames := 40
 var _frames := 0
 var _wait := 0.0
+var embedded := false                       # inside the Ranked screen's Forums tab (set before adding it)
+const RANKED_BAR := 92.0                    # the Ranked top bar's height (embedded: the forum's own bar sits under it)
+const RANKED_FOOT := 44.0
 
 func _ready() -> void:
 	theme = U.theme()
@@ -50,7 +56,8 @@ func _ready() -> void:
 	Forum.load_data()
 	Forum.catch_up()
 	var args := {}
-	for a in OS.get_cmdline_user_args():
+	var user_args: PackedStringArray = PackedStringArray() if embedded else OS.get_cmdline_user_args()
+	for a in user_args:
 		if a.begins_with("--"):
 			var kv := a.substr(2).split("=", true, 1)
 			args[kv[0]] = kv[1] if kv.size() > 1 else "1"
@@ -82,8 +89,9 @@ func _ready() -> void:
 		var l := Forum.listed(_sort, _tag)
 		if not l.is_empty():
 			_open_thread(int(l[0].id))
-	await get_tree().process_frame
-	LoadingScreen.close(get_tree())
+	if not embedded:
+		await get_tree().process_frame
+		LoadingScreen.close(get_tree())
 
 # ---- Building -------------------------------------------------------------------------------------------------------------
 
@@ -118,29 +126,39 @@ func _panel(r: Rect2) -> Panel:
 	return p
 
 func _build() -> void:
-	SocialUi.backdrop(self)
+	if not embedded:
+		SocialUi.backdrop(self)
 	_frame = Control.new()
 	_frame.size = Vector2(W, H)
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_frame)
-	# top bar
-	var top := TextureRect.new()
-	top.texture = U.skin_tex("soc_topbar")
-	top.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	top.size = Vector2(W, 96)
-	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_frame.add_child(top)
-	var back := _button("Back", func(): Options.go(get_tree(), MAIN_MENU), "DarkButton", Vector2(110, 46))
-	back.position = Vector2(30, 23)
-	_frame.add_child(back)
-	var title := _label("Forums", 38, U.GOLD, "title")
-	title.position = Vector2(166, 18)
-	_frame.add_child(title)
+	# the bar: alone, the screen's own top bar with Back and the title; in the Ranked screen, a row under its bar
+	var bar_y := 25.0
 	var x := 360.0
+	var top_y := 108.0                       # where the list and the thread start
+	var ph := 918.0                          # their height
+	if embedded:
+		bar_y = RANKED_BAR + 14.0
+		x = 30.0
+		top_y = RANKED_BAR + 72.0
+		ph = H - RANKED_FOOT - 14.0 - top_y
+	else:
+		var top := TextureRect.new()
+		top.texture = U.skin_tex("soc_topbar")
+		top.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		top.size = Vector2(W, 96)
+		top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_frame.add_child(top)
+		var back := _button("Back", func(): Options.go(get_tree(), MAIN_MENU), "DarkButton", Vector2(110, 46))
+		back.position = Vector2(30, 23)
+		_frame.add_child(back)
+		var title := _label("Forums", 38, U.GOLD, "title")
+		title.position = Vector2(166, 18)
+		_frame.add_child(title)
 	for t in [""] + Forum.TAGS:
 		var tb := _button("All" if t == "" else String(t), func(): _set_tag(String(t)), "DarkButton", Vector2(0, 42))
 		tb.toggle_mode = true
-		tb.position = Vector2(x, 25)
+		tb.position = Vector2(x, bar_y)
 		tb.add_theme_font_size_override("font_size", 16)
 		_frame.add_child(tb)
 		tb.size = Vector2(tb.get_minimum_size().x + 18, 42)
@@ -149,20 +167,20 @@ func _build() -> void:
 	for s in [["hot", "Hot"], ["new", "New"]]:
 		var sb := _button(String(s[1]), func(): _set_sort(String(s[0])), "DarkButton", Vector2(70, 42))
 		sb.toggle_mode = true
-		sb.position = Vector2(x + 18, 25)
+		sb.position = Vector2(x + 18, bar_y)
 		sb.add_theme_font_size_override("font_size", 16)
 		_frame.add_child(sb)
 		_sort_btns[String(s[0])] = sb
 		x += 76.0
 	var np := _button("New post", _new_post, "", Vector2(170, 48))
-	np.position = Vector2(W - 200, 22)
+	np.position = Vector2(W - 200, bar_y - 3.0)
 	np.add_theme_font_size_override("font_size", 19)
 	_frame.add_child(np)
 	# the list
-	var lp := _panel(Rect2(30, 108, 780, 918))
+	var lp := _panel(Rect2(30, top_y, 780, ph))
 	_list_scroll = ScrollContainer.new()
 	_list_scroll.position = Vector2(18, 20)
-	_list_scroll.size = Vector2(746, 880)
+	_list_scroll.size = Vector2(746, ph - 38.0)
 	_list_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	lp.add_child(_list_scroll)
 	_list = VBoxContainer.new()
@@ -170,10 +188,10 @@ func _build() -> void:
 	_list.add_theme_constant_override("separation", 6)
 	_list_scroll.add_child(_list)
 	# the thread
-	var vp := _panel(Rect2(826, 108, 1064, 918))
+	var vp := _panel(Rect2(826, top_y, 1064, ph))
 	_view_scroll = ScrollContainer.new()
 	_view_scroll.position = Vector2(28, 26)
-	_view_scroll.size = Vector2(1012, 756)
+	_view_scroll.size = Vector2(1012, ph - 162.0)
 	_view_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	vp.add_child(_view_scroll)
 	_view = VBoxContainer.new()
@@ -181,24 +199,25 @@ func _build() -> void:
 	_view.add_theme_constant_override("separation", 10)
 	_view_scroll.add_child(_view)
 	_typing = _label("", 15, U.TEXT_DIM, "body")
-	_typing.position = Vector2(20, 790)
+	_typing.position = Vector2(20, ph - 128.0)
 	vp.add_child(_typing)
 	_reply_to_lbl = _label("", 15, U.GOLD, "bold")
-	_reply_to_lbl.position = Vector2(20, 812)
+	_reply_to_lbl.position = Vector2(20, ph - 106.0)
 	vp.add_child(_reply_to_lbl)
 	_reply_box = LineEdit.new()
 	_reply_box.placeholder_text = "Write a reply (Enter to post)"
 	_reply_box.max_length = 500
-	_reply_box.position = Vector2(16, 846)
+	_reply_box.position = Vector2(16, ph - 72.0)
 	_reply_box.size = Vector2(880, 52)
 	_reply_box.add_theme_font_size_override("font_size", 18)
 	_reply_box.text_submitted.connect(func(_t): _send_reply())
 	vp.add_child(_reply_box)
 	var post := _button("Reply", _send_reply, "", Vector2(140, 52))
-	post.position = Vector2(908, 846)
+	post.position = Vector2(908, ph - 72.0)
 	vp.add_child(post)
 	_footer = _label("", 15, U.TEXT_DIM, "body")
 	_footer.position = Vector2(34, 1040)
+	_footer.visible = not embedded              # the Ranked screen has its own footer
 	_frame.add_child(_footer)
 	_build_dialog()
 	_set_tag("", false)
@@ -260,6 +279,10 @@ func _build_dialog() -> void:
 	_dialog.add_child(cancel)
 
 func _layout() -> void:
+	if embedded:
+		_frame.scale = Vector2.ONE                # the Ranked screen scales its whole frame, this page with it
+		_frame.position = Vector2.ZERO
+		return
 	var k := minf(size.x / W, size.y / H)
 	_frame.scale = Vector2(k, k)
 	_frame.position = ((size - Vector2(W, H) * k) * 0.5).floor()
@@ -509,6 +532,8 @@ func _ask_writer(th: Dictionary) -> void:
 			_writer.want_reply(th, q)
 
 func _process(dt: float) -> void:
+	if embedded and not is_visible_in_tree():
+		return
 	_tick -= dt
 	if _wait > 0.0:
 		_wait -= dt
@@ -566,10 +591,19 @@ func refresh_social() -> void:
 	if _open >= 0:
 		_fill_view(Forum.thread(_open))
 
+## Puts the New post dialog away if it is up (the Ranked screen's Esc asks first). True when it was.
+func close_dialog() -> bool:
+	if _dialog != null and _dialog.visible:
+		_hide_dialog()
+		return true
+	return false
+
 func _unhandled_input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo and (e as InputEventKey).keycode == KEY_ESCAPE:
 		if _dialog.visible:
 			_hide_dialog()
+		elif embedded:
+			return                                 # the Ranked screen's Esc (Back) takes it
 		else:
 			Options.go(get_tree(), MAIN_MENU)
 		get_viewport().set_input_as_handled()

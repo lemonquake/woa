@@ -1,0 +1,11 @@
+04:47:09 | INFO: Data are loaded, start creating Blender stuff
+04:47:09 | INFO: Blender create Mesh node thyrandael
+04:47:11 | INFO: glTF import finished in 1.45s
+REMNANTS thyrandael.glb         left L     0 R     0   torn edges L   73 R   58
+00:05.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\thyrandael_remnants_0.png'
+00:05.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\thyrandael_remnants_1.png'
+00:05.235  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\thyrandael_remnants_2.png'
+PNG A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\thyrandael_remnants_0.png;A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\thyrandael_remnants_1.png;A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\thyrandael_remnants_2.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

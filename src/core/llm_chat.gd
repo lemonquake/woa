@@ -294,8 +294,11 @@ func _system_prompt() -> String:
 			var nm := String(SimData.ability(String(a)).get("name", ""))
 			if nm != "":
 				abil.append(nm)
-		heroes.append("- %s: %s; abilities %s" % [String(d.get("name", id)), ", ".join(SimBotKits.roles(String(id)).slice(0, 2).map(func(r): return RankedNum.role(int(r)))),
-			", ".join(abil)])
+		var line := "- %s: %s; abilities %s" % [String(d.get("name", id)), ", ".join(SimBotKits.roles(String(id)).slice(0, 2).map(func(r): return RankedNum.role(int(r)))),
+			", ".join(abil)]
+		if SimBotKits.HOW_TO_PLAY.has(String(id)):
+			line += "; how it plays: " + String(SimBotKits.HOW_TO_PLAY[String(id)])
+		heroes.append(line)
 	return """You write one in-game chat line for a player in Warriors of Aether, a 5 v 5 lane battle game played like Dota 2 (two teams, Ancient Light and Black Sun; three lanes: top, mid, bottom; towers, barracks and a Throne to destroy; creeps, last hits and denies; neutral camps and stacks; orbs in the river; Town Portal scrolls (tp); buyback; Fortify; experience and gold at 150%%). Players are ranked by MMR in ranks Rookie, Advanced, Licensed, Expert, Commander, Chief Commander, Legendary, Mythic, Hero, Transcendent, Aetherium. Items players talk about: Jump Knife (blink in), Spell Shield (spell immunity), Fade Cape, Push Staff, Reveal Dust and Reveal Wards (against invisible heroes), boots, Mini-Axe, Kugmo, Igit, Atuli and others.
 
 The heroes:

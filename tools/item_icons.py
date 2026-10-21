@@ -37,6 +37,7 @@ BACK = {
     "dark": ("#3a2a4a", "#08060c", "#c8a8ff"),
     "wind": ("#2a6a5e", "#04140f", "#c8fff0"),
     "soul": ("#1f4a24", "#030c05", "#a8ff8a"),       # Araki's green soul-fire (run 2026-10-19 c)
+    "holy": ("#8a7430", "#1a1406", "#fff4c8"),       # Thyrandael's white-gold light (run 2026-10-21)
 }
 
 # metals and materials: (light, mid, dark)
@@ -1548,6 +1549,143 @@ def make_skills():
         at(ic, 64, 34, eye("#a8ff6a"), 0, 1.6)
         at(ic, 64, 80, katana(ic, 80), 90, 0.75)
         at(ic, 64, 80, chevrons("#d8ffb8"), 0, 0.6)
+
+    # Blackfire and Thyrandael (run 2026-10-21): black steel, bone and violet souls on the dark backdrop; white-gold
+    # light on the holy backdrop
+    SOUL = "#c8a8ff"
+    DARKSTEEL = ("#9a90b0", "#2e2838", "#06040a")
+    VIOLET = ("#f0d8ff", "#8a4ad0", "#1a0630")
+    HOLY = ("#ffffff", "#ffe8a0", "#a07a20")
+
+    def skull(ic, sc=1.0, horns=True, eyes="#b070ff"):
+        s = ""
+        if horns:
+            for k in (-1, 1):
+                s += P("M%d,-12 Q%d,-34 %d,-46 Q%d,-30 %d,-6 Z" % (k * 14, k * 30, k * 22, k * 20, k * 22),
+                       ic.metal(BONE, -10, -46, 10, -6), sw=2.5)
+        s += P("M-20,-4 Q-22,-30 0,-32 Q22,-30 20,-4 L16,10 L10,18 L-10,18 L-16,10 Z", ic.metal(BONE, -20, -32, 20, 18), sw=3)
+        for k in (-1, 1):
+            s += E(k * 8, -6, 6, 5, "#0a0610", sw=1.5) + C(k * 8, -6, 2.6, eyes, stroke="none", sw=0)
+        s += P("M-3,4 L3,4 L0,9 Z", "#0a0610", sw=1.2)
+        s += L("M-8,14 L-8,18 M-3,14 L-3,18 M3,14 L3,18 M8,14 L8,18", "#0a0610", 1.6)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def soul_wisp(x0, y0, x1, y1, col=SOUL, op=0.85):
+        mx, my = (x0 + x1) / 2 + (y1 - y0) * 0.25, (y0 + y1) / 2 - (x1 - x0) * 0.25
+        d = "M%.1f,%.1f Q%.1f,%.1f %.1f,%.1f" % (x0, y0, mx, my, x1, y1)
+        return L(d, "#1a0630", 7, op * 0.7) + L(d, col, 3.5, op) + C(x0, y0, 4, col, stroke="#1a0630", sw=1.5)
+
+    def claw(ic, sc=1.0, col=DARKSTEEL):
+        s = P("M-14,30 L-12,6 L12,6 L14,30 Z", ic.metal(col, -14, 6, 14, 30), sw=2.5)
+        for k, (x, ln) in enumerate(((-11, 30), (-4, 36), (4, 36), (11, 30))):
+            s += P("M%d,8 Q%d,%d %d,%d L%d,%d Q%d,%d %d,8 Z" % (x - 3, x - 5, 8 - ln * 0.6, x + 2, 8 - ln, x + 3, 6 - ln,
+                                                                  x + 1, 8 - ln * 0.6, x + 3), ic.metal(col, -4, -30, 4, 8), sw=2)
+        s += P("M-14,14 Q-26,4 -24,-8 L-18,-6 Q-18,4 -10,10 Z", ic.metal(col, -26, -8, -10, 14), sw=2)
+        return '<g transform="scale(%s)">%s</g>' % (sc, s)
+
+    def dark_sword(ic, length=92):
+        return sword(ic, DARKSTEEL, VIOLET, length=length, width=19, grip=BLACK, gem="#b070ff", heavy=True)
+
+    def ray_burst(col, n, r0, r1, w, op=0.85):
+        s = ""
+        for k in range(n):
+            a = k * 2 * math.pi / n
+            x0, y0, x1, y1 = math.cos(a) * r0, math.sin(a) * r0, math.cos(a) * r1, math.sin(a) * r1
+            s += L("M%.1f,%.1f L%.1f,%.1f" % (x0, y0, x1, y1), col, w, op)
+        return s
+
+    @icon("underworld_presence", "dark")
+    def _(ic):
+        for x, y in ((14, 22), (114, 26), (16, 108), (112, 104), (64, 122)):
+            ic.add(soul_wisp(x, y, 64 + (x - 64) * 0.35, 62 + (y - 62) * 0.35))
+        at(ic, 64, 66, skull(ic, 1.15))
+        ic.add(badge(ic, '<g transform="scale(0.32)">%s</g>' % cross(("#e0c8ff", "#8a4ad0", "#1a0630")), rim=GOLD))
+
+    @icon("sacrificial_grip", "dark")
+    def _(ic):
+        at(ic, 64, 64, rings(SOUL, 30, 2, 12, 0.35))
+        ic.add('<g opacity="0.9">')
+        at(ic, 64, 58, figure("#ff9a8a", 0.95))
+        ic.add('</g>')
+        at(ic, 64, 82, claw(ic, 1.25))
+        at(ic, 0, 0, L("M10,118 Q30,96 44,92", "#8a4ad0", 6, 0.6) + L("M118,118 Q98,96 84,92", "#8a4ad0", 6, 0.6))
+        for x, y in ((36, 28), (92, 26)):
+            at(ic, x, y, star("#ffe060", 7, 3, 5))
+
+    @icon("rise_up", "dark")
+    def _(ic):
+        at(ic, 0, 0, P("M0,104 Q64,90 128,104 L128,128 L0,128 Z", "#120a18", stroke="#0a0610", sw=2))
+        for x, sc, rot in ((30, 0.8, -12), (64, 1.0, 0), (98, 0.8, 12)):
+            at(ic, x, 92, claw(ic, sc, BONE), rot)
+        for k in range(3):
+            r = 16 + k * 12
+            at(ic, 64, 34, L("M%d,%d A%d,%d 0 0 1 %d,%d" % (-r, 0, r, r, r, 0), SOUL, 3, 0.8 - k * 0.2), 180)
+        at(ic, 64, 34, skull(ic, 0.45, True))
+
+    @icon("fiend_edge", "dark")
+    def _(ic):
+        at(ic, 0, 0, L("M24,108 L104,24", "#8a4ad0", 16, 0.3))
+        at(ic, 58, 72, dark_sword(ic, 96), 42, 1.15)
+        for x, y, ln in ((92, 30, 14), (104, 46, 10), (80, 18, 9)):
+            at(ic, x, y, L("M%d,%d L%d,%d" % (-ln, 0, ln, 0), "#ffffff", 3, 0.9) + L("M0,%d L0,%d" % (-ln, ln), "#ffffff", 3, 0.9))
+        ic.add(badge(ic, '<g transform="scale(0.32)">%s</g>' % cross(("#c8ffc8", "#30c040", "#0a4010")), rim=GOLD))
+
+    @icon("unfallen", "dark")
+    def _(ic):
+        for k in range(3):
+            at(ic, 64, 70, C(0, 0, 26 + k * 14, "none", stroke="#c8a8ff", sw=3 - k * 0.6, extra=' opacity="%s"' % (0.7 - k * 0.2)))
+        at(ic, 64, 64, skull(ic, 1.25))
+        at(ic, 0, 0, L("M64,122 L64,104", INK, 8) + L("M64,122 L64,104", "#e0c8ff", 4))
+        at(ic, 64, 100, P("M-9,6 L0,-6 L9,6 Z", "#e0c8ff", sw=2))
+
+    @icon("divine_touch", "holy")
+    def _(ic):
+        at(ic, 64, 64, rings("#fff4c8", 26, 3, 11, 0.45))
+        at(ic, 64, 66, shield(ic, HOLY, GOLD), 0, 0.82)
+        at(ic, 64, 60, star("#ffffff", 13, 5, 4))
+        for x, y in ((24, 30), (104, 34), (30, 100), (100, 98)):
+            at(ic, x, y, star("#fff0b0", 5, 2, 4))
+
+    @icon("holy_beam", "holy")
+    def _(ic):
+        at(ic, 0, 0, P("M20,112 L120,18 L128,34 L32,122 Z", "#fff4c8", stroke="none", sw=0, extra=' opacity="0.35"'))
+        at(ic, 0, 0, L("M22,112 L122,22", "#ffe8a0", 16, 0.55) + L("M22,112 L122,22", "#ffffff", 7, 0.95))
+        at(ic, 24, 108, C(0, 0, 14, ic.rad([(0, "#ffffff"), (0.6, "#ffe8a0"), (1, "#c09030", 0.0)], 0, 0, 16), stroke="none", sw=0))
+        for x, y in ((70, 52), (96, 38)):
+            at(ic, x, y, figure("#5a4a2a", 0.45), 0)
+        at(ic, 0, 0, L("M40,84 L52,96 M72,62 L84,74 M96,40 L106,50", "#ffffff", 2, 0.7))
+
+    @icon("quick_flash", "holy")
+    def _(ic):
+        at(ic, 64, 64, ray_burst("#fff4c8", 16, 14, 56, 4, 0.55))
+        at(ic, 64, 64, ray_burst("#ffffff", 8, 10, 46, 6, 0.9))
+        at(ic, 64, 64, C(0, 0, 16, ic.rad([(0, "#ffffff"), (0.7, "#fff0b0"), (1, "#e0b040")], 0, 0, 16), sw=2.5))
+        for k, x in enumerate((92, 102, 112)):
+            at(ic, x, 104, C(0, 0, 4.5, "#ffe8a0", sw=1.5))
+
+    @icon("spirit_step", "holy")
+    def _(ic):
+        ic.add('<g opacity="0.35">')
+        at(ic, 32, 78, figure("#fff4c8", 0.7))
+        ic.add('</g>')
+        at(ic, 0, 0, L("M38,64 Q64,30 90,58", "#fff4c8", 3, 0.7) + L("M38,64 Q64,30 90,58", "#ffffff", 1.4, 0.9))
+        at(ic, 92, 104, E(0, 0, 30, 9, "none", stroke="#fff0b0", sw=3, extra=' opacity="0.85"'))
+        at(ic, 92, 104, E(0, 0, 18, 5, "none", stroke="#ffffff", sw=2))
+        at(ic, 92, 78, figure("#ffffff", 0.75))
+        for x, y in ((112, 82), (72, 86)):
+            at(ic, x, y, star("#fff0b0", 5, 2, 4))
+
+    @icon("false_judgement", "holy")
+    def _(ic):
+        at(ic, 64, 64, ray_burst("#fff4c8", 12, 30, 62, 3, 0.4))
+        at(ic, 0, 0, L("M64,26 L64,100", INK, 8) + L("M64,26 L64,100", ic.metal(GOLD, -4, 26, 4, 100), 4))
+        at(ic, 0, 0, L("M30,44 L98,34", INK, 7) + L("M30,44 L98,34", "#ffe8a0", 3.5))
+        for x, y in ((30, 44), (98, 34)):
+            at(ic, 0, 0, L("M%d,%d L%d,%d M%d,%d L%d,%d" % (x, y, x - 12, y + 24, x, y, x + 12, y + 24), "#ffe8a0", 1.8, 0.9))
+            at(ic, x, y + 26, P("M-15,0 Q0,12 15,0 Z", ic.metal(GOLD, -15, 0, 15, 10), sw=2))
+        at(ic, 0, 0, L("M24,74 L34,82 L28,90 L40,98", "#ffffff", 2.5, 0.9))
+        at(ic, 64, 104, P("M-22,0 L22,0 L16,10 L-16,10 Z", ic.metal(GOLD, -22, 0, 22, 10), sw=2.5))
+        at(ic, 64, 22, eye("#fff4c8"), 0, 1.2)
 
     return R
 

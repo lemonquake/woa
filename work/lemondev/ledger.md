@@ -609,3 +609,22 @@ Run: `work/lemondev/2026-10-20e-social-accounts/` (handoff.md, captures). No com
 | P1 Pick quick stats | 1 | peek captures | self-check | no critic | critic |
 | B1/B2 Pro reactions, ladder | 1 | test_profile_pro, test_chat_profiles_in_match | tests pass | none | owner play |
 | U1 Players / friend chat | 1 | players captures | self-check | no critic, no probe | critic, probe |
+| X Integration | 1 | suite 333/0, check.sh Names OK, export, export/exe_match.png | PASS (gate) | none | owner play |
+
+## Session 2026-10-21 — Blackfire and Thyrandael, barriers, Forums tab, faster matchmaking
+
+Run: `work/lemondev/2026-10-21-blackfire-thyrandael/` (contract.md, handoff.md, logs, shots, ui, bodies). No commercial
+benchmark capture (gate UNVERIFIED). No blind critic run (none asked for).
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| C1 Barriers | 1 | test_barrier_kinds; shell and bar in shots/ | tests pass | none | owner play |
+| C2 Blackfire kit | 1-2 | test_blackfire_* (grip timing fixed in pass 2) | tests pass | Unfallen not captured live | capture |
+| C3 Thyrandael kit | 1 | test_thyrandael_* | tests pass | False Judgement not captured live | capture |
+| C4 Bots and chat | 1 | logs/kit_casts1.log (every skill), bot_game_a/b.txt | self-check | bot vs human strength unmeasured | owner play |
+| C5 Visuals, UI | 1 | shots/, ui/select_*.png, icons.png | self-check | no critic | critic |
+| C6 Bodies | builder | bodies/report, collision 0 cm, joins 0 / 2 | builder gates | blade vs wings not checked; Thyrandael 2 joins | owner's eye |
+| C7 Forums tab, matchmaking | 1 | ui/forums_tab.png | self-check | none | owner play |
+| X Integration | 1 | suite 340/2 (2 flaky ladder tests), check.sh Names OK, export, export/exe_match.png | PASS with flaky tests | flaky career tests | seed them |
+| X Integration | 2 | ladder tests seeded; suite 342/0 (logs/tests3.log) | PASS (gate) | none | none |
+| M Fast matchmaking | 1 | mm_probe on the owner's ladder (3% fail, 1 max per queue, 8.8 s avg), test_matchmaker_failed_accept, ranked_probe | tests pass | none | owner play |

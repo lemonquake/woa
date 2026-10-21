@@ -7847,7 +7847,8 @@ func test_bot_names() -> void:
 	for o in BotNames.OWNER:
 		check(o in names, "the owner's example is kept: " + o)
 
-func _test_ladder() -> void:
+func _test_ladder(seed := 0) -> void:
+	Ranked.seed_override = seed
 	Ranked.reset("user://ranked_test.json")
 	if FileAccess.file_exists(Ranked.path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(Ranked.path))
@@ -7855,6 +7856,7 @@ func _test_ladder() -> void:
 
 func _end_ladder() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(Ranked.path))
+	Ranked.seed_override = 0
 	Ranked.reset()
 
 ## Accounts (run 2026-10-20 e): up to 20 on one ladder. A new one starts fresh at 1500; logging in swaps "me" with the
@@ -8064,6 +8066,44 @@ func test_matchmaker_search_decline() -> void:
 	for i in 200:
 		mm.step(0.1)
 	check(mm.state == "ready", "everyone accepted -> ready (%s)" % mm.state)
+	_end_ladder()
+
+## The owner (2026-10-21): bots never fail two accepts in one queue, a re-queue searches twice as fast, and a failed
+## accept does not wait out the 15 second timer.
+func test_matchmaker_failed_accept() -> void:
+	_test_ladder(1)
+	var mm := Matchmaker.new()
+	mm.rng.seed = 5
+	mm.start([1, 2, 3, 4, 5])
+	var t := 0.0
+	while mm.state == "searching" and t < 30.0:
+		mm.step(0.1)
+		t += 0.1
+	check(mm.state == "found" and t <= 10.0, "a search takes seconds (%.1f s)" % t)
+	var bot := ""
+	for id in mm.lineup.accept_at:
+		bot = String(id)
+	mm.lineup.fails = {bot: true}
+	mm.accept()
+	t = 0.0
+	while mm.state == "found" and t < 20.0:
+		mm.step(0.1)
+		t += 0.1
+	check(mm.state == "searching" and t <= 5.0, "a failed accept goes back to the queue at once (%.1f s)" % t)
+	check(mm.note.contains("failed to accept"), "and says so")
+	check(mm.expect <= 3.5, "the re-queue searches twice as fast (%.1f s)" % mm.expect)
+	var fails := 0
+	for i in 40:
+		t = 0.0
+		while mm.state == "searching" and t < 30.0:
+			mm.step(0.1)
+			t += 0.1
+		fails += (mm.lineup.fails as Dictionary).size()
+		mm.decline()
+	check(fails == 0, "nobody fails an accept again in this queue (%d)" % fails)
+	mm.cancel()
+	mm.start([1, 2, 3, 4, 5])
+	check(not mm._after_fail, "leaving the queue starts fresh")
 	_end_ladder()
 
 func test_rated_bot_settings() -> void:
@@ -8349,7 +8389,7 @@ func test_matchmaker_presence() -> void:
 			for p in mm.lineup.teams[side]:
 				if String(p.id) != "me" and not Persona.online(p, Ranked.clock_override):
 					off += 1
-		check(off == 0 or mm.t >= mm.expect + 25.0, "only online players are matched (%d offline)" % off)
+		check(off == 0 or mm.t >= mm.expect + Matchmaker.ONLINE_GRACE, "only online players are matched (%d offline)" % off)
 	Ranked.clock_override = 0
 	_end_ladder()
 
@@ -9215,7 +9255,7 @@ func test_career_averages() -> void:
 
 ## Every ladder player has a career (games, averages, first bloods, multi-kills) and MVPs; the best have hundreds.
 func test_ladder_careers() -> void:
-	_test_ladder()
+	_test_ladder(1)
 	var no_career := 0
 	var top_mvps := 999999
 	for p in Ranked.leaderboard().slice(0, 10):
@@ -9250,7 +9290,7 @@ func _avg_mmr() -> float:
 
 ## A ladder saved before careers (version 4) gets them: estimates, farm on old matches, your career from your history.
 func test_ranked_upgrade_careers() -> void:
-	_test_ladder()
+	_test_ladder(1)
 	for b in Ranked.data.bots:
 		b.erase("career")
 		b["mvps"] = 1
@@ -9474,3 +9514,320 @@ func test_chat_profiles_in_match() -> void:
 	w4.botchat._on_chat({"t": "chat", "u": me4.id, "text": "is sensei ni jericho good?", "all": false})
 	var who_ans: Array = w4.botchat._queue.filter(func(q): return String(q.cat) == "ladder")
 	check(not who_ans.is_empty() and String(who_ans[0].text).contains("#2"), "a ladder player by name is looked up (%s)" % str(who_ans.map(func(q): return q.text)))
+
+# ---- Blackfire, the Unfallen and Thyrandael, the Forsaken Seraph (run 2026-10-21) -----------------------------------------
+
+func test_blackfire_thyrandael_data() -> void:
+	var want := {"blackfire": ["str", C.Element.DARK, 3.0, 1.1, 2.9, "underworld_presence", "unfallen"],
+		"thyrandael": ["int", C.Element.LIGHT, 2.8, 2.0, 4.0, "divine_touch", "false_judgement"]}
+	for id in want:
+		var d := SimData.unit(id)
+		var e: Array = want[id]
+		check(not d.is_empty() and d.kind == K.HERO, "%s is a hero" % id)
+		check(String(d.primary) == String(e[0]) and int(d.element) == int(e[1]), "%s primary and element" % id)
+		near(float(d.str_gain), float(e[2]), 1e-6, "%s strength a level" % id)
+		near(float(d.agi_gain), float(e[3]), 1e-6, "%s agility a level" % id)
+		near(float(d.int_gain), float(e[4]), 1e-6, "%s intelligence a level" % id)
+		near(float(d.range), 150.0, 0.01, "%s is melee" % id)
+		check(String(d.innate) == String(e[5]), "%s innate" % id)
+		check(SimData.ultimate_of(d.abilities) == String(e[6]), "%s ultimate" % id)
+		for tier in d.talents:
+			for tid in tier:
+				check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+		for aid in (d.abilities as Array) + [String(d.innate)]:
+			check(not SimData.ability(String(aid)).is_empty(), "%s exists" % aid)
+			check(UiKit.ABILITY_ICONS.has(String(aid)), "%s has its own icon" % aid)
+		check(SimBotKits.SKILLS.has(id) and SimBotKits.TALENTS.has(id) and SimBotKits.BUILDS.has(id), "bots know %s's builds" % id)
+		for aid in SimBotKits.SKILLS.get(id, []):
+			check(String(aid) in d.abilities, "%s's skill order names its own skill %s" % [id, aid])
+		check(SimBot21.handles(id), "bots play %s's kit" % id)
+		check(id in GameSettings.HEROES and id in GameSettings.OWN_BODY, "%s is pickable, with its own body" % id)
+		check(ModelCatalog.MODELS.has(String(d.model)), "%s has a model entry" % id)
+	near(float(SimData.ability("sacrificial_grip").values.stun[3]), 2.6, 1e-6, "Grip stun 2.6 at level 4")
+	near(float(SimData.ability("rise_up").cooldown[3]), 32.0, 0.01, "Rise Up 32 s at level 4")
+	near(float(SimData.ability("fiend_edge").values.drain[3]), 0.35, 1e-6, "Fiend Edge 35% at level 4")
+	near(float(SimData.ability("holy_beam").values.mana_burn[3]), 60.0, 0.01, "Holy Beam burns 60 at level 4")
+	near(float(SimData.ability("quick_flash").cooldown[0]), 2.2, 1e-6, "Quick Flash 2.2 s")
+	near(float(SimData.ability("spirit_step").range[3]), 940.0, 0.01, "Spirit Step 940 at level 4")
+	near(float(SimData.ability("false_judgement").values.max_charges[2]), 12.0, 0.01, "12 charges at level 3")
+
+func test_barrier_kinds() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var t := _plain(w, "dusk_melee", C.DUSK, o, 5000.0)
+	var src := _plain(w, "dawn_melee", C.DAWN, o + Vector2(100, 0))
+	SimBarrier.give(w, t, "test_all", -1, "all", 100.0, 10.0)
+	SimBarrier.give(w, t, "test_magic", -2, "magic", 50.0, 10.0)
+	var hp := t.hp
+	w.combat.deal_damage(src.id, src.team, false, t, 80.0, C.DamageType.MAGICAL, false, "test")
+	near(t.hp, hp, 0.01, "80 magic: the magic barrier (50) then the all-damage one (30) take it")
+	near(SimBarrier.total(t).x, 70.0, 0.01, "70 all-damage barrier left")
+	near(SimBarrier.total(t).z, 0.0, 0.01, "the magic barrier is spent")
+	check(t.get_modifier("test_magic").is_empty(), "a spent barrier is gone")
+	w.combat.deal_damage(src.id, src.team, false, t, 100.0, C.DamageType.PURE, false, "test")
+	near(t.hp, hp - 30.0, 0.01, "pure damage: the all-damage barrier takes 70, health the rest")
+	SimBarrier.give(w, t, "test_phys", -3, "phys", 40.0, 10.0)
+	var hp2 := t.hp
+	w.combat.deal_damage(src.id, src.team, false, t, 30.0, C.DamageType.MAGICAL, false, "test")
+	near(t.hp, hp2 - 30.0, 0.01, "a physical barrier does not take magic damage")
+	w.combat.deal_damage(src.id, src.team, false, t, 30.0, C.DamageType.PHYSICAL, false, "test")
+	near(t.hp, hp2 - 30.0, 0.01, "but takes physical damage")
+	t.add_modifier({"id": "test_timed", "source": -4, "expires": w.time + 0.5, "barrier_only": true, "barrier_all": 60.0})
+	run(w, 1.0)
+	near(SimBarrier.total(t).x, 0.0, 0.01, "a barrier ends with its time")
+
+func test_blackfire_grip() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "blackfire", o)
+	var foe := _hero16(w, "froster", o + Vector2(400, 0), C.DUSK)
+	foe.auto_attack = false
+	run(w, 0.1)
+	var hp := foe.hp
+	w.command(b.id, {"type": O.CAST_UNIT, "ability": "sacrificial_grip", "target": foe.id})
+	run(w, 0.5)
+	check(foe.is_stunned() and b.is_stunned(), "both are stunned")
+	near(hp - foe.hp, hp * 0.25, hp * 0.01, "the target loses 25% of its health")
+	check(not foe.get_modifier(SimKits8.MARK).is_empty(), "the target is marked for his Undead")
+	near(foe.attack_out_pct, 0.0, 1e-6, "no weakness during the stun")
+	run(w, 2.6)
+	check(not foe.is_stunned() and not b.is_stunned(), "the stun is over after 2.6 s")
+	near(foe.attack_out_pct, -0.30, 1e-6, "then the target deals 30% less attack damage")
+	near(b.attack_out_pct, -0.30, 1e-6, "and Blackfire too")
+	run(w, 2.1)
+	near(foe.attack_out_pct, 0.0, 1e-6, "for 2 seconds")
+	# never lethal
+	foe.hp = 5.0
+	w.abilities.kits8.cast(b, "sacrificial_grip", 4, foe, foe.pos)
+	check(foe.alive and foe.hp >= 1.0, "the grip never kills")
+
+func test_blackfire_rise_up() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "blackfire", o)
+	var creeps: Array = []
+	for i in 3:
+		creeps.append(_plain(w, "dusk_melee", C.DUSK, o + Vector2(300 + 60 * i, 100), 300.0))
+	var far := _plain(w, "dusk_melee", C.DUSK, o + Vector2(1600, 0), 300.0)
+	run(w, 0.1)
+	for c in creeps + [far]:
+		w.combat.deal_damage(b.id, b.team, true, c, 9999.0, C.DamageType.PURE, false, "test")
+	run(w, 1.0)
+	var gold := b.gold()
+	w.command(b.id, {"type": O.CAST_NO_TARGET, "ability": "rise_up"})
+	run(w, 0.2)
+	var raised := w.abilities.kits8.undead_of(b)
+	check(raised.size() == 3, "the three bodies within 1000 rise (%d)" % raised.size())
+	for u: SimUnit in raised:
+		check(u.team == b.team and u.kind == K.SUMMON and u.owner_id == b.id, "an Undead is his, on his team")
+		check(w.abilities.commands(b, u), "and his to command")
+	# the aura raises what dies near him meanwhile
+	var late := _plain(w, "dusk_melee", C.DUSK, o + Vector2(200, -200), 300.0)
+	run(w, 0.1)
+	w.combat.deal_damage(b.id, b.team, true, late, 9999.0, C.DamageType.PURE, false, "test")
+	run(w, 0.2)
+	check(w.abilities.kits8.undead_of(b).size() == 4, "a creep dying near him under the aura rises at once")
+	# neither heroes nor the Undead themselves rise; an Undead pays no bounty
+	var foe := _hero16(w, "froster", o + Vector2(250, 0), C.DUSK)
+	run(w, 0.1)
+	var u0: SimUnit = w.abilities.kits8.undead_of(b)[0]
+	var enemy := _hero16(w, "sludge", o + Vector2(0, 300), C.DUSK)
+	var eg := enemy.gold()
+	w.combat.deal_damage(enemy.id, enemy.team, true, u0, 99999.0, C.DamageType.PURE, false, "test")
+	w.combat.deal_damage(b.id, b.team, true, foe, 99999.0, C.DamageType.PURE, false, "test")
+	run(w, 0.3)
+	check(w.abilities.kits8.undead_of(b).size() == 3, "a hero does not rise, a killed Undead does not rise again")
+	check(enemy.gold() == eg, "a killed Undead gives no gold")
+	run(w, 20.5)
+	check(w.abilities.kits8.undead_of(b).is_empty(), "the Undead last 20 seconds")
+	check(b.gold() >= gold, "no gold lost")
+
+func test_blackfire_presence_and_edge() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "blackfire", o)
+	b.hp = b.max_hp * 0.5
+	var c := _plain(w, "dusk_melee", C.DUSK, o + Vector2(600, 0), 300.0)
+	run(w, 0.1)
+	var before := b.hp
+	w.combat.deal_damage(b.id, b.team, true, c, 9999.0, C.DamageType.PURE, false, "test")
+	run(w, 0.1)
+	near(b.hp - before, b.max_hp * 0.04, b.max_hp * 0.004, "a creep's death within 1000 heals 4%")
+	var foe := _hero16(w, "froster", o + Vector2(700, 0), C.DUSK)
+	run(w, 0.1)
+	before = b.hp
+	w.combat.deal_damage(b.id, b.team, true, foe, 99999.0, C.DamageType.PURE, false, "test")
+	run(w, 0.1)
+	near(b.hp - before, b.max_hp * 0.10, b.max_hp * 0.006, "a hero's: 10% (150% more)")
+	var far := _plain(w, "dusk_melee", C.DUSK, o + Vector2(1300, 0), 300.0)
+	run(w, 0.1)
+	before = b.hp
+	w.combat.deal_damage(b.id, b.team, true, far, 9999.0, C.DamageType.PURE, false, "test")
+	run(w, 0.1)
+	near(b.hp, before, 1.0, "not past 1000")
+	# Fiend Edge: about a quarter of his attacks crit for 2x and heal an ally near him
+	var w2 := empty_world()
+	var bf := _hero16(w2, "blackfire", o)
+	var mate := _hero16(w2, "froster", o + Vector2(-300, 0))
+	var dummy := _plain(w2, "dusk_melee", C.DUSK, o + Vector2(120, 0), 1e7)
+	mate.hp = 100.0
+	run(w2, 0.1)
+	w2.command(bf.id, {"type": O.ATTACK_UNIT, "target": dummy.id})
+	var crits := 0
+	var hits := 0
+	var heals := 0
+	for i in 1800:
+		w2.events.clear()
+		w2.step()
+		for e in w2.events:
+			if String(e.t) == "crit" and int(e.u) == bf.id:
+				crits += 1
+			elif String(e.t) == "damage" and int(e.u) == dummy.id and bool(e.get("attack", false)):
+				hits += 1
+			elif String(e.t) == "fiend_edge":
+				heals += 1
+	check(hits > 30, "he keeps attacking (%d)" % hits)
+	near(float(crits) / float(maxi(1, hits)), 0.25, 0.1, "about 25% of his attacks are critical")
+	check(heals == crits and mate.hp > 100.0 + 50.0, "every critical heals the ally near him")
+
+func test_blackfire_unfallen() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var b := _hero16(w, "blackfire", o)
+	var mate := _plain(w, "dawn_melee", C.DAWN, o + Vector2(150, 0))
+	var foe := _hero16(w, "froster", o + Vector2(-200, 0), C.DUSK)
+	foe.auto_attack = false
+	run(w, 0.1)
+	w.combat.deal_damage(foe.id, foe.team, true, b, 1e6, C.DamageType.PURE, false, "test")
+	run(w, 0.1)
+	check(b.alive and w.abilities.kits8.is_fallen(b), "a killing blow drops him, he does not die")
+	check(b.deaths == 0 and foe.kills == 0, "no death counted yet")
+	check(b.is_invulnerable() and b.is_stunned(), "lying there he is out of reach")
+	run(w, 3.0)
+	check(not w.abilities.kits8.is_fallen(b) and b.alive, "he rises after 3 seconds")
+	near(b.hp, b.max_hp, 1.0, "with full health")
+	check(not b.get_modifier(SimKits8.RISEN).is_empty(), "and the last-life bonus")
+	var mpos := mate.pos
+	var fpos := foe.pos
+	var slams := 0
+	for i in int(5.2 * C.TICK_RATE):
+		w.events.clear()
+		w.step()
+		for e in w.events:
+			if String(e.t) == "impact" and int(e.u) == foe.id:
+				slams += 1
+	check(not b.alive, "he dies for good after 5 seconds (level 3)")
+	check(b.deaths == 1 and foe.kills == 1, "one death, the kill is the first killer's")
+	check(mate.pos.distance_to(mpos) > 150.0, "the blast throws an ally away (%.0f)" % mate.pos.distance_to(mpos))
+	check(foe.pos.distance_to(fpos) > 150.0 or slams > 0, "and an enemy (%.0f, or into a tree)" % foe.pos.distance_to(fpos))
+	if slams > 0:
+		run(w, 0.25)
+		check(not foe.get_modifier("stunned").is_empty(), "a slam into a tree stuns")
+	# before level 6 he dies at once
+	var w2 := empty_world()
+	var b2 := _hero16(w2, "blackfire", o)
+	b2.ability_level["unfallen"] = 0
+	run(w2, 0.1)
+	w2.combat.deal_damage(-1, C.DUSK, false, b2, 1e6, C.DamageType.PURE, false, "test")
+	run(w2, 0.1)
+	check(not b2.alive, "without Unfallen he just dies")
+
+func test_thyrandael_touch_and_flash() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var t := _hero16(w, "thyrandael", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(300, 0), 5000.0)
+	run(w, 0.1)
+	var hp := foe.hp
+	w.command(t.id, {"type": O.CAST_NO_TARGET, "ability": "quick_flash"})
+	run(w, 0.1)
+	var dmg1 := hp - foe.hp
+	near(dmg1, 90.0 * (1.0 + t.magic_amp), 1.0, "Quick Flash: 90 magic at level 4")
+	near(SimBarrier.total(t).x, t.int_total, 0.5, "Divine Touch: a barrier as large as his intelligence")
+	check(w.abilities.kits9.flash_marks(t, foe) == 1, "the enemy is marked")
+	for k in 3:
+		run(w, 2.3)
+		hp = foe.hp
+		w.command(t.id, {"type": O.CAST_NO_TARGET, "ability": "quick_flash"})
+		run(w, 0.1)
+		near(hp - foe.hp, (90.0 + 25.0 * float(k + 1)) * (1.0 + t.magic_amp), 1.0, "each mark adds 25 (%d marks)" % (k + 1))
+	near(SimBarrier.total(t).x, t.int_total * 3.0, 0.5, "the barrier holds 3 charges at most")
+	check(w.abilities.kits9.touch_charges(t) == 3, "3 charges")
+	run(w, 12.5)
+	near(SimBarrier.total(t).x, 0.0, 0.01, "it fades 12 s after his last spell")
+
+func test_thyrandael_holy_beam() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var t := _hero16(w, "thyrandael", o)
+	var inline := _plain(w, "dusk_melee", C.DUSK, o + Vector2(600, 0), 5000.0)
+	var side := _plain(w, "dusk_melee", C.DUSK, o + Vector2(0, 500), 5000.0)
+	inline.def["mana"] = 300.0
+	inline.refresh_stats()
+	inline.mana = 300.0
+	run(w, 0.1)
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "holy_beam", "point": o + Vector2(800, 0)})
+	run(w, 0.4)
+	check(not t.channel.is_empty() and String(t.channel.ability) == "holy_beam", "he channels the beam")
+	var h0 := inline.hp
+	var hs := side.hp
+	run(w, 1.0)
+	near(h0 - inline.hp, 110.0 * (1.0 + t.magic_amp), 15.0, "110 magic a second in the beam")
+	near(side.hp, hs, 0.01, "nothing beside it")
+	check(inline.mana < 300.0 - 40.0, "the beam burns mana (%.0f left)" % inline.mana)
+	check(not inline.get_modifier(SimKits9.BEAM_SLOW).is_empty(), "and slows")
+	var p := t.pos
+	w.command(t.id, {"type": O.MOVE, "point": o + Vector2(0, 900)})
+	run(w, 0.1)
+	check(not t.channel.is_empty(), "a move order does not end it")
+	run(w, 2.0)
+	near(t.pos.distance_to(p), 0.0, 0.5, "he does not walk")
+	check(absf(angle_difference(t.facing, PI * 0.5)) < 0.2, "he turned to the order (%.2f)" % t.facing)
+	hs = side.hp
+	run(w, 0.5)
+	check(side.hp < hs, "the beam turned with him")
+	var near_foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(-250, 0), 5000.0)
+	run(w, 0.1)
+	var hn := near_foe.hp
+	w.command(t.id, {"type": O.CAST_NO_TARGET, "ability": "quick_flash"})
+	run(w, 0.1)
+	check(near_foe.hp < hn, "Quick Flash goes off during the beam")
+	check(not t.channel.is_empty(), "and does not end it")
+	w.command(t.id, {"type": O.STOP})
+	run(w, 0.1)
+	check(t.channel.is_empty(), "Stop ends it")
+	near(t.turn_rate, float(t.def.turn_rate), 1e-4, "his turn rate is back")
+
+func test_thyrandael_step_and_judgement() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var t := _hero16(w, "thyrandael", o)
+	var foe := _hero16(w, "froster", o + Vector2(900, 0), C.DUSK)
+	foe.auto_attack = false
+	run(w, 0.1)
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "spirit_step", "point": o + Vector2(800, 0)})
+	run(w, 0.3)
+	near(t.pos.distance_to(o + Vector2(800, 0)), 0.0, 40.0, "he steps there")
+	check(foe.is_silenced() and not foe.get_modifier("spirit_step_slow").is_empty(), "silences and slows the enemy")
+	check(w.abilities.cast_error(t, "false_judgement", -1, null, foe.pos) == "No charges yet", "no charges, no judgement")
+	for i in 6:
+		w.combat.deal_damage(foe.id, foe.team, true, t, 200.0, C.DamageType.PURE, false, "test")
+		t.hp = t.max_hp
+	check(w.abilities.kits9.judgement_charges(t) == 6, "a charge every 200 damage (%d)" % w.abilities.kits9.judgement_charges(t))
+	near(w.abilities.cast_range(t, "false_judgement", -1), 1600.0 * 0.5, 1.0, "half the charges: half the range")
+	run(w, 3.0)
+	w.command(t.id, {"type": O.CAST_POINT, "ability": "false_judgement", "point": foe.pos})
+	run(w, 0.6)
+	var m := foe.get_modifier(SimKits9.JUDGED)
+	check(not m.is_empty(), "the enemy is judged")
+	near(float(m.get("blind", 0.0)), 0.5, 1e-3, "misses half its attacks (half charges)")
+	near(float(m.get("slow", 0.0)), 0.275, 1e-3, "slowed 27.5%")
+	near(w.abilities.cooldown_left(t, "false_judgement"), 6.0, 0.6, "the cooldown halfway between 8 and 4")
+	check(w.abilities.kits9.judgement_charges(t) == 0, "the charges are spent")
+	var hp := foe.hp
+	run(w, 2.0)
+	near(hp - foe.hp, 2.0 * 50.0 * (1.0 + t.magic_amp) * (1.0 - foe.magic_resist), 20.0, "it burns 50 a second")
+	for i in 20:
+		w.combat.deal_damage(foe.id, foe.team, true, t, 250.0, C.DamageType.PURE, false, "test")
+		t.hp = t.max_hp
+	check(w.abilities.kits9.judgement_charges(t) == 12, "never past 12 charges")

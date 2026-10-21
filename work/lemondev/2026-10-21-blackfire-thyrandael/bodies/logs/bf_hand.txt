@@ -1,0 +1,16 @@
+04:23:03 | INFO: Data are loaded, start creating Blender stuff
+04:23:03 | INFO: Blender create Mesh node blackfire
+04:23:05 | INFO: glTF import finished in 1.43s
+04:23:05 | INFO: Data are loaded, start creating Blender stuff
+04:23:05 | INFO: Blender create Mesh node tripo_mesh_8efd28a3.001
+04:23:05 | INFO: glTF import finished in 0.02s
+00:05.594  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\bf_p1_handR2_idle_2h_300.png'
+00:05.938  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\bf_p1_handR2_idle_2h_60.png'
+00:06.235  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\bf_p1_handR2_idle_2h_200.png'
+00:06.532  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\bf_p1_handR2_hero_run_300.png'
+00:06.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\bf_p1_handR2_hero_run_60.png'
+00:07.157  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\bf_p1_handR2_hero_run_200.png'
+[pose_render] wrote A:/Python/woa/work/lemondev/2026-10-21-blackfire-thyrandael/bodies/renders/bf_p1_handR2.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

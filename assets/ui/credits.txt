@@ -47,9 +47,6 @@ By Eldritch Grim. opengameart.org/content/impactsgunsfx. Licence: CC0 1.0.
 [b]UI icons (items, skills, attributes, status, ui), SVG[/b]
 By beyond-heroes project. same. Licence: Owned by the author.
 
-[b]Painted skill and item icons, PNG[/b]
-Created for Warriors of Aether with OpenAI image generation, October 2026. Covers all heroes, item variants and unit skills. Original SVGs remain as fallbacks. Source sheets and provenance: work/lemondev/2026-10-20-icons/.
-
 [b]Trees, plants, grass, rocks[/b]
 By Quaternius, Stylized Nature MegaKit (Standard). quaternius.itch.io/stylized-nature-megakit. Licence: CC0 1.0.
 
@@ -121,6 +118,12 @@ By dark_igorek. sketchfab.com/3d-models/03def921ed814b3a9de5c5962b86a45c. Licenc
 
 [b]Araki's katana (2026-10-19 c): the katana of "Shadowflame Samurai", cut out as his weapon (tools/blender/araki_katana.py, prep_weapon.py)[/b]
 By dark_igorek. sketchfab.com/3d-models/03def921ed814b3a9de5c5962b86a45c. Licence: CC BY 4.0.
+
+[b]Blackfire's body and sword (2026-10-21): "Blackfire, the Unfallen", baked onto a 44k-triangle mesh and bound to the hero skeleton, the sword cut out of his fist as his weapon (tools/blender/hero_body.py, extract_prop.py, blackfire_sword_roll.py)[/b]
+By s8819296 (Sketchfab; a generated mesh). sketchfab.com/s8819296 (the owner's download; model page link to fill in). Licence: CC BY 4.0.
+
+[b]Thyrandael's body and sword (2026-10-21): "Thyrandael, the Forsaken Seraph", baked onto a 60k-triangle mesh and bound to the hero skeleton, wings on the chest and halo on the head, the greatsword cut out as his weapon (tools/blender/hero_body.py, thyrandael_rigid.py, extract_prop.py, blackfire_sword_roll.py)[/b]
+By s8819296 (Sketchfab; a generated mesh). sketchfab.com/s8819296 (the owner's download; model page link to fill in). Licence: CC BY 4.0.
 
 [b]Ghorman's club and beard[/b]
 By Warriors of Aether (procedural, Blender 5.2). tools/blender/heroes17_gear.py, tools/blender/ghorman_prep.py. Licence: Project-owned.

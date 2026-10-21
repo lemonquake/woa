@@ -1,0 +1,203 @@
+{
+	"custom": [
+		"blood_ranger",
+		"ezee",
+		"froster"
+	],
+	"looks": {
+		"blood_ranger": {
+			"display_name": "Jayla",
+			"dyes": {
+				"armor": {
+					"cloth": "8a1018",
+					"leather": "3a1c16",
+					"metal": "6a5a50",
+					"trim": "c8a060"
+				},
+				"boots": {
+					"leather": "2a1610"
+				},
+				"gloves": {
+					"cloth": "3a1012",
+					"leather": "2a1610"
+				},
+				"inner_garment": {
+					"cloth": "5a1016"
+				},
+				"leggings": {
+					"cloth": "2e1414",
+					"leather": "2a1610"
+				}
+			},
+			"look": {
+				"beard": "none",
+				"beard_color": "",
+				"beard_length": 0.0,
+				"belly": 0.0,
+				"body": "standard",
+				"brow": "arched",
+				"brow_color": "",
+				"brow_heavy": 0.0,
+				"brow_height": 0.0,
+				"brow_thick": 0.7,
+				"brow_tilt": 0.0,
+				"build": -0.35,
+				"cheeks": -0.3,
+				"chin_long": 0.0,
+				"ears_out": 0.0,
+				"ears_point": 0.0,
+				"ears_size": 0.0,
+				"eye": "cat",
+				"eye_color": "e0202c",
+				"eye_glow": 0.55,
+				"eye_height": 0.0,
+				"eye_size": 1.0,
+				"eye_spacing": 0.0,
+				"eye_tilt": 0.0,
+				"eyes_pop": 0.0,
+				"feet": 1.0,
+				"female": 1.0,
+				"hair": "long",
+				"hair_color": "861620",
+				"hair_length": 1.0,
+				"hands": 1.0,
+				"head": 1.0,
+				"height": 0.95,
+				"jaw_wide": 0.0,
+				"lip_amount": 0.3,
+				"lip_color": "8a2028",
+				"lips_full": 0.4,
+				"marking": "none",
+				"marking_color": "8c1410",
+				"mouth_smile": 0.0,
+				"mouth_wide": 0.0,
+				"muscle": 0.0,
+				"nose_long": 0.0,
+				"nose_size": 0.0,
+				"nose_up": 0.0,
+				"nose_wide": 0.0,
+				"pattern": "none",
+				"pattern_amount": 1.0,
+				"pattern_color": "2a1c16",
+				"pattern_scale": 1.0,
+				"rear": 0.0,
+				"show_helm": true,
+				"skin": "e8c2a8",
+				"stubble": 0.0,
+				"underwear": "17171a",
+				"v": 1
+			},
+			"outfit": {
+				"accessory_1": "tc_bloodmoon_signet",
+				"armor": "tc_trackers_leathers",
+				"boots": "wayfarer_boot",
+				"gloves": "silk_glove",
+				"inner_garment": "silk_undershirt",
+				"leggings": "trackers_breeches"
+			}
+		},
+		"ezee": {
+			"display_name": "Ezee",
+			"dyes": {},
+			"look": {},
+			"outfit": {}
+		},
+		"froster": {
+			"display_name": "Froster",
+			"dyes": {
+				"armor": {
+					"cloth": "16325a",
+					"gold": "b8d8f0",
+					"leather": "1e2836",
+					"metal": "6a86a4",
+					"trim": "9cc8e8"
+				},
+				"boots": {
+					"leather": "1e2836",
+					"metal": "708ca8"
+				},
+				"gloves": {
+					"leather": "1e2836",
+					"metal": "708ca8"
+				},
+				"inner_garment": {
+					"cloth": "0f2240"
+				},
+				"leggings": {
+					"cloth": "122a4c",
+					"leather": "1e2836",
+					"metal": "6a86a4",
+					"trim": "9cc8e8"
+				}
+			},
+			"look": {
+				"beard": "braided",
+				"beard_color": "",
+				"beard_length": 2.43,
+				"belly": 0.0,
+				"body": "standard",
+				"brow": "bushy",
+				"brow_color": "",
+				"brow_heavy": 0.7,
+				"brow_height": 0.0,
+				"brow_thick": 1.0,
+				"brow_tilt": 0.0,
+				"build": 0.3,
+				"cheeks": 0.0,
+				"chin_long": 0.0,
+				"ears_out": 0.0,
+				"ears_point": 0.0,
+				"ears_size": 0.0,
+				"eye": "glowing",
+				"eye_color": "8fe4ff",
+				"eye_glow": 0.7,
+				"eye_height": 0.0,
+				"eye_size": 1.0,
+				"eye_spacing": 0.0,
+				"eye_tilt": 0.0,
+				"eyes_pop": 0.0,
+				"feet": 1.907,
+				"female": 0.0,
+				"hair": "mohawk",
+				"hair_color": "d14a8a",
+				"hair_length": 2.48,
+				"hands": 1.74975,
+				"head": 0.7,
+				"height": 1.08,
+				"jaw_wide": 0.5,
+				"lip_amount": 0.0,
+				"lip_color": "b0306a",
+				"lips_full": 0.0,
+				"marking": "none",
+				"marking_color": "8c5a50",
+				"mouth_smile": 0.0,
+				"mouth_wide": 0.0,
+				"muscle": 0.5,
+				"nose_long": 0.0,
+				"nose_size": 0.0,
+				"nose_up": 0.0,
+				"nose_wide": 0.0,
+				"pattern": "none",
+				"pattern_amount": 1.0,
+				"pattern_color": "d14a8a",
+				"pattern_scale": 1.0,
+				"rear": -0.14,
+				"show_helm": true,
+				"skin": "e2d6d4",
+				"stubble": 1.0,
+				"underwear": "d14a8a",
+				"v": 1
+			},
+			"outfit": {
+				"accessory_1": "tidecaller_moonstone",
+				"armor": "tc_sanctified_plate",
+				"boots": "guardian_greaves",
+				"gloves": "guardian_gauntlets",
+				"inner_garment": "padded_gambeson",
+				"leggings": "u_rimewalkers"
+			}
+		}
+	},
+	"opponent": "random",
+	"selected": "azrael"
+}

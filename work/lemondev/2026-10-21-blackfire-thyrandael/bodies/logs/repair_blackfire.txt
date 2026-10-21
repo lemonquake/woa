@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  blackfire.glb: torso 0.27 x 0.20, head 0.13, blade []
+repaired 132 clips of blackfire.glb -> res://assets/characters/hero/hero_anims_fixed.res (OK)

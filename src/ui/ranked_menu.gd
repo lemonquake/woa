@@ -36,7 +36,8 @@ const RIM := Color(0.55, 0.43, 0.2, 0.6)
 const ROLE_LINES := ["Farms the safe lane and wins the late game.", "Holds the middle lane alone and ganks.",
 	"Takes the hard lane and starts fights.", "Roams, ganks, stacks and places wards.",
 	"Keeps the carry alive and buys for the team."]
-const TABS := [["play", "Play"], ["profile", "Profile"], ["leaderboard", "Leaderboard"], ["players", "Players"], ["guilds", "Guilds"]]
+const TABS := [["play", "Play"], ["profile", "Profile"], ["leaderboard", "Leaderboard"], ["players", "Players"], ["forums", "Forums"], ["guilds", "Guilds"]]
+const FORUMS := "res://src/ui/forums.tscn"       # the Forums tab (2026-10-21: moved here from the main menu)
 
 var mm := Matchmaker.new()
 var _frame: Control
@@ -44,6 +45,7 @@ var _strip_top: ColorRect
 var _strip_bot: ColorRect
 var _tab := "play"
 var _pages := {}
+var _forums: Control                          # the Forums tab's page (built when first opened)
 var _tab_btns := {}
 var _chip: Control
 var _toast: Label
@@ -134,6 +136,7 @@ func _ready() -> void:
 	_build_profile_page()
 	_build_board()
 	_build_players()
+	_build_forums()
 	_build_guilds()
 	_build_footer()
 	_build_offer()
@@ -282,18 +285,19 @@ func _build_top() -> void:
 	bar.add_child(back)
 	var title := _label("Ranked", 38, U.GOLD, "title", bar)
 	title.position = Vector2(166, 18)
-	var x := 400.0
+	# each tab as wide as its name (six tabs fit between the title and Accounts since Forums moved in)
+	var x := 340.0
 	for tdef in TABS:
 		var tb := TabButton.new()
 		tb.text = String(tdef[1])
 		tb.soon = String(tdef[0]) == "guilds"
 		tb.position = Vector2(x, 20)
-		tb.size = Vector2(170 if tb.soon else 150, 56)
+		tb.size = Vector2(tb.fit_width(), 56)
 		var id := String(tdef[0])
 		tb.pressed.connect(func(): _show_tab(id))
 		bar.add_child(tb)
 		_tab_btns[id] = tb
-		x += tb.size.x + 8.0
+		x += tb.size.x + 6.0
 	# your accounts: log in to another, log out, make a new one (run 2026-10-20 e)
 	var acc := _button("Accounts", func(): AccountsPanel.open(self), "DarkButton", Vector2(150, 46))
 	acc.position = Vector2(W - 640, 23)
@@ -356,9 +360,18 @@ func _show_tab(id: String) -> void:
 		_fill_players()
 	elif id == "play":
 		_refresh_play()
+	elif id == "forums" and _forums == null:
+		# built the first time it is opened (the forum catches up on what was written meanwhile)
+		_forums = (load(FORUMS) as PackedScene).instantiate()
+		_forums.set("embedded", true)
+		_forums.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		(_pages["forums"] as Control).add_child(_forums)
 
 ## Esc goes back, as the Back button does (fields, dropdowns and overlays get the key first).
 func _unhandled_key_input(e: InputEvent) -> void:
+	if U.is_esc(e) and _tab == "forums" and _forums != null and _forums.call("close_dialog"):
+		get_viewport().set_input_as_handled()       # Esc puts the New post dialog away first
+		return
 	if U.is_esc(e) and _back_btn != null and _back_btn.is_visible_in_tree() and not (_offer != null and _offer.visible):
 		get_viewport().set_input_as_handled()
 		_back_btn.pressed.emit()
@@ -509,9 +522,9 @@ func _refresh_play() -> void:
 		_heroes_box.add_child(hr)
 	_rank_bar.set_rank(int(me.mmr), tier)
 	var rs := _chosen_roles()
-	var est := 8.0 + (6.0 if rs.size() <= 1 else (3.0 if rs.size() <= 2 else 0.0))
+	var est := 3.0 + (2.0 if rs.size() <= 1 else (1.0 if rs.size() <= 2 else 0.0))
 	if rs.size() > 0 and rs.all(func(r): return r <= 2):
-		est += 5.0
+		est += 1.0
 	_wait_lbl.text = "Estimated wait: %s   ·   %s" % [_mmss(est), ", ".join(rs.map(func(r): return role_name(int(r)))) if not rs.is_empty() else "no role picked"]
 	_find_btn.disabled = rs.is_empty()
 	var searching := mm.state == "searching" or mm.state == "found" or mm.state == "ready"
@@ -1339,6 +1352,15 @@ static func _presence_rank(p: Dictionary, t: int) -> int:
 
 # ---- Guilds ---------------------------------------------------------------------------------------------------------
 
+## The Forums tab: an empty page until it is first opened (_show_tab builds the forum into it).
+func _build_forums() -> void:
+	var page := Control.new()
+	page.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	page.size = Vector2(W, H)
+	page.visible = false
+	_frame.add_child(page)
+	_pages["forums"] = page
+
 func _build_guilds() -> void:
 	var page := Control.new()
 	page.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1431,6 +1453,9 @@ class TabButton extends Control:
 			Options.click()
 			pressed.emit()
 			accept_event()
+	## Its name's width with room around it (and the Soon tag).
+	func fit_width() -> float:
+		return maxf(104.0, U.font("title").get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x + 34.0 + (62.0 if soon else 0.0))
 	func _draw() -> void:
 		var col := U.GOLD if active else (Color(1.0, 0.92, 0.75) if _hover else U.TEXT_DIM)
 		if active:

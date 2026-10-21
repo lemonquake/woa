@@ -27,6 +27,7 @@ var hero16_fx: Hero16Fx
 var azrael_fx: AzraelFx
 var hero18_fx: Hero18Fx
 var araki_fx: ArakiFx
+var hero21_fx: Hero21Fx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
@@ -162,6 +163,11 @@ func _ready() -> void:
 	araki_fx.fx = fx
 	araki_fx.fire = fire_fx
 	add_child(araki_fx)
+	hero21_fx = Hero21Fx.new()
+	hero21_fx.game = self
+	hero21_fx.fx = fx
+	hero21_fx.fire = fire_fx
+	add_child(hero21_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -773,6 +779,8 @@ func _drain_events() -> void:
 			hero18_fx.event(e)
 		elif e.t in ArakiFx.EVENTS:
 			araki_fx.event(e)
+		elif e.t in Hero21Fx.EVENTS:
+			hero21_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -1226,6 +1234,7 @@ func _process(dt: float) -> void:
 	azrael_fx.update(world, alpha, dt)
 	hero18_fx.update(world, alpha, dt)
 	araki_fx.update(world, alpha, dt)
+	hero21_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)
@@ -1798,6 +1807,9 @@ func _demo_setup() -> void:
 			if b.hero_id == player_hero_id:
 				world.bots.erase(b)
 				break
+	if args.has("charges"):
+		# --charges=N: False Judgement charges as if he had taken the damage
+		world.abilities.kits9.charges[h.id] = int(args.charges)
 	if args.has("items"):
 		# --items=a,b,c: these items in the hero's slots (item effect captures)
 		var ids := String(args.items).split(",")
@@ -1947,6 +1959,10 @@ func _demo_casts() -> void:
 		first = false
 		if aid == "attack" and near:
 			world.command(h.id, {"type": C.Order.ATTACK_UNIT, "target": near.id, "queue": q})
+			continue
+		if aid == "die" and near:
+			# a killing blow from the nearest enemy (Unfallen captures)
+			world.combat.deal_damage(near.id, near.team, near.is_hero(), h, h.hp + h.max_hp, C.DamageType.PURE)
 			continue
 		if aid.begins_with("item:"):
 			# item:N uses the item in slot N (on the nearest enemy when it needs a unit)

@@ -43,7 +43,7 @@ func _init() -> void:
 							continue
 						casts[hid] = casts.get(hid, {})
 						casts[hid][String(e.ability)] = int(casts[hid].get(String(e.ability), 0)) + 1
-					"axe_leap", "tame", "maul", "unstoppable", "windup", "joke_box_pop", "hurricane_end", "berserk_cleared":
+					"axe_leap", "tame", "maul", "unstoppable", "windup", "joke_box_pop", "hurricane_end", "berserk_cleared", "soul_drain", "fiend_edge", "undead_rise", "unfallen_fall", "unfallen_rise", "unfallen_blast", "barrier_gain", "judgement_charge", "holy_beam_aim":
 						extra[hid + ":" + String(e.t)] = int(extra.get(hid + ":" + String(e.t), 0)) + 1
 			w.events.clear()
 		print("seed %s: %s at %s, %d ms" % [seed_s, "winner " + C.TEAM_NAMES[w.winner] if w.winner >= 0 else "no winner",

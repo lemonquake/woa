@@ -89,6 +89,16 @@ const MODELS := {
 		"cast": "cast_quick", "idle": "hero_run", "run": "hero_run", "run_min": 0.9, "death": "death",
 		"R": "araki_katana", "L": "", "bar": 2.4, "ghost": Color(0.45, 1.0, 0.55), "float": 0.35, "bob": 0.06,
 		"swing_trail": true, "trail_color": Color(0.55, 1.0, 0.6, 0.5)},
+	# Blackfire and Thyrandael (run 2026-10-21): the owner's two Tripo sculpts by s8819296 (CC BY 4.0), bound like
+	# Ezee (hero_body.py: baked, the sword cut out of the fist), each sword cut out of its own model as the right-hand
+	# weapon (extract_prop.py, blackfire_sword_roll.py). Thyrandael's wings ride the chest and the halo the head
+	# (thyrandael_rigid.py --rigid balls), so they never stretch with the arms
+	"hero_blackfire": {"scene": H17 + "blackfire.glb", "scale": 1.0, "attack": ["gs_1", "gs_2", "gs_3", "gs_4"],
+		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "blackfire_sword", "L": "", "bar": 2.6, "swing_trail": true, "trail_color": Color(0.35, 0.1, 0.5, 0.6)},
+	"hero_thyrandael": {"scene": H17 + "thyrandael.glb", "scale": 1.0, "attack": ["gs_1", "gs_2", "gs_4"],
+		"cast": "cast_quick", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72, "death": "death",
+		"R": "thyrandael_sword", "L": "", "bar": 2.5, "swing_trail": true, "trail_color": Color(1.0, 0.9, 0.55, 0.6)},
 	# Tock: the hero body with a brass wand; his bolts are golden orbs
 	"hero_tock": {"scene": "res://assets/characters/hero/hero.glb", "scale": 1.0, "attack": ["wand_1", "wand_2", "wand_3"],
 		"cast": "cast_quick", "idle": "idle_wand", "run": "hero_run", "run_female": "fem_run", "run_min": 0.72,
@@ -247,6 +257,19 @@ const MOCAP := {
 	"araki_ghost": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_run",
 		"attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"], "death": "greatsword_death_1",
 		"deaths": ["greatsword_death_1"], "anims": {"idle_2h": "greatsword_idle"}},
+	# Blackfire and Thyrandael swing their swords with the great sword set, as Ezee
+	"hero_blackfire": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_idle", "cast": "greatsword_cast",
+		"death": "greatsword_death_1", "attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"],
+		"deaths": ["greatsword_death_1", "greatsword_death_2"],
+		"anims": {"idle_2h": "greatsword_idle", "cast_quick": "greatsword_cast", "cast_weapon": "greatsword_cast",
+			"boss_slam": "greatsword_slam", "leap_slam": "greatsword_leap", "boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit",
+			"hit_light": "greatsword_hit_small", "hit_front": "greatsword_hit_small", "idle_hurt": "dizzy"}},
+	"hero_thyrandael": {"run": "greatsword_run", "run_female": "greatsword_run", "idle": "greatsword_idle", "cast": "greatsword_cast",
+		"death": "greatsword_death_1", "attack": ["greatsword_slash_1", "greatsword_slash_2", "greatsword_slash_4"],
+		"deaths": ["greatsword_death_1", "greatsword_death_2"],
+		"anims": {"idle_2h": "greatsword_idle", "cast_quick": "greatsword_cast", "cast_weapon": "greatsword_cast",
+			"boss_slam": "greatsword_slam", "leap_slam": "greatsword_leap", "boss_roar": "greatsword_power", "hit_heavy": "greatsword_hit",
+			"hit_light": "greatsword_hit_small", "hit_front": "greatsword_hit_small", "idle_hurt": "dizzy"}},
 	"hero_azrael": {"attack": ["greatsword_slash_1", "greatsword_slash_2"], "cast": "greatsword_cast",
 		"death": "spell_death_1", "deaths": ["spell_death_1", "spell_death_2"],
 		"anims": {"cast_quick": "greatsword_cast", "cast_heavy": "spell_heavy", "cast_ultimate": "spell_big",

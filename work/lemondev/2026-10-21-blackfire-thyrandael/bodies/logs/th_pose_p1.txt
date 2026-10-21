@@ -1,0 +1,22 @@
+04:38:56 | INFO: Data are loaded, start creating Blender stuff
+04:38:56 | INFO: Blender create Mesh node thyrandael
+04:38:58 | INFO: glTF import finished in 2.23s
+04:38:58 | INFO: Data are loaded, start creating Blender stuff
+04:38:58 | INFO: Blender create Mesh node tripo_mesh_ca66fc79.001
+04:38:58 | INFO: glTF import finished in 0.03s
+00:07.235  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_idle_2h_0.png'
+00:07.563  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_idle_2h_70.png'
+00:07.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_idle_2h_180.png'
+00:08.219  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_idle_2h_290.png'
+00:08.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_gs_1_0.png'
+00:08.844  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_gs_1_70.png'
+00:09.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_gs_1_180.png'
+00:09.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_gs_1_290.png'
+00:09.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_hero_run_0.png'
+00:10.047  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_hero_run_70.png'
+00:10.344  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_hero_run_180.png'
+00:10.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21-blackfire-thyrandael\bodies\renders\th_p1_body_hero_run_290.png'
+[pose_render] wrote A:/Python/woa/work/lemondev/2026-10-21-blackfire-thyrandael/bodies/renders/th_p1_body.png
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit
