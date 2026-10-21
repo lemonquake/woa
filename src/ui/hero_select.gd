@@ -48,6 +48,12 @@ const INFO := {
 		"story": "Blackfire came back from the Underworld and never quite left it. Every soul that dies near him feeds him, his great sword heals his allies with the blows it lands, and the dead creeps around him rise again at his roar. Kill him once and he only gets up angrier; kill him twice and he takes everyone near him down with a blast."},
 	"thyrandael": {"title": "the Forsaken Seraph", "role": "Melee  ·  Intelligence  ·  Nuker, Disabler, Escape",
 		"story": "Thyrandael was cast out of the light he served, and he brought it with him. Every spell he casts wraps him in a barrier of light; he burns enemies with a beam he can turn on them, flashes among them, and steps through space to silence them. The more they hurt him, the harder his False Judgement falls."},
+	"gancho": {"title": "the Nature Whisperer", "role": "Ranged  ·  Agility  ·  Carry, Disabler, Escape",
+		"story": "Gancho grew out of the oldest wood and still talks to it. The trees let him walk straight through them, his thorns stick and bleed, his vines snatch whoever wanders near, and the seeds he throws grow into trees in a moment. When he wakes the whole forest, every trunk around him lashes out."},
+	"kaileh": {"title": "the Grand Cavalier", "role": "Melee  ·  Strength  ·  Initiator, Disabler, Durable",
+		"story": "Lord Kaileh lost his horse long ago and never stopped charging. His jousting lance reaches farther than any sword, and whoever stands in front of it rides it all the way into his army. He plants his house banner where the fight is, and when he sounds the charge, the ghosts of his old cavalry ride beside him."},
+	"dracoxinia": {"title": "the Blue Wyrm", "role": "Melee  ·  Strength  ·  Carry, Disabler, Durable",
+		"story": "Dracoxinia is a dragon princess in pink and gold, and she fights like one. She carries five swords, and each changes who she is: lightning, light, water, fire or nature, whichever beats the enemy in front of her. She dashes through her foes, leaps over trees and cliffs, shrugs off blows on her royal scales and throws her enemies into the sky."},
 	"caziel": {"title": "the Void Assassin", "role": "Melee  ·  Agility  ·  Carry, Escape, Finisher",
 		"story": "No one hires Caziel. He chooses the name himself, and the shadows carry him to it. He is never seen until the last blow, and the last blow never misses."},
 }

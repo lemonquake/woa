@@ -262,6 +262,9 @@ func _check(id: String) -> void:
 	if hero != "":
 		for aid in SimData.unit(hero).abilities:
 			var an: String = A.call(String(SimData.ability(String(aid)).get("anim", "")))
+			var own := String(cfg.get("casts", {}).get(String(aid), ""))
+			if has.call(own):
+				an = own                                  # a hero's own ability clip (run 2026-10-21 b)
 			if has.call(an) and not (an in casts) and an != A.call("leap_slam"):
 				casts.append(an)
 	var hits: Array = []

@@ -88,7 +88,8 @@ const KIT_SPELLS := {"blood_ranger": [0.8, 0.2, 0.0], "ezee": [0.2, 0.55, 0.25],
 	"kragg": [0.0, 1.0, 0.0], "roydo": [0.0, 1.0, 0.0], "blau": [0.0, 1.0, 0.0],
 	"azrael": [0.5, 0.25, 0.25], "airah": [0.0, 1.0, 0.0], "burak": [0.85, 0.0, 0.15], "emelrich": [1.0, 0.0, 0.0],
 	"feran": [0.3, 0.7, 0.0], "ghorman": [0.6, 0.4, 0.0], "araki": [0.65, 0.35, 0.0], "blackfire": [0.6, 0.0, 0.4],
-	"thyrandael": [0.0, 1.0, 0.0]}
+	"thyrandael": [0.0, 1.0, 0.0], "gancho": [0.0, 1.0, 0.0], "kaileh": [0.6, 0.4, 0.0],
+	"dracoxinia": [0.75, 0.25, 0.0]}
 
 static func _avg_networth(w: SimWorld, team: int) -> float:
 	var s := 0.0

@@ -1,0 +1,17 @@
+# New skill and item artwork
+
+Outcome: scan all current live ability, unit-trait, item and held/state icon routes; generate missing or misleading painted artwork with built-in image generation; integrate it; create a reusable discoverable Game Icons skill; export Windows game.
+
+Baseline: 8fb9699ae0b7633915acb46e77636dbbc0a59649 plus the owner's existing working changes (preserved). Godot4.7.2, Windows, Vulkan Forward+,1920x1080 and3840x2160. Current data dump:120 skill/unit entries,180 item/recipe/held entries;22 heroes. Scope includes27 new hero abilities,5 sword-state tiles and one semantically stale Giant Swing image; all items already covered. Innates and extra keys must be included. Death Order stays original per owner choice on20October; do not restart that stopped loop.
+
+Frozen visual criterion: concrete object/action faithful to current implementation, distinct silhouette and value/color grouping readable at32/44/64px, cohesive dimensional painted finish matching existing accepted PNG set. Image sheets use fixed equal grids with no text; retain original sheets/prompts and exact mapping. Original accepted PNGs are visual baseline; accessible commercial reference retained from20October is supplemental, no unsupported commercial superiority claim.
+
+Mechanics invariants: no gameplay values or hero/item names change; existing backgrounds/UI mechanics preserved. Treat numerical changes as audit flags, not automatic art replacement. Sword state must represent its actual element/effect. Save generated project assets in assets/ui/art; originalSVG remains fallback. Item coverage includesrecipes, levels, boots states and empty/full Flask.
+
+Components: current inventory and reusable scanner; painted sheets; state routing; reusable skill; Godot import/runtime coverage, rendered gallery+HUD and Windows export/cold pack probe. Each has exclusive file ownership when delegated. Up to8 build/review passes per component, stop on two consecutive valid rejections of same primary gap. Fresh instruction-isolated critic receives raw comparable anonymous evidence only. Missing commercial match or performance evidence is explicitly UNVERIFIED, not a synthetic pass.
+
+Validation: full coverage scan before/after; source/packed runtime probes; impacted regression suite; names checker; actual32/44/64px gallery with dim/cooldown treatment,1080p and4K HUD; skill frontmatter validator and dry audit using its instructions; release export and cold launch. Texture-only changes introduce no new gameplay lifecycle; known old benchmark-exit/native crash and baseline performance are outside this icon request. No new60FPS claim without measured final evidence. Existing build recoverable before export.
+
+User asks image-generation workflow; this overrides lemondev procedural-texture default. Only deterministic cropping/resizing for packaging; no programmatically drawn substitute art. No CLI/API fallback, no external publishing, no commit requested.
+
+Owner correction during this run: "No! Change the Death Order". This explicitly revokes the20October retained-original choice and authorizes a new bounded attempt after that older loop's plateau. Current scope is34 images:27 new hero skills,5 sword states, Giant Swing replacement, Death Order replacement. All125 live skill/unit/state identities must resolve to painted art; no retained-SVG exemption remains. Death Order uses a prominent almost-empty health bar to express the low-health condition; this is a new owner-authorized component pass1.

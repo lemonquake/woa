@@ -1,0 +1,380 @@
+[
+ {
+  "key": "m_mutant_run",
+  "id": "c9c93cdc-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Mutant Run",
+  "desc": "Mutant Running"
+ },
+ {
+  "key": "m_mutant_breath_idle",
+  "id": "c9c93f13-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Mutant Breathing Idle",
+  "desc": "Mutant Breathing Idle"
+ },
+ {
+  "key": "m_mutant_idle",
+  "id": "c9c93e57-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Mutant Idle",
+  "desc": "Mutant Stretching Idle With Breathing"
+ },
+ {
+  "key": "m_mutant_walk",
+  "id": "c9c93a8c-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Mutant Walking",
+  "desc": "Mutant Brutal Walk"
+ },
+ {
+  "key": "m_mutant_dying",
+  "id": "c9c93d98-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Mutant Dying",
+  "desc": "Mutant Dying Falling Onto Back"
+ },
+ {
+  "key": "m_run_weighted",
+  "id": "c9c610bc-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Running",
+  "desc": "Male Weighted Run"
+ },
+ {
+  "key": "m_run_intention",
+  "id": "c9c99715-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Running",
+  "desc": "Running With Intention"
+ },
+ {
+  "key": "m_run_quick",
+  "id": "c9c97eca-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Running",
+  "desc": "Running Forward Quickly"
+ },
+ {
+  "key": "m_run_fast",
+  "id": "c9ce7bbc-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Fast Run",
+  "desc": "Running Fast"
+ },
+ {
+  "key": "m_run_standard",
+  "id": "c9ccc5dd-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Standard Run",
+  "desc": "Standard Running"
+ },
+ {
+  "key": "m_run_female",
+  "id": "c9ccfb22-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Run Forward",
+  "desc": "Female Run Forward"
+ },
+ {
+  "key": "m_run_ninja",
+  "id": "c9cd1b5d-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Run",
+  "desc": "Female Ninja Run"
+ },
+ {
+  "key": "m_run_slow",
+  "id": "c9ce777f-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Slow Run",
+  "desc": "Slow Run Forward"
+ },
+ {
+  "key": "m_run_medium",
+  "id": "c9ce78f7-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Medium Run",
+  "desc": "Medium Speed Running"
+ },
+ {
+  "key": "m_sprint",
+  "id": "c9cbfef5-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Sprint",
+  "desc": "Standard Sprint"
+ },
+ {
+  "key": "m_run_goofy",
+  "id": "c9c66672-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Goofy Running",
+  "desc": "Feminine Scared Cartoon-Like Goofy Run"
+ },
+ {
+  "key": "m_run_sword",
+  "id": "c9c9e46f-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Run With Sword",
+  "desc": "Running With A Sword In The Right Hand"
+ },
+ {
+  "key": "m_run_zombie",
+  "id": "c9cbd905-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Zombie Run",
+  "desc": "Zombie Running"
+ },
+ {
+  "key": "m_run_unarmed",
+  "id": "c9ceee9c-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Unarmed Run Forward",
+  "desc": "Running Forward"
+ },
+ {
+  "key": "m_run_torch",
+  "id": "b5b82299-62da-49dd-ac55-9fde07ae45d8",
+  "name": "Standing Torch Run Forward",
+  "desc": "Running Forwards With Torch"
+ },
+ {
+  "key": "m_throw_std",
+  "id": "c9cb09fa-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Throw",
+  "desc": "Throwing An Object From A Standard Pose"
+ },
+ {
+  "key": "m_throwing",
+  "id": "c9c835e6-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Throwing",
+  "desc": "Throwing And Object"
+ },
+ {
+  "key": "m_throw_frisbee",
+  "id": "c9c9d85a-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Frisbee Throw",
+  "desc": "Throwing Frisbee Forward"
+ },
+ {
+  "key": "m_throw_goalie",
+  "id": "c9cc31d6-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Goalie Throw",
+  "desc": "Goalie Overhand Throw"
+ },
+ {
+  "key": "m_upward_thrust",
+  "id": "c9c81621-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Upward Thrust",
+  "desc": "Upward Weapon Thrust"
+ },
+ {
+  "key": "m_heavy_swing",
+  "id": "c9c789d5-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Heavy Weapon Swing",
+  "desc": "Two Handed Heavy Weapon Swing"
+ },
+ {
+  "key": "m_bash",
+  "id": "c9c87a20-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Bash",
+  "desc": "Overhead Bashing Swing"
+ },
+ {
+  "key": "m_torch_stab",
+  "id": "14ea273c-ab33-4551-a36b-8d9c7a5bf22c",
+  "name": "Standing Torch Melee Attack Stab",
+  "desc": "Forward Stab Attack With Torch"
+ },
+ {
+  "key": "m_torch_02",
+  "id": "206eb090-d72e-4e45-8b72-d0c85c653795",
+  "name": "Standing Torch Melee Attack 02",
+  "desc": "Left To Right Attack With Torch"
+ },
+ {
+  "key": "m_torch_03",
+  "id": "27285e81-ea46-448c-8ee2-fc2cccccddba",
+  "name": "Standing Torch Melee Attack 03",
+  "desc": "Two Hit Combo Attack With Torch"
+ },
+ {
+  "key": "m_torch_04",
+  "id": "37425bc0-64ff-4207-b32d-9942fccb1025",
+  "name": "Standing Torch Melee Attack 04",
+  "desc": "Two Hit Combo Attack With Torch"
+ },
+ {
+  "key": "m_torch_05",
+  "id": "2fe6b534-784e-444f-accd-9bddb94b5ed2",
+  "name": "Standing Torch Melee Attack 05",
+  "desc": "Two Hit Combo Attack With Torch"
+ },
+ {
+  "key": "m_torch_idle",
+  "id": "e8c2c8c3-6aec-46d8-a6ff-14bc248f7694",
+  "name": "Standing Torch Idle 01",
+  "desc": "Standing Idle"
+ },
+ {
+  "key": "m_pike_walk",
+  "id": "c9ce855b-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Pike Walk",
+  "desc": "Pike Walk"
+ },
+ {
+  "key": "m_charge_point",
+  "id": "c9c77324-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Charge",
+  "desc": "Pointing Onward Charge"
+ },
+ {
+  "key": "m_club2_combo",
+  "id": "c9cdb104-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Two Hand Club Combo",
+  "desc": "Two Handed Club Combo Attack"
+ },
+ {
+  "key": "m_club1_combo",
+  "id": "c9cdaf7b-b96c-11e4-a802-0aaa78deedf9",
+  "name": "One Hand Club Combo",
+  "desc": "One Handed Club Combo Attack"
+ },
+ {
+  "key": "m_draw_sword",
+  "id": "c9cca398-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Draw Sword 2",
+  "desc": "Transition From Standing To Drawing Sword"
+ },
+ {
+  "key": "m_withdraw_sword",
+  "id": "c9c9e235-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Withdrawing Sword",
+  "desc": "Withdrawing A Sword"
+ },
+ {
+  "key": "m_sheath_sword",
+  "id": "c9c9e3b2-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Sheathing Sword",
+  "desc": "Sheathing A Sword"
+ },
+ {
+  "key": "m_gs_down",
+  "id": "c9cc7d9c-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Great Sword Slash",
+  "desc": "Great Sword Downward Slash"
+ },
+ {
+  "key": "m_gs_low",
+  "id": "c9cc7f1e-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Great Sword Slash",
+  "desc": "Great Sword Low Slash"
+ },
+ {
+  "key": "m_gs_power",
+  "id": "c9cc7fdc-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Great Sword Slash",
+  "desc": "Great Sword Power Slash"
+ },
+ {
+  "key": "m_gs_admire",
+  "id": "c9cc95e9-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Great Sword Idle",
+  "desc": "Great Sword Admiring Idle"
+ },
+ {
+  "key": "m_gs_pose",
+  "id": "c9cc952d-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Great Sword Idle",
+  "desc": "Great Sword Strike A Pose Idle"
+ },
+ {
+  "key": "m_gs_walk",
+  "id": "c9cc7257-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Great Sword Walk",
+  "desc": "Great Sword Walk"
+ },
+ {
+  "key": "m_ninja_idle",
+  "id": "c9cd013a-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Ninja Idle",
+  "desc": "Female Ninja Idle"
+ },
+ {
+  "key": "m_ninja_idle1",
+  "id": "c9cd01ff-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Ninja Idle",
+  "desc": "Female Ninja Idle Var. 1"
+ },
+ {
+  "key": "m_ninja_idle2",
+  "id": "c9cd02ca-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Ninja Idle",
+  "desc": "Female Ninja Idle Var. 2"
+ },
+ {
+  "key": "m_clown_idle",
+  "id": "c9c6c17a-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Scary Clown Idle",
+  "desc": "Scary Clown Ready Idle"
+ },
+ {
+  "key": "m_bounce_idle",
+  "id": "c9ca582c-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Bouncing Fight Idle",
+  "desc": "Bouncing Fight Idle With Guard Up"
+ },
+ {
+  "key": "m_tough_walk",
+  "id": "c9c68eaa-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Female Tough Walk",
+  "desc": "Female Walk Like A Cowgirl - 1 Stride Loop"
+ },
+ {
+  "key": "m_swordfight_a",
+  "id": "c9c76f5c-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Sword Fight One",
+  "desc": "Person A - Winner"
+ },
+ {
+  "key": "m_zombie_idle",
+  "id": "c9cbd649-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Zombie Idle",
+  "desc": "Zombie Standing Idle"
+ },
+ {
+  "key": "m_zombie_dying",
+  "id": "c9cc240a-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Zombie Dying",
+  "desc": "Zombie Getting Hit And Falling Forward"
+ },
+ {
+  "key": "m_death_forward",
+  "id": "c9cdb289-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Falling Forward Death",
+  "desc": "Dying Falling Forward"
+ },
+ {
+  "key": "m_death_knees",
+  "id": "c9c630ac-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Dying",
+  "desc": "Dying Front Head Impact To Two Knees"
+ },
+ {
+  "key": "m_death_std",
+  "id": "c9c899a0-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Death",
+  "desc": "Death From Standing Idle"
+ },
+ {
+  "key": "m_death_back",
+  "id": "c9c6dcf2-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Dying Backwards",
+  "desc": "Shot To The Chest Falling Backwards"
+ },
+ {
+  "key": "m_fight_idle_taichi",
+  "id": "c9c63c12-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Fight Idle",
+  "desc": "Male Fight Idle Thai Chi To Open Stance"
+ },
+ {
+  "key": "m_ready_adjust",
+  "id": "c9c9965a-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Idle",
+  "desc": "Ready Pose To Adjusting Stance"
+ },
+ {
+  "key": "m_choke_lift",
+  "id": "c9c67ec5-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Superhuman Choke Lift",
+  "desc": "Superhuman One Hand Choke Lift"
+ },
+ {
+  "key": "m_hands_forward",
+  "id": "c9c90a7c-b96c-11e4-a802-0aaa78deedf9",
+  "name": "Hands Forward Gesture",
+  "desc": "Two Handed Forward Gesture"
+ }
+]

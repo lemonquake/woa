@@ -75,6 +75,8 @@ var form_proj_speed := 0.0                 # cached: its projectile speed meanwh
 var prd := {}                              # pseudo-random counters: effect key -> rolls since the last proc
 var debuff_immune := false                 # cached from modifiers in refresh_stats
 var phased := false                        # cached: walks through units
+var tree_walk := false                     # cached: walks through trees (Gancho's Tree Walk, unless broken)
+var atk_element := -1                      # the element its attacks carry instead of its own (Dracoxinia's sword); -1 none
 
 # ---- Hero -----------------------------------------------------------------------------------------------------------
 var str_total := 0.0
@@ -674,7 +676,26 @@ func refresh_stats() -> void:
 	spell_lifesteal = f.call("spell_lifesteal")
 	debuff_immune = has_flag("debuff_immune")
 	phased = has_flag("phased")
+	tree_walk = ability_level.has("tree_walk") and not is_broken()
+	# Momentum (Lord Kaileh): a share of his bonus movement speed as attack damage
+	if kind == K.HERO and ability_level.has("momentum") and not is_broken():
+		bonus_damage += maxf(0.0, move_speed - float(def.move_speed)) * momentum_pct()
+	# Dragon Hide (Dracoxinia): armor and health regeneration by its level
+	var hide := ability_level_of("dragon_hide") if kind == K.HERO else 0
+	if hide > 0 and not is_broken():
+		var hv: Dictionary = SimData.ability("dragon_hide").values
+		armor += float(hv.armor[hide - 1])
+		hp_regen += float(hv.hp_regen[hide - 1])
 	stats_dirty = false
+
+## Momentum's share (with its talent): SimData directly, as units have no SimAbilities.
+func momentum_pct() -> float:
+	var v := float(SimData.ability("momentum").values.pct[0])
+	for tier in talents:
+		for m in SimData.talent(String(talents[tier])).get("mods", []):
+			if String(m.ability) == "momentum":
+				v += float((m.get("add", {}) as Dictionary).get("pct", 0.0))
+	return v
 
 func upgrade_hp() -> float:
 	if kind == K.NEUTRAL_CREEP:

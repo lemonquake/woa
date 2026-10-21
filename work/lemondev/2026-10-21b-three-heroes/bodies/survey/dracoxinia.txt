@@ -1,0 +1,17 @@
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey.py:26: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+00:03.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\dracoxinia_front.png'
+00:04.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\dracoxinia_side.png'
+00:04.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\dracoxinia_back.png'
+00:04.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\dracoxinia_top.png'
+FBX version: 7400
+OBJ Armature ARMATURE (0.281, 0.511, 0.776) parent None
+  bones 65 ['mixamorig:Hips', 'mixamorig:LeftUpLeg', 'mixamorig:LeftLeg', 'mixamorig:LeftFoot', 'mixamorig:LeftToeBase', 'mixamorig:LeftToe_End', 'mixamorig:RightUpLeg', 'mixamorig:RightLeg', 'mixamorig:RightFoot', 'mixamorig:RightToeBase', 'mixamorig:RightToe_End', 'mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig:Spine2', 'mixamorig:LeftShoulder', 'mixamorig:LeftArm', 'mixamorig:LeftForeArm', 'mixamorig:LeftHand', 'mixamorig:LeftHandIndex1', 'mixamorig:LeftHandIndex2', 'mixamorig:LeftHandIndex3', 'mixamorig:LeftHandIndex4', 'mixamorig:LeftHandMiddle1', 'mixamorig:LeftHandMiddle2', 'mixamorig:LeftHandMiddle3', 'mixamorig:LeftHandMiddle4', 'mixamorig:LeftHandPinky1', 'mixamorig:LeftHandPinky2', 'mixamorig:LeftHandPinky3', 'mixamorig:LeftHandPinky4', 'mixamorig:LeftHandRing1', 'mixamorig:LeftHandRing2', 'mixamorig:LeftHandRing3', 'mixamorig:LeftHandRing4', 'mixamorig:LeftHandThumb1', 'mixamorig:LeftHandThumb2', 'mixamorig:LeftHandThumb3', 'mixamorig:LeftHandThumb4', 'mixamorig:Neck', 'mixamorig:Head', 'mixamorig:HeadTop_End', 'mixamorig:RightShoulder', 'mixamorig:RightArm', 'mixamorig:RightForeArm', 'mixamorig:RightHand', 'mixamorig:RightHandIndex1', 'mixamorig:RightHandIndex2', 'mixamorig:RightHandIndex3', 'mixamorig:RightHandIndex4', 'mixamorig:RightHandMiddle1', 'mixamorig:RightHandMiddle2', 'mixamorig:RightHandMiddle3', 'mixamorig:RightHandMiddle4', 'mixamorig:RightHandPinky1', 'mixamorig:RightHandPinky2', 'mixamorig:RightHandPinky3', 'mixamorig:RightHandPinky4', 'mixamorig:RightHandRing1', 'mixamorig:RightHandRing2', 'mixamorig:RightHandRing3', 'mixamorig:RightHandRing4', 'mixamorig:RightHandThumb1', 'mixamorig:RightHandThumb2', 'mixamorig:RightHandThumb3', 'mixamorig:RightHandThumb4']
+  action Armature|run
+OBJ tripo_node_43d1512f MESH (0.433, 0.525, 0.886) parent Armature
+  faces 54498 verts 27209 mats [] vgroups 52 uv 0 colattr 0
+ACTION Armature|run (1.0, 31.0)
+BOUNDS (-0.239, -0.758, -0.031) (0.194, -0.233, 0.855)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

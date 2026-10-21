@@ -86,6 +86,9 @@ OWNER_NAMES = [
     "Blackfire", "the Unfallen", "Unfallen", "Thyrandael", "the Forsaken Seraph", "Underworld Presence",
     "Sacrificial Grip", "Rise Up", "Fiend Edge", "Divine Touch", "Holy Beam", "Quick Flash", "Spirit Step",
     "False Judgement",
+    # 2026-10-21 b: the owner's three new heroes and titles (their abilities are ours and must pass the rule)
+    "Gancho", "the Nature Whisperer", "Nature Whisperer", "Lord Kaileh", "Kaileh", "the Grand Cavalier",
+    "Grand Cavalier", "Dracoxinia", "the Blue Wyrm", "Blue Wyrm",
 ]
 # The owner named the pure damage type "Aether" (2026-10-14). Only these exact texts may use it, so a new
 # "Aether ..." compound is still caught.

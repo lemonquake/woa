@@ -66,6 +66,9 @@ The owner's own names are never changed by an agent, even when they break this r
   Grip**, **Rise Up**, **Fiend Edge**, **Unfallen**. **Thyrandael**, title **the Forsaken Seraph**; innate **Divine
   Touch**; abilities **Holy Beam**, **Quick Flash**, **Spirit Step**, **False Judgement**. Barrier kinds (the owner's
   words): **Magic Barrier**, **All-damage Barrier**, **Physical Barrier**
+* Heroes (2026-10-21 b): **Gancho**, title **the Nature Whisperer**; **Lord Kaileh**, title **the Grand Cavalier**;
+  **Dracoxinia**, title **the Blue Wyrm** ("Whisperer" and "Wyrm" are the owner's words). Their ability names are ours
+  and follow this rule.
 * Ranks (2026-10-19): **Rookie**, **Advanced**, **Licensed**, **Expert**, **Commander**, **Chief Commander**,
   **Legendary**, **Mythic**, **Hero**, **Transcendent**, **Aetherium**, **Aetherium+** (allowed as "Aetherium" in
   `tools/check_names.py`). Bot example names: **01-hank pop**, **weakass**, **BISAKOL SLAYER**, **basta tangalog bobo**,

@@ -1,0 +1,45 @@
+01:45:34 | INFO: Data are loaded, start creating Blender stuff
+01:45:34 | INFO: Blender create Mesh node Lance_LP_anisotropic1_0
+01:45:34 | INFO: Blender create Mesh node Lance_LP_lambert2_0
+01:45:34 | INFO: Blender create Mesh node Lance_LP_lambert1_0
+01:45:34 | INFO: Blender create Mesh node Lance_HP_anisotropic1_0
+01:45:34 | INFO: Blender create Mesh node Lance_HP_lambert2_0
+01:45:34 | INFO: Blender create Mesh node Lance_HP_lambert1_0
+01:45:34 | INFO: Blender create Mesh node pCylinder1_lambert2_0
+01:45:34 | INFO: Blender create Mesh node pCylinder2_lambert2_0
+01:45:34 | INFO: glTF import finished in 0.03s
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey.py:26: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+00:03.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\lance_front.png'
+00:04.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\lance_side.png'
+00:04.391  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\lance_back.png'
+00:04.719  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\lance_top.png'
+OBJ Sketchfab_model EMPTY (0.0, 0.0, 0.0) parent None
+OBJ 586bde654e0e48cab1c0a2aba084edd1.fbx EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model
+OBJ RootNode EMPTY (0.0, 0.0, 0.0) parent 586bde654e0e48cab1c0a2aba084edd1.fbx
+OBJ Lance_LP EMPTY (0.0, 0.0, 0.0) parent RootNode
+OBJ Lance_LP_anisotropic1_0 MESH (1.196, 1.202, 6.711) parent Lance_LP
+  faces 1007 verts 1588 mats ['anisotropic1'] vgroups 0 uv 1 colattr 0
+OBJ Lance_LP_lambert2_0 MESH (1.196, 1.202, 6.844) parent Lance_LP
+  faces 250 verts 331 mats ['lambert2'] vgroups 0 uv 1 colattr 0
+OBJ Lance_LP_lambert1_0 MESH (0.306, 0.252, 0.26) parent Lance_LP
+  faces 3 verts 9 mats ['lambert1'] vgroups 0 uv 1 colattr 0
+OBJ left EMPTY (0.0, 0.0, 0.0) parent RootNode
+OBJ Object_8 EMPTY (0.0, 0.0, 0.0) parent left
+OBJ Lance_HP EMPTY (0.0, 0.0, 0.0) parent RootNode
+OBJ Lance_HP_anisotropic1_0 MESH (1.121, 1.126, 6.714) parent Lance_HP
+  faces 4656 verts 3511 mats ['anisotropic1'] vgroups 0 uv 1 colattr 0
+OBJ Lance_HP_lambert2_0 MESH (1.167, 1.173, 5.783) parent Lance_HP
+  faces 1020 verts 841 mats ['lambert2'] vgroups 0 uv 1 colattr 0
+OBJ Lance_HP_lambert1_0 MESH (0.157, 0.174, 0.095) parent Lance_HP
+  faces 4 verts 8 mats ['lambert1'] vgroups 0 uv 1 colattr 0
+OBJ pCylinder1 EMPTY (0.0, 0.0, 0.0) parent RootNode
+OBJ pCylinder1_lambert2_0 MESH (0.097, 0.097, 0.321) parent pCylinder1
+  faces 160 verts 164 mats ['lambert2'] vgroups 0 uv 1 colattr 0
+OBJ pCylinder2 EMPTY (0.0, 0.0, 0.0) parent RootNode
+OBJ pCylinder2_lambert2_0 MESH (0.097, 0.097, 0.321) parent pCylinder2
+  faces 160 verts 164 mats ['lambert2'] vgroups 0 uv 1 colattr 0
+BOUNDS (-5.406, -2.586, 1.39) (1.438, 0.601, 2.586)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

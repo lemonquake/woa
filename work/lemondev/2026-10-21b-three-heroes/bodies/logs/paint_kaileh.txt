@@ -1,0 +1,31 @@
+FBX version: 7400
+[paint_prep   1.5s] mesh 167662 vertices, 167670 faces
+[paint_prep   7.4s]   r1    p5 -0.0017 p50 0.0004 p95 0.0022
+[paint_prep   7.4s]   r2    p5 -0.0043 p50 0.0021 p95 0.0076
+[paint_prep   7.4s]   conv  p5 -1.2797 p50 0.0960 p95 1.4239
+[paint_prep   7.4s]   bump  p5 0.0019 p50 0.0247 p95 0.1026
+[paint_prep   7.4s]   brad  p5 0.0265 p50 0.0692 p95 0.1137
+[paint_prep   9.3s] weights: skin 16.2%, steel 23.6%, gold 2.8%, leather 28.6%, cloth 12.2%, fur 8.2%, beard 0.1%, trousers 8.2%
+00:11.969  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\paint_prep.py:341: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+[paint_prep  10.4s] baked ao into vertex colours
+A:\Python\woa\tools\blender\paint_prep.py:361: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+[paint_prep  16.9s] low mesh 44000 triangles, unwrapped
+A:\Python\woa\tools\blender\paint_prep.py:256: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[paint_prep  20.1s]   baked color
+Info: Baking map saved to internal image, save it externally or pack it
+[paint_prep  23.2s]   baked rough
+Info: Baking map saved to internal image, save it externally or pack it
+[paint_prep  25.9s]   baked metal
+Info: Baking map saved to internal image, save it externally or pack it
+[paint_prep  27.2s]   baked normal
+[paint_prep  28.5s] weights copied; dense mesh dropped
+Info: Saved as "kaileh_painted.blend"
+[paint_prep  28.6s] wrote A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/src/kaileh_painted.blend
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

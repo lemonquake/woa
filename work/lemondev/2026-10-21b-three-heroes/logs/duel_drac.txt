@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3 at 10:00: A(dracoxinia) 0/1/0 lvl 8 LH 15 DN 0 nw 2028 | B(gancho) 1/0/0 lvl 11 LH 49 DN 6 nw 5695 | towers lost A 1 B 0
+    casts: { "B:root_snare": 10, "A:item_salve": 7, "A:dragon_dash": 15, "A:item_tango": 3, "B:seed_bomb": 10, "B:item_salve": 3, "B:item_tango": 3, "B:item_clarity": 3, "B:item_magic_stick": 1, "A:item_magic_stick": 2, "B:stomp": 3, "B:item_magic_wand": 2, "B:smash": 1, "B:snarl": 4 }
+    dracoxinia items: ["plate_vest", "magic_stick", "quelling_blade", "tough_band"]
+    gancho items: ["power_treads", "lifesteal", "magic_wand", "wraith_band", "quelling_blade", "dragon_lance", "clarity", "salve"]
+seed 7 at 10:00: A(dracoxinia) 0/0/0 lvl 8 LH 18 DN 3 nw 1758 | B(gancho) 0/0/0 lvl 9 LH 28 DN 9 nw 2802 | towers lost A 0 B 0
+    casts: { "B:item_tango": 3, "B:item_salve": 6, "A:dragon_dash": 18, "B:root_snare": 13, "A:item_salve": 8, "A:item_tango": 3, "B:seed_bomb": 11, "B:item_clarity": 6, "B:snarl": 2, "A:item_clarity": 1, "B:angry_forest": 3, "B:item_magic_stick": 3, "A:item_magic_stick": 3, "A:rising_slash": 1 }
+    dracoxinia items: ["magic_stick", "cloak", "quelling_blade", "tough_band"]
+    gancho items: ["boots", "magic_stick", "big_healing_ring", "wraith_band", "quelling_blade"]
+seed 11 at 10:00: A(dracoxinia) 0/1/0 lvl 8 LH 14 DN 4 nw 1447 | B(gancho) 1/0/0 lvl 11 LH 31 DN 4 nw 4226 | towers lost A 0 B 0
+    casts: { "B:root_snare": 8, "A:item_salve": 8, "A:item_tango": 3, "A:dragon_dash": 16, "B:seed_bomb": 16, "B:item_tango": 3, "B:item_salve": 3, "A:item_clarity": 1, "B:item_magic_stick": 1, "B:angry_forest": 3, "A:item_magic_stick": 3, "B:item_clarity": 4, "B:item_magic_wand": 2 }
+    dracoxinia items: ["magic_stick", "quelling_blade", "tough_band"]
+    gancho items: ["big_healing_ring", "plate_vest", "magic_wand", "wraith_band", "quelling_blade", "boots", "clarity"]
+WARNING: 7955 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 26 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

@@ -110,8 +110,8 @@ IconFrame.make(tex, kind, size)                      # the same thing as a Contr
 
 A hover or lit state brightens `frame_tint` (`Color(1.25, 1.2, 1.05)`), and a disabled one dims `art_tint`.
 **Every** skill or item icon in the game goes through these calls: HUD abilities, innate, unit skills, inventory,
-backpack, stash, Teleport slot, courier, To Buy, the whole shop, the talent tree, Hero Select, the ranked pick, the
-multiplayer lobby and the Options preview. A new screen that shows such an icon must use them too. The buff bar's
+backpack, stash, Teleport slot, courier, To Buy, a dragged item, the whole shop, the talent tree, Hero Select, Game
+Setup, the ranked pick, the multiplayer lobby and the Options preview. A new screen that shows such an icon must use them too. The buff bar's
 status icons are deliberately left out: they are status effects, not skill or item tiles. Give them their own kind
 if they ever become customisable.
 

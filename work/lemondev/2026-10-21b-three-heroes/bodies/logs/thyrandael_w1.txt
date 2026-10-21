@@ -1,0 +1,76 @@
+02:14:10 | INFO: Data are loaded, start creating Blender stuff
+02:14:10 | INFO: Blender create Mesh node hero
+02:14:12 | INFO: glTF import finished in 2.02s
+[hero_body   2.8s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   8.6s] imported 1 objects from work/downloads/sf_heroes/thyrandael_the_forsaken_seraph/source/x/tripo_convert_ca66fc79-c220-4030-a1c3-59d08fabcfda.fbx
+[hero_body   8.6s] kept 1 mesh pieces (1963878 faces), rig: none
+[hero_body  61.1s]   cut 4151 more vertices: loose remnants of the cut prop (tripo_node_ca66fc79)
+[hero_body  63.7s]   cut 88046 vertices from tripo_node_ca66fc79
+[hero_body  63.7s] joined 1 pieces into one mesh (1787400 faces)
+Info: Removed: 6 vertices, 4 edges, 0 faces
+[hero_body  92.0s] low mesh 60000 triangles, unwrapped
+01:35.297  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+A:\Python\woa\tools\blender\hero_body.py:497: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm.use_nodes = True
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body  96.9s]   baked color (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 101.1s]   baked rough (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 105.1s]   baked metal (OPTIX)
+Info: Baking map saved to internal image, save it externally or pack it
+[hero_body 107.2s]   baked normal
+[hero_body 108.0s] scaled x2.629 to 2.150 m
+[hero_body 108.0s]   joint hips         (0.0, 0.0, 0.881) -> (0.0, 0.0, 1.078)
+[hero_body 108.0s]   joint head         (-0.018, 0.013, 1.696) -> (-0.024, 0.008, 1.933)
+[hero_body 108.0s]   joint upper_arm.L  (0.316, 0.105, 1.564) -> (0.381, 0.158, 1.249)
+[hero_body 108.0s]   joint hand.L       (0.455, 0.092, 1.039) -> (0.465, 0.066, 0.868)
+[hero_body 108.0s]   joint thigh.L      (0.145, 0.013, 0.881) -> (0.237, 0.079, 0.565)
+[hero_body 108.0s]   joint foot.L       (0.276, 0.171, 0.158) -> (0.289, 0.079, 0.053)
+[hero_body 108.0s]   hand.R rolled -58 deg to the grip; weapon bone in the fist
+[hero_body 108.0s]   native upper_arm.L  (0.299, 0.168, 1.547) -> (0.364, 0.221, 1.232) (model (0.316, 0.105, 1.564))
+[hero_body 108.0s]   native forearm.L    (0.364, 0.221, 1.232) -> (0.438, 0.155, 1.022) (model (0.381, 0.158, 1.249))
+[hero_body 108.0s]   native hand.L       (0.438, 0.155, 1.022) -> (0.444, 0.141, 0.928) (model (0.455, 0.092, 1.039))
+[hero_body 108.0s]   native thigh.L      (0.145, 0.013, 0.881) -> (0.237, 0.079, 0.565) (model (0.145, 0.013, 0.881))
+[hero_body 109.2s]   thyrandael: automatic weights on 100.0% of vertices
+[hero_body 109.5s]   island gating: 2 pieces, 0 kept to their nearest limb
+[hero_body 109.7s] mesh: 60000 faces -> 60000 triangles
+[hero_body 110.0s] reach: 16780 vertices freed from limbs too far away
+[hero_body 110.0s] cloth: 831 hanging vertices follow the hips more than the legs
+[hero_body 110.1s] arms: 0 hand and forearm vertices freed from the trunk and legs
+[hero_body 110.3s] smoothed all weights (4 passes)
+[hero_body 110.7s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body 110.7s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body 110.9s]   rigid: 448 vertices on 896 faces ride their bone only, split off along 0 border edges
+[hero_body 111.1s]   extra bones: chain wing.L (wing.L, wing_tip.L) holds 6307 vertices, 867 blended into chest at the root
+[hero_body 111.3s]   extra bones: chain wing.R (wing.R, wing_tip.R) holds 6041 vertices, 484 blended into chest at the root
+[hero_body 111.6s] unmix: 1098 vertices made wholly arm or body, 129 edges split (127 new vertices)
+Info: 5648 vertex weights limited
+[hero_body 113.0s] arm split: {'arm_left': 2496, 'arm_right': 2911, 'patches_moved': 338, 'edges_split': 226, 'new_vertices': 259, 'reweighted': 484}
+[hero_body 116.5s] retargeted 132 clips (4216 frames) onto the native rest in 3.4s
+[hero_body 116.5s]   extra bone wing.L (parent chest): head (0.197, 0.276, 1.578) tail (0.723, 0.223, 1.814); axes x (0.09, -0.91, -0.41) y (0.91, -0.09, 0.41) z (-0.41, -0.41, 0.82) (Blender game space: z up, faces -y)
+[hero_body 116.5s]   extra bone wing_tip.L (parent wing.L): head (0.723, 0.223, 1.814) tail (1.249, 0.145, 1.972); axes x (-0.05, -0.95, -0.31) y (0.95, -0.14, 0.28) z (-0.31, -0.28, 0.91) (Blender game space: z up, faces -y)
+[hero_body 116.5s]   extra bone wing.R (parent chest): head (-0.118, 0.289, 1.578) tail (-0.644, 0.355, 1.814); axes x (0.26, 0.91, 0.33) y (-0.91, 0.11, 0.41) z (0.33, -0.41, 0.85) (Blender game space: z up, faces -y)
+[hero_body 116.5s]   extra bone wing_tip.R (parent wing.R): head (-0.644, 0.355, 1.814) tail (-1.17, 0.426, 1.998); axes x (0.22, 0.94, 0.27) y (-0.94, 0.13, 0.33) z (0.27, -0.33, 0.9) (Blender game space: z up, faces -y)
+02:00.860  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_rest_front.png'
+02:01.219  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_rest_side.png'
+02:01.579  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_idle_front.png'
+02:01.938  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_idle_side.png'
+02:02.282  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_hero_run_front.png'
+02:02.657  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_hero_run_side.png'
+02:03.016  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_gs_1_front.png'
+02:03.360  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_thyrandael_w1\thyrandael_gs_1_side.png'
+[hero_body 120.1s] previews in A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/prev_thyrandael_w1
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:16:09 | INFO: Starting glTF 2.0 export
+02:16:09 | INFO: Extracting primitive: thyrandael
+02:16:10 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:16:10 | INFO: Primitives created: 1
+02:16:29 | INFO: Finished glTF 2.0 export in 19.80231475830078 s
+
+[hero_body 140.0s] wrote A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/out/thyrandael.glb (21.0 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

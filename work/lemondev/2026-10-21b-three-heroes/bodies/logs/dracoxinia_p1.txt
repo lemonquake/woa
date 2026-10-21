@@ -1,0 +1,57 @@
+02:10:39 | INFO: Data are loaded, start creating Blender stuff
+02:10:39 | INFO: Blender create Mesh node hero
+02:10:40 | INFO: glTF import finished in 1.61s
+[hero_body   2.2s] hero rig with 132 clips
+[hero_body   2.2s] imported 2 objects from A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/src/dracoxinia_painted.blend
+[hero_body   2.2s] kept 1 mesh pieces (44000 faces), rig: Armature (65 bones)
+[hero_body   2.2s] rig map: {'chest': 'mixamorig:Spine1', 'foot.L': 'mixamorig:LeftFoot', 'foot.R': 'mixamorig:RightFoot', 'forearm.L': 'mixamorig:LeftForeArm', 'forearm.R': 'mixamorig:RightForeArm', 'hand.L': 'mixamorig:LeftHand', 'hand.R': 'mixamorig:RightHand', 'head': 'mixamorig:Head', 'hips': 'mixamorig:Hips', 'neck': 'mixamorig:Neck', 'shin.L': 'mixamorig:LeftLeg', 'shin.R': 'mixamorig:RightLeg', 'shoulder.L': 'mixamorig:LeftShoulder', 'shoulder.R': 'mixamorig:RightShoulder', 'spine': 'mixamorig:Spine', 'thigh.L': 'mixamorig:LeftUpLeg', 'thigh.R': 'mixamorig:RightUpLeg', 'toe.L': 'mixamorig:LeftToeBase', 'toe.R': 'mixamorig:RightToeBase', 'upper_arm.L': 'mixamorig:LeftArm', 'upper_arm.R': 'mixamorig:RightArm'}
+[hero_body   2.3s] hand L: 4 fingers, hand turned 2 deg from the converted bone, palm side (-0.12, -0.11, -0.99)
+[hero_body   2.3s] hand R: 4 fingers, hand turned 2 deg from the converted bone, palm side (0.1, -0.03, -0.99)
+[hero_body   2.5s] hands: 458 palm vertices keep the hand for the curl
+[hero_body   2.6s]   dracoxinia: 65 edges stretched over 1.6x by the pose (worst 4.8x); bones: [('mixamorig:LeftHand', 25), ('mixamorig:RightHand', 23), ('mixamorig:LeftHandThumb2', 21), ('mixamorig:RightHandThumb2', 20), ('mixamorig:LeftHandThumb1', 12), ('mixamorig:LeftHandMiddle1', 11), ('mixamorig:RightHandThumb1', 10), ('mixamorig:RightHandRing1', 7)]
+[hero_body   2.6s] hand L: fist closed, grip 0.050 from the wrist
+[hero_body   2.6s] hand R: fist closed, grip 0.056 from the wrist
+[hero_body   2.9s] scaled x2.036 to 2.000 m
+[hero_body   2.9s]   joint hips         (0.0, 0.0, 0.996) -> (0.0, -0.008, 1.082)
+[hero_body   2.9s]   joint head         (0.0, 0.008, 1.605) -> (0.0, 0.008, 1.85)
+[hero_body   2.9s]   joint upper_arm.L  (0.141, 0.039, 1.48) -> (0.359, 0.055, 1.441)
+[hero_body   2.9s]   joint hand.L       (0.578, 0.053, 1.439) -> (0.762, 0.06, 1.415)
+[hero_body   2.9s]   joint thigh.L      (0.109, -0.0, 0.973) -> (0.102, -0.031, 0.59)
+[hero_body   2.9s]   joint foot.L       (0.102, 0.016, 0.207) -> (0.117, -0.07, 0.035)
+[hero_body   2.9s]   hand.L rolled 3 deg to the grip; weapon bone in the fist
+[hero_body   2.9s]   hand.R rolled -7 deg to the grip; weapon bone in the fist
+[hero_body   2.9s]   native upper_arm.L  (0.14, 0.076, 1.47) -> (0.358, 0.092, 1.431) (model (0.141, 0.039, 1.48))
+[hero_body   2.9s]   native forearm.L    (0.358, 0.092, 1.431) -> (0.577, 0.089, 1.429) (model (0.359, 0.055, 1.441))
+[hero_body   2.9s]   native hand.L       (0.577, 0.089, 1.429) -> (0.679, 0.093, 1.416) (model (0.578, 0.053, 1.439))
+[hero_body   2.9s]   native thigh.L      (0.109, 0.002, 0.973) -> (0.102, -0.029, 0.59) (model (0.109, -0.0, 0.973))
+[hero_body   3.0s] mesh: 44000 faces -> 44000 triangles
+[hero_body   3.5s] cloth: 5767 hanging vertices follow the hips more than the legs
+[hero_body   3.5s] arms: 884 hand and forearm vertices freed from the trunk and legs
+[hero_body   3.7s] smoothed all weights (4 passes)
+[hero_body   4.0s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body   4.1s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   4.3s] unmix: 897 vertices made wholly arm or body, 96 edges split (94 new vertices)
+Info: 8552 vertex weights limited
+[hero_body   5.5s] arm split: {'arm_left': 2158, 'arm_right': 2186, 'patches_moved': 128, 'edges_split': 208, 'new_vertices': 256, 'reweighted': 380}
+[hero_body   9.1s] retargeted 132 clips (4216 frames) onto the native rest in 3.6s
+00:12.469  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_rest_front.png'
+00:12.813  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_rest_side.png'
+00:13.157  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_idle_front.png'
+00:13.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_idle_side.png'
+00:13.860  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_hero_run_front.png'
+00:14.188  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_hero_run_side.png'
+00:14.516  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_gs_1_front.png'
+00:14.860  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_dracoxinia_p1\dracoxinia_gs_1_side.png'
+[hero_body  12.7s] previews in A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/prev_dracoxinia_p1
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:10:51 | INFO: Starting glTF 2.0 export
+02:10:51 | INFO: Extracting primitive: dracoxinia
+02:10:51 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:10:51 | INFO: Primitives created: 1
+02:11:09 | INFO: Finished glTF 2.0 export in 17.795323133468628 s
+
+[hero_body  30.7s] wrote A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/out/dracoxinia.glb (23.0 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

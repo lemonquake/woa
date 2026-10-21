@@ -33,11 +33,19 @@ const ROLES := {
 	# melee caster for mid, the off lane or roaming
 	"blackfire": [3, 1, 4],
 	"thyrandael": [2, 3, 4],
+	# Gancho, Lord Kaileh and Dracoxinia (the owner's heroes, run 2026-10-21 b): a ranged agility carry who also plays mid,
+	# an off lane initiator, a strength carry who can go off lane
+	"gancho": [1, 2, 3],
+	"kaileh": [3, 4, 1],
+	"dracoxinia": [1, 3, 2],
 }
 ## How a hero plays, in a player's words: the online chat and forum writers (LlmChat, ForumWriter) get it so the
 ## players they write for know the hero (run 2026-10-21, the owner: "AI should also know how to use these heroes").
 const HOW_TO_PLAY := {
 	"blackfire": "a tanky dark knight who wins long fights: Sacrificial Grip stuns him AND the target and takes 25% of its current health, so grip when a teammate can hit it; every death near him heals him (Underworld Presence); Rise Up raises dead creeps as his army; Fiend Edge crits heal his whole team; Unfallen makes him get up once after dying for a few seconds and explode, so back off when he rises",
+	"gancho": "a ranged tree man carry: he walks straight through trees (and dodges attacks near them), throws Root Snare to hold the first enemy it touches, then Seed Bomb on the held target (it grows a tree that blocks you, not him); each of his attacks sticks a thorn in you (up to 5, they burn and slow); his ultimate Angry Forest makes every tree near him whip and root you, so never fight him beside the trees",
+	"kaileh": "a huge lance knight with 200 reach: Lance Charge carries the first hero it meets on the lance to the end and stuns it there (he charges you into his team), Lance Sweep knocks everyone round him back, the War Banner gives his team armor and attack speed (4 hits kill it), and his ultimate Cavalry Charge runs a wide line with ghost riders that stuns everyone in it; he hits harder the faster he moves",
+	"dracoxinia": "a royal dragon carry with five swords: her ultimate changes her sword every click (Pink lightning, Gold barrier, Blue root, Red splash and burn, Green heal) and the sword sets her element, so she picks the one that beats yours; every 4th attack is a heavy Dragon Blade strike, she dashes in, leaps over trees and cliffs with Dragon Leap (no damage, it is her way in and out), has thick scales (Dragon Hide: armor and regeneration) and throws you in the air with Rising Slash",
 	"thyrandael": "a melee light caster who gets a barrier from every spell (Divine Touch): Spirit Step in to silence, spam Quick Flash (its marks stack), turn Holy Beam onto enemies (move clicks aim it, S stops it), and the more damage he takes the stronger False Judgement gets (blinds, slows and burns); focus him before he fills his charges",
 }
 
@@ -120,6 +128,20 @@ const SKILLS := {
 	"thyrandael": ["quick_flash", "spirit_step", "quick_flash", "holy_beam", "quick_flash", "false_judgement",
 		"quick_flash", "holy_beam", "holy_beam", "holy_beam", "false_judgement", "spirit_step", "spirit_step",
 		"spirit_step", "false_judgement"],
+	# Gancho (SimBot22): Thorn Barbs first (his damage), Root Snare at 2 for the kill threat, Seed Bomb at 4, the thorns
+	# to 4, then the vine, the bomb last
+	"gancho": ["thorn_barbs", "root_snare", "thorn_barbs", "seed_bomb", "thorn_barbs", "angry_forest", "thorn_barbs",
+		"root_snare", "root_snare", "root_snare", "angry_forest", "seed_bomb", "seed_bomb", "seed_bomb", "angry_forest"],
+	# Lord Kaileh (SimBot22): Lance Charge first (the pick), Lance Sweep for the lane, the banner at 4, the charge to 4
+	"kaileh": ["lance_charge", "lance_sweep", "lance_charge", "war_banner", "lance_charge", "cavalry_charge",
+		"lance_charge", "lance_sweep", "lance_sweep", "lance_sweep", "cavalry_charge", "war_banner", "war_banner",
+		"war_banner", "cavalry_charge"],
+	# Dracoxinia (SimBot22): Dragon Blade first (her farm and fights), the dash at 2, one point of Dragon Leap at 4 (her
+	# way out), Rising Slash, the blade to 4, then the dash, the slash, Dragon Hide, the leap last
+	"dracoxinia": ["dragon_blade", "dragon_dash", "dragon_blade", "dragon_leap", "dragon_blade", "change_sword",
+		"dragon_blade", "rising_slash", "dragon_dash", "dragon_dash", "change_sword", "dragon_dash", "rising_slash",
+		"dragon_hide", "rising_slash", "change_sword", "rising_slash", "dragon_hide", "dragon_hide",
+		"dragon_hide", "dragon_leap", "dragon_leap", "dragon_leap"],
 }
 ## Supports skill the disable / save first.
 const SUPPORT_SKILLS := {
@@ -134,7 +156,8 @@ const TALENTS := {"blood_ranger": [1, 1, 0, 1], "ezee": [0, 0, 1, 0], "sludge": 
 	"tock": [0, 1, 0, 0], "kragg": [0, 1, 0, 0], "roydo": [1, 1, 0, 0], "blau": [1, 0, 1, 0],
 	"azrael": [0, 1, 1, 0], "airah": [0, 0, 1, 0], "burak": [0, 0, 0, 0], "emelrich": [0, 0, 1, 1], "feran": [0, 1, 1, 0],
 	"ghorman": [0, 0, 0, 0], "araki": [0, 0, 0, 1],
-	"blackfire": [0, 1, 0, 0], "thyrandael": [1, 0, 0, 0]}
+	"blackfire": [0, 1, 0, 0], "thyrandael": [1, 0, 0, 0],
+	"gancho": [1, 0, 0, 0], "kaileh": [0, 0, 1, 1], "dracoxinia": [0, 0, 0, 0]}
 
 ## Item builds: role group "core" (positions 1-3) and "support" (4-5); a few variants each. Buying a finished item buys
 ## only its missing parts. Starting items come first.
@@ -248,6 +271,44 @@ const BUILDS := {
 		"support": [
 			["tango", "tango", "salve", "clarity", "branch", "branch", "magic_stick", "boots", "magic_wand", "mana_boots",
 				"medic_kit", "push_staff", "spell_sword", "guard_boots", "team_shield", "spell_shield"],
+		],
+	},
+	# Gancho: attack speed and agility for the thorns (Frenzy Mask, Twin Swords), range, then the Spell Shield
+	"gancho": {
+		"core": [
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "dragon_lance", "mask_of_madness", "yasha", "spell_shield",
+				"crit_bow", "armor_breaker", "moth_blade"],
+			["tango", "salve", "slippers", "circlet", "quelling_blade", "wraith_band", "magic_stick", "boots", "gloves",
+				"boots_elves", "magic_wand", "dragon_lance", "twin_swords", "shock_hammer", "spell_shield", "crit_bow"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "wraith_band",
+				"push_staff", "slip_boots", "dragon_lance", "spell_shield", "guard_boots"],
+		],
+	},
+	# Lord Kaileh: speed for Momentum (Slip Boots, Yasha), health and armor to stay in the fights he starts
+	"kaileh": {
+		"core": [
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "slip_boots", "yasha", "block_shield", "spell_shield", "spike_armor", "battle_armor",
+				"giant_heart"],
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "slip_boots", "war_drum", "cleave_axe", "spell_shield", "crit_sword", "giant_heart"],
+		],
+		"support": [
+			["tango", "tango", "salve", "branch", "branch", "magic_stick", "boots", "magic_wand", "slip_boots",
+				"war_drum", "team_shield", "push_staff", "spell_shield", "guard_boots"],
+		],
+	},
+	# Dracoxinia: damage and attack speed for Dragon Blade's strikes, then crits (a strike can crit too), lifesteal
+	"dracoxinia": {
+		"core": [
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "gloves", "boots_elves", "mask_of_madness", "armor_breaker", "spell_shield", "crit_sword",
+				"battle_armor", "leech_blade"],
+			["tango", "salve", "gauntlets", "quelling_blade", "circlet", "tough_band", "magic_stick", "boots",
+				"magic_wand", "slip_boots", "cleave_axe", "yasha", "spell_shield", "crit_bow", "giant_heart"],
 		],
 	},
 	"tock": {
@@ -391,11 +452,17 @@ static func disable_power(hero: String) -> float:
 			return 0.55
 		"thyrandael":
 			return 0.6
+		"gancho":
+			return 0.55
+		"kaileh":
+			return 0.85
+		"dracoxinia":
+			return 0.55
 	return 0.3
 
 ## Whether the hero is fragile and right-clicks from range (keeps back in fights).
 static func backliner(hero: String) -> bool:
-	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock" or hero == "blau" 		or hero == "airah" or hero == "feran"
+	return hero == "blood_ranger" or hero == "azrin" or hero == "froster" or hero == "tock" or hero == "blau" 		or hero == "airah" or hero == "feran" or hero == "gancho"
 
 ## The hero's ultimate.
 static func ultimate(h: SimUnit) -> String:
@@ -589,6 +656,33 @@ static func burst(w: SimWorld, h: SimUnit, t: SimUnit) -> float:
 			if h.ability_level_of("false_judgement") > 0 and ab.cooldown_left(h, "false_judgement") <= 0.0:
 				total += ab.val(h, "false_judgement", "dps") * w.abilities.kits9.judgement_frac(h) * 4.0 * mr
 			total *= 1.0 + h.magic_amp
+		"gancho":
+			# the vine and the bomb; the thorns he can stack in five seconds of attacks
+			if ready.call("root_snare"):
+				total += ab.val(h, "root_snare", "damage") * mr * 0.75
+			if ready.call("seed_bomb"):
+				total += ab.val(h, "seed_bomb", "damage") * mr * 0.7
+			if h.ability_level_of("thorn_barbs") > 0:
+				total += ab.val(h, "thorn_barbs", "dps") * ab.val(h, "thorn_barbs", "max_thorns") * 3.0 * mr
+			if ready.call("angry_forest") and t != null and w.map.tree_at(t.pos, 350.0) >= 0:
+				total += ab.val(h, "angry_forest", "damage") * 5.0 * mr
+			total *= 1.0 + h.magic_amp
+		"kaileh":
+			# the charge and its stun's worth of attacks, the sweep, the cavalry and its stun
+			if ready.call("lance_charge"):
+				total += ab.val(h, "lance_charge", "damage") * arm + dps(w, h, t) * ab.val(h, "lance_charge", "stun")
+			if ready.call("lance_sweep"):
+				total += ab.val(h, "lance_sweep", "damage") * arm
+			if ready.call("cavalry_charge"):
+				total += ab.val(h, "cavalry_charge", "damage") * mr + dps(w, h, t) * ab.val(h, "cavalry_charge", "stun")
+		"dracoxinia":
+			# the dash, the slash's air time of attacks, a Dragon Blade strike or two
+			if ready.call("dragon_dash"):
+				total += ab.val(h, "dragon_dash", "damage") * arm
+			if ready.call("rising_slash"):
+				total += ab.val(h, "rising_slash", "damage") * arm + dps(w, h, t) * ab.val(h, "rising_slash", "air")
+			if h.ability_level_of("dragon_blade") > 0:
+				total += ab.val(h, "dragon_blade", "damage") * 1.5 * arm
 		"ghorman":
 			var pack := w.abilities.kits6.beasts_of(h)
 			for bst: SimUnit in pack:

@@ -1,0 +1,13 @@
+00:02.203  blend            | Read blend: "A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\src\kaileh_painted.blend"
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\rest_look.py:29: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\rest_look.py:33: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new("look"); m.use_nodes = True
+00:03.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\kaileh_paint_front.png'
+00:04.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\kaileh_paint_back.png'
+00:04.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\kaileh_paint_head.png'
+00:05.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\kaileh_paint_torso.png'
+REST BOUNDS (-0.2884, -0.1494, 0.0) (0.2884, 0.1496, 0.9795)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

@@ -1,0 +1,1 @@
+drac_leap                          frames 115 (3.83s) drift 2.18 m (max 2.28) hands apart 0.51-1.33 m lowest hand 0.29 m

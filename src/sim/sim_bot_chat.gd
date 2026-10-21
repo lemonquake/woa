@@ -528,7 +528,7 @@ func tick() -> void:
 					say(dh, "denied", true, {}, 0.6 if dt.is_hero() else 0.5)
 			"tp_end":
 				_on_escape(e)
-			"unfallen_rise", "rise_up", "false_judgement":
+			"unfallen_rise", "rise_up", "false_judgement", "lance_charge_end", "cavalry_charge_end", "angry_forest", "sword_change":
 				_on_kit(e)
 			"chat":
 				_on_chat(e)
@@ -580,6 +580,49 @@ func _on_kit(e: Dictionary) -> void:
 				speak(_talker(judged), "judged", false, {"skill": "judgement"}, 0.6, _rng.randf_range(1.0, 2.5))
 			if h.bot:
 				speak(h, "judged_self", true, {"n": str(heroes.size())}, 0.3, _rng.randf_range(0.8, 2.0))
+		"lance_charge_end":
+			# a hero rode Lord Kaileh's lance into his team
+			var t := w.get_unit(int(e.get("target", -1)))
+			if t == null or not t.is_hero() or t.team == h.team:
+				return
+			var mates: Array = _bots(h.team).filter(func(f): return f != h and f.alive and f.pos.distance_to(t.pos) < 900.0)
+			if mates.is_empty():
+				return
+			if t.bot:
+				speak(t, "lanced", false, {}, 0.45, _rng.randf_range(0.6, 1.8))
+			if h.bot:
+				speak(h, "lanced_self", true, {}, 0.25, _rng.randf_range(0.5, 1.5))
+		"cavalry_charge_end":
+			var hit: Array = []
+			for o in w.heroes:
+				if o.alive and o.team != h.team and not o.get_modifier("stunned").is_empty() \
+						and o.pos.distance_to(h.pos) < 1800.0:
+					hit.append(o)
+			if hit.size() < 2:
+				return
+			var ran: Array = hit.filter(func(o): return o.bot)
+			if not ran.is_empty():
+				speak(_talker(ran), "cavalry_enemy", false, {"n": str(hit.size())}, 0.6, _rng.randf_range(0.8, 2.0))
+			if h.bot:
+				speak(h, "cavalry_self", true, {"n": str(hit.size())}, 0.3, _rng.randf_range(0.5, 1.5))
+		"angry_forest":
+			var trapped: Array = _bots(1 - h.team).filter(func(f): return f.alive and f.pos.distance_to(h.pos) < 1100.0 \
+				and w.map.tree_at(f.pos, 350.0) >= 0)
+			if trapped.is_empty():
+				return
+			speak(_talker(trapped), "forest_enemy", false, {}, 0.5, _rng.randf_range(1.5, 3.0))
+			if h.bot:
+				speak(h, "forest_self", true, {}, 0.2, _rng.randf_range(0.5, 1.5))
+		"sword_change":
+			# now and then, when she changes swords in a fight
+			if _rng.randf() > 0.08:
+				return
+			var foes2: Array = _bots(1 - h.team).filter(func(f): return f.alive and f.pos.distance_to(h.pos) < 1000.0)
+			if foes2.is_empty():
+				return
+			speak(_talker(foes2), "swords_enemy", false, {}, 0.5, _rng.randf_range(0.8, 2.0))
+			if h.bot and _rng.randf() < 0.4:
+				speak(h, "swords_self", true, {}, 0.2, _rng.randf_range(0.5, 1.5))
 
 ## Twice a second: tilt cools, near deaths that got away.
 func _beat() -> void:

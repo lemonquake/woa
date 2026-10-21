@@ -1,0 +1,15 @@
+== hero_gancho (gancho.glb; idle gan_idle, run gan_run)
+  FAIL join gan_idle               -> stagger_air            blend 0.25s: snap 13.3 deg (hand.L at +0.25s), gap 160 deg (from 1.87s)
+  ok   slide gan_run: planted foot at 0.80x the ground speed (3.55 m/s)
+  -> 35 joins and 3 loops checked, worst snap 13.3 deg (gan_idle -> stagger_air), 1 failures
+== hero_kaileh (kaileh.glb; idle kai_idle, run kai_run)
+  FAIL join kai_thrust_3           -> kai_thrust_1           blend 0.30s: snap 12.8 deg (forearm.R at +0.28s), gap 123 deg
+  ok   slide kai_run: planted foot at 0.97x the ground speed (2.42 m/s)
+  -> 40 joins and 3 loops checked, worst snap 12.8 deg (kai_thrust_3 -> kai_thrust_1), 1 failures
+== hero_dracoxinia (dracoxinia.glb; idle drac_idle, run drac_run)
+  FAIL join drac_idle              -> drac_slash_1           blend 0.20s: snap 13.2 deg (foot.L at +0.20s), gap 170 deg (from 1.88s)
+  FAIL join drac_run               -> drac_slash_1           blend 0.16s: snap 13.0 deg (forearm.L at +0.15s), gap 71 deg (from 0.00s)
+  FAIL join drac_idle              -> drac_slash_2           blend 0.30s: snap 13.3 deg (upper_arm.R at +0.18s), gap 179 deg (from 1.88s)
+  ok   slide drac_run: planted foot at 0.99x the ground speed (4.81 m/s)
+  -> 40 joins and 3 loops checked, worst snap 13.3 deg (drac_idle -> drac_slash_2), 3 failures
+TOTAL failures 5

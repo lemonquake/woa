@@ -34,8 +34,7 @@ func picture(id: String, path: String, texture: Texture2D) -> void:
 		return
 	var full := UiKit.icon_path(path)
 	if not fallback:
-		var suffix := ".svg" if id == "skill:death_order" else ".png"
-		check(full == "res://assets/ui/" + path + suffix, id + " resolves its chosen art: " + full)
+		check(full == "res://assets/ui/" + path + ".png", id + " resolves its chosen art: " + full)
 	var image := texture.get_image()
 	check(image != null and image.get_width() == image.get_height(), id + " is square")
 	if image == null:
@@ -55,7 +54,7 @@ func _run() -> void:
 	ids.sort()
 	for id in ids:
 		var path := String(UiKit.ABILITY_ICONS.get(id, UiKit.NEUTRAL_SKILL_ICONS.get(id, "")))
-		var expected: String = String(UiKit.ABILITY_FALLBACKS[id]) if id == "death_order" else "art/skills/" + String(id)
+		var expected: String = "art/skills/" + String(id)
 		check(path == expected, id + " has an explicit chosen skill route")
 		picture("skill:" + id, path, UiKit.ability_icon(id))
 		check(UiKit.icon(path) == UiKit.ability_icon(id), id + " direct HUD lookup agrees")
@@ -64,6 +63,27 @@ func _run() -> void:
 		var path: String = UiKit.UNIT_SKILL_ICONS[id]
 		picture("unit:" + id, path, UiKit.icon(path))
 		skills.append({"name": String(id).replace("_", " ").capitalize(), "texture": UiKit.icon(path)})
+	# Use the simulation's current sword and modifier, then the legacy paths used by the real HUD and BuffBar.
+	var hero := SimUnit.new()
+	hero.def = SimData.unit("dracoxinia")
+	var swords := SimKits11.new()
+	for i in SimKits11.SWORDS.size():
+		swords.sword[hero.id] = i
+		swords._mark(hero)
+		var id := "sword_" + swords.sword_id(hero)
+		var path: String = UiKit.STATE_SKILL_ICONS.get(id, "")
+		check(path == "art/skills/" + id, id + " has an explicit state route")
+		var texture := UiKit.ability_icon(id)
+		picture("state:" + id, path, texture)
+		var hud_path := "skills/gen/sword_" + swords.sword_id(hero)
+		check(UiKit.icon(hud_path) == texture, id + " current-sword HUD legacy route agrees")
+		var modifier := hero.get_modifier(id)
+		check(not modifier.is_empty(), id + " current sword has its live modifier")
+		check(BuffBar.icon_of(id, modifier) == texture, id + " live buff bar route agrees")
+		if not fallback:
+			check(UiKit.icon_path(hud_path) == "res://assets/ui/" + path + ".png", id + " HUD alias resolves painted state")
+			check(UiKit.icon_path(BuffBar.ICONS[id]) == "res://assets/ui/" + path + ".png", id + " buff alias resolves painted state")
+		skills.append({"name": BuffBar.name_of(id), "texture": texture})
 	for id in ["weapon_grab", "pace_aura", "pack_aura", "magic_armor_aura", "break_strike", "thick_hide_aura"]:
 		check(BuffBar.icon_of(id, {}) == UiKit.ability_icon(id), id + " buff bar uses the same skill art")
 	# Exercise the real unit panel, including every aura, on-hit passive, trait, ward and building entry.
@@ -114,7 +134,7 @@ func _run() -> void:
 	if not fallback:
 		check(UiKit.icon_path("ui/teleport") == "res://assets/ui/art/items/tp_scroll.png", "teleport button uses Town Portal art")
 		for id in UiKit.ABILITY_FALLBACKS:
-			var expected: String = "res://assets/ui/%s.svg" % UiKit.ABILITY_FALLBACKS[id] if id == "death_order" else "res://assets/ui/art/skills/%s.png" % id
+			var expected: String = "res://assets/ui/art/skills/%s.png" % id
 			check(UiKit.icon_path(UiKit.ABILITY_FALLBACKS[id]) == expected, id + " legacy route uses chosen art")
 		for id in SimData.items():
 			if not String(id).begins_with("recipe_"):

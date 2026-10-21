@@ -1,0 +1,517 @@
+{
+  "generator": "Built-in image generation",
+  "size": 256,
+  "icons": [
+    {
+      "id": "underworld_presence",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/underworld_presence.png",
+      "sha256": "6da2090514ee31a2cf1bffbc401995efcc7bd33f7fdade1135f6e615f8d79d06"
+    },
+    {
+      "id": "sacrificial_grip",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/sacrificial_grip.png",
+      "sha256": "dd88d7807d95b50836e5d01ad7195d382e5aef644d56f30e16fadf859d622e3d"
+    },
+    {
+      "id": "rise_up",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/rise_up.png",
+      "sha256": "5253d26fb61ceddeb18e312b1b312dcd526e3a33868888f3b0859d275b5957fb"
+    },
+    {
+      "id": "fiend_edge",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/fiend_edge.png",
+      "sha256": "4567a9c96e156f23d588a5f71093cc8e1d275d2ce404e30ecd8e5af40a83c4f0"
+    },
+    {
+      "id": "unfallen",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/unfallen.png",
+      "sha256": "f76f0977222e39e7663b055925ca998c85429d40c2c1573a0ee2a0f4aadbc2cc"
+    },
+    {
+      "id": "divine_touch",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/divine_touch.png",
+      "sha256": "67486b22098e50f6a93cfb32f34da2ef1ab2167724d4a529597402ee377f489f"
+    },
+    {
+      "id": "holy_beam",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/holy_beam.png",
+      "sha256": "a7372104dd1157e952a12e56a405b66d6f7a7e2f64bde51e7ed8ba890566aed2"
+    },
+    {
+      "id": "quick_flash",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/quick_flash.png",
+      "sha256": "93d00b8a25dbeb817b8e27daa7fd83ea091286e8e6ff1c0e831cfe1ebd9d4f3c"
+    },
+    {
+      "id": "spirit_step",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/spirit_step.png",
+      "sha256": "cdaf6178b650deaf535e470bdc842e40c577cab3131789bb8af03b79a8428e6d"
+    },
+    {
+      "id": "false_judgement",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/false_judgement.png",
+      "sha256": "c7f37bb67306e3963682c24f6309d029ec4bf3c52c78f2ef3341dddbce95029c"
+    },
+    {
+      "id": "giant_swing",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/giant_swing.png",
+      "sha256": "7e18c2f306f6d0d2e0c21578fe15de0e6bdc474f511c39ea917a08ce5817712e"
+    },
+    {
+      "id": "death_order",
+      "kind": "skills",
+      "sheet": "sheet01",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/death_order.png",
+      "sha256": "53d6bc8446d443d362a6c519904082fdca30e83d20c6b853655b6bb1545751c4"
+    },
+    {
+      "id": "tree_walk",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/tree_walk.png",
+      "sha256": "b2ff7e629c8e4a4d9cbd67dffeb20eb86c754f4454a848fbd73f421341374b4a"
+    },
+    {
+      "id": "root_snare",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/root_snare.png",
+      "sha256": "632dd521885070b24425a674062e91a8968ab4e185c9058f6224a492978e3c38"
+    },
+    {
+      "id": "seed_bomb",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/seed_bomb.png",
+      "sha256": "88a216115adcc73613168ab0ff7b8ea39ca432ec9e2deff57fa1d39a3d6212bf"
+    },
+    {
+      "id": "thorn_barbs",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/thorn_barbs.png",
+      "sha256": "e4545e3d2249d00fdb7cabac3cf510ca24c246193a63c52d7030c15d1490e8a1"
+    },
+    {
+      "id": "angry_forest",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/angry_forest.png",
+      "sha256": "c31beeb70e89ee7f0911477b6fb6ca65235ee3ba50bf8cf7e5d14a3b53381c55"
+    },
+    {
+      "id": "momentum",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/momentum.png",
+      "sha256": "54ee192dd77a5d46d6e6737e07dcbe6cb336c94c34cbef7d681edb4bd36fe8e2"
+    },
+    {
+      "id": "lance_charge",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/lance_charge.png",
+      "sha256": "cf3898210b6eaf75681416cf47a4c02a3f565e1a4c0afb0c1b7d48df01ebc82d"
+    },
+    {
+      "id": "lance_sweep",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/lance_sweep.png",
+      "sha256": "e41569f0665ca6c6b0a383a350f84722f8f3da988199cceb072344510cb05c83"
+    },
+    {
+      "id": "war_banner",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/war_banner.png",
+      "sha256": "c3bdbe66179a35749f1ee689d3fc194f7d21693d76c4f1313bb7caa925dc6355"
+    },
+    {
+      "id": "cavalry_charge",
+      "kind": "skills",
+      "sheet": "sheet02",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "996ca8d674bb8214ca75c0b8d07f6c5562b4218866cadc3134a1e16b59f63c03",
+      "path": "assets/ui/art/skills/cavalry_charge.png",
+      "sha256": "d0ef0820b64aa6a842de6eb93fed8b262056a609f93b9a2ff35a75c1652c674d"
+    },
+    {
+      "id": "royal_scales",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/royal_scales.png",
+      "sha256": "817a34897b86c4a7f393c3c24aaab2e1ebb3e2332659f9a335931ef503f8862b"
+    },
+    {
+      "id": "dragon_dash",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/dragon_dash.png",
+      "sha256": "ba5a39b1a7a383ff9f8e433ad38366bc2e938fbb9df9f7a14f2470b01fc17f27"
+    },
+    {
+      "id": "dragon_leap",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 3,
+      "crop": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/dragon_leap.png",
+      "sha256": "88baad0e31d16c7dff9591fe0dc651be81652de051d3ecfc5838f4620b7742e7"
+    },
+    {
+      "id": "dragon_hide",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 4,
+      "crop": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/dragon_hide.png",
+      "sha256": "5d8f90e3a3af65a76d65430cda377b67fcc3755c4cfc9adaf0fb82b791af83bc"
+    },
+    {
+      "id": "rising_slash",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 5,
+      "crop": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/rising_slash.png",
+      "sha256": "85aa314b69cb2caa1853fcbc067a91e325169e668641ff46294fd91d0b9547e4"
+    },
+    {
+      "id": "dragon_blade",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 6,
+      "crop": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/dragon_blade.png",
+      "sha256": "d4e08801f332d64dfbe9cfb8e5679cbd5422cf09f740fe7c385a1cc6e21a7151"
+    },
+    {
+      "id": "change_sword",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 7,
+      "crop": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/change_sword.png",
+      "sha256": "14120c4fb8ae2238a96acc82dda60328afb72ccc11679212e3c0e364771e1c65"
+    },
+    {
+      "id": "sword_pink",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 8,
+      "crop": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/sword_pink.png",
+      "sha256": "23f6f9fc58d4d996bdeafffe4b716d8d90d2f78a74826fefa3cc1683626e7f4b"
+    },
+    {
+      "id": "sword_gold",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 9,
+      "crop": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/sword_gold.png",
+      "sha256": "2f96e4603a28d00283a3afd1d8de403221e9ecb430bc705127016b9647213f34"
+    },
+    {
+      "id": "sword_blue",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 10,
+      "crop": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/sword_blue.png",
+      "sha256": "0a7e43f4937908a3416cf62b007205d4533316f9c18caa673414c88a6adfc86f"
+    },
+    {
+      "id": "sword_red",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 11,
+      "crop": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/sword_red.png",
+      "sha256": "17b0c63d8f0b169ce520d9becd0466687f2638ac03e12382eb4669a75051cf73"
+    },
+    {
+      "id": "sword_green",
+      "kind": "skills",
+      "sheet": "sheet03",
+      "cell": 12,
+      "crop": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_sha256": "c78ba25f4a13080cafb6b9bf1687538141de2ce902fd7c170ea568b876580689",
+      "path": "assets/ui/art/skills/sword_green.png",
+      "sha256": "094d54312afcfb56be8cd6bb00aa1a64a716dd68176f76e4fd27c7d051ede4b2"
+    }
+  ],
+  "missing_sheets": []
+}

@@ -1,0 +1,5043 @@
+{
+  "summary": {
+    "rows": 305,
+    "groups": {
+      "skills": 120,
+      "items": 180,
+      "states": 5
+    },
+    "unique_expected_sources": 259,
+    "missing_source_png": 32,
+    "route_mismatch": 0,
+    "definition_review": 0,
+    "new_entry_review": 0,
+    "runtime_routes": 0,
+    "retained_original_exceptions": 1,
+    "findings": 32,
+    "removed_entries": 0
+  },
+  "records": [
+    {
+      "group": "skills",
+      "id": "angry_forest",
+      "name": "Angry Forest",
+      "path": "art/skills/angry_forest",
+      "expected_source": "res://assets/ui/art/skills/angry_forest.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "anomaly",
+      "name": "Anomaly",
+      "path": "art/skills/anomaly",
+      "expected_source": "res://assets/ui/art/skills/anomaly.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/anomaly.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "axe_throw",
+      "name": "Axe Throw",
+      "path": "art/skills/axe_throw",
+      "expected_source": "res://assets/ui/art/skills/axe_throw.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/axe_throw.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "beast_form",
+      "name": "Beast Form",
+      "path": "art/skills/beast_form",
+      "expected_source": "res://assets/ui/art/skills/beast_form.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/beast_form.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "berserk",
+      "name": "Berserk",
+      "path": "art/skills/berserk",
+      "expected_source": "res://assets/ui/art/skills/berserk.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/berserk.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "blessing_of_the_beast_king",
+      "name": "Blessing of the Beast King",
+      "path": "art/skills/blessing_of_the_beast_king",
+      "expected_source": "res://assets/ui/art/skills/blessing_of_the_beast_king.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/blessing_of_the_beast_king.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "blood_ranger_ult",
+      "name": "Blood Ranger",
+      "path": "art/skills/blood_ranger_ult",
+      "expected_source": "res://assets/ui/art/skills/blood_ranger_ult.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/blood_ranger_ult.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "blubber",
+      "name": "Blubber",
+      "path": "art/skills/blubber",
+      "expected_source": "res://assets/ui/art/skills/blubber.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/blubber.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "blur_strike",
+      "name": "Blur Strike",
+      "path": "art/skills/blur_strike",
+      "expected_source": "res://assets/ui/art/skills/blur_strike.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/blur_strike.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "bounce_shot",
+      "name": "Bounce Shot",
+      "path": "art/skills/bounce_shot",
+      "expected_source": "res://assets/ui/art/skills/bounce_shot.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/bounce_shot.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "breath_of_cold",
+      "name": "Breath of Cold",
+      "path": "art/skills/breath_of_cold",
+      "expected_source": "res://assets/ui/art/skills/breath_of_cold.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/breath_of_cold.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "burst_shot",
+      "name": "Burst Shot",
+      "path": "art/skills/burst_shot",
+      "expected_source": "res://assets/ui/art/skills/burst_shot.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/burst_shot.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "cavalry_charge",
+      "name": "Cavalry Charge",
+      "path": "art/skills/cavalry_charge",
+      "expected_source": "res://assets/ui/art/skills/cavalry_charge.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "change_sword",
+      "name": "Change Sword",
+      "path": "art/skills/change_sword",
+      "expected_source": "res://assets/ui/art/skills/change_sword.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "chomp",
+      "name": "Chomp",
+      "path": "art/skills/chomp",
+      "expected_source": "res://assets/ui/art/skills/chomp.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/chomp.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "dark_matter_skin",
+      "name": "Dark Matter Skin",
+      "path": "art/skills/dark_matter_skin",
+      "expected_source": "res://assets/ui/art/skills/dark_matter_skin.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/dark_matter_skin.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "dark_stomp",
+      "name": "Dark Stomp",
+      "path": "art/skills/dark_stomp",
+      "expected_source": "res://assets/ui/art/skills/dark_stomp.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/dark_stomp.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "death_order",
+      "name": "Death Order",
+      "path": "skills/ns_marked_execution",
+      "expected_source": "res://assets/ui/skills/ns_marked_execution.svg",
+      "source_exists": true,
+      "source_dimensions": null,
+      "resolved_path": "res://assets/ui/skills/ns_marked_execution.svg",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [],
+      "exception": "Owner retained the original Death Order SVG after the small-size review."
+    },
+    {
+      "group": "skills",
+      "id": "death_scythe",
+      "name": "Death Scythe",
+      "path": "art/skills/death_scythe",
+      "expected_source": "res://assets/ui/art/skills/death_scythe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/death_scythe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "divine_darkness",
+      "name": "Divine Darkness",
+      "path": "art/skills/divine_darkness",
+      "expected_source": "res://assets/ui/art/skills/divine_darkness.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/divine_darkness.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "divine_smite",
+      "name": "Divine Smite",
+      "path": "art/skills/divine_smite",
+      "expected_source": "res://assets/ui/art/skills/divine_smite.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/divine_smite.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "divine_touch",
+      "name": "Divine Touch",
+      "path": "art/skills/divine_touch",
+      "expected_source": "res://assets/ui/art/skills/divine_touch.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "djin_bomb",
+      "name": "Djin Bomb",
+      "path": "art/skills/djin_bomb",
+      "expected_source": "res://assets/ui/art/skills/djin_bomb.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/djin_bomb.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "door_of_the_end",
+      "name": "Door of the End",
+      "path": "art/skills/door_of_the_end",
+      "expected_source": "res://assets/ui/art/skills/door_of_the_end.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/door_of_the_end.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "dragon_blade",
+      "name": "Dragon Blade",
+      "path": "art/skills/dragon_blade",
+      "expected_source": "res://assets/ui/art/skills/dragon_blade.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "dragon_dash",
+      "name": "Dragon Dash",
+      "path": "art/skills/dragon_dash",
+      "expected_source": "res://assets/ui/art/skills/dragon_dash.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "dragon_hide",
+      "name": "Dragon Hide",
+      "path": "art/skills/dragon_hide",
+      "expected_source": "res://assets/ui/art/skills/dragon_hide.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "dragon_leap",
+      "name": "Dragon Leap",
+      "path": "art/skills/dragon_leap",
+      "expected_source": "res://assets/ui/art/skills/dragon_leap.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "endless_winter",
+      "name": "Endless Winter",
+      "path": "art/skills/endless_winter",
+      "expected_source": "res://assets/ui/art/skills/endless_winter.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/endless_winter.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "false_judgement",
+      "name": "False Judgement",
+      "path": "art/skills/false_judgement",
+      "expected_source": "res://assets/ui/art/skills/false_judgement.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "fast_forward",
+      "name": "Fast Forward",
+      "path": "art/skills/fast_forward",
+      "expected_source": "res://assets/ui/art/skills/fast_forward.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/fast_forward.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "fiend_edge",
+      "name": "Fiend Edge",
+      "path": "art/skills/fiend_edge",
+      "expected_source": "res://assets/ui/art/skills/fiend_edge.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "fiery_javelin",
+      "name": "Fiery Javelin",
+      "path": "art/skills/fiery_javelin",
+      "expected_source": "res://assets/ui/art/skills/fiery_javelin.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/fiery_javelin.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "frost_heart",
+      "name": "Frost Heart",
+      "path": "art/skills/frost_heart",
+      "expected_source": "res://assets/ui/art/skills/frost_heart.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/frost_heart.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "gale_impact",
+      "name": "Gale Impact",
+      "path": "art/skills/gale_impact",
+      "expected_source": "res://assets/ui/art/skills/gale_impact.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/gale_impact.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "ghosts_of_the_will",
+      "name": "Ghosts of the Will",
+      "path": "art/skills/ghosts_of_the_will",
+      "expected_source": "res://assets/ui/art/skills/ghosts_of_the_will.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/ghosts_of_the_will.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "giant_swing",
+      "name": "Giant Swing",
+      "path": "art/skills/giant_swing",
+      "expected_source": "res://assets/ui/art/skills/giant_swing.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/giant_swing.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "grip_of_the_ruler",
+      "name": "Grip of the Ruler",
+      "path": "art/skills/grip_of_the_ruler",
+      "expected_source": "res://assets/ui/art/skills/grip_of_the_ruler.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/grip_of_the_ruler.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "growing_gut",
+      "name": "Growing Gut",
+      "path": "art/skills/growing_gut",
+      "expected_source": "res://assets/ui/art/skills/growing_gut.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/growing_gut.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "gust",
+      "name": "Gust",
+      "path": "art/skills/gust",
+      "expected_source": "res://assets/ui/art/skills/gust.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/gust.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "holy_beam",
+      "name": "Holy Beam",
+      "path": "art/skills/holy_beam",
+      "expected_source": "res://assets/ui/art/skills/holy_beam.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "hurricane",
+      "name": "Hurricane",
+      "path": "art/skills/hurricane",
+      "expected_source": "res://assets/ui/art/skills/hurricane.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/hurricane.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "ice_pulse",
+      "name": "Ice Pulse",
+      "path": "art/skills/ice_pulse",
+      "expected_source": "res://assets/ui/art/skills/ice_pulse.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/ice_pulse.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "iron_grip",
+      "name": "Iron Grip",
+      "path": "art/skills/iron_grip",
+      "expected_source": "res://assets/ui/art/skills/iron_grip.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/iron_grip.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "joke_box",
+      "name": "Joke Box",
+      "path": "art/skills/joke_box",
+      "expected_source": "res://assets/ui/art/skills/joke_box.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/joke_box.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "knife_juggle",
+      "name": "Knife Juggle",
+      "path": "art/skills/knife_juggle",
+      "expected_source": "res://assets/ui/art/skills/knife_juggle.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/knife_juggle.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "lance_charge",
+      "name": "Lance Charge",
+      "path": "art/skills/lance_charge",
+      "expected_source": "res://assets/ui/art/skills/lance_charge.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "lance_sweep",
+      "name": "Lance Sweep",
+      "path": "art/skills/lance_sweep",
+      "expected_source": "res://assets/ui/art/skills/lance_sweep.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "lay_trap",
+      "name": "Lay Trap",
+      "path": "art/skills/lay_trap",
+      "expected_source": "res://assets/ui/art/skills/lay_trap.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/lay_trap.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "leap_strike",
+      "name": "Leap Strike",
+      "path": "art/skills/leap_strike",
+      "expected_source": "res://assets/ui/art/skills/leap_strike.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/leap_strike.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "magnet_field",
+      "name": "Magnet Field",
+      "path": "art/skills/magnet_field",
+      "expected_source": "res://assets/ui/art/skills/magnet_field.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/magnet_field.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "magnetize",
+      "name": "Magnetize",
+      "path": "art/skills/magnetize",
+      "expected_source": "res://assets/ui/art/skills/magnetize.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/magnetize.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "master_of_shadows",
+      "name": "Master of Shadows",
+      "path": "art/skills/master_of_shadows",
+      "expected_source": "res://assets/ui/art/skills/master_of_shadows.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/master_of_shadows.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "masterful_archery",
+      "name": "Masterful Archery",
+      "path": "art/skills/masterful_archery",
+      "expected_source": "res://assets/ui/art/skills/masterful_archery.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/masterful_archery.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "momentum",
+      "name": "Momentum",
+      "path": "art/skills/momentum",
+      "expected_source": "res://assets/ui/art/skills/momentum.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "overhead_cut",
+      "name": "Overhead Cut",
+      "path": "art/skills/overhead_cut",
+      "expected_source": "res://assets/ui/art/skills/overhead_cut.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/overhead_cut.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "overload",
+      "name": "Overload",
+      "path": "art/skills/overload",
+      "expected_source": "res://assets/ui/art/skills/overload.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/overload.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "pack_leader",
+      "name": "Pack Leader",
+      "path": "art/skills/pack_leader",
+      "expected_source": "res://assets/ui/art/skills/pack_leader.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/pack_leader.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "pilot_turret",
+      "name": "Pilot Turret",
+      "path": "art/skills/pilot_turret",
+      "expected_source": "res://assets/ui/art/skills/pilot_turret.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/pilot_turret.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "place_turret",
+      "name": "Place Turret",
+      "path": "art/skills/place_turret",
+      "expected_source": "res://assets/ui/art/skills/place_turret.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/place_turret.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "quick_flash",
+      "name": "Quick Flash",
+      "path": "art/skills/quick_flash",
+      "expected_source": "res://assets/ui/art/skills/quick_flash.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "quick_hands",
+      "name": "Quick Hands",
+      "path": "art/skills/quick_hands",
+      "expected_source": "res://assets/ui/art/skills/quick_hands.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/quick_hands.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "rage",
+      "name": "Rage",
+      "path": "art/skills/rage",
+      "expected_source": "res://assets/ui/art/skills/rage.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/rage.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "reckless_swing",
+      "name": "Reckless Swing",
+      "path": "art/skills/reckless_swing",
+      "expected_source": "res://assets/ui/art/skills/reckless_swing.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/reckless_swing.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "repel",
+      "name": "Repel",
+      "path": "art/skills/repel",
+      "expected_source": "res://assets/ui/art/skills/repel.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/repel.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "rewind",
+      "name": "Rewind",
+      "path": "art/skills/rewind",
+      "expected_source": "res://assets/ui/art/skills/rewind.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/rewind.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "rise_up",
+      "name": "Rise Up",
+      "path": "art/skills/rise_up",
+      "expected_source": "res://assets/ui/art/skills/rise_up.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "rising_slash",
+      "name": "Rising Slash",
+      "path": "art/skills/rising_slash",
+      "expected_source": "res://assets/ui/art/skills/rising_slash.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "roar",
+      "name": "Roar",
+      "path": "art/skills/roar",
+      "expected_source": "res://assets/ui/art/skills/roar.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/roar.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "root_snare",
+      "name": "Root Snare",
+      "path": "art/skills/root_snare",
+      "expected_source": "res://assets/ui/art/skills/root_snare.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "royal_scales",
+      "name": "Royal Scales",
+      "path": "art/skills/royal_scales",
+      "expected_source": "res://assets/ui/art/skills/royal_scales.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "sacrificial_grip",
+      "name": "Sacrificial Grip",
+      "path": "art/skills/sacrificial_grip",
+      "expected_source": "res://assets/ui/art/skills/sacrificial_grip.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "seed_bomb",
+      "name": "Seed Bomb",
+      "path": "art/skills/seed_bomb",
+      "expected_source": "res://assets/ui/art/skills/seed_bomb.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "senryukai",
+      "name": "Senryukai",
+      "path": "art/skills/senryukai",
+      "expected_source": "res://assets/ui/art/skills/senryukai.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/senryukai.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "shuffle",
+      "name": "Shuffle",
+      "path": "art/skills/shuffle",
+      "expected_source": "res://assets/ui/art/skills/shuffle.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/shuffle.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "shuriken_hook",
+      "name": "Shuriken Hook",
+      "path": "art/skills/shuriken_hook",
+      "expected_source": "res://assets/ui/art/skills/shuriken_hook.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/shuriken_hook.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "slow_field",
+      "name": "Slow Field",
+      "path": "art/skills/slow_field",
+      "expected_source": "res://assets/ui/art/skills/slow_field.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/slow_field.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "smash",
+      "name": "Smash",
+      "path": "art/skills/smash",
+      "expected_source": "res://assets/ui/art/skills/smash.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/smash.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "snarl",
+      "name": "Snarl",
+      "path": "art/skills/snarl",
+      "expected_source": "res://assets/ui/art/skills/snarl.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/snarl.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "soul_tap",
+      "name": "Soul Tap",
+      "path": "art/skills/soul_tap",
+      "expected_source": "res://assets/ui/art/skills/soul_tap.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/soul_tap.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "spirit_of_fire",
+      "name": "Spirit of Fire",
+      "path": "art/skills/spirit_of_fire",
+      "expected_source": "res://assets/ui/art/skills/spirit_of_fire.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/spirit_of_fire.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "spirit_step",
+      "name": "Spirit Step",
+      "path": "art/skills/spirit_step",
+      "expected_source": "res://assets/ui/art/skills/spirit_step.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "steel_stance",
+      "name": "Steel Stance",
+      "path": "art/skills/steel_stance",
+      "expected_source": "res://assets/ui/art/skills/steel_stance.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/steel_stance.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "stench",
+      "name": "Stench",
+      "path": "art/skills/stench",
+      "expected_source": "res://assets/ui/art/skills/stench.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/stench.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "stomp",
+      "name": "Stomp",
+      "path": "art/skills/stomp",
+      "expected_source": "res://assets/ui/art/skills/stomp.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/stomp.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "stop_time",
+      "name": "Stop Time",
+      "path": "art/skills/stop_time",
+      "expected_source": "res://assets/ui/art/skills/stop_time.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/stop_time.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "summon_boulders",
+      "name": "Summon Boulders",
+      "path": "art/skills/summon_boulders",
+      "expected_source": "res://assets/ui/art/skills/summon_boulders.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/summon_boulders.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "swap",
+      "name": "Swap",
+      "path": "art/skills/swap",
+      "expected_source": "res://assets/ui/art/skills/swap.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/swap.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "sweep",
+      "name": "Sweep",
+      "path": "art/skills/sweep",
+      "expected_source": "res://assets/ui/art/skills/sweep.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/sweep.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "sweet_poison",
+      "name": "Sweet Poison",
+      "path": "art/skills/sweet_poison",
+      "expected_source": "res://assets/ui/art/skills/sweet_poison.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/sweet_poison.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "swift_dagger",
+      "name": "Swift Dagger",
+      "path": "art/skills/swift_dagger",
+      "expected_source": "res://assets/ui/art/skills/swift_dagger.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/swift_dagger.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "tailwind",
+      "name": "Tailwind",
+      "path": "art/skills/tailwind",
+      "expected_source": "res://assets/ui/art/skills/tailwind.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/tailwind.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "tainted_touch",
+      "name": "Tainted Touch",
+      "path": "art/skills/tainted_touch",
+      "expected_source": "res://assets/ui/art/skills/tainted_touch.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/tainted_touch.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "tame",
+      "name": "Tame",
+      "path": "art/skills/tame",
+      "expected_source": "res://assets/ui/art/skills/tame.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/tame.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "the_blur",
+      "name": "The Blur",
+      "path": "art/skills/the_blur",
+      "expected_source": "res://assets/ui/art/skills/the_blur.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/the_blur.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "thorn_barbs",
+      "name": "Thorn Barbs",
+      "path": "art/skills/thorn_barbs",
+      "expected_source": "res://assets/ui/art/skills/thorn_barbs.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "time_bolt",
+      "name": "Time Bolt",
+      "path": "art/skills/time_bolt",
+      "expected_source": "res://assets/ui/art/skills/time_bolt.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/time_bolt.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "touch_of_ember",
+      "name": "Touch of Ember",
+      "path": "art/skills/touch_of_ember",
+      "expected_source": "res://assets/ui/art/skills/touch_of_ember.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/touch_of_ember.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "tree_walk",
+      "name": "Tree Walk",
+      "path": "art/skills/tree_walk",
+      "expected_source": "res://assets/ui/art/skills/tree_walk.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "underworld_presence",
+      "name": "Underworld Presence",
+      "path": "art/skills/underworld_presence",
+      "expected_source": "res://assets/ui/art/skills/underworld_presence.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "unfallen",
+      "name": "Unfallen",
+      "path": "art/skills/unfallen",
+      "expected_source": "res://assets/ui/art/skills/unfallen.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "unholy_might",
+      "name": "Unholy Might",
+      "path": "art/skills/unholy_might",
+      "expected_source": "res://assets/ui/art/skills/unholy_might.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/unholy_might.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "unstoppable",
+      "name": "Unstoppable",
+      "path": "art/skills/unstoppable",
+      "expected_source": "res://assets/ui/art/skills/unstoppable.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/unstoppable.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "void_rush",
+      "name": "Void Rush",
+      "path": "art/skills/void_rush",
+      "expected_source": "res://assets/ui/art/skills/void_rush.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/void_rush.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "war_banner",
+      "name": "War Banner",
+      "path": "art/skills/war_banner",
+      "expected_source": "res://assets/ui/art/skills/war_banner.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": null,
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ]
+    },
+    {
+      "group": "skills",
+      "id": "wind_wall",
+      "name": "Wind Wall",
+      "path": "art/skills/wind_wall",
+      "expected_source": "res://assets/ui/art/skills/wind_wall.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/wind_wall.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "weapon_grab",
+      "name": "Weapon Grab",
+      "path": "art/skills/weapon_grab",
+      "expected_source": "res://assets/ui/art/skills/weapon_grab.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/weapon_grab.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "pace_aura",
+      "name": "Pace Aura",
+      "path": "art/skills/pace_aura",
+      "expected_source": "res://assets/ui/art/skills/pace_aura.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/pace_aura.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "pack_aura",
+      "name": "Pack Aura",
+      "path": "art/skills/pack_aura",
+      "expected_source": "res://assets/ui/art/skills/pack_aura.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/pack_aura.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "magic_armor_aura",
+      "name": "Magic Armor Aura",
+      "path": "art/skills/magic_armor_aura",
+      "expected_source": "res://assets/ui/art/skills/magic_armor_aura.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/magic_armor_aura.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "break_strike",
+      "name": "Break Strike",
+      "path": "art/skills/break_strike",
+      "expected_source": "res://assets/ui/art/skills/break_strike.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/break_strike.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "thick_hide_aura",
+      "name": "Thick Hide Aura",
+      "path": "art/skills/thick_hide_aura",
+      "expected_source": "res://assets/ui/art/skills/thick_hide_aura.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/thick_hide_aura.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "neutral_crit",
+      "name": "Neutral Crit",
+      "path": "art/skills/neutral_crit",
+      "expected_source": "res://assets/ui/art/skills/neutral_crit.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/neutral_crit.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "neutral_splash",
+      "name": "Neutral Splash",
+      "path": "art/skills/neutral_splash",
+      "expected_source": "res://assets/ui/art/skills/neutral_splash.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/neutral_splash.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "ancient",
+      "name": "Ancient",
+      "path": "art/skills/ancient",
+      "expected_source": "res://assets/ui/art/skills/ancient.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/ancient.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "flying",
+      "name": "Flying",
+      "path": "art/skills/flying",
+      "expected_source": "res://assets/ui/art/skills/flying.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/flying.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "true_sight",
+      "name": "True Sight",
+      "path": "art/skills/true_sight",
+      "expected_source": "res://assets/ui/art/skills/true_sight.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/true_sight.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "sight",
+      "name": "Sight",
+      "path": "art/skills/sight",
+      "expected_source": "res://assets/ui/art/skills/sight.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/sight.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "backdoor_protection",
+      "name": "Backdoor Protection",
+      "path": "art/skills/backdoor_protection",
+      "expected_source": "res://assets/ui/art/skills/backdoor_protection.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/backdoor_protection.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "skills",
+      "id": "fortify",
+      "name": "Fortify",
+      "path": "art/skills/fortify",
+      "expected_source": "res://assets/ui/art/skills/fortify.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/skills/fortify.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "armor_breaker",
+      "name": "Armor Breaker",
+      "path": "art/items/armor_breaker",
+      "expected_source": "res://assets/ui/art/items/armor_breaker.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/armor_breaker.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "battle_armor",
+      "name": "Battle Armor",
+      "path": "art/items/battle_armor",
+      "expected_source": "res://assets/ui/art/items/battle_armor.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/battle_armor.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "battle_staff",
+      "name": "Battle Staff",
+      "path": "art/items/battle_staff",
+      "expected_source": "res://assets/ui/art/items/battle_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/battle_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "belt_str",
+      "name": "Heavy Belt",
+      "path": "art/items/belt_str",
+      "expected_source": "res://assets/ui/art/items/belt_str.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/belt_str.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "big_gem",
+      "name": "Big Gem",
+      "path": "art/items/big_gem",
+      "expected_source": "res://assets/ui/art/items/big_gem.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/big_gem.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "big_healing_ring",
+      "name": "Big Healing Ring",
+      "path": "art/items/big_healing_ring",
+      "expected_source": "res://assets/ui/art/items/big_healing_ring.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/big_healing_ring.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "blade_alacrity",
+      "name": "Quick Blade",
+      "path": "art/items/blade_alacrity",
+      "expected_source": "res://assets/ui/art/items/blade_alacrity.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/blade_alacrity.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "blades_attack",
+      "name": "Fist Blades",
+      "path": "art/items/blades_attack",
+      "expected_source": "res://assets/ui/art/items/blades_attack.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/blades_attack.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "block_shield",
+      "name": "Block Shield",
+      "path": "art/items/block_shield",
+      "expected_source": "res://assets/ui/art/items/block_shield.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/block_shield.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "boots",
+      "name": "Running Shoes",
+      "path": "art/items/boots",
+      "expected_source": "res://assets/ui/art/items/boots.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/boots.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "boots_elves",
+      "name": "Elf Band",
+      "path": "art/items/boots_elves",
+      "expected_source": "res://assets/ui/art/items/boots_elves.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/boots_elves.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "bottle",
+      "name": "Flask",
+      "path": "art/items/bottle",
+      "expected_source": "res://assets/ui/art/items/bottle.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/bottle.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "branch",
+      "name": "Tree Twig",
+      "path": "art/items/branch",
+      "expected_source": "res://assets/ui/art/items/branch.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/branch.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "brass_knuckles",
+      "name": "Brass Knuckles",
+      "path": "art/items/brass_knuckles",
+      "expected_source": "res://assets/ui/art/items/brass_knuckles.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/brass_knuckles.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "break_blade",
+      "name": "Break Blade",
+      "path": "art/items/break_blade",
+      "expected_source": "res://assets/ui/art/items/break_blade.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/break_blade.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "broadsword",
+      "name": "Long Sword",
+      "path": "art/items/broadsword",
+      "expected_source": "res://assets/ui/art/items/broadsword.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/broadsword.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "burning_cape",
+      "name": "Burning Cape",
+      "path": "art/items/burning_cape",
+      "expected_source": "res://assets/ui/art/items/burning_cape.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/burning_cape.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "chainmail",
+      "name": "Chain Shirt",
+      "path": "art/items/chainmail",
+      "expected_source": "res://assets/ui/art/items/chainmail.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/chainmail.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "circlet",
+      "name": "Headband",
+      "path": "art/items/circlet",
+      "expected_source": "res://assets/ui/art/items/circlet.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/circlet.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "clarity",
+      "name": "Mana Potion",
+      "path": "art/items/clarity",
+      "expected_source": "res://assets/ui/art/items/clarity.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/clarity.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "cleave_axe",
+      "name": "Cleave Axe",
+      "path": "art/items/cleave_axe",
+      "expected_source": "res://assets/ui/art/items/cleave_axe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/cleave_axe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "cloak",
+      "name": "Spell Cloak",
+      "path": "art/items/cloak",
+      "expected_source": "res://assets/ui/art/items/cloak.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/cloak.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "crash_knife",
+      "name": "Crash Knife",
+      "path": "art/items/crash_knife",
+      "expected_source": "res://assets/ui/art/items/crash_knife.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/crash_knife.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "crit_bow",
+      "name": "Crit Bow",
+      "path": "art/items/crit_bow",
+      "expected_source": "res://assets/ui/art/items/crit_bow.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/crit_bow.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "crit_sword",
+      "name": "Crit Sword",
+      "path": "art/items/crit_sword",
+      "expected_source": "res://assets/ui/art/items/crit_sword.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/crit_sword.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dagon",
+      "name": "Blast Rod",
+      "path": "art/items/dagon",
+      "expected_source": "res://assets/ui/art/items/dagon.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dagon.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dagon_2",
+      "name": "Blast Rod 2",
+      "path": "art/items/dagon_2",
+      "expected_source": "res://assets/ui/art/items/dagon_2.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dagon_2.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dagon_3",
+      "name": "Blast Rod 3",
+      "path": "art/items/dagon_3",
+      "expected_source": "res://assets/ui/art/items/dagon_3.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dagon_3.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dagon_4",
+      "name": "Blast Rod 4",
+      "path": "art/items/dagon_4",
+      "expected_source": "res://assets/ui/art/items/dagon_4.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dagon_4.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dagon_5",
+      "name": "Blast Rod 5",
+      "path": "art/items/dagon_5",
+      "expected_source": "res://assets/ui/art/items/dagon_5.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dagon_5.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dodge_charm",
+      "name": "Dodge Charm",
+      "path": "art/items/dodge_charm",
+      "expected_source": "res://assets/ui/art/items/dodge_charm.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dodge_charm.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "dragon_lance",
+      "name": "Long Spear",
+      "path": "art/items/dragon_lance",
+      "expected_source": "res://assets/ui/art/items/dragon_lance.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/dragon_lance.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "faerie_fire",
+      "name": "Firefly Jar",
+      "path": "art/items/faerie_fire",
+      "expected_source": "res://assets/ui/art/items/faerie_fire.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/faerie_fire.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "feather",
+      "name": "Feather",
+      "path": "art/items/feather",
+      "expected_source": "res://assets/ui/art/items/feather.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/feather.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "frost_plate",
+      "name": "Frost Plate",
+      "path": "art/items/frost_plate",
+      "expected_source": "res://assets/ui/art/items/frost_plate.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/frost_plate.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "fur_hat",
+      "name": "Fur Hat",
+      "path": "art/items/fur_hat",
+      "expected_source": "res://assets/ui/art/items/fur_hat.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/fur_hat.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "gauntlets",
+      "name": "Heavy Gloves",
+      "path": "art/items/gauntlets",
+      "expected_source": "res://assets/ui/art/items/gauntlets.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/gauntlets.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "giant_axe",
+      "name": "Giant Axe",
+      "path": "art/items/giant_axe",
+      "expected_source": "res://assets/ui/art/items/giant_axe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/giant_axe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "giant_heart",
+      "name": "Giant Heart",
+      "path": "art/items/giant_heart",
+      "expected_source": "res://assets/ui/art/items/giant_heart.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/giant_heart.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "glimmer_cape",
+      "name": "Fade Cape",
+      "path": "art/items/glimmer_cape",
+      "expected_source": "res://assets/ui/art/items/glimmer_cape.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/glimmer_cape.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "gloves",
+      "name": "Fast Gloves",
+      "path": "art/items/gloves",
+      "expected_source": "res://assets/ui/art/items/gloves.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/gloves.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "gold_band",
+      "name": "Gold Band",
+      "path": "art/items/gold_band",
+      "expected_source": "res://assets/ui/art/items/gold_band.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/gold_band.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "gold_glove",
+      "name": "Gold Glove",
+      "path": "art/items/gold_glove",
+      "expected_source": "res://assets/ui/art/items/gold_glove.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/gold_glove.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "greatsword",
+      "name": "Greatsword",
+      "path": "art/items/greatsword",
+      "expected_source": "res://assets/ui/art/items/greatsword.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/greatsword.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "guard_boots",
+      "name": "Guard Boots",
+      "path": "art/items/guard_boots",
+      "expected_source": "res://assets/ui/art/items/guard_boots.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/guard_boots.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "halberd",
+      "name": "Halberd",
+      "path": "art/items/halberd",
+      "expected_source": "res://assets/ui/art/items/halberd.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/halberd.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "health_crystal",
+      "name": "Health Crystal",
+      "path": "art/items/health_crystal",
+      "expected_source": "res://assets/ui/art/items/health_crystal.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/health_crystal.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "heavy_sword",
+      "name": "Kugmo",
+      "path": "art/items/heavy_sword",
+      "expected_source": "res://assets/ui/art/items/heavy_sword.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/heavy_sword.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "hex_staff",
+      "name": "Hex Staff",
+      "path": "art/items/hex_staff",
+      "expected_source": "res://assets/ui/art/items/hex_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/hex_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "huge_sword",
+      "name": "Huge Sword",
+      "path": "art/items/huge_sword",
+      "expected_source": "res://assets/ui/art/items/huge_sword.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/huge_sword.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "igit_atuli",
+      "name": "Igit and Atuli",
+      "path": "art/items/igit_atuli",
+      "expected_source": "res://assets/ui/art/items/igit_atuli.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/igit_atuli.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "iron_helm",
+      "name": "Iron Helm",
+      "path": "art/items/iron_helm",
+      "expected_source": "res://assets/ui/art/items/iron_helm.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/iron_helm.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "jump_knife",
+      "name": "Jump Knife",
+      "path": "art/items/jump_knife",
+      "expected_source": "res://assets/ui/art/items/jump_knife.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/jump_knife.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "kugmo_atuli",
+      "name": "Kugmo and Atuli",
+      "path": "art/items/kugmo_atuli",
+      "expected_source": "res://assets/ui/art/items/kugmo_atuli.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/kugmo_atuli.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "leaf_hat",
+      "name": "Leaf Hat",
+      "path": "art/items/leaf_hat",
+      "expected_source": "res://assets/ui/art/items/leaf_hat.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/leaf_hat.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "leech_blade",
+      "name": "Leech Blade",
+      "path": "art/items/leech_blade",
+      "expected_source": "res://assets/ui/art/items/leech_blade.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/leech_blade.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "leech_totem",
+      "name": "Leech Totem",
+      "path": "art/items/leech_totem",
+      "expected_source": "res://assets/ui/art/items/leech_totem.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/leech_totem.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "lifesteal",
+      "name": "Leech Mask",
+      "path": "art/items/lifesteal",
+      "expected_source": "res://assets/ui/art/items/lifesteal.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/lifesteal.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "long_lens",
+      "name": "Long Lens",
+      "path": "art/items/long_lens",
+      "expected_source": "res://assets/ui/art/items/long_lens.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/long_lens.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "long_staff",
+      "name": "Long Staff",
+      "path": "art/items/long_staff",
+      "expected_source": "res://assets/ui/art/items/long_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/long_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "magic_stick",
+      "name": "Zap Stick",
+      "path": "art/items/magic_stick",
+      "expected_source": "res://assets/ui/art/items/magic_stick.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/magic_stick.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "magic_wand",
+      "name": "Zap Wand",
+      "path": "art/items/magic_wand",
+      "expected_source": "res://assets/ui/art/items/magic_wand.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/magic_wand.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mana_boots",
+      "name": "Mana Boots",
+      "path": "art/items/mana_boots",
+      "expected_source": "res://assets/ui/art/items/mana_boots.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mana_boots.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mana_gem",
+      "name": "Mana Gem",
+      "path": "art/items/mana_gem",
+      "expected_source": "res://assets/ui/art/items/mana_gem.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mana_gem.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mana_ring",
+      "name": "Mana Ring",
+      "path": "art/items/mana_ring",
+      "expected_source": "res://assets/ui/art/items/mana_ring.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mana_ring.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mana_stone",
+      "name": "Mana Stone",
+      "path": "art/items/mana_stone",
+      "expected_source": "res://assets/ui/art/items/mana_stone.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mana_stone.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mana_tiara",
+      "name": "Mana Tiara",
+      "path": "art/items/mana_tiara",
+      "expected_source": "res://assets/ui/art/items/mana_tiara.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mana_tiara.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mango",
+      "name": "Ripe Mango",
+      "path": "art/items/mango",
+      "expected_source": "res://assets/ui/art/items/mango.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mango.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mantle",
+      "name": "Thinking Cap",
+      "path": "art/items/mantle",
+      "expected_source": "res://assets/ui/art/items/mantle.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mantle.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "mask_of_madness",
+      "name": "Frenzy Mask",
+      "path": "art/items/mask_of_madness",
+      "expected_source": "res://assets/ui/art/items/mask_of_madness.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/mask_of_madness.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "medic_kit",
+      "name": "Medic Kit",
+      "path": "art/items/medic_kit",
+      "expected_source": "res://assets/ui/art/items/medic_kit.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/medic_kit.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "moth_blade",
+      "name": "Moth Blade",
+      "path": "art/items/moth_blade",
+      "expected_source": "res://assets/ui/art/items/moth_blade.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/moth_blade.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "net_staff",
+      "name": "Net Staff",
+      "path": "art/items/net_staff",
+      "expected_source": "res://assets/ui/art/items/net_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/net_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "observer_ward",
+      "name": "Eye Ward",
+      "path": "art/items/observer_ward",
+      "expected_source": "res://assets/ui/art/items/observer_ward.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/observer_ward.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "plate_armor",
+      "name": "Plate Armor",
+      "path": "art/items/plate_armor",
+      "expected_source": "res://assets/ui/art/items/plate_armor.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/plate_armor.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "plate_vest",
+      "name": "Plate Vest",
+      "path": "art/items/plate_vest",
+      "expected_source": "res://assets/ui/art/items/plate_vest.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/plate_vest.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "pointy_hat",
+      "name": "Pointy Hat",
+      "path": "art/items/pointy_hat",
+      "expected_source": "res://assets/ui/art/items/pointy_hat.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/pointy_hat.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "power_treads",
+      "name": "Switch Boots",
+      "path": "art/items/power_treads",
+      "expected_source": "res://assets/ui/art/items/power_treads.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/power_treads.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "push_staff",
+      "name": "Push Staff",
+      "path": "art/items/push_staff",
+      "expected_source": "res://assets/ui/art/items/push_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/push_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "quelling_blade",
+      "name": "Mini-Axe",
+      "path": "art/items/quelling_blade",
+      "expected_source": "res://assets/ui/art/items/quelling_blade.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/quelling_blade.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_battle_armor",
+      "name": "Recipe: Battle Armor",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_break_blade",
+      "name": "Recipe: Break Blade",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_cleave_axe",
+      "name": "Recipe: Cleave Axe",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_crash_knife",
+      "name": "Recipe: Crash Knife",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_crit_bow",
+      "name": "Recipe: Crit Bow",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_crit_sword",
+      "name": "Recipe: Crit Sword",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_dagon",
+      "name": "Recipe: Blast Rod",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_dagon_2",
+      "name": "Recipe: Blast Rod 2",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_dagon_3",
+      "name": "Recipe: Blast Rod 3",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_dagon_4",
+      "name": "Recipe: Blast Rod 4",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_dagon_5",
+      "name": "Recipe: Blast Rod 5",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_dragon_lance",
+      "name": "Recipe: Long Spear",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_frost_plate",
+      "name": "Recipe: Frost Plate",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_giant_heart",
+      "name": "Recipe: Giant Heart",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_glimmer_cape",
+      "name": "Recipe: Fade Cape",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_gold_glove",
+      "name": "Recipe: Gold Glove",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_guard_boots",
+      "name": "Recipe: Guard Boots",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_halberd",
+      "name": "Recipe: Halberd",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_heavy_sword",
+      "name": "Recipe: Kugmo",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_hex_staff",
+      "name": "Recipe: Hex Staff",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_leaf_hat",
+      "name": "Recipe: Leaf Hat",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_long_lens",
+      "name": "Recipe: Long Lens",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_magic_wand",
+      "name": "Recipe: Zap Wand",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_mana_boots",
+      "name": "Recipe: Mana Boots",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_mana_ring",
+      "name": "Recipe: Mana Ring",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_medic_kit",
+      "name": "Recipe: Medic Kit",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_net_staff",
+      "name": "Recipe: Net Staff",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_push_staff",
+      "name": "Recipe: Push Staff",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_refresh_stone",
+      "name": "Recipe: Refresh Stone",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_root_staff",
+      "name": "Recipe: Root Staff",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_silence_staff",
+      "name": "Recipe: Silence Staff",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_small_shield",
+      "name": "Recipe: Small Shield",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_smart_band",
+      "name": "Recipe: Smart Band",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_spell_shield",
+      "name": "Recipe: Spell Shield",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_spell_sword",
+      "name": "Recipe: Atuli",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_spike_armor",
+      "name": "Recipe: Spike Armor",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_storm_hammer",
+      "name": "Recipe: Storm Hammer",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_stun_blade",
+      "name": "Recipe: Stun Blade",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_stun_club",
+      "name": "Recipe: Stun Club",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_sure_hit_staff",
+      "name": "Recipe: Sure Hit Staff",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_team_shield",
+      "name": "Recipe: Team Shield",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_time_crystal",
+      "name": "Recipe: Time Crystal",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_tough_band",
+      "name": "Recipe: Tough Band",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_travel_boots",
+      "name": "Recipe: Travel Boots",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_war_drum",
+      "name": "Recipe: War Drum",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_wraith_band",
+      "name": "Recipe: Swift Band",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "recipe_yasha",
+      "name": "Recipe: Igit",
+      "path": "items/quest_letter",
+      "expected_source": "res://assets/ui/art/items/recipe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/recipe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "refresh_stone",
+      "name": "Refresh Stone",
+      "path": "art/items/refresh_stone",
+      "expected_source": "res://assets/ui/art/items/refresh_stone.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/refresh_stone.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "relic",
+      "name": "Relic",
+      "path": "art/items/relic",
+      "expected_source": "res://assets/ui/art/items/relic.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/relic.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "reveal_dust",
+      "name": "Reveal Dust",
+      "path": "art/items/reveal_dust",
+      "expected_source": "res://assets/ui/art/items/reveal_dust.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/reveal_dust.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "reveal_ward",
+      "name": "Reveal Ward",
+      "path": "art/items/reveal_ward",
+      "expected_source": "res://assets/ui/art/items/reveal_ward.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/reveal_ward.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "ring_protection",
+      "name": "Armor Ring",
+      "path": "art/items/ring_protection",
+      "expected_source": "res://assets/ui/art/items/ring_protection.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/ring_protection.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "ring_regen",
+      "name": "Healing Ring",
+      "path": "art/items/ring_regen",
+      "expected_source": "res://assets/ui/art/items/ring_regen.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/ring_regen.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "robe",
+      "name": "Wizard Robe",
+      "path": "art/items/robe",
+      "expected_source": "res://assets/ui/art/items/robe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/robe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "root_staff",
+      "name": "Root Staff",
+      "path": "art/items/root_staff",
+      "expected_source": "res://assets/ui/art/items/root_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/root_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "rust_stone",
+      "name": "Rust Stone",
+      "path": "art/items/rust_stone",
+      "expected_source": "res://assets/ui/art/items/rust_stone.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/rust_stone.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "salve",
+      "name": "Healing Paste",
+      "path": "art/items/salve",
+      "expected_source": "res://assets/ui/art/items/salve.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/salve.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "shawl",
+      "name": "Scarf",
+      "path": "art/items/shawl",
+      "expected_source": "res://assets/ui/art/items/shawl.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/shawl.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "shock_hammer",
+      "name": "Shock Hammer",
+      "path": "art/items/shock_hammer",
+      "expected_source": "res://assets/ui/art/items/shock_hammer.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/shock_hammer.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "silence_staff",
+      "name": "Silence Staff",
+      "path": "art/items/silence_staff",
+      "expected_source": "res://assets/ui/art/items/silence_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/silence_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "slip_boots",
+      "name": "Slip Boots",
+      "path": "art/items/slip_boots",
+      "expected_source": "res://assets/ui/art/items/slip_boots.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/slip_boots.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "slippers",
+      "name": "Slippers",
+      "path": "art/items/slippers",
+      "expected_source": "res://assets/ui/art/items/slippers.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/slippers.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "small_shield",
+      "name": "Small Shield",
+      "path": "art/items/small_shield",
+      "expected_source": "res://assets/ui/art/items/small_shield.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/small_shield.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "smart_band",
+      "name": "Smart Band",
+      "path": "art/items/smart_band",
+      "expected_source": "res://assets/ui/art/items/smart_band.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/smart_band.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "sneak_blade",
+      "name": "Sneak Blade",
+      "path": "art/items/sneak_blade",
+      "expected_source": "res://assets/ui/art/items/sneak_blade.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/sneak_blade.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "sneak_charm",
+      "name": "Sneak Charm",
+      "path": "art/items/sneak_charm",
+      "expected_source": "res://assets/ui/art/items/sneak_charm.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/sneak_charm.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "sobi_mask",
+      "name": "Calm Mask",
+      "path": "art/items/sobi_mask",
+      "expected_source": "res://assets/ui/art/items/sobi_mask.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/sobi_mask.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "soul_gem",
+      "name": "Soul Gem",
+      "path": "art/items/soul_gem",
+      "expected_source": "res://assets/ui/art/items/soul_gem.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/soul_gem.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "spear",
+      "name": "Spear",
+      "path": "art/items/spear",
+      "expected_source": "res://assets/ui/art/items/spear.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/spear.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "speed_ribbon",
+      "name": "Speed Ribbon",
+      "path": "art/items/speed_ribbon",
+      "expected_source": "res://assets/ui/art/items/speed_ribbon.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/speed_ribbon.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "spell_shield",
+      "name": "Spell Shield",
+      "path": "art/items/spell_shield",
+      "expected_source": "res://assets/ui/art/items/spell_shield.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/spell_shield.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "spell_sword",
+      "name": "Atuli",
+      "path": "art/items/spell_sword",
+      "expected_source": "res://assets/ui/art/items/spell_sword.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/spell_sword.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "spike_armor",
+      "name": "Spike Armor",
+      "path": "art/items/spike_armor",
+      "expected_source": "res://assets/ui/art/items/spike_armor.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/spike_armor.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "steady_ring",
+      "name": "Steady Ring",
+      "path": "art/items/steady_ring",
+      "expected_source": "res://assets/ui/art/items/steady_ring.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/steady_ring.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "steel_hammer",
+      "name": "Steel Hammer",
+      "path": "art/items/steel_hammer",
+      "expected_source": "res://assets/ui/art/items/steel_hammer.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/steel_hammer.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "storm_hammer",
+      "name": "Storm Hammer",
+      "path": "art/items/storm_hammer",
+      "expected_source": "res://assets/ui/art/items/storm_hammer.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/storm_hammer.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "stun_blade",
+      "name": "Stun Blade",
+      "path": "art/items/stun_blade",
+      "expected_source": "res://assets/ui/art/items/stun_blade.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/stun_blade.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "stun_club",
+      "name": "Stun Club",
+      "path": "art/items/stun_club",
+      "expected_source": "res://assets/ui/art/items/stun_club.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/stun_club.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "sure_hit_staff",
+      "name": "Sure Hit Staff",
+      "path": "art/items/sure_hit_staff",
+      "expected_source": "res://assets/ui/art/items/sure_hit_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/sure_hit_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "swift_stone",
+      "name": "Swift Stone",
+      "path": "art/items/swift_stone",
+      "expected_source": "res://assets/ui/art/items/swift_stone.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/swift_stone.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "tango",
+      "name": "Vegan Picker",
+      "path": "art/items/tango",
+      "expected_source": "res://assets/ui/art/items/tango.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/tango.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "team_shield",
+      "name": "Team Shield",
+      "path": "art/items/team_shield",
+      "expected_source": "res://assets/ui/art/items/team_shield.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/team_shield.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "time_crystal",
+      "name": "Time Crystal",
+      "path": "art/items/time_crystal",
+      "expected_source": "res://assets/ui/art/items/time_crystal.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/time_crystal.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "tough_band",
+      "name": "Tough Band",
+      "path": "art/items/tough_band",
+      "expected_source": "res://assets/ui/art/items/tough_band.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/tough_band.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "tp_scroll",
+      "name": "Teleport Scroll",
+      "path": "art/items/tp_scroll",
+      "expected_source": "res://assets/ui/art/items/tp_scroll.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/tp_scroll.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "travel_boots",
+      "name": "Travel Boots",
+      "path": "art/items/travel_boots",
+      "expected_source": "res://assets/ui/art/items/travel_boots.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/travel_boots.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "troll_ring",
+      "name": "Troll Ring",
+      "path": "art/items/troll_ring",
+      "expected_source": "res://assets/ui/art/items/troll_ring.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/troll_ring.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "twin_swords",
+      "name": "Kugmo and Igit",
+      "path": "art/items/twin_swords",
+      "expected_source": "res://assets/ui/art/items/twin_swords.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/twin_swords.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "upgrade_gem",
+      "name": "Upgrade Gem",
+      "path": "art/items/upgrade_gem",
+      "expected_source": "res://assets/ui/art/items/upgrade_gem.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/upgrade_gem.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "upgrade_staff",
+      "name": "Upgrade Staff",
+      "path": "art/items/upgrade_staff",
+      "expected_source": "res://assets/ui/art/items/upgrade_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/upgrade_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "war_axe",
+      "name": "War Axe",
+      "path": "art/items/war_axe",
+      "expected_source": "res://assets/ui/art/items/war_axe.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/war_axe.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "war_drum",
+      "name": "War Drum",
+      "path": "art/items/war_drum",
+      "expected_source": "res://assets/ui/art/items/war_drum.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/war_drum.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "wide_stone",
+      "name": "Wide Stone",
+      "path": "art/items/wide_stone",
+      "expected_source": "res://assets/ui/art/items/wide_stone.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/wide_stone.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "wizard_staff",
+      "name": "Wizard Staff",
+      "path": "art/items/wizard_staff",
+      "expected_source": "res://assets/ui/art/items/wizard_staff.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/wizard_staff.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "wraith_band",
+      "name": "Swift Band",
+      "path": "art/items/wraith_band",
+      "expected_source": "res://assets/ui/art/items/wraith_band.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/wraith_band.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "yasha",
+      "name": "Igit",
+      "path": "art/items/yasha",
+      "expected_source": "res://assets/ui/art/items/yasha.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/yasha.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "power_treads_str",
+      "name": "Switch Boots: str",
+      "path": "art/items/power_treads_str",
+      "expected_source": "res://assets/ui/art/items/power_treads_str.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/power_treads_str.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "power_treads_agi",
+      "name": "Switch Boots: agi",
+      "path": "art/items/power_treads_agi",
+      "expected_source": "res://assets/ui/art/items/power_treads_agi.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/power_treads_agi.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "power_treads_int",
+      "name": "Switch Boots: int",
+      "path": "art/items/power_treads_int",
+      "expected_source": "res://assets/ui/art/items/power_treads_int.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/power_treads_int.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "items",
+      "id": "bottle_empty",
+      "name": "Empty Flask",
+      "path": "art/items/bottle_empty",
+      "expected_source": "res://assets/ui/art/items/bottle_empty.png",
+      "source_exists": true,
+      "source_dimensions": [
+        256,
+        256
+      ],
+      "resolved_path": "res://assets/ui/art/items/bottle_empty.png",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": []
+    },
+    {
+      "group": "states",
+      "id": "sword_pink",
+      "name": "Pink Sword",
+      "path": "skills/gen/sword_pink",
+      "expected_source": "res://assets/ui/art/skills/sword_pink.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": "res://assets/ui/skills/gen/sword_pink.svg",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ],
+      "discovered_from": "src/ui/buff_bar.gd:ICONS"
+    },
+    {
+      "group": "states",
+      "id": "sword_gold",
+      "name": "Gold Sword",
+      "path": "skills/gen/sword_gold",
+      "expected_source": "res://assets/ui/art/skills/sword_gold.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": "res://assets/ui/skills/gen/sword_gold.svg",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ],
+      "discovered_from": "src/ui/buff_bar.gd:ICONS"
+    },
+    {
+      "group": "states",
+      "id": "sword_blue",
+      "name": "Blue Sword",
+      "path": "skills/gen/sword_blue",
+      "expected_source": "res://assets/ui/art/skills/sword_blue.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": "res://assets/ui/skills/gen/sword_blue.svg",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ],
+      "discovered_from": "src/ui/buff_bar.gd:ICONS"
+    },
+    {
+      "group": "states",
+      "id": "sword_red",
+      "name": "Red Sword",
+      "path": "skills/gen/sword_red",
+      "expected_source": "res://assets/ui/art/skills/sword_red.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": "res://assets/ui/skills/gen/sword_red.svg",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ],
+      "discovered_from": "src/ui/buff_bar.gd:ICONS"
+    },
+    {
+      "group": "states",
+      "id": "sword_green",
+      "name": "Green Sword",
+      "path": "skills/gen/sword_green",
+      "expected_source": "res://assets/ui/art/skills/sword_green.png",
+      "source_exists": false,
+      "source_dimensions": null,
+      "resolved_path": "res://assets/ui/skills/gen/sword_green.svg",
+      "route_evidence": "source_inference_only",
+      "runtime_dimensions": null,
+      "findings": [
+        "missing_source_png"
+      ],
+      "discovered_from": "src/ui/buff_bar.gd:ICONS"
+    }
+  ],
+  "findings": [
+    {
+      "group": "skills",
+      "id": "angry_forest",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "cavalry_charge",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "change_sword",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "divine_touch",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "dragon_blade",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "dragon_dash",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "dragon_hide",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "dragon_leap",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "false_judgement",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "fiend_edge",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "holy_beam",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "lance_charge",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "lance_sweep",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "momentum",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "quick_flash",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "rise_up",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "rising_slash",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "root_snare",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "royal_scales",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "sacrificial_grip",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "seed_bomb",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "spirit_step",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "thorn_barbs",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "tree_walk",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "underworld_presence",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "unfallen",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "skills",
+      "id": "war_banner",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "states",
+      "id": "sword_pink",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "states",
+      "id": "sword_gold",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "states",
+      "id": "sword_blue",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "states",
+      "id": "sword_red",
+      "code": "missing_source_png"
+    },
+    {
+      "group": "states",
+      "id": "sword_green",
+      "code": "missing_source_png"
+    }
+  ],
+  "removed_entries": [],
+  "notes": [
+    "Recipes share art/items/recipe.png. Switch Boots attributes and Empty Flask are individual states.",
+    "Missing PNG means missing source art; inferred routes do not prove a Godot import.",
+    "Definition changes require semantic review, including number-only edits. No artwork was modified."
+  ],
+  "data": "A:\\Python\\woa\\work\\lemondev\\2026-10-22-icons\\before\\data.json",
+  "project": "A:\\Python\\woa",
+  "baseline": null
+}

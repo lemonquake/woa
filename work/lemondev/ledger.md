@@ -628,3 +628,39 @@ benchmark capture (gate UNVERIFIED). No blind critic run (none asked for).
 | X Integration | 1 | suite 340/2 (2 flaky ladder tests), check.sh Names OK, export, export/exe_match.png | PASS with flaky tests | flaky career tests | seed them |
 | X Integration | 2 | ladder tests seeded; suite 342/0 (logs/tests3.log) | PASS (gate) | none | none |
 | M Fast matchmaking | 1 | mm_probe on the owner's ladder (3% fail, 1 max per queue, 8.8 s avg), test_matchmaker_failed_accept, ranked_probe | tests pass | none | owner play |
+
+## Session 2026-10-21 b — Gancho, Lord Kaileh, Dracoxinia; own animations for every melee hero
+
+Run: `work/lemondev/2026-10-21b-three-heroes/` (contract.md; hero sheet `docs/NEW_HEROES_22.md`). Interrupted once and
+continued 2026-10-22. No commercial benchmark capture (gate UNVERIFIED); no blind critic.
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| B1 Bodies, weapons | 1 | bodies/*_sheet.png, weapons/weapons_sheet.png, collide_fix2 | builder gates | none (Dracoxinia has no tail, by design) | owner's eye |
+| K1 Kits | 1-2 | test_gancho_*, test_kaileh_*, test_dracoxinia_* | tests pass | owner swapped W/E (Dragon Leap, Dragon Hide) | owner play |
+| A1 Own animations | 1-2 | test_mocap_clips (8 late attacks trimmed), joins 5/115 over (13.3 deg) | PASS with joins over | 5 joins over the limit | owner's eye |
+| V1 Effects, bots, chat | 1 | shots/, duel logs | self-check | no critic | owner play |
+| I Integration | 1 | suite 352/0, check.sh Names OK, export, pck cold start | PASS (gate) | exe menus not clicked | owner play |
+
+
+## Session 2026-10-22 — missing skill/state art and Game Icons skill
+
+Run `work/lemondev/2026-10-22-icons/`. User explicitly reversed the old Death Order choice ("No! Change the Death Order"); new bounded pass authorized.34 generated images:27 new skills,5 sword states,Giant Swing,Death Order. All items retained.259 total active painted identities across305 routes.
+
+| Component | Pass | Evidence | Verdict | Largest gap / next |
+|---|---|---|---|---|
+| Live inventory | 1 | audit.md, before/ and after/audit.json | coverage PASS | 33 missing PNGs filled; Giant Swing semantic replacement |
+| Three artwork sheets | 1 | review/review.md, raw A/B galleries | PASS vs project baseline | Blue Sword fine roots less clear at32px; no mandatory failure |
+| State routing | 1 | gallery logs, packed_probe | 2079/0 PASS | HUD inset and BuffBar use new sword images |
+| Game Icons skill | 1 | skill-test/report.md, validator outputs | dry workflow PASS | no blocked/misrouted instruction; production workflow exercised by root |
+| Packaging helper | 1 | helper-test fixture, --check | PASS | later revisions and changed pixels checked |
+| Integration | 1 | tests.log352/0, ui/, export, packed probe, cold logs | IMPLEMENTED — UNVERIFIED globally | old teardown warnings; no new commercial/performance evidence |
+
+## Session 2026-10-22 b — the official border on every new icon
+
+Run `work/lemondev/2026-10-22-icons/border/`. Owner asked to apply the official border, build and push.
+
+| Component | Pass | Evidence | Verdict | Largest gap / next |
+|---|---|---|---|---|
+| Border coverage | 1 | game_setup.png, exe_match.png, packed_probe.log 2079/0 | PASS (self-check) | Game Setup ultimate and the dragged item now framed; buff bar left out by design |
+| Integration | 1 | tests.log 352/0, check.sh Names OK, export exit 0, exe cold start | PASS (gate) | no critic; drag ghost not captured live |

@@ -1,0 +1,57 @@
+02:06:12 | INFO: Data are loaded, start creating Blender stuff
+02:06:12 | INFO: Blender create Mesh node hero
+02:06:14 | INFO: glTF import finished in 1.73s
+[hero_body   2.5s] hero rig with 132 clips
+[hero_body   2.5s] imported 2 objects from A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/src/kaileh_painted.blend
+[hero_body   2.5s] kept 1 mesh pieces (44000 faces), rig: Armature (65 bones)
+[hero_body   2.5s] rig map: {'chest': 'mixamorig:Spine1', 'foot.L': 'mixamorig:LeftFoot', 'foot.R': 'mixamorig:RightFoot', 'forearm.L': 'mixamorig:LeftForeArm', 'forearm.R': 'mixamorig:RightForeArm', 'hand.L': 'mixamorig:LeftHand', 'hand.R': 'mixamorig:RightHand', 'head': 'mixamorig:Head', 'hips': 'mixamorig:Hips', 'neck': 'mixamorig:Neck', 'shin.L': 'mixamorig:LeftLeg', 'shin.R': 'mixamorig:RightLeg', 'shoulder.L': 'mixamorig:LeftShoulder', 'shoulder.R': 'mixamorig:RightShoulder', 'spine': 'mixamorig:Spine', 'thigh.L': 'mixamorig:LeftUpLeg', 'thigh.R': 'mixamorig:RightUpLeg', 'toe.L': 'mixamorig:LeftToeBase', 'toe.R': 'mixamorig:RightToeBase', 'upper_arm.L': 'mixamorig:LeftArm', 'upper_arm.R': 'mixamorig:RightArm'}
+[hero_body   2.6s] hand L: 4 fingers, hand turned 1 deg from the converted bone, palm side (-0.93, 0.27, -0.26)
+[hero_body   2.6s] hand R: 4 fingers, hand turned 1 deg from the converted bone, palm side (0.93, 0.29, -0.21)
+[hero_body   2.8s] hands: 861 palm vertices keep the hand for the curl
+[hero_body   2.8s]   kaileh: 80 edges stretched over 1.6x by the pose (worst 2.7x); bones: [('mixamorig:RightHand', 38), ('mixamorig:LeftHand', 34), ('mixamorig:LeftHandThumb1', 28), ('mixamorig:RightHandThumb2', 27), ('mixamorig:RightHandThumb1', 26), ('mixamorig:LeftHandThumb2', 26), ('mixamorig:RightHandRing1', 12), ('mixamorig:RightHandPinky1', 11)]
+[hero_body   2.8s] hand L: fist closed, grip 0.060 from the wrist
+[hero_body   2.8s] hand R: fist closed, grip 0.061 from the wrist
+[hero_body   3.1s] scaled x2.348 to 2.300 m
+[hero_body   3.1s]   joint hips         (0.0, 0.0, 1.37) -> (0.0, 0.009, 1.514)
+[hero_body   3.1s]   joint head         (0.0, 0.018, 2.17) -> (0.0, 0.018, 2.47)
+[hero_body   3.1s]   joint upper_arm.L  (0.279, 0.09, 1.945) -> (0.458, 0.09, 1.613)
+[hero_body   3.1s]   joint hand.L       (0.593, -0.006, 1.315) -> (0.644, -0.087, 1.05)
+[hero_body   3.1s]   joint thigh.L      (0.144, -0.009, 1.343) -> (0.252, -0.045, 0.759)
+[hero_body   3.1s]   joint foot.L       (0.332, 0.063, 0.175) -> (0.377, -0.09, 0.076)
+[hero_body   3.1s]   hand.L rolled 31 deg to the grip; weapon bone in the fist
+[hero_body   3.1s]   hand.R rolled -32 deg to the grip; weapon bone in the fist
+[hero_body   3.1s]   native upper_arm.L  (0.23, 0.206, 1.884) -> (0.409, 0.206, 1.551) (model (0.279, 0.09, 1.945))
+[hero_body   3.1s]   native forearm.L    (0.409, 0.206, 1.551) -> (0.544, 0.11, 1.254) (model (0.458, 0.09, 1.613))
+[hero_body   3.1s]   native hand.L       (0.544, 0.11, 1.254) -> (0.572, 0.065, 1.108) (model (0.593, -0.006, 1.315))
+[hero_body   3.1s]   native thigh.L      (0.144, -0.011, 1.344) -> (0.252, -0.047, 0.76) (model (0.144, -0.009, 1.343))
+[hero_body   3.3s] mesh: 44000 faces -> 44000 triangles
+[hero_body   3.9s] cloth: 5340 hanging vertices follow the hips more than the legs
+[hero_body   3.9s] arms: 1124 hand and forearm vertices freed from the trunk and legs
+[hero_body   4.1s] smoothed all weights (4 passes)
+[hero_body   4.4s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body   4.5s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   4.8s] unmix: 5029 vertices made wholly arm or body, 168 edges split (167 new vertices)
+Info: 8244 vertex weights limited
+[hero_body   5.9s] arm split: {'arm_left': 4236, 'arm_right': 4235, 'patches_moved': 80, 'edges_split': 265, 'new_vertices': 339, 'reweighted': 514}
+[hero_body   9.5s] retargeted 132 clips (4216 frames) onto the native rest in 3.6s
+00:13.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_rest_front.png'
+00:14.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_rest_side.png'
+00:14.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_idle_front.png'
+00:14.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_idle_side.png'
+00:15.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_hero_run_front.png'
+00:15.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_hero_run_side.png'
+00:15.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_gs_1_front.png'
+00:16.219  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_kaileh_p3\kaileh_gs_1_side.png'
+[hero_body  13.6s] previews in A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/prev_kaileh_p3
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+02:06:25 | INFO: Starting glTF 2.0 export
+02:06:25 | INFO: Extracting primitive: kaileh
+02:06:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:06:25 | INFO: Primitives created: 1
+02:06:46 | INFO: Finished glTF 2.0 export in 20.743062496185303 s
+
+[hero_body  34.5s] wrote A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/out/kaileh.glb (21.6 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

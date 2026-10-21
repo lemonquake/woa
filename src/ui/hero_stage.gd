@@ -15,17 +15,19 @@ const ACCENTS := {
 	"blau": Color(0.35, 0.82, 1.0), "azrael": Color(0.92, 0.12, 0.16), "airah": Color(0.55, 0.92, 0.85),
 	"burak": Color(1.0, 0.32, 0.18), "emelrich": Color(1.0, 0.88, 0.55), "feran": Color(0.95, 0.25, 0.45),
 	"ghorman": Color(0.55, 0.85, 0.35), "araki": Color(0.5, 1.0, 0.35),
-	"blackfire": Color(0.62, 0.32, 1.0), "thyrandael": Color(1.0, 0.86, 0.45)}
+	"blackfire": Color(0.62, 0.32, 1.0), "thyrandael": Color(1.0, 0.86, 0.45), "gancho": Color(0.45, 0.85, 0.3),
+	"kaileh": Color(0.85, 0.7, 0.4), "dracoxinia": Color(1.0, 0.45, 0.75)}
 const FLOURISH := {"blood_ranger": "bow_1", "ezee": "boss_roar", "azrin": "cast_area", "sludge": "hero_axe_smash",
 	"froster": "cast_area", "caziel": "dual_heavy", "tock": "wand_heavy", "kragg": "shield_bash",
 	"roydo": "roydo_cast_shoot", "blau": "blau_reload", "azrael": "gs_heavy", "airah": "cast_area",
 	"burak": "war_cry", "emelrich": "boss_roar", "feran": "cast_quick", "ghorman": "war_cry", "araki": "boss_roar",
-	"blackfire": "boss_roar", "thyrandael": "cast_area"}
+	"blackfire": "boss_roar", "thyrandael": "cast_area", "gancho": "cast_area", "kaileh": "war_cry",
+	"dracoxinia": "boss_roar"}
 const IDLE := {"blood_ranger": "idle_bow", "ezee": "idle_2h", "azrin": "idle_staff", "sludge": "idle_1h",
 	"froster": "idle_staff", "caziel": "idle_shadowblade", "tock": "idle_wand", "kragg": "idle_shield",
 	"roydo": "roydo_idle_fold", "blau": "blau_idle", "azrael": "idle_staff", "airah": "idle_mage",
 	"burak": "idle_dual", "emelrich": "idle_2h", "feran": "idle_dagger", "ghorman": "idle_1h", "araki": "idle_2h",
-	"blackfire": "idle_2h", "thyrandael": "idle_2h"}
+	"blackfire": "idle_2h", "thyrandael": "idle_2h", "gancho": "idle_mage", "kaileh": "idle_2h", "dracoxinia": "idle_2h"}
 
 var hero_id := ""
 var model: Node3D
@@ -387,6 +389,11 @@ func show_hero(id: String, look := {}, flourish := true) -> void:
 	model = built.model
 	anim = built.anim
 	skeleton = built.skeleton
+	# a long weapon held up by the face (Lord Kaileh's lance, Dracoxinia's sword) would fill a baked portrait
+	if mode == "portrait" and bool(built.cfg.get("portrait_bare", false)) and skeleton:
+		for at in skeleton.find_children("*", "BoneAttachment3D", false, false):
+			if String((at as BoneAttachment3D).bone_name).begins_with("weapon."):
+				(at as Node3D).visible = false
 	model.rotation.y = yaw
 	_lift = float(built.lift)
 	model.position.y = _lift

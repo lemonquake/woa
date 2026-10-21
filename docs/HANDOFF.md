@@ -4,6 +4,89 @@
 
 ## Status (keep this section current)
 
+**2026-10-22 b: the official border on every new icon (your request).** The new skill, sword and item art is framed
+by the Default border pack wherever a skill or item tile is drawn (HUD, shop, talents, Hero Select, ranked pick,
+lobby). Two places still drew a bare picture and now use `IconBorder`: the ultimate beside each slot in **Game Setup**
+(an `IconFrame`; Random and empty slots show nothing) and the item you drag in the inventory. Evidence in
+`work/lemondev/2026-10-22-icons/border/`: suite 352 passed, 0 failed; check.sh clean, Names OK; release export exit 0;
+packed icon probe 2079 checks, 0 failures; `game_setup.png`, `exe_match.png` (exe cold start into a match). The buff
+bar stays unframed on purpose (status effects, see `docs/CUSTOM_UI.md`). PCK SHA256 `37AD6916...6E8007`. No new names.
+
+**2026-10-22: all new skill/state artwork and the reusable Game Icons skill (your request).** Run
+`work/lemondev/2026-10-22-icons/` (contract, audit, source sheets, plan/manifest, review, skill-test, logs, captures).
+* Scanned all22 heroes and305 live entries:120 skills/unit traits,180 item/recipe/held entries and5 sword states.
+  Every item already had suitable artwork; no item image was needlessly replaced. Built-in image generation made
+  **34 images**:27 new hero skills,5 sword states, the updated **Giant Swing** (overhead downward cut) and
+  **Death Order** (your correction: "No! Change the Death Order"). That correction revokes the old retained-SVG
+  choice; its new image includes an almost-empty life bar and a bright dagger. All125 skill/state identities now
+  use painted PNGs, alongside134 item/state images (259 active unique PNGs).
+* Blackfire, Thyrandael, Gancho, Lord Kaileh and Dracoxinia have full sets, including their innates and extra keys.
+  Sword icons work in the HUD's current-sword inset and BuffBar through the shared UiKit routes. Dragon Leap shows
+  traversal, Dragon Hide defensive scales, Pink Sword lightning, Gold barrier, Blue water/root, Red fire and Green
+  healing. Suitable existing art is retained; numerical-only changes are audit flags, not automatic replacements.
+* **Game Icons**: canonical `lemondev/game-icons/SKILL.md`, installed in
+  `C:/Users/Lemon PC/.codex/skills/game-icons/` with automatic invocation enabled. Both AGENTS.md and CLAUDE.md
+  require it for future skill/item icon requests. Both skill copies validate; a fresh-agent dry audit followed the
+  skill successfully (`skill-test/`). Helpers: `tools/icon_audit.py` reads current route dumps and flags missing
+  source art, wrong routes and changed definitions; `tools/icon_art.py --run <run> [--check]` packages only the
+  selected run and checks pixels against source cells. It no longer silently selects the20October run.
+* Evidence: full suite352 passed,0 failed; source/packed icon probe2079 checks,0 failures; scanner305 entries,
+  259 expected unique sources,0 missing images,0 wrong routes. Actual galleries at1080p/4K, HUD/Shop/talents/courier
+  captures, source sheets and hashes retained. The independent raw A/B review accepted the new set including
+  Death Order; minor Blue Sword root detail is less clear at32px. Detailed build/cold-start results are recorded
+  in the run handoff. Existing teardown ObjectDB/resource warnings remain; no new commercial-quality or60FPS claim.
+* New player-facing name: **Game Icons** (skill label only). New code/helper names for veto: `STATE_SKILL_FALLBACKS`,
+  `STATE_SKILL_ICONS`, `icon_audit`, `read_json`, `gd_map`, `rows_of`, `resource_file`, `png_size`, `old_route`,
+  `differences`, `audit`, `chosen`; new icon files reuse existing game IDs. No hero/item names or gameplay numbers changed.
+
+**2026-10-21 b: three new heroes, Gancho, the Nature Whisperer, Lord Kaileh, the Grand Cavalier and Dracoxinia, the
+Blue Wyrm (your models and names; kits from research on Dota 2 and League), and every melee hero with moves of its own
+(your request: "Melee heroes with swords should not have identical animations").** Run
+`work/lemondev/2026-10-21b-three-heroes/` (contract.md, anim, bodies, weapons, logs). The full sheet of the three
+heroes (stats at levels 1 and 25, every skill, the five swords, talents, bots, looks, where to change things) is
+**`docs/NEW_HEROES_22.md`**.
+* **Gancho** (ranged agility, Nature; `src/sim/sim_kits10.gd`): Tree Walk, Root Snare, Seed Bomb, Thorn Barbs, Angry
+  Forest. **Lord Kaileh** (melee 200 reach, strength, Earth; `sim_kits10.gd`): Momentum, Lance Charge, Lance Sweep,
+  War Banner, Cavalry Charge. **Dracoxinia** (melee strength, Lightning; `sim_kits11.gd`): Royal Scales, Dragon Dash,
+  Dragon Leap, Dragon Hide, Rising Slash, Dragon Blade, Change Sword (Pink, Gold, Blue, Red, Green Sword); your
+  follow-up swapped her spinning sweep and Dragon Breath for Dragon Leap (W: over trees and cliffs, no damage) and Dragon
+  Hide (E: +2-5 armor, +1.5-6 health regen), so she has less burst than before. Bots
+  `src/sim/sim_bot22.gd`; chat reactions in `chat_mind.gd`.
+* **Bodies**: your three Tripo models on the hero skeleton (`assets/characters/heroes17/gancho.glb`, `kaileh.glb`,
+  `dracoxinia.glb`); Kaileh painted steel, leather and gold, Dracoxinia pink and shiny gold (`tools/blender/
+  paint_prep.py`). **Weapons**: Kaileh's lance "Lance/Joust Weapon" by Rio.Puntar (CC BY 4.0;
+  `tools/blender/kaileh_lance.py`), Dracoxinia's five swords from your "UTTVM Sword Color Pack" by EvesStudio2008
+  (CC BY 4.0; `tools/blender/dracoxinia_swords.py`); the sword in her hand follows Change Sword. **Thyrandael's wings**
+  now have their own bones and beat as he flies (`src/game/body_sway.gd`).
+* **Own animations** (`work/lemondev/2026-10-21b-three-heroes/anim/hero_clips.py` -> `tools/blender/mocap_clips.json`,
+  `ModelCatalog.MOCAP`): Ser Emelrich, Araki, Blackfire, Thyrandael and the three new heroes each have their own idle,
+  run, attacks, ability moves, hits and deaths; Burak, Ghorman, Feran and Azrael their own idle or run and attacks;
+  Caziel his own run (his dagger stabs were already his alone). Ezee keeps the old great sword set, which nobody else
+  uses now; a hero's own ability clip plays for that ability (`"casts"`), Kaileh and
+  Dracoxinia play their charge clip while they charge or dash. Eight of the new attacks landed 1.1-1.9 s in and were
+  trimmed to land at 0.5 s.
+* **Effects** (`src/game/hero22_fx.gd`): vines, seeds, the angry forest, dust and sparks of the charges, six ghost
+  riders (Kaileh's own body, see-through), the War Banner on its pole, the sword swaps and strike powers, the breath in
+  the sword's colour, the rising cut. Gancho's thorns fly and stick.
+* **New names for your veto**: Tree Walk, Root Snare, Seed Bomb, Thorn Barbs, Angry Forest, Momentum, Lance Charge,
+  Lance Sweep, War Banner, Cavalry Charge, Royal Scales, Dragon Dash, Dragon Leap, Dragon Hide, Rising Slash, Dragon
+  Blade, Change Sword, Pink Sword, Gold Sword, Blue Sword, Red Sword, Green Sword; code: Hero22Fx, BodySway, SimKits10,
+  SimKits11, SimBot22, kaileh_ghost, war_banner.
+* **Not done**: no horses for the ghost riders (none downloaded); no fresh critic, no Dota benchmark. Dracoxinia has
+  no tail (your model has none, as you meant).
+* **Also fixed after the interrupted session**: nine downloaded Mixamo clips were left in the browser's download folder
+  (moved into the library); the bot chat file had a parse error; eight attack clips landed too late (trimmed); the
+  HUD portrait could show a ghost rider (riders now stay off the portrait layer); baked portraits of Kaileh and
+  Dracoxinia hide their long weapons (`"portrait_bare"`).
+* Evidence (logs and shots in the run folder): full suite 352 passed, 0 failed (`logs/tests2.txt`); `sh tools/check.sh`
+  no script errors, Names OK; body collision fixed for every hero (`logs/collide_fix2.txt`, Dracoxinia again after
+  the swap: worst 85.6 cm -> 3.3 cm, Dragon Leap 24.2 -> 3.3 cm in 3 frames); joins for the three new heroes: 5 of 115
+  over the 12 deg limit, worst 13.3 deg (`logs/joins.txt`); live captures of Cavalry Charge with its riders, the
+  sword change and Gold barrier, Gancho's forest, seed tree and root, Dragon Leap (`shots/`); bot duels: Dracoxinia
+  vs Gancho and vs Kaileh run clean, her bots leap 5-7 times in 12 minutes (`logs/duel_drac2.txt`); the Windows export
+  rebuilt (`build/WarriorsOfAether.exe`, pack 862 MB) and the pack cold-starts into a match with no script errors
+  (`shots/pck_match.png`). Not verified: no critic, no Dota benchmark, the exe's menus not clicked through.
+
 **2026-10-21: two new heroes, Blackfire, the Unfallen and Thyrandael, the Forsaken Seraph (your kits and models),
 barriers, Forums moved into the Ranked bar, 25% shorter matchmaking (your requests).** Run
 `work/lemondev/2026-10-21-blackfire-thyrandael/` (contract.md, handoff.md, logs, shots, ui, bodies).

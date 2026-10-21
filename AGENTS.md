@@ -24,6 +24,10 @@ code identifiers.
 
 ## Other house rules
 
+* For any request for new, missing or revised skill/item icons, always read and use
+  `lemondev/game-icons/SKILL.md` (Game Icons). Use built-in image generation and current live data; include
+  innates, extra abilities and icon states. This is the owner's standing preference.
+
 * Use the lemondev Gauntlet Loop (`lemondev/SKILL.md`, ledger in `work/lemondev/ledger.md`).
 * Mechanics and numbers follow Dota 2 exactly; names, art and heroes are original.
 * Windows Python writes CRLF: run `python tools/normalize_eol.py` before commits.

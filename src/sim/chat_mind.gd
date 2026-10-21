@@ -82,6 +82,24 @@ const T := {
 		["get out of the light", "en"], ["bulag ako", "tl"], ["wala tumatama", "tl"]],
 	"judged_self": [["judged", "en"], ["miss all u want", "en"], ["{n} blind {laugh}", "en"], ["sorry cant see?", "en"],
 		["bulag kayo lahat", "tl"]],
+	# ---- the kits of run 2026-10-21 b (SimBotChat._on_kit) -----------------------------------------------------------
+	# Lord Kaileh carried someone on his lance into his team
+	"lanced": [["where are u taking me", "en"], ["free ride lol", "en"], ["he carried me into 3 people", "en"],
+		["lance diff", "en"], ["i got skewered", "en"], ["saan ako dadalhin", "tl"], ["sinakay ako", "tl"]],
+	"lanced_self": [["delivery", "en"], ["special delivery", "en"], ["hop on", "en"], ["tara sakay", "tl"]],
+	# Cavalry Charge ran over two or more of them
+	"cavalry_enemy": [["where did those ghosts come from", "en"], ["ghost knights ran me over", "en"], ["dodge the charge next time", "en"],
+		["{n} stunned by one ult", "en"], ["kabayo kabayo", "tl"], ["nasagasaan kami", "tl"]],
+	"cavalry_self": [["CHARGE", "en"], ["for the house", "en"], ["{n} in one charge", "en"], ["sugod", "tl"]],
+	# Gancho's Angry Forest caught them beside the trees
+	"forest_enemy": [["the trees are hitting me", "en"], ["stay away from the trees", "en"], ["why are the trees angry", "en"],
+		["dont fight him in the jungle", "en"], ["pati puno kalaban", "tl"], ["layo sa puno", "tl"]],
+	"forest_self": [["the forest is with me", "en"], ["wrong neighborhood", "en"], ["welcome to my woods", "en"],
+		["gubat ko to", "tl"]],
+	# Dracoxinia keeps changing her sword
+	"swords_enemy": [["how many swords does she have", "en"], ["she changed swords again", "en"], ["pink sword scary", "en"],
+		["she counters my element every time", "en"], ["ilan ba espada nyan", "tl"], ["nagpalit na naman", "tl"]],
+	"swords_self": [["pick a color", "en"], ["i have one for u", "en"], ["right sword for u", "en"], ["pili ka kulay", "tl"]],
 	"tower_dive": [["worth", "en"], ["tower aggro sucks", "en"], ["too greedy", "en"], ["was worth it", "en"],
 		["sulit naman", "tl"], ["takaw ko", "tl"], ["tower pala", "tl"]],
 	"wipe": [["wipe", "en"], ["team wipe {laugh}", "en"], ["{n} for {n2}", "en"], ["ace", "en"], ["gg?", "en"],

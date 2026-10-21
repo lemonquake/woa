@@ -110,7 +110,19 @@ const ABILITY_FALLBACKS := {"burst_shot": "skills/multishot", "gale_impact": "sk
 	"underworld_presence": "skills/gen/underworld_presence", "sacrificial_grip": "skills/gen/sacrificial_grip",
 	"rise_up": "skills/gen/rise_up", "fiend_edge": "skills/gen/fiend_edge", "unfallen": "skills/gen/unfallen",
 	"divine_touch": "skills/gen/divine_touch", "holy_beam": "skills/gen/holy_beam", "quick_flash": "skills/gen/quick_flash",
-	"spirit_step": "skills/gen/spirit_step", "false_judgement": "skills/gen/false_judgement"}
+	"spirit_step": "skills/gen/spirit_step", "false_judgement": "skills/gen/false_judgement",
+	# Gancho, Lord Kaileh and Dracoxinia (run 2026-10-21 b)
+	"tree_walk": "skills/gen/tree_walk", "root_snare": "skills/gen/root_snare", "seed_bomb": "skills/gen/seed_bomb",
+	"thorn_barbs": "skills/gen/thorn_barbs", "angry_forest": "skills/gen/angry_forest", "momentum": "skills/gen/momentum",
+	"lance_charge": "skills/gen/lance_charge", "lance_sweep": "skills/gen/lance_sweep", "war_banner": "skills/gen/war_banner",
+	"cavalry_charge": "skills/gen/cavalry_charge", "royal_scales": "skills/gen/royal_scales",
+	"dragon_dash": "skills/gen/dragon_dash", "dragon_leap": "skills/gen/dragon_leap", "dragon_hide": "skills/gen/dragon_hide",
+	"rising_slash": "skills/gen/rising_slash", "dragon_blade": "skills/gen/dragon_blade",
+	"change_sword": "skills/gen/change_sword"}
+
+## Persistent skill states used by the HUD and buff bar.
+const STATE_SKILL_FALLBACKS := {"sword_pink": "skills/gen/sword_pink", "sword_gold": "skills/gen/sword_gold",
+	"sword_blue": "skills/gen/sword_blue", "sword_red": "skills/gen/sword_red", "sword_green": "skills/gen/sword_green"}
 
 ## Neutral creeps' spells (the HUD's unit panel and the buff bar).
 const NEUTRAL_SKILL_FALLBACKS := {"snarl": "skills/war_cry", "stomp": "skills/tempo_wd_quake", "smash": "skills/heavens_fist"}
@@ -124,12 +136,12 @@ const UNIT_SKILL_FALLBACKS := {"weapon_grab": "status/weakened", "pace_aura": "s
 static var ABILITY_ICONS := _skill_paths(ABILITY_FALLBACKS)
 static var NEUTRAL_SKILL_ICONS := _skill_paths(NEUTRAL_SKILL_FALLBACKS)
 static var UNIT_SKILL_ICONS := _skill_paths(UNIT_SKILL_FALLBACKS)
+static var STATE_SKILL_ICONS := _skill_paths(STATE_SKILL_FALLBACKS)
 
 static func _skill_paths(fallbacks: Dictionary) -> Dictionary:
 	var paths := {}
 	for id in fallbacks:
-		# Owner chose to retain Death Order's existing icon after the small-size review.
-		paths[id] = fallbacks[id] if id == "death_order" else "art/skills/" + String(id)
+		paths[id] = "art/skills/" + String(id)
 	return paths
 
 static var _fonts := {}
@@ -178,13 +190,11 @@ static func icon(path: String) -> Texture2D:
 
 ## Resolve art first while retaining the original SVGs for incomplete art sets and existing callers.
 static func icon_path(path: String) -> String:
-	if path == ABILITY_FALLBACKS["death_order"] or path == "art/skills/death_order":
-		return "res://assets/ui/%s.svg" % ABILITY_FALLBACKS["death_order"]
 	var art_path := path
 	var fallback := path
 	if path.begins_with("art/skills/"):
 		var id := path.get_file()
-		fallback = String(ABILITY_FALLBACKS.get(id, NEUTRAL_SKILL_FALLBACKS.get(id, UNIT_SKILL_FALLBACKS.get(id, "skills/keen_eye"))))
+		fallback = String(ABILITY_FALLBACKS.get(id, NEUTRAL_SKILL_FALLBACKS.get(id, UNIT_SKILL_FALLBACKS.get(id, STATE_SKILL_FALLBACKS.get(id, "skills/keen_eye")))))
 	elif path.begins_with("art/items/"):
 		fallback = _item_fallback(path.get_file())
 	elif path.begins_with("items/gen/"):
@@ -202,6 +212,11 @@ static func icon_path(path: String) -> String:
 		if art_path == path:
 			for id in NEUTRAL_SKILL_FALLBACKS:
 				if NEUTRAL_SKILL_FALLBACKS[id] == path:
+					art_path = "art/skills/" + String(id)
+					break
+		if art_path == path:
+			for id in STATE_SKILL_FALLBACKS:
+				if STATE_SKILL_FALLBACKS[id] == path:
 					art_path = "art/skills/" + String(id)
 					break
 	var png := "res://assets/ui/%s.png" % art_path
@@ -263,7 +278,7 @@ static func hero_portrait(id: String) -> Texture2D:
 	return t
 
 static func ability_icon(id: String) -> Texture2D:
-	return icon(String(ABILITY_ICONS.get(id, NEUTRAL_SKILL_ICONS.get(id, UNIT_SKILL_ICONS.get(id, "skills/keen_eye")))))
+	return icon(String(ABILITY_ICONS.get(id, NEUTRAL_SKILL_ICONS.get(id, UNIT_SKILL_ICONS.get(id, STATE_SKILL_ICONS.get(id, "skills/keen_eye"))))))
 
 # ---- The generated skin (tools/ui_skin.py: assets/ui/skin, described by skin.json) ---------------------------------
 

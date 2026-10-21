@@ -1,0 +1,54 @@
+01:48:58 | INFO: Data are loaded, start creating Blender stuff
+01:48:58 | INFO: Blender create Mesh node hero
+01:49:00 | INFO: glTF import finished in 1.67s
+[hero_body   2.3s] hero rig with 132 clips
+FBX version: 7400
+[hero_body   2.7s] imported 2 objects from A:/Python/woa/work/downloads/sf_heroes/gancho/tripo_convert_8e9574b5-24f0-4067-b04a-f576b59829ce.fbx
+[hero_body   2.7s] kept 1 mesh pieces (11943 faces), rig: Armature (65 bones)
+[hero_body   2.7s] rig map: {'chest': 'mixamorig:Spine1', 'foot.L': 'mixamorig:LeftFoot', 'foot.R': 'mixamorig:RightFoot', 'forearm.L': 'mixamorig:LeftForeArm', 'forearm.R': 'mixamorig:RightForeArm', 'hand.L': 'mixamorig:LeftHand', 'hand.R': 'mixamorig:RightHand', 'head': 'mixamorig:Head', 'hips': 'mixamorig:Hips', 'neck': 'mixamorig:Neck', 'shin.L': 'mixamorig:LeftLeg', 'shin.R': 'mixamorig:RightLeg', 'shoulder.L': 'mixamorig:LeftShoulder', 'shoulder.R': 'mixamorig:RightShoulder', 'spine': 'mixamorig:Spine', 'thigh.L': 'mixamorig:LeftUpLeg', 'thigh.R': 'mixamorig:RightUpLeg', 'toe.L': 'mixamorig:LeftToeBase', 'toe.R': 'mixamorig:RightToeBase', 'upper_arm.L': 'mixamorig:LeftArm', 'upper_arm.R': 'mixamorig:RightArm'}
+[hero_body   2.7s] hand L: 4 fingers, hand turned 5 deg from the converted bone, palm side (-0.83, -0.0, -0.55)
+[hero_body   2.7s] hand R: 4 fingers, hand turned 4 deg from the converted bone, palm side (0.85, -0.03, -0.53)
+[hero_body   2.7s] scaled x1.993 to 1.950 m
+[hero_body   2.7s]   joint hips         (0.0, 0.0, 1.078) -> (0.0, 0.0, 1.184)
+[hero_body   2.7s]   joint head         (0.0, 0.015, 1.611) -> (0.0, 0.015, 1.85)
+[hero_body   2.7s]   joint upper_arm.L  (0.175, 0.053, 1.451) -> (0.297, 0.053, 1.268)
+[hero_body   2.7s]   joint hand.L       (0.438, -0.017, 1.115) -> (0.562, -0.049, 0.929)
+[hero_body   2.7s]   joint thigh.L      (0.091, -0.0, 1.025) -> (0.107, -0.008, 0.628)
+[hero_body   2.7s]   joint foot.L       (0.107, 0.053, 0.187) -> (0.129, -0.023, 0.042)
+[hero_body   2.7s]   hand.L rolled 12 deg to the grip; weapon bone in the fist
+[hero_body   2.7s]   hand.R rolled -10 deg to the grip; weapon bone in the fist
+[hero_body   2.7s]   native upper_arm.L  (0.166, 0.092, 1.419) -> (0.288, 0.092, 1.237) (model (0.175, 0.053, 1.451))
+[hero_body   2.7s]   native forearm.L    (0.288, 0.092, 1.237) -> (0.429, 0.022, 1.083) (model (0.297, 0.053, 1.268))
+[hero_body   2.7s]   native hand.L       (0.429, 0.022, 1.083) -> (0.497, 0.004, 0.981) (model (0.438, -0.017, 1.115))
+[hero_body   2.7s]   native thigh.L      (0.091, -0.0, 1.025) -> (0.107, -0.008, 0.628) (model (0.091, -0.0, 1.025))
+[hero_body   2.8s] mesh: 11943 faces -> 11943 triangles
+[hero_body   2.9s] cloth: 277 hanging vertices follow the hips more than the legs
+[hero_body   2.9s] arms: 286 hand and forearm vertices freed from the trunk and legs
+[hero_body   3.0s] smoothed all weights (4 passes)
+[hero_body   3.1s] smoothed weights at the shoulders, elbows, hips, knees and neck
+[hero_body   3.2s] hands: 0 hand and finger vertices given back to their arm only
+[hero_body   3.2s] unmix: 1251 vertices made wholly arm or body, 106 edges split (104 new vertices)
+Info: 2331 vertex weights limited
+[hero_body   3.5s] arm split: {'arm_left': 780, 'arm_right': 794, 'patches_moved': 26, 'edges_split': 115, 'new_vertices': 158, 'reweighted': 204}
+[hero_body   7.1s] retargeted 132 clips (4216 frames) onto the native rest in 3.6s
+00:11.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_rest_front.png'
+00:11.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_rest_side.png'
+00:12.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_idle_front.png'
+00:12.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_idle_side.png'
+00:12.797  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_hero_run_front.png'
+00:13.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_hero_run_side.png'
+00:13.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_gs_1_front.png'
+00:13.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\prev_gancho_p1\gancho_gs_1_side.png'
+[hero_body  10.8s] previews in A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/prev_gancho_p1
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+01:49:09 | INFO: Starting glTF 2.0 export
+01:49:09 | INFO: Extracting primitive: gancho
+01:49:10 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+01:49:10 | INFO: Primitives created: 1
+01:49:25 | INFO: Finished glTF 2.0 export in 16.034420490264893 s
+
+[hero_body  27.7s] wrote A:/Python/woa/work/lemondev/2026-10-21b-three-heroes/bodies/out/gancho.glb (13.3 MB)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

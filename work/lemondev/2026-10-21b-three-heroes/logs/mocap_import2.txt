@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Could not parse global class "SimBotChat" from "res://src/sim/sim_bot_chat.gd".
+   at: GDScript::reload (res://src/sim/sim_world.gd:13)
+SCRIPT ERROR: Parse Error: Could not resolve class "SimBotChat", because of a parser error.
+   at: GDScript::reload (res://src/sim/sim_world.gd:78)
+SCRIPT ERROR: Parse Error: Could not resolve external class member "botchat".
+   at: GDScript::reload (res://src/sim/sim_team_ai.gd:1491)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/sim/sim_bot.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/sim/sim_abilities.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/sim/sim_kits5.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/sim/sim_bot_kits.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/core/game_settings.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/net/net_server.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://src/net/net.gd:0)
+ERROR: Failed to load script "res://src/net/net.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+wrote res://assets/characters/hero/mocap/hero_mocap.res: 189 clips, 293702 keys (OK)
+copied clip timings to res://assets/characters/hero/mocap/mocap_meta.json

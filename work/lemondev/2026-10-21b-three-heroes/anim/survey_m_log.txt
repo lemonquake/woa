@@ -1,0 +1,827 @@
+02:12:27 | INFO: Data are loaded, start creating Blender stuff
+02:12:27 | INFO: Blender create Mesh node hero
+02:12:30 | INFO: glTF import finished in 2.25s
+FBX version: 7700
+[mocap] m_bash                             frames 121 (4.03s) drift 0.00 m (max 0.11) hands apart 0.29-1.14 m lowest hand 0.78 m
+[mocap]   m_bash: toe hinge 29
+[mocap]   speeds m_bash: 0:0 2:0 4:0 6:0 8:0 10:0 12:1 14:1 16:1 18:2 20:3 22:4 24:5 26:5 28:5 30:5 32:5 34:4 36:4 38:4 40:3 42:3 44:5 46:13 48:16 50:17 52:11 54:6 56:4 58:2 60:2 62:1 64:1 66:1 68:1 70:2 72:3 74:3 76:4 78:3 80:3 82:3 84:3 86:3 88:3 90:3 92:2 94:2 96:1 98:1 100:0 102:0 104:0 106:0 108:0 110:0 112:0 114:0 116:0 118:0 120:0
+00:07.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_00.png'
+00:08.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_01.png'
+00:08.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_02.png'
+00:08.046  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_03.png'
+00:08.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_04.png'
+00:08.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_05.png'
+00:08.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__0_06.png'
+00:08.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_00.png'
+00:08.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_01.png'
+00:08.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_02.png'
+00:08.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_03.png'
+00:08.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_04.png'
+00:08.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_05.png'
+00:08.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_bash__1_06.png'
+FBX version: 7700
+[mocap] m_charge_point                     frames 172 (5.73s) drift 0.00 m (max 0.87) hands apart 0.35-1.36 m lowest hand 0.84 m
+[mocap]   m_charge_point: toe hinge 73
+[mocap]   speeds m_charge_point: 0:0 2:1 4:3 6:4 8:6 10:6 12:5 14:5 16:3 18:1 20:3 22:5 24:5 26:5 28:4 30:2 32:1 34:1 36:1 38:3 40:4 42:3 44:1 46:2 48:6 50:8 52:6 54:4 56:3 58:2 60:8 62:10 64:5 66:3 68:1 70:1 72:1 74:0 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:1 94:3 96:4 98:5 100:5 102:3 104:3 106:3 108:1 110:5 112:6 114:4 116:3 118:2 120:1 122:1 124:0 126:2 128:3 130:3 132:4 134:5 136:4 138:3 140:1 142:1 144:1 146:0 148:1 150:1 152:1 154:1 156:1 158:1 160:0 162:0 164:0 166:0 168:0 170:0
+00:08.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_00.png'
+00:08.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_01.png'
+00:08.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_02.png'
+00:08.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_03.png'
+00:08.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_04.png'
+00:08.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_05.png'
+00:08.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__0_06.png'
+00:08.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_00.png'
+00:08.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_01.png'
+00:08.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_02.png'
+00:08.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_03.png'
+00:08.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_04.png'
+00:09.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_05.png'
+00:09.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_charge_point__1_06.png'
+FBX version: 7700
+[mocap] m_club1_combo                      frames 110 (3.67s) drift 1.39 m (max 2.15) hands apart 0.28-1.37 m lowest hand 0.76 m
+[mocap]   m_club1_combo: toe hinge 152
+[mocap]   speeds m_club1_combo: 0:0 2:3 4:3 6:3 8:4 10:5 12:3 14:8 16:22 18:25 20:29 22:19 24:10 26:5 28:3 30:1 32:3 34:7 36:13 38:23 40:20 42:18 44:19 46:20 48:14 50:6 52:5 54:6 56:5 58:6 60:11 62:14 64:25 66:24 68:20 70:23 72:24 74:7 76:3 78:5 80:9 82:14 84:19 86:18 88:10 90:7 92:2 94:2 96:3 98:2 100:2 102:1 104:0 106:0 108:0
+00:09.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_00.png'
+00:09.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_01.png'
+00:09.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_02.png'
+00:09.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_03.png'
+00:09.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_04.png'
+00:09.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_05.png'
+00:09.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__0_06.png'
+00:09.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_00.png'
+00:09.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_01.png'
+00:09.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_02.png'
+00:09.515  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_03.png'
+00:09.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_04.png'
+00:09.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_05.png'
+00:09.593  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club1_combo__1_06.png'
+FBX version: 7700
+[mocap] m_club2_combo                      frames 164 (5.47s) drift 1.47 m (max 1.79) hands apart 0.11-0.21 m lowest hand 0.84 m
+[mocap]   m_club2_combo: toe hinge 186
+[mocap]   speeds m_club2_combo: 0:0 2:1 4:2 6:1 8:1 10:1 12:1 14:1 16:1 18:2 20:2 22:2 24:2 26:2 28:2 30:2 32:1 34:1 36:2 38:3 40:5 42:7 44:13 46:16 48:14 50:12 52:16 54:15 56:9 58:6 60:4 62:4 64:5 66:4 68:5 70:3 72:2 74:2 76:3 78:4 80:5 82:8 84:15 86:18 88:17 90:15 92:17 94:13 96:7 98:5 100:4 102:1 104:1 106:1 108:2 110:3 112:3 114:8 116:16 118:20 120:18 122:20 124:15 126:8 128:7 130:6 132:3 134:1 136:1 138:2 140:2 142:2 144:2 146:2 148:2 150:2 152:3 154:2 156:1 158:1 160:1 162:0
+00:09.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_00.png'
+00:10.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_01.png'
+00:10.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_02.png'
+00:10.046  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_03.png'
+00:10.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_04.png'
+00:10.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_05.png'
+00:10.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__0_06.png'
+00:10.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_00.png'
+00:10.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_01.png'
+00:10.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_02.png'
+00:10.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_03.png'
+00:10.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_04.png'
+00:10.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_05.png'
+00:10.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_club2_combo__1_06.png'
+FBX version: 7700
+[mocap] m_draw_sword                       frames 24 (0.80s) drift 0.08 m (max 0.09) hands apart 0.22-1.00 m lowest hand 0.93 m
+[mocap]   m_draw_sword: toe hinge 23
+[mocap]   speeds m_draw_sword: 0:0 2:4 4:3 6:3 8:4 10:6 12:5 14:4 16:5 18:1 20:1 22:1
+00:10.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_00.png'
+00:10.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_01.png'
+00:10.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_02.png'
+00:10.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_03.png'
+00:10.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_04.png'
+00:10.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_05.png'
+00:10.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__0_06.png'
+00:10.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_00.png'
+00:10.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_01.png'
+00:10.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_02.png'
+00:10.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_03.png'
+00:10.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_04.png'
+00:10.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_05.png'
+00:10.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_draw_sword__1_06.png'
+FBX version: 7700
+[mocap] m_gs_admire                        frames 114 (3.80s) drift 0.00 m (max 0.09) hands apart 0.16-0.68 m lowest hand 0.86 m
+[mocap]   speeds m_gs_admire: 0:0 2:1 4:1 6:1 8:1 10:1 12:1 14:1 16:1 18:1 20:1 22:1 24:1 26:1 28:1 30:1 32:1 34:1 36:1 38:1 40:1 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:1 68:1 70:1 72:1 74:1 76:1 78:1 80:1 82:1 84:1 86:2 88:1 90:1 92:1 94:1 96:1 98:1 100:1 102:1 104:1 106:0 108:0 110:0 112:0
+00:11.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_00.png'
+00:11.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_01.png'
+00:11.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_02.png'
+00:11.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_03.png'
+00:11.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_04.png'
+00:11.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_05.png'
+00:11.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__0_06.png'
+00:11.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_00.png'
+00:11.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_01.png'
+00:11.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_02.png'
+00:11.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_03.png'
+00:11.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_04.png'
+00:11.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_05.png'
+00:11.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_admire__1_06.png'
+FBX version: 7700
+[mocap] m_gs_down                          frames 39 (1.30s) drift 0.00 m (max 0.34) hands apart 0.16-0.21 m lowest hand 0.73 m
+[mocap]   m_gs_down: toe hinge 70
+[mocap]   speeds m_gs_down: 0:0 2:4 4:10 6:16 8:11 10:7 12:3 14:6 16:10 18:17 20:18 22:9 24:3 26:8 28:9 30:5 32:1 34:1 36:1 38:0
+00:11.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_00.png'
+00:11.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_01.png'
+00:11.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_02.png'
+00:11.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_03.png'
+00:11.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_04.png'
+00:11.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_05.png'
+00:11.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__0_06.png'
+00:11.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_00.png'
+00:11.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_01.png'
+00:11.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_02.png'
+00:11.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_03.png'
+00:11.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_04.png'
+00:11.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_05.png'
+00:11.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_down__1_06.png'
+FBX version: 7700
+[mocap] m_gs_low                           frames 56 (1.87s) drift 0.00 m (max 0.71) hands apart 0.13-0.21 m lowest hand 0.69 m
+[mocap]   m_gs_low: toe hinge 95
+[mocap]   speeds m_gs_low: 0:0 2:1 4:1 6:2 8:3 10:3 12:2 14:2 16:2 18:4 20:5 22:10 24:19 26:19 28:19 30:19 32:11 34:5 36:3 38:2 40:5 42:5 44:5 46:4 48:3 50:2 52:1 54:1
+00:12.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_00.png'
+00:12.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_01.png'
+00:12.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_02.png'
+00:12.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_03.png'
+00:12.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_04.png'
+00:12.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_05.png'
+00:12.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__0_06.png'
+00:12.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_00.png'
+00:12.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_01.png'
+00:12.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_02.png'
+00:12.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_03.png'
+00:12.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_04.png'
+00:12.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_05.png'
+00:12.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_low__1_06.png'
+FBX version: 7700
+[mocap] m_gs_pose                          frames 111 (3.70s) drift 0.00 m (max 0.11) hands apart 0.18-0.65 m lowest hand 0.83 m
+[mocap]   speeds m_gs_pose: 0:0 2:0 4:0 6:0 8:1 10:1 12:1 14:1 16:2 18:2 20:2 22:2 24:1 26:2 28:1 30:1 32:1 34:0 36:0 38:0 40:0 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:1 68:1 70:1 72:1 74:1 76:2 78:2 80:2 82:2 84:1 86:1 88:1 90:1 92:1 94:1 96:0 98:0 100:1 102:1 104:1 106:1 108:0 110:0
+00:12.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_00.png'
+00:12.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_01.png'
+00:12.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_02.png'
+00:12.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_03.png'
+00:12.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_04.png'
+00:12.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_05.png'
+00:12.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__0_06.png'
+00:12.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_00.png'
+00:12.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_01.png'
+00:12.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_02.png'
+00:13.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_03.png'
+00:13.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_04.png'
+00:13.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_05.png'
+00:13.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_pose__1_06.png'
+FBX version: 7700
+[mocap] m_gs_power                         frames 55 (1.83s) drift 1.10 m (max 1.10) hands apart 0.14-0.23 m lowest hand 0.82 m
+[mocap]   m_gs_power: toe hinge 66
+[mocap]   speeds m_gs_power: 0:0 2:5 4:5 6:5 8:4 10:1 12:2 14:2 16:5 18:9 20:15 22:13 24:12 26:11 28:13 30:8 32:2 34:2 36:7 38:5 40:9 42:8 44:7 46:2 48:1 50:0 52:0 54:0
+00:13.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_00.png'
+00:13.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_01.png'
+00:13.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_02.png'
+00:13.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_03.png'
+00:13.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_04.png'
+00:13.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_05.png'
+00:13.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__0_06.png'
+00:13.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_00.png'
+00:13.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_01.png'
+00:13.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_02.png'
+00:13.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_03.png'
+00:13.593  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_04.png'
+00:13.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_05.png'
+00:13.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_power__1_06.png'
+FBX version: 7700
+[mocap] m_gs_walk                          frames 42 (1.40s) drift 1.45 m (max 1.45) hands apart 0.19-0.19 m lowest hand 0.86 m
+[mocap]   m_gs_walk: toe hinge 53
+[mocap]   speeds m_gs_walk: 0:0 2:1 4:1 6:1 8:1 10:1 12:1 14:1 16:1 18:1 20:1 22:1 24:1 26:1 28:1 30:1 32:1 34:1 36:1 38:1 40:1
+00:13.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_00.png'
+00:13.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_01.png'
+00:13.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_02.png'
+00:13.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_03.png'
+00:13.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_04.png'
+00:14.046  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_05.png'
+00:14.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__0_06.png'
+00:14.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_00.png'
+00:14.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_01.png'
+00:14.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_02.png'
+00:14.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_03.png'
+00:14.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_04.png'
+00:14.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_05.png'
+00:14.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_gs_walk__1_06.png'
+FBX version: 7700
+[mocap] m_heavy_swing                      frames 157 (5.23s) drift 0.00 m (max 0.37) hands apart 0.26-0.30 m lowest hand 0.64 m
+[mocap]   m_heavy_swing: toe hinge 48
+[mocap]   speeds m_heavy_swing: 0:0 2:1 4:1 6:1 8:1 10:1 12:1 14:1 16:0 18:0 20:0 22:0 24:0 26:0 28:0 30:0 32:0 34:1 36:1 38:1 40:2 42:2 44:3 46:4 48:5 50:5 52:5 54:5 56:3 58:2 60:2 62:1 64:1 66:2 68:4 70:5 72:7 74:12 76:16 78:15 80:12 82:10 84:4 86:3 88:1 90:2 92:5 94:7 96:8 98:8 100:8 102:7 104:6 106:5 108:4 110:5 112:5 114:6 116:7 118:5 120:3 122:2 124:1 126:1 128:2 130:2 132:3 134:2 136:2 138:2 140:1 142:1 144:1 146:1 148:1 150:2 152:2 154:2 156:0
+00:14.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_00.png'
+00:14.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_01.png'
+00:14.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_02.png'
+00:14.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_03.png'
+00:14.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_04.png'
+00:14.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_05.png'
+00:14.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__0_06.png'
+00:14.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_00.png'
+00:14.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_01.png'
+00:14.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_02.png'
+00:14.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_03.png'
+00:14.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_04.png'
+00:14.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_05.png'
+00:14.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_heavy_swing__1_06.png'
+FBX version: 7700
+[mocap] m_mutant_breath_idle               frames 122 (4.07s) drift 0.00 m (max 0.03) hands apart 0.60-0.62 m lowest hand 0.79 m
+[mocap]   m_mutant_breath_idle: toe hinge 244
+[mocap]   speeds m_mutant_breath_idle: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:0 18:0 20:0 22:0 24:0 26:0 28:0 30:0 32:0 34:0 36:0 38:0 40:0 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:0 68:0 70:0 72:0 74:0 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0 102:0 104:0 106:0 108:0 110:0 112:0 114:0 116:0 118:0 120:0
+00:15.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_00.png'
+00:15.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_01.png'
+00:15.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_02.png'
+00:15.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_03.png'
+00:15.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_04.png'
+00:15.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_05.png'
+00:15.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__0_06.png'
+00:15.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_00.png'
+00:15.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_01.png'
+00:15.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_02.png'
+00:15.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_03.png'
+00:15.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_04.png'
+00:15.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_05.png'
+00:15.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_breath_idle__1_06.png'
+FBX version: 7700
+[mocap] m_mutant_dying                     frames 139 (4.63s) drift 0.93 m (max 0.94) hands apart 0.25-1.41 m lowest hand 0.04 m
+[mocap]   m_mutant_dying: toe hinge 278
+[mocap]   speeds m_mutant_dying: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:3 18:2 20:2 22:3 24:3 26:2 28:2 30:1 32:1 34:1 36:1 38:1 40:1 42:1 44:1 46:2 48:2 50:2 52:2 54:3 56:4 58:2 60:2 62:2 64:3 66:6 68:6 70:8 72:9 74:2 76:4 78:3 80:2 82:1 84:1 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0 102:0 104:0 106:0 108:0 110:0 112:0 114:0 116:0 118:0 120:0 122:0 124:0 126:0 128:0 130:0 132:0 134:0 136:0 138:0
+00:16.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_00.png'
+00:16.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_01.png'
+00:16.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_02.png'
+00:16.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_03.png'
+00:16.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_04.png'
+00:16.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_05.png'
+00:16.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__0_06.png'
+00:16.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_00.png'
+00:16.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_01.png'
+00:16.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_02.png'
+00:16.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_03.png'
+00:16.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_04.png'
+00:16.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_05.png'
+00:16.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_dying__1_06.png'
+FBX version: 7700
+[mocap] m_mutant_idle                      frames 428 (14.27s) drift 0.00 m (max 0.07) hands apart 0.51-1.37 m lowest hand 0.79 m
+[mocap]   m_mutant_idle: toe hinge 856
+[mocap]   speeds m_mutant_idle: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:0 18:0 20:0 22:0 24:0 26:0 28:0 30:0 32:0 34:0 36:0 38:0 40:0 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:0 68:0 70:0 72:0 74:0 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0 102:0 104:0 106:0 108:0 110:0 112:0 114:0 116:0 118:0 120:0 122:0 124:0 126:0 128:0 130:0 132:1 134:1 136:1 138:1 140:2 142:2 144:2 146:2 148:2 150:2 152:2 154:1 156:1 158:1 160:1 162:1 164:1 166:1 168:0 170:0 172:0 174:0 176:0 178:0 180:1 182:1 184:1 186:1 188:1 190:1 192:1 194:1 196:1 198:1 200:0 202:1 204:2 206:2 208:2 210:2 212:1 214:1 216:1 218:1 220:1 222:1 224:1 226:1 228:1 230:1 232:1 234:1 236:1 238:1 240:1 242:1 244:1 246:1 248:1 250:1 252:1 254:1 256:1 258:1 260:1 262:1 264:1 266:1 268:1 270:1 272:0 274:0 276:0 278:0 280:0 282:0 284:0 286:0 288:0 290:0 292:0 294:0 296:0 298:0 300:0 302:0 304:0 306:0 308:0 310:0 312:0 314:0 316:0 318:0 320:0 322:0 324:0 326:0 328:0 330:0 332:0 334:0 336:0 338:0 340:0 342:0 344:0 346:0 348:0 350:0 352:0 354:0 356:0 358:0 360:0 362:0 364:0 366:0 368:0 370:0 372:0 374:0 376:0 378:0 380:0 382:0 384:0 386:0 388:0 390:0 392:0 394:0 396:0 398:0 400:0 402:0 404:0 406:0 408:0 410:0 412:0 414:0 416:0 418:0 420:0 422:0 424:0 426:0
+00:17.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_00.png'
+00:17.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_01.png'
+00:17.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_02.png'
+00:17.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_03.png'
+00:17.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_04.png'
+00:17.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_05.png'
+00:18.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__0_06.png'
+00:18.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_00.png'
+00:18.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_01.png'
+00:18.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_02.png'
+00:18.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_03.png'
+00:18.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_04.png'
+00:18.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_05.png'
+00:18.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_idle__1_06.png'
+FBX version: 7700
+[mocap] m_mutant_run                       frames 27 (0.90s) drift 1.98 m (max 1.98) hands apart 0.82-0.91 m lowest hand 0.67 m
+[mocap]   m_mutant_run: toe hinge 27
+[mocap]   speeds m_mutant_run: 0:0 2:5 4:2 6:2 8:2 10:5 12:4 14:4 16:4 18:3 20:2 22:4 24:4 26:0
+00:18.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_00.png'
+00:18.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_01.png'
+00:18.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_02.png'
+00:18.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_03.png'
+00:18.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_04.png'
+00:18.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_05.png'
+00:18.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__0_06.png'
+00:18.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_00.png'
+00:18.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_01.png'
+00:18.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_02.png'
+00:18.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_03.png'
+00:18.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_04.png'
+00:18.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_05.png'
+00:18.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_run__1_06.png'
+FBX version: 7700
+[mocap] m_mutant_walk                      frames 44 (1.47s) drift 1.80 m (max 1.80) hands apart 0.80-0.99 m lowest hand 0.80 m
+[mocap]   m_mutant_walk: toe hinge 37
+[mocap]   speeds m_mutant_walk: 0:0 2:2 4:1 6:1 8:2 10:3 12:4 14:3 16:3 18:3 20:4 22:4 24:2 26:2 28:2 30:1 32:3 34:5 36:5 38:5 40:4 42:2
+00:18.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_00.png'
+00:18.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_01.png'
+00:18.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_02.png'
+00:18.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_03.png'
+00:19.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_04.png'
+00:19.046  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_05.png'
+00:19.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__0_06.png'
+00:19.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_00.png'
+00:19.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_01.png'
+00:19.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_02.png'
+00:19.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_03.png'
+00:19.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_04.png'
+00:19.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_05.png'
+00:19.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_mutant_walk__1_06.png'
+FBX version: 7700
+[mocap] m_ninja_idle                       frames 101 (3.37s) drift 0.00 m (max 0.02) hands apart 1.13-1.14 m lowest hand 0.80 m
+[mocap]   speeds m_ninja_idle: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:0 18:0 20:0 22:0 24:0 26:0 28:0 30:0 32:0 34:0 36:0 38:0 40:0 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:0 68:0 70:0 72:0 74:0 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0
+00:19.515  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_00.png'
+00:19.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_01.png'
+00:19.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_02.png'
+00:19.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_03.png'
+00:19.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_04.png'
+00:19.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_05.png'
+00:19.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__0_06.png'
+00:19.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_00.png'
+00:19.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_01.png'
+00:19.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_02.png'
+00:19.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_03.png'
+00:19.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_04.png'
+00:19.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_05.png'
+00:19.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle__1_06.png'
+FBX version: 7700
+[mocap] m_ninja_idle1                      frames 276 (9.20s) drift 0.00 m (max 0.26) hands apart 0.85-1.15 m lowest hand 0.75 m
+[mocap]   speeds m_ninja_idle1: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:0 18:1 20:1 22:1 24:1 26:1 28:2 30:2 32:2 34:2 36:2 38:1 40:1 42:1 44:1 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:0 68:0 70:0 72:0 74:0 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0 102:1 104:1 106:1 108:1 110:1 112:1 114:1 116:1 118:1 120:1 122:1 124:1 126:1 128:1 130:1 132:1 134:1 136:1 138:1 140:1 142:1 144:1 146:0 148:0 150:0 152:0 154:0 156:0 158:0 160:0 162:0 164:0 166:0 168:0 170:0 172:0 174:0 176:0 178:0 180:0 182:0 184:0 186:1 188:1 190:1 192:1 194:1 196:1 198:1 200:1 202:1 204:1 206:1 208:1 210:1 212:1 214:1 216:1 218:1 220:1 222:1 224:1 226:1 228:0 230:0 232:0 234:0 236:0 238:0 240:0 242:0 244:0 246:0 248:0 250:0 252:0 254:0 256:0 258:0 260:0 262:0 264:0 266:0 268:0 270:0 272:0 274:0
+00:20.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_00.png'
+00:20.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_01.png'
+00:20.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_02.png'
+00:20.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_03.png'
+00:20.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_04.png'
+00:20.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_05.png'
+00:20.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__0_06.png'
+00:20.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_00.png'
+00:20.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_01.png'
+00:20.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_02.png'
+00:21.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_03.png'
+00:21.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_04.png'
+00:21.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_05.png'
+00:21.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_ninja_idle1__1_06.png'
+FBX version: 7700
+[mocap] m_pike_walk                        frames 196 (6.53s) drift 0.00 m (max 0.60) hands apart 0.41-0.56 m lowest hand 0.02 m
+[mocap]   m_pike_walk: toe hinge 212
+[mocap]   speeds m_pike_walk: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:0 18:0 20:0 22:0 24:0 26:0 28:1 30:1 32:2 34:2 36:1 38:3 40:1 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:2 66:2 68:1 70:2 72:2 74:1 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0 102:1 104:0 106:1 108:1 110:1 112:1 114:1 116:1 118:1 120:0 122:0 124:0 126:0 128:0 130:0 132:0 134:0 136:0 138:1 140:1 142:1 144:2 146:2 148:2 150:2 152:1 154:0 156:0 158:1 160:0 162:0 164:0 166:0 168:0 170:0 172:0 174:0 176:0 178:0 180:0 182:0 184:0 186:0 188:0 190:0 192:0 194:0
+00:21.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_00.png'
+00:21.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_01.png'
+00:21.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_02.png'
+00:21.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_03.png'
+00:21.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_04.png'
+00:21.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_05.png'
+00:21.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__0_06.png'
+00:21.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_00.png'
+00:21.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_01.png'
+00:21.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_02.png'
+00:21.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_03.png'
+00:21.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_04.png'
+00:21.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_05.png'
+00:22.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_pike_walk__1_06.png'
+FBX version: 7700
+[mocap] m_run_fast                         frames 17 (0.57s) drift 2.89 m (max 2.89) hands apart 0.46-0.92 m lowest hand 0.76 m
+[mocap]   m_run_fast: toe hinge 2
+[mocap]   speeds m_run_fast: 0:0 2:5 4:18 6:26 8:4 10:11 12:11 14:8 16:0
+00:22.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_00.png'
+00:22.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_01.png'
+00:22.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_02.png'
+00:22.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_03.png'
+00:22.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_04.png'
+00:22.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_05.png'
+00:22.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__0_06.png'
+00:22.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_00.png'
+00:22.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_01.png'
+00:22.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_02.png'
+00:22.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_03.png'
+00:22.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_04.png'
+00:22.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_05.png'
+00:22.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_fast__1_06.png'
+FBX version: 7700
+[mocap] m_run_female                       frames 19 (0.63s) drift 2.94 m (max 2.94) hands apart 0.49-0.80 m lowest hand 0.85 m
+[mocap]   m_run_female: toe hinge 2
+[mocap]   speeds m_run_female: 0:0 2:2 4:6 6:14 8:11 10:6 12:5 14:5 16:5 18:0
+00:22.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_00.png'
+00:22.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_01.png'
+00:22.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_02.png'
+00:22.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_03.png'
+00:22.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_04.png'
+00:22.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_05.png'
+00:22.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__0_06.png'
+00:22.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_00.png'
+00:22.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_01.png'
+00:22.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_02.png'
+00:22.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_03.png'
+00:22.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_04.png'
+00:22.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_05.png'
+00:22.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_female__1_06.png'
+FBX version: 7700
+[mocap] m_run_intention                    frames 22 (0.73s) drift 3.19 m (max 3.19) hands apart 0.54-0.77 m lowest hand 0.91 m
+[mocap]   m_run_intention: toe hinge 44
+[mocap]   speeds m_run_intention: 0:0 2:5 4:2 6:5 8:11 10:8 12:6 14:4 16:5 18:5 20:6
+00:23.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_00.png'
+00:23.046  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_01.png'
+00:23.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_02.png'
+00:23.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_03.png'
+00:23.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_04.png'
+00:23.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_05.png'
+00:23.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__0_06.png'
+00:23.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_00.png'
+00:23.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_01.png'
+00:23.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_02.png'
+00:23.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_03.png'
+00:23.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_04.png'
+00:23.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_05.png'
+00:23.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_intention__1_06.png'
+FBX version: 7700
+[mocap] m_run_medium                       frames 18 (0.60s) drift 2.54 m (max 2.54) hands apart 0.42-0.73 m lowest hand 0.76 m
+[mocap]   m_run_medium: toe hinge 2
+[mocap]   speeds m_run_medium: 0:0 2:5 4:13 6:12 8:3 10:5 12:5 14:5 16:4
+00:23.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_00.png'
+00:23.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_01.png'
+00:23.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_02.png'
+00:23.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_03.png'
+00:23.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_04.png'
+00:23.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_05.png'
+00:23.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__0_06.png'
+00:23.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_00.png'
+00:23.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_01.png'
+00:23.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_02.png'
+00:23.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_03.png'
+00:23.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_04.png'
+00:23.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_05.png'
+00:23.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_medium__1_06.png'
+FBX version: 7700
+[mocap] m_run_ninja                        frames 20 (0.67s) drift 2.59 m (max 2.59) hands apart 0.65-0.73 m lowest hand 0.89 m
+[mocap]   m_run_ninja: toe hinge 34
+[mocap]   speeds m_run_ninja: 0:0 2:5 4:5 6:3 8:3 10:3 12:4 14:5 16:4 18:4
+00:23.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_00.png'
+00:23.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_01.png'
+00:23.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_02.png'
+00:23.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_03.png'
+00:23.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_04.png'
+00:24.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_05.png'
+00:24.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__0_06.png'
+00:24.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_00.png'
+00:24.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_01.png'
+00:24.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_02.png'
+00:24.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_03.png'
+00:24.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_04.png'
+00:24.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_05.png'
+00:24.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_ninja__1_06.png'
+FBX version: 7700
+[mocap] m_run_quick                        frames 22 (0.73s) drift 2.53 m (max 2.53) hands apart 0.45-0.74 m lowest hand 0.89 m
+[mocap]   m_run_quick: toe hinge 3
+[mocap]   speeds m_run_quick: 0:0 2:5 4:1 6:4 8:6 10:10 12:5 14:4 16:1 18:3 20:6
+00:24.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_00.png'
+00:24.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_01.png'
+00:24.515  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_02.png'
+00:24.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_03.png'
+00:24.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_04.png'
+00:24.593  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_05.png'
+00:24.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__0_06.png'
+00:24.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_00.png'
+00:24.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_01.png'
+00:24.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_02.png'
+00:24.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_03.png'
+00:24.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_04.png'
+00:24.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_05.png'
+00:24.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_quick__1_06.png'
+FBX version: 7700
+[mocap] m_run_slow                         frames 23 (0.77s) drift 2.20 m (max 2.20) hands apart 0.42-0.58 m lowest hand 0.74 m
+[mocap]   m_run_slow: toe hinge 9
+[mocap]   speeds m_run_slow: 0:0 2:3 4:3 6:5 8:7 10:6 12:5 14:4 16:4 18:4 20:4 22:0
+00:24.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_00.png'
+00:24.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_01.png'
+00:24.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_02.png'
+00:24.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_03.png'
+00:25.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_04.png'
+00:25.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_05.png'
+00:25.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__0_06.png'
+00:25.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_00.png'
+00:25.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_01.png'
+00:25.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_02.png'
+00:25.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_03.png'
+00:25.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_04.png'
+00:25.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_05.png'
+00:25.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_slow__1_06.png'
+FBX version: 7700
+[mocap] m_run_standard                     frames 23 (0.77s) drift 3.11 m (max 3.11) hands apart 0.51-0.86 m lowest hand 0.76 m
+[mocap]   m_run_standard: toe hinge 3
+[mocap]   speeds m_run_standard: 0:0 2:4 4:6 6:7 8:11 10:7 12:7 14:6 16:6 18:5 20:6 22:0
+00:25.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_00.png'
+00:25.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_01.png'
+00:25.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_02.png'
+00:25.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_03.png'
+00:25.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_04.png'
+00:25.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_05.png'
+00:25.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__0_06.png'
+00:25.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_00.png'
+00:25.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_01.png'
+00:25.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_02.png'
+00:25.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_03.png'
+00:25.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_04.png'
+00:25.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_05.png'
+00:25.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_standard__1_06.png'
+FBX version: 7700
+[mocap] m_run_sword                        frames 25 (0.83s) drift 2.87 m (max 2.87) hands apart 0.50-0.63 m lowest hand 0.95 m
+[mocap]   m_run_sword: toe hinge 3
+[mocap]   speeds m_run_sword: 0:0 2:3 4:3 6:3 8:3 10:2 12:3 14:4 16:4 18:4 20:4 22:4 24:0
+00:25.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_00.png'
+00:25.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_01.png'
+00:25.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_02.png'
+00:25.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_03.png'
+00:25.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_04.png'
+00:25.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_05.png'
+00:25.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__0_06.png'
+00:25.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_00.png'
+00:25.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_01.png'
+00:25.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_02.png'
+00:26.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_03.png'
+00:26.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_04.png'
+00:26.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_05.png'
+00:26.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_sword__1_06.png'
+FBX version: 7700
+[mocap] m_run_torch                        frames 21 (0.70s) drift 2.64 m (max 2.64) hands apart 0.63-1.06 m lowest hand 0.86 m
+[mocap]   m_run_torch: toe hinge 5
+[mocap]   speeds m_run_torch: 0:0 2:3 4:6 6:9 8:9 10:5 12:4 14:5 16:6 18:8 20:0
+00:26.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_00.png'
+00:26.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_01.png'
+00:26.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_02.png'
+00:26.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_03.png'
+00:26.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_04.png'
+00:26.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_05.png'
+00:26.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__0_06.png'
+00:26.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_00.png'
+00:26.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_01.png'
+00:26.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_02.png'
+00:26.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_03.png'
+00:26.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_04.png'
+00:26.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_05.png'
+00:26.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_torch__1_06.png'
+FBX version: 7700
+[mocap] m_run_weighted                     frames 26 (0.87s) drift 2.06 m (max 2.06) hands apart 0.43-0.55 m lowest hand 0.94 m
+[mocap]   m_run_weighted: toe hinge 1
+[mocap]   speeds m_run_weighted: 0:0 2:2 4:3 6:4 8:6 10:7 12:6 14:3 16:2 18:2 20:2 22:2 24:2
+00:26.593  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_00.png'
+00:26.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_01.png'
+00:26.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_02.png'
+00:26.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_03.png'
+00:26.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_04.png'
+00:26.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_05.png'
+00:26.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__0_06.png'
+00:26.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_00.png'
+00:26.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_01.png'
+00:26.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_02.png'
+00:26.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_03.png'
+00:26.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_04.png'
+00:26.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_05.png'
+00:26.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_weighted__1_06.png'
+FBX version: 7700
+[mocap] m_run_zombie                       frames 25 (0.83s) drift 2.37 m (max 2.37) hands apart 0.89-1.06 m lowest hand 0.70 m
+[mocap]   m_run_zombie: toe hinge 17
+[mocap]   speeds m_run_zombie: 0:0 2:4 4:6 6:6 8:5 10:6 12:4 14:3 16:2 18:2 20:3 22:3 24:0
+00:27.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_00.png'
+00:27.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_01.png'
+00:27.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_02.png'
+00:27.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_03.png'
+00:27.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_04.png'
+00:27.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_05.png'
+00:27.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__0_06.png'
+00:27.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_00.png'
+00:27.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_01.png'
+00:27.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_02.png'
+00:27.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_03.png'
+00:27.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_04.png'
+00:27.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_05.png'
+00:27.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_run_zombie__1_06.png'
+FBX version: 7700
+[mocap] m_sheath_sword                     frames 51 (1.70s) drift 0.04 m (max 0.05) hands apart 0.26-0.97 m lowest hand 0.79 m
+[mocap]   speeds m_sheath_sword: 0:0 2:3 4:4 6:3 8:4 10:7 12:10 14:12 16:13 18:10 20:1 22:1 24:1 26:1 28:1 30:1 32:1 34:2 36:1 38:2 40:6 42:10 44:7 46:8 48:4 50:0
+00:27.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_00.png'
+00:27.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_01.png'
+00:27.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_02.png'
+00:27.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_03.png'
+00:27.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_04.png'
+00:27.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_05.png'
+00:27.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__0_06.png'
+00:27.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_00.png'
+00:27.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_01.png'
+00:27.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_02.png'
+00:27.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_03.png'
+00:27.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_04.png'
+00:27.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_05.png'
+00:27.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sheath_sword__1_06.png'
+FBX version: 7700
+[mocap] m_sprint                           frames 17 (0.57s) drift 3.16 m (max 3.16) hands apart 0.28-0.61 m lowest hand 0.87 m
+[mocap]   m_sprint: toe hinge 4
+[mocap]   speeds m_sprint: 0:0 2:12 4:6 6:6 8:8 10:4 12:4 14:2 16:0
+00:27.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_00.png'
+00:27.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_01.png'
+00:27.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_02.png'
+00:27.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_03.png'
+00:28.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_04.png'
+00:28.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_05.png'
+00:28.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__0_06.png'
+00:28.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_00.png'
+00:28.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_01.png'
+00:28.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_02.png'
+00:28.171  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_03.png'
+00:28.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_04.png'
+00:28.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_05.png'
+00:28.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_sprint__1_06.png'
+FBX version: 7700
+[mocap] m_throw_frisbee                    frames 100 (3.33s) drift 0.00 m (max 0.91) hands apart 0.19-1.40 m lowest hand 0.91 m
+[mocap]   m_throw_frisbee: toe hinge 24
+[mocap]   speeds m_throw_frisbee: 0:0 2:2 4:1 6:1 8:1 10:3 12:4 14:4 16:6 18:8 20:9 22:7 24:6 26:7 28:6 30:5 32:3 34:3 36:6 38:15 40:19 42:8 44:3 46:0 48:1 50:1 52:1 54:2 56:3 58:3 60:3 62:2 64:4 66:5 68:1 70:2 72:4 74:4 76:4 78:3 80:3 82:2 84:2 86:2 88:2 90:2 92:1 94:1 96:1 98:1
+00:28.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_00.png'
+00:28.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_01.png'
+00:28.515  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_02.png'
+00:28.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_03.png'
+00:28.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_04.png'
+00:28.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_05.png'
+00:28.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__0_06.png'
+00:28.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_00.png'
+00:28.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_01.png'
+00:28.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_02.png'
+00:28.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_03.png'
+00:28.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_04.png'
+00:28.750  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_05.png'
+00:28.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_frisbee__1_06.png'
+FBX version: 7700
+[mocap] m_throw_goalie                     frames 116 (3.87s) drift 1.15 m (max 1.62) hands apart 0.29-1.44 m lowest hand 0.64 m
+[mocap]   m_throw_goalie: toe hinge 16
+[mocap]   speeds m_throw_goalie: 0:0 2:0 4:0 6:1 8:1 10:1 12:1 14:2 16:2 18:2 20:3 22:4 24:4 26:6 28:6 30:5 32:4 34:3 36:2 38:4 40:5 42:3 44:5 46:6 48:11 50:17 52:11 54:5 56:8 58:3 60:4 62:4 64:5 66:2 68:3 70:4 72:4 74:4 76:3 78:3 80:5 82:5 84:6 86:6 88:4 90:1 92:1 94:1 96:2 98:2 100:2 102:2 104:2 106:3 108:3 110:1 112:1 114:1
+00:29.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_00.png'
+00:29.046  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_01.png'
+00:29.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_02.png'
+00:29.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_03.png'
+00:29.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_04.png'
+00:29.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_05.png'
+00:29.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__0_06.png'
+00:29.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_00.png'
+00:29.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_01.png'
+00:29.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_02.png'
+00:29.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_03.png'
+00:29.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_04.png'
+00:29.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_05.png'
+00:29.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_goalie__1_06.png'
+FBX version: 7700
+[mocap] m_throw_std                        frames 67 (2.23s) drift 0.00 m (max 0.12) hands apart 0.39-1.11 m lowest hand 0.80 m
+[mocap]   speeds m_throw_std: 0:0 2:3 4:4 6:3 8:3 10:5 12:6 14:6 16:6 18:7 20:8 22:8 24:11 26:12 28:6 30:4 32:3 34:3 36:2 38:4 40:5 42:4 44:1 46:1 48:4 50:2 52:1 54:1 56:1 58:0 60:0 62:0 64:0 66:0
+00:29.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_00.png'
+00:29.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_01.png'
+00:29.593  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_02.png'
+00:29.625  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_03.png'
+00:29.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_04.png'
+00:29.671  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_05.png'
+00:29.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__0_06.png'
+00:29.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_00.png'
+00:29.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_01.png'
+00:29.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_02.png'
+00:29.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_03.png'
+00:29.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_04.png'
+00:29.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_05.png'
+00:29.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throw_std__1_06.png'
+FBX version: 7700
+[mocap] m_throwing                         frames 168 (5.60s) drift 0.80 m (max 1.04) hands apart 0.54-1.20 m lowest hand 0.70 m
+[mocap]   m_throwing: toe hinge 247
+[mocap]   speeds m_throwing: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:1 16:1 18:1 20:1 22:1 24:1 26:1 28:2 30:2 32:2 34:2 36:2 38:2 40:1 42:2 44:4 46:9 48:13 50:12 52:9 54:7 56:5 58:2 60:1 62:1 64:1 66:1 68:2 70:2 72:3 74:5 76:5 78:4 80:4 82:4 84:3 86:2 88:1 90:1 92:2 94:2 96:1 98:1 100:1 102:1 104:1 106:1 108:1 110:0 112:0 114:0 116:0 118:1 120:0 122:0 124:0 126:0 128:0 130:0 132:0 134:0 136:0 138:0 140:0 142:0 144:0 146:0 148:0 150:0 152:0 154:0 156:0 158:0 160:0 162:0 164:0 166:0
+00:30.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_00.png'
+00:30.218  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_01.png'
+00:30.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_02.png'
+00:30.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_03.png'
+00:30.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_04.png'
+00:30.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_05.png'
+00:30.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__0_06.png'
+00:30.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_00.png'
+00:30.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_01.png'
+00:30.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_02.png'
+00:30.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_03.png'
+00:30.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_04.png'
+00:30.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_05.png'
+00:30.515  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_throwing__1_06.png'
+FBX version: 7700
+[mocap] m_torch_02                         frames 71 (2.37s) drift 0.00 m (max 0.19) hands apart 0.60-1.38 m lowest hand 0.62 m
+[mocap]   m_torch_02: toe hinge 47
+[mocap]   speeds m_torch_02: 0:0 2:3 4:6 6:6 8:5 10:2 12:5 14:6 16:7 18:9 20:9 22:6 24:7 26:10 28:7 30:3 32:3 34:3 36:4 38:2 40:2 42:2 44:2 46:2 48:1 50:2 52:3 54:2 56:2 58:3 60:3 62:2 64:1 66:1 68:1 70:0
+00:30.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_00.png'
+00:30.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_01.png'
+00:30.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_02.png'
+00:30.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_03.png'
+00:30.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_04.png'
+00:30.812  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_05.png'
+00:30.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__0_06.png'
+00:30.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_00.png'
+00:30.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_01.png'
+00:30.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_02.png'
+00:30.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_03.png'
+00:30.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_04.png'
+00:31.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_05.png'
+00:31.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_02__1_06.png'
+FBX version: 7700
+[mocap] m_torch_03                         frames 106 (3.53s) drift 0.00 m (max 0.13) hands apart 0.65-1.29 m lowest hand 0.60 m
+[mocap]   m_torch_03: toe hinge 40
+[mocap]   speeds m_torch_03: 0:0 2:4 4:4 6:5 8:5 10:3 12:3 14:3 16:4 18:4 20:6 22:10 24:15 26:11 28:4 30:7 32:2 34:2 36:2 38:3 40:3 42:3 44:3 46:3 48:2 50:4 52:8 54:4 56:9 58:9 60:6 62:4 64:1 66:1 68:2 70:3 72:2 74:2 76:1 78:2 80:2 82:3 84:3 86:4 88:4 90:2 92:1 94:1 96:1 98:1 100:1 102:0 104:0
+00:31.265  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_00.png'
+00:31.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_01.png'
+00:31.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_02.png'
+00:31.343  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_03.png'
+00:31.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_04.png'
+00:31.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_05.png'
+00:31.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__0_06.png'
+00:31.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_00.png'
+00:31.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_01.png'
+00:31.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_02.png'
+00:31.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_03.png'
+00:31.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_04.png'
+00:31.593  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_05.png'
+00:31.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_03__1_06.png'
+FBX version: 7700
+[mocap] m_torch_04                         frames 116 (3.87s) drift 1.74 m (max 1.75) hands apart 0.36-1.33 m lowest hand 0.61 m
+[mocap]   m_torch_04: toe hinge 71
+[mocap]   speeds m_torch_04: 0:0 2:1 4:2 6:2 8:2 10:4 12:4 14:4 16:4 18:3 20:1 22:4 24:7 26:7 28:5 30:4 32:5 34:7 36:3 38:3 40:3 42:5 44:5 46:2 48:2 50:1 52:2 54:2 56:2 58:3 60:4 62:6 64:7 66:5 68:8 70:3 72:5 74:7 76:5 78:4 80:2 82:3 84:4 86:3 88:4 90:4 92:5 94:3 96:2 98:1 100:1 102:1 104:2 106:1 108:1 110:1 112:1 114:1
+00:31.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_00.png'
+00:31.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_01.png'
+00:31.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_02.png'
+00:31.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_03.png'
+00:31.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_04.png'
+00:31.968  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_05.png'
+00:32.000  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__0_06.png'
+00:32.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_00.png'
+00:32.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_01.png'
+00:32.078  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_02.png'
+00:32.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_03.png'
+00:32.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_04.png'
+00:32.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_05.png'
+00:32.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_04__1_06.png'
+FBX version: 7700
+[mocap] m_torch_05                         frames 97 (3.23s) drift 1.73 m (max 1.75) hands apart 0.52-1.27 m lowest hand 0.54 m
+[mocap]   m_torch_05: toe hinge 39
+[mocap]   speeds m_torch_05: 0:0 2:2 4:3 6:5 8:6 10:4 12:1 14:4 16:5 18:8 20:10 22:8 24:7 26:3 28:7 30:4 32:3 34:2 36:2 38:2 40:3 42:5 44:5 46:7 48:4 50:5 52:4 54:6 56:6 58:6 60:6 62:4 64:5 66:6 68:4 70:5 72:5 74:3 76:2 78:3 80:3 82:3 84:2 86:1 88:1 90:1 92:1 94:1 96:0
+00:32.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_00.png'
+00:32.421  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_01.png'
+00:32.453  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_02.png'
+00:32.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_03.png'
+00:32.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_04.png'
+00:32.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_05.png'
+00:32.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__0_06.png'
+00:32.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_00.png'
+00:32.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_01.png'
+00:32.640  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_02.png'
+00:32.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_03.png'
+00:32.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_04.png'
+00:32.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_05.png'
+00:32.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_05__1_06.png'
+FBX version: 7700
+[mocap] m_torch_idle                       frames 191 (6.37s) drift 0.00 m (max 0.01) hands apart 1.03-1.08 m lowest hand 0.88 m
+[mocap]   speeds m_torch_idle: 0:0 2:0 4:0 6:0 8:0 10:0 12:0 14:0 16:0 18:0 20:0 22:0 24:0 26:0 28:0 30:0 32:0 34:0 36:0 38:0 40:0 42:0 44:0 46:0 48:0 50:0 52:0 54:0 56:0 58:0 60:0 62:0 64:0 66:0 68:0 70:0 72:0 74:0 76:0 78:0 80:0 82:0 84:0 86:0 88:0 90:0 92:0 94:0 96:0 98:0 100:0 102:0 104:0 106:0 108:0 110:0 112:0 114:0 116:0 118:0 120:0 122:0 124:0 126:0 128:0 130:0 132:0 134:0 136:0 138:0 140:0 142:0 144:0 146:0 148:0 150:0 152:0 154:0 156:0 158:0 160:0 162:0 164:0 166:0 168:0 170:0 172:0 174:0 176:0 178:0 180:0 182:0 184:0 186:0 188:0 190:0
+00:33.125  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_00.png'
+00:33.156  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_01.png'
+00:33.187  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_02.png'
+00:33.203  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_03.png'
+00:33.234  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_04.png'
+00:33.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_05.png'
+00:33.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__0_06.png'
+00:33.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_00.png'
+00:33.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_01.png'
+00:33.390  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_02.png'
+00:33.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_03.png'
+00:33.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_04.png'
+00:33.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_05.png'
+00:33.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_idle__1_06.png'
+FBX version: 7700
+[mocap] m_torch_stab                       frames 74 (2.47s) drift 0.00 m (max 0.60) hands apart 0.71-1.30 m lowest hand 0.58 m
+[mocap]   m_torch_stab: toe hinge 49
+[mocap]   speeds m_torch_stab: 0:0 2:2 4:3 6:4 8:4 10:3 12:2 14:1 16:4 18:5 20:4 22:4 24:12 26:13 28:7 30:3 32:1 34:1 36:3 38:2 40:2 42:2 44:4 46:6 48:5 50:2 52:2 54:2 56:1 58:1 60:2 62:2 64:2 66:2 68:2 70:1 72:0
+00:33.687  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_00.png'
+00:33.718  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_01.png'
+00:33.734  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_02.png'
+00:33.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_03.png'
+00:33.796  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_04.png'
+00:33.828  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_05.png'
+00:33.843  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__0_06.png'
+00:33.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_00.png'
+00:33.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_01.png'
+00:33.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_02.png'
+00:33.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_03.png'
+00:33.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_04.png'
+00:34.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_05.png'
+00:34.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_torch_stab__1_06.png'
+FBX version: 7700
+[mocap] m_upward_thrust                    frames 71 (2.37s) drift 0.00 m (max 1.18) hands apart 0.24-1.21 m lowest hand 0.84 m
+[mocap]   m_upward_thrust: toe hinge 20
+[mocap]   speeds m_upward_thrust: 0:0 2:1 4:1 6:2 8:2 10:2 12:2 14:2 16:3 18:5 20:6 22:7 24:6 26:1 28:1 30:0 32:0 34:1 36:2 38:3 40:3 42:3 44:2 46:7 48:2 50:7 52:4 54:2 56:2 58:2 60:1 62:1 64:0 66:0 68:0 70:0
+00:34.250  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_00.png'
+00:34.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_01.png'
+00:34.296  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_02.png'
+00:34.328  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_03.png'
+00:34.359  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_04.png'
+00:34.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_05.png'
+00:34.406  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__0_06.png'
+00:34.437  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_00.png'
+00:34.468  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_01.png'
+00:34.500  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_02.png'
+00:34.531  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_03.png'
+00:34.546  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_04.png'
+00:34.578  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_05.png'
+00:34.609  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_upward_thrust__1_06.png'
+FBX version: 7700
+[mocap] m_withdraw_sword                   frames 46 (1.53s) drift 0.05 m (max 0.06) hands apart 0.26-1.13 m lowest hand 0.78 m
+[mocap]   speeds m_withdraw_sword: 0:0 2:0 4:2 6:7 8:10 10:10 12:8 14:5 16:1 18:1 20:5 22:3 24:5 26:11 28:15 30:12 32:7 34:3 36:3 38:1 40:0 42:0 44:0
+00:34.765  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_00.png'
+00:34.781  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_01.png'
+00:34.859  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_02.png'
+00:34.875  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_03.png'
+00:34.906  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_04.png'
+00:34.921  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_05.png'
+00:34.953  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__0_06.png'
+00:34.984  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_00.png'
+00:35.015  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_01.png'
+00:35.031  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_02.png'
+00:35.062  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_03.png'
+00:35.093  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_04.png'
+00:35.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_05.png'
+00:35.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\anim\survey_m\m_withdraw_sword__1_06.png'
+[mocap] done in 32.6s
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

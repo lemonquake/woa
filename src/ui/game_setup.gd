@@ -204,10 +204,8 @@ func _slot_row(t: int, i: int) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	row.custom_minimum_size = Vector2(0, 76)
-	var icon := TextureRect.new()
-	icon.custom_minimum_size = Vector2(56, 56)
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	# the hero's ultimate, framed by the current icon border
+	var icon := IconFrame.make(null, "skill", 56)
 	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(icon)
 	var kind := OptionButton.new()
@@ -371,9 +369,12 @@ func _refresh() -> void:
 			(r.lane as OptionButton).visible = s.kind == "you"
 			nm.visible = s.kind == "bot"
 			nm.editable = s.kind == "bot"
-			var icon := r.icon as TextureRect
+			var icon := r.icon as IconFrame
 			var ult := "" if hid == "random" or empty else String((SimData.unit(hid).abilities as Array)[3])
 			icon.texture = U.ability_icon(ult) if ult != "" else null
+			icon.kind = IconBorder.ability_kind(ult) if ult != "" else "skill"
+			# no hero (random or an empty slot): keep the space, show nothing
+			icon.modulate.a = 1.0 if ult != "" else 0.0
 			(r.kind as OptionButton).add_theme_color_override("font_color", Color(0.55, 1.0, 0.55) if s.kind == "you" else (U.TEXT_DIM if empty else U.TEXT))
 	var counts := [0, 0]
 	for t in 2:

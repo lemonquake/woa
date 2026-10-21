@@ -38,6 +38,8 @@ BACK = {
     "wind": ("#2a6a5e", "#04140f", "#c8fff0"),
     "soul": ("#1f4a24", "#030c05", "#a8ff8a"),       # Araki's green soul-fire (run 2026-10-19 c)
     "holy": ("#8a7430", "#1a1406", "#fff4c8"),       # Thyrandael's white-gold light (run 2026-10-21)
+    "earth": ("#6a4a26", "#140c04", "#ffd8a0"),      # Lord Kaileh (run 2026-10-21 b)
+    "royal": ("#8a2a5e", "#1a0612", "#ffc0e0"),      # Dracoxinia's pink and gold (run 2026-10-21 b)
 }
 
 # metals and materials: (light, mid, dark)
@@ -1686,6 +1688,208 @@ def make_skills():
         at(ic, 0, 0, L("M24,74 L34,82 L28,90 L40,98", "#ffffff", 2.5, 0.9))
         at(ic, 64, 104, P("M-22,0 L22,0 L16,10 L-16,10 Z", ic.metal(GOLD, -22, 0, 22, 10), sw=2.5))
         at(ic, 64, 22, eye("#fff4c8"), 0, 1.2)
+
+
+    # ---- Gancho, Lord Kaileh and Dracoxinia (run 2026-10-21 b) ----------------------------------------------------
+    BARK = ("#c89a68", "#6a4422", "#20100a")
+    VINE = ("#c8f08a", "#3c8a2a", "#0c2a08")
+    PINK = ("#ffd8ec", "#ff5aa8", "#5a0a30")
+    ROYAL_GOLD = ("#fff8d0", "#f0c040", "#6a4a08")
+    SWORD_COLS = {"pink": PINK, "gold": ROYAL_GOLD, "blue": ("#d0e8ff", "#3a7aff", "#0a1a5a"),
+                  "red": ("#ffd0c0", "#ff3a20", "#5a0a02"), "green": ("#e0ffc0", "#40d030", "#0a3a06")}
+
+    def trunk(ic, x, y, h=70, w=16):
+        s = P("M%d,%d L%d,%d Q%d,%d %d,%d L%d,%d Q%d,%d %d,%d Z" % (-w / 2, 0, -w / 2 + 2, -h, 0, -h - 6, w / 2 - 2, -h,
+                                                                       w / 2, 0, 0, 6, -w / 2, 0), ic.metal(BARK, -w, -h, w, 0), sw=2.5)
+        s += L("M-2,-%d Q2,-%d -1,-%d" % (h * 0.8, h * 0.5, h * 0.2), "#3a2010", 1.6, 0.7)
+        crown_ = C(0, -h - 10, w * 1.6, ic.rad([(0, "#c8f08a"), (0.7, "#3c8a2a"), (1, "#0c2a08")], 0, -h - 10, w * 1.6), sw=2.5)
+        return '<g transform="translate(%s %s)">%s%s</g>' % (x, y, s, crown_)
+
+    def vine(d, w=5.0, op=1.0):
+        return L(d, "#0c2a08", w + 3, op) + L(d, "#4caa30", w, op) + L(d, "#c8f08a", w * 0.35, op * 0.8)
+
+    def lance(ic, length=110, col=RED):
+        s = P("M0,-%d L7,-%d L4,0 L-4,0 L-7,-%d Z" % (length, length - 30, length - 30), ic.metal(STEEL, -7, -length, 7, 0), sw=2.5)
+        s += P("M-14,0 L14,0 L8,14 L-8,14 Z", ic.metal(col, -14, 0, 14, 14), sw=2.5)
+        s += P("M-3,14 L3,14 L3,40 L-3,40 Z", ic.metal(LEATHER, -3, 14, 3, 40), sw=2)
+        for k in range(3):
+            y = -length + 36 + k * 18
+            s += L("M-5,%d L5,%d" % (y, y - 6), col[1], 2.5, 0.9)
+        return s
+
+    def great_sword(ic, blade, length=100, glow=None):
+        s = ""
+        if glow:
+            s += P("M-14,0 L0,-%d L14,0 Z" % (length + 8), glow, stroke="none", sw=0, extra=' opacity="0.35"')
+        s += P("M-9,0 L-9,-%d L0,-%d L9,-%d L9,0 Z" % (length - 18, length, length - 18), ic.metal(blade, -9, -length, 9, 0), sw=2.8)
+        s += L("M0,-6 L0,-%d" % (length - 10), blade[0], 1.6, 0.85)
+        s += P("M-24,0 L24,0 L20,8 L-20,8 Z", ic.metal(ROYAL_GOLD, -24, 0, 24, 8), sw=2.5)
+        s += P("M-4,8 L4,8 L4,30 L-4,30 Z", ic.metal(PINK, -4, 8, 4, 30), sw=2)
+        s += C(0, 34, 5.5, ic.metal(ROYAL_GOLD, -5, 30, 5, 40), sw=2)
+        return s
+
+    def scales(ic, col=PINK, rows=4, cols=4, r=12):
+        s = ""
+        for j in range(rows):
+            for i in range(cols):
+                x = (i - (cols - 1) / 2) * r * 1.6 + (r * 0.8 if j % 2 else 0)
+                y = j * r * 1.05
+                s += P("M%.1f,%.1f A%d,%d 0 0 0 %.1f,%.1f Z" % (x - r, y, r, r, x + r, y), ic.metal(col, x - r, y, x + r, y + r), sw=2)
+        return s
+
+    def horse_head(col="#e8f0ff", op=0.8):
+        return P("M-10,24 L-6,4 Q-14,-6 -10,-18 L-2,-26 L2,-34 L6,-24 Q20,-20 22,-8 L18,-4 Q8,-8 6,0 L10,24 Z", col,
+                 stroke="#0a1020", sw=2, extra=' opacity="%s"' % op)
+
+    @icon("tree_walk", "nature")
+    def _(ic):
+        at(ic, 0, 0, trunk(ic, 34, 112, 66, 18) + trunk(ic, 94, 114, 72, 18))
+        ic.add('<g opacity="0.55">')
+        at(ic, 64, 82, figure("#d8ffb0", 0.8))
+        ic.add('</g>')
+        ic.add(speed_lines("#e0ffc0", 3, 10, 26, 64, 10, 0.75))
+        for x, y in ((50, 40), (78, 30)):
+            at(ic, x, y, leaf(ic, GREEN, 0.5), 30)
+
+    @icon("root_snare", "nature")
+    def _(ic):
+        at(ic, 0, 0, vine("M10,112 Q40,70 66,82 Q90,94 100,74", 6))
+        at(ic, 100, 72, figure("#ffe0c8", 0.7))
+        for k in range(3):
+            y = 92 + k * 7
+            at(ic, 0, 0, vine("M86,%d Q100,%d 114,%d" % (y, y - 8, y), 3.2))
+        for x, y, r in ((28, 92, -30), (52, 74, 20)):
+            at(ic, x, y, leaf(ic, GREEN, 0.45), r)
+
+    @icon("seed_bomb", "nature")
+    def _(ic):
+        at(ic, 64, 74, ray_burst("#e0ffb0", 12, 22, 52, 4, 0.6))
+        at(ic, 64, 78, E(0, 0, 20, 15, ic.metal(BARK, -20, -15, 20, 15), sw=3))
+        at(ic, 0, 0, vine("M64,64 Q60,40 72,26", 4))
+        at(ic, 74, 26, leaf(ic, GREEN, 0.7), 40)
+        at(ic, 58, 40, leaf(ic, GREEN, 0.5), -50)
+        for x, y in ((24, 104), (104, 104), (20, 52), (108, 50)):
+            at(ic, x, y, C(0, 0, 4, ic.metal(BARK, -4, -4, 4, 4), sw=1.5))
+
+    @icon("thorn_barbs", "nature")
+    def _(ic):
+        at(ic, 64, 64, C(0, 0, 34, ic.rad([(0, "#ff9a8a"), (0.8, "#a02a24"), (1, "#3a0606")], 0, 0, 34), sw=3))
+        for x, y, rot in ((46, 44, -30), (78, 48, 25), (60, 78, 5), (88, 82, 40), (38, 84, -50)):
+            at(ic, x, y, P("M-5,8 L0,-16 L5,8 Z", ic.metal(VINE, -5, -16, 5, 8), sw=2), rot)
+        ic.add(badge(ic, '<g transform="scale(0.5)">%s</g>' % droplet(ic, RED, 0.9), rim=GOLD))
+
+    @icon("angry_forest", "nature")
+    def _(ic):
+        at(ic, 0, 0, trunk(ic, 22, 118, 56, 14) + trunk(ic, 64, 112, 74, 18) + trunk(ic, 106, 118, 56, 14))
+        at(ic, 0, 0, vine("M30,74 Q52,58 44,40 Q40,26 56,18", 4) + vine("M98,72 Q78,56 86,40 Q90,26 74,18", 4))
+        for k in (-1, 1):
+            at(ic, 64 + k * 8, 50, C(0, 0, 3.5, "#ffe060", stroke="#3a1a04", sw=1.5))
+        at(ic, 64, 60, L("M-9,0 Q0,-5 9,0", "#20100a", 2.5))
+
+    @icon("momentum", "earth")
+    def _(ic):
+        ic.add(speed_lines("#ffe0b0", 4, 6, 40, 40, 13, 0.8))
+        at(ic, 62, 64, lance(ic, 96, RED), 90, 0.68)
+        ic.add(badge(ic, star("#ffe060", 9, 4, 5), rim=GOLD))
+
+    @icon("lance_charge", "earth")
+    def _(ic):
+        ic.add(speed_lines("#ffe8c0", 4, 4, 34, 54, 12, 0.7))
+        at(ic, 56, 74, lance(ic, 112, RED), 60, 0.8)
+        at(ic, 108, 36, figure("#ffd0c0", 0.6), 20)
+        at(ic, 108, 36, C(0, 0, 18, "none", stroke="#ffffff", sw=2, extra=' opacity="0.7"'))
+
+    @icon("lance_sweep", "earth")
+    def _(ic):
+        at(ic, 64, 70, P("M-52,0 A52,40 0 1 1 52,0", "none", stroke="#ffe0a0", sw=10, extra=' opacity="0.35"'))
+        at(ic, 64, 70, P("M-52,0 A52,40 0 1 1 52,0", "none", stroke="#ffffff", sw=3, extra=' opacity="0.85"'))
+        at(ic, 64, 70, lance(ic, 96, RED), -70, 0.85)
+        for x, y in ((18, 96), (110, 96)):
+            at(ic, x, y, figure("#e8d0b0", 0.45), -20 if x < 64 else 20)
+
+    @icon("war_banner", "earth")
+    def _(ic):
+        at(ic, 0, 0, L("M40,120 L40,14", INK, 8) + L("M40,120 L40,14", ic.metal(WOOD, -3, 14, 3, 120), 4))
+        at(ic, 40, 12, C(0, 0, 6, ic.metal(GOLD, -6, -6, 6, 6), sw=2))
+        flag = P("M42,20 Q72,14 104,24 Q96,40 104,56 Q72,48 42,58 Z", ic.lin([(0, "#e03028"), (1, "#701010")], 42, 20, 104, 58), sw=3)
+        flag += P("M42,20 Q72,14 104,24 L102,30 Q72,20 42,26 Z", ic.metal(GOLD, 42, 20, 104, 30), sw=1.5)
+        at(ic, 0, 0, flag)
+        at(ic, 72, 38, shield(ic, GOLD, RED), 0, 0.3)
+        at(ic, 40, 110, rings("#ffd8a0", 18, 2, 14, 0.6))
+
+    @icon("cavalry_charge", "earth")
+    def _(ic):
+        ic.add(speed_lines("#e8f0ff", 5, 2, 30, 30, 15, 0.6))
+        for x, y, sc, op in ((40, 54, 0.8, 0.45), (40, 98, 0.8, 0.45), (66, 76, 1.05, 0.95)):
+            at(ic, x, y, horse_head("#e8f0ff" if op < 0.9 else "#ffffff", op), 0, sc)
+        at(ic, 76, 70, lance(ic, 70, RED), 80, 0.7)
+
+    @icon("royal_scales", "royal")
+    def _(ic):
+        at(ic, 64, 34, scales(ic, PINK, 4, 4, 13))
+        at(ic, 0, 0, P("M24,30 Q64,18 104,30 L100,46 Q64,36 28,46 Z", ic.metal(ROYAL_GOLD, 24, 18, 104, 46), sw=2.5))
+        for x in (40, 64, 88):
+            at(ic, x, 22, star("#fff8d0", 6, 2.5, 5))
+        ic.add(badge(ic, '<g transform="scale(0.32)">%s</g>' % cross(("#ffe0f0", "#ff5aa8", "#5a0a30")), rim=GOLD))
+
+    @icon("dragon_dash", "royal")
+    def _(ic):
+        for k, op in enumerate((0.2, 0.4)):
+            ic.add('<g opacity="%s">' % op)
+            at(ic, 30 + k * 18, 78, great_sword(ic, PINK, 70), 60, 0.8)
+            ic.add('</g>')
+        at(ic, 74, 70, great_sword(ic, PINK, 84, "#ff9ad0"), 60, 0.8)
+        ic.add(speed_lines("#ffd8ec", 3, 4, 30, 96, 10, 0.7))
+
+    @icon("dragon_leap", "royal")
+    def _(ic):
+        # she arcs high over a tree, a pink trail behind her
+        at(ic, 0, 0, trunk(ic, 64, 112, 44, 14))
+        arc = "M14,108 Q58,-6 114,96"
+        at(ic, 0, 0, L(arc, "#5a0a30", 10, 0.5) + L(arc, "#ff5aa8", 6, 0.8) + L(arc, "#ffe0f0", 2, 0.9))
+        at(ic, 70, 30, figure("#ffd8ec", 0.75), 35)
+        at(ic, 84, 22, great_sword(ic, PINK, 44), 70, 0.55)
+        at(ic, 0, 0, P("M100,112 L114,96 L120,114", "none", stroke="#ffd8ec", sw=3))
+
+    @icon("dragon_hide", "royal")
+    def _(ic):
+        # rows of pink scales with gold rims, the front one shining
+        for row, (y, n) in enumerate(((44, 3), (68, 4), (92, 3))):
+            for k in range(n):
+                x = 64 + (k - (n - 1) / 2) * 30
+                sc = "M-15,-12 Q-15,14 0,20 Q15,14 15,-12 Q0,-4 -15,-12 Z"
+                at(ic, x, y, P(sc, ic.metal(PINK, -15, -12, 15, 20), stroke=ROYAL_GOLD[2], sw=2.5)
+                   + L("M-11,-9 Q0,-2 11,-9", ROYAL_GOLD[1], 2.5, 0.95) + L("M-6,0 Q-6,10 0,13", "#ffffff", 2, 0.5))
+        at(ic, 64, 68, P("M-15,-12 Q-15,14 0,20 Q15,14 15,-12 Q0,-4 -15,-12 Z", "#ffffff", stroke="none", sw=0,
+                         extra=' opacity="0.25"'))
+
+    @icon("rising_slash", "royal")
+    def _(ic):
+        at(ic, 0, 0, P("M20,112 Q30,40 100,14", "none", stroke="#ffd8ec", sw=12, extra=' opacity="0.35"'))
+        at(ic, 0, 0, P("M20,112 Q30,40 100,14", "none", stroke="#ffffff", sw=3))
+        at(ic, 92, 34, figure("#ffe0c8", 0.6), 25)
+        at(ic, 40, 96, great_sword(ic, PINK, 70), 20, 0.75)
+        for y in (60, 72, 84):
+            at(ic, 0, 0, L("M%d,%d L%d,%d" % (98, y + 20, 98, y + 6), "#ffffff", 2, 0.7))
+
+    @icon("dragon_blade", "royal")
+    def _(ic):
+        at(ic, 64, 64, ray_burst("#ffd8ec", 12, 30, 60, 3, 0.45))
+        at(ic, 64, 96, great_sword(ic, PINK, 98, "#ff9ad0"), 0, 0.9)
+        for k in range(4):
+            at(ic, 22, 100 - k * 14, C(0, 0, 5, "#ffe0f0" if k < 3 else "#fff8d0", stroke="#3a0820", sw=1.5))
+
+    @icon("change_sword", "royal")
+    def _(ic):
+        for k, cid in enumerate(("green", "red", "blue", "gold", "pink")):
+            at(ic, 64, 104, great_sword(ic, SWORD_COLS[cid], 72), -48 + k * 24, 0.75)
+        ic.add(badge(ic, '<g transform="scale(0.34)">%s</g>' % cycle_arrows("#ffe0f0", 30), rim=GOLD))
+
+    for cid, col in SWORD_COLS.items():
+        def make(ic, col=col):
+            at(ic, 64, 64, rings(col[0], 24, 2, 16, 0.4))
+            at(ic, 64, 100, great_sword(ic, col, 100, col[1]), 35, 0.9)
+        icon("sword_" + cid, "royal")(make)
 
     return R
 

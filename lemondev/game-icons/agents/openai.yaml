@@ -1,0 +1,6 @@
+interface:
+  display_name: "Game Icons"
+  short_description: "Audit and generate skill and item artwork"
+  default_prompt: "Use $game-icons to scan current skill and item icons, create missing artwork, integrate it and build the game."
+policy:
+  allow_implicit_invocation: true

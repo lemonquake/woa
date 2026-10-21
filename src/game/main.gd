@@ -28,6 +28,7 @@ var azrael_fx: AzraelFx
 var hero18_fx: Hero18Fx
 var araki_fx: ArakiFx
 var hero21_fx: Hero21Fx
+var hero22_fx: Hero22Fx
 var fortify_fx: FortifyFx
 var status_fx: StatusFx
 var orb_view: OrbView
@@ -168,6 +169,11 @@ func _ready() -> void:
 	hero21_fx.fx = fx
 	hero21_fx.fire = fire_fx
 	add_child(hero21_fx)
+	hero22_fx = Hero22Fx.new()
+	hero22_fx.game = self
+	hero22_fx.fx = fx
+	hero22_fx.fire = fire_fx
+	add_child(hero22_fx)
 	sludge_fx = SludgeFx.new()
 	sludge_fx.game = self
 	sludge_fx.fx = fx
@@ -721,9 +727,18 @@ func _make_view(u: SimUnit) -> void:
 		var eye_col := Color(1.0, 0.85, 0.3) if u.team == 0 else Color(1.0, 0.3, 0.3)
 		if String(u.def.id) == "ward_sentry":
 			eye_col = Color(0.4, 0.75, 1.0)            # Reveal Ward: a blue eye
-		var eye := fx._sphere(0.16, fx._glow(eye_col, 4.0))
-		eye.position.y = 1.2
-		wv.add_child(eye)
+		if String(u.def.id) == "war_banner":
+			# Lord Kaileh's War Banner: a banner on a pole, its reach on the ground (Hero22Fx)
+			var reach := 600.0
+			var bk: Dictionary = world.abilities.kits10.banners.get(u.id, {})
+			if not bk.is_empty():
+				reach = float(bk.radius)
+			var ban := hero22_fx.make_banner(u.team, reach)
+			wv.add_child(ban)
+		else:
+			var eye := fx._sphere(0.16, fx._glow(eye_col, 4.0))
+			eye.position.y = 1.2
+			wv.add_child(eye)
 		wv.place()
 	else:
 		var v := UnitView.new()
@@ -781,6 +796,8 @@ func _drain_events() -> void:
 			araki_fx.event(e)
 		elif e.t in Hero21Fx.EVENTS:
 			hero21_fx.event(e)
+		elif e.t in Hero22Fx.EVENTS:
+			hero22_fx.event(e)
 		match e.t:
 			"damage":
 				_on_damage(e)
@@ -1235,6 +1252,7 @@ func _process(dt: float) -> void:
 	hero18_fx.update(world, alpha, dt)
 	araki_fx.update(world, alpha, dt)
 	hero21_fx.update(world, alpha, dt)
+	hero22_fx.update(world, alpha, dt)
 	item_fx.frame(dt)
 	_t = _tm("fx_other", _t)
 	status_fx.frame(dt)

@@ -1,0 +1,22 @@
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey.py:26: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+00:03.922  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\gancho_front.png'
+00:04.312  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\gancho_side.png'
+00:04.656  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\gancho_back.png'
+00:04.969  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\gancho_top.png'
+FBX version: 7400
+OBJ Armature ARMATURE (0.325, 0.486, 0.831) parent None
+  bones 65 ['mixamorig:Hips', 'mixamorig:LeftUpLeg', 'mixamorig:LeftLeg', 'mixamorig:LeftFoot', 'mixamorig:LeftToeBase', 'mixamorig:LeftToe_End', 'mixamorig:RightUpLeg', 'mixamorig:RightLeg', 'mixamorig:RightFoot', 'mixamorig:RightToeBase', 'mixamorig:RightToe_End', 'mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig:Spine2', 'mixamorig:LeftShoulder', 'mixamorig:LeftArm', 'mixamorig:LeftForeArm', 'mixamorig:LeftHand', 'mixamorig:LeftHandIndex1', 'mixamorig:LeftHandIndex2', 'mixamorig:LeftHandIndex3', 'mixamorig:LeftHandIndex4', 'mixamorig:LeftHandMiddle1', 'mixamorig:LeftHandMiddle2', 'mixamorig:LeftHandMiddle3', 'mixamorig:LeftHandMiddle4', 'mixamorig:LeftHandPinky1', 'mixamorig:LeftHandPinky2', 'mixamorig:LeftHandPinky3', 'mixamorig:LeftHandPinky4', 'mixamorig:LeftHandRing1', 'mixamorig:LeftHandRing2', 'mixamorig:LeftHandRing3', 'mixamorig:LeftHandRing4', 'mixamorig:LeftHandThumb1', 'mixamorig:LeftHandThumb2', 'mixamorig:LeftHandThumb3', 'mixamorig:LeftHandThumb4', 'mixamorig:Neck', 'mixamorig:Head', 'mixamorig:HeadTop_End', 'mixamorig:RightShoulder', 'mixamorig:RightArm', 'mixamorig:RightForeArm', 'mixamorig:RightHand', 'mixamorig:RightHandIndex1', 'mixamorig:RightHandIndex2', 'mixamorig:RightHandIndex3', 'mixamorig:RightHandIndex4', 'mixamorig:RightHandMiddle1', 'mixamorig:RightHandMiddle2', 'mixamorig:RightHandMiddle3', 'mixamorig:RightHandMiddle4', 'mixamorig:RightHandPinky1', 'mixamorig:RightHandPinky2', 'mixamorig:RightHandPinky3', 'mixamorig:RightHandPinky4', 'mixamorig:RightHandRing1', 'mixamorig:RightHandRing2', 'mixamorig:RightHandRing3', 'mixamorig:RightHandRing4', 'mixamorig:RightHandThumb1', 'mixamorig:RightHandThumb2', 'mixamorig:RightHandThumb3', 'mixamorig:RightHandThumb4']
+  action Armature|run
+OBJ tripo_node_8e9574b5 MESH (0.373, 0.471, 0.859) parent Armature
+  faces 11943 verts 5954 mats ['tripo_mat_8e9574b5'] vgroups 50 uv 1 colattr 0
+ACTION Armature|run (1.0, 31.0)
+ACTION Armature|walk (1.0, 57.0)
+IMG gancho_basecolor (2048, 2048) False A:\Python\woa\work\downloads\sf_heroes\gancho\tripo_convert_8e9574b5-24f0-4067-b04a-f576b59829ce.fbm\gancho_basecolor.JPEG
+IMG gancho_metallic (2048, 2048) False A:\Python\woa\work\downloads\sf_heroes\gancho\tripo_convert_8e9574b5-24f0-4067-b04a-f576b59829ce.fbm\gancho_metallic.JPEG
+IMG gancho_normal (2048, 2048) False A:\Python\woa\work\downloads\sf_heroes\gancho\tripo_convert_8e9574b5-24f0-4067-b04a-f576b59829ce.fbm\gancho_normal.JPEG
+IMG gancho_roughness (2048, 2048) False A:\Python\woa\work\downloads\sf_heroes\gancho\tripo_convert_8e9574b5-24f0-4067-b04a-f576b59829ce.fbm\gancho_roughness.JPEG
+BOUNDS (-0.191, -0.721, 0.001) (0.183, -0.25, 0.86)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

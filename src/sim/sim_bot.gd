@@ -437,6 +437,9 @@ func think() -> void:
 	# Araki (run 2026-10-19 c): Blur Strike's second dash home after a lane poke
 	if SimBot19.tick(self, h):
 		return
+	# Dracoxinia's sword for the fight at hand (run 2026-10-21 b)
+	if SimBot22.tick(self, h):
+		return
 	if mode != "retreat" and mode != "fight" and _grab_orb(h):
 		return
 	if _use_site(h):
@@ -764,6 +767,7 @@ const CLEAR_SPELLS := {
 	"emelrich": [["sweep", "self"]], "feran": [["joke_box", "point"], ["knife_juggle", "line"]],
 	"burak": [["reckless_swing", "self"]], "ghorman": [["roar", "self"]], "araki": [["blur_strike", "line"]],
 	"thyrandael": [["quick_flash", "self"]],
+	"gancho": [["seed_bomb", "point"]], "kaileh": [["lance_sweep", "self"]], "dracoxinia": [],
 }
 const CLEAR_DAMAGE_KEYS := ["damage", "explode_damage", "blast_damage", "impact_damage", "crash_damage"]
 
@@ -1180,6 +1184,8 @@ func _escape_spells(h: SimUnit, fd: float) -> bool:
 		return SimBot19.escape(self, h, fd)
 	if SimBot21.handles(kit):
 		return SimBot21.escape(self, h, fd)
+	if SimBot22.handles(kit):
+		return SimBot22.escape(self, h, fd)
 	var ab := w.abilities
 	match kit:
 		"tock":
@@ -1906,6 +1912,8 @@ func _aoe_farm(h: SimUnit, ns: Array[SimUnit], centre: Vector2) -> bool:
 		return SimBot19.aoe_farm(self, h, ns, centre)
 	if _spells_ok() and SimBot21.handles(kit):
 		return SimBot21.aoe_farm(self, h, ns, centre)
+	if _spells_ok() and SimBot22.handles(kit):
+		return SimBot22.aoe_farm(self, h, ns, centre)
 	if _spells_ok():
 		var ab := w.abilities
 		match kit:
@@ -2935,6 +2943,8 @@ func _spells_on(h: SimUnit, e: SimUnit) -> void:
 		SimBot19.spells(self, h, e)
 	elif SimBot21.handles(kit):
 		SimBot21.spells(self, h, e)
+	elif SimBot22.handles(kit):
+		SimBot22.spells(self, h, e)
 	else:
 		_ranger_spells(h, e)
 

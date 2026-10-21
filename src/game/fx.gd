@@ -633,6 +633,23 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 			sp.rotation.x = -PI * 0.5
 			node.add_child(sp)
 			arc = 0.6
+		"thorn":
+			# Gancho's thrown thorn: a dark wooden spike with a green tip, a faint leafy streak behind it
+			var th := MeshInstance3D.new()
+			var cone := CylinderMesh.new()
+			cone.top_radius = 0.0
+			cone.bottom_radius = 0.035
+			cone.height = 0.42
+			cone.radial_segments = 6
+			th.mesh = cone
+			th.material_override = _solid(Color(0.32, 0.22, 0.12), 0.7)
+			th.rotation.x = -PI * 0.5
+			node.add_child(th)
+			var tipg := _sphere(0.03, _glow(Color(0.45, 1.0, 0.35), 2.5))
+			tipg.position = Vector3(0, 0, -0.2)
+			node.add_child(tipg)
+			trail = Trail3D.make(node, Color(0.45, 0.85, 0.3, 0.45), 0.03, 0.18)
+			arc = 0.1
 		_:
 			# Roydo's and Blau's shots (h16:...) come fully made; anything else unknown gets a plain glowing ball
 			if not style.begins_with("h16:"):
@@ -652,7 +669,7 @@ func projectile(e: Dictionary, w: SimWorld) -> void:
 		"trail": trail, "last": p0, "src_team": src.team, "big": bool(e.get("fortify", false))}
 
 func _is_arrow(style: String) -> bool:
-	return style in ["arrow", "burst_arrow", "blood_arrow", "spear"]
+	return style in ["arrow", "burst_arrow", "blood_arrow", "spear", "thorn"]
 
 func projectile_end(e: Dictionary) -> void:
 	var p = _proj.get(e.id)

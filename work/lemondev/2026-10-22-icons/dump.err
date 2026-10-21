@@ -1,0 +1,2720 @@
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:32)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:53)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)
+ERROR: Condition "format != p_src->format" is true.
+   at: blend_rect (core/io/image.cpp:3218)
+   GDScript backtrace (most recent call first):
+       [0] _sheet (res://tests/tools/icon_art_dump.gd:54)
+       [1] _init (res://tests/tools/icon_art_dump.gd:33)

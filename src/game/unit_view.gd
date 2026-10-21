@@ -16,6 +16,7 @@ var model: Node3D
 var pivot: Node3D                          # leans for hit flinches; the model hangs under it
 var anim: AnimationPlayer
 var skeleton: Skeleton3D
+var sway: BodySway = null                 # wings that beat (BodySway, run 2026-10-21 b)
 var appearance: HeroAppearance
 var weapons: Array[Node3D] = []
 var weapon_nodes := {}                     # "R" / "L" -> the weapon in that hand
@@ -100,6 +101,7 @@ func setup(u: SimUnit, p_terrain: TerrainBuilder) -> void:
 		anim = null
 	var sks := model.find_children("*", "Skeleton3D", true, false)
 	skeleton = sks[0] if not sks.is_empty() else null
+	sway = BodySway.attach(skeleton, cfg)
 	if cfg.get("hero", false):
 		appearance = HeroAppearance.new(model)
 		appearance.apply(u.look.get("look", {}))
@@ -252,6 +254,7 @@ func _swap_model(k: String) -> void:
 		anim.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	var sks := model.find_children("*", "Skeleton3D", true, false)
 	skeleton = sks[0] if not sks.is_empty() else null
+	sway = BodySway.attach(skeleton, cfg)
 	if cfg.has("skin_shader"):
 		_skin(model, String(cfg.skin_shader), String(cfg.get("skin_material", "SludgeSkin")), cfg.get("skin_params", {}))
 	if k == _base_key:
@@ -295,6 +298,29 @@ func _weapons() -> void:
 			swing_trail = Trail3D.make(tip, cfg.get("trail_color", Color(0.92, 0.92, 1.0, 0.45)), 0.06, 0.14)
 			swing_trail.emitting = false
 			add_child(swing_trail)
+
+## Put another weapon in a hand (Dracoxinia's Change Sword: Hero22Fx): the new one on the same grip, the swing trail
+## moved onto it (in `trail` colour when given).
+func swap_weapon(side: String, wname: String, trail = null) -> void:
+	var old: Node3D = weapon_nodes.get(side)
+	var ps := ModelCatalog.weapon(wname)
+	if old == null or ps == null or not is_instance_valid(old):
+		return
+	var w := ps.instantiate() as Node3D
+	old.get_parent().add_child(w)
+	w.transform = old.transform
+	for c in old.get_children():
+		if c.get_class() == "Node3D" and c.get_child_count() == 0:
+			c.reparent(w, false)                 # the swing trail's tip
+	weapons.erase(old)
+	weapons.append(w)
+	weapon_nodes[side] = w
+	old.queue_free()
+	if swing_trail and trail is Color:
+		swing_trail.color = trail
+	if _glow_on and _glow_mat:
+		for mi: MeshInstance3D in w.find_children("*", "MeshInstance3D", true, false):
+			mi.material_overlay = _glow_mat
 
 ## Darken a weapon to blackened steel (Ezee's greatsword).
 func _tint_node(n: Node3D, c: Color, metal := -1.0) -> void:
@@ -484,8 +510,14 @@ func tick(u: SimUnit) -> void:
 	if _fallen_at >= 0.0:
 		_fallen_at = -1.0
 		_state = ""
-		_play("getup", false, 1.1, 0.12, true)
-		_lock_until = _now() + 0.85
+		# his own climb back up from the floor when he has one (MOCAP "anims" rise), else the stagger's recovery
+		var rise := ModelCatalog.anim(cfg, "rise")
+		if anim and rise != "rise" and anim.has_animation(rise):
+			_play("rise", false, 1.0, 0.12, true)
+			_lock_until = _now() + float(ModelCatalog.clip(rise).get("length", 0.85))
+		else:
+			_play("getup", false, 1.1, 0.12, true)
+			_lock_until = _now() + 0.85
 	if not u.alive:
 		if cfg.has("ghost"):
 			model.visible = false               # a spirit has no body to fall: it goes up in a puff (SimKits7 ghost_poof)
@@ -514,7 +546,31 @@ func tick(u: SimUnit) -> void:
 		_state = ""
 	_item_states(u)
 	if not u.knock.is_empty() and not bool(u.knock.get("disable", true)) and not u.knock.get("phys", false):
-		pass                                     # a Push Staff slide is not a disable: no stagger
+		# a hero's own charge or dash (Lord Kaileh's lance, Dracoxinia's dash): its charge clip while it lasts (MOCAP
+		# "anims" charge); a Push Staff slide is not a disable: no stagger
+		# (or the clip of that very move: MOCAP "charges", e.g. Dragon Leap's jump, played once over its flight)
+		var own := String(cfg.get("charges", {}).get(String(u.knock.get("charge", "")), ""))
+		if u.knock.has("charge") and own != "" and anim and anim.has_animation(own):
+			if _state != "charge":
+				_state = "charge"
+				# its time in the air (the clip's "airborne" timings) fitted to the flight; the landing plays out after it
+				var meta := ModelCatalog.clip(own)
+				var ln := float(meta.get("length", 1.0))
+				var air = meta.get("airborne", null)
+				var span := float(air[1]) - float(air[0]) if air is Array and air.size() == 2 else ln
+				var spd := clampf(span / maxf(0.2, float(u.knock.dur)), 0.6, 2.5)
+				_play(own, false, spd, 0.06, true)
+				_lock_until = _now() + ln / spd
+			return
+		if u.knock.has("charge") and anim and anim.has_animation(ModelCatalog.anim(cfg, "charge")):
+			if _state != "charge":
+				_state = "charge"
+				_play("charge", true, 1.0, 0.08)
+			return
+	elif _state == "charge":
+		_state = ""
+	if not u.knock.is_empty() and not bool(u.knock.get("disable", true)) and not u.knock.get("phys", false):
+		pass
 	elif not u.knock.is_empty():
 		if u.knock.get("drag", false):
 			# caught by a Shuriken Hook: hauled along, limbs trailing
@@ -573,6 +629,10 @@ func tick(u: SimUnit) -> void:
 	if now < _lock_until and u.moving == false:
 		return
 	_moving = u.moving
+	if sway:
+		sway.moving = clampf(u.move_speed / 400.0, 0.0, 1.0) if u.moving else 0.0
+		sway.airborne = bool(cfg.get("glide", false))
+		sway.dead = not u.alive
 	_gliding = u.moving and bool(cfg.get("glide", false))
 	_glide_speed = u.move_speed if _gliding else 0.0
 	if u.moving:
@@ -682,6 +742,10 @@ func on_cast_start(aid: String, cast_point: float) -> void:
 	var a := SimData.ability(aid)
 	var clip := String(a.get("anim", cfg.get("cast", "cast_quick"))) if aid != "" else String(cfg.get("cast", "cast_quick"))
 	clip = ModelCatalog.anim(cfg, clip)
+	# a hero's own clip for this ability (ModelCatalog MOCAP "casts": run 2026-10-21 b, no two heroes share a move)
+	var own := String(cfg.get("casts", {}).get(aid, ""))
+	if own != "" and anim and anim.has_animation(own):
+		clip = own
 	if anim == null or not anim.has_animation(clip):
 		clip = String(cfg.get("cast", "cast_quick"))
 	var meta := ModelCatalog.clip(clip)

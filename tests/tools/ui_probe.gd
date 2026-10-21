@@ -45,6 +45,12 @@ func _run() -> void:
 			quit(1)
 			return
 	await frames(30)
+	if tag == "_1080":
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+		DisplayServer.window_set_position(Vector2i(0, 0))
+		DisplayServer.window_set_size(Vector2i(1920, 1080))
+		await frames(20)
 	if tag == "_4k":
 		# a real 3840 x 2160 frame: a borderless window larger than the screen
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)

@@ -159,13 +159,136 @@ def rot3(m):
     return m.to_3x3().normalized()
 
 
-def retarget_clip(arm, name, frames, seq, rest, opt):
-    """Write action `name` on the hero rig."""
+def rig_tables(arm):
     bones = sorted(arm.data.bones, key=depth)
     order = [b.name for b in bones]
     restH = {b.name: b.matrix_local.copy() for b in bones}
     parent = {b.name: (b.parent.name if b.parent else None) for b in bones}
     relH = {n: (restH[parent[n]].inverted() @ restH[n]) if parent[n] else restH[n] for n in order}
+    return order, restH, parent, relH
+
+
+def to_local(P, order, parent, relH):
+    """Armature-space pose -> each bone's turn and place against its rest under its parent."""
+    return {h: relH[h].inverted() @ (P[parent[h]].inverted() @ P[h] if parent[h] else P[h]) for h in order}
+
+
+def from_local(L, order, parent, relH):
+    P = {}
+    for h in order:
+        P[h] = (P[parent[h]] @ relH[h] @ L[h]) if parent[h] else (relH[h] @ L[h])
+    return P
+
+
+UPPER = ("spine", "chest", "neck", "head", "shoulder.L", "upper_arm.L", "forearm.L", "hand.L", "shoulder.R",
+         "upper_arm.R", "forearm.R", "hand.R")
+ARMS = ("shoulder.L", "upper_arm.L", "forearm.L", "hand.L", "shoulder.R", "upper_arm.R", "forearm.R", "hand.R")
+
+
+def bone_set(v):
+    if isinstance(v, list):
+        return tuple(v)
+    return {"upper": UPPER, "arms": ARMS, "trunk": ("spine", "chest", "neck", "head"),
+            "chest_up": UPPER[1:]}.get(v, UPPER)
+
+
+def turn(q_local, deg):
+    """A local turn of `deg` [x, y, z] degrees (bone axes) laid on q_local."""
+    e = Matrix.Rotation(math.radians(deg[2]), 3, 'Z') @ Matrix.Rotation(math.radians(deg[1]), 3, 'Y') @ \
+        Matrix.Rotation(math.radians(deg[0]), 3, 'X')
+    return q_local @ e.to_quaternion()
+
+
+def curve_at(curve, t):
+    pts = sorted(curve)
+    if t <= pts[0][0]:
+        return pts[0][1]
+    if t >= pts[-1][0]:
+        return pts[-1][1]
+    for (ta, wa), (tb, wb) in zip(pts, pts[1:]):
+        if ta <= t <= tb:
+            u = (t - ta) / max(1e-6, tb - ta)
+            u = u * u * (3 - 2 * u)
+            return wa + (wb - wa) * u
+    return 1.0
+
+
+def stylize(poses, opt, order, parent, relH, upper=None):
+    """A hero's own way of moving, laid over the capture (run 2026-10-21 b), all in each bone's local turn:
+      "upper": another clip's poses (`upper` here) for the bones in "upper_bones" (default the trunk and both arms;
+        "arms", "trunk", "chest_up" or a list), blended by "upper_mix" (1 = all of it): a run's legs under a weapon
+        stance;
+      "amp": {bone or "all": factor}: how far each bone moves away from the clip's average turn (1.2 = bolder,
+        0.7 = calmer);
+      "pose": {bone: [x, y, z] degrees}: a constant offset in the bone's own axes (the hero's stance: chest out, head
+        low, elbows wide); "pose_curve": [[t, w], ...] (seconds): how much of "pose" applies over time."""
+    if not (upper or opt.get("amp") or opt.get("pose")):
+        return poses
+    locs = [to_local(P, order, parent, relH) for P in poses]
+    n = len(locs)
+    if upper:
+        ub = bone_set(opt.get("upper_bones", "upper"))
+        w = float(opt.get("upper_mix", 1.0))
+        ul = [to_local(P, order, parent, relH) for P in upper]
+        for i in range(n):
+            U = ul[i % len(ul)]
+            for h in ub:
+                qa = locs[i][h].to_quaternion()
+                qb = U[h].to_quaternion()
+                if qa.dot(qb) < 0:
+                    qb = -qb
+                locs[i][h] = Matrix.Translation(locs[i][h].translation) @ qa.slerp(qb, w).to_matrix().to_4x4()
+    amp = opt.get("amp")
+    if amp:
+        for h in order:
+            k = float(amp.get(h, amp.get("all", 1.0)))
+            if abs(k - 1.0) < 1e-4 or h == "root" or h.startswith("weapon."):
+                continue
+            qs = [L[h].to_quaternion() for L in locs]
+            acc = Quaternion((0.0, 0.0, 0.0, 0.0))
+            for q in qs:
+                acc = acc + (q if q.dot(qs[0]) >= 0 else -q)
+            avg = acc.normalized()
+            for i, q in enumerate(qs):
+                if q.dot(avg) < 0:
+                    q = -q
+                ax, ang = avg.rotation_difference(q).to_axis_angle()
+                q2 = avg @ Quaternion(ax, ang * k)
+                locs[i][h] = Matrix.Translation(locs[i][h].translation) @ q2.to_matrix().to_4x4()
+    pose = opt.get("pose")
+    if pose:
+        curve = opt.get("pose_curve")
+        for i in range(n):
+            w = curve_at(curve, i / 30.0) if curve else 1.0
+            for h, deg in pose.items():
+                q2 = turn(locs[i][h].to_quaternion(), [d * w for d in deg])
+                locs[i][h] = Matrix.Translation(locs[i][h].translation) @ q2.to_matrix().to_4x4()
+    return [from_local(L, order, parent, relH) for L in locs]
+
+
+def resample(frames, seq, factor):
+    """Play a capture `factor` times as fast (1.25 = quicker), at 30 fps: each bone's turn slerped, place lerped."""
+    n = len(frames)
+    m = max(2, int(round((n - 1) / factor)) + 1)
+    out = {s: [] for s in seq}
+    for j in range(m):
+        x = j * (n - 1) / (m - 1)
+        i = min(n - 2, int(math.floor(x)))
+        u = x - i
+        for s, v in seq.items():
+            a, b = v[i], v[i + 1]
+            qa, qb = a.to_quaternion(), b.to_quaternion()
+            if qa.dot(qb) < 0:
+                qb = -qb
+            t = a.translation.lerp(b.translation, u)
+            out[s].append(Matrix.LocRotScale(t, qa.slerp(qb, u), a.to_scale().lerp(b.to_scale(), u)))
+    return list(range(m)), out
+
+
+def compute_poses(arm, frames, seq, rest, opt):
+    """Each frame's armature-space pose of the hero rig for a Mixamo capture (no keys written). "crouch" (m) lowers
+    the hips for a lower stance; "hip_drop" scales the capture's own hip rise and fall."""
+    order, restH, parent, relH = rig_tables(arm)
     k_hip = restH["hips"].translation.z / max(0.1, rest["Hips"].translation.z)
     s0 = seq["Hips"][0].translation.copy()
     s1 = seq["Hips"][-1].translation.copy()
@@ -201,6 +324,7 @@ def retarget_clip(arm, name, frames, seq, rest, opt):
                     d.y = max(-0.12, min(0.12, (p.y - s0.y) * k_hip))
                 if opt.get("flat") and d.z > 0.0:
                     d.z = 0.0                    # the game lifts the hero itself (Leap Strike's arc): no own jump height
+                d.z = d.z * float(opt.get("hip_drop", 1.0)) - float(opt.get("crouch", 0.0))
                 pos = restH["hips"].translation + Vector((d.x, d.y, d.z))
                 P[h] = Matrix.Translation(pos) @ R.to_4x4()
             elif parent[h] is None:
@@ -212,6 +336,14 @@ def retarget_clip(arm, name, frames, seq, rest, opt):
                 else:
                     P[h] = Matrix.Translation(base.translation) @ R.to_4x4()
         poses.append(P)
+    return poses
+
+
+def retarget_clip(arm, name, frames, seq, rest, opt, upper=None):
+    """Write action `name` on the hero rig."""
+    order, restH, parent, relH = rig_tables(arm)
+    n = len(frames)
+    poses = stylize(compute_poses(arm, frames, seq, rest, opt), opt, order, parent, relH, upper)
     seam = int(opt.get("seam", 6 if opt.get("loop") else 0))
     if seam > 0 and n > 3 * seam:
         # ease the last `seam` frames into the first frame's pose (each bone's armature-space turn and the hips'
@@ -435,10 +567,35 @@ def main():
         keep = [i for i, f in enumerate(frames) if a <= f <= b]
         frames = [frames[i] for i in keep]
         seq = {s: [v[i] for i in keep] for s, v in seq.items()}
+        if abs(float(opt.get("speed", 1.0)) - 1.0) > 1e-4:
+            frames, seq = resample(frames, seq, float(opt["speed"]))
+        upper = None
+        if opt.get("upper"):
+            # the upper body from another capture (its own start, end, speed, mirror), looped under these frames
+            uo = opt["upper"] if isinstance(opt["upper"], dict) else {"src": opt["upper"]}
+            uf, us, ur = read_source(os.path.join(SRC, uo["src"] + ".fbx"))
+            uf = [f - uf[0] for f in uf]
+            if uo.get("mirror"):
+                us, ur = mirrored(us, ur)
+            ua, ub = int(uo.get("start", uf[0])), int(uo.get("end", uf[-1]))
+            ukeep = [i for i, f in enumerate(uf) if ua <= f <= ub]
+            uf = [uf[i] for i in ukeep]
+            us = {s: [v[i] for i in ukeep] for s, v in us.items()}
+            if abs(float(uo.get("speed", 1.0)) - 1.0) > 1e-4:
+                uf, us = resample(uf, us, float(uo["speed"]))
+            if uo.get("fit", True) and len(uf) != len(frames) and len(uf) > 1:
+                # stretch the upper clip over this one's length (a looping stance under a looping run)
+                uf, us = resample(uf, us, (len(uf) - 1) / max(1, len(frames) - 1))
+            upper = compute_poses(arm, uf, us, ur, dict(uo, place="zero"))
         line = "%-34s %s" % (name, stats(seq, rest, frames))
         report.append(line)
         log(line)
-        act, poses = retarget_clip(arm, name, frames, seq, rest, opt)
+        act, poses = retarget_clip(arm, name, frames, seq, rest, opt, upper)
+        if arg("speeds"):
+            # the right weapon tip's speed each frame (m/s), to find where a combo's blows fall ("start"/"end")
+            tip = [(P["weapon.R"] @ Vector((0.0, float(opt.get("reach", 0.9)), 0.0, 1.0))).to_3d() for P in poses]
+            sp = [0.0] + [(tip[i + 1] - tip[i - 1]).length * 15.0 for i in range(1, len(tip) - 1)] + [0.0]
+            log("  speeds %s: %s" % (name, " ".join("%d:%.0f" % (i, v) for i, v in enumerate(sp) if i % 2 == 0)))
         if not SURVEY:
             st = strike_time(poses, opt)
             m = {"length": round((len(frames) - 1) / 30.0, 4), "loop": bool(opt.get("loop", False))}

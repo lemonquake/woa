@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 3 at 12:00: A(dracoxinia) 0/0/0 lvl 11 LH 27 DN 6 nw 2935 | B(kaileh) 0/0/0 lvl 11 LH 25 DN 15 nw 2876 | towers lost A 1 B 0
+    casts: { "B:lance_charge": 11, "B:lance_sweep": 14, "A:item_tango": 3, "B:item_tango": 3, "B:item_clarity": 11, "B:item_salve": 5, "A:dragon_dash": 14, "A:item_salve": 8, "B:war_banner": 7, "A:dragon_leap": 5, "B:item_magic_stick": 4, "B:cavalry_charge": 3, "A:item_magic_stick": 2, "A:item_clarity": 1, "A:rising_slash": 1, "B:snarl": 2 }
+    dracoxinia items: ["boots", "magic_stick", "quelling_blade", "tough_band", "plate_vest"]
+    kaileh items: ["magic_stick", "salve", "plate_vest", "quelling_blade", "tough_band"]
+seed 7 at 12:00: A(dracoxinia) 0/0/0 lvl 10 LH 33 DN 12 nw 3643 | B(kaileh) 0/0/0 lvl 10 LH 30 DN 14 nw 3009 | towers lost A 0 B 0
+    casts: { "B:lance_charge": 13, "B:lance_sweep": 17, "A:item_salve": 6, "A:item_tango": 3, "B:item_clarity": 10, "A:dragon_dash": 15, "B:item_salve": 5, "A:dragon_leap": 7, "A:item_clarity": 2, "B:war_banner": 7, "B:item_tango": 3, "A:item_magic_stick": 1, "B:item_magic_stick": 5, "A:item_magic_wand": 4, "A:rising_slash": 4, "B:cavalry_charge": 2, "B:snarl": 11 }
+    dracoxinia items: ["plate_vest", "magic_wand", "boots", "quelling_blade", "tough_band", "salve", "clarity"]
+    kaileh items: ["broadsword", "magic_stick", "quelling_blade", "tough_band", "boots"]
+seed 11 at 12:00: A(dracoxinia) 0/0/0 lvl 10 LH 33 DN 9 nw 3697 | B(kaileh) 0/0/0 lvl 11 LH 42 DN 7 nw 4615 | towers lost A 0 B 0
+    casts: { "B:lance_charge": 5, "A:item_salve": 7, "B:lance_sweep": 18, "A:item_tango": 3, "A:dragon_dash": 14, "B:stomp": 4, "B:item_clarity": 3, "B:item_tango": 2, "A:item_clarity": 4, "B:war_banner": 6, "A:dragon_leap": 7, "B:item_magic_wand": 4, "B:cavalry_charge": 3, "A:item_magic_stick": 3, "B:snarl": 4, "B:smash": 2 }
+    dracoxinia items: ["magic_stick", "boots", "plate_vest", "quelling_blade", "tough_band", "salve"]
+    kaileh items: ["salve", "spike_armor", "boots", "quelling_blade", "tough_band", "magic_wand", "clarity", "tango"]
+WARNING: 10414 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 26 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

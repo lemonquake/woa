@@ -34,7 +34,10 @@ const NAMES := {"stunned": "Stunned", "bashed": "Bashed", "frosted": "Frozen", "
 	"joke_confetti": "Confetti", "joke_glue": "Glue", "shuffle_dizzy": "Dizzy", "tamed": "Tamed",
 	"blur_strike_again": "Second Dash", "the_blur_speed": "Fast Attacks", "grip_weak": "Weakened",
 	"grip_hold": "Holding On", "unfallen_fallen": "Fallen", "unfallen_risen": "Last Life", "undead": "Undead",
-	"quick_flash_mark": "Flash Mark", "holy_beam_turn": "Holding the Beam", "spirit_step_silence": "Silenced"}
+	"quick_flash_mark": "Flash Mark", "holy_beam_turn": "Holding the Beam", "spirit_step_silence": "Silenced",
+	"forest_root": "Rooted", "blue_sword_root": "Rooted", "gold_sword_barrier": "Gold Barrier",
+	"red_sword_burn": "Burning", "sword_pink": "Pink Sword", "sword_gold": "Gold Sword",
+	"sword_blue": "Blue Sword", "sword_red": "Red Sword", "sword_green": "Green Sword"}
 
 ## Icons for those (assets/ui/<path>.svg); abilities and items use their own.
 const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "frosted": "status/frozen",
@@ -45,7 +48,9 @@ const ICONS := {"stunned": "status/stunned", "bashed": "status/stunned", "froste
 	"orb_magic": "status/overcharged", "orb_shield": "status/shielded", "reveal_dust": "status/dazzled",
 	"corruption": "status/armor_broken", "magnet_charge": "status/overcharged", "unholy_fatigue": "status/weakened",
 	"tainted_curse": "status/cursed", "static_charge": "status/shocked", "fortify_mark": "status/marked",
-	"ensnared": "status/webbed", "piloted": "status/fortified"}
+	"ensnared": "status/webbed", "piloted": "status/fortified", "sword_pink": "skills/gen/sword_pink",
+	"sword_gold": "skills/gen/sword_gold", "sword_blue": "skills/gen/sword_blue", "sword_red": "skills/gen/sword_red",
+	"sword_green": "skills/gen/sword_green"}
 
 ## Endings that name a part of an ability or item (Leap Strike's slow is "leap_strike_slow").
 const SUFFIXES := ["_slow", "_stun", "_armor", "_curse", "_aura"]
@@ -76,7 +81,8 @@ const ALIAS := {"blood_ranger": "blood_ranger_ult", "void_rush_buff": "void_rush
 	"tamed": "tame", "blur_strike_again": "blur_strike", "the_blur_speed": "the_blur", "ghost_form": "ghosts_of_the_will",
 	"grip_weak": "sacrificial_grip", "grip_hold": "sacrificial_grip", "unfallen_fallen": "unfallen",
 	"unfallen_risen": "unfallen", "undead": "rise_up", "quick_flash_mark": "quick_flash", "holy_beam_turn": "holy_beam",
-	"spirit_step_silence": "spirit_step"}
+	"spirit_step_silence": "spirit_step", "forest_root": "angry_forest", "blue_sword_root": "dragon_blade",
+	"blue_sword_slow": "dragon_blade", "gold_sword_barrier": "dragon_blade", "red_sword_burn": "dragon_blade"}
 
 static var _index := {}                    # effect id -> {name, item | icon}: auras, creep attack effects, item uses
 

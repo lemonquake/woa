@@ -1,0 +1,9 @@
+00:02.015  blend            | Read blend: "A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\src\dracoxinia_painted.blend"
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\rest_look.py:29: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+00:03.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\dracoxinia_mat_front.png'
+00:03.890  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\dracoxinia_mat_head.png'
+REST BOUNDS (-0.3924, -0.1178, -0.0) (0.3924, 0.1178, 0.9825)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

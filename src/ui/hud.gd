@@ -980,7 +980,8 @@ class BottomPanel extends Control:
 			if it != null:
 				var ic: Texture2D = U.held_item_icon(it)
 				if ic:
-					draw_texture_rect(ic, Rect2(get_local_mouse_position() - Vector2(22, 22), Vector2(44, 44)), false, Color(1, 1, 1, 0.85))
+					IconBorder.draw_item(self, ic, Rect2(get_local_mouse_position() - Vector2(22, 22), Vector2(44, 44)),
+						Color(1, 1, 1, 0.85), Color(1, 1, 1, 0.85))
 		if overlay:
 			overlay.queue_redraw()
 
@@ -1321,6 +1322,11 @@ class BottomPanel extends Control:
 			var auto := bool(h.autocast.get(aid, false))
 			var toggled := bool(h.toggles.get(aid, false))
 			var ic: Texture2D = U.ability_icon(aid)
+			if aid == "change_sword":
+				# Dracoxinia's ultimate shows the sword she holds
+				var sw := U.icon("skills/gen/sword_" + w.abilities.kits11.sword_id(h))
+				if sw:
+					ic = sw
 			var col := Color(1, 1, 1) if lv > 0 else Color(0.32, 0.32, 0.34)
 			var mana_cost := float(a.mana[maxi(lv - 1, 0)])
 			if lv > 0 and h.mana < mana_cost:
@@ -1437,6 +1443,25 @@ class BottomPanel extends Control:
 			lines.append(["Right-click to toggle autocast. Cast by hand on a hero to attack without drawing creep aggro.", 12, U.TEXT_DIM, "body"])
 		if a.behavior == "toggle":
 			lines.append(["Press again to turn it off.", 12, U.TEXT_DIM, "body"])
+		if aid == "change_sword" or aid == "dragon_blade":
+			# Dracoxinia: the sword she holds and every sword's power (the owner's five swords)
+			var k11: SimKits11 = hud.game.world.abilities.kits11
+			var open := k11.swords_open(h)
+			var held := k11.sword_of(h)
+			var power := {"pink": "Lightning: the strike jumps to 3 more enemies",
+				"gold": "Light: a barrier as large as the strike",
+				"blue": "Water: the strike roots and slows",
+				"red": "Fire: the strike hits all round the target and burns",
+				"green": "Nature: she heals 60% of the strike"}
+			for i in SimKits11.SWORDS.size():
+				var sd: Dictionary = SimKits11.SWORDS[i]
+				var tag := "  (held)" if i == held else ("" if i < open else "  (locked)")
+				var c := Color(1.0, 0.85, 0.45) if i == held else (U.TEXT if i < open else U.TEXT_DIM)
+				lines.append(["%s%s: %s" % [String(sd.name), tag, String(power[String(sd.id)])], 13, c, "body"])
+			if aid == "dragon_blade" and lv > 0:
+				var left := k11.strike_in(h)
+				lines.append(["Next strike: " + ("this attack" if left == 0 else "in %d attacks" % (left + 1)), 13,
+					Color(0.8, 0.9, 1.0), "body"])
 		var act := Keybinds.slot_action(slot if slot >= 0 else maxi(0, h.abilities.find(aid)), h.abilities.size())
 		lines.append(["Ctrl + %s to learn" % Keybinds.key_name(act), 12, U.TEXT_DIM, "body"])
 		return lines

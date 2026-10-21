@@ -41,6 +41,8 @@ var rock := PackedByteArray()              # N*N resting boulders on the cell (S
 var trees: Array = []                      # [{pos, alive, kind, scale, regrow (s left, <= 0 = not regrowing), rot,
                                            #   planted: true for Ironwood Twig trees, expires, under (cell's old index)}]
 var astar := AStarGrid2D.new()
+var bblock := PackedByteArray()            # N*N 1 = a building's footprint holds the cell (tree walkers stay out too)
+var _tw: AStarGrid2D = null                # the grid for tree walkers (Gancho): tree cells open; built on first use
 var vision_block := PackedByteArray()      # VN*VN 1 = a tree stands here (blocks sight beyond)
 var vision_level := PackedByteArray()
 var vision_rev := 0                         # bumped whenever vision_block changes (SimVision's sight cache)
@@ -665,8 +667,12 @@ func set_block_circle(center: Vector2, radius: float, open: bool) -> void:
 		for cx in range(c0.x, c1.x + 1):
 			if cell_center(cx, cy).distance_to(center) <= radius + CELL * 0.5:
 				walkable[cy * N + cx] = 1 if open else 0
+				if bblock.size() != N * N:
+					bblock.resize(N * N)
+				bblock[cy * N + cx] = 0 if open else 1
 				if astar.region.size.x > 0:
 					astar.set_point_solid(Vector2i(cx, cy), not open)
+				_tw_sync(Vector2i(cx, cy))
 
 ## A destroyed building leaves no footprint: its cells open again unless the border, a cliff, a living tree, a
 ## resting boulder or a building still standing (`standing`: [[pos, radius]]) holds them.
@@ -691,7 +697,10 @@ func open_building(center: Vector2, radius: float, standing: Array = []) -> void
 			if held:
 				continue
 			walkable[i] = 1
+			if bblock.size() == N * N:
+				bblock[i] = 0
 			astar.set_point_solid(Vector2i(cx, cy), false)
+			_tw_sync(Vector2i(cx, cy))
 
 ## Cut down a tree (it regrows after `regrow_time` seconds when that is > 0; planted trees never regrow). Returns
 ## false if there was none.
@@ -712,6 +721,7 @@ func destroy_tree(index: int, regrow_time: float) -> bool:
 		if u >= 0 and trees[u].alive:
 			walkable[c.y * N + c.x] = 0
 			astar.set_point_solid(c, true)
+	_tw_sync(c)
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 0
 	vision_rev += 1
@@ -726,6 +736,7 @@ func regrow_tree(index: int) -> void:
 	var c := world_to_cell(t.pos)
 	walkable[c.y * N + c.x] = 0
 	astar.set_point_solid(c, true)
+	_tw_sync(c)
 	var v := world_to_vcell(t.pos)
 	vision_block[v.y * VN + v.x] = 1
 	vision_rev += 1
@@ -749,6 +760,7 @@ func add_rock(center: Vector2, radius: float) -> Array:
 			rock[i] = mini(255, rock[i] + 1)
 			walkable[i] = 0
 			astar.set_point_solid(Vector2i(cx, cy), true)
+			_tw_sync(Vector2i(cx, cy))
 			out.append(Vector2i(cx, cy))
 	return out
 
@@ -763,6 +775,7 @@ func remove_rock(cells: Array) -> void:
 			var open: bool = not (ti >= 0 and trees[ti].alive)
 			walkable[i] = 1 if open else 0
 			astar.set_point_solid(c, not open)
+			_tw_sync(c)
 
 func rock_at(c: Vector2i) -> int:
 	if rock.size() != N * N or c.x < 0 or c.y < 0 or c.x >= N or c.y >= N:
@@ -830,19 +843,24 @@ func tree_at(p: Vector2, radius: float) -> int:
 
 ## A path for a ground unit from a to b (world points). Grid A* with collinear points removed; units smooth the
 ## corners as they walk (SimOrders looks ahead along the path). Empty if unreachable.
-func find_path(a: Vector2, b: Vector2) -> PackedVector2Array:
+## trees: a tree walker's path (Gancho's Tree Walk): tree cells count as open ground.
+func find_path(a: Vector2, b: Vector2, trees := false) -> PackedVector2Array:
 	var ca := world_to_cell(a)
 	var cb := world_to_cell(b)
-	if not is_walkable_cell(ca):
-		ca = nearest_walkable(ca)
-	if not is_walkable_cell(cb):
-		cb = nearest_walkable(cb)
+	if not is_walkable_cell(ca, trees):
+		ca = nearest_walkable(ca, trees)
+	if not is_walkable_cell(cb, trees):
+		cb = nearest_walkable(cb, trees)
 		b = cell_center(cb.x, cb.y)
 	if ca == cb:
 		return PackedVector2Array([b])
-	if a.distance_squared_to(b) < 2000.0 * 2000.0 and line_walkable(a, b):
+	if a.distance_squared_to(b) < 2000.0 * 2000.0 and line_walkable(a, b, trees):
 		return PackedVector2Array([b])
-	var ids := astar.get_id_path(ca, cb, true)
+	var grid := astar
+	if trees:
+		_tw_build()
+		grid = _tw
+	var ids := grid.get_id_path(ca, cb, true)
 	if ids.is_empty():
 		return PackedVector2Array()
 	var out := PackedVector2Array()
@@ -855,27 +873,65 @@ func find_path(a: Vector2, b: Vector2) -> PackedVector2Array:
 	out.append(b)
 	return out
 
-func is_walkable_cell(c: Vector2i) -> bool:
+func is_walkable_cell(c: Vector2i, trees := false) -> bool:
 	if c.x < 0 or c.y < 0 or c.x >= N or c.y >= N:
 		return false
-	return walkable[c.y * N + c.x] == 1
+	return walkable[c.y * N + c.x] == 1 or (trees and _tw_open(c.x, c.y))
 
-func is_walkable(p: Vector2) -> bool:
-	return is_walkable_cell(world_to_cell(p))
+func is_walkable(p: Vector2, trees := false) -> bool:
+	return is_walkable_cell(world_to_cell(p), trees)
 
-func nearest_walkable(c: Vector2i) -> Vector2i:
+func nearest_walkable(c: Vector2i, trees := false) -> Vector2i:
 	for r in range(1, 24):
 		for oy in range(-r, r + 1):
 			for ox in range(-r, r + 1):
 				if absi(ox) != r and absi(oy) != r:
 					continue
 				var t := Vector2i(c.x + ox, c.y + oy)
-				if is_walkable_cell(t):
+				if is_walkable_cell(t, trees):
 					return t
 	return c
 
-## Whether a straight walk from a to b crosses only walkable cells (exact grid traversal).
-func line_walkable(a: Vector2, b: Vector2) -> bool:
+# ---- Tree walkers ------------------------------------------------------------------------------------------------------
+
+## A tree walker may stand in the cell: open ground, or a living tree's cell that no cliff, rock, border or building
+## holds.
+func _tw_open(cx: int, cy: int) -> bool:
+	if cx <= 1 or cy <= 1 or cx >= N - 2 or cy >= N - 2:
+		return false
+	var i := cy * N + cx
+	if walkable[i] == 1:
+		return true
+	var ti := tree_cell[i]
+	if ti < 0 or not trees[ti].alive:
+		return false
+	if rock.size() == N * N and rock[i] > 0 or bblock.size() == N * N and bblock[i] == 1:
+		return false
+	return not is_cliff_cell(cx, cy) and level[i] != MOUNTAIN
+
+func _tw_build() -> void:
+	if _tw != null:
+		return
+	_tw = AStarGrid2D.new()
+	_tw.region = Rect2i(0, 0, N, N)
+	_tw.cell_size = Vector2(1, 1)
+	_tw.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	_tw.default_compute_heuristic = AStarGrid2D.HEURISTIC_OCTILE
+	_tw.default_estimate_heuristic = AStarGrid2D.HEURISTIC_OCTILE
+	_tw.jumping_enabled = false
+	_tw.update()
+	for cy in N:
+		for cx in N:
+			if not _tw_open(cx, cy):
+				_tw.set_point_solid(Vector2i(cx, cy), true)
+
+## A cell changed (a tree fell or grew, a rock or building came or went): the tree walkers' grid follows.
+func _tw_sync(c: Vector2i) -> void:
+	if _tw != null and c.x >= 0 and c.y >= 0 and c.x < N and c.y < N:
+		_tw.set_point_solid(c, not _tw_open(c.x, c.y))
+
+## Whether a straight walk from a to b crosses only walkable cells (exact grid traversal). trees: for a tree walker.
+func line_walkable(a: Vector2, b: Vector2, trees := false) -> bool:
 	var fx := (a.x + HALF) / CELL
 	var fy := (a.y + HALF) / CELL
 	var tx := (b.x + HALF) / CELL
@@ -899,7 +955,7 @@ func line_walkable(a: Vector2, b: Vector2) -> bool:
 	var guard := 0
 	while guard < 1024:
 		guard += 1
-		if x < 0 or y < 0 or x >= N or y >= N or walkable[y * N + x] == 0:
+		if x < 0 or y < 0 or x >= N or y >= N or walkable[y * N + x] == 0 and not (trees and _tw_open(x, y)):
 			return false
 		if x == ex and y == ey:
 			return true

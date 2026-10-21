@@ -9831,3 +9831,416 @@ func test_thyrandael_step_and_judgement() -> void:
 		w.combat.deal_damage(foe.id, foe.team, true, t, 250.0, C.DamageType.PURE, false, "test")
 		t.hp = t.max_hp
 	check(w.abilities.kits9.judgement_charges(t) == 12, "never past 12 charges")
+
+# ---- Gancho, Lord Kaileh, Dracoxinia (run 2026-10-21 b) ------------------------------------------------------------------
+
+func test_three_heroes_22_data() -> void:
+	var want := {"gancho": ["agi", C.Element.NATURE, 600.0, "tree_walk", "angry_forest", 4],
+		"kaileh": ["str", C.Element.EARTH, 200.0, "momentum", "cavalry_charge", 4],
+		"dracoxinia": ["str", C.Element.LIGHTNING, 150.0, "royal_scales", "change_sword", 6]}
+	for id in want:
+		var d := SimData.unit(id)
+		var e: Array = want[id]
+		check(not d.is_empty() and d.kind == K.HERO, "%s is a hero" % id)
+		check(String(d.primary) == String(e[0]) and int(d.element) == int(e[1]), "%s primary and element" % id)
+		near(float(d.range), float(e[2]), 0.01, "%s attack range" % id)
+		check(String(d.innate) == String(e[3]), "%s innate" % id)
+		check(SimData.ultimate_of(d.abilities) == String(e[4]), "%s ultimate" % id)
+		check((d.abilities as Array).size() == int(e[5]), "%s has %d skills besides the innate" % [id, int(e[5])])
+		for tier in d.talents:
+			for tid in tier:
+				check(not SimData.talent(String(tid)).is_empty(), "talent %s exists" % tid)
+		for aid in (d.abilities as Array) + [String(d.innate)]:
+			check(not SimData.ability(String(aid)).is_empty(), "%s exists" % aid)
+			check(UiKit.ABILITY_ICONS.has(String(aid)), "%s has its own icon" % aid)
+		check(SimBotKits.SKILLS.has(id) and SimBotKits.TALENTS.has(id) and SimBotKits.BUILDS.has(id), "bots know %s's builds" % id)
+		for aid in SimBotKits.SKILLS.get(id, []):
+			check(String(aid) in d.abilities, "%s's skill order names its own skill %s" % [id, aid])
+		check(SimBot22.handles(id), "bots play %s's kit" % id)
+		check(SimBotKits.HOW_TO_PLAY.has(id), "the online writers know how %s plays" % id)
+		check(id in GameSettings.HEROES and id in GameSettings.OWN_BODY, "%s is pickable, with its own body" % id)
+		check(ModelCatalog.MODELS.has(String(d.model)), "%s has a model entry" % id)
+	# Dracoxinia's seven skills: an innate, four spells on Q W E D, a passive on F, the ultimate on R
+	var keys := []
+	for aid in SimData.unit("dracoxinia").abilities:
+		keys.append(String(SimData.ability(String(aid)).key))
+	check(keys == ["Q", "W", "E", "D", "F", "R"], "Dracoxinia's keys %s" % str(keys))
+	check(String(SimData.ability("dragon_blade").behavior) == "passive", "Dragon Blade is passive")
+	check(SimData.unit("dracoxinia").title == "the Blue Wyrm" and SimData.unit("gancho").title == "the Nature Whisperer" \
+		and SimData.unit("kaileh").name == "Lord Kaileh" and SimData.unit("kaileh").title == "the Grand Cavalier",
+		"the owner's names")
+
+## A tree with trees on both sides along x (a forest row) and open ground at both ends, for Tree Walk.
+func _forest_row() -> Array:
+	for t in _map.trees:
+		if not t.alive or t.get("planted", false):
+			continue
+		var p: Vector2 = t.pos
+		var a := p + Vector2(-260, 0)
+		var b := p + Vector2(260, 0)
+		if _map.is_walkable(a) and _map.is_walkable(b) and not _map.is_walkable(p) \
+				and _map.level_at(a) == _map.level_at(b) and _map.level_at(a) == _map.level_at(p):
+			var c := _map.world_to_cell(p)
+			if not _map.is_cliff_cell(c.x, c.y):
+				return [p, a, b]
+	return []
+
+func test_gancho_tree_walk() -> void:
+	var w := empty_world()
+	var row := _forest_row()
+	check(not row.is_empty(), "a tree with open ground on both sides")
+	if row.is_empty():
+		return
+	var g := _hero16(w, "gancho", row[1])
+	check(g.tree_walk, "Gancho walks through trees")
+	run(w, 0.4)
+	check(not g.get_modifier(SimKits10.WALK).is_empty(), "20% evasion beside a tree")
+	near(g.evasion, 0.2, 1e-3, "his evasion near trees")
+	w.command(g.id, {"type": O.MOVE, "point": row[0]})
+	run(w, 2.0)
+	near(g.pos.distance_to(row[0]), 0.0, 40.0, "he stands inside the tree")
+	w.command(g.id, {"type": O.MOVE, "point": row[2]})
+	run(w, 2.5)
+	near(g.pos.distance_to(row[2]), 0.0, 40.0, "and walks out the other side")
+	var walker := _hero16(w, "kragg", row[1])
+	check(not walker.tree_walk, "others do not")
+	var path := w.map.find_path(row[1], row[0])
+	check(path.is_empty() or path[path.size() - 1].distance_to(row[0]) > 30.0, "a walker's path cannot end in the tree")
+	g.pos = Vector2(-2000, -4000)
+	run(w, 0.4)
+	if w.map.tree_at(g.pos, 260.0) < 0:
+		check(g.get_modifier(SimKits10.WALK).is_empty(), "no evasion in the open")
+
+func test_gancho_snare_and_seed() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var g := _hero16(w, "gancho", o)
+	var first := _plain(w, "dusk_melee", C.DUSK, o + Vector2(500, 0), 5000.0)
+	var second := _plain(w, "dusk_melee", C.DUSK, o + Vector2(800, 0), 5000.0)
+	run(w, 0.1)
+	var h1 := first.hp
+	var h2 := second.hp
+	w.command(g.id, {"type": O.CAST_POINT, "ability": "root_snare", "point": o + Vector2(1000, 0)})
+	run(w, 0.8)
+	near(h1 - first.hp, 260.0 * (1.0 + g.magic_amp), 1.0, "Root Snare: 260 magic at level 4")
+	check(first.is_rooted() and not first.get_modifier("root_snare").is_empty(), "the first enemy is rooted")
+	near(second.hp, h2, 0.01, "the vine stops at the first enemy")
+	var s0 := first.get_modifier("root_snare")
+	near(float(s0.expires) - w.time, 1.8 - 0.5, 0.6, "for about 1.8 s")
+	# Seed Bomb: the burst after 0.6 s, the slow, a young tree for 15 s
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(0, 600), 5000.0)
+	run(w, 0.1)
+	var hp := foe.hp
+	var spot := o + Vector2(0, 700)
+	w.command(g.id, {"type": O.CAST_POINT, "ability": "seed_bomb", "point": spot})
+	run(w, 0.5)
+	near(foe.hp, hp, 0.01, "nothing before it bursts")
+	run(w, 0.6)
+	near(hp - foe.hp, 180.0 * (1.0 + g.magic_amp), 1.0, "180 magic at level 4")
+	check(not foe.get_modifier("seed_bomb_slow").is_empty(), "and slowed")
+	var ti := w.map.tree_at(spot, 70.0)
+	check(ti >= 0 and bool(w.map.trees[ti].get("seed", false)), "a young tree grew where it burst")
+	if ti >= 0:
+		check(not w.map.is_walkable(w.map.trees[ti].pos), "it blocks walkers")
+		check(w.map.is_walkable(w.map.trees[ti].pos, true), "but not Gancho")
+	run(w, 16.5)
+	check(w.map.tree_at(spot, 70.0) < 0 or not bool(w.map.trees[w.map.tree_at(spot, 70.0)].get("seed", false)),
+		"the young tree is gone after 15 s")
+
+func test_gancho_thorns_and_forest() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var g := _hero16(w, "gancho", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(450, 0), 50000.0)
+	g.auto_attack = true
+	w.command(g.id, {"type": O.ATTACK_UNIT, "target": foe.id})
+	run(w, 1.2)
+	check(w.abilities.kits10.thorns_on(foe) >= 1, "an attack leaves a thorn")
+	run(w, 8.0)
+	check(w.abilities.kits10.thorns_on(foe) == 5, "never more than 5 thorns (%d)" % w.abilities.kits10.thorns_on(foe))
+	near(float(foe.get_modifier(SimKits10.THORNS).get("slow", 0.0)), 0.2, 1e-3, "4% slow a thorn")
+	g.auto_attack = false
+	w.command(g.id, {"type": O.STOP})
+	run(w, 0.3)
+	var hp := foe.hp
+	run(w, 1.0)
+	near(hp - foe.hp, 5.0 * 10.0 * (1.0 + g.magic_amp), 6.0, "5 thorns x 10 magic a second")
+	run(w, 5.0)
+	check(w.abilities.kits10.thorns_on(foe) == 0, "they fall out 5 s after the last attack")
+	# Angry Forest: the trees lash an enemy beside them
+	var w2 := empty_world()
+	var row := _forest_row()
+	if row.is_empty():
+		check(false, "a tree to test the forest by")
+		return
+	var g2 := _hero16(w2, "gancho", row[1] + Vector2(-400, 0))
+	var foe2 := _plain(w2, "dusk_melee", C.DUSK, row[2] + Vector2(40, 0), 50000.0)
+	run(w2, 0.1)
+	var h0 := foe2.hp
+	var as0 := g2.attack_speed
+	w2.command(g2.id, {"type": O.CAST_NO_TARGET, "ability": "angry_forest"})
+	run(w2, 0.5)
+	check(g2.attack_speed > as0 + 50.0, "Angry Forest: he attacks faster")
+	var rooted := false
+	for i in 30:
+		run(w2, 0.1)
+		if not foe2.get_modifier("forest_root").is_empty():
+			rooted = true
+	check(rooted, "a tree roots the enemy beside it")
+	check(foe2.hp < h0 - 60.0, "and lashes it (%.0f damage)" % (h0 - foe2.hp))
+	run(w2, 6.0)
+	check(not w2.abilities.kits10.forest_on(g2), "the forest sleeps after 7 s")
+
+func test_kaileh_momentum_and_charge() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var k := _hero16(w, "kaileh", o)
+	var dmg0 := k.bonus_damage
+	k.add_modifier({"id": "test_haste", "source": k.id, "expires": INF, "stats": {"move_speed": 100.0}})
+	k.refresh_stats()
+	near(k.bonus_damage - dmg0, 30.0, 0.5, "Momentum: 30% of 100 bonus speed is 30 damage")
+	k.remove_modifier("test_haste")
+	k.refresh_stats()
+	near(float(k.def.range), 200.0, 0.01, "200 attack range")
+	var foe := _hero16(w, "froster", o + Vector2(400, 0), C.DUSK)
+	foe.auto_attack = false
+	var creep := _plain(w, "dusk_melee", C.DUSK, o + Vector2(200, 40), 5000.0)
+	run(w, 0.1)
+	var hf := foe.hp
+	var hc := creep.hp
+	var cy := creep.pos.y
+	w.command(k.id, {"type": O.CAST_POINT, "ability": "lance_charge", "point": o + Vector2(1000, 0)})
+	run(w, 0.75)
+	check(creep.hp < hc, "the creep in the way takes the damage")
+	check(absf(creep.pos.y - cy) > 40.0 or not creep.knock.is_empty(), "and is pushed aside")
+	check(not foe.knock.is_empty() and foe.knock.get("drag", false), "the hero rides the lance")
+	run(w, 0.55)
+	near(k.pos.distance_to(o + Vector2(1000, 0)), 0.0, 40.0, "he charges the whole way")
+	check(foe.pos.distance_to(k.pos) < 120.0, "the hero came along (%.0f away)" % foe.pos.distance_to(k.pos))
+	check(foe.knock.is_empty() and foe.is_stunned(), "and is stunned at the end")
+	near(hf - foe.hp, 300.0 * C.armor_multiplier(foe.armor), 300.0 * 0.03, "300 physical at level 4 (after armor)")
+	run(w, 2.0)
+	check(not foe.is_stunned(), "for 1.8 s")
+
+func test_kaileh_sweep_banner_cavalry() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var k := _hero16(w, "kaileh", o)
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(200, 0), 5000.0)
+	run(w, 0.1)
+	var hp := foe.hp
+	w.command(k.id, {"type": O.CAST_NO_TARGET, "ability": "lance_sweep"})
+	run(w, 0.7)
+	near(hp - foe.hp, 210.0, 1.0, "Lance Sweep: 210 physical (no armor)")
+	check(foe.pos.distance_to(o) > 300.0, "pushed away (%.0f)" % foe.pos.distance_to(o))
+	check(not foe.get_modifier("lance_sweep_slow").is_empty(), "and slowed")
+	# War Banner: armor and attack speed for allies, a slow for enemies, four hits to bring it down
+	var ally := _hero16(w, "froster", o + Vector2(-200, 0))
+	var arm := ally.armor
+	var aspd := ally.attack_speed
+	w.command(k.id, {"type": O.CAST_POINT, "ability": "war_banner", "point": o + Vector2(0, 200)})
+	run(w, 0.6)
+	var banners: Array = w.abilities.kits10.banners_of(k.team)
+	check(banners.size() == 1, "a banner stands")
+	near(ally.armor - arm, 6.0, 0.01, "+6 armor near it")
+	near(ally.attack_speed - aspd, 25.0, 0.5, "+25 attack speed")
+	check(not foe.get_modifier(SimKits10.BANNER_SLOW).is_empty() or foe.pos.distance_to(banners[0].pos) > 650.0,
+		"enemies near it are slowed")
+	if banners.size() == 1:
+		var b: SimUnit = banners[0]
+		w.combat.deal_damage(foe.id, foe.team, false, b, 5000.0, C.DamageType.MAGICAL, false, "test")
+		check(b.alive and b.hp == 4.0, "spells do not hurt it")
+		for i in 4:
+			w.combat.deal_damage(foe.id, foe.team, false, b, 1.0, C.DamageType.PHYSICAL, true, "attack")
+		check(not b.alive, "four attacks bring it down")
+	# Cavalry Charge
+	var w2 := empty_world()
+	var k2 := _hero16(w2, "kaileh", o)
+	var h1 := _hero16(w2, "froster", o + Vector2(600, 120), C.DUSK)
+	var h2 := _hero16(w2, "azrin", o + Vector2(900, -150), C.DUSK)
+	h1.auto_attack = false
+	h2.auto_attack = false
+	run(w2, 0.1)
+	var a1 := h1.hp
+	var a2 := h2.hp
+	w2.command(k2.id, {"type": O.CAST_POINT, "ability": "cavalry_charge", "point": o + Vector2(1600, 0)})
+	run(w2, 0.6)
+	check(k2.has_flag("unstoppable"), "nothing moves him while he charges")
+	w2.abilities.start_push(k2, Vector2(0, 900), h1.id, h1.team, "test", 1, 1)
+	check(k2.knock.get("charge", "") == "cavalry_charge", "a push does not stop him")
+	run(w2, 1.4)
+	near(k2.pos.distance_to(o + Vector2(1600, 0)), 0.0, 60.0, "he charges 1600")
+	check(a1 - h1.hp > 200.0 and a2 - h2.hp > 200.0, "both heroes in the path take its damage (%.0f, %.0f)" % [a1 - h1.hp, a2 - h2.hp])
+	check(h1.is_stunned() or not h1.get_modifier("stunned").is_empty() or w2.time < 0.0, "and are stunned")
+	check(not k2.has_flag("unstoppable"), "the charge is over")
+
+func test_dracoxinia_swords() -> void:
+	var w := empty_world()
+	w.elements = true
+	var o := Vector2(-2000, -4000)
+	var d := _hero16(w, "dracoxinia", o)
+	var k11 := w.abilities.kits11
+	check(k11.sword_of(d) == 0 and k11.sword_element(d) == C.Element.LIGHTNING, "she starts with the Pink Sword")
+	# the order and the levels: 3 / 4 / 5 swords
+	d.ability_level["change_sword"] = 1
+	var seen := []
+	for i in 4:
+		w.command(d.id, {"type": O.CAST_NO_TARGET, "ability": "change_sword"})
+		run(w, 1.05)
+		seen.append(k11.sword_id(d))
+	check(seen == ["gold", "blue", "pink", "gold"], "level 1 cycles three swords: %s" % str(seen))
+	d.ability_level["change_sword"] = 3
+	seen = []
+	for i in 5:
+		w.command(d.id, {"type": O.CAST_NO_TARGET, "ability": "change_sword"})
+		run(w, 1.05)
+		seen.append(k11.sword_id(d))
+	check(seen == ["blue", "red", "green", "pink", "gold"], "level 3 cycles all five: %s" % str(seen))
+	check(d.atk_element == C.Element.LIGHT, "the Gold Sword's attacks are Light")
+	check(not d.get_modifier("sword_gold").is_empty() and d.get_modifier("sword_pink").is_empty(), "the buff bar names it")
+	var mana := d.mana
+	w.command(d.id, {"type": O.CAST_NO_TARGET, "ability": "change_sword"})
+	run(w, 0.1)
+	near(d.mana, mana, 0.01, "free")
+	check(w.abilities.cast_error(d, "change_sword", -1, null, d.pos) == "Ability on cooldown", "1 s apart")
+	# Royal Scales: 15% less from an enemy whose element her sword beats (Blue, Water, beats Fire)
+	k11.set_sword(d, 2)
+	var fire := _plain(w, "dusk_melee", C.DUSK, o + Vector2(0, 900), 5000.0)
+	fire.element = C.Element.FIRE
+	d.hp = d.max_hp
+	var hp := d.hp
+	w.combat.deal_damage(fire.id, fire.team, false, d, 100.0, C.DamageType.PURE, false, "test", false, {"element": C.Element.NONE})
+	near(hp - d.hp, 85.0, 0.5, "Royal Scales: 15% less from Fire with the Blue Sword")
+	k11.set_sword(d, 0)
+	hp = d.hp
+	w.combat.deal_damage(fire.id, fire.team, false, d, 100.0, C.DamageType.PURE, false, "test", false, {"element": C.Element.NONE})
+	near(hp - d.hp, 100.0, 0.5, "and full damage with the Pink Sword")
+
+## Dracoxinia striking `t` until her next Dragon Blade strike has landed; returns the strike's event.
+func _strike(w: SimWorld, d: SimUnit, t: SimUnit) -> Dictionary:
+	w.events.clear()
+	w.command(d.id, {"type": O.ATTACK_UNIT, "target": t.id})
+	for i in 200:
+		var before := d.hp
+		w.step()
+		for e in w.events:
+			if String(e.t) == "dragon_blade":
+				w.command(d.id, {"type": O.STOP})
+				e["hp_before"] = before
+				return e
+		w.events.clear()
+	return {}
+
+func test_dracoxinia_blade() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var d := _hero16(w, "dracoxinia", o)
+	var k11 := w.abilities.kits11
+	d.auto_attack = true
+	var foe := _plain(w, "dusk_melee", C.DUSK, o + Vector2(120, 0), 50000.0)
+	# every 4th attack
+	w.events.clear()
+	w.command(d.id, {"type": O.ATTACK_UNIT, "target": foe.id})
+	var landed := 0
+	var strikes := []
+	for i in 30 * 12:
+		w.step()
+		for e in w.events:
+			if String(e.t) == "damage" and int(e.u) == foe.id and bool(e.get("attack", false)) and int(e.src) == d.id:
+				landed += 1
+			if String(e.t) == "dragon_blade":
+				strikes.append(landed)
+		w.events.clear()
+	check(strikes.size() >= 2 and int(strikes[0]) == 4 and int(strikes[1]) == 8, "strikes on the 4th and 8th attacks %s" % str(strikes))
+	w.command(d.id, {"type": O.STOP})
+	run(w, 1.0)
+	# Pink: lightning to 3 more enemies
+	var near1 := _plain(w, "dusk_melee", C.DUSK, foe.pos + Vector2(200, 0), 5000.0)
+	var near2 := _plain(w, "dusk_melee", C.DUSK, foe.pos + Vector2(0, 250), 5000.0)
+	var n1 := near1.hp
+	k11.set_sword(d, 0)
+	var e := _strike(w, d, foe)
+	check(not e.is_empty() and (e.get("chain", []) as Array).size() >= 2, "Pink: lightning jumps (%s)" % str(e.get("chain", [])))
+	check(near1.hp < n1, "to the enemies nearby")
+	# Gold: a barrier as large as the strike
+	k11.set_sword(d, 1)
+	e = _strike(w, d, foe)
+	near(SimBarrier.total(d).x, float(e.get("amount", 0.0)), 1.0, "Gold: an All-damage Barrier of the strike")
+	# Blue: root and slow
+	k11.set_sword(d, 2)
+	e = _strike(w, d, foe)
+	run(w, 0.05)
+	check(not foe.get_modifier("blue_sword_root").is_empty() and not foe.get_modifier("blue_sword_slow").is_empty(),
+		"Blue: rooted and slowed")
+	# Red: the strike on everyone within 250 of the target and a burn on them all
+	k11.set_sword(d, 3)
+	var n2 := near2.hp
+	e = _strike(w, d, foe)
+	check(near2.hp < n2 - float(e.get("amount", 0.0)) * 0.5, "Red: the enemy beside the target takes the strike too")
+	check(not w.status.dots_on(near2).is_empty() and not w.status.dots_on(foe).is_empty(), "and both burn")
+	# Green: heals 60% of it
+	k11.set_sword(d, 4)
+	d.hp = d.max_hp * 0.5
+	e = _strike(w, d, foe)
+	near(d.hp - float(e.get("hp_before", 0.0)), float(e.get("amount", 0.0)) * 0.6, 2.0, "Green: she heals 60% of the strike")
+	# a sword change makes the next attack a strike, at most once every 4 s at level 3
+	run(w, 5.0)
+	w.command(d.id, {"type": O.CAST_NO_TARGET, "ability": "change_sword"})
+	run(w, 0.1)
+	check(k11.strike_in(d) == 0, "the next attack after a change is a strike")
+	e = _strike(w, d, foe)
+	check(not e.is_empty(), "and it lands")
+	run(w, 1.1)
+	w.command(d.id, {"type": O.CAST_NO_TARGET, "ability": "change_sword"})
+	run(w, 0.1)
+	check(k11.strike_in(d) != 0, "but not again within 4 s")
+
+func test_dracoxinia_spells() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var d := _hero16(w, "dracoxinia", o)
+	var k11 := w.abilities.kits11
+	var a := _plain(w, "dusk_melee", C.DUSK, o + Vector2(300, 30), 5000.0)
+	run(w, 0.1)
+	var hp := a.hp
+	w.command(d.id, {"type": O.CAST_POINT, "ability": "dragon_dash", "point": o + Vector2(650, 0)})
+	run(w, 0.7)
+	near(d.pos.distance_to(o + Vector2(650, 0)), 0.0, 40.0, "Dragon Dash: she is there")
+	near(hp - a.hp, 250.0, 1.0, "250 physical to the enemy she passed")
+	# Dragon Leap (the owner's swap for her old W, 2026-10-22): up in the air, there at the end, no damage
+	var b := _plain(w, "dusk_melee", C.DUSK, d.pos + Vector2(150, 0), 5000.0)
+	run(w, 0.1)
+	hp = b.hp
+	var leap_to := d.pos + Vector2(0, 600)
+	w.command(d.id, {"type": O.CAST_POINT, "ability": "dragon_leap", "point": leap_to})
+	run(w, 0.4)
+	check(not d.knock.is_empty() and float(d.knock.get("z", 0.0)) > 100.0, "Dragon Leap: she is in the air")
+	run(w, 0.5)
+	check(d.knock.is_empty(), "and down again")
+	near(d.pos.distance_to(leap_to), 0.0, 40.0, "Dragon Leap: she lands where she aimed (600 away)")
+	check(b.hp == hp, "the leap deals no damage")
+	near(w.abilities.cast_range(d, "dragon_leap", -1), 650.0, 1e-6, "650 reach at level 4")
+	d.ability_ready["dragon_leap"] = 0.0
+	d.add_modifier({"id": "test_root", "source": d.id, "expires": w.time + 2.0, "root": true})
+	check(w.abilities.cast_error(d, "dragon_leap", -1, null, d.pos + Vector2(300, 0)) == "Rooted", "no leap while rooted")
+	d.remove_modifier("test_root")
+	# Dragon Hide (the owner's swap for Dragon Breath): 5 armor and 6 health regen at level 4
+	var arm := d.armor
+	var reg := d.hp_regen
+	d.ability_level["dragon_hide"] = 0
+	d.refresh_stats()
+	near(arm - d.armor, 5.0, 1e-4, "Dragon Hide: +5 armor")
+	near(reg - d.hp_regen, 6.0, 1e-4, "and +6 health regeneration")
+	d.ability_level["dragon_hide"] = 4
+	d.refresh_stats()
+	# Rising Slash: up in the air, stunned
+	var t := _hero16(w, "froster", d.pos + Vector2(-150, 0), C.DUSK)
+	t.auto_attack = false
+	run(w, 0.1)
+	hp = t.hp
+	w.command(d.id, {"type": O.CAST_UNIT, "ability": "rising_slash", "target": t.id})
+	run(w, 0.5)
+	check(t.is_stunned() and not t.knock.is_empty() and t.knock.get("air", false), "Rising Slash: thrown up and stunned")
+	check(hp - t.hp > 100.0, "with its damage")
+	run(w, 1.5)
+	check(t.knock.is_empty() and not t.is_stunned(), "back down after 1.4 s")

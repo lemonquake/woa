@@ -668,7 +668,7 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 	var need_path := u.path.is_empty() or u.path_goal.distance_to(goal) > 96.0 or w.time >= u.repath_at
 	if need_path:
 		var tp := Time.get_ticks_usec() if w.profiling else 0
-		u.path = w.map.find_path(u.pos, goal)
+		u.path = w.map.find_path(u.pos, goal, u.tree_walk)
 		if w.profiling:
 			w._prof("  find_path", tp)
 			w.prof["  n_paths"] = float(w.prof.get("  n_paths", 0.0)) + 1.0
@@ -682,7 +682,8 @@ func _move_to(u: SimUnit, goal: Vector2, stop_dist: float, chase: SimUnit = null
 		return true
 	# corner cutting: skip ahead while the next-but-one point is in a straight walkable line
 	var tl := Time.get_ticks_usec() if w.profiling else 0
-	var cut := u.path_i + 1 < u.path.size() and (w.tick + u.id) % 4 == 0 and w.map.line_walkable(u.pos, u.path[u.path_i + 1])
+	var cut := u.path_i + 1 < u.path.size() and (w.tick + u.id) % 4 == 0 \
+		and w.map.line_walkable(u.pos, u.path[u.path_i + 1], u.tree_walk)
 	if w.profiling:
 		w._prof("  corner_cut", tl)
 	if cut:
@@ -790,10 +791,10 @@ func _free(u: SimUnit, p: Vector2, chase: SimUnit, near: Array, loose := false) 
 	if not w.abilities.kits3.boulders.is_empty() and u.kind != K.COURIER and w.abilities.kits3.blocks(p, u.hull) \
 			and not w.abilities.kits3.blocks(u.pos, u.hull):
 		return false
-	if not w.map.is_walkable(p):
+	if not w.map.is_walkable(p, u.tree_walk):
 		# a unit standing inside a blocked cell (pushed or spawned there) may move within it to get out
 		var cc := w.map.world_to_cell(u.pos)
-		if w.map.is_walkable_cell(cc) or w.map.world_to_cell(p) != cc:
+		if w.map.is_walkable_cell(cc, u.tree_walk) or w.map.world_to_cell(p) != cc:
 			return false
 	if u.kind == K.COURIER:
 		return true                                # couriers pass through units

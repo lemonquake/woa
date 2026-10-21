@@ -1,0 +1,20 @@
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\rest_look.py:29: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\rest_look.py:33: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new("look"); m.use_nodes = True
+00:04.297  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_front.png'
+00:04.719  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_back.png'
+00:05.109  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_left.png'
+00:05.484  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_right.png'
+00:05.937  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_head.png'
+00:06.375  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_head_back.png'
+00:06.844  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_torso.png'
+00:07.281  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_torso_back.png'
+00:07.703  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_legs.png'
+00:08.140  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_head_side.png'
+00:08.562  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\look\lord_kaileh_hand_r.png'
+FBX version: 7400
+REST BOUNDS (-0.288, -0.15, -0.0) (0.288, 0.15, 0.979)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

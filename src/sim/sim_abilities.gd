@@ -19,6 +19,8 @@ var kits6: SimKits6                         # Feran Mock's and Ghorman's kits (r
 var kits7: SimKits7                         # Araki's kit (run 2026-10-19 c)
 var kits8: SimKits8                         # Blackfire's kit (run 2026-10-21)
 var kits9: SimKits9                         # Thyrandael's kit (run 2026-10-21)
+var kits10: SimKits10                       # Gancho's and Lord Kaileh's kits (run 2026-10-21 b)
+var kits11: SimKits11                       # Dracoxinia's kit (run 2026-10-21 b)
 
 ## Units hero `h` commands besides itself and its courier: Ghorman's beasts, Blackfire's Undead.
 func commands(h: SimUnit, o: SimUnit) -> bool:
@@ -34,6 +36,8 @@ func _init(world: SimWorld = null) -> void:
 	kits7 = SimKits7.new(world, self)
 	kits8 = SimKits8.new(world, self)
 	kits9 = SimKits9.new(world, self)
+	kits10 = SimKits10.new(world, self)
+	kits11 = SimKits11.new(world, self)
 
 # ---- Learning ---------------------------------------------------------------------------------------------------------
 
@@ -221,6 +225,14 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		var k9 := kits9.cast_error(u, aid, target, point, check_target)
 		if k9 != "":
 			return k9
+	if kits10.handles(aid):
+		var k10 := kits10.cast_error(u, aid, target, point, check_target)
+		if k10 != "":
+			return k10
+	if kits11.handles(aid):
+		var k11 := kits11.cast_error(u, aid, target, point, check_target)
+		if k11 != "":
+			return k11
 	if a.behavior == "unit" and check_target:
 		var te := _target_error(u, a, target)
 		if te != "":
@@ -381,6 +393,15 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return                                   # the leap to his axe: free
 	if aid == "swap" and kits6.try_swap_mark(u, t):
 		return                                   # Upgrade Staff: marking the ally to swap is free
+	if aid == "change_sword":
+		# Dracoxinia's sword: free, 1 s apart, not a spell cast (as a toggle: no spell-cast effects)
+		u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
+		kits11.change_sword(u)
+		if u.bot:
+			var cb = w.bot_for(u.id)
+			if cb != null:
+				cb.botlog.on_cast(w.time, aid)
+		return
 	u.mana -= ability_mana(u, aid)
 	u.ability_ready[aid] = w.time + ability_cooldown(u, aid)
 	w.events.append({"t": "cast", "u": u.id, "ability": aid, "point": p, "target": t.id if t else -1})
@@ -422,6 +443,12 @@ func execute(u: SimUnit, aid: String, slot: int, t: SimUnit, p: Vector2) -> void
 		return
 	if kits9.handles(aid):
 		kits9.cast(u, aid, lv, t, p)
+		return
+	if kits10.handles(aid):
+		kits10.cast(u, aid, lv, t, p)
+		return
+	if kits11.handles(aid):
+		kits11.cast(u, aid, lv, t, p)
 		return
 	match aid:
 		"fiery_javelin":
@@ -664,6 +691,8 @@ func update_effects() -> void:
 					done = kits6.update_effect(e)
 				elif kits7.owns_effect(String(e.kind)):
 					done = kits7.update_effect(e)
+				elif kits10.owns_effect(String(e.kind)):
+					done = kits10.update_effect(e)
 		if done:
 			if String(e.kind) in SKILLSHOTS:
 				_note_miss(e)
@@ -671,7 +700,7 @@ func update_effects() -> void:
 
 ## Aimed spells that fly a line: when one ends without touching an enemy hero it passed near, that hero dodged it
 ## (a "skill_miss" event; the bots' chat mocks it, SimBotChat).
-const SKILLSHOTS := ["line", "hook", "javelin", "gust", "time_bolt"]
+const SKILLSHOTS := ["line", "hook", "javelin", "gust", "time_bolt", "root_snare"]
 
 func _note_miss(e: Dictionary) -> void:
 	var src := w.get_unit(int(e.get("src", -1)))
@@ -828,6 +857,8 @@ const RESTITUTION := 0.3
 func start_push(o: SimUnit, vel: Vector2, src_id: int, team: int, aid: String, lv: int, seq: int) -> void:
 	if not o.alive or o.is_building() or o.is_ward() or o.kind == K.COURIER:
 		return
+	if o.has_flag("unstoppable"):
+		return                                     # Cavalry Charge: nothing moves Lord Kaileh while he charges
 	if not o.knock.is_empty() and o.knock.get("phys", false):
 		o.knock.vel = (o.knock.vel as Vector2) + vel
 		return

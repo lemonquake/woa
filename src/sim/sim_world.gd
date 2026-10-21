@@ -340,6 +340,8 @@ func step() -> void:
 	abilities.kits7.tick()
 	abilities.kits8.tick()
 	abilities.kits9.tick()
+	abilities.kits10.tick()
+	abilities.kits11.tick()
 	abilities.update_effects()
 	items.update()
 	status.update()
@@ -466,7 +468,7 @@ func cut_tree(i: int, from: Vector2, smashed := false) -> bool:
 ## Units standing in a cell that just became blocked (a planted tree) step out to the nearest open cell.
 func nudge_out(p: Vector2, r: float) -> void:
 	for u in query(p, r + 40.0, true):
-		if u.is_building() or u.is_ward() or u.kind == K.COURIER or map.is_walkable(u.pos):
+		if u.is_building() or u.is_ward() or u.kind == K.COURIER or map.is_walkable(u.pos, u.tree_walk):
 			continue
 		var c := map.nearest_walkable(map.world_to_cell(u.pos))
 		u.pos = map.cell_center(c.x, c.y)

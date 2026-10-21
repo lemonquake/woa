@@ -28,6 +28,7 @@ func release_attack(u: SimUnit, t: SimUnit, mod: String) -> void:
 		w.abilities.pay_attack_modifier(u, mod)
 	if u.is_hero():
 		w.abilities.kits7.on_attack_released(u)
+		w.abilities.kits11.on_attack_released(u, snap, t)          # Dracoxinia's Dragon Blade strikes
 		snap["burst"] = w.abilities.masterful_bonus(u, t)
 		snap["soul"] = w.abilities.kits4.soul_charged(u)
 		if w.abilities.frost_heart_spend(u, t):
@@ -89,7 +90,7 @@ func attack_snapshot(u: SimUnit, mod: String) -> Dictionary:
 ## What an attack carries, fixed at launch (the attacker may die before it lands).
 func _snapshot(u: SimUnit, mod: String) -> Dictionary:
 	return {"src": u.id, "team": u.team, "hero": u.is_hero(), "kind": u.kind, "dmg_min": u.dmg_min, "dmg_max": u.dmg_max,
-		"bonus": u.bonus_damage, "class": u.weapon, "element": u.element, "level_h": w.map.level_at(u.pos), "mod": mod,
+		"bonus": u.bonus_damage, "class": u.weapon, "element": u.atk_element if u.atk_element >= 0 else u.element, "level_h": w.map.level_at(u.pos), "mod": mod,
 		"lifesteal": u.lifesteal, "lifesteal_ab": u.lifesteal_ability, "ranged": u.is_ranged(), "quell": _quelling(u),
 		"taint": _taint(u), "crit": u.atk_crit, "crit_key": u.atk_crit_key, "out_pct": u.attack_out_pct, "flying": bool(u.def.flying)}
 
@@ -235,7 +236,7 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 	if t.is_creep() and t.team != s.team:
 		dmg += float(s.quell)
 	dmg *= crit
-	dmg += float(s.get("burst", 0.0)) + float(s.get("sneak", 0.0))
+	dmg += float(s.get("burst", 0.0)) + float(s.get("sneak", 0.0)) + float(s.get("blade", 0.0))
 	# Senryukai: Araki's stacks on the target add to his hits (and his ghosts')
 	dmg += w.abilities.kits7.senryukai_bonus(s, t)
 	if s.mod != "":
@@ -296,6 +297,9 @@ func land_attack(s: Dictionary, t: SimUnit) -> bool:
 		w.abilities.kits4.on_attack_landed(s, t, base_dmg)
 	if bool(s.hero) and t.team != s.team:
 		w.abilities.kits5.on_attack_landed(s, t, base_dmg)
+		w.abilities.kits10.on_attack_landed(s, t)                 # Gancho's Thorn Barbs
+		if s.has("blade"):
+			w.abilities.kits11.on_attack_landed(s, t, dealt)       # Dracoxinia's Dragon Blade: the sword's power
 	# Araki's ghosts strike with a share of his damage only: no item procs
 	if bool(s.hero):
 		if not s.has("ghost"):
@@ -436,6 +440,16 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 	if key == "":
 		key = "attack" if is_attack else "spell"
 	var src0 := w.get_unit(src_id)
+	if bool(t.def.get("hits", false)):
+		# counted in attacks (War Banner): any attack takes one, spells none
+		if not is_attack or src_team == t.team:
+			return 0.0
+		t.hp = maxf(0.0, t.hp - 1.0)
+		w.events.append({"t": "damage", "u": t.id, "src": src_id, "amount": 1.0, "type": dtype, "attack": true,
+			"key": key, "reflected": false, "halved": 0.0})
+		if t.hp <= 0.001:
+			kill(t, src0)
+		return 1.0
 	# Death Scythe (Azrael): the blow may strike as pure damage, with bonus pure damage on top and 50% lifesteal
 	var scythe_ls := 0.0
 	if src0 != null and not reflected and src0.team != t.team and String(src0.def.id) == "azrael":
@@ -498,6 +512,8 @@ func deal_damage(src_id: int, src_team: int, src_hero: bool, t: SimUnit, amount:
 		var more := SimKits5.damage_taken(t)
 		if more != 0.0:
 			amount *= maxf(0.0, 1.0 + more)
+		if t.ability_level.has("royal_scales"):
+			amount *= w.abilities.kits11.scales_mult(t, src0)       # Dracoxinia's Royal Scales
 		if src_team != t.team and not reflected:
 			amount *= w.abilities.kits5.front_block(t, w.get_unit(src_id), key, is_attack)
 	if t.is_building() and t.backdoor_active and src_team != t.team:

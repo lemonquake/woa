@@ -1,0 +1,22 @@
+{
+  "generator": "Built-in image generation",
+  "size": 256,
+  "icons": [
+    {
+      "id": "sample",
+      "kind": "skills",
+      "sheet": "test",
+      "cell": 2,
+      "crop": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_sha256": "e84280fb93cb2f9e3834b6375160717354a7371f5edf5799a31f8523fbae0d07",
+      "path": "assets/ui/art/skills/sample.png",
+      "sha256": "dd88d7807d95b50836e5d01ad7195d382e5aef644d56f30e16fadf859d622e3d"
+    }
+  ],
+  "missing_sheets": []
+}

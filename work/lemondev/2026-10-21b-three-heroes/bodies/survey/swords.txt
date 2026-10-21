@@ -1,0 +1,265 @@
+01:45:29 | INFO: Data are loaded, start creating Blender stuff
+01:45:29 | INFO: Blender create Mesh node Object_0
+01:45:29 | INFO: Blender create Mesh node Object_1
+01:45:29 | INFO: Blender create Mesh node Object_0.001
+01:45:29 | INFO: Blender create Mesh node Object_1.001
+01:45:29 | INFO: Blender create Mesh node Object_0.002
+01:45:29 | INFO: Blender create Mesh node Object_1.002
+01:45:29 | INFO: Blender create Mesh node Object_0.003
+01:45:29 | INFO: Blender create Mesh node Object_1.003
+01:45:29 | INFO: Blender create Mesh node Object_0.009
+01:45:29 | INFO: Blender create Mesh node Object_1.009
+01:45:29 | INFO: Blender create Mesh node Object_0.010
+01:45:29 | INFO: Blender create Mesh node Object_1.010
+01:45:29 | INFO: Blender create Mesh node Object_0.011
+01:45:29 | INFO: Blender create Mesh node Object_1.011
+01:45:29 | INFO: Blender create Mesh node Object_0.012
+01:45:29 | INFO: Blender create Mesh node Object_1.012
+01:45:29 | INFO: Blender create Mesh node Object_0.013
+01:45:29 | INFO: Blender create Mesh node Object_1.013
+01:45:29 | INFO: Blender create Mesh node Object_0.014
+01:45:29 | INFO: Blender create Mesh node Object_1.014
+01:45:29 | INFO: glTF import finished in 0.20s
+OBJ Sketchfab_model EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model
+OBJ GLTF_SceneRootNode EMPTY (0.0, 0.0, 0.0) parent root
+OBJ Sketchfab_model_0 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode
+OBJ root_1 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0
+OBJ GLTF_SceneRootNode_2 EMPTY (0.0, 0.0, 0.0) parent root_1
+OBJ Sketchfab_model_0_3 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3
+OBJ RootNode_2_5 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4
+OBJ Object_3_3_6 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5
+OBJ GLTF_created_0_7 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6
+OBJ GLTF_created_0 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0
+OBJ Object_13_13 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction
+OBJ Object_16_16_correction EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0
+OBJ Object_16_16 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction
+OBJ Object_18 MESH (0.065, 2.544, 0.531) parent GLTF_created_0
+  faces 56 verts 33 mats ['Blade'] vgroups 4 uv 7 colattr 0
+OBJ Object_21 MESH (0.141, 2.601, 0.697) parent GLTF_created_0
+  faces 234 verts 215 mats ['Sword'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.001 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.001 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.001
+OBJ GLTF_SceneRootNode.001 EMPTY (0.0, 0.0, 0.0) parent root.001
+OBJ Sketchfab_model_0.001 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.001
+OBJ root_1.001 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.001
+OBJ GLTF_SceneRootNode_2.001 EMPTY (0.0, 0.0, 0.0) parent root_1.001
+OBJ Sketchfab_model_0_3.001 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.001
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.001 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.001
+OBJ RootNode_2_5.001 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.001
+OBJ Object_3_3_6.001 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.001
+OBJ GLTF_created_0_7.001 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.001
+OBJ GLTF_created_0.001 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.001
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.001 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.001
+OBJ Object_13_13.001 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.001
+OBJ Object_16_16_correction.001 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.001
+OBJ Object_16_16.001 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.001
+OBJ Object_18.001 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.001
+  faces 56 verts 33 mats ['Blade.001'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.001 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.001
+  faces 234 verts 215 mats ['Sword.001'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.002 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.002 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.002
+OBJ GLTF_SceneRootNode.002 EMPTY (0.0, 0.0, 0.0) parent root.002
+OBJ Sketchfab_model_0.002 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.002
+OBJ root_1.002 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.002
+OBJ GLTF_SceneRootNode_2.002 EMPTY (0.0, 0.0, 0.0) parent root_1.002
+OBJ Sketchfab_model_0_3.002 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.002
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.002 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.002
+OBJ RootNode_2_5.002 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.002
+OBJ Object_3_3_6.002 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.002
+OBJ GLTF_created_0_7.002 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.002
+OBJ GLTF_created_0.002 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.002
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.002 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.002
+OBJ Object_13_13.002 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.002
+OBJ Object_16_16_correction.002 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.002
+OBJ Object_16_16.002 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.002
+OBJ Object_18.002 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.002
+  faces 56 verts 33 mats ['Blade.002'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.002 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.002
+  faces 234 verts 215 mats ['Sword.002'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.003 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.003 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.003
+OBJ GLTF_SceneRootNode.003 EMPTY (0.0, 0.0, 0.0) parent root.003
+OBJ Sketchfab_model_0.003 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.003
+OBJ root_1.003 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.003
+OBJ GLTF_SceneRootNode_2.003 EMPTY (0.0, 0.0, 0.0) parent root_1.003
+OBJ Sketchfab_model_0_3.003 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.003
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.003 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.003
+OBJ RootNode_2_5.003 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.003
+OBJ Object_3_3_6.003 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.003
+OBJ GLTF_created_0_7.003 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.003
+OBJ GLTF_created_0.003 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.003
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.003 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.003
+OBJ Object_13_13.003 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.003
+OBJ Object_16_16_correction.003 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.003
+OBJ Object_16_16.003 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.003
+OBJ Object_18.003 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.003
+  faces 56 verts 33 mats ['Blade.003'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.003 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.003
+  faces 234 verts 215 mats ['Sword.003'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.004 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.004 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.004
+OBJ GLTF_SceneRootNode.004 EMPTY (0.0, 0.0, 0.0) parent root.004
+OBJ Sketchfab_model_0.004 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.004
+OBJ root_1.004 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.004
+OBJ GLTF_SceneRootNode_2.004 EMPTY (0.0, 0.0, 0.0) parent root_1.004
+OBJ Sketchfab_model_0_3.004 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.004
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.004 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.004
+OBJ RootNode_2_5.004 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.004
+OBJ Object_3_3_6.004 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.004
+OBJ GLTF_created_0_7.004 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.004
+OBJ GLTF_created_0.004 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.004
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.004 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.004
+OBJ Object_13_13.004 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.004
+OBJ Object_16_16_correction.004 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.004
+OBJ Object_16_16.004 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.004
+OBJ Object_18.004 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.004
+  faces 56 verts 33 mats ['Blade.009'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.004 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.004
+  faces 234 verts 215 mats ['Sword.009'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.005 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.005 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.005
+OBJ GLTF_SceneRootNode.005 EMPTY (0.0, 0.0, 0.0) parent root.005
+OBJ Sketchfab_model_0.005 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.005
+OBJ root_1.005 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.005
+OBJ GLTF_SceneRootNode_2.005 EMPTY (0.0, 0.0, 0.0) parent root_1.005
+OBJ Sketchfab_model_0_3.005 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.005
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.005 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.005
+OBJ RootNode_2_5.005 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.005
+OBJ Object_3_3_6.005 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.005
+OBJ GLTF_created_0_7.005 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.005
+OBJ GLTF_created_0.005 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.005
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.005 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.005
+OBJ Object_13_13.005 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.005
+OBJ Object_16_16_correction.005 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.005
+OBJ Object_16_16.005 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.005
+OBJ Object_18.005 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.005
+  faces 56 verts 33 mats ['Blade.010'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.005 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.005
+  faces 234 verts 215 mats ['Sword.010'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.006 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.006 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.006
+OBJ GLTF_SceneRootNode.006 EMPTY (0.0, 0.0, 0.0) parent root.006
+OBJ Sketchfab_model_0.006 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.006
+OBJ root_1.006 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.006
+OBJ GLTF_SceneRootNode_2.006 EMPTY (0.0, 0.0, 0.0) parent root_1.006
+OBJ Sketchfab_model_0_3.006 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.006
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.006 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.006
+OBJ RootNode_2_5.006 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.006
+OBJ Object_3_3_6.006 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.006
+OBJ GLTF_created_0_7.006 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.006
+OBJ GLTF_created_0.006 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.006
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.006 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.006
+OBJ Object_13_13.006 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.006
+OBJ Object_16_16_correction.006 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.006
+OBJ Object_16_16.006 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.006
+OBJ Object_18.006 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.006
+  faces 56 verts 33 mats ['Blade.011'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.006 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.006
+  faces 234 verts 215 mats ['Sword.011'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.007 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.007 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.007
+OBJ GLTF_SceneRootNode.007 EMPTY (0.0, 0.0, 0.0) parent root.007
+OBJ Sketchfab_model_0.007 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.007
+OBJ root_1.007 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.007
+OBJ GLTF_SceneRootNode_2.007 EMPTY (0.0, 0.0, 0.0) parent root_1.007
+OBJ Sketchfab_model_0_3.007 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.007
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.007 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.007
+OBJ RootNode_2_5.007 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.007
+OBJ Object_3_3_6.007 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.007
+OBJ GLTF_created_0_7.007 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.007
+OBJ GLTF_created_0.007 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.007
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.007 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.007
+OBJ Object_13_13.007 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.007
+OBJ Object_16_16_correction.007 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.007
+OBJ Object_16_16.007 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.007
+OBJ Object_18.007 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.007
+  faces 56 verts 33 mats ['Blade.012'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.007 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.007
+  faces 234 verts 215 mats ['Sword.012'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.008 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.008 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.008
+OBJ GLTF_SceneRootNode.008 EMPTY (0.0, 0.0, 0.0) parent root.008
+OBJ Sketchfab_model_0.008 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.008
+OBJ root_1.008 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.008
+OBJ GLTF_SceneRootNode_2.008 EMPTY (0.0, 0.0, 0.0) parent root_1.008
+OBJ Sketchfab_model_0_3.008 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.008
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.008 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.008
+OBJ RootNode_2_5.008 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.008
+OBJ Object_3_3_6.008 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.008
+OBJ GLTF_created_0_7.008 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.008
+OBJ GLTF_created_0.008 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.008
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.008 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.008
+OBJ Object_13_13.008 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.008
+OBJ Object_16_16_correction.008 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.008
+OBJ Object_16_16.008 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.008
+OBJ Object_18.008 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.008
+  faces 56 verts 33 mats ['Blade.013'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.008 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.008
+  faces 234 verts 215 mats ['Sword.013'] vgroups 4 uv 3 colattr 0
+OBJ Sketchfab_model.009 EMPTY (0.0, 0.0, 0.0) parent None
+OBJ root.009 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model.009
+OBJ GLTF_SceneRootNode.009 EMPTY (0.0, 0.0, 0.0) parent root.009
+OBJ Sketchfab_model_0.009 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode.009
+OBJ root_1.009 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0.009
+OBJ GLTF_SceneRootNode_2.009 EMPTY (0.0, 0.0, 0.0) parent root_1.009
+OBJ Sketchfab_model_0_3.009 EMPTY (0.0, 0.0, 0.0) parent GLTF_SceneRootNode_2.009
+OBJ d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.009 EMPTY (0.0, 0.0, 0.0) parent Sketchfab_model_0_3.009
+OBJ RootNode_2_5.009 EMPTY (0.0, 0.0, 0.0) parent d0a31f84e29b49a6942b9c86a2d00849.fbx_1_4.009
+OBJ Object_3_3_6.009 EMPTY (0.0, 0.0, 0.0) parent RootNode_2_5.009
+OBJ GLTF_created_0_7.009 EMPTY (0.0, 0.0, 0.0) parent Object_3_3_6.009
+OBJ GLTF_created_0.009 ARMATURE (0.0, 0.0, 0.0) parent GLTF_created_0_7.009
+  bones 4 ['GLTF_created_0_rootJoint', 'GLTF_created_0_rootJoint_8', '_rootJoint_4_9', 'Sword1_00_7_10']
+OBJ Object_13_13_correction.009 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.009
+OBJ Object_13_13.009 EMPTY (0.0, 0.0, 0.0) parent Object_13_13_correction.009
+OBJ Object_16_16_correction.009 EMPTY (0.0, 0.0, 0.0) parent GLTF_created_0.009
+OBJ Object_16_16.009 EMPTY (0.0, 0.0, 0.0) parent Object_16_16_correction.009
+OBJ Object_18.009 MESH (0.065, 2.544, 0.531) parent GLTF_created_0.009
+  faces 56 verts 33 mats ['Blade.014'] vgroups 4 uv 7 colattr 0
+OBJ Object_21.009 MESH (0.141, 2.601, 0.697) parent GLTF_created_0.009
+  faces 234 verts 215 mats ['Sword.014'] vgroups 4 uv 3 colattr 0
+OBJ Icosphere MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.001 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.002 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.003 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.004 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey.py:26: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
+00:04.860  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\swords_front.png'
+00:05.219  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\swords_side.png'
+00:05.594  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\swords_back.png'
+00:05.907  render           | Saved: 'A:\Python\woa\work\lemondev\2026-10-21b-three-heroes\bodies\survey\swords_top.png'
+42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.005 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.006 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.007 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.008 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+OBJ Icosphere.009 MESH (1.902, 2.0, 2.0) parent None
+  faces 80 verts 42 mats [] vgroups 0 uv 1 colattr 0
+IMG Blade_baseColor (512, 512) True 
+IMG Blade_metallicRoughness (512, 512) True 
+IMG Sword_baseColor (512, 512) True 
+BOUNDS (-0.951, -1.0, -1.0) (8.484, 1.0, 3.167)
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

@@ -47,10 +47,12 @@ static func _ensure() -> void:
 	_build_abilities_18()
 	_build_abilities_19()
 	_build_abilities_21()
+	_build_abilities_22()
 	_build_talents()
 	_build_talents_18()
 	_build_talents_19()
 	_build_talents_21()
+	_build_talents_22()
 
 static func unit(id: String) -> Dictionary:
 	_ensure()
@@ -311,6 +313,7 @@ static func _build_units() -> void:
 	_add_heroes_18()
 	_add_heroes_19()
 	_add_heroes_21()
+	_add_heroes_22()
 
 static func _add_heroes_15b() -> void:
 	# Tock, the Clockmaker (run 2026-10-15 b; names and numbers are ours, chosen to sit beside Dota's ranged
@@ -1136,6 +1139,186 @@ static func _build_talents_21() -> void:
 	_talent("thyrandael_step_silence", "+1s Spirit Step silence", [{"ability": "spirit_step", "add": {"silence": 1.0}}])
 	_talent("thyrandael_judgement_charges", "-50 damage per False Judgement charge", [{"ability": "false_judgement", "add": {"damage_per_charge": -50.0}}])
 	_talent("thyrandael_judgement_radius", "+150 False Judgement radius", [{"ability": "false_judgement", "add": {"radius": 150.0}}])
+
+# ---- Gancho, the Nature Whisperer; Lord Kaileh, the Grand Cavalier; Dracoxinia, the Blue Wyrm (the owner's heroes and
+# names, run 2026-10-21 b; kits ours from research on Dota 2 and League of Legends, numbers on Dota's templates, all
+# listed in docs/HANDOFF.md for the owner's veto) ---------------------------------------------------------------------
+
+static func _add_heroes_22() -> void:
+	# Gancho: a tree man who throws thorns (Hoodwink's and Windranger's ranged agility templates)
+	_add("gancho", {"name": "Gancho", "title": "the Nature Whisperer", "kind": K.HERO, "hull": 24.0,
+		"hp": SimConst.HERO_BASE_HP, "hp_regen": 0.25, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 1.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 23.0, "dmg_max": 30.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.4, "backswing": 0.5, "acquire": 800.0, "range": 600.0,
+		"projectile_speed": 1250.0, "move_speed": 300.0, "turn_rate": 0.7, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "agi", "str": 18.0, "str_gain": 2.0, "agi": 22.0, "agi_gain": 3.2, "int": 17.0,
+		"int_gain": 1.9, "element": EL.NATURE,
+		"abilities": ["root_snare", "seed_bomb", "thorn_barbs", "angry_forest"], "innate": "tree_walk",
+		"talents": [["gancho_snare_root", "gancho_attack_speed"], ["gancho_seed_damage", "gancho_range"],
+			["gancho_thorns", "gancho_thorn_damage"], ["gancho_forest_time", "gancho_forest_damage"]],
+		"model": "hero_gancho"})
+	# Lord Kaileh: a huge knight with a jousting lance, 200 reach (Mars' 250 and Spirit Breaker's 170 bracket it)
+	_add("kaileh", {"name": "Lord Kaileh", "title": "the Grand Cavalier", "kind": K.HERO, "hull": 26.0,
+		"hp": SimConst.HERO_BASE_HP, "hp_regen": 0.75, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 2.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 31.0, "dmg_max": 39.0, "bat": 1.8,
+		"attack_speed": 100.0, "attack_point": 0.45, "backswing": 0.5, "acquire": 600.0, "range": 200.0,
+		"projectile_speed": 0.0, "move_speed": 300.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "str", "str": 24.0, "str_gain": 3.4, "agi": 15.0, "agi_gain": 1.6, "int": 17.0,
+		"int_gain": 1.8, "element": EL.EARTH,
+		"abilities": ["lance_charge", "lance_sweep", "war_banner", "cavalry_charge"], "innate": "momentum",
+		"talents": [["kaileh_damage", "kaileh_health"], ["kaileh_charge_stun", "kaileh_momentum"],
+			["kaileh_sweep_cooldown", "kaileh_charge_range"], ["kaileh_cavalry_stun", "kaileh_cavalry_damage"]],
+		"model": "hero_kaileh"})
+	# Dracoxinia: a royal dragon-woman with a two-handed sword of five colours. Seven skills: an innate, three spells
+	# (Q W D), two passives (E F) and the ultimate that changes her sword (R)
+	_add("dracoxinia", {"name": "Dracoxinia", "title": "the Blue Wyrm", "kind": K.HERO, "hull": 24.0,
+		"hp": SimConst.HERO_BASE_HP, "hp_regen": 0.5, "mana": SimConst.HERO_BASE_MANA, "mana_regen": 0.0, "armor": 2.0,
+		"magic_resist": SimConst.HERO_BASE_MAGIC_RESIST, "dmg_min": 30.0, "dmg_max": 36.0, "bat": 1.7,
+		"attack_speed": 100.0, "attack_point": 0.45, "backswing": 0.5, "acquire": 600.0, "range": 150.0,
+		"projectile_speed": 0.0, "move_speed": 305.0, "turn_rate": 0.6, "vision_day": 1800.0, "vision_night": 800.0,
+		"xp": 0.0, "primary": "str", "str": 23.0, "str_gain": 3.3, "agi": 19.0, "agi_gain": 2.2, "int": 17.0,
+		"int_gain": 1.7, "element": EL.LIGHTNING,
+		"abilities": ["dragon_dash", "dragon_leap", "dragon_hide", "rising_slash", "dragon_blade", "change_sword"],
+		"innate": "royal_scales",
+		"talents": [["dracoxinia_damage", "dracoxinia_strength"], ["dracoxinia_leap_cooldown", "dracoxinia_slash_time"],
+			["dracoxinia_blade_damage", "dracoxinia_blade_every"], ["dracoxinia_sword_wait", "dracoxinia_scales"]],
+		"model": "hero_dracoxinia"})
+	# War Banner (Lord Kaileh): a banner on a pole; four attacks of any kind bring it down (spells do not hurt it)
+	_add("war_banner", {"name": "War Banner", "kind": K.WARD, "hull": 16.0, "hp": 4.0, "hits": true, "can_attack": false,
+		"can_move": false, "move_speed": 0.0, "vision_day": 400.0, "vision_night": 400.0, "xp": 0.0, "gold_min": 25,
+		"gold_max": 25, "model": "war_banner"})
+
+static func _build_abilities_22() -> void:
+	# Gancho
+	_abilities["tree_walk"] = {"id": "tree_walk", "name": "Tree Walk", "behavior": "innate", "key": "", "max_level": 1,
+		"mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0,
+		"values": {"evasion": [0.20], "radius": [250]},
+		"desc": "Gancho walks through trees as if they were open ground, and has 20% evasion while he stands within 250 of a tree."}
+	_abilities["root_snare"] = {"id": "root_snare", "name": "Root Snare", "behavior": "point", "key": "Q", "max_level": 4,
+		"mana": [90, 100, 110, 120], "cooldown": [14, 12, 10, 8], "cast_point": 0.3, "range": 1100, "anim": "cast_quick",
+		"damage_type": "magical", "line": true, "direction": true,
+		"values": {"damage": [80, 140, 200, 260], "root": [1.2, 1.4, 1.6, 1.8], "distance": [1100, 1100, 1100, 1100],
+		"width": [90, 90, 90, 90], "speed": [1500, 1500, 1500, 1500]},
+		"hidden_values": ["width", "speed"],
+		"desc": "Gancho throws a living vine 1100 far. The first enemy it touches takes 80 / 140 / 200 / 260 magic damage and is rooted for 1.2 / 1.4 / 1.6 / 1.8 seconds."}
+	_abilities["seed_bomb"] = {"id": "seed_bomb", "name": "Seed Bomb", "behavior": "point", "key": "W", "max_level": 4,
+		"mana": [80, 80, 80, 80], "cooldown": [13, 12, 11, 10], "cast_point": 0.35, "range": 900, "anim": "cast_area",
+		"damage_type": "magical", "aoe": true,
+		"values": {"radius": [250, 250, 250, 250], "delay": [0.6, 0.6, 0.6, 0.6], "damage": [60, 100, 140, 180],
+		"slow": [0.3, 0.3, 0.3, 0.3], "slow_duration": [2, 2, 2, 2], "tree_duration": [15, 15, 15, 15]},
+		"hidden_values": ["delay"],
+		"desc": "Gancho throws a seed. It bursts 0.6 seconds after it lands: enemies within 250 take 60 / 100 / 140 / 180 magic damage and are slowed by 30% for 2 seconds, and a young tree grows where it burst for 15 seconds."}
+	_abilities["thorn_barbs"] = {"id": "thorn_barbs", "name": "Thorn Barbs", "behavior": "passive", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"damage_type": "magical",
+		"values": {"dps": [4, 6, 8, 10], "slow": [0.04, 0.04, 0.04, 0.04], "max_thorns": [5, 5, 5, 5],
+		"duration": [5, 5, 5, 5]},
+		"desc": "Each of Gancho's attacks leaves a thorn in the enemy for 5 seconds (up to 5; a new one renews them all). Each thorn deals 4 / 6 / 8 / 10 magic damage a second and slows by 4%."}
+	_abilities["angry_forest"] = {"id": "angry_forest", "name": "Angry Forest", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [90, 80, 70],
+		"cast_point": 0.4, "range": 0, "anim": "cast_ultimate", "damage_type": "magical",
+		"values": {"duration": [7, 7, 7], "radius": [1000, 1000, 1000], "reach": [350, 350, 350],
+		"damage": [35, 50, 65], "root": [0.4, 0.4, 0.4], "root_wait": [1.5, 1.5, 1.5], "attack_speed": [30, 45, 60],
+		"max_lashes": [2, 2, 2]},
+		"hidden_values": ["root_wait", "max_lashes"],
+		"desc": "Gancho wakes the forest for 7 seconds. Every second each tree within 1000 of him lashes the nearest enemy within 350 of it with a vine: 35 / 50 / 65 magic damage and a 0.4 second root (a unit is rooted at most once every 1.5 seconds, and takes at most two lashes a second). Gancho attacks 30 / 45 / 60 faster meanwhile."}
+	# Lord Kaileh
+	_abilities["momentum"] = {"id": "momentum", "name": "Momentum", "behavior": "innate", "key": "", "max_level": 1,
+		"mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0, "values": {"pct": [0.30]},
+		"desc": "Lord Kaileh hits harder the faster he moves: 30% of his bonus movement speed is added to his attack damage."}
+	_abilities["lance_charge"] = {"id": "lance_charge", "name": "Lance Charge", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [100, 100, 100, 100], "cooldown": [16, 14, 12, 10], "cast_point": 0.3,
+		"range": [700, 800, 900, 1000], "anim": "cast_weapon", "damage_type": "physical",
+		"values": {"damage": [75, 150, 225, 300], "stun": [1.2, 1.4, 1.6, 1.8], "speed": [1100, 1100, 1100, 1100],
+		"width": [140, 140, 140, 140], "push": [180, 180, 180, 180]},
+		"hidden_values": ["speed", "width", "push"],
+		"desc": "Lord Kaileh lowers his lance and charges up to 700 / 800 / 900 / 1000. The first enemy hero he meets is carried on the lance to the end of the charge, takes 75 / 150 / 225 / 300 physical damage and is stunned for 1.2 / 1.4 / 1.6 / 1.8 seconds. Other enemies in his way take the damage and are pushed aside."}
+	_abilities["lance_sweep"] = {"id": "lance_sweep", "name": "Lance Sweep", "behavior": "no_target", "key": "W",
+		"max_level": 4, "mana": [70, 70, 70, 70], "cooldown": [9, 9, 9, 9], "cast_point": 0.3, "range": 0,
+		"anim": "boss_slam", "damage_type": "physical",
+		"values": {"radius": [350, 350, 350, 350], "damage": [60, 110, 160, 210], "push": [150, 150, 150, 150],
+		"slow": [0.3, 0.3, 0.3, 0.3], "slow_duration": [2, 2, 2, 2]},
+		"desc": "Lord Kaileh swings his lance round him (350): enemies take 60 / 110 / 160 / 210 physical damage, are pushed 150 away and slowed by 30% for 2 seconds."}
+	_abilities["war_banner"] = {"id": "war_banner", "name": "War Banner", "behavior": "point", "key": "E", "max_level": 4,
+		"mana": [90, 90, 90, 90], "cooldown": [24, 22, 20, 18], "cast_point": 0.2, "range": 600, "anim": "war_cry",
+		"aoe": true,
+		"values": {"radius": [600, 600, 600, 600], "duration": [12, 12, 12, 12], "armor": [3, 4, 5, 6],
+		"attack_speed": [10, 15, 20, 25], "slow": [0.10, 0.10, 0.10, 0.10]},
+		"desc": "Lord Kaileh plants his house banner for 12 seconds. Allies within 600 have 3 / 4 / 5 / 6 more armor and attack 10 / 15 / 20 / 25 faster; enemies within 600 move 10% slower. Four attacks bring it down; spells do not hurt it."}
+	_abilities["cavalry_charge"] = {"id": "cavalry_charge", "name": "Cavalry Charge", "behavior": "point", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [150, 200, 250], "cooldown": [100, 90, 80],
+		"cast_point": 0.5, "range": 1600, "anim": "boss_roar", "damage_type": "magical",
+		"values": {"damage": [200, 300, 400], "stun": [1.0, 1.25, 1.5], "speed": [1400, 1400, 1400],
+		"width": [400, 400, 400], "push": [220, 220, 220], "riders": [6, 6, 6]},
+		"hidden_values": ["speed", "push", "riders"],
+		"desc": "Lord Kaileh charges up to 1600 with six ghost riders at his sides, trampling the trees in his way. Enemies in the 400 wide path take 200 / 300 / 400 magic damage, are pushed aside and stunned for 1 / 1.25 / 1.5 seconds. Nothing can slow or move him while he charges."}
+	# Dracoxinia
+	_abilities["royal_scales"] = {"id": "royal_scales", "name": "Royal Scales", "behavior": "innate", "key": "",
+		"max_level": 1, "mana": [0], "cooldown": [0], "cast_point": 0.0, "range": 0, "values": {"reduction": [0.15]},
+		"desc": "Dracoxinia takes 15% less damage from enemies whose element her sword beats."}
+	_abilities["dragon_dash"] = {"id": "dragon_dash", "name": "Dragon Dash", "behavior": "point", "key": "Q",
+		"max_level": 4, "mana": [80, 80, 80, 80], "cooldown": [13, 11, 9, 7], "cast_point": 0.15, "range": 650,
+		"anim": "cast_quick", "damage_type": "physical",
+		"values": {"damage": [70, 130, 190, 250], "slow": [0.5, 0.5, 0.5, 0.5], "slow_duration": [0.5, 0.5, 0.5, 0.5],
+		"speed": [1800, 1800, 1800, 1800], "width": [150, 150, 150, 150]},
+		"hidden_values": ["speed", "width"],
+		"desc": "Dracoxinia dashes up to 650 through her enemies: each takes 70 / 130 / 190 / 250 physical damage and is slowed by 50% for 0.5 seconds."}
+	_abilities["dragon_leap"] = {"id": "dragon_leap", "name": "Dragon Leap", "behavior": "point", "key": "W",
+		"max_level": 4, "mana": [70, 70, 70, 70], "cooldown": [22, 19, 16, 13], "cast_point": 0.1,
+		"range": [500, 550, 600, 650], "anim": "cast_quick",
+		"values": {"leap_time": [0.55, 0.55, 0.55, 0.55], "height": [240, 240, 240, 240]},
+		"hidden_values": ["height"],
+		"desc": "Dracoxinia leaps to a point up to 500 / 550 / 600 / 650 away, over trees and cliffs, 0.55 seconds in the air. She cannot leap while rooted."}
+	_abilities["dragon_hide"] = {"id": "dragon_hide", "name": "Dragon Hide", "behavior": "passive", "key": "E",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"armor": [2, 3, 4, 5], "hp_regen": [1.5, 3, 4.5, 6]},
+		"desc": "Dracoxinia's scales harden: 2 / 3 / 4 / 5 more armor and 1.5 / 3 / 4.5 / 6 more health regeneration."}
+	_abilities["rising_slash"] = {"id": "rising_slash", "name": "Rising Slash", "behavior": "unit", "key": "D",
+		"target_team": "enemy", "max_level": 4, "mana": [90, 90, 90, 90], "cooldown": [18, 16, 14, 12],
+		"cast_point": 0.25, "range": 200, "anim": "leap_slam", "damage_type": "physical",
+		"values": {"damage": [60, 100, 140, 180], "air": [0.8, 1.0, 1.2, 1.4], "height": [260, 260, 260, 260]},
+		"hidden_values": ["height"],
+		"desc": "Dracoxinia slashes upward and throws an enemy into the air for 0.8 / 1.0 / 1.2 / 1.4 seconds (it is stunned there), with 60 / 100 / 140 / 180 physical damage."}
+	_abilities["dragon_blade"] = {"id": "dragon_blade", "name": "Dragon Blade", "behavior": "passive", "key": "F",
+		"max_level": 4, "mana": [0, 0, 0, 0], "cooldown": [0, 0, 0, 0], "cast_point": 0.0, "range": 0,
+		"values": {"damage": [20, 35, 50, 65], "every": [4, 4, 4, 4], "chain": [3, 3, 3, 3], "chain_pct": [0.6, 0.6, 0.6, 0.6],
+		"chain_radius": [500, 500, 500, 500], "barrier_pct": [1.0, 1.0, 1.0, 1.0], "barrier_duration": [6, 6, 6, 6],
+		"root": [0.6, 0.6, 0.6, 0.6], "slow": [0.4, 0.4, 0.4, 0.4], "slow_duration": [2, 2, 2, 2],
+		"splash_radius": [250, 250, 250, 250], "burn": [30, 30, 30, 30], "burn_duration": [3, 3, 3, 3],
+		"heal_pct": [0.6, 0.6, 0.6, 0.6]},
+		"hidden_values": ["chain_radius"],
+		"desc": "Every 4th attack is a heavy strike with 20 / 35 / 50 / 65 more damage and her sword's power. Pink: lightning jumps to 3 more enemies within 500 for 60% of the strike. Gold: an All-damage Barrier as large as the strike for 6 seconds. Blue: the target is rooted for 0.6 seconds and slowed by 40% for 2 seconds. Red: every enemy within 250 of the target takes the strike too, and all of them burn for 30 a second for 3 seconds. Green: she heals 60% of the strike."}
+	_abilities["change_sword"] = {"id": "change_sword", "name": "Change Sword", "behavior": "no_target", "key": "R",
+		"max_level": 3, "required_level": [6, 12, 18], "mana": [0, 0, 0], "cooldown": [1, 1, 1], "cast_point": 0.0,
+		"range": 0, "immediate": true,
+		"values": {"swords": [3, 4, 5], "strike_wait": [6, 5, 4]},
+		"desc": "Each use changes Dracoxinia's sword to the next one (1 second apart, no mana): 3 / 4 / 5 swords in the order Pink, Gold, Blue, Red, Green. Her attacks take the sword's element (Pink Lightning, Gold Light, Blue Water, Red Fire, Green Nature), and her next attack after a change is a Dragon Blade strike (at most once every 6 / 5 / 4 seconds)."}
+
+static func _build_talents_22() -> void:
+	_talent("gancho_snare_root", "+0.6s Root Snare root", [{"ability": "root_snare", "add": {"root": 0.6}}])
+	_talent("gancho_attack_speed", "+20 Attack Speed", [], {"attack_speed": 20.0})
+	_talent("gancho_seed_damage", "+70 Seed Bomb damage", [{"ability": "seed_bomb", "add": {"damage": 70.0}}])
+	_talent("gancho_range", "+100 Attack Range", [], {"range": 100.0})
+	_talent("gancho_thorns", "+2 Thorn Barbs thorns", [{"ability": "thorn_barbs", "add": {"max_thorns": 2.0}}])
+	_talent("gancho_thorn_damage", "+6 Thorn Barbs damage", [{"ability": "thorn_barbs", "add": {"dps": 6.0}}])
+	_talent("gancho_forest_time", "+3s Angry Forest time", [{"ability": "angry_forest", "add": {"duration": 3.0}}])
+	_talent("gancho_forest_damage", "+30 Angry Forest damage", [{"ability": "angry_forest", "add": {"damage": 30.0}}])
+	_talent("kaileh_damage", "+30 Damage", [], {"damage": 30.0})
+	_talent("kaileh_health", "+250 Health", [], {"hp": 250.0})
+	_talent("kaileh_charge_stun", "+0.5s Lance Charge stun", [{"ability": "lance_charge", "add": {"stun": 0.5}}])
+	_talent("kaileh_momentum", "+15% Momentum", [{"ability": "momentum", "add": {"pct": 0.15}}])
+	_talent("kaileh_sweep_cooldown", "-4s Lance Sweep cooldown", [{"ability": "lance_sweep", "add": {"cooldown": -4.0}}])
+	_talent("kaileh_charge_range", "+300 Lance Charge range", [{"ability": "lance_charge", "add": {"range": 300.0}}])
+	_talent("kaileh_cavalry_stun", "+0.5s Cavalry Charge stun", [{"ability": "cavalry_charge", "add": {"stun": 0.5}}])
+	_talent("kaileh_cavalry_damage", "+150 Cavalry Charge damage", [{"ability": "cavalry_charge", "add": {"damage": 150.0}}])
+	_talent("dracoxinia_damage", "+25 Damage", [], {"damage": 25.0})
+	_talent("dracoxinia_strength", "+8 Strength", [], {"str": 8.0})
+	_talent("dracoxinia_leap_cooldown", "-4s Dragon Leap cooldown", [{"ability": "dragon_leap", "add": {"cooldown": -4.0}}])
+	_talent("dracoxinia_slash_time", "+0.4s Rising Slash air time", [{"ability": "rising_slash", "add": {"air": 0.4}}])
+	_talent("dracoxinia_blade_damage", "+30 Dragon Blade damage", [{"ability": "dragon_blade", "add": {"damage": 30.0}}])
+	_talent("dracoxinia_blade_every", "Dragon Blade every 3rd attack", [{"ability": "dragon_blade", "add": {"every": -1.0}}])
+	_talent("dracoxinia_sword_wait", "-2s Change Sword strike wait", [{"ability": "change_sword", "add": {"strike_wait": -2.0}}])
+	_talent("dracoxinia_scales", "+15% Royal Scales", [{"ability": "royal_scales", "add": {"reduction": 0.15}}])
 
 static func _talent(id: String, name: String, mods: Array, stats := {}) -> void:
 	_talents[id] = {"id": id, "name": name, "mods": mods, "stats": stats}

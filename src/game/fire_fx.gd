@@ -220,6 +220,11 @@ static func ramp(kind := "fire") -> GradientTexture1D:
 			g.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
 			g.colors = PackedColorArray([Color(0.95, 0.85, 1.0, 1.0), Color(0.6, 0.25, 1.0, 1.0), Color(0.25, 0.06, 0.5, 0.85),
 				Color(0.03, 0.0, 0.06, 0.0)])
+		"water":
+			# Dracoxinia's Blue Sword (run 2026-10-21 b): white-blue cores, clear blue, dying to deep sea blue
+			g.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
+			g.colors = PackedColorArray([Color(0.9, 0.97, 1.0, 1.0), Color(0.35, 0.65, 1.0, 1.0), Color(0.1, 0.3, 0.75, 0.8),
+				Color(0.02, 0.06, 0.2, 0.0)])
 		"holy":
 			g.offsets = PackedFloat32Array([0.0, 0.35, 0.75, 1.0])
 			g.colors = PackedColorArray([Color(1.0, 0.97, 0.85, 1.0), Color(1.0, 0.78, 0.35, 1.0), Color(1.0, 0.42, 0.12, 0.8),

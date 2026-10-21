@@ -1,0 +1,140 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (7 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | BodySway[39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | UnitView[39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | SimKits11[39m[0m
+[  37% ] [90m[1mupdate_scripts_classes[22m | UiKit[39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  62% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (34 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | angry_forest.png[39m[0m
+[   2% ] [90m[1m_update_scan_actions[22m | cavalry_charge.png[39m[0m
+[   5% ] [90m[1m_update_scan_actions[22m | change_sword.png[39m[0m
+[   8% ] [90m[1m_update_scan_actions[22m | death_order.png[39m[0m
+[  11% ] [90m[1m_update_scan_actions[22m | divine_touch.png[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | dragon_blade.png[39m[0m
+[  17% ] [90m[1m_update_scan_actions[22m | dragon_dash.png[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | dragon_hide.png[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | dragon_leap.png[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | false_judgement.png[39m[0m
+[  28% ] [90m[1m_update_scan_actions[22m | fiend_edge.png[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | giant_swing.png[39m[0m
+[  34% ] [90m[1m_update_scan_actions[22m | holy_beam.png[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | lance_charge.png[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | lance_sweep.png[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | momentum.png[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | quick_flash.png[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | rise_up.png[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | rising_slash.png[39m[0m
+[  54% ] [90m[1m_update_scan_actions[22m | root_snare.png[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | royal_scales.png[39m[0m
+[  60% ] [90m[1m_update_scan_actions[22m | sacrificial_grip.png[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | seed_bomb.png[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | spirit_step.png[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | sword_blue.png[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | sword_gold.png[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | sword_green.png[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | sword_pink.png[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | sword_red.png[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | thorn_barbs.png[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | tree_walk.png[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | underworld_presence.png[39m[0m
+[  91% ] [90m[1m_update_scan_actions[22m | unfallen.png[39m[0m
+[  94% ] [90m[1m_update_scan_actions[22m | war_banner.png[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (34 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   2% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   5% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   8% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  11% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  14% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  17% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  20% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  22% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  25% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  31% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  34% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  40% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  51% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  60% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  62% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  65% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  71% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  74% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  77% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  80% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  85% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  88% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  91% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  94% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | rise_up.png[39m[0m
+[   2% ] [90m[1mreimport[22m | rising_slash.png[39m[0m
+[   5% ] [90m[1mreimport[22m | root_snare.png[39m[0m
+[   8% ] [90m[1mreimport[22m | royal_scales.png[39m[0m
+[  11% ] [90m[1mreimport[22m | sacrificial_grip.png[39m[0m
+[  14% ] [90m[1mreimport[22m | seed_bomb.png[39m[0m
+[  17% ] [90m[1mreimport[22m | spirit_step.png[39m[0m
+[  20% ] [90m[1mreimport[22m | sword_blue.png[39m[0m
+[  22% ] [90m[1mreimport[22m | sword_gold.png[39m[0m
+[  25% ] [90m[1mreimport[22m | sword_green.png[39m[0m
+[  28% ] [90m[1mreimport[22m | sword_pink.png[39m[0m
+[  31% ] [90m[1mreimport[22m | sword_red.png[39m[0m
+[  34% ] [90m[1mreimport[22m | thorn_barbs.png[39m[0m
+[  37% ] [90m[1mreimport[22m | tree_walk.png[39m[0m
+[  40% ] [90m[1mreimport[22m | underworld_presence.png[39m[0m
+[  42% ] [90m[1mreimport[22m | unfallen.png[39m[0m
+[  45% ] [90m[1mreimport[22m | war_banner.png[39m[0m
+[  48% ] [90m[1mreimport[22m | angry_forest.png[39m[0m
+[  51% ] [90m[1mreimport[22m | cavalry_charge.png[39m[0m
+[  54% ] [90m[1mreimport[22m | change_sword.png[39m[0m
+[  57% ] [90m[1mreimport[22m | death_order.png[39m[0m
+[  60% ] [90m[1mreimport[22m | divine_touch.png[39m[0m
+[  62% ] [90m[1mreimport[22m | dragon_blade.png[39m[0m
+[  65% ] [90m[1mreimport[22m | dragon_dash.png[39m[0m
+[  68% ] [90m[1mreimport[22m | dragon_hide.png[39m[0m
+[  71% ] [90m[1mreimport[22m | dragon_leap.png[39m[0m
+[  74% ] [90m[1mreimport[22m | false_judgement.png[39m[0m
+[  77% ] [90m[1mreimport[22m | fiend_edge.png[39m[0m
+[  80% ] [90m[1mreimport[22m | giant_swing.png[39m[0m
+[  82% ] [90m[1mreimport[22m | holy_beam.png[39m[0m
+[  85% ] [90m[1mreimport[22m | lance_charge.png[39m[0m
+[  88% ] [90m[1mreimport[22m | lance_sweep.png[39m[0m
+[  91% ] [90m[1mreimport[22m | momentum.png[39m[0m
+[  94% ] [90m[1mreimport[22m | quick_flash.png[39m[0m
+[  97% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (34 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
