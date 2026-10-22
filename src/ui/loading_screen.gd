@@ -189,6 +189,9 @@ func fade_out() -> void:
 		return
 	_closing = true
 	_target = 1.0
+	if not bool(Options.get_value("ui_motion")):
+		queue_free()                              # "Menu animations" off: gone at once, no fade
+		return
 	var tw := create_tween()
 	tw.tween_interval(0.25)
 	tw.tween_property(_root, "modulate:a", 0.0, 0.6)
@@ -217,10 +220,11 @@ func _process(dt: float) -> void:
 	(_sky.material as ShaderMaterial).set_shader_parameter("t", _t)
 	(_title.material as ShaderMaterial).set_shader_parameter("t", _t)
 	# the title settles in on first show
-	var k := clampf(_t / 1.2, 0.0, 1.0)
+	var motion := bool(Options.get_value("ui_motion"))
+	var k := clampf(_t / 1.2, 0.0, 1.0) if motion else 1.0
 	var e := 1.0 - pow(1.0 - k, 3.0)
 	_title.modulate.a = e
 	_title.pivot_offset = _title.size * 0.5
 	_title.scale = Vector2.ONE * lerpf(1.06, 1.0, e)
-	_by.modulate.a = clampf((_t - 0.6) / 0.8, 0.0, 1.0)
+	_by.modulate.a = clampf((_t - 0.6) / 0.8, 0.0, 1.0) if motion else 1.0
 	_layout()

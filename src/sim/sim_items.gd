@@ -314,6 +314,8 @@ func _crash(u: SimUnit, v: Dictionary) -> void:
 
 ## Push Staff: shoves the target 600 the way it faces over 0.5 s. It is not a disable; trees in the way are cut.
 func _push(u: SimUnit, d: Dictionary, t: SimUnit) -> void:
+	if t.has_flag("unstoppable"):
+		return                                   # Cavalry Charge: nothing moves Lord Kaileh
 	var v: Dictionary = d.values
 	var dir := Vector2.from_angle(t.facing)
 	var to := t.pos + dir * float(v.distance)
@@ -468,6 +470,10 @@ func _stat_aura(h: SimUnit, au: Dictionary) -> void:
 			st = au.low_hp_stats
 		var old := o.get_modifier(String(au.id))
 		var had := not old.is_empty()
+		# a carrier's own share (self_stats) never replaces the full aura another carrier gave it this tick
+		if (o == h and au.has("self_stats") and had and int(old.get("by", -1)) != h.id
+				and old.get("stats") == au.stats and float(old.get("expires", 0.0)) >= w.time + 0.5 + 5.0 * C.DT):
+			continue
 		o.add_modifier({"id": String(au.id), "source": AURA_SRC, "expires": w.time + 0.5 + 6.0 * C.DT, "stats": st,
 			"aura": true, "by": h.id, "debuff": enemy})
 		if not had or old.get("stats") != st:
@@ -658,7 +664,7 @@ func _cleave(src: SimUnit, main: SimUnit, dmg: float, v: Dictionary) -> void:
 			continue
 		var amount := dmg * float(v.cleave_pct_creep if o.is_creep() else v.cleave_pct)
 		w.combat.deal_damage(src.id, src.team, true, o, amount, C.DamageType.PHYSICAL, false, "cleave_axe", false,
-			{"ignore_armor": true, "no_spell_lifesteal": true})
+			{"ignore_armor": true, "no_spell_lifesteal": true, "no_amp": true})
 
 # ---- Damage taken -------------------------------------------------------------------------------------------------
 

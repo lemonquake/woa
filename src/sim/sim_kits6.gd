@@ -46,7 +46,7 @@ func _enemy(team: int, o: SimUnit) -> bool:
 
 func _movable(o: SimUnit) -> bool:
 	return o.alive and not o.is_building() and not o.is_ward() and o.kind != K.COURIER and bool(o.def.can_move) \
-		and float(o.def.move_speed) > 0.0 and not o.is_invulnerable()
+		and float(o.def.move_speed) > 0.0 and not o.is_invulnerable() and not o.has_flag("unstoppable")
 
 func _land_spot(p: Vector2) -> Vector2:
 	p = Vector2(clampf(p.x, -SimMap.EDGE, SimMap.EDGE), clampf(p.y, -SimMap.EDGE, SimMap.EDGE))
@@ -105,6 +105,8 @@ func cast_error(u: SimUnit, aid: String, t: SimUnit, _p: Vector2, check_target: 
 				return "Must target another hero"
 			if t.team != u.team and not ab.can_debuff(t, u.team):
 				return "Target is debuff immune"
+			if t.has_flag("unstoppable"):
+				return "Target can't be moved"
 			if t.team == u.team and u.has_scepter():
 				return ""
 		"tame":
@@ -302,6 +304,7 @@ func trade_places(a: SimUnit, b: SimUnit) -> void:
 		o.path_goal = Vector2(INF, INF)
 		o.knock = {}
 		o.hop = {}
+		o.leap = {}                              # a leap in flight (Leap Strike) would carry it back
 
 ## Shuffle: every enemy hero and creep in the area takes another one's place (a random derangement: nobody stays), is
 ## stunned, then dizzy; then Knife Juggles fly out of the middle in every direction. With one enemy inside it trades
@@ -335,6 +338,8 @@ func _shuffle(u: SimUnit, aid: String, p: Vector2) -> void:
 			o.path = PackedVector2Array()
 			o.path_goal = Vector2(INF, INF)
 			o.knock = {}
+			o.hop = {}
+			o.leap = {}
 			moves.append([o.id, o.pos])
 	var stun := ab.val(u, aid, "stun")
 	for o: SimUnit in inside:

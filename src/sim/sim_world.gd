@@ -935,6 +935,9 @@ func on_building_destroyed(u: SimUnit) -> void:
 	if u.kind == K.ANCIENT:
 		winner = 1 - u.team
 		events.append({"t": "victory", "team": winner})
+	# losing a tier 1 tower refreshes that team's Glyph (Dota)
+	if String(u.def.id) == "tower1" and u.team >= 0 and u.team < 2:
+		glyph_ready_at[u.team] = minf(float(glyph_ready_at[u.team]), time)
 	# its ground is free to walk on again (the fountain never blocked)
 	if u.kind != K.FOUNTAIN:
 		var standing: Array = []

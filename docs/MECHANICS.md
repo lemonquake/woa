@@ -221,6 +221,14 @@ Break, Invisibility, Disjoint; Valve's game data for the numbers.
   longer of the two times (a short stun never cuts a long one). Stuns keep the unit's orders, which resume afterwards.
 * **Status resistance** and **slow resistance** multiply between sources; the Heavy Sword family (Heavy Sword, Twin
   Swords, Stun Blade) does not stack with itself: the largest value counts. Slow resistance shrinks movement slows.
+* **Movement speed** (Dota 2): (base + flat bonuses) x (1 + percentage bonuses - slows), then the 100-550 limits.
+  Slows from different sources add up (2026-10-22 c; before, only the strongest counted). The Igit family's
+  percentage bonus (Igit, Kugmo and Igit, Igit and Atuli) does not stack with itself: the largest counts.
+* **Hold position** lets go of a target that walked out of attack range and takes one in reach. Invulnerable units
+  (a piloting Blau, Azrael's door, a shielded courier) cannot be attacked or auto-targeted; a disarm or the target
+  turning invulnerable cancels an attack mid-swing.
+* **Controlled units pay their owner**: last hits and kills by summons (Undead, tamed beasts, turrets, Araki's ghosts)
+  give gold and kill credit to the hero who owns them. A denied tower pays only the enemy team.
 * **Hex**: silence + mute + disarm, base movement speed 140 (flat and percentage bonuses still apply), ends channels.
   Only a strong dispel removes it.
 * **Silence** ends channels and blocks spells, not items or passives. **Mute** blocks items. **Disarm** blocks attacks.

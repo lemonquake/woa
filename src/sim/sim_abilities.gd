@@ -237,6 +237,8 @@ func cast_error(u: SimUnit, aid: String, slot: int, target: SimUnit, point: Vect
 		var te := _target_error(u, a, target)
 		if te != "":
 			return te
+	if aid == "swift_dagger" and u.is_rooted():
+		return "Rooted"                            # a flash to the target, like a blink: roots stop it
 	if aid == "leap_strike":
 		if u.is_rooted():
 			return "Rooted"
@@ -863,6 +865,8 @@ func start_push(o: SimUnit, vel: Vector2, src_id: int, team: int, aid: String, l
 		o.knock.vel = (o.knock.vel as Vector2) + vel
 		return
 	w.orders.cancel_channel(o)
+	o.leap = {}
+	o.hop = {}
 	var vz := 520.0 * clampf(vel.length() / 1000.0, 0.35, 1.1)
 	o.knock = {"phys": true, "vel": vel, "z": 0.0, "vz": vz, "t": 0.0, "src": src_id, "team": team, "ability": aid,
 		"lv": lv, "seq": seq, "impacted": false, "stun": 0.0}
@@ -1191,7 +1195,7 @@ func on_attacked(t: SimUnit, attacker: SimUnit) -> void:
 	if not t.alive or attacker == null:
 		return
 	var m := t.get_modifier("blood_ranger")
-	if m.is_empty() or not t.hop.is_empty() or t.is_stunned() or t.is_leaping():
+	if m.is_empty() or not t.hop.is_empty() or t.is_stunned() or t.is_leaping() or t.is_rooted():
 		return
 	if w.time < float(t.get_meta("hop_ready", C.LONG_AGO)):
 		return
@@ -1329,7 +1333,7 @@ func _update_javelin(e: Dictionary) -> bool:
 			w.status.add_dot(o, src, String(e.ability), float(e.dps), float(e.dur), C.Element.FIRE)
 		if o.kind == K.NEUTRAL_CREEP and src != null:
 			w.ai.neutral_provoked(o, src)
-		if can_debuff(o, int(e.team)) and o.alive:
+		if can_debuff(o, int(e.team)) and o.alive and not o.has_flag("unstoppable"):
 			w.orders.cancel_channel(o)
 			o.leap = {}
 			o.hop = {}
@@ -1570,6 +1574,13 @@ func _hook_latch(e: Dictionary, o: SimUnit) -> void:
 		e.target = -1
 		w.events.append({"t": "hook_kill", "u": o.id, "src": e.src})
 		w.combat.kill(o, caster)
+		return
+	if o.has_flag("unstoppable"):
+		# Cavalry Charge: the hook bites (its damage) but cannot drag him; it comes back empty
+		e.target = -1
+		if not ally:
+			w.combat.deal_damage(int(e.src), int(e.team), true, o, float(e.damage), C.DamageType.PURE, false,
+				String(e.ability))
 		return
 	w.orders.cancel_channel(o)
 	o.leap = {}

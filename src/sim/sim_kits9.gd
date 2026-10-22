@@ -151,13 +151,14 @@ func beam_tick(u: SimUnit) -> void:
 		w.combat.deal_damage(u.id, u.team, true, o, dmg, C.DamageType.MAGICAL, false, aid)
 		if not o.alive:
 			continue
-		if o.max_mana > 0.0 and burn > 0.0:
-			o.mana = maxf(0.0, o.mana - burn)
-		if ab.can_debuff(o, u.team):
-			w.status.apply(o, u.id, u.team, {"id": BEAM_SLOW, "dur": 0.25, "no_resist": true, "slow": slow,
-				"fx": "holy_beam"})
 		if o.kind == K.NEUTRAL_CREEP:
 			w.ai.neutral_provoked(o, u)
+		if not ab.can_debuff(o, u.team):
+			continue                                 # spell immunity: no mana burn and no slow
+		if o.max_mana > 0.0 and burn > 0.0:
+			o.mana = maxf(0.0, o.mana - burn)
+		w.status.apply(o, u.id, u.team, {"id": BEAM_SLOW, "dur": 0.25, "no_resist": true, "slow": slow,
+			"fx": "holy_beam"})
 
 func beam_end(u: SimUnit, cancelled: bool) -> void:
 	u.remove_modifier(BEAM_TURN)

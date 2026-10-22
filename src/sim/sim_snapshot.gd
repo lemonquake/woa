@@ -111,7 +111,11 @@ class _Writer:
 					if TRANSIENT.has(n) or (n == "prof" and v is SimWorld):
 						continue
 					fields[n] = enc(v.get(n))
-				objs[idx] = [(v.get_script() as Script).resource_path, fields]
+				# metadata is state too (a bot's last use of each item, Blood Ranger's next back-leap)
+				var meta := {}
+				for mk in v.get_meta_list():
+					meta[String(mk)] = enc(v.get_meta(mk))
+				objs[idx] = [(v.get_script() as Script).resource_path, fields, meta]
 				return {"@o": idx}
 			TYPE_DICTIONARY:
 				var d: Dictionary = v
@@ -203,6 +207,10 @@ class _Reader:
 		var fields: Dictionary = e[1]
 		for k in fields:
 			o.set(k, dec(fields[k]))
+		if e.size() > 2:
+			var meta: Dictionary = e[2]
+			for mk in meta:
+				o.set_meta(StringName(mk), dec(meta[mk]))
 		return o
 
 	func _dict(i: int) -> Dictionary:

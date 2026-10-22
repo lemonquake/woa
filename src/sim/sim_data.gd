@@ -1096,7 +1096,8 @@ static func _build_abilities_21() -> void:
 		"desc": "Every spell Thyrandael casts gives him a charge of Divine Touch: an All-damage Barrier as large as his intelligence (it takes damage of every kind before his health). Up to 3 charges; the barrier fades 12 seconds after his last spell."}
 	_abilities["holy_beam"] = {"id": "holy_beam", "name": "Holy Beam", "behavior": "point", "key": "Q", "max_level": 4,
 		"mana": [120, 120, 120, 120], "cooldown": [15, 15, 15, 15], "cast_point": 0.3, "range": 800,
-		"anim": "cast_channel", "damage_type": "magical", "channel": true,
+		"anim": "cast_channel", "damage_type": "magical", "channel": true, "line": true, "direction": true,
+		"full_width": true,
 		"values": {"damage": [50, 70, 90, 110], "mana_burn": [30, 40, 50, 60], "slow": [0.3, 0.3, 0.3, 0.3],
 		"width": [150, 150, 150, 150], "max_channel": [7, 7, 7, 7], "turn_slow": [0.6, 0.6, 0.6, 0.6]},
 		"hidden_values": ["width"],
@@ -1641,8 +1642,8 @@ static func _build_items() -> void:
 		"components": ["broadsword", "lifesteal"], "recipe_cost": 0, "category": "upgrades",
 		"values": {"attack_speed": 100.0, "move_speed_pct": 0.06, "move_speed_pct_melee": 0.12, "armor_reduction": 7.0,
 		"duration": 6.0, "mana": 25.0}})
-	# Igit (Dota's Yasha; the owner's name)
-	_it("yasha", "Igit", 2100, {"stats": {"agi": 16.0, "attack_speed": 15.0, "move_speed_pct": 0.1},
+	# Igit (Dota's Yasha; the owner's name). The Igit family's speed does not stack with itself ("_max")
+	_it("yasha", "Igit", 2100, {"stats": {"agi": 16.0, "attack_speed": 15.0, "move_speed_pct_max": 0.1},
 		"components": ["blade_alacrity", "boots_elves"], "recipe_cost": 650, "category": "upgrades"})
 	_it("dragon_lance", "Long Spear", 2000, {"stats": {"agi": 15.0, "str": 10.0, "range": 130.0},
 		"components": ["blade_alacrity", "belt_str"], "recipe_cost": 550, "category": "upgrades"})
@@ -1661,13 +1662,13 @@ static func _build_items() -> void:
 	_it("spell_sword", "Atuli", 2100, {"stats": {"int": 16.0, "magic_amp": 0.10, "mana_regen_amp_max": 0.20},
 		"components": ["wizard_staff", "robe"], "recipe_cost": 650, "category": "upgrades"})
 	_it("twin_swords", "Kugmo and Igit", 4200, {"stats": {"str": 16.0, "agi": 16.0, "attack_speed": 20.0,
-		"move_speed_pct": 0.12, "status_resist_max": 0.16, "heal_amp_max": 0.16, "slow_resist_max": 0.30},
+		"move_speed_pct_max": 0.12, "status_resist_max": 0.16, "heal_amp_max": 0.16, "slow_resist_max": 0.30},
 		"components": ["heavy_sword", "yasha"], "recipe_cost": 0, "category": "upgrades"})
 	_it("kugmo_atuli", "Kugmo and Atuli", 4200, {"stats": {"str": 16.0, "int": 16.0, "slow_resist_max": 0.25,
 		"heal_amp_max": 0.16, "magic_amp": 0.12, "mana_regen_amp_max": 0.30, "mana_cost_cut_max": 0.25},
 		"components": ["heavy_sword", "spell_sword"], "recipe_cost": 0, "category": "upgrades"})
 	_it("igit_atuli", "Igit and Atuli", 4200, {"stats": {"agi": 16.0, "int": 16.0, "attack_speed": 20.0,
-		"move_speed_pct": 0.12, "magic_amp": 0.12, "mana_regen_amp_max": 0.30, "cast_speed_max": 0.25},
+		"move_speed_pct_max": 0.12, "magic_amp": 0.12, "mana_regen_amp_max": 0.30, "cast_speed_max": 0.25},
 		"components": ["yasha", "spell_sword"], "recipe_cost": 0, "category": "upgrades"})
 	_it("battle_staff", "Battle Staff", 1625, {"stats": {"int": 10.0, "attack_speed": 35.0, "mana_regen": 1.25},
 		"components": ["brass_knuckles", "robe", "sobi_mask"], "recipe_cost": 0, "category": "upgrades"})

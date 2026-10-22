@@ -664,3 +664,18 @@ Run `work/lemondev/2026-10-22-icons/border/`. Owner asked to apply the official 
 |---|---|---|---|---|
 | Border coverage | 1 | game_setup.png, exe_match.png, packed_probe.log 2079/0 | PASS (self-check) | Game Setup ultimate and the dragged item now framed; buff bar left out by design |
 | Integration | 1 | tests.log 352/0, check.sh Names OK, export exit 0, exe cold start | PASS (gate) | no critic; drag ghost not captured live |
+
+## Session 2026-10-22 c — deep QA, frame rate, build
+
+Run `work/lemondev/2026-10-22c-qa-perf/` (contract.md, logs, bench). Interrupted once (session limit) and continued.
+Three fresh-context auditors (kits, rules, interface); no commercial benchmark capture; no blind visual critic.
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| L Leftovers | 1 | ledger read; nothing open blocked | PASS | none | none |
+| Q1 Hero kits | 1 | 12 confirmed fixed; test_qa_kits_*, test_qa_war_banner_* | tests pass | 7 plausible left (listed in HANDOFF) | owner play |
+| Q2 Core rules | 1 | 11 confirmed + 3 deviations fixed; test_qa_* | tests pass | Midas XP, level 30 XP unconfirmed | research |
+| Q3 Interface | 1 | 16 confirmed fixed | self-check | no live click-through | probe |
+| Q4 Runtime errors | 1 | kc2_a/b/c: 3 x 25 min, all 22 heroes, 0 SCRIPT ERROR | PASS (gate) | none | none |
+| P Frame rate | 1-2 | bench/a_q*, a_qbase*, lane_*, b_q*: A 21.6 -> 18.4-19.3 ms, lane 15.0 -> 13.1 | improved, targets not met | main thread bound (script, flush, draw) | render thread, draw calls |
+| X Integration | 1-2 | snapshot regression fixed (metadata); suite 361/0 (logs/tests_fix2.log) | see run handoff | none | owner play |

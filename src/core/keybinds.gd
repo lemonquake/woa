@@ -77,7 +77,7 @@ static func slot_action(slot: int, count: int) -> String:
 	return "ability_%d" % (slot + 2)
 
 ## Keys an action may never take: they open menus or are modifiers.
-const RESERVED := [KEY_ESCAPE, KEY_F10, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META, KEY_CAPSLOCK]
+const RESERVED := [KEY_ESCAPE, KEY_F10, KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META, KEY_CAPSLOCK, KEY_ENTER, KEY_KP_ENTER]
 const MODIFIER_KEYS := [KEY_CTRL, KEY_SHIFT, KEY_ALT, KEY_META]
 
 ## Why a binding cannot be used ("" = it can): menu keys, control groups, system shortcuts.
@@ -266,7 +266,16 @@ static func held(action: String) -> bool:
 	var base := b & ~MODS
 	if base >= MOUSE_BASE:
 		return Input.is_mouse_button_pressed(base - MOUSE_BASE)
-	return Input.is_key_pressed(base)
+	return Input.is_key_pressed(base) and not typing()
+
+## A text box has the keyboard (chat, the shop's search, a name field): held keys are typing, not the camera, the
+## scoreboard or any other held control.
+static func typing() -> bool:
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null or tree.root == null:
+		return false
+	var f := tree.root.gui_get_focus_owner()
+	return f is LineEdit or f is TextEdit
 
 static func label(action: String) -> String:
 	for a in ACTIONS:

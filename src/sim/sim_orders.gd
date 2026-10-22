@@ -205,7 +205,7 @@ func issue(u: SimUnit, o: Dictionary, from_player: bool, from_queue := false) ->
 func attack_error(u: SimUnit, t: SimUnit) -> String:
 	if not u.can_attack_at_all():
 		return "This unit cannot attack"
-	if t.is_invulnerable() and t.is_building():
+	if t.is_invulnerable():
 		return "Target is invulnerable"
 	if not w.vision.sees(u.team, t):
 		return "Target not visible"
@@ -445,7 +445,8 @@ func _idle(u: SimUnit, hold: bool) -> void:
 	if not u.can_attack_at_all() or u.is_disarmed():
 		return
 	var t := w.get_unit(u.atk_target)
-	if t == null or not _attackable(u, t):
+	# holding position, a target that walked out of reach is let go for one in reach (Dota's Hold)
+	if t == null or not _attackable(u, t) or hold and u.edge_distance(t) > u.attack_range and u.atk_phase == AP.NONE:
 		u.atk_target = -1
 		t = null
 		# invisible units never attack on their own (Dota 2 wiki, Invisibility)
@@ -473,7 +474,8 @@ func _order_attack(u: SimUnit) -> void:
 			_finish_order(u)
 		return
 	u.last_seen = t.pos
-	if u.is_disarmed():
+	if u.is_disarmed() or t.is_invulnerable():
+		# disarmed, or the target can't be hit for now (a piloting Blau, a shielded courier): stay in reach and wait
 		_move_to(u, t.pos, u.attack_range)
 		return
 	if t.team == u.team and not can_deny(u, t):
@@ -503,8 +505,8 @@ func _order_attack_move(u: SimUnit) -> void:
 func _attackable(u: SimUnit, t: SimUnit) -> bool:
 	if not t.alive or t.removed:
 		return false
-	if t.is_invulnerable() and t.is_building():
-		return false
+	if t.is_invulnerable():
+		return false                               # protected buildings, a piloting Blau, Azrael's door, a shielded courier
 	if t.team != u.team and not t.modifiers.is_empty() and t.has_flag("untargetable"):
 		return false                               # Blackfire lying dead before Unfallen raises him
 	if not w.vision.sees(u.team, t):
@@ -518,7 +520,7 @@ func _acquire(u: SimUnit, r: float) -> SimUnit:
 	var best: SimUnit = null
 	var bd := INF
 	for o: SimUnit in w.query(u.pos, r + 200.0, true):
-		if o.team == u.team or o.is_invulnerable() and o.is_building() or o.is_ward() and not o.alive:
+		if o.team == u.team or o.is_invulnerable():
 			continue
 		if o.kind == K.FOUNTAIN or (not o.modifiers.is_empty() and o.has_flag("untargetable")):
 			continue
@@ -566,6 +568,10 @@ func _attack(u: SimUnit, t: SimUnit, chase: bool) -> void:
 func _update_windup(u: SimUnit) -> void:
 	var t := w.get_unit(u.atk_target)
 	if t == null or not t.alive or (t.team == u.team and not can_deny(u, t)):
+		_cancel_windup(u)
+		return
+	# a disarm landing mid-swing stops it, and so does a target turning invulnerable (Dota)
+	if u.is_disarmed() or t.is_invulnerable():
 		_cancel_windup(u)
 		return
 	if u.edge_distance(t) > u.attack_range + C.ATTACK_RANGE_BUFFER:

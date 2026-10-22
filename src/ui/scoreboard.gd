@@ -14,12 +14,14 @@ var recap: Array = []                      # [{who, key, type, amount}] sorted, 
 var recap_killer := ""
 var _recap_total := 0.0
 
+var _board_arg := OS.get_cmdline_user_args().has("--board")    # captures: show the board (read once)
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
 func _process(_dt: float) -> void:
-	show_board = Keybinds.held("scoreboard") or OS.get_cmdline_user_args().has("--board")
+	show_board = Keybinds.held("scoreboard") or _board_arg
 	# only the board (Tab) or the death recap draws anything: redraw while one shows, and once when it goes
 	var h: SimUnit = hud.hero() if hud else null
 	var showing := show_board or (h != null and not h.alive and not recap.is_empty())
@@ -142,7 +144,9 @@ func _board() -> void:
 	y += 40.0
 	U.text(self, "Damage by source (to heroes, units and buildings)", Vector2(r.position.x + 20, y), 16, U.GOLD, "bold")
 	y += 12.0
-	var colw := (width - 60.0) / maxf(1.0, heroes.size())
+	# the columns and the 20 px gaps between them fit inside the panel's 20 px margins
+	var n := maxf(1.0, heroes.size())
+	var colw := (width - 40.0 - 20.0 * (n - 1.0)) / n
 	for i in heroes.size():
 		var hh: SimUnit = heroes[i]
 		_breakdown(hh, Vector2(r.position.x + 20 + i * (colw + 20.0), y + 8), colw)

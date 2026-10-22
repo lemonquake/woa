@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 10305 ms
+match ready in 35457 ms
+BENCH frames 1019 avg 39.29 ms (25 fps) p50 33.33 p95 68.59 p99 104.62 max 153.74 over16.7 1018 units 200
+  frames with a tick 961 avg 40.15 ms, without 58 avg 25.13 ms
+  per-frame means: views 3.82, fx 0.71, fx_azrin 0.56, fx_froster 0.30, fx_other 1.47, status 0.60, target 0.02, fog 0.11, sim_ahead 8.93, sim 3.15, events 3.09, sync 3.11, script_proc 8.74, script_phys 9.69, n_tick_frames 0.94, gpu 16.71, rcpu 3.95, setup 0.09, other 20.86, flush 11.75, draw 10.07, gap 0.23, draws 1778.38, prims 2359640.65, trails 0.27, bars 2.30, ui_hud 0.02, ui_Tip 0.01, ui_feed 0.52, ui_chat 0.42, ui_fro_call 0.28, ui_BottomPanel 2.21, ui_Minimap 1.48, ui_TopBar 0.48, ui_PortraitOverlay 0.19, ui_board 0.05

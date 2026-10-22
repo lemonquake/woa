@@ -4,6 +4,50 @@
 
 ## Status (keep this section current)
 
+**2026-10-22 c: deep QA of heroes, rules and interface; faster frames; a new build (your request).** Run
+`work/lemondev/2026-10-22c-qa-perf/` (contract.md, logs, bench). Three fresh-context auditors read the hero kits, the
+core rules and the interface; every confirmed finding is fixed, nine with new tests (`test_qa_*`).
+* **Rules (Dota 2)**: slows from different sources add up and come off the percentage bonuses; the Igit family's speed
+  no longer stacks with itself; Hold position drops a target that walked out of reach; invulnerable units (piloting
+  Blau, Azrael's door, a shielded courier) are never attacked or auto-targeted; a disarm or invulnerability cancels a
+  swing; summons' last hits and kills pay their owner; a denied tower pays only the enemy team; a denied hero's old
+  hits give no credit in the next life; a consumable bought away from the shop waits in the stash; a dead hero near
+  the fountain is not "in the shop"; cleave is not spell-amplified; Burak dying to his own Berserk return is not a
+  deny; two Leech Totem carriers keep each other's full aura; losing a tier 1 tower refreshes the Glyph.
+* **Hero kits**: Underworld Presence ignores summons that expire (Araki's ghosts healed Blackfire 33%); Lance Charge
+  lets go of a rider something else moved, and drops it unstunned if Kaileh dies; Cavalry Charge's "nothing moves
+  him" now holds against hooks, Fiery Javelin, Iron Grip, boulders, traps, Push Staff and Swap; Rising Slash's toss
+  lasts only as long as its (resistible) stun; War Banner pays its 25 gold; Blood Ranger's back-leap and Swift Dagger
+  respect roots; no Dragon Blade strikes before Dragon Blade is learned; Sacrificial Grip's weakness is not shortened
+  twice; Holy Beam's mana burn respects spell immunity and it aims by direction; Swap/Shuffle/pushes end a Leap Strike.
+* **Interface**: real mana and cooldown on skills, items and Teleport (talents, items, orbs); "(now X)" values in skill
+  tips; Crash Knife's own text; correct sell price; search results stop above the stash; To Buy redraws and has
+  tooltips; clicks on the top bar and stats box never reach the world; typing in chat no longer moves the camera or
+  opens the scoreboard; Enter can't be bound; Ctrl+Alt+digit hotkeys work; Esc with the pause menu open resumes;
+  Game Setup shows the real ultimate; scoreboard columns fit in 5v5; long talent names shrink to fit; "Menu
+  animations" off removes the remaining menu, loading and draft motion; a dead hero drops its aimed spell.
+* **Saved matches** (multiplayer rejoin) now keep object metadata (a bot's last item use, Blood Ranger's next leap):
+  a restored match diverged on its first tick.
+* **Frame rate** (1080p, RTX 4060, V-Sync off, High; alternating with the 6cf1045 view code, `bench/`): the 30 Hz
+  simulation step now runs on a worker thread while the previous frame draws (single player only; multiplayer,
+  captures and `--sync_step` keep the plain step), creeps pose at most 30 times a second at any frame rate, chat
+  lines are wrapped once, nothing is picked under the cursor over the HUD, hidden portrait not rendered.
+  Teamfight A **21.6 -> 18.4-19.3 ms (46 -> 52-54 fps)**, p95 33.3 -> 25.8-28.6; lane 5v5 **15.0 -> 13.1 ms (66 -> 76
+  fps)**, p99 28.3 -> 22.2; teamfight B (newest heroes) 26.6 -> 21.2 ms, p99 100 -> 72.5. Threaded skeletons were
+  tried and dropped (no gain). Bench B's ~290 ms hitches are the bench restaging the fight every 20 s (bench-only
+  `HITCH` lines show them), not match play. Not reached: lane p99 under 16.7 ms and teamfight 60 fps; the frame is now
+  bound by the main thread (scripts ~6 ms, skeleton/transform flush ~5 ms, renderer ~5 ms; GPU ~8 ms).
+* Evidence: suite 361 passed, 0 failed (`logs/tests_fix2.log`); three 25-minute bot games with all 22 heroes, 0 script
+  errors (`logs/kc2_*.log`); `sh tools/check.sh` every script parses, Names OK (`logs/check.log`); release export exit 0
+  (`build/WarriorsOfAether.exe`, pack 866 MB, PCK SHA256 `36AABB07...AD3304`); the exe cold-starts into a match with no script
+  errors (`shots/exe_match.png`, `logs/exe_run.txt`). Not fixed (written down): Seed Bomb trees are never reused in `map.trees` (small growth
+  over a match); Midas XP and the level 30 XP value unconfirmed; bots never cast Tock's Fast Forward or Ser Emelrich's
+  Steel Stance in these games.
+* New names for your veto (player-visible): "Must target a unit", "Target can't be moved", "N more: type more of the
+  name", "Now: mana X, cooldown Y s", "(now X)". Code: `controller`, `_held`, `Keybinds.typing`, `_cd_total`,
+  `_cd_full`, `CREEP_POSE_STEP`, `_ahead_task`, `_ahead_done`, `_ahead_us`, `_on_pre_draw`, `_step_ahead`,
+  `_join_ahead`, `_names`, `_board_arg`, `move_speed_pct_max`, `test_qa_*`.
+
 **2026-10-22 b: the official border on every new icon (your request).** The new skill, sword and item art is framed
 by the Default border pack wherever a skill or item tile is drawn (HUD, shop, talents, Hero Select, ranked pick,
 lobby). Two places still drew a bare picture and now use `IconBorder`: the ultimate beside each slot in **Game Setup**

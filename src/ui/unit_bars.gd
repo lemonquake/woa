@@ -14,6 +14,7 @@ var font: Font
 var popups: Array = []                     # [{text, pos, t, color, size, rise, life, drift, pop}]
 var _texts: Array = []                     # deferred labels: [font, pos, text, size, outline, colour]
 var _ghost := {}                           # unit id -> [shown health fraction, time it last dropped]
+var _names := {}                           # hero id -> [time measured, who_parts, their widths, total width]
 var _icons: Array = []                     # deferred status icons: [texture, rect, remaining fraction]
 var _mod_seen := {}                        # "unit:modifier:expiry" -> game time first seen (icon timers)
 
@@ -37,7 +38,7 @@ const DISABLE_COLORS := {"Stunned": Color(1.0, 0.86, 0.35), "Frosted": Color(0.5
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	font = ThemeDB.fallback_font
+	font = UiKit.font("bold")                  # the interface's own font (docs/CUSTOM_UI.md)
 
 func popup(text: String, at: Vector3, color: Color, size := 18, rise := 1.2, life := 1.3, drift := Vector2.ZERO,
 		pop := false) -> void:
@@ -76,6 +77,10 @@ func damage_number(amount: float, dtype: int, at: Vector3, style: String, target
 	var st: Array = _stack.get(key, [-9.0, 0])
 	var level: int = st[1] + 1 if now - float(st[0]) < 0.35 else 0
 	_stack[key] = [now, level]
+	if _stack.size() > 300:
+		for sk in _stack.keys():
+			if now - float(_stack[sk][0]) > 1.0:
+				_stack.erase(sk)
 	var n := int(round(amount))
 	var size := int(clampf(15.0 + log(amount + 1.0) * 2.6, 16.0, 32.0))
 	var col: Color = DMG_COLORS[clampi(dtype, 0, 2)]
@@ -251,6 +256,12 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 	if frac < float(g[0]) - 0.002 and now - float(g[1]) <= 0.02:
 		g[1] = now
 	_ghost[u.id] = g
+	if _ghost.size() > 600:
+		# drop the dead creeps' entries (one per unit ever drawn, over a whole match)
+		for gid in _ghost.keys():
+			var gu: SimUnit = game.world.get_unit(int(gid))
+			if gu == null or not gu.alive:
+				_ghost.erase(gid)
 	if float(g[0]) > frac:
 		draw_rect(Rect2(r.position.x + width * frac, r.position.y, width * (float(g[0]) - frac), height), Color(1.0, 0.93, 0.7, 0.85))
 	var fill := Rect2(r.position, Vector2(width * frac, height))
@@ -267,7 +278,7 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		if held > 0.0:
 			var hw := minf(width * frac, width * held / maxf(1.0, u.max_hp))
 			draw_rect(Rect2(r.position.x + width * frac - hw, r.position.y, hw, height), Color(0.25, 0.02, 0.04, 0.85))
-	if not u.is_hero() and not u.is_building():
+	if not u.is_hero() and not u.is_building() and not u.modifiers.is_empty():
 		_disable_bar(u, Rect2(r.position.x, r.end.y + 3, width, 4), false)
 	if u.is_hero():
 		# a tick every 250 health
@@ -295,15 +306,23 @@ func _bar(u: SimUnit, s: Vector2, my_team: int) -> void:
 		var dy := _disable_bar(u, Rect2(r.position.x, r.end.y + 9 + below, width, 6), true)
 		_status_icons(u, Vector2(r.position.x, r.end.y + 9 + below + dy))
 		# "lemonQ (Ezee)": the player in their player colour, the hero in its team's colour
-		var parts := UiKit.who_parts(u)
+		# the parts and their widths are measured once a second per hero, not twice every frame
 		var nf := UiKit.font("bold")
 		var gap := 5.0
-		var nw := -gap
-		for pt in parts:
-			nw += nf.get_string_size(String(pt[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x + gap
-		var nx := s.x - nw * 0.5
-		for i in parts.size():
-			var pc: Color = parts[i][1]
-			_texts.append([nf, Vector2(nx, r.position.y - 7), String(parts[i][0]), 16, 5,
+		var nm: Array = _names.get(u.id, [])
+		if nm.is_empty() or now - float(nm[0]) > 1.0:
+			var parts := UiKit.who_parts(u)
+			var widths: Array = []
+			var total := -gap
+			for pt in parts:
+				var pw := nf.get_string_size(String(pt[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
+				widths.append(pw)
+				total += pw + gap
+			nm = [now, parts, widths, total]
+			_names[u.id] = nm
+		var nx: float = s.x - float(nm[3]) * 0.5
+		for i in (nm[1] as Array).size():
+			var pc: Color = nm[1][i][1]
+			_texts.append([nf, Vector2(nx, r.position.y - 7), String(nm[1][i][0]), 16, 5,
 				pc.lightened(0.15) if i == 0 else pc.lightened(0.35)])
-			nx += nf.get_string_size(String(parts[i][0]), HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x + gap
+			nx += float(nm[2][i]) + gap

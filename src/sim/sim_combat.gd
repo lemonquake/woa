@@ -736,9 +736,27 @@ func process_deaths() -> void:
 			_creep_death(t, killer, deny)
 		elif t.is_building():
 			_building_death(t, killer, deny)
+		elif t.is_ward() and not deny and int(t.def.get("gold_max", 0)) > 0:
+			# a ward with a bounty (War Banner, 25 gold) pays the enemy hero who brought it down
+			var kh := controller(killer)
+			if kh != null and kh.team != t.team:
+				give_gold(kh, w.rng.randi_range(int(t.def.gold_min), int(t.def.gold_max)), false, t.pos)
+
+## The hero who controls `k`: the hero itself, or the owner of a summon (Undead, a tamed beast, a turret, Araki's
+## ghosts): as in Dota, a controlled unit's last hits and kills pay its owner.
+func controller(k: SimUnit) -> SimUnit:
+	if k == null:
+		return null
+	if k.is_hero():
+		return k
+	if k.kind == K.SUMMON and k.owner_id >= 0:
+		var o := w.get_unit(k.owner_id)
+		if o != null and o.is_hero():
+			return o
+	return null
 
 func _creep_death(t: SimUnit, killer: SimUnit, deny: bool) -> void:
-	var hero_killer := killer if killer != null and killer.is_hero() else null
+	var hero_killer := controller(killer)
 	if deny:
 		if hero_killer:
 			hero_killer.denies += 1
@@ -836,7 +854,8 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 	var victim_streak := t.streak
 	t.streak = 0
 	if killer != null and killer.team == t.team:
-		return                                # denied hero: no rewards
+		t.hero_damage_log.clear()             # denied hero: no rewards (and none for old hits in the next life)
+		return
 	var credit := kill_credit(t, killer)
 	var enemy_team := 1 - t.team
 	var assisters: Array[SimUnit] = []
@@ -894,7 +913,8 @@ func _hero_death(t: SimUnit, killer: SimUnit) -> void:
 
 ## Kill credit: an enemy hero who struck the killing blow, else the last enemy hero to damage the victim recently.
 func kill_credit(t: SimUnit, killer: SimUnit) -> SimUnit:
-	var credit: SimUnit = killer if killer != null and killer.is_hero() and killer.team != t.team else null
+	var ck := controller(killer)
+	var credit: SimUnit = ck if ck != null and ck.team != t.team else null
 	if credit == null:
 		var best_t := -INF
 		for hid in t.hero_damage_log:
@@ -916,12 +936,15 @@ func _building_death(t: SimUnit, killer: SimUnit, deny: bool) -> void:
 	if C.BUILDING_BOUNTY.has(key):
 		var b: Array = C.BUILDING_BOUNTY[key]
 		if deny:
+			# a denied building still pays the enemy team part of its bounty (Dota), its own team nothing
 			for h in w.heroes:
-				give_gold(h, int(b[0] * C.TOWER_DENY_FACTOR), false, h.pos)
+				if h.team != t.team:
+					give_gold(h, int(b[0] * C.TOWER_DENY_FACTOR), false, h.pos)
 		else:
 			for h in w.heroes:
 				if h.team != t.team:
 					give_gold(h, int(b[0]), false, h.pos)
-			if killer != null and killer.is_hero() and killer.team != t.team:
-				give_gold(killer, w.rng.randi_range(int(b[1]), int(b[2])), false, t.pos)
+			var kh := controller(killer)
+			if kh != null and kh.team != t.team:
+				give_gold(kh, w.rng.randi_range(int(b[1]), int(b[2])), false, t.pos)
 	w.on_building_destroyed(t)

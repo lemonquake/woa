@@ -49,7 +49,7 @@ func _enemy(team: int, o: SimUnit) -> bool:
 
 func _movable(o: SimUnit) -> bool:
 	return o.alive and not o.is_building() and not o.is_ward() and o.kind != K.COURIER and bool(o.def.can_move) \
-		and float(o.def.move_speed) > 0.0 and not o.is_invulnerable()
+		and float(o.def.move_speed) > 0.0 and not o.is_invulnerable() and not o.has_flag("unstoppable")
 
 func _land_spot(p: Vector2) -> Vector2:
 	if w.map.is_walkable(p) and not blocks(p, 16.0):

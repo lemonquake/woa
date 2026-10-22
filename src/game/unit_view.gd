@@ -889,6 +889,7 @@ func _play(clip: String, loop: bool, speed := 1.0, blend := 0.15, restart := fal
 		anim.seek(0.0, true)
 
 var _placed_at := Vector2.INF
+const CREEP_POSE_STEP := 1.0 / 30.0         # seconds between two poses of a creep's skeleton (frame())
 
 ## Off screen (Main skips frame()): still stand where the unit is, so a unit that spawned or moved out of view never
 ## shows at the world origin (the river at the map's centre) when it is next drawn or an effect looks it up.
@@ -900,7 +901,7 @@ func place() -> void:
 	rotation.y = View.yaw(cur_facing)
 
 ## Called every rendered frame with the interpolation fraction between the last two ticks.
-func frame(alpha: float, delta: float, cam: Camera3D = null, frame_no := 0) -> void:
+func frame(alpha: float, delta: float, cam: Camera3D = null, _frame_no := 0) -> void:
 	_placed_at = Vector2.INF
 	var p := prev_pos.lerp(cur_pos, alpha)
 	if _flash > 0.0:
@@ -926,13 +927,14 @@ func frame(alpha: float, delta: float, cam: Camera3D = null, frame_no := 0) -> v
 			on = cam.is_position_in_frustum(position) or cam.is_position_in_frustum(position + Vector3(0, 2.4, 0))
 		if anim.active != on:
 			anim.active = on
-		# creeps and other non-heroes animate at half the frame rate (every other frame, alternating by id, with the
-		# time of both frames), heroes every frame
+		# creeps and other non-heroes pose at most 30 times a second (at 60 fps every other frame, as before; at 144 fps
+		# every fourth or fifth), spread over the frames by id, with the time of the frames skipped; heroes every frame
 		if on:
 			if _clip == "":
 				_play(String(cfg.idle), true)          # never a bind pose, even on the first frame in view
+				_anim_acc = CREEP_POSE_STEP * float(uid % 5) / 5.0
 			_anim_acc += delta
-			if is_hero or (frame_no + uid) % 2 == 0:
+			if is_hero or _anim_acc >= CREEP_POSE_STEP - 0.002:
 				anim.advance(_anim_acc)
 				_anim_acc = 0.0
 	var h := terrain.height_at(p)

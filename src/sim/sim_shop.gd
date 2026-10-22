@@ -22,7 +22,8 @@ func _init(world: SimWorld = null) -> void:
 	w = world
 
 func in_shop(u: SimUnit) -> bool:
-	return u.alive and u.pos.distance_to(w.map.shops[u.team]) <= C.SHOP_RADIUS or u.pos.distance_to(w.map.fountains[u.team]) <= C.SHOP_RADIUS
+	return u.alive and (u.pos.distance_to(w.map.shops[u.team]) <= C.SHOP_RADIUS
+		or u.pos.distance_to(w.map.fountains[u.team]) <= C.SHOP_RADIUS)
 
 ## Every way to build an item: lists of part ids, the recipe scroll included when the recipe costs gold. Empty for
 ## a basic item.
@@ -276,7 +277,8 @@ func _place(u: SimUnit, it: Dictionary, in_range: bool) -> bool:
 	var d := SimData.item(it.id)
 	var lists: Array = [u.inventory, u.stash] if in_range else [u.stash]
 	if bool(d.consumable):
-		for arr in lists + [u.inventory]:
+		# away from the shop a consumable waits in the stash (on top of a stack there), never in the bags
+		for arr in lists:
 			for i in arr.size():
 				var o = arr[i]
 				if o != null and o.id == it.id:

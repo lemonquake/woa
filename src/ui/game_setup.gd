@@ -370,7 +370,7 @@ func _refresh() -> void:
 			nm.visible = s.kind == "bot"
 			nm.editable = s.kind == "bot"
 			var icon := r.icon as IconFrame
-			var ult := "" if hid == "random" or empty else String((SimData.unit(hid).abilities as Array)[3])
+			var ult := "" if hid == "random" or empty else SimData.ultimate_of(SimData.unit(hid).abilities as Array)
 			icon.texture = U.ability_icon(ult) if ult != "" else null
 			icon.kind = IconBorder.ability_kind(ult) if ult != "" else "skill"
 			# no hero (random or an empty slot): keep the space, show nothing

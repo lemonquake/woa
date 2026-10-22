@@ -261,6 +261,8 @@ func _ready() -> void:
 			llm.setup(world, player_team, lc)
 			print("online bot chat on (%s)" % llm.model())
 	booted = true
+	RenderingServer.frame_pre_draw.connect(_on_pre_draw)
+	RenderingServer.frame_post_draw.connect(_join_ahead)
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
 	await _stage(0.96, "Ready")
 	# a couple of rendered frames so shaders compile behind the loading screen, then reveal the match
@@ -338,6 +340,10 @@ func order(uid: int, o: Dictionary) -> void:
 
 ## Leaving the match (quit, restart, back to the menu): keep what the bots learned in fights so far.
 func _exit_tree() -> void:
+	_join_ahead()
+	if RenderingServer.frame_pre_draw.is_connected(_on_pre_draw):
+		RenderingServer.frame_pre_draw.disconnect(_on_pre_draw)
+		RenderingServer.frame_post_draw.disconnect(_join_ahead)
 	if BotMemory.active and BotMemory.dirty:
 		BotMemory.save()
 
@@ -606,12 +612,52 @@ func _physics_process(_dt: float) -> void:
 
 func _step() -> void:
 	var t := Time.get_ticks_usec()
-	world.step()
+	_join_ahead()
+	if _ahead_done:
+		_ahead_done = false                    # this tick's step already ran on a worker thread during the last draw
+	else:
+		world.step()
 	t = _tm("sim", t)
 	_drain_events()
 	t = _tm("events", t)
 	_sync_views()
 	_tm("sync", t)
+
+## The step ahead (single player): the 30 Hz step used to land whole in one rendered frame, so every tick frame was
+## several milliseconds longer than the frames between. When the next frame will run a tick, the step now starts on a
+## worker thread as this frame begins drawing (the renderer never reads the simulation and no script runs during the
+## draw) and is joined as the draw ends, before input or any script can touch the world; the tick then only drains its
+## events and syncs the views. A command given in that last frame before the tick lands one tick later, as if it came
+## just after it. Multiplayer, captures and --sync_step keep the plain step.
+var _ahead_task := -1                       # WorkerThreadPool task of the step ahead (-1: none running)
+var _ahead_done := false                    # a step ran ahead and waits for its tick
+var _ahead_us := 0                          # how long that step took (the benchmark's "sim_ahead")
+
+func _ahead_ok() -> bool:
+	return booted and net == null and _capture_frames < 0 and not args.has("sync_step") and world.winner < 0
+
+func _on_pre_draw() -> void:
+	if _ahead_task >= 0 or _ahead_done or not _ahead_ok():
+		return
+	var ticks := Engine.get_physics_interpolation_fraction() \
+		+ get_process_delta_time() * Engine.physics_ticks_per_second * Engine.time_scale
+	if ticks < 1.0:
+		return
+	_ahead_task = WorkerThreadPool.add_task(_step_ahead, true, "Simulation step")
+
+func _step_ahead() -> void:
+	var t := Time.get_ticks_usec()
+	world.step()
+	_ahead_us = Time.get_ticks_usec() - t
+
+func _join_ahead() -> void:
+	if _ahead_task < 0:
+		return
+	WorkerThreadPool.wait_for_task_completion(_ahead_task)
+	_ahead_task = -1
+	_ahead_done = true
+	if _bench_until > 0.0:
+		_bench_acc["sim_ahead"] = _bench_acc.get("sim_ahead", 0.0) + _ahead_us / 1000.0
 
 func _sync_views() -> void:
 	if selected.size() > 0:
@@ -1607,6 +1653,11 @@ func _bench_frame(dt: float) -> void:
 		get_viewport().get_texture().get_image().save_png(String(args.bench_shot))
 	var ph := BenchProbe.take_phys()
 	_bench_ticks.append(ph.y)
+	if dt > 0.1:
+		# a hitch: where its time went (script in frames and ticks, deferred work, the renderer, the step ahead)
+		print("HITCH %.0f ms at %s: proc %.1f phys %.1f (%d ticks) flush %.1f draw %.1f ahead %.1f" % [dt * 1000.0,
+			world.clock_text(), BenchProbe.proc_us / 1000.0, ph.x / 1000.0, ph.y, BenchProbe.flush_us / 1000.0,
+			BenchProbe.draw_us / 1000.0, _ahead_us / 1000.0])
 	_bench_acc["script_proc"] = _bench_acc.get("script_proc", 0.0) + BenchProbe.proc_us / 1000.0
 	_bench_acc["script_phys"] = _bench_acc.get("script_phys", 0.0) + ph.x / 1000.0
 	if ph.y > 0:

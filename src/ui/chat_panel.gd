@@ -126,10 +126,18 @@ func _draw_body() -> void:
 		if not is_open() and age > SHOW + FADE:
 			break
 		var a := 1.0 if is_open() else clampf((SHOW + FADE - age) / FADE, 0.0, 1.0)
-		var who := String(l.name) + (" (%s)" % l.hero if String(l.hero) != "" and String(l.hero) != String(l.name) else "") + ": "
 		var col := Color((l.get("col", U.DAWN) as Color).lerp(Color.WHITE, 0.2), a)
-		var wx := U.font("bold").get_string_size(who, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
-		var parts := U.wrap(String(l.text), W - wx, 16, "body")
+		# the name and the wrapped rows are worked out once per line (they were measured again 30 times a second);
+		# a line rewritten later (the online chat writer) is measured again
+		var wrapped: Array = l.get("_wrapped", [])
+		if wrapped.is_empty() or String(wrapped[0]) != String(l.text):
+			var who0 := String(l.name) + (" (%s)" % l.hero if String(l.hero) != "" and String(l.hero) != String(l.name) else "") + ": "
+			var wx0 := U.font("bold").get_string_size(who0, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x
+			wrapped = [String(l.text), who0, wx0, U.wrap(String(l.text), W - wx0, 16, "body")]
+			l["_wrapped"] = wrapped
+		var who := String(wrapped[1])
+		var wx := float(wrapped[2])
+		var parts: Array = wrapped[3]
 		var block: Array = []
 		for k in parts.size():
 			block.append([who if k == 0 else "", parts[k], col, a, wx])

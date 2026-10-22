@@ -360,7 +360,11 @@ func _charge_tick(u: SimUnit, c: Dictionary) -> void:
 				w.events.append({"t": "lance_charge_hit", "u": u.id, "target": o.id, "carried": true})
 				continue
 			_hit_aside(u, aid, o, cp, dir)
-		if carried != null and carried.alive:
+		if carried != null and not _held(u, carried):
+			# something else took the rider off the lance (a push, a hook, a swap, Unfallen): let it go
+			c.carried = -1
+			carried = null
+		if carried != null:
 			var hold := u.pos + dir * (u.hull + carried.hull + 8.0)
 			carried.pos = hold if w.map.is_walkable(hold) else u.pos
 		return
@@ -369,10 +373,12 @@ func _charge_tick(u: SimUnit, c: Dictionary) -> void:
 	if aid == "cavalry_charge":
 		u.remove_modifier(UNSTOPPABLE)
 		u.refresh_stats()
+	if carried != null and not _held(u, carried):
+		carried = null
 	if carried != null:
-		if not carried.knock.is_empty() and carried.knock.get("drag", false) and int(carried.knock.get("src", -1)) == u.id:
-			carried.knock = {}
-		if carried.alive:
+		carried.knock = {}
+		# a Lord Kaileh who fell mid-charge drops the rider where it is, unstunned
+		if carried.alive and u.alive:
 			var front := u.pos + dir * (u.hull + carried.hull + 8.0)
 			if w.map.is_walkable(front):
 				carried.pos = front
@@ -382,6 +388,10 @@ func _charge_tick(u: SimUnit, c: Dictionary) -> void:
 			if carried.kind == K.NEUTRAL_CREEP:
 				w.ai.neutral_provoked(carried, u)
 	w.events.append({"t": aid + "_end", "u": u.id, "pos": u.pos, "target": carried.id if carried != null else -1})
+
+## The lance still holds `o`: its drag is this charge's and nothing has made it untouchable.
+func _held(u: SimUnit, o: SimUnit) -> bool:
+	return o.alive and not o.is_invulnerable() and bool(o.knock.get("drag", false)) and int(o.knock.get("src", -1)) == u.id
 
 ## Someone in a charge's way: the damage, pushed off the line, and Cavalry Charge's stun.
 func _hit_aside(u: SimUnit, aid: String, o: SimUnit, cp: Vector2, dir: Vector2) -> void:

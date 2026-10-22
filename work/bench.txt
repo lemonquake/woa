@@ -1,3 +1,3 @@
-BENCH frames 1947 avg 20.55 ms (49 fps) p50 18.18 p95 34.72 p99 58.26 max 157.65 over16.7 1061 units 211
-  frames with a tick 1155 avg 22.90 ms, without 792 avg 17.12 ms
-  per-frame means: views 2.33, fx 0.49, fx_azrin 0.32, fx_froster 0.16, fx_other 0.55, status 0.39, target 0.02, fog 0.08, sim 3.96, events 0.85, sync 0.96, script_proc 5.38, script_phys 5.88, n_tick_frames 0.59, gpu 7.93, rcpu 2.19, setup 0.19, other 9.29, flush 5.29, draw 4.41, gap 0.15, draws 1590.84, prims 2152498.30, trails 0.17, bars 1.17, ui_hud 0.01, ui_Tip 0.02, ui_feed 0.37, ui_chat 0.09, ui_fro_call 0.15, ui_BottomPanel 0.83, ui_Minimap 0.58, ui_TopBar 0.17, ui_PortraitOverlay 0.08
+BENCH frames 1849 avg 21.64 ms (46 fps) p50 18.37 p95 41.67 p99 72.74 max 292.35 over16.7 1111 units 212
+  frames with a tick 1113 avg 24.16 ms, without 736 avg 17.83 ms
+  per-frame means: views 3.82, fx 0.33, fx_azrin 0.24, fx_froster 0.13, fx_other 1.07, status 0.38, target 0.01, fog 0.08, sim 0.79, events 1.56, sync 2.36, sim_ahead 3.60, script_proc 7.06, script_phys 4.82, n_tick_frames 0.60, gpu 8.31, rcpu 2.18, setup 0.11, other 9.76, flush 5.21, draw 5.46, gap 0.15, draws 1636.80, prims 2389520.24, trails 0.20, bars 1.01, ui_hud 0.02, ui_BottomPanel 0.83, ui_Minimap 0.58, ui_TopBar 0.18, ui_Tip 0.00, ui_feed 0.38, ui_chat 0.15, ui_PortraitOverlay 0.07, ui_fro_call 0.13

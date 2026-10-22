@@ -215,7 +215,7 @@ func _valid_target(u: SimUnit, t: SimUnit) -> bool:
 		# aggressive (fighting anyone, or in the 5 s after)
 		if u.is_building() or w.time >= t.hostile_until:
 			return false
-	if t.is_building() and t.is_invulnerable():
+	if t.is_invulnerable():
 		return false
 	if t.has_flag("invisible"):
 		return false

@@ -127,7 +127,14 @@ func _draw_grid(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 		var per_row := 10 if ci < 0 else 2
 		U.text(self, String(c[1]), Vector2(x0, y + 14), 14, U.GOLD, "title")
 		y += 22.0
-		for i in ids.size():
+		# search results stop above the stash row (a long list ran into it, and the clicks went to the grid)
+		var max_n := ids.size()
+		if ci < 0:
+			max_n = mini(ids.size(), per_row * maxi(1, floori((H - 90.0 - y) / STEP.y)))
+			if max_n < ids.size():
+				U.text_r(self, "%d more: type more of the name" % (ids.size() - max_n), Vector2(GRID_W, 118), 12,
+					U.TEXT_DIM, "body")
+		for i in max_n:
 			var id: String = ids[i]
 			var r := Rect2(Vector2(x0 + (i % per_row) * STEP.x, y + (i / per_row) * STEP.y), CELL)
 			_rects[id] = r
@@ -227,11 +234,7 @@ func _draw_pane(h: SimUnit, w: SimWorld, m: Vector2) -> void:
 	# Buy or Sell
 	var br := Rect2(x, H - 278, pw, 40)
 	if sell_slot >= 0 and h.inventory[sell_slot] != null and h.inventory[sell_slot].id == selected:
-		var it: Dictionary = h.inventory[sell_slot]
-		var value := int(d.cost)
-		if bool(d.consumable):
-			value = int(float(d.cost) * float(it.charges) / maxf(1.0, float(d.charges)))
-		var refund := value if w.time - float(it.get("bought", -99.0)) <= 10.0 else value / 2
+		var refund := w.shop.sell_value(h.inventory[sell_slot])   # what the sale really pays (combined parts too)
 		U.panel(self, br, U.GOLD if br.has_point(m) else U.GOLD_DIM, 4)
 		U.text_c(self, "Sell for %d gold" % refund, br.get_center() + Vector2(0, 7), 17, U.TEXT, "title")
 		_pane_rects.append([br, "sell", sell_slot])

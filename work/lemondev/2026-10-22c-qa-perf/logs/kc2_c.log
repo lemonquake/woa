@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 9: no winner at 25:00, 245997 ms
+  kaileh     L13 K/D/A 0/11/5 LH  21  casts { "lance_charge": 22, "lance_sweep": 21, "war_banner": 10, "cavalry_charge": 5 }
+  dracoxinia L16 K/D/A 4/9/4 LH  20  casts { "dragon_dash": 33, "dragon_leap": 14, "rising_slash": 5 }  | barrier_gain 2  | NEVER: change_sword
+  sludge     L16 K/D/A 3/13/2 LH  44  casts { "shuriken_hook": 14, "stench": 32, "blubber": 13, "chomp": 9 }
+  kragg      L12 K/D/A 2/13/4 LH  10  casts { "iron_grip": 20, "repel": 10, "magnet_field": 5 }
+  azrael     L15 K/D/A 11/9/1 LH  21  casts { "soul_tap": 50, "door_of_the_end": 6, "divine_darkness": 9 }
+  blackfire  L18 K/D/A 4/4/12 LH  75  casts { "sacrificial_grip": 35, "rise_up": 18 }  | soul_drain 297, fiend_edge 50, undead_rise 117, unfallen_fall 2, unfallen_rise 2, unfallen_blast 2
+  thyrandael L27 K/D/A 23/1/15 LH 115  casts { "quick_flash": 148, "spirit_step": 32, "holy_beam": 36, "false_judgement": 20 }  | barrier_gain 235, holy_beam_aim 396, judgement_charge 108
+  gancho     L19 K/D/A 9/3/6 LH  85  casts { "root_snare": 18, "seed_bomb": 32, "angry_forest": 4 }
+  araki      L14 K/D/A 11/5/7 LH  28  casts { "blur_strike": 26, "djin_bomb": 18, "ghosts_of_the_will": 10, "the_blur": 6 }
+  tock       L18 K/D/A 7/7/12 LH  20  casts { "time_bolt": 45, "rewind": 6, "stop_time": 6, "slow_field": 14, "fast_forward": 3 }

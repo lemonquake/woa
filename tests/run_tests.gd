@@ -10244,3 +10244,179 @@ func test_dracoxinia_spells() -> void:
 	check(hp - t.hp > 100.0, "with its damage")
 	run(w, 1.5)
 	check(t.knock.is_empty() and not t.is_stunned(), "back down after 1.4 s")
+
+# ---- QA run 2026-10-22 c: the fixes from the rules, kits and interface review -------------------------------------
+
+func test_qa_slows_add_and_igit_speed_does_not_stack() -> void:
+	var w := empty_world()
+	var t := _dummy(w, "ezee", C.DUSK, Vector2(-1850, -4000))
+	t.inventory.resize(9)
+	t.refresh_stats()
+	var base := t.move_speed
+	w.status.apply(t, 999, C.DAWN, {"id": "slow_a", "slow": 0.2, "dur": 5.0})
+	w.status.apply(t, 998, C.DAWN, {"id": "slow_b", "slow": 0.3, "dur": 5.0})
+	t.refresh_stats()
+	near(t.move_speed, maxf(C.MOVE_SPEED_MIN, base * 0.5), 0.5, "a 20% and a 30% slow add up to 50% (Dota)")
+	t.remove_modifier("slow_a")
+	t.remove_modifier("slow_b")
+	_give(w, t, "yasha", 0)
+	var one := t.move_speed
+	_give(w, t, "igit_atuli", 1)
+	near(t.move_speed / base, 1.12, 0.01, "Igit and Igit and Atuli: only the largest speed bonus counts")
+	check(one > base, "Igit alone is faster")
+
+func test_qa_remote_consumable_waits_in_stash() -> void:
+	var w := empty_world()
+	var h := w.spawn("sludge", C.DAWN, Vector2(-2000, -4000))
+	h.gold_unreliable = 5000
+	var it := _give(w, h, "tango", 0)
+	var c0 := int(it.charges)
+	check(not w.shop.in_shop(h), "away from the shop")
+	check(w.shop.buy(h, "tango") == "", "bought away from the shop")
+	check(int(h.inventory[0].charges) == c0, "the charges do not appear in the bags")
+	var in_stash := false
+	for s in h.stash:
+		if s != null and String(s.id) == "tango":
+			in_stash = true
+	check(in_stash, "they wait in the stash for the courier")
+	# a dead hero whose body lies by the fountain is not in the shop
+	h.pos = _map.fountains[0] + Vector2(300, 0)
+	check(w.shop.in_shop(h), "alive at the fountain: in the shop")
+	h.alive = false
+	check(not w.shop.in_shop(h), "dead: never in the shop")
+
+func test_qa_hold_takes_a_target_in_reach() -> void:
+	var w := empty_world()
+	var a := w.spawn("blood_ranger", C.DAWN, Vector2(0, -3000))
+	var b := _dummy(w, "ezee", C.DUSK, a.pos + Vector2(-300, 0))
+	var c := _dummy(w, "sludge", C.DUSK, a.pos + Vector2(-2000, 0))
+	w.vision.update()
+	w.command(a.id, {"type": O.HOLD})
+	run(w, 2.0)
+	check(a.atk_target == b.id, "holding, the hero attacks the enemy in reach")
+	var swings := 0
+	for i in 150:
+		b.pos = a.pos + Vector2(-750, 0)
+		c.pos = a.pos + Vector2(-150, 120)
+		w.step()
+		for e in w.events:
+			if e.t == "attack_start" and e.u == a.id and e.target == c.id:
+				swings += 1
+		w.events.clear()
+	check(swings > 0, "the first target walked out of reach: the one in reach is attacked (%d swings)" % swings)
+
+func test_qa_invulnerable_units_are_not_attacked() -> void:
+	var w := empty_world()
+	var a := w.spawn("blood_ranger", C.DAWN, Vector2(0, -3000))
+	var b := _dummy(w, "ezee", C.DUSK, a.pos + Vector2(-300, 0))
+	b.add_modifier({"id": "test_invuln", "source": b.id, "expires": INF, "invulnerable": true})
+	w.vision.update()
+	a.auto_attack = true
+	run(w, 2.0)
+	check(a.atk_target != b.id, "no auto-attack on an invulnerable enemy")
+	check(w.orders.attack_error(a, b) == "Target is invulnerable", "an attack order is refused")
+	b.remove_modifier("test_invuln")
+	run(w, 1.0)
+	check(a.atk_target == b.id, "attacked once it can be hit again")
+	# a disarm landing mid-swing stops the swing
+	w.status.apply(a, b.id, C.DUSK, {"id": "test_disarm", "disarm": true, "dur": 3.0})
+	run(w, 1.0)
+	check(a.atk_phase != SimUnit.AtkPhase.WINDUP, "disarmed: no wind-up runs")
+
+func test_qa_summon_kills_pay_the_owner() -> void:
+	var w := empty_world()
+	var bf := _hero15(w, "blackfire", Vector2(-2000, -4000))
+	var und := w.spawn("dawn_melee", C.DAWN, bf.pos + Vector2(100, 0))
+	und.kind = K.SUMMON
+	und.owner_id = bf.id
+	var creep := w.spawn("dusk_melee", C.DUSK, bf.pos + Vector2(200, 0))
+	var g0 := bf.gold()
+	w.combat.kill(creep, und)
+	w.combat.process_deaths()
+	check(bf.gold() > g0, "an Undead's last hit pays Blackfire (%d -> %d)" % [g0, bf.gold()])
+	check(bf.last_hits == 1, "and counts as his last hit")
+	# a hero killed by the summon: the owner has the kill
+	var foe := _hero15(w, "froster", bf.pos + Vector2(300, 0), C.DUSK)
+	w.combat.kill(foe, und)
+	w.combat.process_deaths()
+	check(bf.kills == 1, "the owner gets the hero kill")
+
+func test_qa_tower_deny_pays_only_the_enemy() -> void:
+	var w := empty_world()
+	var ally := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
+	var foe := w.spawn("ezee", C.DUSK, Vector2(2000, 4000))
+	var tower := w.spawn("tower1", C.DAWN, Vector2(-1800, -4000))
+	var ga := ally.gold()
+	var gf := foe.gold()
+	w.combat.kill(tower, ally)
+	w.combat.process_deaths()
+	check(ally.gold() == ga, "the denying team gets nothing")
+	check(foe.gold() > gf, "the enemy team still gets part of the bounty")
+
+func test_qa_denied_hero_forgets_old_hits() -> void:
+	var w := empty_world()
+	var a := w.spawn("blood_ranger", C.DAWN, Vector2(-2000, -4000))
+	var e := w.spawn("ezee", C.DUSK, Vector2(-1800, -4000))
+	var e2 := w.spawn("sludge", C.DUSK, Vector2(-1700, -4000))
+	w.combat.deal_damage(a.id, a.team, true, e, 50.0, C.DamageType.PURE)
+	check(e.hero_damage_log.has(a.id), "the hit is logged")
+	w.combat.kill(e, e2)
+	w.combat.process_deaths()
+	check(e.hero_damage_log.is_empty(), "a denied hero's damage log is cleared for the next life")
+
+func test_qa_kits_presence_rising_blade_beam_root() -> void:
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	# Underworld Presence: a summon running out of time is not a death
+	var bf := _hero16(w, "blackfire", o)
+	var body := {"def": "dusk_melee", "pos": o + Vector2(200, 0), "team": C.DUSK, "at": w.time, "facing": 0.0,
+		"hp": 550.0, "armor": 2.0, "as": 100.0, "dmg_add": 0.0, "id": -1}
+	w.abilities.kits8._raise(bf, body, 1.0)
+	bf.hp = bf.max_hp * 0.5
+	var before := bf.hp
+	run(w, 2.0)
+	check(bf.hp - before < 30.0, "an Undead timing out does not heal Blackfire (%.0f)" % (bf.hp - before))
+	# Rising Slash: status resistance shortens the toss with the stun
+	var w2 := empty_world()
+	var d := _hero16(w2, "dracoxinia", o)
+	var foe := _hero16(w2, "froster", o + Vector2(150, 0), C.DUSK)
+	foe.add_modifier({"id": "test_sr", "source": foe.id, "expires": INF, "stats": {"status_resist": 0.5}})
+	foe.refresh_stats()
+	run(w2, 0.1)
+	w2.abilities.kits11.cast(d, "rising_slash", 4, foe, foe.pos)
+	near(float(foe.knock.get("dur", 0.0)), float(foe.get_modifier("stunned").dur), 0.01, "the toss lasts the stun")
+	run(w2, 1.0)
+	check(not foe.is_stunned() and foe.knock.is_empty(), "with 50% status resistance it is over after 0.7 s")
+	# Dragon Blade: no strike before it is learned, even after a sword change
+	d.ability_level["dragon_blade"] = 0
+	d.refresh_stats()
+	w2.abilities.kits11.forced[d.id] = true
+	var snap := {}
+	w2.abilities.kits11.on_attack_released(d, snap, foe)
+	check(not snap.has("blade"), "no Dragon Blade strike at level 0")
+	# Holy Beam: no mana burn through spell immunity
+	var w3 := empty_world()
+	var th := _hero16(w3, "thyrandael", o)
+	var im := _hero16(w3, "froster", o + Vector2(400, 0), C.DUSK)
+	im.add_modifier({"id": "spell_shield", "source": im.id, "expires": INF, "debuff_immune": true})
+	im.refresh_stats()
+	run(w3, 0.1)
+	var m0 := im.mana
+	w3.abilities.kits9.cast(th, "holy_beam", 4, null, im.pos)
+	run(w3, 2.0)
+	check(m0 - im.mana < 1.0, "Holy Beam burns no mana from a spell-immune enemy (%.0f)" % (m0 - im.mana))
+	# Swift Dagger is a flash to the target: roots stop it
+	var cz := _hero16(w3, "caziel", o + Vector2(0, 600))
+	cz.add_modifier({"id": "test_root", "source": cz.id, "expires": INF, "root": true})
+	check(w3.abilities.cast_error(cz, "swift_dagger", -1, im, im.pos) == "Rooted", "no Swift Dagger while rooted")
+
+func test_qa_war_banner_pays_its_bounty() -> void:
+	var w := empty_world()
+	var k := _hero16(w, "kaileh", Vector2(-2000, -4000))
+	var foe := _hero16(w, "froster", Vector2(-1500, -4000), C.DUSK)
+	var ban := w.spawn("war_banner", C.DAWN, Vector2(-1700, -4000))
+	ban.owner_id = k.id
+	var g0 := foe.gold()
+	w.combat.kill(ban, foe)
+	w.combat.process_deaths()
+	check(foe.gold() >= g0 + 25, "killing the War Banner pays 25 gold (%d -> %d)" % [g0, foe.gold()])

@@ -284,7 +284,7 @@ func _iron_grip(u: SimUnit, aid: String, t: SimUnit) -> void:
 	var dur := ab.val(u, aid, "pull_time")
 	var dir := t.pos - u.pos
 	dir = Vector2.from_angle(u.facing) if dir.length() < 1.0 else dir.normalized()
-	var movable := ab.can_debuff(t, u.team)
+	var movable := ab.can_debuff(t, u.team) and not t.has_flag("unstoppable")
 	var mid := (u.pos + t.pos) * 0.5 if movable else t.pos - dir * (u.hull + t.hull + 10.0)
 	var gap := (u.hull + t.hull) * 0.5 + 6.0
 	var u_to := _land_spot(mid - dir * gap) if movable else _land_spot(mid)
@@ -292,6 +292,8 @@ func _iron_grip(u: SimUnit, aid: String, t: SimUnit) -> void:
 	u.path = PackedVector2Array()
 	if movable:
 		w.orders.cancel_channel(t)
+		t.leap = {}
+		t.hop = {}
 		t.knock = {"from": t.pos, "to": _land_spot(mid + dir * gap), "t": 0.0, "dur": dur, "disable": true, "src": u.id}
 		t.path = PackedVector2Array()
 	w.combat.deal_damage(u.id, u.team, true, t, ab.val(u, aid, "damage") * spell_mult(u, t), C.DamageType.MAGICAL,

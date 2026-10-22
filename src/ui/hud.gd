@@ -222,8 +222,9 @@ func _process(dt: float) -> void:
 	_redraw_t -= dt
 	if _redraw_t <= 0.0:
 		_redraw_t = 0.05
-		for c in [bottom, minimap, topbar, shop]:
-			c.queue_redraw()
+		for c in [bottom, minimap, topbar, shop, to_buy]:
+			if c.visible:
+				c.queue_redraw()
 	tip.queue_redraw()
 
 func _update_portrait(dt: float) -> void:
@@ -237,7 +238,7 @@ func _update_portrait(dt: float) -> void:
 	# the portrait renders every other frame (its shadow pass still costs ~200 draw calls); a 166 px face at 30+ fps
 	# looks the same
 	_portrait_flip = not _portrait_flip
-	if _portrait_flip and not game.args.has("noportrait"):
+	if _portrait_flip and not game.args.has("noportrait") and bottom.portrait_box != null and bottom.portrait_box.is_visible_in_tree():
 		portrait_vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 	var sk: Skeleton3D = v.get("skeleton") if v is UnitView else null
 	var bi := sk.find_bone("head") if sk != null else -1
@@ -374,7 +375,7 @@ func _queue_waypoints(h: SimUnit) -> void:
 		var aid := String(o.get("ability", ""))
 		var ic: Texture2D = U.ability_icon(aid) if aid != "" and aid != "tp" else null
 		if ic:
-			draw_texture_rect(ic, Rect2(sp + Vector2(10, -26), Vector2(20, 20)), false)
+			IconBorder.draw_icon(self, ic, Rect2(sp + Vector2(10, -26), Vector2(20, 20)), IconBorder.ability_kind(aid))
 		U.text_c(self, str(n), sp + Vector2(0, 6), 15, Color(1, 1, 1), "bold")
 		prev = p
 		prev_s = sp
@@ -431,6 +432,10 @@ func toggle_shop() -> void:
 ## on the bottom panel (items, stash, the Shop button) and the To Buy list keep it open, since they work with the shop.
 ## The click itself still does its usual job (a right click on the ground still moves the hero).
 func _input(e: InputEvent) -> void:
+	# the pause menu, Options or the end screen is up: Esc and clicks are theirs (Esc resumes, it does not close the
+	# shop hidden behind the menu)
+	if game != null and game.get("menus") != null and game.menus.has_method("blocks_input") and game.menus.blocks_input():
+		return
 	# the item menu closes on a click anywhere else, or Esc
 	if bottom and bottom.item_menu_open():
 		if e is InputEventMouseButton and e.pressed and (e as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
@@ -470,6 +475,8 @@ func over_hud(p: Vector2) -> bool:
 	for c: Control in [bottom, minimap, topbar]:
 		if c.get_global_rect().has_point(p):
 			return true
+	if stats != null and stats.visible and stats.get_global_rect().has_point(p):
+		return true
 	if minimap._has_point(p - minimap.global_position):
 		return true
 	if bottom.covers_extra(p - bottom.global_position):
@@ -824,6 +831,19 @@ class BottomPanel extends Control:
 	var _abil_rects: Array = []
 	var _was_cooling := {}
 	var _ready_at := {}
+	var _cd_full := {}                     # "unit:key" -> the running cooldown's whole length (the sweep's 100%)
+
+	## The whole length of the cooldown now running: its time left when it began (cooldown reduction, talents and
+	## orbs included, whatever changes later), at least what one would cost now when it was first seen.
+	func _cd_total(key: String, left: float, now_total: float) -> float:
+		if left <= 0.0:
+			_cd_full.erase(key)
+			return now_total
+		var full := float(_cd_full.get(key, maxf(left, now_total)))
+		if left > full + 0.05:
+			full = left                        # a new cooldown began (or a longer one replaced it)
+		_cd_full[key] = full
+		return full
 	var _learn_rects: Array = []
 	var _item_rects: Array = []
 	var _stash_rects: Array = []
@@ -1299,7 +1319,11 @@ class BottomPanel extends Control:
 				U.skin(self, sk, tr, Color(1, 1, 1, 1.0) if not other else Color(0.6, 0.6, 0.6))
 				var nm := String(SimData.talent(tid).get("name", tid))
 				var tc := Color(0.12, 0.07, 0.0) if picked else (Color(0.45, 0.45, 0.45) if other else U.TEXT)
-				U.text_c(self, nm, tr.get_center() + Vector2(0, 5), 14, tc, "bold")
+				# a long name shrinks to fit its button (three talent names ran past theirs at 14 px)
+				var fs := 14
+				while fs > 10 and U.font("bold").get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > tr.size.x - 10:
+					fs -= 1
+				U.text_c(self, nm, tr.get_center() + Vector2(0, 5), fs, tc, "bold")
 				_talent_rows.append([tr, tier, side])
 		# the innate skill, named at the tree's title (hover it for the full text)
 		var inn := String(h.def.get("innate", ""))
@@ -1328,17 +1352,18 @@ class BottomPanel extends Control:
 				if sw:
 					ic = sw
 			var col := Color(1, 1, 1) if lv > 0 else Color(0.32, 0.32, 0.34)
-			var mana_cost := float(a.mana[maxi(lv - 1, 0)])
-			if lv > 0 and h.mana < mana_cost:
+			# what the spell really costs now (talents, Kugmo and Atuli, the Magic Orb); a toggle needs no mana to switch
+			var mana_cost := w.abilities.ability_mana(h, aid) if lv > 0 else 0.0
+			if lv > 0 and String(a.behavior) != "toggle" and h.mana < mana_cost:
 				col = Color(0.45, 0.55, 1.0)
 			draw_rect(r, Color(0.04, 0.05, 0.08))
 			if ic:
 				draw_texture_rect(ic, r, false, col)
 			if lv > 0:
 				var cd := w.abilities.cooldown_left(h, aid)
-				var total := float(a.cooldown[lv - 1])
+				var total := _cd_total("%d:%s" % [h.id, aid], cd, w.abilities.ability_cooldown(h, aid))
 				if cd > 0.0 and total > 0.0:
-					U.cooldown(self, r, cd / total, cd)
+					U.cooldown(self, r, clampf(cd / total, 0.0, 1.0), cd)
 					_was_cooling[aid] = true
 				elif _was_cooling.get(aid, false):
 					_was_cooling[aid] = false
@@ -1427,7 +1452,14 @@ class BottomPanel extends Control:
 			for v in vals:
 				var fv := float(v)
 				parts.append(("%d%%" % roundi(fv * 100.0)) if fv > 0.0 and fv < 1.0 and (k.contains("slow") or k.ends_with("pct") or k.contains("chance") or k == "lifesteal" or k.contains("resist") or k.contains("vision")) else str(v))
-			lines.append(["%s: %s" % [k.replace("_", " ").capitalize(), " / ".join(parts)], 13, Color(0.8, 0.85, 0.75), "body"])
+			var row := "%s: %s" % [k.replace("_", " ").capitalize(), " / ".join(parts)]
+			if lv > 0 and lv <= vals.size():
+				# a talent or upgrade changed it: the value this level has now
+				var now_v: float = hud.game.world.abilities.val(h, aid, k)
+				if absf(now_v - float(vals[lv - 1])) > 0.001:
+					var pct: bool = String(parts[lv - 1]).ends_with("%")
+					row += "  (now %s)" % (("%d%%" % roundi(now_v * 100.0)) if pct else str(snappedf(now_v, 0.01)))
+			lines.append([row, 13, Color(0.8, 0.85, 0.75), "body"])
 		if String(a.behavior) in ["point", "unit"] or (String(a.behavior) == "no_target" and float(a.get("range", 0.0)) > 0.0):
 			# the range the hero casts from now (talents, upgrades, Long Lens and other cast range bonuses included)
 			var rng: float = hud.game.world.abilities.cast_range(h, aid, -1)
@@ -1439,6 +1471,14 @@ class BottomPanel extends Control:
 				lines.append([reach, 13, Color(0.75, 0.85, 1.0), "body"])
 		if a.behavior != "passive":
 			lines.append(["Mana: %s    Cooldown: %s" % [" / ".join(a.mana.map(func(x): return str(x))), " / ".join(a.cooldown.map(func(x): return str(x)))], 13, Color(0.6, 0.75, 1.0), "body"])
+			if lv > 0:
+				# talents, items and orbs change them: what this cast costs now
+				var ab: SimAbilities = hud.game.world.abilities
+				var m_now := ab.ability_mana(h, aid)
+				var c_now := ab.ability_cooldown(h, aid)
+				if absf(m_now - float(a.mana[lv - 1])) > 0.05 or absf(c_now - float(a.cooldown[lv - 1])) > 0.05:
+					lines.append(["Now: mana %s, cooldown %s s" % [str(snappedf(m_now, 0.1)), str(snappedf(c_now, 0.1))],
+						13, Color(0.6, 0.9, 1.0), "body"])
 		if a.behavior == "autocast_attack":
 			lines.append(["Right-click to toggle autocast. Cast by hand on a hero to attack without drawing creep aggro.", 12, U.TEXT_DIM, "body"])
 		if a.behavior == "toggle":
@@ -1586,7 +1626,7 @@ class BottomPanel extends Control:
 		var d := SimData.item(it.id)
 		if slot >= 0 and slot < 9 and h != null:
 			var cd := w.abilities.item_cooldown_left(h, slot) if slot < 6 else maxf(0.0, float(it.get("ready", C.LONG_AGO)) - w.time)
-			var total := maxf(float(d.cooldown), C.BACKPACK_SWAP_COOLDOWN)
+			var total := _cd_total("%d:item:%s:%d" % [h.id, String(it.id), slot], cd, float(d.cooldown))
 			if cd > 0.0:
 				U.cooldown(self, ir, clampf(cd / total, 0.0, 1.0), cd)
 		var hot := r.has_point(get_local_mouse_position()) and (not _dragging or _press_slot != slot)
@@ -1664,13 +1704,15 @@ class BottomPanel extends Control:
 			Color(1.25, 1.2, 1.05) if lit else Color.WHITE)
 		var cd := w.abilities.cooldown_left(h, "tp")
 		if cd > 0.0:
-			U.cooldown(self, tile, cd / SimConst.TP_COOLDOWN, cd)
+			U.cooldown(self, tile, clampf(cd / _cd_total("%d:tp" % h.id, cd, SimConst.TP_COOLDOWN), 0.0, 1.0), cd)
 		_key_tag(tile, Keybinds.key_name("tp"), 9)
 		U.text_r(self, str(h.tp_charges), tile.end + Vector2(-3, -2), 12, Color(1, 1, 1), "bold")
 		if _tp_rect.has_point(m):
 			hud.show_tip(get_global_mouse_position(), [["Teleport Scroll", 18, U.GOLD, "title"],
 				["Channel 3 s, then teleport beside the allied building nearest the target point. Moving or a stun cancels it.", 14, U.TEXT, "body"],
-				["Charges %d. Cooldown 80 s. Mana 75. Hotkey %s." % [h.tp_charges, Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"],
+				["Charges %d. Cooldown %d s. Mana %d. Hotkey %s." % [h.tp_charges,
+					roundi(SimConst.TP_COOLDOWN * SimOrbs.cooldown_mult(h)),
+					roundi(SimConst.TP_MANA), Keybinds.key_name("tp")], 13, U.TEXT_DIM, "body"],
 				["Buy one for 100 gold: press %s or right click here (Consumables in the shop). Away from the shop it goes to your stash." % Keybinds.key_name("buy_tp"), 13, U.GOLD, "body"]])
 		var c := w.get_unit(h.courier_id)
 		U.skin(self, "btn_hover" if _courier_rect.has_point(m) else "btn_normal", _courier_rect)
@@ -2211,7 +2253,7 @@ class ToBuyPanel extends Control:
 const STAT_NAMES := {"str": "Strength", "agi": "Agility", "int": "Intelligence", "damage": "Damage",
 	"attack_speed": "Attack Speed", "armor": "Armor", "hp": "Health", "mana": "Mana", "hp_regen": "Health Regen",
 	"mana_regen": "Mana Regen", "move_speed": "Movement Speed", "boot_ms": "Movement Speed",
-	"move_speed_pct": "Movement Speed", "max_mana_pct": "Max Mana", "lifesteal": "Lifesteal", "range": "Attack Range",
+	"move_speed_pct": "Movement Speed", "move_speed_pct_max": "Movement Speed", "max_mana_pct": "Max Mana", "lifesteal": "Lifesteal", "range": "Attack Range",
 	"magic_resist": "Magic Resistance", "evasion": "Evasion", "status_resist_max": "Status Resistance",
 	"slow_resist_max": "Slow Resistance", "heal_amp_max": "Health Restoration", "spell_amp": "Spell Amp",
 	"mana_regen_amp": "Mana Regen", "range_melee": "Attack Range (melee)", "magic_amp": "Magic Amp",
@@ -2300,10 +2342,11 @@ func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 		for l in U.wrap("%s: %s to %s within %d." % [String(au.name), ", ".join(parts), who, int(au.radius)], wrap, 14):
 			lines.append([l, 14, Color(0.75, 0.85, 1.0) if not bool(au.get("enemy", false)) else Color(1.0, 0.7, 0.6), "body"])
 	var use := String(d.use)
-	if d.has("text") and not ITEM_TEXT.has(use):
+	# an item's own text wins over the shared text of its action (Crash Knife jumps like the Jump Knife, and more)
+	if d.has("text"):
 		for l in U.wrap(String(d.text), wrap, 14):
 			lines.append([l, 14, Color(0.75, 0.9, 0.75), "body"])
-	if ITEM_TEXT.has(use):
+	elif ITEM_TEXT.has(use):
 		var utxt := String(ITEM_TEXT[use])
 		if use == "ward" and float(v.get("true_sight", 0.0)) > 0.0:
 			utxt = "Plant an invisible ward that gives your team True Sight within %d for 7 minutes: invisible enemies there can be seen where you have vision. It has no sight of its own." % int(v.true_sight)
@@ -2648,8 +2691,10 @@ void fragment() { float v = clamp(texture(TEXTURE, vec2(UV.x, 1.0 - UV.y)).r * 2
 				if mb.pressed:
 					_focus(mb.position)
 			elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
-				var h: SimUnit = hud.hero()
-				hud.game.input.move_selected(_from_mm(mb.position), mb.shift_pressed)
+				if hud.game.input.targeting != "":
+					hud.game.input.targeting = ""        # a right click cancels the aimed spell here too, as in the world
+				else:
+					hud.game.input.move_selected(_from_mm(mb.position), mb.shift_pressed)
 			accept_event()
 		elif e is InputEventMouseMotion and _drag:
 			_focus((e as InputEventMouseMotion).position)
@@ -2745,7 +2790,6 @@ class TopBar extends Control:
 			for t in tiles:
 				if (t[0] as Rect2).has_point((e as InputEventMouseButton).position):
 					var h: SimUnit = hud.game.world.get_unit(t[1])
-					var w: SimWorld = hud.game.world
 					if h and hud.game.spectator:
 						hud.game.watch(h.id)
 					elif h and h.alive and hud.game.sees(h):
@@ -2753,6 +2797,11 @@ class TopBar extends Control:
 						hud.game.input.select([h.id])
 					accept_event()
 					return
+		# a click on the bar (the clock, the kills) never reaches the world behind it (no move or select there);
+		# the wheel still zooms the camera
+		if e is InputEventMouseButton and e.pressed and not ((e as InputEventMouseButton).button_index in [
+				MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]):
+			accept_event()
 
 # ======================================================================================================================
 
@@ -2779,6 +2828,12 @@ class StatsPanel extends Control:
 		if _in or pinned or _t <= 0.0:
 			_t = 0.25
 			queue_redraw()
+
+	## Clicks on the box stay in it (a right click there used to move the hero to the ground under it).
+	func _gui_input(e: InputEvent) -> void:
+		if e is InputEventMouseButton and e.pressed and not ((e as InputEventMouseButton).button_index in [
+				MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]):
+			accept_event()
 
 	func _draw() -> void:
 		var h: SimUnit = hud.hero()
@@ -2856,7 +2911,7 @@ class Tip extends Control:
 			var m := get_viewport().get_mouse_position()
 			# each panel's own hit test: the Fortify button sits above the minimap's rectangle and the buff bar and
 			# stash above the bottom panel's (a rectangle test let those tooltips blink between redraws)
-			for c in [hud.bottom, hud.minimap, hud.shop, hud.stats]:
+			for c in [hud.bottom, hud.minimap, hud.shop, hud.stats, hud.to_buy]:
 				var lp: Vector2 = m - c.global_position
 				var over: bool = (Rect2(Vector2.ZERO, c.size).has_point(lp) or (c == hud.stats and hud.stats.pinned)
 					or (c == hud.bottom and hud.bottom.covers_extra(lp)) or (c == hud.minimap and hud.minimap._has_point(lp)))

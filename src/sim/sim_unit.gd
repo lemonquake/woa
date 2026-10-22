@@ -626,7 +626,7 @@ func refresh_stats() -> void:
 	# range ("range_form") always counts
 	attack_range = float(def.range) + range_bonus + (f.call("range") if is_ranged() else f.call("range_melee")) \
 		+ f.call("range_form")
-	# the strongest slow counts, shrunk by slow resistance (the Heavy Sword family's does not stack: largest wins)
+	# slow resistance shrinks every slow (the Heavy Sword family's does not stack: largest wins)
 	slow_resist = _stack(float(items.get("slow_resist_max", 0.0)), f.call("slow_resist"), "slow_resist")
 	status_resist = _stack(float(items.get("status_resist_max", 0.0)), f.call("status_resist"), "status_resist")
 	spell_amp = f.call("spell_amp")
@@ -634,13 +634,16 @@ func refresh_stats() -> void:
 	magic_amp_items = diminished_amp(item_magic_amps())
 	# talents and buffs add on top (not diminished)
 	magic_amp = magic_amp_int + magic_amp_items + _mod_stat("magic_amp") + float(perm_stats.get("magic_amp", 0.0))
+	# slows from different sources add up, shrunk by slow resistance, and are taken off the percentage bonuses
+	# (Dota 2: speed = (base + flat) x (1 + bonuses - slows), never under the 100 minimum)
 	var slow := 0.0
 	for m in modifiers:
-		slow = maxf(slow, float(m.get("slow", 0.0)))
+		slow += float(m.get("slow", 0.0))
 	slow *= 1.0 - slow_resist
 	# a hex sets the base speed to 140; flat and percentage bonuses still apply (Dota: Hex, set movement speed)
 	var base_ms := C.HEX_MOVE_SPEED if is_hexed() else float(def.move_speed)
-	var ms: float = (base_ms + f.call("move_speed") + f.call("boot_ms")) * (1.0 + f.call("move_speed_pct")) * (1.0 - slow)
+	var ms: float = (base_ms + f.call("move_speed") + f.call("boot_ms")) * maxf(0.0, 1.0 + f.call("move_speed_pct")
+		+ float(items.get("move_speed_pct_max", 0.0)) - slow)
 	move_speed = clampf(ms, C.MOVE_SPEED_MIN, C.MOVE_SPEED_MAX) if float(def.move_speed) > 0.0 else 0.0
 	# haste (Speed Orb): the maximum speed, and slows cannot lower it
 	if has_flag("haste") and move_speed > 0.0:

@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+seed 5: no winner at 25:00, 425868 ms
+  azrael     L12 K/D/A 8/10/2 LH  28  casts { "soul_tap": 64, "divine_darkness": 9, "door_of_the_end": 8 }
+  airah      L18 K/D/A 10/5/8 LH  56  casts { "gust": 42, "tailwind": 20, "wind_wall": 4, "hurricane": 7 }  | hurricane_end 7
+  burak      L15 K/D/A 2/10/7 LH  62  casts { "axe_throw": 36, "reckless_swing": 38, "berserk": 6 }  | axe_leap 14, unstoppable 5
+  emelrich   L14 K/D/A 1/12/8 LH  42  casts { "overhead_cut": 20, "sweep": 31, "giant_swing": 7 }  | windup 27  | NEVER: steel_stance
+  feran      L16 K/D/A 3/10/14 LH  20  casts { "knife_juggle": 28, "joke_box": 33, "swap": 7, "shuffle": 5 }  | joke_box_pop 33
+  ghorman    L17 K/D/A 1/9/15 LH  19  casts { "tame": 39, "roar": 15, "beast_form": 4, "blessing_of_the_beast_king": 11 }  | tame 39, maul 3
+  araki      L19 K/D/A 9/6/20 LH  62  casts { "blur_strike": 29, "djin_bomb": 18, "ghosts_of_the_will": 14, "the_blur": 8 }
+  blackfire  L17 K/D/A 2/5/24 LH  10  casts { "sacrificial_grip": 35, "rise_up": 15 }  | soul_drain 326, fiend_edge 17, undead_rise 93, unfallen_fall 4, unfallen_rise 4, unfallen_blast 3
+  thyrandael L21 K/D/A 22/3/6 LH  72  casts { "quick_flash": 123, "spirit_step": 27, "holy_beam": 25, "false_judgement": 12 }  | barrier_gain 183, holy_beam_aim 280, judgement_charge 81
+  gancho     L18 K/D/A 8/2/20 LH  25  casts { "root_snare": 26, "seed_bomb": 31, "angry_forest": 8 }

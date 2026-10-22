@@ -84,8 +84,13 @@ func _courier_selected() -> SimUnit:
 func _process(_dt: float) -> void:
 	if game.camera == null or game.camera.cam == null:
 		return
+	# a hero that died lets go of the spell it was aiming (the courier's own targeting stays)
+	if targeting != "" and hero() != null and not hero().alive and _courier_selected() == null:
+		targeting = ""
 	var m := game.get_viewport().get_mouse_position()
-	hover_id = pick(m)
+	# over the interface nothing in the world is under the cursor (and the pick's query is skipped)
+	var on_hud: bool = game.hud != null and game.hud.has_method("over_hud") and game.hud.over_hud(m)
+	hover_id = -1 if on_hud else pick(m)
 	_site_tip(m)
 	_cursor()
 	_rmb_repeat()
@@ -391,9 +396,11 @@ func _key(k: InputEventKey, h: SimUnit) -> void:
 	var act := String(m.action)
 	# control groups: Ctrl+1..9 stores your selected units, 1..9 recalls them (unless the digit is a hotkey),
 	# a double tap centres on them
-	if k.keycode >= KEY_1 and k.keycode <= KEY_9 and (k.ctrl_pressed or act == ""):
+	# (Ctrl + Alt + a digit is free for hotkeys: the Hotkeys screen accepts it)
+	var group_set := k.ctrl_pressed and (not k.alt_pressed or act == "")
+	if k.keycode >= KEY_1 and k.keycode <= KEY_9 and (group_set or act == ""):
 		var g := int(k.keycode - KEY_0)
-		if k.ctrl_pressed:
+		if group_set:
 			var ids: Array = game.selected.filter(func(x): return _owned(w.get_unit(x)))
 			if not ids.is_empty():
 				_groups[g] = ids
@@ -479,7 +486,7 @@ func _action(act: String, h: SimUnit, learn := false, queue := false) -> void:
 			if game.hud and game.hud.has_method("toggle_debug"):
 				game.hud.toggle_debug()
 	var cs2 := _courier_selected()
-	if cs2 and not hero_selected():
+	if cs2 and not hero_selected() and not learn:          # Ctrl + Q still learns, even with the courier selected
 		var cmd := COURIER_KEYS.get(act, "") as String
 		if cmd != "":
 			courier_cmd(cmd)
@@ -788,6 +795,9 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 			if ierr != "" and not ierr.ends_with("on cooldown"):
 				_error(ierr)
 				return
+			if tgt == null:
+				_error("Must target a unit")                 # cooling down, and nothing under the cursor either
+				return
 			game.order(h.id, {"type": O.CAST_UNIT, "ability": "", "item_slot": slot, "target": tgt.id, "queue": shift})
 		else:
 			game.order(h.id, {"type": O.CAST_POINT, "ability": "", "item_slot": slot, "point": ground, "queue": shift})
@@ -798,6 +808,9 @@ func _left_click(pos: Vector2, shift: bool) -> void:
 			var uerr: String = w.abilities.cast_error(h, targeting, -1, tgt, ground)
 			if uerr != "" and not uerr.ends_with("on cooldown") and uerr != "Not enough mana":
 				_error(uerr)
+				return
+			if tgt == null:
+				_error("Must target a unit")
 				return
 			game.order(h.id, {"type": O.CAST_UNIT, "ability": targeting, "target": tgt.id, "queue": shift})
 		else:

@@ -134,8 +134,8 @@ func scales_mult(t: SimUnit, src: SimUnit) -> float:
 
 ## An attack leaves her (SimCombat.release_attack): every 4th, or the first after a sword change, is a strike.
 func on_attack_released(u: SimUnit, snap: Dictionary, t: SimUnit) -> void:
-	if not u.ability_level.has(BLADE) or u.is_broken():
-		return
+	if u.ability_level_of(BLADE) <= 0 or u.is_broken():
+		return                                   # no strikes (not even a sword change's) before Dragon Blade is learned
 	if t == null or t.is_building() or t.is_ward() or t.team == u.team:
 		return
 	var lv := u.ability_level_of(BLADE)
@@ -296,10 +296,13 @@ func _rising(u: SimUnit, aid: String, _lv: int, t: SimUnit) -> void:
 	var air := ab.val(u, aid, "air")
 	if t.alive and ab.can_debuff(t, u.team):
 		w.orders.cancel_channel(t)
-		if t.knock.is_empty() and t.leap.is_empty() and not t.has_flag("unstoppable"):
-			t.knock = {"from": t.pos, "to": t.pos, "t": 0.0, "dur": air, "air": true, "height": ab.val(u, aid, "height")}
+		# the stun first: status resistance (or a dispel later) shortens it, and the toss is only its picture
+		var landed := w.status.apply(t, u.id, u.team, {"id": "stunned", "stun": true, "dur": air, "fx": "stun"})
+		air = float(t.get_modifier("stunned").get("dur", air)) if landed else 0.0
+		if air > 0.05 and t.knock.is_empty() and t.leap.is_empty() and not t.has_flag("unstoppable"):
+			t.knock = {"from": t.pos, "to": t.pos, "t": 0.0, "dur": air, "air": true, "height": ab.val(u, aid, "height"),
+				"disable": false}
 			t.path = PackedVector2Array()
-		w.status.apply(t, u.id, u.team, {"id": "stunned", "stun": true, "dur": air, "fx": "stun"})
 	if t.kind == K.NEUTRAL_CREEP and t.alive:
 		w.ai.neutral_provoked(t, u)
 	w.events.append({"t": "rising_slash", "u": u.id, "target": t.id, "dur": air, "sword": sword_of(u)})

@@ -82,8 +82,11 @@ static func raisable(t: SimUnit) -> bool:
 
 ## A death (SimCombat.process_deaths, before its rewards): Underworld Presence heals every Blackfire near it, the body
 ## is kept for Rise Up, and an aura around him raises it at once.
-func on_death(t: SimUnit, _killer: SimUnit) -> void:
+func on_death(t: SimUnit, killer: SimUnit) -> void:
 	if t.is_building() or t.is_ward() or t.kind == K.COURIER:
+		return
+	# a summon that runs out of time or is let go (Araki's ghosts, Undead, released beasts, turrets) is not a death
+	if t.kind == K.SUMMON and (killer == null or String(t.def.id) == "araki_ghost"):
 		return
 	for h in w.heroes:
 		if h == t or not h.alive or h.ability_level_of("underworld_presence") <= 0 or h.is_broken() \
@@ -125,8 +128,9 @@ func _grip(u: SimUnit, aid: String, t: SimUnit) -> void:
 	var held := float(t.get_modifier("stunned").get("dur", stun)) if landed else 0.0
 	if t.alive:
 		# weakened once the stun ends; meanwhile (and for those seconds) his Undead go for it first
-		w.status.apply(t, u.id, u.team, {"id": "grip_weak", "dur": held + weak_t, "weak_from": w.time + held,
-			"weak_pct": weak, "fx": "grip_weak"})
+		# the held stun was already shortened by status resistance: only the weakness's own seconds are now
+		w.status.apply(t, u.id, u.team, {"id": "grip_weak", "dur": held + weak_t * (1.0 - t.status_resist),
+			"weak_from": w.time + held, "weak_pct": weak, "fx": "grip_weak", "no_resist": true})
 		t.add_modifier({"id": MARK, "source": u.id, "expires": w.time + held + weak_t, "fx": "grip_mark"})
 		if t.kind == K.NEUTRAL_CREEP:
 			w.ai.neutral_provoked(t, u)

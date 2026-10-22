@@ -1,0 +1,487 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[10:00] units 229  tick mean 27.46 ms p95 14.24 max 14.24 | bots 7.34,   bot:shop_items 3.24, orders 2.49,   bot:choose 2.11,   n_paths 2.00, ai 1.72, pre 1.46,   bot:learn 1.29,   ord:1 0.80,   resolve 0.68,   pre:5 0.63,   bot:scan 0.50,   ord:5 0.39,   ord:2 0.32, effects 0.29,   ord:3 0.24,   ord:4 0.24, couriers 0.19,   ord:0 0.19, deaths 0.17,   bot:run_fight 0.13, cleanup 0.12,   find_path 0.11,   pre:6 0.11,   corner_cut 0.10,   pre:1 0.08,   pre:0 0.08,   pre:7 0.06,   ord:6 0.05,   pre:12 0.04,   pre:2 0.03,   pre:9 0.03,   ord:7 0.03,   pre:8 0.03,   bot:orb_site 0.03,   pre:11 0.02,   pre:4 0.02, projectiles 0.01,   pre:3 0.01,   ord:9 0.01,   bot:track 0.01,   pre:10 0.01,   ord:11 0.01,   ord:8 0.01,   ord:10 0.01, brains 0.01,   bot:door 0.01,   bot:turret 0.01, vision 0.00
+[10:00] units 232  tick mean 25.94 ms p95 13.67 max 13.67 | bots 5.86, orders 2.84,   n_paths 2.00,   bot:choose 1.78,   bot:run_fight 1.75, couriers 1.56, pre 1.51,   bot:shop_items 1.05, ai 0.85,   ord:1 0.84,   bot:learn 0.84,   resolve 0.69, effects 0.68,   ord:5 0.59,   pre:5 0.42,   bot:scan 0.36,   ord:2 0.34,   ord:4 0.26,   ord:0 0.21,   ord:3 0.20,   find_path 0.15,   pre:12 0.13,   pre:6 0.12, deaths 0.11,   pre:0 0.10,   corner_cut 0.10,   pre:1 0.09,   pre:7 0.06,   ord:6 0.06, cleanup 0.04,   pre:8 0.03,   pre:2 0.03,   pre:9 0.03,   ord:7 0.03,   bot:orb_site 0.03,   pre:11 0.03,   ord:9 0.02,   pre:3 0.02,   pre:10 0.02,   pre:4 0.02,   ord:11 0.01,   bot:track 0.01, projectiles 0.01,   ord:13 0.01,   ord:8 0.01,   ord:10 0.01,   bot:door 0.01, brains 0.01,   bot:turret 0.01, vision 0.00
+  slow tick 24.3 ms at 10:00:   pre:5 0.7, pre 2.3, ai 1.5,   bot:learn 2.9,   bot:shop_items 6.4,   bot:scan 1.4,   bot:choose 3.2, bots 14.6,   resolve 0.7,   ord:1 0.7, orders 2.8, effects 0.8, vision 1.9
+  slow tick 19.7 ms at 10:00: pre 1.5, ai 0.7, brains 0.9,   bot:learn 2.0,   bot:shop_items 1.2,   bot:scan 0.7,   bot:choose 2.8, bots 12.4, couriers 1.2,   resolve 0.5,   ord:1 0.5, orders 2.4
+  slow tick 33.9 ms at 10:00:   pre:0 2.5,   pre:5 0.8,   pre:1 0.6, pre 5.8, ai 1.6,   bot:learn 4.0,   bot:shop_items 9.4,   bot:scan 1.8,   bot:choose 5.7, bots 22.2,   resolve 0.8,   ord:1 0.7, orders 2.6, effects 1.3
+  slow tick 20.3 ms at 10:00:   pre:5 0.7, pre 2.2, ai 1.4,   bot:learn 1.9,   bot:shop_items 2.6,   bot:scan 1.6,   bot:choose 5.4, bots 13.3,   resolve 0.8,   ord:1 0.8, orders 2.7
+  slow tick 15.2 ms at 10:00:   pre:5 0.6, pre 2.1, ai 1.5,   bot:learn 0.7,   bot:shop_items 1.1,   bot:scan 0.6,   bot:choose 4.5, bots 7.9,   resolve 0.7,   ord:0 0.5,   ord:1 0.8, orders 3.1
+  slow tick 15.2 ms at 10:00: pre 1.7, ai 2.2,   bot:shop_items 0.5,   bot:choose 2.0, bots 3.5,   resolve 0.8,   ord:1 0.8, orders 3.0, effects 1.8, vision 2.6
+  slow tick 24.4 ms at 10:00: pre 1.4, ai 1.3, brains 4.8,   bot:learn 2.1,   bot:shop_items 2.8,   bot:scan 0.6,   bot:choose 4.3, bots 12.3,   resolve 0.8,   ord:0 0.6,   ord:1 0.8, orders 3.3, effects 0.8,   brain:ganks 1.7,   brain:teamfight 0.8,   brain:other 1.7
+  slow tick 19.2 ms at 10:00: pre 1.4, ai 1.6,   bot:shop_items 2.9,   bot:scan 1.7,   bot:choose 4.6, bots 11.7,   resolve 0.9,   ord:0 0.5,   ord:5 0.6,   ord:1 1.2, orders 3.7
+  slow tick 19.2 ms at 10:00:   pre:5 0.6, pre 2.0, ai 1.9,   bot:shop_items 1.3,   bot:scan 1.7,   bot:choose 3.6, bots 8.0,   resolve 0.7,   ord:0 1.7,   ord:1 0.8, orders 4.0, effects 0.8, vision 2.2
+  slow tick 25.3 ms at 10:00:   pre:5 0.8, pre 2.6, ai 3.2,   bot:shop_items 3.2,   bot:scan 3.0,   bot:choose 3.8, bots 12.0,   resolve 0.8,   ord:1 0.8,   ord:2 0.6, orders 3.0, effects 2.3, vision 1.6
+  slow tick 15.4 ms at 10:00:   pre:0 0.6, pre 2.0, ai 0.9,   bot:shop_items 1.6,   bot:scan 2.1,   bot:choose 3.5, bots 8.5,   resolve 0.8,   ord:5 0.5,   ord:1 0.9, orders 3.0
+  slow tick 21.9 ms at 10:01:   pre:5 0.6, pre 5.1, ai 3.4, brains 4.8,   resolve 0.7,   ord:0 1.4,   ord:1 1.1, orders 4.3, effects 2.4, vision 1.4,   brain:ganks 1.7,   brain:teamfight 0.7,   brain:other 1.8
+  slow tick 19.4 ms at 10:01:   pre:5 0.6, pre 2.0, ai 3.2, brains 5.1,   resolve 0.7,   ord:0 0.7,   ord:1 1.0, orders 3.5, effects 2.6, deaths 0.5, vision 2.1,   brain:ganks 1.7,   brain:teamfight 0.8,   brain:other 2.0
+  slow tick 20.9 ms at 10:01: pre 1.8, ai 3.0,   bot:shop_items 1.6,   bot:scan 2.1,   bot:choose 4.1, bots 9.4,   resolve 0.6,   ord:1 0.7, orders 2.5, effects 2.2, vision 1.7
+  slow tick 19.5 ms at 10:01:   pre:0 0.8, pre 2.2, ai 1.7,   bot:shop_items 1.6,   bot:scan 2.7,   bot:choose 2.0, bots 7.6,   resolve 0.7,   ord:1 0.8, orders 2.7, effects 2.3, deaths 0.6, vision 2.0
+  slow tick 16.3 ms at 10:01:   pre:0 0.7,   pre:5 0.6, pre 2.7, ai 1.2, brains 4.9,   bot:choose 1.7, bots 2.8,   resolve 0.9,   ord:1 0.9, orders 3.1, effects 1.2,   brain:ganks 1.6,   brain:teamfight 0.8,   brain:other 1.9
+  slow tick 20.4 ms at 10:01:   pre:0 0.9,   pre:5 0.6, pre 3.1, ai 1.5,   bot:shop_items 1.7,   bot:scan 2.0,   bot:choose 4.6, bots 10.3,   resolve 0.8,   ord:1 0.7, orders 3.1, effects 1.2, deaths 0.7
+  slow tick 17.9 ms at 10:01:   pre:0 0.5, pre 2.0, ai 0.6, brains 5.3,   bot:shop_items 1.7,   bot:scan 0.9,   bot:choose 2.6, bots 6.6,   resolve 0.6,   ord:1 0.6, orders 2.2, effects 0.7,   brain:ganks 1.8,   brain:teamfight 0.8,   brain:other 2.1
+  slow tick 16.1 ms at 10:01:   pre:5 0.6, pre 2.4, ai 2.3,   bot:shop_items 0.7,   bot:scan 0.7,   bot:choose 2.0, bots 3.9,   resolve 0.8,   ord:1 0.8, orders 2.9, effects 2.4, vision 1.8
+  slow tick 18.0 ms at 10:01:   pre:5 0.5, pre 2.0, ai 0.9,   bot:shop_items 1.7,   bot:scan 2.0,   bot:choose 5.2, bots 10.2,   resolve 0.7,   ord:1 0.7, orders 3.0, effects 1.1
+  slow tick 19.3 ms at 10:02:   pre:5 0.6, pre 5.0, ai 3.1,   bot:scan 0.8,   bot:choose 1.6, bots 2.9,   resolve 0.7,   ord:1 0.7, orders 2.6, effects 3.2, vision 2.1
+  slow tick 19.7 ms at 10:02: pre 1.5, ai 1.0,   bot:shop_items 1.5,   bot:scan 1.5,   bot:choose 4.9, bots 9.1,   resolve 0.9,   find_path 0.5,   ord:1 1.4,   ord:13 0.5, orders 3.6, effects 1.6, vision 2.4
+  slow tick 22.1 ms at 10:02:   pre:5 0.7, pre 2.7, ai 3.5,   bot:shop_items 1.9,   bot:scan 2.6,   bot:choose 2.4, bots 8.4,   resolve 0.6,   ord:1 0.5, orders 2.3, effects 3.0, vision 1.6
+  slow tick 17.8 ms at 10:02:   pre:5 0.5, pre 2.3, ai 1.1,   bot:shop_items 1.5,   bot:scan 1.5,   bot:choose 4.8, bots 9.3,   resolve 0.9,   find_path 0.7,   ord:1 1.0,   ord:3 0.8, orders 3.7, effects 1.0
+  slow tick 16.5 ms at 10:02:   pre:0 0.9,   pre:5 0.6, pre 2.4, ai 1.1,   bot:shop_items 1.7,   bot:scan 2.4,   bot:choose 2.4, bots 7.4,   resolve 0.9,   ord:1 1.0, orders 3.6, effects 1.4
+  slow tick 17.9 ms at 10:02:   pre:5 0.6, pre 2.1, ai 1.9,   bot:shop_items 1.8,   bot:scan 2.1,   bot:choose 4.5, bots 9.7,   resolve 0.9,   ord:1 0.8,   ord:13 0.5, orders 3.3
+  slow tick 15.9 ms at 10:02: pre 1.7, ai 3.2, brains 3.4,   resolve 0.9,   ord:1 0.9,   ord:13 0.5, orders 3.1, effects 2.3, vision 1.7,   brain:ganks 1.0,   brain:teamfight 0.5,   brain:other 1.4
+  slow tick 15.3 ms at 10:02:   pre:5 0.6, pre 2.1, ai 0.8,   bot:shop_items 1.3,   bot:scan 1.2,   bot:choose 3.7, bots 7.1,   resolve 0.6,   ord:5 0.5,   ord:1 0.8, orders 3.2, effects 1.5
+  slow tick 32.3 ms at 10:02:   pre:5 0.7, pre 2.2, ai 3.0, brains 3.7,   bot:shop_items 1.5,   bot:scan 1.1,   bot:choose 2.7, bots 6.4,   resolve 0.8,   ord:1 0.9, orders 3.1, effects 2.9, vision 10.5,   brain:ganks 1.0,   brain:teamfight 0.7,   brain:other 1.6
+  slow tick 22.9 ms at 10:02:   pre:5 0.6, pre 2.0, ai 1.2,   bot:shop_items 2.1,   bot:scan 1.8,   bot:choose 5.0, bots 12.0,   resolve 0.9,   ord:1 0.8, orders 3.4, effects 1.2, vision 2.6
+  slow tick 17.6 ms at 10:03:   pre:5 0.6, pre 2.1, ai 1.0,   bot:shop_items 1.7,   bot:scan 1.7,   bot:choose 3.9, bots 8.9,   resolve 0.7,   ord:0 0.9,   find_path 0.8,   ord:1 1.0, orders 4.2, effects 1.0
+  slow tick 17.8 ms at 10:03:   pre:5 0.6, pre 2.1, ai 1.2, brains 4.7,   bot:shop_items 1.7,   bot:scan 0.6,   bot:choose 2.3, bots 5.3,   resolve 0.6,   ord:0 0.9,   ord:1 0.5, orders 3.1, effects 0.8,   brain:ganks 1.7,   brain:teamfight 0.8,   brain:other 1.6
+  slow tick 16.5 ms at 10:03:   pre:5 0.6, pre 2.2, ai 3.2,   bot:shop_items 0.9,   bot:scan 0.8,   bot:choose 2.4, bots 4.4,   resolve 0.7,   ord:1 0.6,   ord:13 0.5, orders 2.5, effects 2.6, vision 1.2
+  slow tick 16.8 ms at 10:03:   pre:0 0.6,   pre:5 0.7, pre 2.6, ai 1.8,   bot:shop_items 1.5,   bot:scan 1.6,   bot:choose 4.1, bots 8.3,   resolve 0.8,   ord:5 0.5,   ord:1 0.9, orders 3.2
+  slow tick 25.9 ms at 10:03: pre 1.7, ai 1.1,   bot:shop_items 1.7,   bot:scan 1.8,   bot:choose 4.0, bots 8.9,   resolve 0.9,   ord:1 0.9, orders 3.4, effects 2.4, vision 7.8
+  slow tick 20.4 ms at 10:03:   pre:0 0.6,   pre:5 0.7, pre 2.6, ai 2.4,   bot:shop_items 1.2,   bot:scan 1.6,   bot:choose 1.9, bots 5.6,   resolve 0.8,   ord:1 0.9, orders 3.3, effects 3.7, vision 2.3
+  slow tick 15.6 ms at 10:03:   pre:0 0.6,   pre:5 0.7, pre 2.6, ai 1.2, brains 3.4,   bot:shop_items 0.7,   bot:choose 1.7, bots 2.9,   resolve 0.9,   ord:1 0.8, orders 3.3, effects 1.7,   brain:ganks 1.2,   brain:other 1.2
+  slow tick 18.1 ms at 10:03:   pre:0 1.9,   pre:5 0.6,   pre:13 1.3, pre 4.8, ai 1.7,   bot:shop_items 0.9,   bot:scan 1.3,   bot:choose 1.4, bots 4.0,   resolve 0.5,   ord:1 0.5, orders 2.3, effects 1.8, vision 3.2
+  slow tick 15.8 ms at 10:03:   pre:5 0.5, pre 1.9, ai 0.8,   bot:shop_items 1.7,   bot:scan 1.8,   bot:choose 4.1, bots 9.3,   resolve 0.7,   ord:1 0.7, orders 2.8
+  slow tick 16.6 ms at 10:04:   pre:0 0.6,   pre:5 0.7, pre 5.3, ai 3.4,   resolve 0.6,   ord:0 0.6,   ord:1 0.8, orders 3.0, effects 2.6, vision 1.9
+  slow tick 24.6 ms at 10:04:   pre:0 0.7,   pre:5 0.8, pre 3.1, ai 2.4, brains 3.5,   bot:shop_items 1.6,   bot:scan 0.6,   bot:choose 3.5, bots 7.5,   resolve 0.7,   ord:1 0.8, orders 3.1, effects 2.6, vision 1.8,   brain:ganks 1.2,   brain:teamfight 0.8,   brain:other 1.1
+  slow tick 19.2 ms at 10:04: pre 1.3, ai 1.6,   bot:shop_items 1.5,   bot:scan 1.0,   bot:choose 3.8, bots 7.5,   resolve 0.7,   ord:0 0.6,   ord:1 1.0, orders 3.5, effects 1.5, vision 3.0
+  slow tick 15.1 ms at 10:04:   pre:5 0.6, pre 2.1, ai 2.8, brains 3.8,   resolve 0.6,   ord:1 0.6, orders 2.4, effects 2.2, vision 1.5,   brain:ganks 1.4,   brain:teamfight 0.6,   brain:other 1.1
+  slow tick 15.6 ms at 10:04: pre 1.8, ai 1.2,   bot:shop_items 3.2,   bot:scan 1.1,   bot:choose 2.7, bots 8.3,   resolve 0.6,   ord:0 1.1,   ord:1 0.6, orders 3.3, effects 0.6
+  slow tick 15.2 ms at 10:04:   pre:0 0.7,   pre:5 0.6, pre 2.5, ai 0.8,   bot:shop_items 1.7,   bot:scan 1.3,   bot:choose 3.9, bots 8.2,   ord:0 0.8,   ord:1 0.5, orders 2.6, effects 0.6
+  slow tick 16.3 ms at 10:04:   pre:0 0.6,   pre:5 0.7, pre 2.8, ai 3.3,   bot:shop_items 0.8,   bot:scan 0.9,   bot:choose 1.6, bots 3.8,   resolve 0.5,   ord:1 0.6, orders 2.5, effects 1.6, vision 1.9
+  slow tick 18.7 ms at 10:04:   pre:5 0.6, pre 2.0, ai 1.2,   bot:shop_items 4.6,   bot:scan 1.4,   bot:choose 4.3, bots 11.6,   resolve 0.6,   ord:1 0.8, orders 2.8, effects 0.5
+  slow tick 19.7 ms at 10:04:   pre:0 0.6,   pre:5 0.7, pre 2.5, ai 1.1,   bot:shop_items 2.1,   bot:scan 1.3,   bot:choose 3.8, bots 9.3,   resolve 0.7,   ord:1 0.8, orders 3.1, effects 1.0, vision 2.1
+  slow tick 29.9 ms at 10:05:   pre:5 0.7, pre 6.4, ai 3.5,   bot:shop_items 2.2,   bot:scan 1.7,   bot:choose 5.2, bots 10.5,   resolve 0.7,   ord:0 0.5,   find_path 0.7,   ord:1 1.5, orders 4.1, effects 2.7, vision 1.9
+  slow tick 17.9 ms at 10:05:   pre:5 0.8, pre 2.1, ai 1.8,   bot:shop_items 2.2,   bot:scan 1.5,   bot:choose 5.1, bots 10.0,   resolve 0.6,   ord:1 0.8, orders 3.0
+  slow tick 15.7 ms at 10:05:   pre:5 0.6, pre 1.8, ai 0.9, brains 2.3,   bot:shop_items 1.7,   bot:scan 1.0,   bot:choose 3.6, bots 7.5,   ord:1 0.6, orders 2.0, effects 0.8,   brain:ganks 1.1
+  slow tick 21.5 ms at 10:05:   pre:5 0.6, pre 2.1, ai 2.9,   bot:shop_items 2.1,   bot:scan 1.4,   bot:choose 4.0, bots 9.2,   resolve 0.6,   ord:0 0.5,   ord:1 1.0, orders 3.3, effects 1.8, vision 1.7
+  slow tick 18.4 ms at 10:05:   pre:5 0.7, pre 2.3, ai 1.3,   bot:shop_items 1.7,   bot:scan 1.4,   bot:choose 3.5, bots 7.8,   resolve 0.6,   ord:0 0.5,   ord:1 0.8, orders 3.2, effects 1.4, vision 1.9
+  slow tick 16.9 ms at 10:05:   pre:0 0.6,   pre:5 0.6, pre 2.4, ai 1.2,   bot:shop_items 2.3,   bot:scan 1.5,   bot:choose 4.0, bots 9.2,   resolve 0.7,   ord:1 0.8, orders 2.9
+  slow tick 18.5 ms at 10:06:   pre:5 0.5, pre 4.9, ai 3.0, brains 2.7,   bot:shop_items 0.6,   bot:choose 1.0, bots 2.2,   ord:1 0.6, orders 2.0, effects 1.9, vision 1.4,   brain:ganks 1.7
+  slow tick 15.0 ms at 10:06:   pre:5 0.7, pre 2.0, ai 1.8,   bot:shop_items 1.7,   bot:scan 1.4,   bot:choose 2.9, bots 6.9,   resolve 0.7,   ord:1 0.8, orders 2.9, effects 0.9
+  slow tick 15.9 ms at 10:06:   pre:0 0.7,   pre:5 0.7, pre 3.1, ai 3.4,   bot:scan 1.0, bots 1.7,   resolve 0.6,   ord:1 0.8, orders 3.1, effects 2.3, vision 1.7
+  slow tick 20.0 ms at 10:06:   pre:5 0.7, pre 2.1, ai 1.7,   bot:shop_items 3.1,   bot:scan 1.1,   bot:choose 3.2, bots 9.3,   resolve 0.6,   ord:0 1.0,   ord:1 0.9, orders 3.8, effects 0.6, vision 2.1
+  slow tick 19.7 ms at 10:06:   pre:5 0.7, pre 2.5, ai 3.1,   bot:shop_items 1.8,   bot:scan 1.3,   bot:choose 2.9, bots 7.0,   resolve 0.6,   ord:1 1.1, orders 3.3, effects 1.5, vision 1.7
+  slow tick 20.3 ms at 10:06:   pre:0 0.5,   pre:5 0.6, pre 2.3, ai 0.9, brains 3.1,   bot:shop_items 2.1,   bot:scan 1.1,   bot:choose 3.2, bots 9.5,   resolve 0.5,   ord:1 0.8, orders 2.6, effects 1.4,   brain:ganks 2.0
+  slow tick 19.9 ms at 10:07:   pre:5 0.6, pre 5.5, ai 3.5,   bot:shop_items 1.9,   bot:scan 1.0,   bot:choose 1.8, bots 6.1,   ord:1 0.5, orders 1.8, effects 1.1, vision 1.2
+  slow tick 16.6 ms at 10:07:   pre:5 0.7, pre 2.2, ai 1.7,   bot:shop_items 1.7,   bot:scan 1.2,   bot:choose 2.8, bots 6.7,   resolve 0.6,   ord:1 0.8, orders 2.8, effects 0.6, vision 2.1
+  slow tick 16.8 ms at 10:07:   pre:5 0.7, pre 2.5, ai 3.4, brains 2.8,   bot:shop_items 0.8,   bot:choose 1.4, bots 2.8,   ord:1 0.7, orders 2.4, effects 1.2, vision 1.2,   brain:teamfight 0.7,   brain:other 1.3
+  slow tick 17.7 ms at 10:07: pre 1.5, ai 2.6,   bot:shop_items 1.6,   bot:scan 1.2,   bot:choose 3.1, bots 6.9,   resolve 0.6,   ord:1 0.8, orders 2.8, effects 1.5, vision 1.8
+  slow tick 17.1 ms at 10:07:   pre:5 0.7, pre 2.2, ai 1.3, brains 3.0,   bot:shop_items 2.3,   bot:choose 2.4, bots 6.2,   resolve 0.7,   ord:1 0.8, orders 2.9, effects 1.0,   brain:teamfight 0.7,   brain:other 1.4
+  slow tick 18.7 ms at 10:08:   pre:5 0.7, pre 7.5, ai 3.4,   resolve 0.6,   find_path 0.7,   ord:1 1.1,   ord:4 0.8, orders 3.5, effects 1.8, vision 1.8
+  slow tick 19.6 ms at 10:08:   pre:5 0.8, pre 2.2, ai 3.1,   bot:shop_items 2.3,   bot:scan 1.2,   bot:choose 2.5, bots 7.5,   resolve 0.6,   ord:1 1.0, orders 3.0, effects 1.6, vision 1.7
+  slow tick 16.3 ms at 10:08:   pre:5 0.7, pre 2.2, ai 1.2,   bot:shop_items 1.8,   bot:scan 1.1,   bot:choose 3.4, bots 7.7,   resolve 0.6,   ord:1 0.7, orders 2.9, effects 0.6, vision 1.1
+  slow tick 17.9 ms at 10:09:   pre:5 0.6, pre 4.7, ai 2.7, brains 2.7,   bot:choose 1.5, bots 2.5,   ord:1 0.6, orders 2.1, effects 1.5, vision 1.3,   brain:teamfight 0.5,   brain:other 1.4
+  slow tick 16.0 ms at 10:09:   pre:5 0.6, pre 1.9, ai 1.7,   bot:shop_items 2.2,   bot:scan 1.2,   bot:choose 2.2, bots 6.9,   resolve 0.7,   find_path 0.5,   ord:1 1.0, orders 3.3, effects 0.5, vision 1.2
+  slow tick 15.6 ms at 10:09:   pre:5 0.5, pre 1.7, ai 2.3, brains 2.2,   bot:shop_items 1.3,   bot:scan 0.8,   bot:choose 2.0, bots 5.0,   resolve 0.5,   ord:1 0.7, orders 2.1, effects 1.1, vision 1.0,   brain:ganks 1.3
+  slow tick 28.3 ms at 10:09:   pre:5 0.7, pre 2.1, ai 1.7,   bot:shop_items 1.5,   bot:scan 1.2,   bot:choose 2.9, bots 6.8,   resolve 0.6,   ord:0 6.6,   ord:1 1.0, orders 9.2, effects 0.6, vision 7.4
+  slow tick 16.5 ms at 10:10:   pre:5 0.8, pre 2.2, ai 1.8,   bot:shop_items 2.4,   bot:scan 1.2,   bot:choose 3.3, bots 8.8,   resolve 0.7,   ord:1 0.8, orders 2.9
+  slow tick 16.5 ms at 10:10: pre 1.5, ai 0.7, brains 2.2,   bot:shop_items 5.0,   bot:scan 0.8,   bot:choose 2.1, bots 9.3,   ord:1 0.6, orders 2.0,   brain:ganks 1.0
+  slow tick 15.6 ms at 10:10: pre 1.6, ai 2.6, brains 2.4,   bot:shop_items 0.6,   bot:choose 1.9, bots 3.6,   resolve 0.5,   ord:1 0.7, orders 2.5, effects 1.0, vision 1.2,   brain:ganks 0.8,   brain:other 0.6
+  slow tick 15.3 ms at 10:10:   pre:0 0.6,   pre:5 0.6, pre 2.2, ai 1.2,   bot:shop_items 2.4,   bot:scan 1.0,   bot:choose 2.8, bots 7.8,   ord:1 0.6, orders 2.6, effects 0.5
+  slow tick 16.6 ms at 10:11: pre 2.0, ai 2.3,   bot:shop_items 1.7,   bot:scan 0.8,   bot:choose 2.5, bots 6.4,   resolve 0.6,   find_path 0.5,   ord:1 1.3, orders 3.1, effects 1.2, vision 1.2
+  slow tick 16.7 ms at 10:11:   pre:5 0.7, pre 2.1, ai 1.4,   bot:shop_items 2.3,   bot:scan 1.7,   bot:choose 3.8, bots 9.2,   resolve 0.5,   ord:1 0.9,   ord:3 0.6, orders 3.2
+  slow tick 16.2 ms at 10:11:   pre:5 0.8, pre 2.1, ai 1.7,   bot:shop_items 1.9,   bot:scan 1.0,   bot:choose 2.9, bots 7.3,   resolve 0.6,   ord:0 0.5,   ord:1 0.7, orders 3.0, vision 1.3
+  slow tick 17.1 ms at 10:12:   pre:5 0.6, pre 1.8, ai 1.3,   bot:shop_items 5.9,   bot:scan 1.1,   bot:choose 2.9, bots 10.9,   ord:0 0.6,   ord:1 0.5, orders 2.3
+  slow tick 16.1 ms at 10:13: pre 5.2, ai 2.3,   bot:shop_items 0.8,   bot:scan 0.6,   bot:choose 1.2, bots 3.1,   resolve 0.6,   ord:1 0.8, orders 2.8, effects 1.1, vision 1.3
+  slow tick 15.9 ms at 10:13:   pre:5 0.8, pre 2.2, ai 1.0,   bot:shop_items 3.8,   bot:scan 1.0,   bot:choose 1.8, bots 9.2,   resolve 0.7,   ord:1 0.8, orders 2.8
+  slow tick 22.4 ms at 10:14:   pre:5 0.7, pre 5.7, ai 3.3, brains 2.9,   bot:shop_items 2.3,   bot:choose 1.7, bots 5.5,   resolve 0.5,   ord:1 0.8, orders 2.2, effects 1.0, vision 1.3,   brain:ganks 2.0
+  slow tick 15.1 ms at 10:16:   pre:5 0.7, pre 5.9, ai 3.6, bots 0.9,   ord:1 0.7, orders 2.3, effects 0.9, vision 1.2
+  slow tick 16.1 ms at 10:17: pre 5.3, ai 3.1, brains 2.1,   resolve 0.5,   ord:1 0.5, orders 2.7, effects 1.3, vision 1.2,   brain:push 0.5
+  slow tick 15.7 ms at 10:17:   pre:5 0.7, pre 2.2, ai 3.2,   bot:shop_items 1.5,   bot:scan 0.7,   bot:choose 1.6, bots 4.8,   resolve 0.5,   ord:1 0.6, orders 2.7, effects 1.0, vision 1.4
+  slow tick 16.7 ms at 10:18: pre 1.4, ai 2.7,   bot:shop_items 5.1,   bot:choose 0.5, bots 6.9,   ord:0 1.2,   find_path 1.3,   ord:1 0.6, orders 3.5, effects 0.8, vision 0.9
+  slow tick 15.8 ms at 10:19: pre 5.4, ai 3.3,   bot:shop_items 0.9, bots 1.9,   ord:1 0.5, orders 1.9, effects 1.0, vision 1.9
+  slow tick 17.1 ms at 10:19:   pre:5 0.7, pre 2.1, ai 3.2,   bot:shop_items 4.8,   bot:choose 0.5, bots 6.2,   ord:1 0.5, orders 2.1, effects 0.9, vision 2.3
+  slow tick 25.2 ms at 10:20:   pre:5 0.6, pre 1.8, ai 1.1,   bot:shop_items 6.5,   bot:scan 1.7,   bot:choose 5.0, bots 18.9,   find_path 0.7,   ord:1 0.5, orders 2.4, effects 0.6
+  slow tick 20.6 ms at 10:20:   pre:5 0.7, pre 2.1, ai 1.9,   bot:shop_items 2.5,   bot:scan 1.4,   bot:choose 4.2, bots 14.2, orders 1.8
+  slow tick 21.9 ms at 10:20:   pre:5 0.5, pre 1.6, ai 3.1, brains 4.3,   bot:shop_items 0.6,   bot:choose 2.3, bots 3.4, couriers 3.2, orders 2.4, effects 1.7, vision 1.8,   brain:ganks 1.4,   brain:teamfight 0.8,   brain:other 1.6
+  slow tick 24.6 ms at 10:20:   pre:5 0.8, pre 2.1, ai 1.9,   bot:shop_items 7.9,   bot:scan 2.4,   bot:choose 4.1, bots 16.0, orders 2.2, vision 1.8
+  slow tick 29.2 ms at 10:20:   pre:5 0.8, pre 2.3, ai 3.2, brains 3.3,   bot:shop_items 4.0,   bot:scan 1.9,   bot:choose 5.4, bots 13.3,   resolve 0.5,   ord:0 0.5,   ord:1 0.6, orders 2.7, effects 1.8, vision 2.1,   brain:ganks 1.6,   brain:teamfight 0.9
+  slow tick 19.0 ms at 10:20:   pre:5 0.6, pre 1.7, ai 0.8,   bot:shop_items 6.0,   bot:scan 2.0,   bot:choose 3.5, bots 12.7,   resolve 0.6,   ord:0 0.6,   ord:1 0.7, orders 3.1
+  slow tick 19.5 ms at 10:20:   pre:5 0.7, pre 1.8, ai 1.2,   bot:shop_items 2.9,   bot:scan 1.8,   bot:choose 4.9, bots 11.6,   ord:0 1.9, orders 3.8
+  slow tick 18.5 ms at 10:20:   pre:5 0.7, pre 2.3, ai 1.2,   bot:shop_items 6.1,   bot:scan 2.4,   bot:choose 2.4, bots 12.4, orders 1.8
+  slow tick 30.5 ms at 10:21:   pre:0 1.2,   pre:5 0.8, pre 9.0, ai 2.5,   bot:shop_items 5.1,   bot:scan 2.0,   bot:choose 1.4, bots 9.3,   ord:0 1.0, orders 3.0, effects 2.9, vision 3.4
+  slow tick 17.5 ms at 10:21: pre 1.6, ai 1.3,   bot:shop_items 2.4,   bot:scan 1.8,   bot:choose 4.0, bots 9.9, orders 1.4, effects 0.6, vision 2.2
+  slow tick 15.4 ms at 10:21:   pre:5 0.7, pre 2.3, ai 3.4,   bot:scan 0.7,   bot:choose 1.5, bots 3.4, orders 2.1, effects 2.4, vision 1.3
+  slow tick 17.7 ms at 10:21:   pre:0 0.5,   pre:5 0.7, pre 2.4, ai 1.6,   bot:shop_items 5.4,   bot:scan 2.1,   bot:choose 2.3, bots 10.5,   ord:1 0.5, orders 2.2
+  slow tick 17.5 ms at 10:21:   pre:0 0.6,   pre:5 0.6, pre 2.3, ai 0.9,   bot:shop_items 2.9,   bot:scan 2.1,   bot:choose 4.8, bots 11.2,   ord:1 0.5, orders 2.1
+  slow tick 22.0 ms at 10:21:   pre:5 0.7, pre 2.2, ai 1.0, brains 3.3,   bot:shop_items 4.9,   bot:scan 1.7,   bot:choose 4.1, bots 12.1,   ord:1 0.6, orders 2.4, effects 0.6,   brain:ganks 1.6,   brain:teamfight 0.8
+  slow tick 17.4 ms at 10:21:   pre:5 0.7, pre 2.6, ai 1.3,   bot:shop_items 2.8,   bot:scan 1.7,   bot:choose 4.2, bots 10.0,   ord:1 0.6, orders 2.4, effects 0.5
+  slow tick 25.2 ms at 10:21:   pre:5 0.6, pre 2.1, ai 0.8,   bot:shop_items 5.8,   bot:scan 1.5,   bot:choose 3.5, bots 12.0, orders 2.3, effects 0.6, vision 6.8
+  slow tick 20.9 ms at 10:21: pre 1.5, ai 2.1, brains 3.6,   bot:shop_items 4.2,   bot:scan 0.6,   bot:choose 3.6, bots 9.5, orders 1.4, effects 1.2, vision 1.2,   brain:ganks 1.2,   brain:teamfight 0.7,   brain:other 1.4
+  slow tick 19.3 ms at 10:21:   pre:5 0.7, pre 2.1, ai 1.3,   bot:shop_items 5.8,   bot:scan 1.6,   bot:choose 3.8, bots 12.6, orders 2.4
+  slow tick 18.9 ms at 10:22:   pre:5 0.7, pre 6.2, ai 3.2, brains 3.7,   ord:1 0.6, orders 2.2, effects 1.8, vision 1.5,   brain:ganks 1.6,   brain:teamfight 1.2
+  slow tick 18.7 ms at 10:22:   pre:5 0.7, pre 2.1, ai 1.5,   bot:shop_items 6.2,   bot:scan 2.1,   bot:choose 3.0, bots 12.1,   ord:0 0.8, orders 2.2
+  slow tick 19.3 ms at 10:22:   pre:5 0.6, pre 2.2, ai 2.8,   bot:shop_items 5.1,   bot:scan 1.5,   bot:choose 2.0, bots 9.3, orders 1.5, effects 1.4, vision 1.7
+  slow tick 20.2 ms at 10:22: pre 1.5, ai 1.3,   bot:shop_items 3.0,   bot:scan 1.9,   bot:choose 4.3, bots 11.0, orders 2.2, effects 1.6, vision 1.7
+  slow tick 19.6 ms at 10:22: pre 1.5, ai 0.8,   bot:shop_items 5.7,   bot:scan 1.5,   bot:choose 3.6, bots 12.9,   ord:1 0.6, orders 2.7, effects 0.9
+  slow tick 18.0 ms at 10:22:   pre:0 0.5,   pre:5 0.6, pre 2.6, ai 1.1,   bot:shop_items 2.8,   bot:scan 1.8,   bot:choose 3.3, bots 9.4,   ord:0 1.6, orders 3.5, effects 0.8
+  slow tick 17.7 ms at 10:22:   pre:0 0.6,   pre:5 0.6, pre 2.3, ai 1.0, brains 3.0,   bot:shop_items 5.1,   bot:choose 2.6, bots 8.9, orders 1.7,   brain:ganks 1.0,   brain:teamfight 0.7,   brain:other 0.9
+  slow tick 20.4 ms at 10:23:   pre:5 0.7, pre 5.7, ai 3.1,   bot:shop_items 0.5,   bot:scan 0.6,   bot:choose 1.7, bots 3.0,   ord:0 0.6, orders 2.4, effects 2.5, vision 3.2
+  slow tick 20.9 ms at 10:23:   pre:5 0.7, pre 2.5, ai 1.8,   bot:shop_items 6.1,   bot:scan 1.8,   bot:choose 2.6, bots 11.4, orders 2.0, effects 1.4, vision 1.1
+  slow tick 19.5 ms at 10:23:   pre:5 0.7, pre 2.5, ai 3.3,   bot:shop_items 2.8,   bot:scan 2.4,   bot:choose 1.4, bots 7.3,   ord:1 0.7, orders 2.6, effects 2.0, vision 1.3
+  slow tick 23.2 ms at 10:23:   pre:5 0.7, pre 2.4, ai 1.0,   bot:shop_items 6.6,   bot:scan 1.8,   bot:choose 4.1, bots 14.6,   ord:1 0.5, orders 2.6, projectiles 0.8, effects 1.2
+  slow tick 15.3 ms at 10:23:   pre:5 0.5, pre 2.1, ai 1.0,   bot:shop_items 2.8,   bot:scan 2.1,   bot:choose 2.1, bots 8.0,   ord:0 1.1, orders 2.9
+  slow tick 18.9 ms at 10:23:   pre:0 0.6,   pre:5 0.6, pre 2.2, ai 0.7,   bot:shop_items 6.3,   bot:scan 1.8,   bot:choose 3.4, bots 12.7, orders 2.2, effects 0.5
+  slow tick 22.2 ms at 10:23: pre 1.8, ai 2.1,   bot:shop_items 5.9,   bot:scan 1.2,   bot:choose 3.4, bots 12.0,   ord:0 0.6,   ord:1 0.6, orders 2.4, effects 1.8, vision 1.5
+  slow tick 16.6 ms at 10:23:   pre:5 0.6, pre 2.1, ai 1.5,   bot:shop_items 2.2,   bot:scan 1.7,   bot:choose 1.7, bots 6.4,   ord:0 0.8, orders 2.3, effects 1.3, vision 2.6
+  slow tick 15.8 ms at 10:24:   pre:5 0.6, pre 6.6, ai 3.3,   ord:0 0.7, orders 2.2, effects 1.9, vision 1.2
+  slow tick 18.5 ms at 10:24:   pre:5 0.6, pre 1.9, ai 1.2,   bot:shop_items 8.2,   bot:scan 1.2,   bot:choose 2.2, bots 12.9, orders 1.7
+  slow tick 18.3 ms at 10:24:   pre:5 0.6, pre 1.8, ai 0.8, brains 2.2,   bot:learn 0.5,   bot:shop_items 2.9,   bot:scan 1.9,   bot:choose 2.1, bots 8.2,   ord:0 1.4, orders 3.0, effects 1.3,   brain:ganks 1.1,   brain:teamfight 0.6
+  slow tick 15.3 ms at 10:24:   pre:5 0.7, pre 2.1, ai 0.8,   bot:shop_items 2.1,   bot:scan 1.2,   bot:choose 2.9, bots 7.5, orders 2.0, effects 1.2, vision 1.2
+  slow tick 20.7 ms at 10:24:   pre:5 0.6, pre 2.1, ai 3.4,   bot:shop_items 3.0,   bot:scan 1.6,   bot:choose 3.4, bots 9.3, orders 2.3, effects 1.5, vision 1.4
+  slow tick 17.0 ms at 10:25: pre 1.8, ai 2.9, brains 3.1,   bot:shop_items 1.8,   bot:choose 1.5, bots 5.1, orders 1.7, effects 1.0, vision 1.1,   brain:ganks 0.9,   brain:teamfight 0.5,   brain:other 1.0
+  slow tick 15.8 ms at 10:25: pre 1.2, ai 0.6,   bot:shop_items 2.4,   bot:scan 1.1,   bot:choose 2.5, bots 7.2, orders 2.1, effects 1.2, vision 2.9
+  slow tick 15.1 ms at 10:25:   pre:5 0.7, pre 1.9, ai 1.0, brains 2.2,   bot:shop_items 2.7,   bot:choose 2.6, bots 6.9, orders 1.9, effects 0.8,   brain:ganks 0.8,   brain:other 0.5
+  slow tick 23.3 ms at 10:26: pre 5.7, ai 1.8,   bot:shop_items 2.6,   bot:scan 1.2,   bot:choose 3.3, bots 9.9, orders 2.0, effects 1.7, vision 1.6
+  slow tick 16.7 ms at 10:26:   pre:5 0.6, pre 2.1, ai 3.0, brains 2.6,   bot:shop_items 1.6,   bot:choose 1.8, bots 4.6,   ord:0 0.6, orders 1.8, effects 1.0, vision 1.2,   brain:ganks 0.9,   brain:other 0.8
+  slow tick 20.5 ms at 10:26:   pre:5 0.7, pre 2.0, ai 0.9,   bot:shop_items 9.6,   bot:scan 1.1,   bot:choose 2.4, bots 15.0, orders 1.8
+  slow tick 16.1 ms at 10:27:   pre:5 0.6, pre 4.9, ai 3.2,   bot:shop_items 2.3,   bot:choose 0.6, bots 3.4, orders 1.7, effects 1.2, vision 1.2
+  slow tick 16.4 ms at 10:27:   pre:5 0.7, pre 2.2, ai 3.4,   bot:shop_items 2.2,   bot:scan 1.2,   bot:choose 1.7, bots 6.3, orders 1.8, effects 1.0, vision 1.2
+  slow tick 21.9 ms at 10:28:   pre:5 0.6, pre 5.8, ai 3.1,   bot:learn 0.6,   bot:shop_items 4.0,   bot:scan 0.8,   bot:choose 1.7, bots 8.3,   ord:0 0.5, orders 1.9, effects 1.1, vision 1.1
+  slow tick 16.3 ms at 10:29:   pre:5 0.8, pre 2.0, ai 1.7,   bot:shop_items 1.4,   bot:scan 0.7,   bot:choose 1.2, bots 4.4,   ord:0 1.8, orders 3.8, effects 0.7, deaths 1.3, vision 1.5
+  slow tick 27.3 ms at 10:30: pre 11.4, ai 3.1, brains 1.6,   bot:shop_items 0.6, bots 1.3, couriers 2.1,   resolve 0.6,   ord:0 0.6,   find_path 1.6,   ord:1 2.1,   ord:2 0.9, orders 4.8, effects 1.4, vision 1.3
+  slow tick 18.1 ms at 10:30:   pre:5 0.7, pre 2.3, ai 3.5,   bot:shop_items 1.4,   bot:scan 0.7,   bot:choose 0.8, bots 5.4,   resolve 0.7,   ord:0 0.6,   ord:1 1.0, orders 3.2, effects 1.0, vision 2.1
+  slow tick 18.4 ms at 10:30:   pre:5 0.6, pre 2.0, ai 3.1,   bot:shop_items 1.0,   bot:scan 0.5,   bot:choose 1.0, bots 6.6,   resolve 0.8,   ord:0 0.7,   ord:5 0.5,   ord:1 1.1, orders 3.7, effects 1.1, vision 1.5
+  slow tick 16.2 ms at 10:31:   pre:5 0.6, pre 6.3, ai 3.9,   resolve 0.7,   ord:0 0.7,   ord:1 1.0, orders 3.2, effects 1.1, vision 1.2
+  slow tick 16.8 ms at 10:31:   pre:5 0.8, pre 2.6, ai 3.3, brains 2.7,   bot:shop_items 1.1,   bot:choose 0.8, bots 2.6,   resolve 0.7,   ord:0 0.5,   ord:1 1.1, orders 3.2, effects 0.9, vision 1.1,   brain:ganks 1.6
+  slow tick 15.9 ms at 10:32:   pre:5 0.7, pre 6.8, ai 3.5,   ord:0 1.2,   ord:1 0.7, orders 2.9, effects 0.8, vision 1.3
+  slow tick 20.7 ms at 10:33:   pre:5 0.6, pre 6.3, ai 3.7, brains 1.3,   bot:shop_items 1.3,   bot:scan 0.5,   bot:choose 0.9, bots 3.2,   resolve 0.6,   ord:0 1.0,   ord:1 1.1, orders 3.5, effects 0.9, vision 1.3
+  slow tick 20.8 ms at 10:35:   pre:5 0.7, pre 6.5, ai 3.6,   bot:shop_items 1.0,   bot:scan 0.6,   bot:choose 1.0, bots 3.3,   resolve 0.6,   ord:0 1.0,   find_path 1.3,   ord:1 2.3, orders 4.7, effects 1.0, vision 1.4
+  slow tick 15.4 ms at 10:35:   pre:5 0.8, pre 2.4, ai 3.6,   bot:shop_items 1.1,   bot:scan 0.7,   bot:choose 0.9, bots 3.5,   find_path 0.7,   ord:1 1.0,   ord:2 1.0, orders 3.2, effects 0.6, vision 1.7
+  slow tick 16.6 ms at 10:36:   pre:0 1.0,   pre:5 0.6, pre 8.5, ai 3.3,   ord:1 0.8, orders 2.1, effects 1.0, vision 1.3
+  slow tick 15.2 ms at 10:36:   pre:5 0.8, pre 2.4, ai 3.6,   ord:1 1.0, orders 2.4, effects 0.8, vision 5.5
+  slow tick 20.7 ms at 10:37:   pre:5 0.5, pre 6.1, ai 2.5, bots 0.9,   ord:1 0.8, orders 1.7, effects 1.0, vision 8.1
+  slow tick 15.9 ms at 10:38:   pre:5 0.5, pre 5.9, ai 2.8, brains 1.4,   ord:1 1.4, orders 2.9, effects 1.2, vision 1.2
+  slow tick 15.4 ms at 10:40: pre 1.3, ai 0.6, brains 1.7,   bot:shop_items 1.1,   bot:scan 1.3,   bot:choose 2.6, bots 6.4, couriers 1.7,   ord:0 0.7,   ord:1 1.0, orders 3.1,   brain:ganks 1.2
+  slow tick 17.4 ms at 10:40:   pre:0 2.0,   pre:5 0.6, pre 3.8, ai 0.8,   bot:shop_items 2.3,   bot:scan 1.9,   bot:choose 3.5, bots 9.2,   ord:1 0.9, orders 2.7
+  slow tick 18.9 ms at 10:40:   pre:5 0.6, pre 1.8, ai 0.8, brains 6.0,   bot:shop_items 2.6,   bot:choose 3.3, bots 7.7,   ord:1 0.7, orders 2.1,   brain:ganks 3.0,   brain:teamfight 0.9,   brain:other 1.9
+  slow tick 19.8 ms at 10:40:   pre:5 0.8, pre 2.2, ai 1.2,   bot:shop_items 1.5,   bot:scan 1.5,   bot:choose 3.4, bots 8.8,   resolve 0.5,   ord:1 0.9, orders 2.6, effects 0.9, vision 3.8
+  slow tick 18.9 ms at 10:40: pre 1.6, ai 2.6,   bot:shop_items 1.5,   bot:scan 1.5,   bot:choose 2.9, bots 6.9,   resolve 0.5,   ord:1 0.9, orders 2.6, effects 2.0, vision 2.5
+  slow tick 19.3 ms at 10:40: pre 1.6, ai 1.4,   bot:shop_items 2.9,   bot:scan 1.3,   bot:choose 3.1, bots 8.9,   ord:0 1.8,   ord:1 0.9, orders 3.9, effects 0.6, vision 2.5
+  slow tick 17.1 ms at 10:40:   pre:0 0.6,   pre:5 0.7, pre 2.6, ai 1.9,   bot:shop_items 2.0,   bot:scan 2.2,   bot:choose 3.8, bots 9.4,   ord:1 0.7, orders 2.3
+  slow tick 19.6 ms at 10:41:   pre:0 1.5,   pre:5 0.6, pre 7.3, ai 3.2, brains 4.1,   ord:1 0.5, orders 1.5, effects 1.3, vision 1.5,   brain:ganks 1.8,   brain:teamfight 0.6,   brain:other 1.2
+  slow tick 23.3 ms at 10:41:   pre:0 0.6,   pre:5 0.7, pre 2.8, ai 3.1, brains 5.0,   bot:shop_items 1.3,   bot:choose 2.5, bots 5.4,   ord:1 0.8, orders 1.9, effects 2.8, vision 1.9,   brain:ganks 1.8,   brain:teamfight 1.0,   brain:other 1.8
+  slow tick 16.7 ms at 10:41: pre 1.4, ai 0.9,   bot:shop_items 1.9,   bot:scan 2.0,   bot:choose 4.9, bots 10.3,   ord:1 0.8, orders 2.2, effects 0.5, vision 1.0
+  slow tick 17.7 ms at 10:41: pre 1.7, ai 2.3,   bot:shop_items 2.2,   bot:scan 2.5,   bot:choose 2.4, bots 8.2,   ord:1 0.6, orders 1.8, effects 1.8, vision 1.5
+  slow tick 20.3 ms at 10:41:   pre:5 0.7, pre 2.2, ai 1.2, brains 4.4,   bot:shop_items 1.9,   bot:choose 4.4, bots 8.7,   ord:1 0.9, orders 2.4, effects 0.7,   brain:ganks 1.9,   brain:teamfight 0.6,   brain:other 1.5
+  slow tick 16.2 ms at 10:41:   pre:5 0.6, pre 1.7, ai 3.1,   bot:shop_items 0.6,   bot:scan 1.1,   bot:choose 1.7, bots 4.1,   ord:1 0.9, orders 2.4, effects 1.6, vision 2.9
+  slow tick 15.6 ms at 10:41:   pre:5 0.5, pre 1.6, ai 1.3,   bot:shop_items 3.8,   bot:scan 1.2,   bot:choose 4.1, bots 10.6,   ord:1 0.6, orders 1.4
+  slow tick 16.5 ms at 10:41: pre 1.6, ai 0.6,   bot:shop_items 2.5,   bot:scan 2.5,   bot:choose 4.1, bots 10.7,   ord:1 0.7,   ord:2 0.7, orders 2.6
+  slow tick 26.7 ms at 10:42:   pre:0 1.4,   pre:5 0.7, pre 7.6, ai 3.3,   bot:shop_items 1.7,   bot:scan 2.1,   bot:choose 3.9, bots 8.5,   ord:0 0.6,   ord:1 0.7, orders 2.7, effects 2.0, vision 2.0
+  slow tick 15.6 ms at 10:42: pre 1.3, ai 0.7,   bot:shop_items 2.4,   bot:scan 2.2,   bot:choose 3.1, bots 9.2,   ord:1 0.8, orders 2.2, effects 0.7, vision 1.2
+  slow tick 15.5 ms at 10:42:   pre:0 0.6,   pre:5 0.7, pre 2.2, ai 1.1,   bot:shop_items 1.7,   bot:scan 2.0,   bot:choose 3.4, bots 8.8,   ord:0 0.8,   ord:1 0.9, orders 2.5
+  slow tick 16.9 ms at 10:42:   pre:5 0.7, pre 2.1, ai 1.8,   bot:shop_items 2.5,   bot:scan 1.3,   bot:choose 4.5, bots 9.9,   ord:1 0.9, orders 2.4
+  slow tick 18.2 ms at 10:42:   pre:0 1.0,   pre:5 0.7, pre 3.3, ai 2.2, brains 3.7,   bot:shop_items 1.1,   bot:choose 2.7, bots 4.9,   ord:1 0.6, orders 1.8, effects 1.0, vision 0.9,   brain:ganks 1.3,   brain:teamfight 0.6,   brain:other 1.4
+  slow tick 21.2 ms at 10:42:   pre:5 0.6, pre 1.9, ai 1.3,   bot:shop_items 1.5,   bot:scan 1.5,   bot:choose 2.9, bots 6.7,   ord:1 0.6, orders 1.9, effects 0.9, vision 8.0
+  slow tick 25.1 ms at 10:42:   pre:5 0.6, pre 2.1, ai 2.6, brains 2.5,   bot:shop_items 2.8,   bot:scan 1.5,   bot:choose 5.6, bots 11.7,   ord:1 0.7, orders 2.5, effects 1.8, vision 1.5,   brain:ganks 1.3,   brain:teamfight 0.7
+  slow tick 16.2 ms at 10:42:   pre:5 0.7, pre 2.2, ai 0.9,   bot:shop_items 1.9,   bot:scan 2.1,   bot:choose 4.0, bots 10.0,   ord:1 0.7, orders 2.4
+  slow tick 23.4 ms at 10:43:   pre:5 0.8, pre 7.6, ai 3.5,   bot:shop_items 0.5,   bot:scan 1.1,   bot:choose 2.4, bots 4.7,   ord:1 0.8, orders 2.5, effects 2.1, vision 2.5
+  slow tick 16.1 ms at 10:43: pre 1.8, ai 0.8,   bot:shop_items 2.3,   bot:scan 1.2,   bot:choose 5.2, bots 10.3,   ord:0 0.6,   ord:1 0.6, orders 2.4
+  slow tick 19.9 ms at 10:43:   pre:0 0.7,   pre:5 0.6, pre 2.5, ai 1.1,   bot:shop_items 2.9,   bot:scan 1.9,   bot:choose 5.9, bots 12.8,   ord:1 1.0, orders 2.6
+  slow tick 16.0 ms at 10:43:   pre:5 0.7, pre 2.1, ai 1.2,   bot:shop_items 1.4,   bot:scan 1.5,   bot:choose 3.1, bots 7.0,   ord:1 0.9, orders 2.6, effects 0.7, vision 2.1
+  slow tick 21.0 ms at 10:43:   pre:5 0.6, pre 2.2, ai 3.0,   bot:shop_items 1.8,   bot:scan 1.9,   bot:choose 2.7, bots 7.4,   ord:1 0.8, orders 2.3, effects 3.5, vision 2.1
+  slow tick 16.7 ms at 10:43:   pre:0 0.7,   pre:5 0.5, pre 2.2, ai 1.8,   bot:shop_items 2.7,   bot:scan 2.7,   bot:choose 2.0, bots 8.3,   ord:1 0.6, orders 1.7, effects 0.8, vision 1.4
+  slow tick 18.0 ms at 10:43: pre 1.7, ai 0.8,   bot:shop_items 7.9,   bot:scan 1.2,   bot:choose 2.6, bots 12.7,   ord:1 0.7, orders 2.0
+  slow tick 17.7 ms at 10:43: pre 1.4, ai 0.5, brains 3.0,   bot:shop_items 2.0,   bot:scan 1.6,   bot:choose 4.4, bots 9.3,   ord:1 0.8, orders 2.4, effects 0.6,   brain:ganks 1.8,   brain:teamfight 0.7
+  slow tick 18.9 ms at 10:43:   pre:5 0.8, pre 2.3, ai 1.2,   bot:shop_items 2.7,   bot:scan 2.4,   bot:choose 3.1, bots 11.1,   ord:1 0.8, orders 2.4, effects 1.3
+  slow tick 17.6 ms at 10:44:   pre:0 0.7,   pre:5 0.5, pre 5.0, ai 1.8,   bot:shop_items 1.4,   bot:scan 1.5,   bot:choose 2.7, bots 6.6,   ord:1 0.7, orders 1.8, effects 1.2, vision 0.9
+  slow tick 20.4 ms at 10:44:   pre:5 0.8, pre 2.2, ai 1.0,   bot:shop_items 1.9,   bot:scan 1.8,   bot:choose 3.7, bots 8.8,   find_path 0.9,   ord:1 1.8, orders 3.2, effects 0.8, vision 3.5
+  slow tick 20.6 ms at 10:44:   pre:0 0.6,   pre:5 0.6, pre 2.6, ai 2.7, brains 3.0,   bot:shop_items 1.8,   bot:choose 2.0, bots 5.4,   ord:0 0.6,   ord:1 0.9, orders 2.5, effects 1.8, vision 2.2,   brain:ganks 1.1,   brain:teamfight 0.6,   brain:other 1.1
+  slow tick 15.6 ms at 10:44:   pre:0 0.7,   pre:5 0.7, pre 2.8, ai 2.0, brains 2.1,   bot:scan 0.5,   bot:choose 1.7, bots 3.2,   ord:1 0.7, orders 2.3, effects 1.8, vision 1.1,   brain:ganks 1.2
+  slow tick 16.2 ms at 10:44: pre 1.8, ai 1.3,   bot:shop_items 1.8,   bot:scan 1.8,   bot:choose 4.2, bots 9.2,   ord:1 0.8, orders 2.4, effects 0.9
+  slow tick 15.3 ms at 10:44:   pre:5 0.8, pre 2.8, ai 4.0,   ord:1 0.8, orders 2.5, effects 1.8, vision 3.7
+  slow tick 19.5 ms at 10:44:   pre:5 0.7, pre 2.2, ai 3.0,   bot:shop_items 1.8,   bot:scan 1.5,   bot:choose 4.1, bots 8.8,   ord:1 0.6, orders 2.3, effects 1.5, vision 1.3
+  slow tick 18.7 ms at 10:44:   pre:5 0.5, pre 1.6, ai 0.7, brains 4.4,   bot:shop_items 1.8,   bot:scan 1.0,   bot:choose 2.8, bots 7.5,   ord:0 1.1,   ord:1 0.8, orders 3.3,   brain:ganks 3.3,   brain:teamfight 0.5
+  slow tick 16.4 ms at 10:45:   pre:5 0.8, pre 6.4, ai 3.4,   ord:1 0.8, orders 2.6, effects 2.1, vision 1.5
+  slow tick 17.8 ms at 10:45:   pre:5 0.7, pre 2.6, ai 3.6,   bot:shop_items 1.7,   bot:scan 1.0,   bot:choose 2.2, bots 6.6,   ord:0 1.3,   ord:1 0.6, orders 2.8, effects 1.0, vision 0.9
+  slow tick 16.5 ms at 10:45:   pre:5 0.6, pre 2.3, ai 3.2,   bot:shop_items 2.0,   bot:scan 1.4,   bot:choose 1.6, bots 5.9,   ord:0 0.6,   ord:1 0.7, orders 2.3, effects 1.3, vision 1.1
+  slow tick 17.7 ms at 10:45:   pre:5 0.7, pre 2.3, ai 3.5, brains 3.4,   bot:shop_items 2.4, bots 2.7,   ord:0 0.6,   ord:1 0.8, orders 2.7, effects 1.8, vision 1.1,   brain:ganks 1.1,   brain:teamfight 0.7,   brain:other 1.1
+  slow tick 15.1 ms at 10:45:   pre:0 0.6,   pre:5 0.8, pre 2.9, ai 1.3,   bot:shop_items 2.2,   bot:scan 1.5,   bot:choose 2.3, bots 7.4,   ord:1 0.9, orders 2.6
+  slow tick 16.0 ms at 10:46: pre 4.2, ai 2.5, brains 4.1,   ord:1 0.7, orders 2.5, effects 1.5, vision 0.9,   brain:ganks 2.9
+  slow tick 15.2 ms at 10:46:   pre:5 0.7, pre 2.2, ai 1.2,   bot:shop_items 1.8,   bot:scan 1.2,   bot:choose 1.7, bots 6.0,   ord:0 0.5,   ord:1 0.8, orders 2.7, effects 0.7, vision 1.7
+  slow tick 20.4 ms at 10:46:   pre:5 0.5, pre 1.7, ai 3.3,   bot:shop_items 1.7,   bot:scan 1.5,   bot:choose 3.5, bots 7.7,   ord:0 1.1,   ord:1 0.8, orders 3.1, effects 2.4, vision 1.5
+  slow tick 23.6 ms at 10:46:   pre:5 0.5, pre 1.9, ai 2.2,   bot:shop_items 1.8,   bot:scan 1.2,   bot:choose 1.6, bots 6.6,   ord:1 0.7, orders 2.6, effects 1.6, vision 8.0
+  slow tick 18.9 ms at 10:46:   pre:5 0.5, pre 1.5, ai 1.0,   bot:shop_items 5.1,   bot:scan 1.1,   bot:choose 2.0, bots 9.5,   ord:0 0.6,   ord:1 0.9, orders 2.7, effects 0.6, vision 3.1
+  slow tick 20.2 ms at 10:47:   pre:5 0.6, pre 5.0, ai 3.3,   bot:shop_items 2.1,   bot:scan 1.2,   bot:choose 1.2, bots 5.3,   ord:0 0.9,   ord:1 0.8, orders 2.9, effects 1.8, vision 1.4
+  slow tick 16.4 ms at 10:47:   pre:5 0.7, pre 2.3, ai 3.3, brains 4.7,   ord:0 0.8,   ord:1 0.7, orders 2.7, effects 1.5, vision 1.4,   brain:ganks 3.4
+  slow tick 15.4 ms at 10:47:   pre:0 0.6,   pre:5 0.7, pre 2.7, ai 1.7,   bot:shop_items 1.8,   bot:scan 1.2,   bot:choose 1.7, bots 5.9,   ord:0 0.6,   ord:1 0.6, orders 2.6, effects 0.7, vision 1.4
+  slow tick 17.9 ms at 10:47: pre 1.5, ai 1.9, brains 1.3,   bot:shop_items 1.6,   bot:scan 1.1,   bot:choose 2.6, bots 6.3,   resolve 0.5,   ord:0 0.8,   ord:1 0.7, orders 2.9, effects 1.5, vision 1.6,   brain:ganks 0.5
+  slow tick 17.1 ms at 10:48:   pre:0 0.6,   pre:5 0.6,   pre:1 0.5, pre 3.1, ai 3.4,   bot:shop_items 1.7,   bot:scan 1.2,   bot:choose 1.4, bots 5.2,   ord:1 0.9, orders 2.4, effects 1.6, vision 1.1
+  slow tick 15.7 ms at 10:48:   pre:5 0.7, pre 2.2, ai 1.8,   bot:shop_items 1.6,   bot:scan 1.2,   bot:choose 2.6, bots 6.2,   ord:0 0.8,   ord:1 0.9, orders 3.0, effects 0.5, vision 1.4
+  slow tick 18.6 ms at 10:48:   pre:5 0.6, pre 2.0, ai 2.8,   bot:shop_items 2.2,   bot:scan 1.3,   bot:choose 3.2, bots 8.0,   ord:1 0.8, orders 2.5, effects 1.5, vision 1.4
+  slow tick 15.6 ms at 10:48:   pre:5 0.6, pre 1.9, ai 1.0, brains 2.3,   bot:shop_items 1.8,   bot:scan 1.0,   bot:choose 1.7, bots 6.9,   ord:1 0.8, orders 2.4,   brain:ganks 0.9,   brain:teamfight 0.6
+  slow tick 24.4 ms at 10:49:   pre:5 0.7, pre 5.9, ai 2.8, brains 3.5,   bot:shop_items 1.1,   bot:choose 1.6, bots 4.4,   ord:1 0.8, orders 2.3, effects 1.5, vision 3.5,   brain:ganks 2.5
+  slow tick 15.4 ms at 10:49:   pre:5 0.6, pre 1.7, ai 1.8,   bot:shop_items 2.0,   bot:scan 1.1,   bot:choose 2.9, bots 7.4,   ord:1 0.7, orders 2.1, vision 1.3
+  slow tick 19.4 ms at 10:49: pre 1.4, ai 0.9,   bot:shop_items 8.9,   bot:scan 0.6,   bot:choose 1.9, bots 12.4,   ord:1 0.8, orders 2.5, vision 1.3
+  slow tick 18.1 ms at 10:49:   pre:5 0.7, pre 2.3, ai 3.4,   bot:shop_items 2.1,   bot:scan 1.2,   bot:choose 3.2, bots 7.8,   ord:1 0.5, orders 1.8, effects 1.1, vision 1.1
+  slow tick 16.9 ms at 10:50: pre 1.9, ai 3.2,   bot:shop_items 3.8,   bot:scan 1.0,   bot:choose 2.1, bots 7.7,   ord:1 0.6, orders 1.8, effects 0.9, vision 0.9
+  slow tick 18.2 ms at 10:51:   pre:5 0.8, pre 7.4, ai 2.4,   bot:shop_items 1.3,   bot:scan 0.7,   bot:choose 1.2, bots 4.0, orders 1.4, effects 1.4, vision 1.3
+  slow tick 17.9 ms at 10:51:   pre:5 0.6, pre 2.0, ai 3.1,   bot:shop_items 2.0,   bot:scan 1.0,   bot:choose 2.5, bots 6.8,   ord:1 0.6, orders 1.9, projectiles 0.5, effects 2.1, vision 1.2
+  slow tick 16.4 ms at 10:51:   pre:5 0.6, pre 2.1, ai 3.3,   bot:shop_items 1.4,   bot:scan 0.9,   bot:choose 1.9, bots 5.0,   ord:1 0.6, orders 2.9, effects 1.8, vision 0.9
+  slow tick 16.3 ms at 10:51:   pre:5 0.6, pre 1.6, ai 1.6,   bot:shop_items 2.2,   bot:scan 1.2,   bot:choose 2.9, bots 7.9,   ord:1 0.8, orders 2.4, effects 0.9, vision 1.3
+  slow tick 16.8 ms at 10:52:   pre:5 0.5, pre 5.6, ai 3.0,   ord:0 1.0,   ord:1 0.5, orders 2.6, effects 1.7, deaths 1.1, vision 1.1
+  slow tick 17.4 ms at 10:52:   pre:5 0.8, pre 2.2, ai 1.8,   bot:shop_items 6.4,   bot:scan 1.0,   bot:choose 1.3, bots 9.8,   ord:1 1.0, orders 2.7
+  slow tick 15.9 ms at 10:52:   pre:5 0.6, pre 2.0, ai 3.1, brains 1.5,   bot:shop_items 1.0,   bot:scan 0.6,   bot:choose 0.9, bots 4.0,   ord:1 0.5, orders 2.0, effects 1.5, vision 1.3,   brain:ganks 0.6
+  slow tick 16.4 ms at 10:52:   pre:0 0.9,   pre:5 0.7,   pre:13 0.8, pre 3.3, ai 1.3,   bot:shop_items 3.1,   bot:scan 1.1,   bot:choose 2.2, bots 7.1,   ord:1 0.5, orders 1.9, effects 0.8, vision 1.4
+  slow tick 15.5 ms at 10:52:   pre:5 0.6, pre 1.9, ai 2.4,   bot:shop_items 3.0,   bot:scan 0.9,   bot:choose 1.1, bots 5.8,   ord:1 0.7, orders 2.4, effects 1.3, vision 1.0
+  slow tick 19.5 ms at 10:53:   pre:5 0.7, pre 2.0, ai 1.7,   bot:shop_items 1.3,   bot:scan 0.9,   bot:choose 2.2, bots 5.8, couriers 1.8,   ord:0 1.0,   ord:1 0.8, orders 3.2, effects 1.0, deaths 1.6, vision 1.3
+  slow tick 15.4 ms at 10:53:   pre:5 0.5, pre 1.5, ai 2.4,   bot:shop_items 5.2,   bot:scan 0.5,   bot:choose 0.6, bots 7.2,   ord:1 0.5, orders 1.5, effects 1.2, vision 1.2
+  slow tick 19.3 ms at 10:54:   pre:0 0.6,   pre:5 0.7, pre 6.3, ai 3.2, brains 1.5,   bot:shop_items 1.2,   bot:scan 0.6,   bot:choose 0.8, bots 3.2, orders 1.5, effects 1.6, vision 1.5,   brain:ganks 0.6
+  slow tick 17.4 ms at 10:58:   pre:5 0.6, pre 4.2, ai 3.0,   bot:shop_items 1.2,   bot:scan 0.7,   bot:choose 1.8, bots 5.0,   ord:1 0.5, orders 2.0, effects 1.5, vision 1.2
+  slow tick 15.1 ms at 10:58: pre 1.3, ai 3.0,   bot:shop_items 1.6,   bot:scan 0.7,   bot:choose 1.9, bots 5.4,   ord:1 0.5, orders 2.0, effects 1.2, vision 1.9
+  slow tick 19.2 ms at 11:00: pre 11.2, ai 2.3,   ord:0 0.5,   find_path 1.0,   ord:1 1.2,   ord:2 0.5, orders 3.4, effects 0.7, vision 1.3
+  slow tick 20.8 ms at 11:00: pre 1.6, ai 2.1, brains 4.8,   bot:shop_items 1.8,   bot:choose 3.1, bots 7.0,   ord:1 0.6, orders 2.1, effects 1.5, vision 1.1,   brain:ganks 1.3,   brain:teamfight 1.1,   brain:other 2.0
+  slow tick 20.9 ms at 11:00: pre 1.4, ai 1.2,   bot:shop_items 2.6,   bot:scan 1.6,   bot:choose 3.3, bots 11.5, couriers 1.4,   resolve 0.6,   ord:0 0.6,   ord:1 0.9, orders 3.1, effects 0.8, vision 1.3
+  slow tick 16.6 ms at 11:00:   pre:5 0.6, pre 2.3, ai 2.0, brains 4.7,   resolve 0.6,   ord:1 0.8, orders 2.6, effects 1.8, vision 2.9,   brain:ganks 3.3,   brain:teamfight 0.8
+  slow tick 16.3 ms at 11:00: pre 1.5, ai 1.3,   bot:shop_items 2.3,   bot:scan 1.8,   bot:choose 3.9, bots 9.9,   resolve 0.5,   ord:1 0.7, orders 2.3, effects 0.8
+  slow tick 18.9 ms at 11:00:   pre:5 0.7, pre 2.2, ai 0.9,   bot:shop_items 3.7,   bot:scan 1.7,   bot:choose 4.3, bots 11.7,   resolve 0.7,   ord:1 1.1, orders 3.3
+  slow tick 15.5 ms at 11:00:   pre:5 0.7, pre 2.0, ai 1.1,   bot:shop_items 1.8,   bot:scan 1.1,   bot:choose 3.7, bots 8.2,   resolve 0.7,   ord:0 0.5,   ord:1 0.8, orders 3.0, effects 0.9
+  slow tick 20.2 ms at 11:00:   pre:5 0.7, pre 2.6, ai 3.2,   bot:shop_items 2.6,   bot:scan 1.6,   bot:choose 2.5, bots 7.4,   resolve 0.7,   ord:1 1.0, orders 3.2, effects 1.7, vision 1.5
+  slow tick 20.2 ms at 11:00:   pre:0 1.6,   pre:5 0.5, pre 3.2, ai 1.2,   bot:shop_items 1.7,   bot:scan 2.1,   bot:choose 3.7, bots 9.4,   resolve 0.5,   ord:0 0.8,   ord:1 0.8, orders 3.1, effects 0.6, vision 2.1
+  slow tick 23.0 ms at 11:01:   pre:5 0.7, pre 4.9, ai 3.1,   bot:shop_items 2.1,   bot:scan 2.4,   bot:choose 2.7, bots 9.0,   resolve 0.6,   ord:1 0.8, orders 2.9, effects 1.6, vision 1.0
+  slow tick 15.8 ms at 11:01:   pre:5 0.5, pre 2.0, ai 3.2,   bot:scan 1.0,   bot:choose 1.8, bots 4.8,   ord:1 0.7, orders 1.8, effects 1.4, vision 2.0
+  slow tick 15.0 ms at 11:01:   pre:0 0.7,   pre:5 0.6, pre 2.0, ai 1.3,   bot:shop_items 1.3,   bot:scan 1.9,   bot:choose 3.2, bots 8.2,   ord:1 0.7, orders 2.1, effects 1.0
+  slow tick 15.5 ms at 11:01: pre 1.4, ai 1.3,   bot:shop_items 0.9,   bot:scan 1.1,   bot:choose 3.3, bots 6.8,   resolve 0.6,   ord:1 0.9, orders 2.7, effects 0.7, vision 2.1
+  slow tick 18.4 ms at 11:01:   pre:5 0.6, pre 1.8, ai 2.7,   bot:shop_items 1.8,   bot:scan 1.8,   bot:choose 3.3, bots 8.1,   ord:1 0.6, orders 2.0, effects 1.8, vision 1.4
+  slow tick 17.1 ms at 11:01: pre 1.3, ai 0.9,   bot:shop_items 1.9,   bot:scan 1.2,   bot:choose 4.9, bots 9.9,   resolve 0.5,   ord:1 0.7, orders 2.4, effects 0.6, vision 1.6
+  slow tick 29.3 ms at 11:01:   pre:0 0.5,   pre:5 0.6, pre 2.2, ai 3.2, brains 4.0,   bot:shop_items 0.7,   bot:choose 1.1, bots 2.7,   ord:0 0.9,   ord:1 0.7, orders 2.9, effects 2.0, vision 11.6,   brain:ganks 1.6,   brain:teamfight 0.6,   brain:other 1.4
+  slow tick 15.0 ms at 11:01:   pre:5 0.7, pre 2.0, ai 1.3,   bot:shop_items 2.1,   bot:scan 2.1,   bot:choose 2.9, bots 8.3,   ord:1 0.8, orders 2.4, effects 0.6
+  slow tick 20.8 ms at 11:02:   pre:5 0.7, pre 5.8, ai 3.2, brains 5.5,   ord:1 0.8, orders 2.3, effects 1.6, vision 2.0,   brain:ganks 1.6,   brain:teamfight 1.0,   brain:other 2.4
+  slow tick 19.1 ms at 11:02: pre 1.8, ai 3.6,   bot:shop_items 1.2,   bot:scan 1.3,   bot:choose 3.7, bots 7.6,   ord:1 0.8, orders 2.7, effects 1.5, vision 1.3
+  slow tick 17.6 ms at 11:02:   pre:5 0.6, pre 2.0, ai 1.5,   bot:shop_items 2.0,   bot:scan 1.5,   bot:choose 4.7, bots 9.3,   ord:1 0.7, orders 2.3, effects 0.6, vision 1.3
+  slow tick 15.7 ms at 11:02:   pre:5 0.6, pre 2.0, ai 2.0,   bot:shop_items 1.9,   bot:scan 1.8,   bot:choose 1.5, bots 5.7,   ord:0 0.6,   ord:1 0.8, orders 2.9, effects 1.6, vision 1.0
+  slow tick 20.7 ms at 11:02:   pre:0 0.7, pre 2.3, ai 0.7, brains 6.1,   bot:shop_items 2.1,   bot:scan 1.0,   bot:choose 2.6, bots 6.8,   resolve 0.5,   ord:0 1.0,   ord:1 0.9, orders 3.5, effects 0.7,   brain:ganks 2.0,   brain:teamfight 1.4,   brain:other 2.2
+  slow tick 16.9 ms at 11:02:   pre:5 0.7, pre 2.1, ai 1.4,   bot:shop_items 2.4,   bot:scan 1.3,   bot:choose 4.2, bots 9.8,   ord:1 0.6, orders 2.6
+  slow tick 16.7 ms at 11:02:   pre:5 0.6, pre 2.0, ai 1.3,   bot:shop_items 2.0,   bot:scan 1.7,   bot:choose 3.7, bots 8.7,   find_path 0.6,   ord:1 0.7,   ord:2 1.0, orders 3.3, effects 0.8
+  slow tick 17.4 ms at 11:02: pre 1.5, ai 1.3, brains 4.6,   bot:shop_items 2.2,   bot:scan 1.1,   bot:choose 1.1, bots 5.1,   resolve 0.7,   ord:1 0.9,   ord:4 0.7, orders 3.2, effects 1.1,   brain:ganks 1.4,   brain:teamfight 0.8,   brain:other 1.8
+  slow tick 15.7 ms at 11:02:   pre:5 0.7, pre 2.4, ai 1.5,   bot:shop_items 0.9,   bot:scan 1.0,   bot:choose 2.4, bots 5.1,   ord:1 0.6, orders 2.7, effects 1.3, vision 2.1
+  slow tick 26.1 ms at 11:03:   pre:0 1.2,   pre:5 0.6, pre 6.7, ai 3.3,   bot:shop_items 1.9,   bot:scan 1.7,   bot:choose 4.3, bots 9.6,   ord:1 0.7, orders 2.2, effects 2.0, vision 1.9
+  slow tick 18.2 ms at 11:03:   pre:0 0.8,   pre:5 0.7, pre 2.5, ai 1.9,   bot:shop_items 2.2,   bot:scan 2.0,   bot:choose 2.0, bots 6.9, couriers 2.3,   ord:1 0.6, orders 2.0, effects 0.8, vision 1.5
+  slow tick 15.8 ms at 11:03:   pre:0 0.6,   pre:5 0.7, pre 2.6, ai 1.8,   bot:shop_items 1.1,   bot:scan 1.3,   bot:choose 2.9, bots 6.6,   ord:0 0.8,   ord:1 0.8, orders 3.0, effects 1.3
+  slow tick 21.2 ms at 11:03:   pre:5 0.5, pre 2.2, ai 2.9, brains 3.5,   bot:shop_items 0.9,   bot:scan 0.5,   bot:choose 1.8, bots 5.8,   ord:1 0.6, orders 2.0, effects 2.9, vision 1.5,   brain:ganks 1.2,   brain:teamfight 0.5,   brain:other 1.4
+  slow tick 18.5 ms at 11:03:   pre:0 1.4,   pre:5 0.6, pre 3.4, ai 1.3,   bot:shop_items 2.0,   bot:scan 1.8,   bot:choose 3.2, bots 7.8,   ord:1 0.7, orders 2.7, effects 0.9, vision 1.9
+  slow tick 21.1 ms at 11:03:   pre:0 0.8,   pre:5 0.7, pre 3.2, ai 3.5,   bot:shop_items 2.3,   bot:scan 1.7,   bot:choose 2.1, bots 6.9,   ord:1 0.7, orders 2.9, effects 2.5, vision 1.6
+  slow tick 19.7 ms at 11:03:   pre:0 0.7,   pre:5 0.6, pre 2.7, ai 1.1, brains 3.8,   bot:shop_items 2.1,   bot:choose 3.9, bots 7.8,   ord:1 0.8, orders 3.0, effects 0.9,   brain:ganks 1.0,   brain:teamfight 0.8,   brain:other 1.3
+  slow tick 20.2 ms at 11:04:   pre:5 0.8, pre 7.5, ai 3.2,   bot:shop_items 0.5,   bot:scan 1.0, bots 1.7,   ord:1 0.9, orders 2.8, effects 2.5, vision 2.1
+  slow tick 20.0 ms at 11:04:   pre:0 0.5,   pre:13 0.5, pre 2.4, ai 1.3,   bot:shop_items 2.4,   bot:scan 1.5,   bot:choose 4.0, bots 9.0,   ord:0 1.4,   ord:1 0.9, orders 3.9, deaths 1.5
+  slow tick 16.1 ms at 11:04:   pre:5 0.6, pre 1.8, ai 1.6,   bot:shop_items 1.9,   bot:scan 1.3,   bot:choose 4.1, bots 8.7,   ord:1 0.6, orders 2.2, effects 1.3
+  slow tick 16.5 ms at 11:04:   pre:0 0.8,   pre:5 0.7, pre 2.8, ai 1.9,   bot:scan 0.9,   bot:choose 1.9, bots 4.0,   ord:1 1.0, orders 2.9, effects 0.6, vision 3.5
+  slow tick 21.6 ms at 11:04:   pre:5 0.6, pre 2.3, ai 2.9,   bot:shop_items 2.2,   bot:scan 1.6,   bot:choose 3.6, bots 8.7,   ord:1 0.6, orders 2.5, effects 2.8, vision 2.0
+  slow tick 16.8 ms at 11:04:   pre:5 0.6, pre 1.7, ai 1.0,   bot:shop_items 2.4,   bot:scan 1.1,   bot:choose 3.3, bots 7.8,   ord:0 0.7,   ord:1 0.6, orders 3.1, effects 0.9, vision 1.6
+  slow tick 15.1 ms at 11:04:   pre:5 0.7, pre 2.5, ai 3.3,   bot:shop_items 0.8,   bot:scan 0.8, bots 1.8,   ord:0 0.6,   ord:1 0.5, orders 2.8, projectiles 0.6, effects 1.9, vision 1.6
+  slow tick 16.9 ms at 11:04:   pre:5 0.7, pre 2.6, ai 1.3,   bot:shop_items 2.3,   bot:scan 1.3,   bot:choose 3.3, bots 7.9,   ord:0 1.3, orders 3.2, effects 1.1
+  slow tick 23.6 ms at 11:05: pre 5.7, ai 2.8, brains 3.1,   bot:choose 1.8, bots 2.9,   find_path 0.6,   ord:1 1.3, orders 3.3, effects 1.9, vision 3.5,   brain:ganks 0.8,   brain:teamfight 0.7,   brain:other 1.1
+  slow tick 19.2 ms at 11:05:   pre:5 0.7, pre 1.9, ai 1.9,   bot:shop_items 2.2,   bot:scan 1.5,   bot:choose 3.8, bots 9.2,   find_path 0.7,   ord:1 1.3, orders 3.2, projectiles 0.6, effects 0.7, vision 1.1
+  slow tick 23.4 ms at 11:05:   pre:5 0.6, pre 2.2, ai 2.7, brains 2.7,   bot:shop_items 2.2,   bot:scan 1.0,   bot:choose 3.7, bots 8.7,   ord:1 0.7, orders 2.5, effects 1.8, vision 1.8,   brain:ganks 1.6
+  slow tick 15.9 ms at 11:05:   pre:5 0.7, pre 2.3, ai 3.6,   bot:shop_items 1.0,   bot:scan 0.8,   bot:choose 1.9, bots 4.4, orders 2.3, effects 1.3, vision 1.4
+  slow tick 18.1 ms at 11:05:   pre:5 0.7, pre 2.5, ai 1.4,   bot:shop_items 2.3,   bot:scan 1.3,   bot:choose 3.4, bots 8.1,   ord:0 2.1, orders 4.4, effects 1.1
+  slow tick 15.9 ms at 11:05:   pre:5 0.7, pre 2.1, ai 1.3,   bot:shop_items 2.4,   bot:scan 1.4,   bot:choose 3.2, bots 8.3,   ord:1 0.9, orders 2.9
+  slow tick 21.0 ms at 11:05:   pre:5 0.7, pre 2.3, ai 3.7,   bot:shop_items 2.2,   bot:scan 1.4,   bot:choose 3.7, bots 8.9,   find_path 0.5,   ord:2 0.7, orders 2.7, effects 1.6, vision 1.3
+  slow tick 16.4 ms at 11:05:   pre:5 0.6, pre 1.9, ai 1.8,   bot:shop_items 2.2,   bot:scan 1.2,   bot:choose 3.8, bots 8.5,   ord:1 0.7, orders 2.2, effects 0.7, vision 1.0
+  slow tick 18.4 ms at 11:06:   pre:5 0.8, pre 7.7, ai 3.3,   bot:shop_items 0.8,   bot:scan 0.8, bots 1.8,   ord:1 0.8, orders 2.3, effects 1.8, vision 1.2
+  slow tick 15.7 ms at 11:06: pre 1.9, ai 0.9,   bot:shop_items 2.2,   bot:scan 1.2,   bot:choose 3.0, bots 7.5,   ord:0 1.6,   ord:1 0.7, orders 3.9, effects 0.9
+  slow tick 18.4 ms at 11:06:   pre:0 0.5,   pre:5 0.7, pre 2.7, ai 1.0, brains 2.6,   bot:shop_items 2.0,   bot:scan 1.3,   bot:choose 3.7, bots 8.3,   ord:1 0.7, orders 2.4, effects 1.0,   brain:ganks 1.2,   brain:teamfight 0.7
+  slow tick 16.1 ms at 11:06:   pre:5 0.7, pre 2.1, ai 1.4,   bot:shop_items 2.3,   bot:scan 1.3,   bot:choose 3.4, bots 8.2,   ord:1 0.5, orders 2.6, effects 1.1
+  slow tick 20.7 ms at 11:06:   pre:5 0.8, pre 2.3, ai 1.5,   bot:shop_items 2.5,   bot:scan 1.8,   bot:choose 4.0, bots 9.7,   ord:0 1.8,   ord:1 0.6,   ord:2 0.5, orders 4.3, effects 0.9, vision 1.4
+  slow tick 23.3 ms at 11:06:   pre:5 0.6, pre 2.0, ai 3.7, brains 3.2,   bot:shop_items 2.0,   bot:choose 3.1, bots 7.3,   ord:1 0.6, orders 2.1, effects 1.1, deaths 1.5, vision 1.1,   brain:ganks 0.7,   brain:teamfight 0.6,   brain:other 1.3
+  slow tick 16.5 ms at 11:06:   pre:5 0.7, pre 2.3, ai 1.2,   bot:learn 1.0,   bot:shop_items 3.8,   bot:scan 1.1,   bot:choose 2.6, bots 9.8,   ord:1 0.7, orders 2.4
+  slow tick 15.2 ms at 11:06: pre 1.4, ai 2.0, brains 2.1,   bot:shop_items 0.9,   bot:scan 0.5,   bot:choose 1.6, bots 3.5,   ord:0 0.6,   ord:1 0.7, orders 2.7, effects 1.6, vision 1.3,   brain:ganks 0.9,   brain:teamfight 0.7
+  slow tick 17.0 ms at 11:07: pre 1.6, ai 2.3,   bot:shop_items 3.1,   bot:scan 1.3,   bot:choose 2.0, bots 7.4,   ord:1 0.6, orders 2.0, effects 1.5, vision 1.6
+  slow tick 16.1 ms at 11:07: pre 1.4, ai 1.1,   bot:shop_items 1.5,   bot:scan 1.0,   bot:choose 2.8,   bot:orb_site 0.7, bots 9.5,   ord:1 0.6, orders 2.5, effects 0.9
+  slow tick 20.2 ms at 11:08: pre 4.8, ai 2.7,   bot:shop_items 2.3,   bot:scan 0.9,   bot:choose 2.1, bots 6.7,   ord:1 0.8,   ord:4 0.6, orders 2.6, effects 1.0, vision 1.7
+  slow tick 15.3 ms at 11:08:   pre:5 0.6, pre 2.0, ai 3.0,   bot:choose 1.0, bots 5.8,   ord:1 0.7, orders 2.2, effects 0.7, vision 1.2
+  slow tick 17.6 ms at 11:09:   pre:5 0.7, pre 6.8, ai 3.5, orders 2.2, effects 1.1, vision 3.7
+  slow tick 17.0 ms at 11:10:   pre:5 0.5, pre 4.8, ai 2.7, brains 0.9, bots 2.8,   ord:1 0.7, orders 2.3, effects 1.2, vision 1.8
+  slow tick 17.3 ms at 11:14:   pre:5 0.7, pre 1.9, ai 1.7,   bot:shop_items 8.9, bots 10.0, orders 1.7, vision 1.3
+  slow tick 15.6 ms at 11:16:   pre:5 0.7, pre 5.6, ai 4.5,   resolve 0.6,   ord:1 0.6, orders 2.5, effects 0.9, vision 1.6
+  slow tick 15.0 ms at 11:16:   pre:5 0.8,   pre:1 0.6, pre 3.2, ai 2.1,   bot:shop_items 0.9,   bot:scan 0.9,   bot:choose 0.6, bots 6.3,   resolve 0.6,   ord:1 0.6, orders 2.5
+  slow tick 27.8 ms at 11:17:   pre:5 0.8, pre 6.8, ai 3.5,   bot:choose 0.6, bots 4.0,   resolve 0.5, orders 2.4, effects 0.8, vision 9.9
+  slow tick 16.7 ms at 11:20:   pre:0 2.4,   pre:5 0.8,   pre:1 0.6, pre 5.1, ai 1.3,   bot:shop_items 1.0,   bot:scan 1.3,   bot:choose 0.9, bots 6.7,   resolve 0.5,   ord:0 0.6,   ord:1 0.8, orders 2.9
+  slow tick 23.9 ms at 11:20:   pre:5 0.6, pre 1.7, ai 1.0,   bot:shop_items 4.2,   bot:scan 1.6,   bot:choose 5.2, bots 15.7, couriers 1.7,   ord:1 0.7, orders 2.4, effects 1.1
+  slow tick 19.5 ms at 11:20:   pre:5 0.7, pre 1.9, ai 1.4,   bot:shop_items 1.9,   bot:scan 0.9,   bot:choose 4.1, bots 11.2, couriers 1.8,   resolve 0.5,   ord:0 0.5,   ord:1 0.6, orders 2.5
+  slow tick 18.1 ms at 11:20:   pre:5 0.7, pre 2.6, ai 3.3,   bot:shop_items 1.2,   bot:scan 0.8, bots 2.3, couriers 2.8,   ord:1 0.6, orders 2.3, effects 2.1, vision 2.6
+  slow tick 26.4 ms at 11:20:   pre:5 0.7, pre 2.0, ai 1.1,   bot:shop_items 9.3,   bot:scan 2.1,   bot:choose 3.4, bots 15.8,   resolve 0.6,   ord:1 0.7, orders 2.6, effects 0.6, vision 3.8
+  slow tick 22.5 ms at 11:20:   pre:5 0.7, pre 1.9, ai 3.4,   bot:shop_items 2.1,   bot:scan 1.6,   bot:choose 4.4, bots 9.7,   ord:0 1.0,   ord:1 0.7, orders 3.1, effects 1.7, vision 1.9
+  slow tick 15.1 ms at 11:20:   pre:5 0.7, pre 2.1, ai 1.7,   bot:shop_items 1.7,   bot:scan 1.2,   bot:choose 4.2, bots 8.7, orders 1.8
+  slow tick 24.4 ms at 11:20:   pre:5 0.7, pre 2.0, ai 1.1,   bot:shop_items 1.5,   bot:scan 1.1,   bot:choose 2.2, bots 5.9,   ord:0 1.8, orders 3.8, vision 10.6
+  slow tick 20.1 ms at 11:21:   pre:5 0.7, pre 5.3, ai 3.2, brains 4.5,   resolve 0.5,   ord:1 0.6, orders 2.2, effects 2.6, vision 1.8,   brain:ganks 1.7,   brain:teamfight 0.7,   brain:other 1.6
+  slow tick 16.0 ms at 11:21:   pre:5 0.8, pre 2.3, ai 1.0,   bot:shop_items 1.9,   bot:scan 1.4,   bot:choose 4.0, bots 9.6,   ord:1 0.5, orders 1.9, effects 0.9
+  slow tick 23.2 ms at 11:21:   pre:5 0.8, pre 2.6, ai 3.3, brains 3.5,   bot:shop_items 1.8,   bot:scan 2.0, bots 4.1,   ord:1 0.6, orders 2.2, effects 3.1, vision 3.8,   brain:ganks 1.4,   brain:teamfight 0.9
+  slow tick 16.5 ms at 11:21:   pre:5 0.7, pre 2.3, ai 2.0,   bot:shop_items 1.6,   bot:scan 1.1,   bot:choose 3.1, bots 8.0,   ord:1 0.8, orders 2.5, effects 0.8
+  slow tick 16.4 ms at 11:21:   pre:5 0.8, pre 3.2, ai 3.7,   ord:1 0.6,   ord:2 0.6, orders 2.7, effects 2.8, vision 3.5
+  slow tick 15.3 ms at 11:21:   pre:5 0.7, pre 2.3, ai 1.5,   bot:shop_items 1.9,   bot:scan 2.2,   bot:choose 2.3, bots 7.9,   ord:0 0.6,   ord:1 0.6, orders 2.5, effects 0.6
+  slow tick 22.0 ms at 11:21:   pre:5 0.5, pre 2.1, ai 3.1,   bot:shop_items 1.6,   bot:scan 1.4,   bot:choose 2.7, bots 6.9, orders 2.2, effects 2.8, vision 4.1
+  slow tick 16.3 ms at 11:21:   pre:5 0.6, pre 2.1, ai 1.0,   bot:shop_items 1.6,   bot:scan 1.9,   bot:choose 4.9, bots 9.8,   ord:1 0.5, orders 2.1, effects 0.9
+  slow tick 22.5 ms at 11:21:   pre:5 0.8, pre 2.6, ai 3.2,   bot:shop_items 1.1,   bot:scan 1.0,   bot:choose 2.5, bots 6.9, orders 2.1, effects 1.6, vision 5.6
+  slow tick 23.8 ms at 11:21:   pre:5 0.6, pre 1.9, ai 1.7,   bot:shop_items 3.0,   bot:scan 2.4,   bot:choose 5.2, bots 12.4, orders 2.0, effects 1.9, vision 3.2
+  slow tick 27.2 ms at 11:22:   pre:5 0.6, pre 5.8, ai 3.3,   bot:shop_items 2.0,   bot:scan 1.6,   bot:choose 4.9, bots 10.4,   ord:1 0.6, orders 2.2, effects 2.7, vision 1.9
+  slow tick 15.7 ms at 11:22:   pre:5 0.7, pre 2.5, ai 2.3,   bot:shop_items 1.5,   bot:scan 2.1,   bot:choose 3.0, bots 7.7,   ord:1 0.5, orders 2.0, effects 0.9
+  slow tick 18.7 ms at 11:22:   pre:5 0.8,   pre:4 0.8, pre 4.6, ai 1.2, brains 4.1,   bot:shop_items 1.5,   bot:scan 0.6,   bot:choose 1.2, bots 4.0,   ord:1 0.6, orders 2.3, effects 0.9, deaths 0.8,   brain:ganks 1.4,   brain:teamfight 0.7,   brain:other 1.6
+  slow tick 16.9 ms at 11:22:   pre:5 0.9, pre 2.4, ai 1.0,   bot:shop_items 2.3,   bot:scan 1.8,   bot:choose 4.8, bots 10.5,   ord:1 0.6, orders 2.0
+  slow tick 16.8 ms at 11:22:   pre:0 0.7,   pre:5 0.8, pre 2.7, ai 2.0,   bot:shop_items 1.6,   bot:scan 1.5,   bot:choose 3.1, bots 7.6,   ord:1 0.5, orders 2.1, effects 0.8, vision 1.3
+  slow tick 16.4 ms at 11:22:   pre:5 0.8, pre 2.5, ai 1.2,   bot:shop_items 2.0,   bot:scan 2.5,   bot:choose 3.1, bots 8.6,   ord:0 1.5, orders 2.9, effects 0.8
+  slow tick 24.7 ms at 11:22:   pre:5 0.6, pre 2.2, ai 3.6, brains 4.8,   bot:shop_items 2.0,   bot:scan 0.6,   bot:choose 3.0, bots 6.5,   ord:0 1.7, orders 3.8, effects 1.9, vision 1.3,   brain:ganks 1.6,   brain:teamfight 0.8,   brain:other 1.9
+  slow tick 15.7 ms at 11:22:   pre:5 0.6, pre 2.2, ai 1.7,   bot:shop_items 1.6,   bot:scan 2.0,   bot:choose 2.5, bots 6.9,   ord:0 0.7, orders 2.6, effects 0.7, vision 1.2
+  slow tick 18.0 ms at 11:22:   pre:0 0.6,   pre:5 0.9, pre 3.5, ai 4.2, brains 3.3,   ord:0 0.9, orders 2.8, effects 2.2, vision 1.6,   brain:ganks 1.3,   brain:teamfight 1.0
+  slow tick 19.5 ms at 11:22:   pre:0 0.6,   pre:5 0.9, pre 3.2, ai 2.0,   bot:shop_items 2.2,   bot:scan 1.7,   bot:choose 4.5, bots 10.4, orders 2.2, effects 1.2
+  slow tick 16.9 ms at 11:22:   pre:0 0.6,   pre:5 0.8, pre 3.0, ai 1.0,   bot:shop_items 1.9,   bot:scan 1.6,   bot:choose 4.4, bots 9.2,   ord:1 0.5, orders 2.4, effects 0.8
+  slow tick 21.0 ms at 11:23:   pre:5 0.5, pre 6.2, ai 2.7,   bot:shop_items 1.4,   bot:scan 1.2,   bot:choose 1.6, bots 5.4,   ord:0 0.8, orders 2.4, effects 2.0, vision 1.8
+  slow tick 17.4 ms at 11:23:   pre:0 0.7, pre 2.0, ai 0.7,   bot:shop_items 1.9,   bot:scan 1.5,   bot:choose 4.4, bots 9.5,   ord:0 0.7, orders 2.3, effects 2.4
+  slow tick 18.2 ms at 11:23:   pre:5 0.5, pre 1.9, ai 2.9,   bot:shop_items 1.2,   bot:scan 0.9,   bot:choose 2.0, bots 5.0, orders 1.9, effects 1.7, vision 4.3
+  slow tick 17.1 ms at 11:23:   pre:5 0.7, pre 2.2, ai 1.1,   bot:shop_items 2.0,   bot:scan 1.7,   bot:choose 3.1, bots 8.0, orders 2.2, projectiles 0.7, effects 0.8, vision 1.5
+  slow tick 21.3 ms at 11:23:   pre:5 0.7, pre 2.0, ai 3.2,   bot:shop_items 1.8,   bot:scan 1.3,   bot:choose 3.4, bots 7.8,   ord:0 1.3, orders 3.0, effects 2.2, deaths 0.6, vision 2.1
+  slow tick 16.0 ms at 11:23:   pre:5 0.7, pre 1.8, ai 1.0,   bot:shop_items 1.8,   bot:scan 1.6,   bot:choose 3.9, bots 9.8, orders 2.3, effects 0.6
+  slow tick 16.7 ms at 11:23:   pre:5 0.7, pre 2.1, ai 1.1, brains 4.3,   bot:shop_items 1.3,   bot:choose 2.6, bots 5.0,   ord:0 0.8, orders 2.7, effects 1.0,   brain:ganks 1.2,   brain:teamfight 1.3,   brain:other 1.3
+  slow tick 17.1 ms at 11:23:   pre:5 0.8, pre 2.2, ai 1.7,   bot:shop_items 2.0,   bot:scan 1.6,   bot:choose 3.9, bots 9.0, orders 1.8, effects 1.8
+  slow tick 17.1 ms at 11:23:   pre:0 0.6,   pre:5 0.8, pre 2.5, ai 0.9, brains 3.1,   bot:shop_items 1.8,   bot:scan 1.2,   bot:choose 3.5, bots 7.7, orders 1.8, effects 0.6,   brain:ganks 1.4,   brain:teamfight 0.7
+  slow tick 26.0 ms at 11:24:   pre:5 0.7, pre 6.4, ai 3.1,   bot:shop_items 2.2,   bot:scan 1.9,   bot:choose 3.8, bots 9.5, orders 1.9, effects 1.4, vision 3.2
+  slow tick 16.8 ms at 11:24:   pre:5 0.7, pre 2.0, ai 0.9,   bot:shop_items 1.8,   bot:scan 1.0,   bot:choose 4.5, bots 9.7, orders 1.9, effects 0.7, vision 1.2
+  slow tick 16.2 ms at 11:24:   pre:5 0.7, pre 2.6, ai 3.4, brains 4.1,   ord:0 1.3, orders 3.0, effects 1.7, vision 0.9,   brain:ganks 1.7,   brain:teamfight 0.7,   brain:other 1.3
+  slow tick 19.4 ms at 11:24:   pre:5 0.6, pre 1.8, ai 3.1, brains 3.7,   bot:shop_items 1.5,   bot:scan 0.5,   bot:choose 1.9, bots 4.7, orders 2.0, effects 2.3, vision 1.3,   brain:ganks 1.1,   brain:teamfight 0.6,   brain:other 1.1
+  slow tick 16.6 ms at 11:24:   pre:5 0.7, pre 2.4, ai 3.1,   bot:shop_items 1.3,   bot:scan 1.4,   bot:choose 2.6, bots 6.2, orders 1.8, effects 1.4, vision 1.2
+  slow tick 16.2 ms at 11:24: pre 1.4, ai 1.5,   bot:shop_items 2.1,   bot:scan 1.6,   bot:choose 3.4, bots 8.8,   ord:0 0.5, orders 2.2, effects 0.6, vision 1.3
+  slow tick 16.1 ms at 11:24:   pre:5 0.7, pre 2.4, ai 3.2,   bot:shop_items 1.7,   bot:scan 1.7,   bot:choose 1.4, bots 5.6, orders 1.6, effects 1.4, vision 1.3
+  slow tick 16.6 ms at 11:25:   pre:5 0.7, pre 2.0, ai 1.0,   bot:shop_items 2.2,   bot:scan 1.5,   bot:choose 3.9, bots 9.1,   ord:1 0.5, orders 2.2, effects 1.8
+  slow tick 16.3 ms at 11:25:   pre:5 0.6, pre 1.6, ai 1.0, brains 3.1,   bot:shop_items 1.3,   bot:choose 1.8, bots 4.3,   ord:0 1.3, orders 3.0, deaths 1.4,   brain:ganks 1.2,   brain:teamfight 0.6,   brain:other 1.0
+  slow tick 19.0 ms at 11:26:   pre:5 0.7, pre 6.0, ai 3.3, brains 1.6,   bot:shop_items 1.1,   bot:choose 0.8, bots 2.8,   ord:0 0.5, orders 2.1, effects 1.5, vision 1.2,   brain:ganks 0.6
+  slow tick 16.7 ms at 11:26:   pre:5 0.6, pre 2.0, ai 2.8,   bot:shop_items 1.8,   bot:scan 0.9,   bot:choose 2.3, bots 6.0, orders 1.9, effects 1.3, vision 2.3
+  slow tick 16.8 ms at 11:27:   pre:5 0.7, pre 6.3, ai 3.2, orders 1.6, effects 1.5, vision 3.8
+  slow tick 16.1 ms at 11:27:   pre:5 0.7, pre 2.2, ai 3.2, brains 1.8,   bot:shop_items 1.1,   bot:choose 1.4, bots 3.7, orders 1.7, effects 1.0, vision 2.0,   brain:ganks 0.8
+  slow tick 17.9 ms at 11:27:   pre:5 0.6, pre 2.1, ai 3.4, brains 1.5,   bot:shop_items 1.9,   bot:scan 0.7,   bot:choose 2.8, bots 6.7, orders 2.0, effects 0.9, vision 1.0,   brain:ganks 0.6
+  slow tick 15.6 ms at 11:28:   pre:0 0.5,   pre:5 0.6, pre 2.5, ai 3.3,   bot:shop_items 1.3,   bot:scan 0.7,   bot:choose 1.7, bots 4.7,   ord:0 0.7, orders 2.4, effects 1.2, vision 1.2
+  slow tick 26.8 ms at 11:29:   pre:5 0.6, pre 6.8, ai 2.7, brains 1.3,   bot:shop_items 1.9,   bot:scan 0.6,   bot:choose 1.7, bots 5.2,   ord:0 5.3,   ord:1 0.5, orders 7.1, effects 1.4, vision 1.7,   brain:ganks 0.6
+  slow tick 23.3 ms at 11:30: pre 14.0, ai 2.9,   find_path 1.1,   ord:1 1.5,   ord:2 0.6, orders 3.1, effects 1.4, vision 1.3
+  slow tick 15.1 ms at 11:30:   pre:5 0.6, pre 2.2, ai 3.2,   bot:shop_items 0.9,   bot:scan 0.6,   bot:choose 1.4, bots 4.1,   resolve 0.7,   ord:1 1.0, orders 2.7, effects 1.1, vision 1.4
+  slow tick 18.3 ms at 11:31:   pre:5 0.6, pre 5.8, ai 3.5,   bot:shop_items 1.2,   bot:scan 0.5,   bot:choose 1.7, bots 4.7,   ord:1 0.7, orders 1.9, effects 1.0, vision 1.0
+  slow tick 16.3 ms at 11:33:   pre:5 0.7, pre 6.4, ai 4.0,   bot:choose 0.7, bots 1.8,   ord:1 0.6, orders 1.7, effects 0.8, vision 1.2
+  slow tick 17.5 ms at 11:34:   pre:5 0.7, pre 5.7, ai 2.8, brains 0.8,   resolve 0.6,   ord:1 1.2, orders 2.6, effects 1.1, vision 4.2
+  slow tick 15.2 ms at 11:34:   pre:0 2.2,   pre:5 0.8, pre 4.4, ai 1.0,   bot:shop_items 2.5, bots 3.7,   resolve 0.5,   ord:1 1.2, orders 2.8, vision 2.2
+  slow tick 16.5 ms at 11:35:   pre:0 1.5,   pre:5 0.6, pre 6.8, ai 3.7,   find_path 1.0,   ord:1 1.6, orders 3.0, effects 1.1, vision 1.6
+  slow tick 19.4 ms at 11:36:   pre:0 1.7,   pre:5 0.8, pre 6.9, ai 3.3,   bot:choose 0.7, bots 4.2,   ord:1 0.7, orders 2.0, effects 0.6, vision 2.0
+  slow tick 17.5 ms at 11:37:   pre:0 1.8,   pre:5 0.8, pre 8.0, ai 3.6, brains 0.5,   ord:1 0.7, orders 2.2, effects 0.9, vision 1.3
+  slow tick 18.6 ms at 11:38:   pre:0 1.8,   pre:5 0.7, pre 7.2, ai 2.6,   bot:shop_items 1.1,   bot:choose 1.2, bots 3.4,   ord:1 1.2, orders 2.6, effects 0.9, vision 1.4
+  slow tick 16.2 ms at 11:38:   pre:5 0.7, pre 2.3, ai 3.1, brains 0.6,   bot:shop_items 0.9,   bot:choose 1.3, bots 3.6,   ord:1 1.1,   ord:2 0.5, orders 3.0, effects 0.9, vision 2.2
+  slow tick 20.5 ms at 11:39:   pre:0 1.6,   pre:5 0.7, pre 7.4, ai 3.6,   bot:choose 0.6, bots 1.5,   ord:1 0.7, orders 2.0, effects 0.8, vision 4.6
+  slow tick 15.5 ms at 11:39:   pre:5 0.7, pre 2.3, ai 2.9,   bot:shop_items 1.8,   bot:choose 1.6, bots 4.7,   resolve 0.5,   ord:1 0.8, orders 2.5, effects 0.8, vision 1.6
+  slow tick 16.5 ms at 11:40:   pre:0 1.7,   pre:5 0.7, pre 7.6, ai 2.4,   bot:choose 0.7, bots 1.6,   ord:1 0.9, orders 2.4, effects 0.9, vision 1.2
+  slow tick 30.7 ms at 11:40:   pre:5 0.7, pre 2.3, ai 3.6, brains 6.0,   bot:shop_items 1.9,   bot:scan 0.7,   bot:choose 4.3, bots 12.7,   ord:0 0.5,   ord:1 0.8, orders 2.7, effects 1.6, vision 1.4,   brain:ganks 2.0,   brain:teamfight 1.2,   brain:other 2.3
+  slow tick 22.4 ms at 11:40:   pre:5 0.6, pre 1.9, ai 0.8,   bot:shop_items 2.1,   bot:scan 2.5,   bot:choose 4.0, bots 16.4,   ord:0 0.5,   ord:1 0.9, orders 2.6
+  slow tick 16.1 ms at 11:40: pre 1.3, ai 1.6,   bot:scan 1.0,   bot:choose 2.7, bots 4.2, couriers 3.0,   resolve 0.5,   ord:1 0.9, orders 2.6, vision 2.8
+  slow tick 17.6 ms at 11:40:   pre:5 0.5, pre 1.9, ai 3.0, brains 3.2,   resolve 0.5,   ord:0 0.5,   find_path 1.2,   ord:1 0.7,   ord:13 1.3, orders 3.6, effects 1.7, vision 3.6,   brain:ganks 1.6,   brain:teamfight 0.8
+  slow tick 16.8 ms at 11:40:   pre:5 0.6, pre 1.9, ai 1.1,   bot:shop_items 2.0,   bot:scan 0.9,   bot:choose 3.1, bots 6.7,   ord:1 0.8, orders 2.5, vision 3.6
+  slow tick 17.0 ms at 11:40:   pre:5 0.7, pre 2.1, ai 1.8,   bot:shop_items 1.6,   bot:scan 1.8,   bot:choose 3.6, bots 9.0,   resolve 0.5,   ord:1 0.8, orders 2.6, effects 1.0
+  slow tick 18.8 ms at 11:40: pre 2.0, ai 2.3,   bot:shop_items 1.7,   bot:scan 1.3,   bot:choose 4.2, bots 8.5,   ord:1 0.7, orders 2.2, effects 1.5, vision 1.9
+  slow tick 22.6 ms at 11:40:   pre:5 0.7, pre 2.3, ai 3.3,   bot:shop_items 1.6,   bot:scan 1.7,   bot:choose 2.5, bots 6.8,   find_path 1.5,   ord:1 1.1,   ord:13 1.6, orders 4.1, effects 1.7, vision 4.0
+  slow tick 17.0 ms at 11:40:   pre:5 0.7, pre 1.7, ai 1.5,   bot:shop_items 1.8,   bot:scan 1.6,   bot:choose 3.0, bots 8.0,   ord:0 2.3,   ord:1 0.9, orders 4.6
+  slow tick 19.1 ms at 11:40:   pre:5 0.7, pre 2.1, ai 1.3,   bot:shop_items 2.0,   bot:scan 2.5,   bot:choose 3.3, bots 9.6,   ord:0 0.7,   ord:1 0.7, orders 2.6, effects 0.5, vision 2.5
+  slow tick 20.5 ms at 11:41:   pre:5 0.7, pre 6.4, ai 3.2,   bot:scan 0.8,   bot:choose 2.4, bots 4.4,   ord:1 0.8, orders 2.4, effects 2.1, vision 1.5
+  slow tick 18.7 ms at 11:41:   pre:5 0.7, pre 2.0, ai 1.0,   bot:shop_items 2.0,   bot:scan 1.7,   bot:choose 4.7, bots 11.2,   find_path 1.1,   ord:1 1.9, orders 3.4, effects 0.5
+  slow tick 18.0 ms at 11:41: pre 1.4, ai 1.0,   bot:shop_items 1.8,   bot:scan 1.9,   bot:choose 4.8, bots 10.8,   find_path 1.1,   ord:1 1.9, orders 3.5, effects 0.6
+  slow tick 17.6 ms at 11:41:   pre:5 0.8, pre 2.2, ai 1.2, brains 6.0,   bot:shop_items 1.7,   bot:scan 0.9,   bot:choose 1.2, bots 5.3,   ord:1 0.6, orders 1.8, effects 0.6,   brain:ganks 2.2,   brain:teamfight 0.9,   brain:other 2.5
+  slow tick 22.1 ms at 11:41:   pre:5 0.8, pre 2.5, ai 1.1,   bot:shop_items 2.0,   bot:scan 1.8,   bot:choose 5.7, bots 11.5,   ord:0 0.5,   ord:1 1.1, orders 3.0, effects 0.8, vision 2.9
+  slow tick 15.6 ms at 11:41:   pre:5 0.6, pre 2.1, ai 1.7,   bot:shop_items 1.9,   bot:scan 2.2,   bot:choose 2.7, bots 7.7,   ord:1 0.8, orders 2.2, effects 1.5
+  slow tick 20.7 ms at 11:41:   pre:5 0.7, pre 2.1, ai 1.3,   bot:shop_items 1.8,   bot:scan 2.0,   bot:choose 4.9, bots 11.9,   ord:1 1.0, orders 2.8, vision 1.8
+  slow tick 16.6 ms at 11:41:   pre:5 0.7, pre 2.2, ai 1.2,   bot:shop_items 1.9,   bot:scan 1.8,   bot:choose 4.7, bots 9.5,   ord:0 0.6,   ord:1 0.7, orders 2.7
+  slow tick 17.9 ms at 11:41:   pre:5 0.7, pre 2.3, ai 2.4,   bot:shop_items 1.6,   bot:scan 2.3,   bot:choose 2.6, bots 7.5,   ord:1 0.8, orders 2.0, effects 1.8, vision 1.6
+  slow tick 16.6 ms at 11:41:   pre:5 0.7, pre 2.2, ai 1.0,   bot:shop_items 2.0,   bot:scan 2.2,   bot:choose 4.3, bots 9.7,   ord:1 0.9, orders 2.3, effects 0.7
+  slow tick 18.6 ms at 11:41:   pre:5 0.8, pre 2.4, ai 1.8,   bot:shop_items 2.1,   bot:scan 1.8,   bot:choose 4.3, bots 9.4,   ord:1 1.2, orders 2.9, effects 1.6
+  slow tick 18.3 ms at 11:41:   pre:5 0.7, pre 2.4, ai 3.2, brains 5.8,   ord:1 0.9, orders 2.3, effects 2.1, vision 2.0,   brain:ganks 2.2,   brain:teamfight 0.8,   brain:other 2.2
+  slow tick 16.5 ms at 11:41: pre 1.8, ai 1.0,   bot:shop_items 1.9,   bot:scan 2.5,   bot:choose 3.3, bots 8.9,   ord:1 1.1, orders 2.9, effects 1.3
+  slow tick 17.0 ms at 11:41:   pre:5 0.7, pre 2.0, ai 1.2,   bot:shop_items 1.9,   bot:scan 2.0,   bot:choose 3.8, bots 8.8,   ord:0 0.8,   ord:1 0.8, orders 2.8, effects 1.6
+  slow tick 28.0 ms at 11:42: pre 4.6, ai 3.6, brains 2.6,   bot:shop_items 2.1,   bot:scan 1.7,   bot:choose 5.3, bots 10.8,   ord:1 0.9, orders 2.4, effects 1.8, vision 1.7,   brain:teamfight 1.0
+  slow tick 17.2 ms at 11:42:   pre:5 0.6, pre 1.9, ai 0.9,   bot:shop_items 1.7,   bot:scan 1.3,   bot:choose 5.5, bots 10.1,   ord:0 0.9,   ord:1 0.8, orders 3.3
+  slow tick 31.8 ms at 11:42:   pre:0 0.6,   pre:5 0.8, pre 3.0, ai 3.5,   bot:shop_items 2.2,   bot:scan 2.2,   bot:choose 5.7, bots 12.1,   ord:1 0.7, orders 2.3, effects 1.8, vision 8.7
+  slow tick 16.1 ms at 11:42:   pre:0 0.8,   pre:5 0.8, pre 2.8, ai 1.2,   bot:shop_items 1.7,   bot:scan 1.9,   bot:choose 4.6, bots 9.2,   ord:1 0.6, orders 1.7, effects 0.7
+  slow tick 16.0 ms at 11:42: pre 1.6, ai 1.1,   bot:shop_items 1.3,   bot:scan 1.4,   bot:choose 5.3, bots 9.1,   ord:1 0.7, orders 1.8, effects 0.6, vision 1.4
+  slow tick 15.1 ms at 11:42:   pre:5 0.7, pre 2.2, ai 1.1,   bot:shop_items 1.9,   bot:scan 1.6,   bot:choose 3.9, bots 8.5,   ord:1 0.7, orders 2.2, effects 0.5
+  slow tick 17.8 ms at 11:42:   pre:5 0.5, pre 1.7, ai 0.8, brains 2.1,   bot:shop_items 1.8,   bot:scan 1.4,   bot:choose 5.1, bots 9.5,   ord:1 1.1, orders 2.3, effects 0.9,   brain:teamfight 1.0
+  slow tick 15.8 ms at 11:42:   pre:5 0.8, pre 2.3, ai 1.0,   bot:shop_items 1.9,   bot:scan 2.5,   bot:choose 1.9, bots 7.1,   ord:0 1.2,   ord:1 0.9, orders 3.4, projectiles 0.8, effects 0.5
+  slow tick 19.3 ms at 11:42:   pre:0 0.7,   pre:5 0.5, pre 2.4, ai 1.8,   bot:shop_items 1.8,   bot:scan 1.9,   bot:choose 5.2, bots 11.0,   ord:1 0.7, orders 1.9, effects 0.7, vision 1.1
+  slow tick 17.5 ms at 11:42:   pre:5 0.8, pre 2.5, ai 1.4,   bot:shop_items 1.8,   bot:scan 1.8,   bot:choose 5.0, bots 9.9,   ord:1 0.8, orders 2.2, effects 1.2
+  slow tick 17.1 ms at 11:42:   pre:0 1.2,   pre:5 0.6, pre 2.9, ai 1.2, brains 6.5,   bot:choose 2.0, bots 3.1,   ord:1 0.9, orders 2.4, effects 0.5,   brain:ganks 2.5,   brain:teamfight 1.2,   brain:other 2.4
+  slow tick 18.2 ms at 11:42:   pre:5 0.7, pre 2.2, ai 1.4,   bot:shop_items 1.8,   bot:scan 2.3,   bot:choose 1.7, bots 6.4, couriers 2.9,   ord:1 0.9, orders 2.5, effects 1.0, vision 1.7
+  slow tick 15.4 ms at 11:42:   pre:0 0.7, pre 2.3, ai 0.9,   bot:shop_items 1.8,   bot:scan 1.6,   bot:choose 4.1, bots 8.7,   ord:1 1.1, orders 2.4, effects 0.6
+  slow tick 25.0 ms at 11:43:   pre:5 0.6, pre 5.7, ai 3.5,   bot:shop_items 1.7,   bot:scan 1.4,   bot:choose 5.1, bots 9.5,   ord:1 0.6, orders 2.0, effects 2.2, vision 1.6
+  slow tick 15.1 ms at 11:43:   pre:0 0.8,   pre:5 0.7, pre 2.8, ai 1.8,   bot:scan 1.1,   bot:choose 2.7, bots 4.6,   ord:1 1.1, orders 2.6, effects 1.0, vision 1.7
+  slow tick 16.4 ms at 11:43:   pre:0 0.8,   pre:5 0.7, pre 2.7, ai 1.1,   bot:shop_items 2.8,   bot:scan 2.8,   bot:choose 1.9, bots 8.2,   ord:0 1.1,   ord:1 0.7, orders 3.1, effects 0.8
+  slow tick 19.3 ms at 11:43:   pre:0 0.6,   pre:5 0.6, pre 2.4, ai 1.7,   bot:shop_items 2.0,   bot:scan 1.9,   bot:choose 5.6, bots 11.0,   ord:0 1.2,   ord:1 0.8, orders 3.2
+  slow tick 26.9 ms at 11:43:   pre:5 0.6, pre 2.1, ai 4.0, brains 5.6,   bot:shop_items 2.1,   bot:scan 0.6,   bot:choose 4.6, bots 9.6,   ord:1 0.8, orders 2.1, effects 1.7, vision 1.3,   brain:ganks 1.9,   brain:teamfight 1.0,   brain:other 2.2
+  slow tick 16.7 ms at 11:43:   pre:5 0.8, pre 2.2, ai 1.0,   bot:shop_items 2.0,   bot:scan 1.8,   bot:choose 4.7, bots 9.9,   ord:1 0.9, orders 2.5, effects 0.5
+  slow tick 24.0 ms at 11:43:   pre:5 0.5, pre 2.1, ai 2.6, brains 1.9,   bot:shop_items 1.9,   bot:scan 1.6,   bot:choose 4.5, bots 10.0,   ord:0 1.9,   ord:1 0.7, orders 3.6, effects 1.8, vision 1.4,   brain:teamfight 0.8
+  slow tick 19.1 ms at 11:43:   pre:0 1.6,   pre:5 0.8, pre 3.9, ai 1.9,   bot:shop_items 2.1,   bot:scan 2.1,   bot:choose 4.6, bots 10.0,   ord:1 0.9, orders 2.3, effects 0.5
+  slow tick 15.3 ms at 11:43:   pre:5 0.8, pre 1.8, ai 1.2,   bot:shop_items 1.8,   bot:scan 2.4,   bot:choose 1.7, bots 6.6,   ord:1 0.9, orders 2.1, effects 1.5, vision 1.5
+  slow tick 15.6 ms at 11:43:   pre:5 0.7, pre 2.5, ai 3.4,   bot:scan 1.0,   bot:choose 2.3, bots 4.2,   ord:1 0.6, orders 2.1, effects 1.7, vision 1.2
+  slow tick 15.2 ms at 11:43: pre 1.4, ai 0.7,   bot:shop_items 1.6,   bot:scan 1.3,   bot:choose 4.0, bots 9.0,   ord:1 1.0, orders 2.3, projectiles 0.6, effects 0.7
+  slow tick 16.6 ms at 11:43: pre 1.6, ai 1.1, brains 5.4,   bot:shop_items 1.8,   bot:scan 1.1,   bot:choose 1.1, bots 4.7,   ord:0 0.6,   ord:1 0.7, orders 2.6, effects 0.5,   brain:ganks 2.0,   brain:teamfight 0.8,   brain:other 2.1
+  slow tick 17.3 ms at 11:44:   pre:0 1.0,   pre:5 0.7, pre 2.8, ai 1.2,   bot:shop_items 2.0,   bot:scan 2.0,   bot:choose 3.8, bots 9.0,   ord:1 1.1, orders 2.8, effects 0.6
+  slow tick 18.0 ms at 11:44:   pre:5 0.7, pre 2.4, ai 1.3,   bot:shop_items 2.2,   bot:scan 2.0,   bot:choose 3.1, bots 8.9,   ord:0 0.5,   find_path 0.7,   ord:1 1.6, orders 3.3, effects 0.6, vision 1.1
+  slow tick 16.2 ms at 11:44:   pre:5 0.5, pre 1.8, ai 1.7,   bot:shop_items 1.7,   bot:scan 2.1,   bot:choose 3.1, bots 8.6,   find_path 0.8,   ord:1 1.7, orders 3.1, effects 0.5
+  slow tick 18.8 ms at 11:44:   pre:0 0.5,   pre:5 0.5, pre 2.2, ai 1.8,   bot:shop_items 1.4,   bot:scan 1.9,   bot:choose 4.7, bots 9.3,   ord:0 1.0,   ord:1 0.8, orders 3.0, effects 0.7, vision 1.3
+  slow tick 15.9 ms at 11:44:   pre:0 0.9, pre 2.7, ai 2.1,   bot:shop_items 1.7,   bot:scan 1.8,   bot:choose 1.5, bots 5.7,   ord:1 0.9, orders 2.4, effects 1.4, vision 1.2
+  slow tick 16.6 ms at 11:44:   pre:5 0.5, pre 1.8, ai 0.8,   bot:shop_items 2.1,   bot:scan 1.8,   bot:choose 4.3, bots 9.4,   ord:0 1.4,   ord:1 0.9, orders 3.6, effects 0.5
+  slow tick 18.5 ms at 11:44:   pre:5 0.7, pre 2.2, ai 1.2,   bot:shop_items 4.1,   bot:scan 1.5,   bot:choose 4.2, bots 11.8,   ord:1 0.8, orders 2.3
+  slow tick 20.6 ms at 11:44:   pre:0 0.5,   pre:5 0.5, pre 2.2, ai 2.5,   bot:shop_items 1.5,   bot:scan 1.0,   bot:choose 3.6, bots 9.5,   ord:1 0.8, orders 2.3, effects 1.5, vision 1.6
+  slow tick 27.7 ms at 11:45:   pre:5 0.7, pre 6.3, ai 2.9, brains 5.2,   bot:shop_items 2.0,   bot:choose 2.9, bots 6.4,   ord:0 0.6,   ord:1 0.9, orders 2.8, effects 2.1, vision 1.4,   brain:ganks 1.9,   brain:teamfight 0.7,   brain:other 2.1
+  slow tick 15.1 ms at 11:45:   pre:5 0.8, pre 2.2, ai 1.3,   bot:shop_items 1.5,   bot:scan 1.2,   bot:choose 4.3, bots 8.8,   ord:1 0.5, orders 1.8, effects 0.5
+  slow tick 17.4 ms at 11:45: pre 1.3, ai 1.2,   bot:shop_items 1.5,   bot:scan 1.2,   bot:choose 3.0, bots 6.7, couriers 2.9,   ord:0 1.0,   ord:1 0.7, orders 2.8, effects 0.8, vision 1.2
+  slow tick 20.1 ms at 11:45:   pre:5 0.7, pre 2.5, ai 3.0, brains 5.0,   bot:scan 0.7,   bot:choose 2.0, bots 3.6,   ord:0 0.8,   ord:1 0.6, orders 2.3, effects 1.7, vision 1.7,   brain:ganks 3.5,   brain:teamfight 0.5
+  slow tick 15.2 ms at 11:45:   pre:0 0.5,   pre:5 0.7, pre 2.1, ai 1.3,   bot:shop_items 3.1,   bot:scan 1.4,   bot:choose 3.2, bots 8.8,   ord:1 0.7, orders 1.8, effects 0.7
+  slow tick 17.5 ms at 11:45:   pre:5 0.8, pre 2.3, ai 1.2,   bot:shop_items 1.8,   bot:scan 1.7,   bot:choose 3.6, bots 8.3,   ord:0 1.5,   ord:1 0.8, orders 3.2, effects 0.6, vision 1.5
+  slow tick 15.1 ms at 11:45:   pre:0 0.9, pre 2.3, ai 0.7, brains 4.7,   bot:shop_items 1.4,   bot:scan 1.1,   bot:choose 1.5, bots 4.8,   ord:1 0.6, orders 1.9,   brain:ganks 3.4
+  slow tick 17.4 ms at 11:45:   pre:5 0.7, pre 2.1, ai 2.9,   bot:shop_items 1.4,   bot:scan 1.0,   bot:choose 2.9, bots 6.1,   ord:0 0.8,   ord:1 0.5, orders 2.2, effects 1.7, vision 1.9
+  slow tick 16.3 ms at 11:45:   pre:0 1.0,   pre:5 0.7, pre 2.8, ai 1.1,   bot:shop_items 1.8,   bot:scan 1.7,   bot:choose 4.2, bots 9.0, couriers 1.2, orders 1.6
+  slow tick 17.7 ms at 11:46:   pre:0 1.3,   pre:5 0.7, pre 3.2, ai 1.7,   bot:shop_items 2.0,   bot:scan 1.4,   bot:choose 4.4, bots 8.7,   ord:1 0.9, orders 2.6, effects 0.9
+  slow tick 15.3 ms at 11:46:   pre:5 0.5, pre 1.9, ai 1.2,   bot:shop_items 1.9,   bot:scan 1.7,   bot:choose 4.2, bots 8.9,   ord:1 0.8, orders 2.3
+  slow tick 15.1 ms at 11:46:   pre:5 0.5, pre 2.0, ai 2.5,   bot:shop_items 1.2,   bot:scan 1.3,   bot:choose 1.1, bots 4.6,   ord:0 0.9,   ord:1 0.8, orders 2.8, effects 1.6, vision 1.1
+  slow tick 19.8 ms at 11:46:   pre:5 0.6, pre 1.6, ai 0.9, brains 4.9,   bot:shop_items 2.9,   bot:scan 1.0,   bot:choose 3.8, bots 8.6,   ord:1 0.8, orders 2.3, effects 1.1,   brain:ganks 3.6
+  slow tick 22.3 ms at 11:46:   pre:5 0.7, pre 2.5, ai 3.1,   bot:shop_items 2.2,   bot:scan 1.8,   bot:choose 4.3, bots 9.6,   ord:0 1.2,   ord:1 0.7, orders 3.2, effects 1.8, vision 1.6
+  slow tick 17.2 ms at 11:46:   pre:5 0.6, pre 2.0, ai 3.2, brains 4.5,   bot:choose 1.6, bots 2.5,   ord:0 1.0,   ord:1 0.6, orders 2.7, effects 1.2, vision 0.8,   brain:ganks 1.9,   brain:teamfight 0.6,   brain:other 1.6
+  slow tick 15.7 ms at 11:46: pre 1.6, ai 0.8,   bot:shop_items 2.1,   bot:scan 1.8,   bot:choose 4.4, bots 9.3,   ord:0 0.7,   ord:1 0.8, orders 2.7, effects 0.8
+  slow tick 16.7 ms at 11:46:   pre:5 0.8, pre 2.6, ai 3.3, brains 4.7,   ord:0 0.7,   ord:1 0.8, orders 2.5, effects 1.9, vision 1.3,   brain:ganks 3.4
+  slow tick 15.4 ms at 11:46:   pre:0 1.7,   pre:5 0.6, pre 3.3, ai 0.9,   bot:shop_items 1.9,   bot:scan 1.9,   bot:choose 4.0, bots 8.9, orders 1.6
+  slow tick 19.4 ms at 11:47:   pre:5 0.7, pre 2.2, ai 1.7,   bot:shop_items 2.1,   bot:scan 1.7,   bot:choose 4.9, bots 10.7,   ord:0 1.0,   ord:1 0.9, orders 2.9, vision 1.0
+  slow tick 16.8 ms at 11:47:   pre:0 1.2,   pre:5 0.6, pre 2.6, ai 1.0, brains 4.1,   bot:shop_items 1.6,   bot:scan 0.7,   bot:choose 0.8, bots 4.4, couriers 2.1,   ord:1 0.9, orders 1.9,   brain:ganks 1.4,   brain:teamfight 0.6,   brain:other 1.7
+  slow tick 18.5 ms at 11:47: pre 1.7, ai 2.0,   bot:shop_items 1.5,   bot:scan 1.2,   bot:choose 3.3, bots 7.4,   ord:0 0.8,   find_path 0.6,   ord:1 1.5, orders 3.4, effects 1.9, vision 1.4
+  slow tick 22.0 ms at 11:47: pre 1.3, ai 0.6, brains 3.6,   bot:shop_items 5.7,   bot:scan 1.7,   bot:choose 4.4, bots 13.0,   ord:1 0.8, orders 2.3, effects 0.6,   brain:ganks 2.3
+  slow tick 15.9 ms at 11:47: pre 1.3, ai 0.7,   bot:shop_items 3.4,   bot:scan 1.4,   bot:choose 3.6, bots 9.4,   ord:0 1.3,   ord:1 1.0, orders 3.5
+  slow tick 21.5 ms at 11:47:   pre:0 0.7,   pre:5 0.6, pre 2.6, ai 3.3,   bot:shop_items 4.1,   bot:scan 2.0,   bot:choose 1.6, bots 8.6,   ord:0 0.7,   ord:1 0.8, orders 2.8, effects 2.2, vision 1.5
+  slow tick 15.1 ms at 11:47:   pre:5 0.7, pre 2.0, ai 1.1, brains 4.4,   bot:shop_items 1.2,   bot:choose 1.3, bots 3.5,   ord:0 1.0,   ord:1 0.9, orders 3.2,   brain:ganks 1.7,   brain:teamfight 0.7,   brain:other 1.6
+  slow tick 20.1 ms at 11:47:   pre:5 0.7, pre 2.3, ai 3.1,   bot:shop_items 1.8,   bot:scan 1.5,   bot:choose 3.5, bots 8.1,   ord:0 0.9,   ord:1 0.9, orders 3.0, effects 1.6, vision 1.6
+  slow tick 20.5 ms at 11:48: pre 5.4, ai 3.1,   bot:scan 1.0,   bot:choose 2.1, bots 4.0,   ord:0 2.2,   ord:1 0.9,   ord:2 0.6, orders 4.5, effects 1.5, vision 1.3
+  slow tick 17.3 ms at 11:48:   pre:0 0.7,   pre:5 0.6, pre 2.4, ai 1.6,   bot:shop_items 1.9,   bot:scan 1.8,   bot:choose 4.0, bots 8.9,   ord:0 1.5,   ord:1 0.7, orders 3.2, effects 0.5
+  slow tick 17.0 ms at 11:48: pre 1.8, ai 3.1, brains 4.9,   ord:0 1.0,   ord:1 1.0, orders 3.2, effects 2.0, vision 1.5,   brain:ganks 1.8,   brain:teamfight 0.9,   brain:other 1.8
+  slow tick 18.7 ms at 11:48:   pre:0 1.0,   pre:5 0.6, pre 2.7, ai 0.6,   bot:shop_items 3.2,   bot:scan 1.6,   bot:choose 4.3,   bot:orb_site 0.5, bots 10.8,   ord:1 1.1, orders 2.8, effects 1.1
+  slow tick 16.8 ms at 11:48:   pre:5 0.6, pre 2.1, ai 3.2, brains 5.7,   ord:0 0.8,   ord:1 0.6, orders 2.4, effects 2.1, vision 1.0,   brain:ganks 4.0,   brain:teamfight 0.5
+  slow tick 19.0 ms at 11:48:   pre:5 0.7, pre 1.9, ai 1.1,   bot:shop_items 2.1,   bot:scan 1.7,   bot:choose 4.3, bots 9.5,   ord:0 1.5,   ord:1 0.9, orders 3.6, effects 0.9, vision 1.5
+  slow tick 20.1 ms at 11:48:   pre:5 0.6, pre 2.2, ai 2.9,   bot:shop_items 1.9,   bot:scan 1.3,   bot:choose 3.7, bots 7.8,   ord:0 1.3,   ord:1 0.8, orders 3.4, effects 2.0, vision 1.4
+  slow tick 18.9 ms at 11:48:   pre:5 0.7, pre 2.0, ai 1.1, brains 4.2,   bot:learn 0.6,   bot:shop_items 1.9,   bot:choose 3.2, bots 8.0,   ord:1 0.9, orders 2.4,   brain:ganks 1.2,   brain:teamfight 0.9,   brain:other 1.6
+  slow tick 25.8 ms at 11:49:   pre:5 0.7, pre 7.5, ai 3.4,   bot:shop_items 2.0,   bot:scan 1.7,   bot:choose 2.4, bots 7.5,   ord:0 0.7,   ord:1 0.9, orders 3.0, effects 2.3, vision 1.6
+  slow tick 19.5 ms at 11:49:   pre:5 0.7, pre 2.3, ai 2.8,   bot:shop_items 1.8,   bot:scan 1.3,   bot:choose 3.3, bots 7.4,   ord:0 0.7,   ord:1 0.8, orders 2.8, effects 2.3, vision 1.5
+  slow tick 15.1 ms at 11:49:   pre:0 0.6,   pre:5 0.7, pre 2.8, ai 1.7,   bot:shop_items 1.8,   bot:scan 1.5,   bot:choose 2.5, bots 7.1,   ord:1 0.8, orders 2.2, effects 0.9
+  slow tick 15.7 ms at 11:49:   pre:0 0.6,   pre:5 0.7, pre 2.6, ai 3.4,   bot:scan 0.9,   bot:choose 1.2, bots 2.9,   ord:0 1.1,   ord:1 0.8, orders 3.0, effects 1.9, vision 1.4
+  slow tick 15.3 ms at 11:49:   pre:0 0.7,   pre:5 0.7, pre 2.4, ai 1.1,   bot:shop_items 2.0,   bot:scan 1.5,   bot:choose 3.7, bots 8.5,   ord:1 0.7, orders 2.2, effects 0.7
+  slow tick 15.5 ms at 11:49:   pre:0 0.5, pre 2.2, ai 0.7, brains 2.4,   bot:shop_items 1.7,   bot:scan 1.5,   bot:choose 2.7, bots 7.3,   ord:1 0.8, orders 2.1,   brain:ganks 1.5
+  slow tick 15.5 ms at 11:49: pre 2.0, ai 3.2, brains 3.5,   ord:0 0.8,   ord:1 0.8, orders 2.8, effects 2.3, vision 1.3,   brain:ganks 1.1,   brain:teamfight 0.6,   brain:other 1.5
+  slow tick 17.3 ms at 11:50: pre 4.8, ai 2.1, brains 2.4,   bot:shop_items 1.0,   bot:scan 0.7,   bot:choose 1.0, bots 4.2, orders 1.5, effects 1.2, vision 0.8,   brain:ganks 1.5
+  slow tick 15.9 ms at 11:50:   pre:5 0.6, pre 2.0, ai 2.9,   bot:shop_items 1.7,   bot:scan 1.0,   bot:choose 2.2, bots 5.6,   ord:1 0.8, orders 2.2, effects 1.3, vision 1.4
+  slow tick 17.6 ms at 11:51:   pre:5 0.6, pre 2.0, ai 3.1, brains 2.2,   bot:shop_items 1.6,   bot:scan 0.7,   bot:choose 0.9, bots 4.1,   ord:0 0.6,   ord:1 0.7, orders 2.6, effects 1.6, vision 1.1,   brain:ganks 1.1,   brain:teamfight 0.5
+  slow tick 16.0 ms at 11:52:   pre:5 0.7, pre 5.8, ai 3.6,   bot:shop_items 1.0, bots 1.5,   ord:0 0.6,   ord:1 0.9, orders 2.5, effects 1.1, vision 1.0
+  slow tick 16.4 ms at 11:52:   pre:5 0.9, pre 2.5, ai 3.9,   bot:shop_items 0.9, bots 4.7,   ord:1 0.9, orders 2.0, effects 1.2, vision 1.5
+  slow tick 17.4 ms at 11:53:   pre:5 0.7, pre 6.7, ai 3.4, brains 0.6, bots 0.9,   ord:1 1.0, orders 2.3, effects 1.4, vision 1.2
+  slow tick 17.7 ms at 11:53:   pre:5 0.8, pre 2.4, ai 2.0,   bot:shop_items 1.4,   bot:scan 0.6,   bot:choose 8.0, bots 10.7, orders 1.8
+  slow tick 20.3 ms at 11:54:   pre:5 0.8, pre 6.5, ai 5.6,   bot:learn 0.7,   bot:shop_items 0.7,   bot:scan 0.6,   bot:choose 0.7, bots 3.0,   ord:1 0.6, orders 1.8, effects 1.0, vision 1.8
+  slow tick 15.6 ms at 11:55:   pre:5 0.8, pre 7.4, ai 3.6, bots 0.8,   ord:1 0.5, orders 1.9, effects 0.7, vision 1.0
+  slow tick 15.4 ms at 11:56:   pre:5 0.7, pre 2.1, ai 3.5, brains 0.6,   bot:shop_items 1.7,   bot:choose 1.4, bots 4.2,   ord:1 0.6, orders 2.0, effects 0.8, vision 1.7
+  slow tick 17.9 ms at 11:58:   pre:5 0.6, pre 5.0, ai 2.9, brains 0.6, orders 1.5, effects 0.6, vision 6.9
+  slow tick 17.1 ms at 11:59:   pre:5 0.9, pre 7.1, ai 3.6,   bot:shop_items 1.2,   bot:choose 0.8, bots 3.0,   ord:1 0.5, orders 1.7, effects 0.7, vision 0.8
+  slow tick 19.3 ms at 12:00:   pre:5 0.6, pre 10.3, ai 2.8,   find_path 1.0,   ord:1 1.1,   ord:2 0.6, orders 2.7, effects 0.9, vision 2.2
+ALL mean 9.93 ms/tick over 3600 ticks, winner -1 at 12:00
+units by kind: { "ancient": 2, "fountain": 2, "tower4": 4, "tower3": 6, "melee_rax": 6, "ranged_rax": 6, "tower2": 6, "tower1": 6, "filler": 6, "blackfire": 1, "courier": 10, "thyrandael": 1, "gancho(dead)": 1, "kaileh": 1, "dracoxinia(dead)": 1, "araki(dead)": 1, "azrael(dead)": 1, "azrin(dead)": 1, "froster(dead)": 1, "sludge(dead)": 1, "strider": 9, "strider_warlord": 11, "ashfang": 14, "ashfang_alpha": 7, "ogre_brute": 13, "hill_troll": 20, "cinder_wyrmling": 6, "elder_cinder_wyrm": 3, "mudling": 9, "mudling_digger": 3, "mudling_foreman": 7, "ward_observer": 2, "dawn_siege": 1, "dusk_siege": 1, "dawn_melee(dead)": 1, "dawn_ranged": 7, "dusk_melee(dead)": 1, "dusk_ranged": 6, "dawn_melee": 13, "dusk_melee": 12, "dawn_flag": 3, "dusk_flag": 3 }
+blocked now: 0
+top creeps 19: 0:(-6200,4800) 0:(-6300,4800) 0:(-6300,4800) 0:(-6400,4400) 0:(-6400,4400) 0:(-6500,-4200) 0:(-6500,-4400) 0:(-6600,-4200) 0:(-6600,-4200) 1:(-5100,6000) 1:(-5300,6000) 1:(-5300,6000) 1:(-5300,6000) 1:(-6200,4900) 1:(-6300,5000) 1:(4100,6200) 1:(4100,6300) 1:(4100,6400) 1:(4400,6300)
+mid creeps 10: 0:(-4800,-4500) 0:(-4800,-4500) 0:(-4900,-4400) 0:(-5000,-4700) 0:(1000,1000) 0:(1400,1100) 1:(4800,4500) 1:(4800,4500) 1:(4900,4400) 1:(5000,4700)
+bot creeps 17: 0:(-4100,-6200) 0:(-4100,-6300) 0:(-4100,-6400) 0:(-4400,-6300) 0:(5100,-6000) 0:(5300,-6000) 0:(5300,-6000) 0:(5300,-6000) 0:(6100,-5200) 1:(6200,-5000) 1:(6200,-5000) 1:(6300,-4700) 1:(6300,-5000) 1:(6400,4100) 1:(6500,4400) 1:(6600,4100) 1:(6600,4200)
+WARNING: 5367 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 29 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

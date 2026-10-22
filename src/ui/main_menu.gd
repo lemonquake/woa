@@ -85,11 +85,12 @@ func _ready() -> void:
 		title_shown = true
 		_title = TitleCard.new()
 		add_child(_title)
-		_title.finished.connect(func(): _intro = 0.0)
+		_title.finished.connect(func(): _intro = 0.0 if bool(Options.get_value("ui_motion")) else 10.0)
 		if _title_at >= 0.0:
 			_title.seek(_title_at)
 	else:
-		_intro = 0.0 if _capture_path == "" else 10.0
+		# "Menu animations" off: the menu is simply there, no entrance
+		_intro = 0.0 if _capture_path == "" and bool(Options.get_value("ui_motion")) else 10.0
 	if _capture_focus and _focus < _plates.size():
 		(_plates[_focus] as MenuPlate).focused = true
 	_place(0.0)

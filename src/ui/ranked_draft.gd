@@ -348,6 +348,8 @@ func _process(dt: float) -> void:
 			if _t > 7.5 and _capture == "":
 				phase = "loading"
 				_launch()
+	if _shake > 0.0 and not bool(Options.get_value("ui_motion")):
+		_shake = 0.0                               # "Menu animations" off: no shake
 	if _shake > 0.0:
 		_shake = maxf(0.0, _shake - dt * 2.5)
 		var k := minf(size.x / W, size.y / H)

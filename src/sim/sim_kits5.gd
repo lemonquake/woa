@@ -60,7 +60,7 @@ func _enemy(team: int, o: SimUnit) -> bool:
 
 func _movable(o: SimUnit) -> bool:
 	return o.alive and not o.is_building() and not o.is_ward() and o.kind != K.COURIER and bool(o.def.can_move) \
-		and float(o.def.move_speed) > 0.0 and not o.is_invulnerable()
+		and float(o.def.move_speed) > 0.0 and not o.is_invulnerable() and not o.has_flag("unstoppable")
 
 func _land_spot(p: Vector2) -> Vector2:
 	p = Vector2(clampf(p.x, -SimMap.EDGE, SimMap.EDGE), clampf(p.y, -SimMap.EDGE, SimMap.EDGE))
@@ -828,8 +828,9 @@ func _update_returns() -> void:
 		var d := minf(float(r.per), float(r.left))
 		r.left = float(r.left) - d
 		var by := w.get_unit(int(r.by))
-		var src_id := by.id if by != null else u.id
-		var src_team := by.team if by != null else u.team
+		# with no enemy hero to name, the damage comes from nobody (a death to it is not his own deny)
+		var src_id := by.id if by != null else -1
+		var src_team := by.team if by != null else 1 - u.team
 		w.combat.deal_damage(src_id, src_team, by != null, u, d, C.DamageType.PURE, false, "berserk", true,
 			{"no_amp": true, "element": C.Element.NONE})
 		if float(r.left) <= 0.01:
