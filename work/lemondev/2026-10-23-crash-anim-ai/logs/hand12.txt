@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  out of reach by 8.0 cm: hand.R at 0.30 s
+dracoxinia: drac_h_cut_2 1.00 s { "length": 1.0, "loop": false, "hits": [[0.43, 0.5]] }
+saved res://assets/characters/hero/hand/hero_hand.res (10 clips) err 0

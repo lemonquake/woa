@@ -55,7 +55,10 @@ const MODELS := {
 	# greatsword; the jester (assassin body, restyle pending) with throwing knives
 	"hero_emelrich": {"scene": H17 + "emelrich.glb", "scale": 1.0, "attack": ["gs_1", "gs_3", "gs_4"],
 		"cast": "cast_weapon", "idle": "idle_2h", "run": "hero_run", "run_min": 0.72, "death": "death",
-		"R": "heavy_greatsword", "L": "", "bar": 2.6, "swing_trail": true, "trail_color": Color(1.0, 0.9, 0.6, 0.6)},
+		"R": "heavy_greatsword", "L": "", "bar": 2.6, "swing_trail": true, "trail_color": Color(1.0, 0.9, 0.6, 0.6),
+		# run 2026-10-23: his right hand holds the long handle 20 cm below the guard (both hands on the handle, the
+		# pommel just past the left), not at the guard with half a metre of handle sticking back into his chest
+		"R_xform": [1.0, Vector3(0, 0.2, 0)]},
 	# Burak, Airah and Ghorman's Beast Form (2026-10-17, bodies only until their kits land): the berserker with two
 	# bearded axes; the dancer in flowing scarves (a hand-placed rig on a posed model); the troll with its mace, its
 	# hunch kept under the hero clips
@@ -250,12 +253,16 @@ const MOCAP := {
 	# the five heroes of hero_ideas.txt (run 2026-10-18 e): Emelrich swings the great sword set, Burak swings both axes
 	# (the two-weapon slashes; the axe set's one-handed swings left his second axe flopping) and keeps the axe idle,
 	# Ghorman the axe set (he thumps his chest on the stage), Feran throws his knives overhand, Airah the spell set
-	"hero_emelrich": {"run": "emel_run", "run_female": "emel_run", "idle": "emel_idle", "cast": "emel_cast", "death": "emel_death_1",
-		"attack": ["emel_slash_1", "emel_slash_2", "emel_slash_3"], "deaths": ["emel_death_1", "emel_death_2"],
+	# run 2026-10-23: his idle, run, cast and flinch are hand-made (tools/anim/clips_emelrich.gd): the great sword
+	# carried on his shoulder; the old ones came from Ezee's great sword pack. His cuts stay his own two-handed combo
+	# (not Ezee's): the hand-made two-handed cuts still bend his wrists too far (tests/tools/anim_audit.gd)
+	"hero_emelrich": {"run": "emel_h_run", "run_female": "emel_h_run", "idle": "emel_h_idle", "cast": "emel_h_cast",
+		"death": "emel_death_1", "attack": ["emel_slash_1", "emel_slash_2", "emel_slash_3"],
+		"deaths": ["emel_death_1", "emel_death_2"],
 		"casts": {"overhead_cut": "emel_overhead", "sweep": "emel_sweep", "giant_swing": "emel_swing"},
-		"anims": {"idle_2h": "emel_idle", "cast_weapon": "emel_cast", "cast_quick": "emel_cast",
-			"boss_roar": "emel_cast", "hit_heavy": "emel_hit", "hit_light": "emel_hit",
-			"hit_front": "emel_hit", "idle_hurt": "dizzy"}},
+		"anims": {"idle_2h": "emel_h_idle", "cast_weapon": "emel_h_cast", "cast_quick": "emel_h_cast",
+			"boss_roar": "emel_h_cast", "hit_heavy": "emel_h_hit", "hit_light": "emel_h_hit",
+			"hit_front": "emel_h_hit", "idle_hurt": "dizzy"}},
 	"hero_burak": {"run": "burak_run", "run_female": "burak_run", "idle": "burak_idle",
 		"attack": ["burak_dual_1", "burak_spin_high", "burak_dual_2", "burak_spin_low"], "cast": "axe_battle_cry",
 		"death": "death_from_front", "deaths": ["death_from_front", "death_from_back"],
@@ -314,14 +321,17 @@ const MOCAP := {
 			"idle_hurt": "dizzy"}},
 	"kaileh_ghost": {"run": "kai_charge", "run_female": "kai_charge", "idle": "kai_charge", "attack": ["kai_thrust_1"],
 		"death": "kai_death_1", "deaths": ["kai_death_1"], "anims": {"hero_run": "kai_charge"}},
-	"hero_dracoxinia": {"run": "drac_run", "run_female": "drac_run", "idle": "drac_idle", "cast": "drac_swap",
-		"death": "drac_death_1", "attack": ["drac_slash_1", "drac_slash_2", "drac_slash_3"],
+	# run 2026-10-23: her run, idle and cuts are hand-made (tools/anim/clips_dracoxinia.gd), her own sword style; the
+	# old ones came from the same great sword pack as Ezee's
+	"hero_dracoxinia": {"run": "drac_h_run", "run_female": "drac_h_run", "idle": "drac_h_idle", "cast": "drac_h_swap",
+		"death": "drac_death_1", "attack": ["drac_h_cut_1", "drac_h_cut_2", "drac_h_cut_3"],
 		"deaths": ["drac_death_1", "drac_death_2"],
-		"casts": {"dragon_dash": "drac_dash", "dragon_leap": "drac_swap", "rising_slash": "drac_rise",
-			"change_sword": "drac_swap"},
+		"casts": {"dragon_dash": "drac_h_dash", "dragon_leap": "drac_h_swap", "rising_slash": "drac_rise",
+			"change_sword": "drac_h_swap"},
 		"charges": {"dragon_leap": "drac_leap"},
-		"anims": {"idle_2h": "drac_idle", "cast_quick": "drac_swap", "boss_roar": "drac_swap", "charge": "drac_dash",
-			"blade": "drac_blade", "hit_heavy": "drac_hit", "hit_light": "drac_hit", "hit_front": "drac_hit",
+		"anims": {"idle_2h": "drac_h_idle", "cast_quick": "drac_h_swap", "boss_roar": "drac_h_swap", "charge": "drac_h_dash",
+			"blade": "drac_blade", "hit_heavy": "drac_h_hit", "hit_light": "drac_h_hit", "hit_front": "drac_h_hit",
+			"knockback": "drac_h_stagger", "getup": "drac_h_recover", "launch": "drac_h_stagger", "wall_impact": "drac_h_hit",
 			"idle_hurt": "dizzy"}},
 	"hero_gancho": {"run": "gan_run", "run_female": "gan_run", "idle": "gan_idle", "cast": "gan_forest",
 		"death": "gan_death_1", "attack": ["gan_throw_1", "gan_throw_2"], "deaths": ["gan_death_1", "gan_death_2"],
@@ -375,7 +385,7 @@ static func scene(model_key: String) -> PackedScene:
 static func clip(name: String) -> Dictionary:
 	if _meta.is_empty():
 		for f in [UNITS + "anim_meta.json", UNITS + "creature_meta.json", "res://assets/characters/hero/hero_meta.json",
-				H16 + "heroes16_meta.json", MocapClips.META]:
+				H16 + "heroes16_meta.json", MocapClips.META, MocapClips.HAND_META]:
 			if not FileAccess.file_exists(f):
 				continue
 			var d = JSON.parse_string(FileAccess.get_file_as_string(f))

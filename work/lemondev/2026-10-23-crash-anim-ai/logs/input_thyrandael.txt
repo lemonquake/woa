@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 5642 ms
+match ready in 23890 ms
+hero thyrandael level 22 abilities { "holy_beam": 4, "quick_flash": 4, "spirit_step": 4, "false_judgement": 3, "divine_touch": 1 }
+PASS holy_beam: key starts targeting (targeting=holy_beam)
+  foe on screen at (1145.89, 506.7437) pick=47 foe id 47
+PASS holy_beam: click on the enemy ends targeting
+PASS holy_beam: cast (mana 1371 -> 1257, cd 13.9)
+PASS quick_flash: cast (mana 1371 -> 1319, cd 0.7)
+PASS spirit_step: key starts targeting (targeting=spirit_step)
+  foe on screen at (1145.89, 506.7437) pick=47 foe id 47
+PASS spirit_step: click on the enemy ends targeting
+PASS spirit_step: cast (mana 1371 -> 1298, cd 7.7)
+FAIL false_judgement: key starts targeting (targeting=)
+  foe on screen at (1261.026, 494.2199) pick=47 foe id 47
+SCRIPT ERROR: Invalid access to property or key 'behavior' on a base object of type 'Dictionary'.
+   at: InputController._left_click (res://src/game/input_controller.gd:806)
+   GDScript backtrace (most recent call first):
+       [0] _left_click (res://src/game/input_controller.gd:806)
+       [1] _run (res://tests/tools/input_probe.gd:96)
+PASS false_judgement: click on the enemy ends targeting
+FAIL false_judgement: cast (mana 1371 -> 1371, cd 0.0)
+PASS quick cast: holy_beam needs no click (targeting=)
+PASS quick cast: holy_beam went off at the mouse (mana 1371 -> 1257)
+PASS self-cast skill: first click starts targeting (holy_beam)
+PASS self-cast skill: second click within 0.5 s self-casts (holy_beam)
+PASS self-cast skill: holy_beam went off on self
+PASS self-cast item: first click starts targeting
+PASS self-cast item: second click within 0.5 s self-casts Push Staff
+PASS self-cast item: Push Staff pushed the hero (549 moved)
+PASS T starts Town Portal targeting
+PASS T again after 0.6 s keeps targeting (no teleport)
+PASS a double tap ends targeting
+PASS a double tap teleports to the fountain (dest (-6840.497, -6452.383), fountain (-7050.0, -6650.0))
+PASS and the hero arrives there (288 away)
+
+21 passed, 2 failed
+WARNING: 705 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 27 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

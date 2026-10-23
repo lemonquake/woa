@@ -679,3 +679,16 @@ Three fresh-context auditors (kits, rules, interface); no commercial benchmark c
 | Q4 Runtime errors | 1 | kc2_a/b/c: 3 x 25 min, all 22 heroes, 0 SCRIPT ERROR | PASS (gate) | none | none |
 | P Frame rate | 1-2 | bench/a_q*, a_qbase*, lane_*, b_q*: A 21.6 -> 18.4-19.3 ms, lane 15.0 -> 13.1 | improved, targets not met | main thread bound (script, flush, draw) | render thread, draw calls |
 | X Integration | 1-2 | snapshot regression fixed (metadata); suite 361/0 (logs/tests_fix2.log) | see run handoff | none | owner play |
+
+## Session 2026-10-23 — skill crash, hit effects, hand-made animations, bot knowledge, build
+
+Run `work/lemondev/2026-10-23-crash-anim-ai/` (contract.md). No commercial benchmark capture; no blind critic.
+
+| Component | Pass | Evidence | Verdict | Primary gap | Next |
+|---|---|---|---|---|---|
+| C Skill crashes | 1-2 | logs/storm_*.txt, storm2_*, storm3_mix: 0 SCRIPT ERROR after fix; test fails on old code | PASS (gate) | none in debug | exe storm (X) |
+| F Hit effects | 1-3 | fx/direct5, fx/swing1, fx/after2 | self-check | no critic; sizes tuned by eye | owner play |
+| A1 Dracoxinia clips | 1-8 | collide 0 cm, joins 1 at 12.1 deg, slide 0.97x, audit 6/10 clean | IMPLEMENTED, near gate | cuts' wrists 84-105 deg a few frames | DP weights / poses |
+| A2 Emelrich clips | 1-6 | idle/run/cast/hit clean everywhere | PASS for 4 clips | two-handed cuts fail wrist audit: not used | redesign with lean |
+| B Bot knowledge | 1-2 | botgame_chat2.txt, llm_prompt.txt, test_bot_knowledge | tests pass | LLM output itself not sampled (no key used) | owner play |
+| X Integration | 1 | suite 365/0, check.sh Names OK, export exit 0, exe storm 0 errors | PASS (gate) | bench B not re-run after the fx buffer fix | owner play |

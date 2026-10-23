@@ -246,7 +246,7 @@ func _ready() -> void:
 	_sync_views()
 	if mp:
 		_start_net()
-	elif not args.has("capture") and not args.has("bench") and (args.has("llm_endpoint")
+	elif not args.has("capture") and not args.has("bench") and not args.has("storm") and (args.has("llm_endpoint")
 			or LlmChat.ready_to_run() and not LlmChat.automated(get_tree())):
 		# the online chat writer: single player only (every multiplayer machine must show the same lines)
 		var lc := LlmChat.load_config()
@@ -264,6 +264,10 @@ func _ready() -> void:
 	RenderingServer.frame_pre_draw.connect(_on_pre_draw)
 	RenderingServer.frame_post_draw.connect(_join_ahead)
 	print("match ready in %d ms" % (Time.get_ticks_msec() - t0))
+	if args.has("storm"):
+		var storm := StormProbe.new()
+		storm.game = self
+		add_child(storm)
 	await _stage(0.96, "Ready")
 	# a couple of rendered frames so shaders compile behind the loading screen, then reveal the match
 	for i in 3:
@@ -381,7 +385,7 @@ func _parse_args() -> void:
 ## duel (you against Bot Gerald in mid; --hero= and --bot_hero= pick the heroes) unless --bots=5v5 asks for full teams.
 ## Learning (BotMemory) follows Options "Bots learn from games", and is off for automated runs.
 func _spawn_heroes() -> void:
-	var automated := args.has("capture") or args.has("bench")
+	var automated := args.has("capture") or args.has("bench") or args.has("storm")
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	var slots: Array = []
@@ -1216,7 +1220,7 @@ func _on_damage(e: Dictionary) -> void:
 		# Burst Shot's arrows flash and jolt the body like attacks do
 		dv.on_hit(su.pos if su else tu.pos, amt, tu.max_hp, atk or String(e.get("key", "")) == "burst_shot")
 		if atk and su and not su.is_ranged() and dv.visible:
-			fx.melee_hit(su, tu, amt)
+			fx.melee_hit(su, tu, amt, int(_crit_hit.get(tu.id, -1)) == int(e.src))
 			if String(su.def.model) == "hero_azrael":
 				azrael_fx.scythe_hit(su, tu)
 	if not sees(tu):
@@ -1333,6 +1337,8 @@ func _process(dt: float) -> void:
 	if _capture_frames >= 0:
 		_capture_frames += 1
 		_demo_casts()
+		if args.has("follow"):
+			center_on_hero()                     # --follow: the camera keeps the hero in the middle (live captures)
 		var fl := String(args.get("frames", "45")).split(",")
 		if _capture_frames == int(fl[0]) - 6 and args.has("marker"):
 			var mv := String(args.marker).split(",")

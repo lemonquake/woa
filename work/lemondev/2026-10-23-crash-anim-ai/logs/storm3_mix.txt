@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 4854 ms
+match ready in 24133 ms
+storm: you are dracoxinia; heroes ["dracoxinia", "ezee", "emelrich", "thyrandael", "araki", "burak", "blackfire", "gancho", "kaileh", "caziel"]
+casts ordered: { "dragon_dash": 82, "change_sword": 79, "rising_slash": 125, "dragon_leap": 104 }
+casts fired:   { "dragon_dash": 28, "change_sword": 50, "rising_slash": 45, "dragon_leap": 34 }
+slowest frame 0.825 s, game time 318.8, frames 3576
+storm done
+WARNING: 2994 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 29 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

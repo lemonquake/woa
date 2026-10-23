@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 5977 ms
+match ready in 22869 ms
+hero araki level 22 abilities { "blur_strike": 4, "djin_bomb": 4, "ghosts_of_the_will": 4, "the_blur": 3, "senryukai": 1 }
+PASS blur_strike: key starts targeting (targeting=blur_strike)
+  foe on screen at (1145.89, 506.7437) pick=47 foe id 47
+PASS blur_strike: click on the enemy ends targeting
+PASS blur_strike: cast (mana 820 -> 694, cd 0.0)
+PASS djin_bomb: key starts targeting (targeting=djin_bomb)
+  foe on screen at (1261.026, 494.2199) pick=47 foe id 47
+PASS djin_bomb: click on the enemy ends targeting
+PASS djin_bomb: cast (mana 820 -> 704, cd 10.8)
+PASS ghosts_of_the_will: key starts targeting (targeting=ghosts_of_the_will)
+  foe on screen at (1261.026, 494.2199) pick=47 foe id 47
+PASS ghosts_of_the_will: click on the enemy ends targeting
+PASS ghosts_of_the_will: cast (mana 820 -> 714, cd 16.9)
+PASS the_blur: cast (mana 820 -> 700, cd 38.5)
+PASS quick cast: blur_strike needs no click (targeting=)
+PASS quick cast: blur_strike went off at the mouse (mana 820 -> 694)
+PASS self-cast skill: first click starts targeting (blur_strike)
+PASS self-cast skill: second click within 0.5 s self-casts (blur_strike)
+PASS self-cast skill: blur_strike went off on self
+PASS self-cast item: first click starts targeting
+PASS self-cast item: second click within 0.5 s self-casts Push Staff
+PASS self-cast item: Push Staff pushed the hero (539 moved)
+PASS T starts Town Portal targeting
+PASS T again after 0.6 s keeps targeting (no teleport)
+PASS a double tap ends targeting
+PASS a double tap teleports to the fountain (dest (-6840.497, -6452.383), fountain (-7050.0, -6650.0))
+PASS and the hero arrives there (288 away)
+
+23 passed, 0 failed
+WARNING: 707 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 27 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

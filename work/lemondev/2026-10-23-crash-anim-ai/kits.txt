@@ -1,0 +1,316 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+## blood_ranger (Jayla) the Blood Ranger range 625 move 300 primary agi element 6
+  -  [, ]: 
+  - Burst Shot [burst_shot, point]: Jayla plants her feet and looses 30 arrows over five waves of four to seven into the target area. Each arrow strikes a random enemy there for a share of her attack damage. Channelled: moving, attacking, stopping, a stun, silence or a push ends it.
+  - Gale Impact [gale_impact, point]: Looses a great arrow toward the target point; it always flies its full 2000 range. Every enemy it passes is struck for magic damage and hurled aside; an enemy that crashes into a wall, unit, building or tree takes another 20% of that damage. The arrow fells ev
+  - Masterful Archery [masterful_archery, passive]: Her attacks have a chance to burst for bonus physical damage based on her agility. Cooldown after each burst.
+  - Blood Ranger [blood_ranger_ult, no_target]: Jayla gives in to the hunt: for 15 seconds her attacks steal life and reach much further. When an attack hits her she may leap back out of reach.
+## ezee (Ezee) the Dark Paladin range 150 move 305 primary str element 7
+  -  [, ]: 
+  - Dark Stomp [dark_stomp, no_target]: Ezee slams the ground with unholy force, damaging nearby enemies and hurling them away. Enemies that crash into a unit, tree, cliff or wall take impact damage and are stunned.
+  - Leap Strike [leap_strike, no_target]: Ezee picks the visible enemy in range with the lowest health (the nearest one if none is hurt), leaps onto it and strikes for pure damage plus 60% of his strength, slowing it. Does nothing if no enemy is in sight.
+  - Tainted Touch [tainted_touch, no_target]: Purple lightning from the sky enchants Ezee's sword. His attacks deal bonus magic damage and curse the target, revealing it and granting sight around it, even through invisibility.
+  - Unholy Might [unholy_might, no_target]: Ezee roars and is wrapped in a dark aura. Each instance of damage he takes has a chance to be halved, the other half striking a random nearby enemy as pure damage. When the aura fades he is slowed for 2 seconds.
+## sludge (Sludge) the Butcher range 175 move 280 primary str element 4
+  - Growing Gut [growing_gut, innate]: Sludge gains 2 strength for good whenever an enemy hero dies within 450 of him, or anywhere if he gets the kill.
+  - Shuriken Hook [shuriken_hook, point]: Sludge hurls a chain tipped with a spinning shuriken. It always flies its full 1300 range and catches the first unit it touches, dragging it back to where he threw it. Enemies take pure damage and are stunned while dragged; enemy creeps die at once; allies are
+  - Stench [stench, toggle]: A toxic cloud pours off Sludge, damaging and slowing nearby enemies, and hurting Sludge himself (it can never kill him). Toggle it on and off. Keeps working while he is stunned.
+  - Blubber [blubber, no_target]: Sludge's fat thickens: every instance of damage he takes, from any source, is reduced by a flat amount for a few seconds. Does not interrupt Chomp.
+  - Chomp [chomp, unit]: Sludge grabs an enemy and eats it alive. Channelled for 2.75 seconds: the victim is stunned and pulled in, taking magic damage that grows with his strength, and Sludge heals for all of it.
+## azrin (Azrin) the Flamemander range 665 move 290 primary int element 1
+  -  [, ]: 
+  - Fiery Javelin [fiery_javelin, point]: Azrin hurls a great flaming javelin up to 1000 range. Every enemy near its path is caught and dragged along to where it lands, and burns for magic damage every second for 5 seconds. Trees in its path are knocked down.
+  - Touch of Ember [touch_of_ember, point]: Spirit flames burst over a 300 area: enemies take 100 magic damage and carry the flames. When one of them casts a spell, or after 4 seconds, the flames explode for more magic damage and stun it.
+  - Spirit of Fire [spirit_of_fire, point]: Every spell Azrin casts adds a spirit of fire circling her, up to 5. Shoot them all at a 250 area: each spirit burns the enemies there for magic damage over 5 seconds, and they are slowed while they burn.
+  - Divine Smite [divine_smite, unit]: Azrin hurls a burning hammer at an enemy. It strikes for 250 plus twice her intelligence as magic damage and sets the ground around it alight: every Fire burn on enemies there lasts longer.
+## froster (Froster) the Winter Master range 600 move 295 primary int element 3
+  -  [, ]: 
+  - Breath of Cold [breath_of_cold, point]: Froster breathes a cone of bitter cold up to 800 ahead. Every enemy in it takes magic damage and is slowed for 3 seconds.
+  - Ice Pulse [ice_pulse, unit]: Curses an enemy: its defense drops (armor and every resistance count less, so it takes more physical and magic damage) for 3.5 seconds. Then the curse bursts in an ice blast that deals 100 magic damage to it and every enemy within 300.
+  - Frost Heart [frost_heart, passive]: Damage Froster deals to enemies builds a Frost Heart (one per 500 / 450 / 400 / 350 damage, up to 3). His next attack spends one: 200 extra magic damage and a 40% slow for 1.5 seconds.
+  - Endless Winter [endless_winter, no_target]: Froster stands still and calls a blizzard for up to 7 seconds. Enemies within 600 take magic damage every second; one that stays inside for 2 seconds is Frosted, frozen solid for 2 seconds (once every 1.5 seconds after that). Channelled.
+## caziel (Caziel) the Void Assassin range 150 move 305 primary agi element 7
+  -  [, ]: 
+  - Swift Dagger [swift_dagger, unit]: Caziel flashes to an enemy in a trail of shadows and stabs it at once with his attack plus bonus physical damage, cutting its armor for 3 seconds.
+  - Sweet Poison [sweet_poison, passive]: Each attack has a chance to land a second, poisoned blow: the target takes poison damage every second for 2 seconds. A new poison renews the old one; they do not stack.
+  - Master of Shadows [master_of_shadows, no_target]: Caziel wraps himself in shadows for 12 seconds: he vanishes from the enemy minimap, evades attacks more often and moves faster.
+  - Death Order [death_order, passive]: Caziel strikes hardest when an enemy is about to die: his attacks deal pure damage to enemies below 10 / 12 / 14% health.
+## tock (Tock) the Clockmaker range 575 move 295 primary int element 8
+  -  [, ]: 
+  - Time Bolt [time_bolt, point]: Tock fires a bolt of slowed time up to 1000 ahead. Every enemy it passes takes magic damage, and for 4 seconds its spell and item cooldowns run 30 / 40 / 50 / 60% slower.
+  - Fast Forward [fast_forward, unit]: Winds an ally (or Tock) forward: 2 / 3.5 / 5 / 6.5 seconds come off the cooldowns of its basic spells (not its ultimate, not items), and it moves 10 / 14 / 18 / 22% faster for 5 seconds.
+  - Rewind [rewind, no_target]: Tock steps back to where he stood 3 seconds ago, with the health and mana he had then if he had more. Removes slows and silences (a basic dispel) and dodges projectiles on the way.
+  - Slow Field [slow_field, point]: A field of slowed time for 5 seconds: enemies inside move 30 / 35 / 40 / 45% slower and attack slower.
+  - Quick Hands [quick_hands, passive]: Every spell Tock casts takes 1 / 1.5 / 2 / 2.5 seconds off the cooldowns of his other spells.
+  - Stop Time [stop_time, point]: Time stops in a 400 area: every enemy there is frozen (stunned) and its cooldowns stand still for 2.5 / 3 / 3.5 seconds. Tock's allies keep moving.
+## kragg (Kragg) the Magnet Knight range 150 move 300 primary str element 5
+  - Magnetize [magnetize, innate]: Kragg's attacks give enemies a Charge (up to 4, for 8 seconds). Each Charge makes the enemy take 0.10% more damage from his spells, +0.05% per hero level.
+  - Iron Grip [iron_grip, unit]: Kragg magnetizes an enemy: the two snap together and meet halfway. The enemy takes magic damage, is stunned and gets 2 Charges.
+  - Repel [repel, no_target]: A magnetic blast throws enemies near Kragg away, 25% further for each Charge they carry, and slows them. One that crashes into a tree, wall or unit takes more damage and is stunned. Adds a Charge.
+  - Overload [overload, passive]: Every 6th / 5th / 4th / 3rd attack, Kragg overloads and bursts electric charge around him: enemies within 200 are slowed by 80% for 0.8 seconds and take 60 / 75 / 90 / 105 electric magic damage (Lightning element).
+  - Magnet Field [magnet_field, no_target]: For 6 seconds Kragg is a giant magnet: enemies within 700 are dragged toward him (harder with each Charge) and gain a Charge every second. When it ends, enemies within 300 take magic damage and are stunned.
+## roydo (Roydo) the Anomaly range 150 move 305 primary int element 0
+  -  [, ]: 
+  - Grip of the Ruler [grip_of_the_ruler, point]: Roydo's gravity seizes one unit in a 400 area, enemy heroes first, and throws it to the middle over 0.8 seconds. Then every enemy there takes magic damage and is stunned for 1 second. With no enemy in the area, an ally is thrown instead and comes to no harm.
+  - Void Rush [void_rush, no_target]: A wave of gravity rolls out 650 around Roydo for 7 seconds. Enemies lose 20 / 30 / 40 / 50% status resistance and deal 10 / 15 / 20 / 25% less damage. Allies gain 7 / 9 / 11 / 13 armor and move 7 / 9 / 11 / 13% faster.
+  - Dark Matter Skin [dark_matter_skin, passive]: Damage Roydo takes has a 9 / 13 / 17 / 21% chance to burst back out: 25 / 28 / 31 / 34% of it hits every enemy within 650 as magic damage and slows their movement and attacks by 80% for 0.3 seconds.
+  - Anomaly [anomaly, no_target]: Roydo becomes the Anomaly, a hulking monster, for 30 seconds: his base attack time is 0.25 seconds shorter, he deals 60 / 120 / 180 more attack damage and he attacks from range (650).
+## blau (Blau) the Master Tactician range 600 move 295 primary agi element 0
+  -  [, ]: 
+  - Bounce Shot [bounce_shot, point]: Blau fires a magic bullet toward the target point. It passes through enemies and ricochets off trees, walls, boulders and other units, up to 3 / 5 / 7 / 9 times; each ricochet lets it fly 400 further. A tree it ricochets off is knocked down. Each enemy it pass
+  - Summon Boulders [summon_boulders, point]: 3 / 4 / 5 / 6 boulders roll out toward the target point at random angles, as far as it (at most 700), bouncing off each other, walls and units. An enemy they hit takes magic damage once and is knocked 200 back. They stay for 10 seconds and block every unit, ev
+  - Lay Trap [lay_trap, no_target]: Blau leaps 400 backwards and leaves a hidden trap where he stood. The first enemy to step on it is caught and cannot move for 1.2 / 1.6 / 2 / 2.4 seconds. The trap lasts 25 seconds.
+  - Place Turret [place_turret, point]: Blau builds a turret that shoots enemies within 650 every 1.5 seconds for 25 / 30 / 35% of his attack damage (40% at level 3 with the Upgrade Staff); his attack effects work with its shots. It has 900 / 1500 / 2100 health, no regeneration and lasts 35 seconds.
+## azrael (Azrael) the Death Dealer range 150 move 300 primary agi element 7
+  -  [, ]: 
+  - Soul Tap [soul_tap, toggle]: Toggle. Every 4.5 seconds Azrael scans 600 around her for souls (every unit but herself, allies and enemies alike). If at least one unit is found, it spends 80 mana and grants bonus attack damage on her next strike for each unit and each hero scanned. Her next
+  - Door of the End [door_of_the_end, point]: Azrael opens a door to the spirit world. She and up to two allied heroes can walk into it, hidden and unharmed, and may move to step out early without setting off the blast. Cast again to place the exit, up to 800 away. When the door closes, everyone inside st
+  - Death Scythe [death_scythe, passive]: Azrael's attacks and spells have a chance to strike as pure damage, adding bonus pure damage and healing her for 50% of the damage done. 1 second cooldown after each strike.
+  - Divine Darkness [divine_darkness, no_target]: Azrael spreads her white wings for 25 seconds: she flies over cliffs and trees, moves 15% faster, sees further day and night and attacks faster. Enemies within 700 of her lose part of their sight.
+## airah (Airah) the Wind Goddess range 600 move 300 primary int element 5
+  -  [, ]: 
+  - Gust [gust, point]: A blast of wind rushes 900 ahead, then turns back to Airah wherever she is. Every enemy it hits takes magic damage and is dragged along toward its head; enemies can still move and act, and can pull free by walking away. An enemy dragged into a tree, cliff, bui
+  - Tailwind [tailwind, unit]: Wind at an ally's back (or Airah's) for 5 seconds: it moves 16 / 22 / 28 / 34% faster, walks through units, and ranged attacks against it miss 25 / 30 / 35 / 40% of the time. Removes slows when cast.
+  - Wind Wall [wind_wall, point]: A wall of wind 600 wide rises across Airah's aim for 4 / 4.5 / 5 / 5.5 seconds. Enemy ranged attacks that touch it stop. Enemies walking through it are slowed by 30%.
+  - Hurricane [hurricane, point]: A hurricane 450 wide for 6 seconds; Airah keeps moving and casting. Trees inside fall. Enemies inside are dragged toward its middle and take magic damage every second; allies inside move 25% faster. When it ends, every enemy still inside is thrown 450 straight
+## burak (Burak) the Berserker range 150 move 305 primary str element 1
+  - Rage [rage, innate]: Burak fills with Rage (up to 100): 1 for every 1% of his health he loses and 5 for every attack he lands on a hero. After 4 seconds without hitting or being hit by a hero he loses 10 a second. Every 10 Rage gives him 5 attack speed (50 when full).
+  - Axe Throw [axe_throw, point]: Burak throws an axe up to 1000. The first enemy hit takes physical damage and is slowed by 30% for 2 seconds; the axe sticks in it, or in the first tree or cliff, or drops at the end. For 4 seconds he can cast it again for free to leap to the axe, landing besi
+  - Reckless Swing [reckless_swing, no_target]: For 8 seconds Burak's attacks cleave 50 / 60 / 70 / 80% of their damage to the enemies behind his target and heal him for 15 / 20 / 25 / 30% of the damage, but he takes 15% more damage.
+  - Unstoppable [unstoppable, passive]: When a stun, root or hex lands on Burak while he has 40 Rage or more, he spends 40 Rage and it lasts 40 / 50 / 60 / 70% shorter. Break stops it.
+  - Berserk [berserk, no_target]: For 12 seconds Burak's Rage stays full, he deals 40 / 60 / 80 more attack damage, moves 10% faster and slows do nothing to him. Half of the damage he takes is held back and comes back as pure damage over 6 seconds after Berserk ends. Every enemy hero he kills 
+## emelrich (Ser Emelrich) the Heavy Sword range 150 move 290 primary str element 8
+  -  [, ]: 
+  - Overhead Cut [overhead_cut, point]: Ser Emelrich raises his sword (this part can still be called off), then winds up for 0.6 seconds with a red line on the ground for everyone to see; from then on only a stun, hex or silence stops the swing. The cut, 450 long and 160 wide, deals physical damage 
+  - Sweep [sweep, no_target]: A wide swing through the half circle in front of him (300): his attack damage plus 40 / 70 / 100 / 130 as physical damage. Enemies hit are shoved 200 to his left, so they pile up; one shoved into a tree, cliff, building or unit takes 40 / 60 / 80 / 100 more an
+  - Steel Stance [steel_stance, toggle]: Toggle (1 second between toggles). While on, Ser Emelrich moves 20% slower and turns half as fast, but has 4 / 6 / 8 / 10 more armor and takes 25 / 35 / 45 / 55% less damage from attacks and line shots that come from his front 120 degrees. Other slows do nothi
+  - Giant Swing [giant_swing, point]: Ser Emelrich winds up for 1.8 / 1.6 / 1.4 seconds (a red cone for everyone to see: get out of it), then brings the sword down through a cone 700 long and 100 degrees wide: 250 / 375 / 500 physical damage that ignores 65% of armor, and every enemy hit is knocke
+## feran (Feran Mock) the Jester range 550 move 305 primary int element 0
+  -  [, ]: 
+  - Knife Juggle [knife_juggle, point]: Feran throws 4 / 5 / 6 / 7 knives 0.1 seconds apart, each at a random angle within 25 degrees of his aim, 800 far. Each knife deals magic damage to the first enemy it hits; one enemy is hit by at most 5 knives a cast.
+  - Joke Box [joke_box, point]: Feran throws a box that lands and pops after a 0.8 second fuse: enemies within 275 take magic damage and each rolls its own prank. Pie: its attacks miss half the time for 3 seconds. Spring: thrown 350 in a random direction (a crash into a tree, cliff or unit s
+  - Swap [swap, unit]: Feran and any hero, ally or enemy, trade places at once; projectiles aimed at either of them miss. A swapped enemy is turned to face away and slowed by 40% for 1.5 seconds. Upgrade Staff: cast it on an allied hero to mark it, then on an enemy hero: those two t
+  - Shuffle [shuffle, point]: Every enemy hero and creep in the area trades places with another random enemy there, is stunned, then is dizzy for 3 seconds (turns half as fast and moves 25% slower). Then knives fly out of the middle in every direction: 6 Knife Juggles at its level, each hi
+## ghorman (Ghorman) the Beast King range 150 move 305 primary str element 6
+  -  [, ]: 
+  - Tame [tame, unit]: A neutral creep (not from the ancient camp) or an enemy lane creep becomes Ghorman's beast for good, with 20 / 30 / 40 / 50% more health and attack damage, and keeps its own ability. He can lead 1 / 2 / 3 / 5 at once; taming past that releases the oldest (it d
+  - Roar [roar, no_target]: Enemies within 500 are slowed by 35 / 40 / 45 / 50% and deal 15 / 20 / 25 / 30% less attack damage for 6 seconds. His beasts within 900 attack 30 faster (and 2% more for each beast he leads) and move 20% faster for 6 seconds.
+  - Pack Leader [pack_leader, passive]: Each of his beasts within 900 gives Ghorman 3 / 4 / 5 / 6 attack damage and 1 / 1.5 / 2 / 2.5 armor. When one of his beasts dies, he heals 8 / 10 / 12 / 14% of his health.
+  - Blessing of the Beast King [blessing_of_the_beast_king, unit]: Ghorman blesses one of his beasts: it heals 30 / 40 / 50 / 60% of its health, is cleansed of slows, silences and roots, its ability is ready again, and for 8 seconds it deals 20 / 30 / 40 / 50% more attack damage and attacks 20 / 30 / 40 / 50 faster.
+  - Beast Form [beast_form, no_target]: Ghorman becomes a huge beast for 25 seconds: 300 / 600 / 900 more health, 40 / 60 / 80 more attack damage and 40 more speed; every 3rd attack is a maul for 100 / 150 / 200 more physical damage and a 0.6 second bash. His beasts grow too: 25% more health, and th
+## araki (Araki) the Blur range 150 move 305 primary agi element 0
+  - Senryukai [senryukai, innate]: Araki's katana grows sharper the longer the fight goes on. Each of his attacks (and his ghosts') on an enemy adds a stack: every stack deals 4 more physical damage on his hits on that enemy. The stacks last 15 seconds, renewed with every hit. Not on buildings.
+  - Blur Strike [blur_strike, point]: Araki dashes up to 600 like a flash and slashes every enemy within 250 of his path: each one takes an attack (critical strikes, bashes and every other attack effect can happen) and 50 / 80 / 110 / 140 magic damage, and is slowed by 60% for 1 second. If he hits
+  - Djin Bomb [djin_bomb, point]: Araki throws a bomb that sets a demon loose in a cloud of smoke (radius 450) for 5 seconds. Enemies inside lose 10 / 15 / 20 / 25% magic resistance and 10 / 15 / 20 / 25% status resistance, and are slowed by 5 / 8 / 11 / 14% more for every second they stay in 
+  - Ghosts of the Will [ghosts_of_the_will, unit]: Araki calls 3 / 5 / 7 / 9 ghosts from the Undead realm, one every 0.3 seconds. Each flies out at 800 (through units, over cliffs and trees) and strikes the target the moment it reaches it, even on the run, for 25 / 35 / 45 / 55% of Araki's attack damage, then 
+  - The Blur [the_blur, no_target]: Araki falls into complete concentration for 19 seconds: Blur Strike and Djin Bomb have half their cooldowns (the ones already running are halved too), and his next 9 / 15 / 21 attacks are 60 / 80 / 100 faster.
+## blackfire (Blackfire) the Unfallen range 150 move 300 primary str element 7
+  - Underworld Presence [underworld_presence, innate]: Every unit that dies within 1000 of Blackfire gives its soul to him: he heals 4% of his maximum health, 10% for a hero (150% more).
+  - Sacrificial Grip [sacrificial_grip, unit]: Blackfire grips an enemy unit with the Underworld: the target and Blackfire are both stunned for 2 / 2.2 / 2.4 / 2.6 seconds, and the target loses 25% of its current health as pure damage (this never kills). After the stun both deal 30% less attack damage for 
+  - Rise Up [rise_up, no_target]: Blackfire lets out a deafening roar: the fresh bodies within 1000 rise at once as his Undead for 20 seconds, his to command. The roar stays on him for 20 seconds and raises whatever dies within 1000 meanwhile; the raised stay their 20 seconds after it ends. An
+  - Fiend Edge [fiend_edge, passive]: Blackfire's great sword is corrupted with the Underworld: a 10 / 15 / 20 / 25% chance to strike a critical hit for 2x damage. A critical hit heals every ally within 800 (Blackfire too) for 20 / 25 / 30 / 35% of its damage.
+  - Unfallen [unfallen, passive]: Blackfire cannot stay dead. When he dies he lies still for 3 seconds, then springs back to life with full health and 25% more damage, armor, movement speed and attack speed for 3 / 4 / 5 seconds, and then dies for good (sooner if he is killed again). As his li
+## thyrandael (Thyrandael) the Forsaken Seraph range 150 move 305 primary int element 8
+  - Divine Touch [divine_touch, innate]: Every spell Thyrandael casts gives him a charge of Divine Touch: an All-damage Barrier as large as his intelligence (it takes damage of every kind before his health). Up to 3 charges; the barrier fades 12 seconds after his last spell.
+  - Holy Beam [holy_beam, point]: Thyrandael shoots a beam of light 800 long for up to 7 seconds. Enemies in the beam take 50 / 70 / 90 / 110 magic damage and lose 30 / 40 / 50 / 60 mana every second, and are slowed by 30% while it touches them. He cannot move while he holds it; a move order t
+  - Quick Flash [quick_flash, no_target]: A quick blast of light around Thyrandael (500): 30 / 50 / 70 / 90 magic damage, and a mark on every enemy hit for 10 seconds. The marks stack and renew: each mark an enemy already has adds 10 / 15 / 20 / 25 magic damage to the next Quick Flash. It does not sto
+  - Spirit Step [spirit_step, point]: Thyrandael steps to the target spot at once and stomps the ground with divine light: enemies within 300 are silenced for 1 / 1.4 / 1.8 / 2.2 seconds and slowed by 40% for 1 second.
+  - False Judgement [false_judgement, point]: Thyrandael gains a charge for every 300 / 250 / 200 damage he takes, up to 10 / 11 / 12. He spends them all on a violent burst of light at a spot (400): for 5 seconds enemies miss up to 40 / 70 / 100% of their attacks, are slowed by up to 55% and take up to 60
+## gancho (Gancho) the Nature Whisperer range 600 move 300 primary agi element 6
+  - Tree Walk [tree_walk, innate]: Gancho walks through trees as if they were open ground, and has 20% evasion while he stands within 250 of a tree.
+  - Root Snare [root_snare, point]: Gancho throws a living vine 1100 far. The first enemy it touches takes 80 / 140 / 200 / 260 magic damage and is rooted for 1.2 / 1.4 / 1.6 / 1.8 seconds.
+  - Seed Bomb [seed_bomb, point]: Gancho throws a seed. It bursts 0.6 seconds after it lands: enemies within 250 take 60 / 100 / 140 / 180 magic damage and are slowed by 30% for 2 seconds, and a young tree grows where it burst for 15 seconds.
+  - Thorn Barbs [thorn_barbs, passive]: Each of Gancho's attacks leaves a thorn in the enemy for 5 seconds (up to 5; a new one renews them all). Each thorn deals 4 / 6 / 8 / 10 magic damage a second and slows by 4%.
+  - Angry Forest [angry_forest, no_target]: Gancho wakes the forest for 7 seconds. Every second each tree within 1000 of him lashes the nearest enemy within 350 of it with a vine: 35 / 50 / 65 magic damage and a 0.4 second root (a unit is rooted at most once every 1.5 seconds, and takes at most two lash
+## kaileh (Lord Kaileh) the Grand Cavalier range 200 move 300 primary str element 4
+  - Momentum [momentum, innate]: Lord Kaileh hits harder the faster he moves: 30% of his bonus movement speed is added to his attack damage.
+  - Lance Charge [lance_charge, point]: Lord Kaileh lowers his lance and charges up to 700 / 800 / 900 / 1000. The first enemy hero he meets is carried on the lance to the end of the charge, takes 75 / 150 / 225 / 300 physical damage and is stunned for 1.2 / 1.4 / 1.6 / 1.8 seconds. Other enemies in
+  - Lance Sweep [lance_sweep, no_target]: Lord Kaileh swings his lance round him (350): enemies take 60 / 110 / 160 / 210 physical damage, are pushed 150 away and slowed by 30% for 2 seconds.
+  - War Banner [war_banner, point]: Lord Kaileh plants his house banner for 12 seconds. Allies within 600 have 3 / 4 / 5 / 6 more armor and attack 10 / 15 / 20 / 25 faster; enemies within 600 move 10% slower. Four attacks bring it down; spells do not hurt it.
+  - Cavalry Charge [cavalry_charge, point]: Lord Kaileh charges up to 1600 with six ghost riders at his sides, trampling the trees in his way. Enemies in the 400 wide path take 200 / 300 / 400 magic damage, are pushed aside and stunned for 1 / 1.25 / 1.5 seconds. Nothing can slow or move him while he ch
+## dracoxinia (Dracoxinia) the Blue Wyrm range 150 move 305 primary str element 5
+  - Royal Scales [royal_scales, innate]: Dracoxinia takes 15% less damage from enemies whose element her sword beats.
+  - Dragon Dash [dragon_dash, point]: Dracoxinia dashes up to 650 through her enemies: each takes 70 / 130 / 190 / 250 physical damage and is slowed by 50% for 0.5 seconds.
+  - Dragon Leap [dragon_leap, point]: Dracoxinia leaps to a point up to 500 / 550 / 600 / 650 away, over trees and cliffs, 0.55 seconds in the air. She cannot leap while rooted.
+  - Dragon Hide [dragon_hide, passive]: Dracoxinia's scales harden: 2 / 3 / 4 / 5 more armor and 1.5 / 3 / 4.5 / 6 more health regeneration.
+  - Rising Slash [rising_slash, unit]: Dracoxinia slashes upward and throws an enemy into the air for 0.8 / 1.0 / 1.2 / 1.4 seconds (it is stunned there), with 60 / 100 / 140 / 180 physical damage.
+  - Dragon Blade [dragon_blade, passive]: Every 4th attack is a heavy strike with 20 / 35 / 50 / 65 more damage and her sword's power. Pink: lightning jumps to 3 more enemies within 500 for 60% of the strike. Gold: an All-damage Barrier as large as the strike for 6 seconds. Blue: the target is rooted 
+  - Change Sword [change_sword, no_target]: Each use changes Dracoxinia's sword to the next one (1 second apart, no mana): 3 / 4 / 5 swords in the order Pink, Gold, Blue, Red, Green. Her attacks take the sword's element (Pink Lightning, Gold Light, Blue Water, Red Fire, Green Nature), and her next attac
+## ITEMS
+      0 observer_ward Eye Ward
+     50 reveal_ward Reveal Ward
+     55 branch Tree Twig
+     60 clarity Mana Potion
+     65 faerie_fire Firefly Jar
+     65 mango Ripe Mango
+     80 reveal_dust Reveal Dust
+     90 tango Vegan Picker
+    100 quelling_blade Mini-Axe
+    100 salve Healing Paste
+    100 tp_scroll Teleport Scroll
+    140 gauntlets Heavy Gloves
+    140 mantle Thinking Cap
+    140 slippers Slippers
+    150 recipe_magic_wand Recipe: Zap Wand
+    155 circlet Headband
+    175 ring_protection Armor Ring
+    175 ring_regen Healing Ring
+    175 sobi_mask Calm Mask
+    200 magic_stick Zap Stick
+    200 recipe_crit_sword Recipe: Crit Sword
+    210 recipe_smart_band Recipe: Smart Band
+    210 recipe_tough_band Recipe: Tough Band
+    210 recipe_wraith_band Recipe: Swift Band
+    225 speed_ribbon Speed Ribbon
+    250 fur_hat Fur Hat
+    250 pointy_hat Pointy Hat
+    250 recipe_break_blade Recipe: Break Blade
+    250 recipe_leaf_hat Recipe: Leaf Hat
+    250 recipe_mana_ring Recipe: Mana Ring
+    250 recipe_root_staff Recipe: Root Staff
+    250 recipe_small_shield Recipe: Small Shield
+    300 recipe_net_staff Recipe: Net Staff
+    300 recipe_silence_staff Recipe: Silence Staff
+    300 rust_stone Rust Stone
+    325 recipe_mana_boots Recipe: Mana Boots
+    350 recipe_halberd Recipe: Halberd
+    400 recipe_cleave_axe Recipe: Cleave Axe
+    400 recipe_time_crystal Recipe: Time Crystal
+    425 leaf_hat Leaf Hat
+    425 mana_ring Mana Ring
+    425 small_shield Small Shield
+    450 belt_str Heavy Belt
+    450 blades_attack Fist Blades
+    450 boots_elves Elf Band
+    450 gloves Fast Gloves
+    450 gold_band Gold Band
+    450 recipe_spike_armor Recipe: Spike Armor
+    450 robe Wizard Robe
+    450 shawl Scarf
+    460 magic_wand Zap Wand
+    500 boots Running Shoes
+    500 chainmail Chain Shirt
+    505 smart_band Smart Band
+    505 tough_band Tough Band
+    505 wraith_band Swift Band
+    525 recipe_war_drum Recipe: War Drum
+    550 recipe_dragon_lance Recipe: Long Spear
+    550 recipe_storm_hammer Recipe: Storm Hammer
+    650 recipe_heavy_sword Recipe: Kugmo
+    650 recipe_spell_sword Recipe: Atuli
+    650 recipe_yasha Recipe: Igit
+    675 bottle Flask
+    700 big_healing_ring Big Healing Ring
+    700 mana_stone Mana Stone
+    700 recipe_hex_staff Recipe: Hex Staff
+    775 recipe_long_lens Recipe: Long Lens
+    800 mana_gem Mana Gem
+    800 recipe_giant_heart Recipe: Giant Heart
+    800 recipe_glimmer_cape Recipe: Fade Cape
+    825 recipe_stun_club Recipe: Stun Club
+    850 recipe_medic_kit Recipe: Medic Kit
+    900 cloak Spell Cloak
+    900 lifesteal Leech Mask
+    900 recipe_sure_hit_staff Recipe: Sure Hit Staff
+    900 sneak_charm Sneak Charm
+    900 spear Spear
+    900 wide_stone Wide Stone
+    950 plate_vest Plate Vest
+    950 recipe_push_staff Recipe: Push Staff
+    975 iron_helm Iron Helm
+   1000 blade_alacrity Quick Blade
+   1000 brass_knuckles Brass Knuckles
+   1000 broadsword Long Sword
+   1000 giant_axe Giant Axe
+   1000 health_crystal Health Crystal
+   1000 recipe_crit_bow Recipe: Crit Bow
+   1000 wizard_staff Wizard Staff
+   1050 recipe_team_shield Recipe: Team Shield
+   1100 recipe_dagon Recipe: Blast Rod
+   1100 recipe_dagon_2 Recipe: Blast Rod 2
+   1100 recipe_dagon_3 Recipe: Blast Rod 3
+   1100 recipe_dagon_4 Recipe: Blast Rod 4
+   1100 recipe_dagon_5 Recipe: Blast Rod 5
+   1175 recipe_guard_boots Recipe: Guard Boots
+   1200 big_gem Big Gem
+   1250 recipe_frost_plate Recipe: Frost Plate
+   1275 recipe_stun_blade Recipe: Stun Blade
+   1300 dodge_charm Dodge Charm
+   1300 recipe_battle_armor Recipe: Battle Armor
+   1350 greatsword Greatsword
+   1400 plate_armor Plate Armor
+   1400 power_treads Switch Boots
+   1400 steady_ring Steady Ring
+   1400 upgrade_gem Upgrade Gem
+   1450 recipe_spell_shield Recipe: Spell Shield
+   1450 slip_boots Slip Boots
+   1500 mana_boots Mana Boots
+   1600 recipe_refresh_stone Recipe: Refresh Stone
+   1600 steel_hammer Steel Hammer
+   1625 battle_staff Battle Staff
+   1625 war_drum War Drum
+   1700 block_shield Block Shield
+   1700 mana_tiara Mana Tiara
+   1700 troll_ring Troll Ring
+   1750 recipe_crash_knife Recipe: Crash Knife
+   1750 recipe_gold_glove Recipe: Gold Glove
+   1775 medic_kit Medic Kit
+   1900 mask_of_madness Frenzy Mask
+   2000 crit_sword Crit Sword
+   2000 dragon_lance Long Spear
+   2000 recipe_travel_boots Recipe: Travel Boots
+   2000 swift_stone Swift Stone
+   2100 heavy_sword Kugmo
+   2100 spell_sword Atuli
+   2100 yasha Igit
+   2150 glimmer_cape Fade Cape
+   2200 gold_glove Gold Glove
+   2200 huge_sword Huge Sword
+   2200 leech_totem Leech Totem
+   2200 push_staff Push Staff
+   2250 jump_knife Jump Knife
+   2250 root_staff Root Staff
+   2275 long_lens Long Lens
+   2400 spike_armor Spike Armor
+   2500 travel_boots Travel Boots
+   2800 feather Feather
+   2800 long_staff Long Staff
+   2800 war_axe War Axe
+   2875 stun_club Stun Club
+   2950 shock_hammer Shock Hammer
+   3000 dagon Blast Rod
+   3000 soul_gem Soul Gem
+   3250 sneak_blade Sneak Blade
+   3275 silence_staff Silence Staff
+   3300 halberd Halberd
+   3400 relic Relic
+   3500 armor_breaker Armor Breaker
+   3725 team_shield Team Shield
+   3900 cleave_axe Cleave Axe
+   4050 spell_shield Spell Shield
+   4100 dagon_2 Blast Rod 2
+   4200 igit_atuli Igit and Atuli
+   4200 kugmo_atuli Kugmo and Atuli
+   4200 twin_swords Kugmo and Igit
+   4200 upgrade_staff Upgrade Staff
+   4450 guard_boots Guard Boots
+   4500 frost_plate Frost Plate
+   4650 net_staff Net Staff
+   4700 burning_cape Burning Cape
+   5000 refresh_stone Refresh Stone
+   5000 sure_hit_staff Sure Hit Staff
+   5050 leech_blade Leech Blade
+   5100 time_crystal Time Crystal
+   5125 battle_armor Battle Armor
+   5200 crit_bow Crit Bow
+   5200 dagon_3 Blast Rod 3
+   5200 hex_staff Hex Staff
+   5300 giant_heart Giant Heart
+   5450 moth_blade Moth Blade
+   5500 storm_hammer Storm Hammer
+   5700 break_blade Break Blade
+   6250 stun_blade Stun Blade
+   6300 dagon_4 Blast Rod 4
+   6800 crash_knife Crash Knife
+   7400 dagon_5 Blast Rod 5

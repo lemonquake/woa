@@ -1,0 +1,104 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 5084 ms
+match ready in 22423 ms
+storm: you are gancho; heroes ["gancho", "kaileh", "gancho", "dracoxinia", "kaileh", "gancho", "blackfire", "thyrandael", "thyrandael", "blackfire"]
+WARNING: Vector2 cannot be normalized, the elements must be finite. Making (0, 0) as a fallback.
+   at: normalize (core/math/vector2.cpp:55)
+   GDScript backtrace (most recent call first):
+       [0] _snare (res://src/sim/sim_kits10.gd:121)
+       [1] cast (res://src/sim/sim_kits10.gd:71)
+       [2] execute (res://src/sim/sim_abilities.gd:450)
+       [3] _update_cast (res://src/sim/sim_orders.gd:633)
+       [4] update (res://src/sim/sim_orders.gd:304)
+       [5] step (res://src/sim/sim_world.gd:331)
+       [6] _step (res://src/game/main.gd:619)
+       [7] _physics_process (res://src/game/main.gd:611)
+SCRIPT ERROR: Invalid access to property or key 'impacted' on a base object of type 'Dictionary'.
+   at: SimAbilities._impact (res://src/sim/sim_abilities.gd:992)
+   GDScript backtrace (most recent call first):
+       [0] _impact (res://src/sim/sim_abilities.gd:992)
+       [1] update_motion (res://src/sim/sim_abilities.gd:965)
+       [2] _pre_unit (res://src/sim/sim_world.gd:521)
+       [3] step (res://src/sim/sim_world.gd:304)
+       [4] _step (res://src/game/main.gd:619)
+       [5] _physics_process (res://src/game/main.gd:611)
+SCRIPT ERROR: Invalid access to property or key 'impacted' on a base object of type 'Dictionary'.
+   at: SimAbilities._impact (res://src/sim/sim_abilities.gd:992)
+   GDScript backtrace (most recent call first):
+       [0] _impact (res://src/sim/sim_abilities.gd:992)
+       [1] update_motion (res://src/sim/sim_abilities.gd:965)
+       [2] _pre_unit (res://src/sim/sim_world.gd:521)
+       [3] step (res://src/sim/sim_world.gd:304)
+       [4] _step (res://src/game/main.gd:619)
+       [5] _physics_process (res://src/game/main.gd:611)
+SCRIPT ERROR: Invalid access to property or key 'impacted' on a base object of type 'Dictionary'.
+   at: SimAbilities._impact (res://src/sim/sim_abilities.gd:992)
+   GDScript backtrace (most recent call first):
+       [0] _impact (res://src/sim/sim_abilities.gd:992)
+       [1] update_motion (res://src/sim/sim_abilities.gd:965)
+       [2] _pre_unit (res://src/sim/sim_world.gd:521)
+       [3] step (res://src/sim/sim_world.gd:304)
+       [4] _step (res://src/game/main.gd:619)
+       [5] _physics_process (res://src/game/main.gd:611)
+SCRIPT ERROR: Invalid access to property or key 'impacted' on a base object of type 'Dictionary'.
+   at: SimAbilities._impact (res://src/sim/sim_abilities.gd:992)
+   GDScript backtrace (most recent call first):
+       [0] _impact (res://src/sim/sim_abilities.gd:992)
+       [1] update_motion (res://src/sim/sim_abilities.gd:965)
+       [2] _pre_unit (res://src/sim/sim_world.gd:521)
+       [3] step (res://src/sim/sim_world.gd:304)
+       [4] _step (res://src/game/main.gd:619)
+       [5] _physics_process (res://src/game/main.gd:611)
+WARNING: Vector2 cannot be normalized, the elements must be finite. Making (0, 0) as a fallback.
+   at: normalize (core/math/vector2.cpp:55)
+   GDScript backtrace (most recent call first):
+       [0] _snare (res://src/sim/sim_kits10.gd:121)
+       [1] cast (res://src/sim/sim_kits10.gd:71)
+       [2] execute (res://src/sim/sim_abilities.gd:450)
+       [3] _update_cast (res://src/sim/sim_orders.gd:633)
+       [4] update (res://src/sim/sim_orders.gd:304)
+       [5] step (res://src/sim/sim_world.gd:331)
+       [6] _step_ahead (res://src/game/main.gd:650)
+WARNING: Vector2 cannot be normalized, the elements must be finite. Making (0, 0) as a fallback.
+   at: normalize (core/math/vector2.cpp:55)
+   GDScript backtrace (most recent call first):
+       [0] _snare (res://src/sim/sim_kits10.gd:121)
+       [1] cast (res://src/sim/sim_kits10.gd:71)
+       [2] execute (res://src/sim/sim_abilities.gd:450)
+       [3] _update_cast (res://src/sim/sim_orders.gd:633)
+       [4] update (res://src/sim/sim_orders.gd:304)
+       [5] step (res://src/sim/sim_world.gd:331)
+       [6] _step (res://src/game/main.gd:619)
+       [7] _physics_process (res://src/game/main.gd:611)
+WARNING: Vector2 cannot be normalized, the elements must be finite. Making (0, 0) as a fallback.
+   at: normalize (core/math/vector2.cpp:55)
+   GDScript backtrace (most recent call first):
+       [0] _snare (res://src/sim/sim_kits10.gd:121)
+       [1] cast (res://src/sim/sim_kits10.gd:71)
+       [2] execute (res://src/sim/sim_abilities.gd:450)
+       [3] _update_cast (res://src/sim/sim_orders.gd:633)
+       [4] update (res://src/sim/sim_orders.gd:304)
+       [5] step (res://src/sim/sim_world.gd:331)
+       [6] _step (res://src/game/main.gd:619)
+       [7] _physics_process (res://src/game/main.gd:611)
+WARNING: Vector2 cannot be normalized, the elements must be finite. Making (0, 0) as a fallback.
+   at: normalize (core/math/vector2.cpp:55)
+   GDScript backtrace (most recent call first):
+       [0] _snare (res://src/sim/sim_kits10.gd:121)
+       [1] cast (res://src/sim/sim_kits10.gd:71)
+       [2] execute (res://src/sim/sim_abilities.gd:450)
+       [3] _update_cast (res://src/sim/sim_orders.gd:633)
+       [4] update (res://src/sim/sim_orders.gd:304)
+       [5] step (res://src/sim/sim_world.gd:331)
+       [6] _step (res://src/game/main.gd:619)
+       [7] _physics_process (res://src/game/main.gd:611)
+casts ordered: { "root_snare": 202, "seed_bomb": 188, "angry_forest": 189 }
+casts fired:   { "root_snare": 17, "angry_forest": 11, "seed_bomb": 13 }
+slowest frame 0.843 s, game time 257.6, frames 5604
+storm done
+WARNING: 2505 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 29 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

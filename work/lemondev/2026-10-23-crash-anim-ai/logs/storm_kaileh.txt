@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+SCRIPT ERROR: Parse Error: Identifier "StormProbe" not declared in the current scope.
+   at: GDScript::reload (res://src/game/main.gd:268)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "storm" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://src/game/main.gd:268)
+ERROR: Failed to load script "res://src/game/main.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+FAIL boot timeout

@@ -1,0 +1,115 @@
+{
+	"animations": {
+		"drac_h_cut_1": {
+			"hits": [
+				[
+					0.43,
+					0.5
+				]
+			],
+			"length": 1.0,
+			"loop": false
+		},
+		"drac_h_cut_2": {
+			"hits": [
+				[
+					0.43,
+					0.5
+				]
+			],
+			"length": 1.0,
+			"loop": false
+		},
+		"drac_h_cut_3": {
+			"hits": [
+				[
+					0.43,
+					0.5
+				]
+			],
+			"length": 1.0,
+			"loop": false
+		},
+		"drac_h_dash": {
+			"hits": [
+				[
+					0.08,
+					0.12
+				]
+			],
+			"length": 0.6,
+			"loop": true,
+			"release": 0.1
+		},
+		"drac_h_hit": {
+			"hits": [
+				[
+					0.1,
+					0.16
+				]
+			],
+			"length": 0.6,
+			"loop": false
+		},
+		"drac_h_idle": {
+			"length": 3.2,
+			"loop": true
+		},
+		"drac_h_recover": {
+			"length": 0.7,
+			"loop": false
+		},
+		"drac_h_run": {
+			"ground_speed": 3.05,
+			"length": 0.62,
+			"loop": true
+		},
+		"drac_h_stagger": {
+			"length": 0.9,
+			"loop": false
+		},
+		"drac_h_swap": {
+			"hits": [
+				[
+					0.28,
+					0.34
+				]
+			],
+			"length": 1.0,
+			"loop": false,
+			"release": 0.3
+		},
+		"emel_h_cast": {
+			"hits": [
+				[
+					0.3,
+					0.36
+				]
+			],
+			"length": 1.0,
+			"loop": false,
+			"release": 0.32
+		},
+		"emel_h_hit": {
+			"hits": [
+				[
+					0.1,
+					0.16
+				]
+			],
+			"length": 0.6,
+			"loop": false
+		},
+		"emel_h_idle": {
+			"length": 3.4,
+			"loop": true
+		},
+		"emel_h_run": {
+			"ground_speed": 4.384,
+			"length": 0.56,
+			"loop": true
+		}
+	},
+	"fps": 30.0,
+	"generator": "tools/anim/hand_clips.gd"
+}

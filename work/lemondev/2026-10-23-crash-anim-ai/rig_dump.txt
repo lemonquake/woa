@@ -1,0 +1,64 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+bones 24
+0 root parent=-1 pos=(0.0, 0.0, 0.0) rot=(-0.0, 0.0, -0.0, 1) gpos=(0.0, 0.0, 0.0) gbasisY=(0.0, 1.0, 0.0)
+1 hips parent=0 pos=(0.0, 0.996, 0.0) rot=(0.045314, 0.0, -0.0, 0.998973) gpos=(0.0, 0.996, 0.0) gbasisY=(0.0, 1.0, 0.09)
+2 spine parent=1 pos=(0.0, 0.086, 0.008) rot=(-0.045314, -0.0, -0.0, 0.998973) gpos=(0.0, 1.081, 0.016) gbasisY=(0.0, 1.0, 0.0)
+3 chest parent=2 pos=(0.0, 0.141, 0.0) rot=(-0.072591, 0.0, -0.0, 0.997362) gpos=(0.0, 1.222, 0.016) gbasisY=(0.0, 0.99, -0.14)
+4 neck parent=3 pos=(0.0, 0.32, -0.047) rot=(0.299797, -0.0, -0.0, 0.954003) gpos=(0.0, 1.532, -0.077) gbasisY=(0.0, 0.89, 0.45)
+5 head parent=4 pos=(0.0, 0.062, 0.031) rot=(-0.229753, -0.0, 0.0, 0.973249) gpos=(0.0, 1.574, -0.021) gbasisY=(0.0, 1.0, 0.0)
+6 shoulder.L parent=3 pos=(0.047, 0.258, -0.039) rot=(-0.517121, -0.482014, -0.476001, 0.523135) gpos=(0.047, 1.471, -0.06) gbasisY=(1.0, 0.0, -0.08)
+7 upper_arm.L parent=6 pos=(-0.008, 0.094, 0.0) rot=(-0.087937, -0.0, 0.006959, 0.996102) gpos=(0.14, 1.47, -0.076) gbasisY=(0.98, -0.18, -0.07)
+8 forearm.L parent=7 pos=(0.0, 0.223, 0.0) rot=(0.076338, -0.0, -0.052207, 0.995714) gpos=(0.358, 1.431, -0.092) gbasisY=(1.0, -0.01, 0.01)
+9 hand.L parent=8 pos=(0.0, 0.219, 0.0) rot=(-0.056346, 0.023267, 0.0313, 0.997649) gpos=(0.577, 1.429, -0.089) gbasisY=(0.99, -0.13, -0.04)
+10 weapon.L parent=9 pos=(0.04, 0.097, -0.019) rot=(0.000001, 0.000002, -0.707107, 0.707107) gpos=(0.674, 1.402, -0.052) gbasisY=(0.05, 0.1, 0.99)
+11 shoulder.R parent=3 pos=(-0.047, 0.258, -0.039) rot=(-0.517122, 0.482014, 0.476001, 0.523135) gpos=(-0.047, 1.471, -0.06) gbasisY=(-1.0, 0.0, -0.08)
+12 upper_arm.R parent=11 pos=(0.008, 0.094, 0.0) rot=(-0.087937, 0.0, -0.006959, 0.996102) gpos=(-0.14, 1.47, -0.076) gbasisY=(-0.98, -0.18, -0.07)
+13 forearm.R parent=12 pos=(0.0, 0.223, 0.0) rot=(0.068015, -0.0, 0.04961, 0.99645) gpos=(-0.358, 1.431, -0.092) gbasisY=(-1.0, -0.03, 0.01)
+14 hand.R parent=13 pos=(0.0, 0.22, 0.0) rot=(-0.037531, -0.064519, -0.018466, 0.997039) gpos=(-0.579, 1.425, -0.09) gbasisY=(-0.99, -0.1, -0.02)
+15 weapon.R parent=14 pos=(-0.039, 0.11, -0.014) rot=(0.0, 0.0, 0.707107, 0.707107) gpos=(-0.688, 1.401, -0.054) gbasisY=(-0.03, 0.02, 1.0)
+16 thigh.L parent=1 pos=(0.109, -0.023, 0.0) rot=(0.0, 0.085937, 0.996248, 0.010206) gpos=(0.109, 0.973, -0.002) gbasisY=(-0.02, -1.0, 0.08)
+17 shin.L parent=16 pos=(0.0, 0.384, 0.0) rot=(-0.101457, -0.0, 0.010189, 0.994788) gpos=(0.102, 0.59, 0.029) gbasisY=(0.0, -0.99, -0.12)
+18 foot.L parent=17 pos=(0.0, 0.386, 0.0) rot=(0.28878, -0.023447, 0.035379, 0.956454) gpos=(0.102, 0.207, -0.018) gbasisY=(0.08, -0.89, 0.45)
+19 toe.L parent=18 pos=(0.0, 0.193, 0.0) rot=(0.525528, 0.005126, -0.030886, 0.8502) gpos=(0.117, 0.035, 0.068) gbasisY=(0.0, 0.0, 1.0)
+20 thigh.R parent=1 pos=(-0.109, -0.023, 0.0) rot=(-0.0, 0.085937, 0.996248, -0.010206) gpos=(-0.109, 0.973, -0.002) gbasisY=(0.02, -1.0, 0.08)
+21 shin.R parent=20 pos=(0.0, 0.384, 0.0) rot=(-0.101457, 0.0, -0.01019, 0.994788) gpos=(-0.102, 0.59, 0.029) gbasisY=(0.0, -0.99, -0.12)
+22 foot.R parent=21 pos=(0.0, 0.386, 0.0) rot=(0.288624, 0.01177, -0.01776, 0.957205) gpos=(-0.102, 0.207, -0.018) gbasisY=(-0.04, -0.89, 0.45)
+23 toe.R parent=22 pos=(0.0, 0.192, 0.0) rot=(0.525685, -0.002559, 0.015418, 0.850536) gpos=(-0.109, 0.035, 0.068) gbasisY=(0.0, 0.0, 1.0)
+lib meta [&"hips_rest"] hips_rest (0.0, 0.98, 0.0)
+clip drac_run length 0.60000002384186 loop 0 tracks 22
+  Skeleton3D:hips type 1 keys 19 first (0.0, -0.088159, -0.0)
+  Skeleton3D:hips type 2 keys 19 first (0.174468, -0.130693, -0.029866, 0.975494)
+  Skeleton3D:spine type 2 keys 19 first (0.092237, 0.030355, -0.005553, 0.995259)
+  Skeleton3D:chest type 2 keys 19 first (0.036711, 0.006917, 0.0018, 0.9993)
+  Skeleton3D:neck type 2 keys 19 first (-0.090123, 0.001369, 0.00846, 0.995894)
+  Skeleton3D:head type 2 keys 19 first (-0.196301, 0.086081, -0.012715, 0.976675)
+  Skeleton3D:shoulder.L type 2 keys 19 first (-0.367567, -0.573684, -0.567859, 0.461863)
+  Skeleton3D:upper_arm.L type 2 keys 19 first (-0.611757, -0.064056, -0.227432, 0.754934)
+  Skeleton3D:forearm.L type 2 keys 19 first (0.015754, -0.006232, -0.389675, 0.920797)
+  Skeleton3D:hand.L type 2 keys 19 first (-0.075212, -0.212738, -0.097547, 0.969314)
+  Skeleton3D:shoulder.R type 2 keys 19 first (-0.282294, 0.624844, 0.559264, 0.465944)
+  Skeleton3D:upper_arm.R type 2 keys 19 first (-0.560044, 0.136474, 0.329626, 0.747712)
+  Skeleton3D:forearm.R type 2 keys 19 first (0.090601, 0.049409, 0.511351, 0.853153)
+  Skeleton3D:hand.R type 2 keys 19 first (-0.009982, 0.213063, 0.158065, 0.964116)
+  Skeleton3D:thigh.L type 2 keys 19 first (-0.101362, -0.470811, -0.875339, 0.042952)
+  Skeleton3D:shin.L type 2 keys 19 first (-0.761817, -0.041867, 0.064112, 0.643251)
+  Skeleton3D:foot.L type 2 keys 19 first (0.514107, -0.044215, 0.093355, 0.851484)
+  Skeleton3D:toe.L type 2 keys 19 first (0.202337, -0.0, -0.0, 0.979316)
+  Skeleton3D:thigh.R type 2 keys 19 first (-0.014179, -0.316896, -0.945313, 0.075893)
+  Skeleton3D:shin.R type 2 keys 19 first (-0.424508, 0.01626, -0.008174, 0.905241)
+  Skeleton3D:foot.R type 2 keys 19 first (0.717639, -0.000091, -0.00429, 0.696402)
+  Skeleton3D:toe.R type 2 keys 19 first (0.229013, -0.0, -0.0, 0.973423)
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 147 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 139 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

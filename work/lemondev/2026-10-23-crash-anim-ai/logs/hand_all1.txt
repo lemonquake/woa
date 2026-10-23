@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  out of reach by 3.8 cm: hand.R at 1.13 s
+dracoxinia: drac_h_idle 3.20 s { "length": 3.2, "loop": true }
+  out of reach by 5.4 cm: hand.R at 0.00 s
+dracoxinia: drac_h_run 0.62 s { "length": 0.62, "loop": true, "ground_speed": 3.05 }
+  out of reach by 3.5 cm: hand.L at 0.00 s
+dracoxinia: drac_h_cut_1 1.00 s { "length": 1.0, "loop": false, "hits": [[0.43, 0.5]] }
+  out of reach by 8.0 cm: hand.R at 0.30 s
+dracoxinia: drac_h_cut_2 1.00 s { "length": 1.0, "loop": false, "hits": [[0.43, 0.5]] }
+  out of reach by 12.7 cm: hand.L at 0.53 s
+dracoxinia: drac_h_cut_3 1.00 s { "length": 1.0, "loop": false, "hits": [[0.43, 0.5]] }
+  out of reach by 3.9 cm: hand.L at 0.13 s
+dracoxinia: drac_h_hit 0.60 s { "length": 0.6, "loop": false, "hits": [[0.1, 0.16]] }
+  out of reach by 12.3 cm: hand.R at 0.33 s
+dracoxinia: drac_h_swap 1.00 s { "length": 1.0, "loop": false, "hits": [[0.28, 0.34]], "release": 0.3 }
+  out of reach by 2.4 cm: hand.R at 0.30 s
+dracoxinia: drac_h_dash 0.60 s { "length": 0.6, "loop": true, "hits": [[0.08, 0.12]], "release": 0.1 }
+  out of reach by 12.8 cm: hand.R at 0.43 s
+dracoxinia: drac_h_stagger 0.90 s { "length": 0.9, "loop": false }
+  out of reach by 10.4 cm: hand.R at 0.00 s
+dracoxinia: drac_h_recover 0.70 s { "length": 0.7, "loop": false }
+  out of reach by 3.9 cm: hand.R at 3.30 s
+emelrich: emel_h_idle 3.40 s { "length": 3.4, "loop": true }
+  out of reach by 4.7 cm: hand.L at 0.40 s
+emelrich: emel_h_run 0.56 s { "length": 0.56, "loop": true, "ground_speed": 4.384 }
+  out of reach by 8.1 cm: hand.L at 0.37 s
+emelrich: emel_h_cut_1 1.10 s { "length": 1.1, "loop": false, "hits": [[0.52, 0.58]] }
+  out of reach by 7.2 cm: hand.L at 0.90 s
+emelrich: emel_h_cut_2 1.10 s { "length": 1.1, "loop": false, "hits": [[0.52, 0.58]] }
+  out of reach by 10.3 cm: hand.L at 0.67 s
+emelrich: emel_h_cut_3 1.10 s { "length": 1.1, "loop": false, "hits": [[0.52, 0.58]] }
+  out of reach by 3.9 cm: hand.R at 0.00 s
+emelrich: emel_h_cast 1.00 s { "length": 1.0, "loop": false, "hits": [[0.3, 0.36]], "release": 0.32 }
+  out of reach by 3.9 cm: hand.R at 0.00 s
+emelrich: emel_h_hit 0.60 s { "length": 0.6, "loop": false, "hits": [[0.1, 0.16]] }
+saved res://assets/characters/hero/hand/hero_hand.res (17 clips) err 0

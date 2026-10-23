@@ -39,7 +39,10 @@ static func _apply(w: SimWorld, hero_id: int, c: Dictionary) -> String:
 			var o = c.get("o", {})
 			if not (o is Dictionary):
 				return ""
-			w.command(uid, (o as Dictionary).duplicate(true))
+			var od := (o as Dictionary).duplicate(true)
+			if od.has("point"):
+				od.point = _spot(od.point)        # a point off the map (or not a number) aims at the map's edge
+			w.command(uid, od)
 		"courier_move":
 			return w.courier_move(h, _v2(c.get("p")))
 		"courier":
@@ -106,3 +109,10 @@ static func _apply(w: SimWorld, hero_id: int, c: Dictionary) -> String:
 
 static func _v2(v) -> Vector2:
 	return v if v is Vector2 else Vector2.ZERO
+
+## An order's point, finite and on the map.
+static func _spot(v) -> Vector2:
+	var p := _v2(v)
+	if not p.is_finite():
+		return Vector2.ZERO
+	return p.clamp(-Vector2.ONE * (SimMap.EDGE - 1.0), Vector2.ONE * (SimMap.EDGE - 1.0))

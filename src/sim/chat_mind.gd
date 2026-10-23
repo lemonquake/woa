@@ -288,6 +288,12 @@ const CALLS := {
 	"six": [["6", "en"], ["6 gank?", "en"], ["ult up", "en"], ["6 na", "tl"], ["may ult na", "tl"]],
 	"item": [["{item} ready", "en"], ["{item} finally", "en"], ["{item} done lets go", "en"], ["{item} na ako", "tl"], ["{item} done", "en"], ["got {item}", "en"], ["{item} up", "en"], ["may {item} na", "tl"]],
 	"dust_buy": [["got dust", "en"], ["dust bought, they have invis", "en"], ["may dust ako", "tl"]],
+	# run 2026-10-23: what the bots know of the enemy heroes (BotKnowledge)
+	"intel_tip": [["{tip}", "en"], ["{tip}", "en"], ["heads up, {tip}", "en"], ["{tip} guys", "en"], ["ingat, {tip}", "tl"],
+		["{tip} ha", "tl"]],
+	"counter_call": [["vs {hero} get {item}", "en"], ["someone buy {item} for {hero}", "en"], ["{item} vs {hero} pls", "en"],
+		["need {item}, {hero} is a problem", "en"], ["{hero} again.. {item} pls", "en"], ["bili kayo {item} para kay {hero}", "tl"],
+		["kailangan ng {item} vs {hero}", "tl"]],
 	"counter": [["{item} for {why}", "en"], ["need {item}, {why}", "en"], ["bili ako {item}", "tl"], ["getting {item} vs {why}", "en"], ["{item} vs {why}", "en"], ["{item} para sa {why}", "tl"]],
 	"fade_cape": [["{ally} run!", "en"], ["cape on u {ally}, run", "en"], ["takbo {ally}!", "tl"]],
 	"dust_use": [["dusting {hero}", "en"], ["dust", "en"], ["dust kay {hero}", "tl"]],

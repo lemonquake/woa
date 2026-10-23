@@ -1,0 +1,9 @@
+== hero_emelrich (emelrich.glb; idle emel_h_idle, run emel_h_run)
+  FAIL join emel_slash_2           -> emel_h_run             blend 0.16s: snap 25.7 deg (forearm.L at +0.15s), gap 180 deg
+  FAIL join emel_h_idle            -> emel_slash_3           blend 0.08s: snap 15.3 deg (upper_arm.L at +0.08s), gap 75 deg (from 2.55s)
+  FAIL join emel_h_run             -> emel_slash_3           blend 0.16s: snap 17.8 deg (forearm.L at +0.15s), gap 71 deg (from 0.42s)
+  FAIL join emel_slash_2           -> emel_slash_3           blend 0.20s: snap 21.6 deg (hand.L at +0.20s), gap 167 deg
+  ok   slide emel_h_run: planted foot at 0.89x the ground speed (4.38 m/s)
+  FAIL floor emel_death_1: head 6 cm under the floor
+  -> 40 joins and 3 loops checked, worst snap 25.7 deg (emel_slash_2 -> emel_h_run), 5 failures
+TOTAL failures 5

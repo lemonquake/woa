@@ -1,0 +1,89 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+== dracoxinia.glb (dracoxinia): 17 shapes, height 2.00 m
+   hips       -0.26-0.07 m along, 0.255 x 0.135
+   chest      0.00-0.32 m along, 0.112 x 0.105
+   head       0.00-0.36 m along, 0.112 x 0.092
+   forearm.L  0.00-0.21 m along, 0.040 x 0.044
+   thigh.L    0.00-0.37 m along, 0.099 x 0.093
+  drac_h_idle        before: worst  0.0 cm (-), 0/97 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_run         before: worst  3.1 cm (weapon.R in hips f14), 20/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_death_1       before: worst 50.9 cm (weapon.R in floor f76), 75/109 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_swap        before: worst  1.7 cm (weapon.R in chest f22), 8/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_cut_1       before: worst  4.2 cm (weapon.R in chest f4), 4/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_cut_2       before: worst  2.4 cm (weapon.R in chest f21), 6/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_cut_3       before: worst  2.4 cm (weapon.R in hips f27), 3/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst  9.8 cm (fore.L in chest f76), 81/81 frames over 1 cm | after: worst  0.8 cm (elbow.R in chest f61), 0 frames
+  boss_roar          before: worst  7.7 cm (weapon.R in hips f44), 9/47 frames over 1 cm | after: worst  1.7 cm (elbow.R in chest f44), 3 frames
+  cast_quick         before: worst  7.9 cm (fore.R in hips f0), 9/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 13.6 cm (weapon.R in hips f7), 34/37 frames over 1 cm | after: worst  0.6 cm (elbow.R in chest f15), 0 frames
+  drac_h_dash        before: worst  0.0 cm (-), 0/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_rise          before: worst 11.7 cm (weapon.R in head f102), 43/107 frames over 1 cm | after: worst  0.9 cm (weapon.R in head f10), 0 frames
+  drac_leap          before: worst 23.9 cm (weapon.R in hips f9), 35/46 frames over 1 cm | after: worst  3.3 cm (weapon.R in head f31), 2 frames
+  knockback          before: worst 16.7 cm (weapon.R in floor f26), 21/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 18.1 cm (weapon.R in floor f7), 26/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  3.1 cm (weapon.R in chest f1), 7/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst 10.1 cm (weapon.R in thigh.R f22), 22/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  8.5 cm (weapon.R in thigh.R f6), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  7.9 cm (fore.R in hips f0), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  7.9 cm (fore.R in hips f6), 13/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  8.1 cm (fore.L in chest f35), 61/61 frames over 1 cm | after: worst  7.9 cm (hand.L in upper_arm.R f54), 8 frames
+  blink              before: worst 13.4 cm (weapon.R in hips f0), 9/16 frames over 1 cm | after: worst  0.6 cm (elbow.L in chest f1), 0 frames
+  dodge_step         before: worst  7.9 cm (fore.R in hips f14), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_stagger     before: worst  0.0 cm (-), 0/28 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_recover     before: worst  0.0 cm (-), 0/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  drac_h_hit         before: worst  0.0 cm (-), 0/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  8.0 cm (fore.R in hips f32), 129/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 23.3 cm (weapon.R in floor f20), 32/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 14.0 cm (elbow.R in chest f16), 22/22 frames over 1 cm | after: worst  1.0 cm (elbow.R in chest f9), 1 frames
+  gs_3               before: worst 15.8 cm (elbow.R in chest f15), 25/25 frames over 1 cm | after: worst  1.7 cm (elbow.L in chest f18), 2 frames
+  gs_4               before: worst 85.6 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  2.3 cm (elbow.L in chest f7), 3 frames
+  drac_death_2       before: worst  6.9 cm (weapon.R in head f0), 48/118 frames over 1 cm | after: worst  1.2 cm (weapon.R in floor f12), 1 frames
+  wrote res://assets/characters/heroes17/anim_fixed/dracoxinia_collide.res (OK); worst 85.6 cm -> 7.9 cm
+  wrote res://assets/characters/hero/mocap/collide/dracoxinia.res (OK): 5 mocap clips
+== emelrich.glb (emelrich): 17 shapes, height 1.95 m
+   hips       -0.25--0.06 m along, 0.158 x 0.138
+   chest      0.05-0.44 m along, 0.269 x 0.141
+   head       0.00-0.25 m along, 0.099 x 0.084
+   forearm.L  0.02-0.32 m along, 0.081 x 0.063
+   thigh.L    0.00-0.29 m along, 0.088 x 0.083
+  emel_h_idle        before: worst  2.7 cm (weapon.R in chest f4), 103/103 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_h_run         before: worst  2.6 cm (weapon.R in chest f6), 18/18 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_death_1       before: worst 29.5 cm (weapon.R in floor f96), 62/136 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_h_cast        before: worst 18.4 cm (weapon.R in chest f4), 31/31 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_h_cut_1       before: worst 28.6 cm (hand.L in chest f18), 34/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_h_cut_2       before: worst 22.5 cm (weapon.R in chest f4), 34/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_h_cut_3       before: worst 21.9 cm (weapon.R in chest f4), 34/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_2h            before: worst 11.1 cm (elbow.L in chest f1), 81/81 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  boss_roar          before: worst  1.2 cm (weapon.R in chest f9), 1/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_slam    before: worst 66.5 cm (weapon.R in floor f24), 58/77 frames over 1 cm | after: worst 44.0 cm (weapon.R in floor f29), 34 frames
+  greatsword_slash_2 before: worst 11.6 cm (weapon.R in chest f11), 16/48 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  greatsword_power   before: worst  0.0 cm (-), 0/106 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_overhead      before: worst  0.0 cm (-), 0/39 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_sweep         before: worst 11.6 cm (weapon.R in chest f19), 16/56 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_swing         before: worst 26.5 cm (weapon.R in floor f87), 91/157 frames over 1 cm | after: worst  5.7 cm (weapon.R in floor f84), 2 frames
+  knockback          before: worst 98.6 cm (weapon.R in floor f25), 24/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  getup              before: worst 98.6 cm (weapon.R in floor f0), 25/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  launch             before: worst  1.1 cm (weapon.R in chest f1), 1/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wall_impact        before: worst  3.5 cm (elbow.R in chest f1), 3/34 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_heavy          before: worst  3.4 cm (elbow.R in chest f6), 17/20 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_light          before: worst  3.3 cm (elbow.R in chest f10), 13/13 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_front          before: worst  3.3 cm (elbow.R in chest f7), 13/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  idle_hurt          before: worst  5.4 cm (hand.L in chest f5), 61/61 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  leap_slam          before: worst 16.0 cm (hand.R in chest f12), 23/37 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  blink              before: worst  3.5 cm (hand.R in spine f4), 4/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dodge_step         before: worst  3.3 cm (elbow.R in chest f0), 7/16 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_back       before: worst  9.1 cm (weapon.R in head f6), 9/35 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_recover    before: worst  8.7 cm (weapon.R in head f9), 8/40 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  stagger_air        before: worst  9.9 cm (weapon.R in head f17), 8/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  hit_from_back      before: worst 10.9 cm (weapon.R in head f40), 10/41 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_h_hit         before: worst  3.7 cm (weapon.R in chest f0), 8/19 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  dizzy              before: worst  1.1 cm (elbow.R in chest f32), 15/129 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  death              before: worst 98.5 cm (weapon.R in floor f46), 35/47 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  cast_weapon        before: worst 22.9 cm (weapon.R in chest f20), 20/26 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_1               before: worst 25.0 cm (elbow.L in chest f11), 22/22 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_3               before: worst 20.3 cm (elbow.R in chest f23), 25/25 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  gs_4               before: worst 100.5 cm (weapon.R in floor f20), 30/30 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  emel_death_2       before: worst 48.8 cm (weapon.R in floor f76), 59/109 frames over 1 cm | after: worst  0.0 cm (-), 0 frames
+  wrote res://assets/characters/heroes17/anim_fixed/emelrich_collide.res (OK); worst 100.5 cm -> 44.0 cm
+  wrote res://assets/characters/hero/mocap/collide/emelrich.res (OK): 13 mocap clips

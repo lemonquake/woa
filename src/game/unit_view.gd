@@ -47,7 +47,8 @@ var _flinch := Vector2.ZERO               # lean direction * strength (view spac
 var _flinch_t := 1.0
 var _glow_mat: StandardMaterial3D
 var _glow_on := false
-var swing_trail: Trail3D                  # melee heroes: a streak off the blade tip while swinging
+var _swing_from := 0.0                     # when an attack's sweep begins (its wind-up leaves none)
+var swing_trail: Trail3D                  # melee heroes: the blade's sweep while swinging (a SwingArc)
 var _swing_until := 0.0
 var swing_lit := false                    # kept lit (Tainted Touch)
 var fog_ok := true                        # seen by the player's team (set by Main each tick)
@@ -292,12 +293,38 @@ func _weapons() -> void:
 		if cfg.has("weapon_tint"):
 			_tint_node(w, cfg.weapon_tint, 0.85)
 		if cfg.get("swing_trail", false) and side == "R":
+			# the sweep of the blade from its middle to its tip (SwingArc), sized to this weapon
+			var blade := _blade_length(w)
+			var mid := Node3D.new()
+			w.add_child(mid)
+			mid.position = Vector3(0, blade * 0.32, 0)
 			var tip := Node3D.new()
 			w.add_child(tip)
-			tip.position = Vector3(0, 0.95, 0)
-			swing_trail = Trail3D.make(tip, cfg.get("trail_color", Color(0.92, 0.92, 1.0, 0.45)), 0.06, 0.14)
+			tip.position = Vector3(0, blade * 0.97, 0)
+			swing_trail = SwingArc.make_arc(mid, tip, cfg.get("trail_color", Color(0.92, 0.92, 1.0, 0.45)), 0.16)
 			swing_trail.emitting = false
 			add_child(swing_trail)
+
+## How far a held weapon reaches along its +Y (its blade or head), from its own meshes; 0.95 m when it has none.
+static func _blade_length(w: Node3D) -> float:
+	var top := 0.0
+	var inv := w.global_transform.affine_inverse() if w.is_inside_tree() else Transform3D()
+	for mi: MeshInstance3D in w.find_children("*", "MeshInstance3D", true, false):
+		if mi.mesh == null:
+			continue
+		var xf := (inv * mi.global_transform) if w.is_inside_tree() else _rel(w, mi)
+		var bb := xf * mi.mesh.get_aabb()
+		top = maxf(top, bb.end.y)
+	return clampf(top, 0.4, 2.2) if top > 0.0 else 0.95
+
+static func _rel(root: Node3D, n: Node3D) -> Transform3D:
+	var xf := Transform3D()
+	var cur: Node = n
+	while cur != null and cur != root:
+		if cur is Node3D:
+			xf = (cur as Node3D).transform * xf
+		cur = cur.get_parent()
+	return xf
 
 ## Put another weapon in a hand (Dracoxinia's Change Sword: Hero22Fx): the new one on the same grip, the swing trail
 ## moved onto it (in `trail` colour when given).
@@ -700,6 +727,7 @@ func on_attack_start(point_time: float) -> void:
 	var length := float(ModelCatalog.clip(clip).get("length", 0.6))
 	_lock_until = _now() + length / spd
 	_swing_until = _now() + (strike / spd) * 1.35
+	_swing_from = _now() + (strike / spd) * 0.55     # the sweep shows the cut, not the wind-up
 
 func on_attack_cancel() -> void:
 	_lock_until = 0.0
@@ -758,6 +786,7 @@ func on_cast_start(aid: String, cast_point: float) -> void:
 	# after the release the clip finishes at a natural pace
 	_lock_until = _now() + cast_point + maxf(0.0, length - release) / maxf(1.0, spd * 0.8)
 	_swing_until = _now() + cast_point + 0.25
+	_swing_from = _now() + cast_point * 0.5
 
 ## Leap Strike took off: stretch the airborne part of the clip so its strike frame lands with the simulation.
 ## The clip's "airborne" [take-off, landing] and its blow come from its timings (the old leap or its mocap stand-in).
@@ -954,7 +983,7 @@ func frame(alpha: float, delta: float, cam: Camera3D = null, _frame_no := 0) -> 
 		elif pivot.rotation != Vector3.ZERO:
 			pivot.rotation = Vector3.ZERO
 	if swing_trail:
-		swing_trail.emitting = swing_lit or _now() < _swing_until or _state == "leap"
+		swing_trail.emitting = swing_lit or (_now() >= _swing_from and _now() < _swing_until) or _state == "leap"
 	if _glow_on and _glow_mat:
 		var t := _now()
 		_glow_mat.albedo_color.a = 0.55 + 0.25 * sin(t * 13.0) + 0.15 * sin(t * 31.0)

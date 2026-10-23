@@ -1,0 +1,11 @@
+natural bend forearm.L: (0.0, 0.0, -1.0)
+natural bend forearm.R: (0.0, 0.0, 1.0)
+natural bend shin.L: (-1.0, 0.0, 0.0)
+natural bend shin.R: (-1.0, 0.0, 0.0)
+== emelrich (R heavy_greatsword, L -)
+  emel_h_cut_1     wrist bent L 32% of frames (worst 136 deg at 0.73 s); pop upper_arm.L 9% of frames (worst 142 deg at 0.83 s); pop forearm.L 15% of frames (worst 91 deg at 0.83 s); pop upper_arm.R 15% of frames (worst 160 deg at 0.83 s); pop forearm.R 21% of frames (worst 77 deg at 0.33 s); forearm twist L 12% of frames (worst 166 deg at 0.47 s); wrist bent R 29% of frames (worst 136 deg at 0.57 s); pop hand.L 15% of frames (worst 75 deg at 0.77 s); pop weapon.L 15% of frames (worst 75 deg at 0.77 s); pop hand.R 15% of frames (worst 75 deg at 0.77 s); pop weapon.R 15% of frames (worst 75 deg at 0.77 s); forearm twist R 9% of frames (worst 157 deg at 0.47 s)
+  emel_h_cut_2     wrist bent R 56% of frames (worst 110 deg at 0.53 s); wrist bent L 6% of frames (worst 80 deg at 0.33 s); pop hand.L 6% of frames (worst 77 deg at 0.50 s); pop weapon.L 6% of frames (worst 77 deg at 0.50 s); pop hand.R 6% of frames (worst 77 deg at 0.50 s); pop weapon.R 6% of frames (worst 77 deg at 0.50 s); forearm twist L 12% of frames (worst 102 deg at 0.67 s)
+  emel_h_cut_3     wrist bent R 32% of frames (worst 107 deg at 0.47 s); pop hand.L 9% of frames (worst 111 deg at 0.50 s); pop weapon.L 9% of frames (worst 111 deg at 0.50 s); pop forearm.R 6% of frames (worst 79 deg at 0.30 s); pop hand.R 9% of frames (worst 111 deg at 0.50 s); pop weapon.R 9% of frames (worst 111 deg at 0.50 s); wrist bent L 6% of frames (worst 82 deg at 0.47 s); pop forearm.L 6% of frames (worst 56 deg at 0.47 s)
+  emel_h_cast      ok
+  -> 27 findings
+TOTAL findings 27

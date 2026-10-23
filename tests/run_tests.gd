@@ -7172,7 +7172,7 @@ func test_mocap_clips() -> void:
 		names.append_array(mc.get("deaths", []))
 		names.append_array((mc.get("anims", {}) as Dictionary).values())
 		for n in names:
-			check(lib.has_animation(String(n)), "%s: %s in the mocap library" % [key, n])
+			check(_has_clip(lib, String(n)), "%s: %s in the mocap or hand-made library" % [key, n])
 		for a in mc.get("attack", []):
 			var meta := ModelCatalog.clip(String(a))
 			var st := ModelCatalog.strike_time(String(a))
@@ -7193,6 +7193,10 @@ func test_mocap_clips() -> void:
 	var rest_y := sk.get_bone_rest(sk.find_bone("hips")).origin.y
 	check(absf(hips_y - rest_y) < 0.15, "the hips stand on the body's own height (%.2f, rest %.2f)" % [hips_y, rest_y])
 	m.free()
+
+## A clip in the motion-capture library or in the hand-made one (run 2026-10-23, MocapClips.hand_library).
+func _has_clip(lib: AnimationLibrary, n: String) -> bool:
+	return lib.has_animation(n) or (MocapClips.hand_library() != null and MocapClips.hand_library().has_animation(n))
 
 ## Run 2026-10-18 e: the five heroes of hero_ideas.txt are pickable (stats from the file; their kits came in run
 ## 2026-10-18 f, so they are random picks too); every motion-capture run, push and leap clip a hero is given exists, the runs carry their measured
@@ -7216,9 +7220,9 @@ func test_new_heroes_and_blends() -> void:
 					if RepairedClips.COMPOSED.has(c):
 						# a run made of two clips at load (RepairedClips._compose_runs): both halves exist
 						var parts: Array = RepairedClips.COMPOSED[c]
-						check(lib.has_animation(String(parts[1])), "%s plays %s (its arms %s)" % [key, c, parts[1]])
+						check(_has_clip(lib, String(parts[1])), "%s plays %s (its arms %s)" % [key, c, parts[1]])
 						continue
-					check(lib.has_animation(c), "%s plays %s" % [key, c])
+					check(_has_clip(lib, c), "%s plays %s" % [key, c])
 			if not bool(cfg.get("glide", false)):
 				check(float(ModelCatalog.clip(String(cfg.run)).get("ground_speed", 0.0)) > 1.0,
 					"%s: %s has its ground speed" % [key, cfg.run])
@@ -10420,3 +10424,82 @@ func test_qa_war_banner_pays_its_bounty() -> void:
 	w.combat.kill(ban, foe)
 	w.combat.process_deaths()
 	check(foe.gold() >= g0 + 25, "killing the War Banner pays 25 gold (%d -> %d)" % [g0, foe.gold()])
+
+# ---- Run 2026-10-23: crashes, hand-made clips, bot knowledge ----------------------------------------------------------
+
+func test_qa_push_into_unstoppable_charge() -> void:
+	# a unit thrown into Lord Kaileh mid-Cavalry Charge (nothing moves him): the push must not treat his charge as a
+	# push of its own (that error aborted the whole simulation step every tick it happened: the game froze)
+	var w := empty_world()
+	var o := Vector2(-2000, -4000)
+	var k := _hero16(w, "kaileh", o)
+	var foe := _hero16(w, "froster", o + Vector2(260, 0), C.DUSK)
+	run(w, 0.1)
+	w.abilities.kits10.cast(k, "cavalry_charge", 3, null, o + Vector2(-1200, 0))
+	check(k.has_flag("unstoppable") and String(k.knock.get("charge", "")) == "cavalry_charge", "Kaileh charges, unstoppable")
+	w.abilities.start_push(foe, Vector2(-2600, 0), foe.id, C.DUSK, "dark_stomp", 1, 991)
+	var p0 := foe.pos
+	var t0 := w.time
+	var errs := ErrorCount.new()
+	OS.add_logger(errs)
+	run(w, 0.4)
+	OS.remove_logger(errs)
+	check(errs.n == 0, "no script error while the thrown unit hits him (%d)" % errs.n)
+	check(w.time > t0 + 0.35, "the world keeps stepping")
+	check(foe.pos.distance_to(p0) > 30.0, "the thrown unit moved (%.0f)" % foe.pos.distance_to(p0))
+	check(String(k.knock.get("charge", "")) == "cavalry_charge" or k.knock.is_empty(), "his charge was not replaced by a push")
+
+func test_qa_order_points_stay_on_the_map() -> void:
+	var w := empty_world()
+	var h := _hero16(w, "gancho", Vector2(-2000, -4000))
+	SimCommands.apply(w, h.id, {"k": "order", "u": h.id, "o": {"type": C.Order.MOVE, "point": Vector2(INF, NAN)}})
+	check(h.order_point.is_finite(), "a point that is not a number becomes a real one (%s)" % str(h.order_point))
+	SimCommands.apply(w, h.id, {"k": "order", "u": h.id, "o": {"type": C.Order.MOVE, "point": Vector2(99999, -99999)}})
+	check(absf(h.order_point.x) < SimMap.EDGE and absf(h.order_point.y) < SimMap.EDGE, "a point off the map is kept on it")
+
+func test_bot_knowledge_items_and_heroes() -> void:
+	for id in ["branch", "tango", "circlet", "boots", "magic_wand", "recipe_yasha", "quelling_blade", "salve"]:
+		check(not BotKnowledge.notable(id), "%s is never named in chat" % id)
+	for id in ["spell_shield", "jump_knife", "crit_bow", "halberd", "glimmer_cape"]:
+		check(BotKnowledge.notable(id), "%s is worth naming" % id)
+	for hero in GameSettings.HEROES:
+		var k: Dictionary = BotKnowledge.HEROES.get(String(hero), {})
+		check(not k.is_empty() and String(k.get("tip", "")) != "", "the bots know %s" % hero)
+		for it in k.get("counter", []):
+			check(not SimData.item(String(it)).is_empty(), "%s's counter %s is a real item" % [hero, it])
+	var w := empty_world()
+	var h := _hero16(w, "sludge", Vector2(-2000, -4000))
+	h.inventory[0] = w.shop.new_item("boots")
+	h.inventory[1] = w.shop.new_item("branch")
+	check(BotKnowledge.best_notable(h) == "", "boots and a branch are nothing to name")
+	h.inventory[2] = w.shop.new_item("jump_knife")
+	check(BotKnowledge.best_notable(h) == "jump knife", "a Jump Knife is (%s)" % BotKnowledge.best_notable(h))
+	check(BotKnowledge.digest(w, C.DAWN).contains("Jump Knife"), "the match digest names it")
+
+func test_hand_clips_present_and_used() -> void:
+	var lib := MocapClips.hand_library()
+	check(lib != null, "the hand-made clip library loads")
+	if lib == null:
+		return
+	for c in ["drac_h_idle", "drac_h_run", "drac_h_cut_1", "drac_h_cut_2", "drac_h_cut_3", "drac_h_hit", "drac_h_swap",
+			"drac_h_dash", "drac_h_stagger", "drac_h_recover", "emel_h_idle", "emel_h_run",
+			"emel_h_cast", "emel_h_hit"]:
+		check(lib.has_animation(c), "clip %s" % c)
+	check(float(ModelCatalog.clip("drac_h_run").get("ground_speed", 0.0)) > 2.0, "the run knows its ground speed")
+	if MocapClips.available():
+		var cfg := ModelCatalog.info("hero_dracoxinia")
+		check(String(cfg.run) == "drac_h_run" and String(cfg.idle) == "drac_h_idle", "Dracoxinia runs and stands in her own")
+		check(not ((cfg.attack as Array).has("drac_slash_1")), "none of Ezee's great sword slashes left in her attacks")
+		var ce := ModelCatalog.info("hero_emelrich")
+		check(String(ce.run) == "emel_h_run" and String(ce.idle) == "emel_h_idle", "Ser Emelrich has his own idle and run")
+	for clip in ["drac_h_cut_1", "drac_h_cut_2", "drac_h_cut_3"]:
+		var st := ModelCatalog.strike_time(clip)
+		check(st >= 0.2 and st <= 1.0, "%s lands at %.2f s" % [clip, st])
+
+## Counts the engine errors logged while it is added (OS.add_logger): a test can require none.
+class ErrorCount extends Logger:
+	var n := 0
+
+	func _log_error(_f: String, _file: String, _line: int, _code: String, _r: String, _e: bool, _t: int,
+			_bt: Array[ScriptBacktrace]) -> void:
+		n += 1

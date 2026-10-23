@@ -1,0 +1,5 @@
+== hero_dracoxinia (dracoxinia.glb; idle drac_h_idle, run drac_h_run)
+  FAIL join drac_h_run             -> drac_h_cut_2           blend 0.12s: snap 20.4 deg (hand.R at +0.12s), gap 78 deg (from 0.31s)
+  ok   slide drac_h_run: planted foot at 0.97x the ground speed (3.05 m/s)
+  -> 40 joins and 3 loops checked, worst snap 20.4 deg (drac_h_run -> drac_h_cut_2), 1 failures
+TOTAL failures 1

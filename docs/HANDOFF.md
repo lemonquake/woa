@@ -4,6 +4,63 @@
 
 ## Status (keep this section current)
 
+**2026-10-23: the new heroes' skill crash, better hits, hand-made animations, bots that know the game, a new build
+(your request).** Run `work/lemondev/2026-10-23-crash-anim-ai/` (contract.md, logs, anim, fx).
+* **The crash** (found with a new live stress mode, `--storm`, that plays a real windowed match with every hero at level
+  25 spamming its skills; it also runs in the exported game): a unit thrown by a push (Blackfire's Unfallen blast, Ezee's
+  stomp, Kragg's Repel...) into **Lord Kaileh during Cavalry Charge** made the push code read push data from his charge,
+  and that error aborted the simulation step every tick it lasted, so the game froze (`src/sim/sim_abilities.gd`). Also
+  fixed: order points that are not numbers or off the map are kept on it (`SimCommands`), and an item tooltip ("move 20%
+  faster") that broke string formatting (seen in your own `godot.log`). Storms for Dracoxinia, Gancho, Kaileh,
+  Blackfire, Thyrandael and a ten-melee-hero mix: 0 script errors after the fix. Test `test_qa_push_into_unstoppable_charge`
+  counts engine errors (it fails on the old code).
+* **Hits** (`src/game/hit_fx.gd`, `swing_arc.gd`): every impact in the game is now a soft hot flare with thin rays and,
+  for big ones, a ring (the old one was a flat-coloured ball that read as a hexagon); a melee hero's blow cuts a crescent
+  across the target in the weapon's colour with sparks; a critical strike crosses a second red cut, rings out and nudges
+  the camera; arrows flash where they hit; the Black Sun tower's hit no longer swells an opaque black ball over the hero
+  (a crimson implosion instead). Melee weapons sweep a glowing sheet between the blade's middle and tip (smoothed between
+  frames, only during the cut, not the wind-up) instead of a thin line off the tip.
+* **Dracoxinia's own moves, made by hand** (`tools/anim/`, no Mixamo): idle (standing tall, blade low before her, hand
+  on hip), run (quick light steps, feet planted: the run's foot speed matches her movement at 0.97x; the blade trails out
+  to her side), three cuts (forehand diagonal, level backhand, lunging thrust), her flinch, Change Sword's raised-blade
+  move, Dragon Dash's lean, and her stagger and recovery. Every one of them: **0 cm** of body collision as played,
+  joins between them all smooth but one (12.1 degrees against a 12 limit), and the strict twist audit clean on idle, run,
+  hit, Change Sword, dash and stagger (the three cuts and the recovery go a little over the wrist limit for a few frames:
+  worst 105 degrees in the forehand's follow-through). Her old cuts were Mixamo's great sword slashes, one of them the very
+  clip Ezee swings. Her skirt panels and calf plates were weighted to her shins, so every stride flung them out as long
+  thin strips; `tools/glb_leg_weights.py` gives each panel one smooth hips-to-thigh blend (in her GLB, nothing else
+  touched).
+* **Ser Emelrich** (the other hero on Ezee's great sword pack: idle, run, cast and flinch): his own idle (sword on his
+  shoulder), heavy run, raised-sword cast and flinch, all four clean in every check. His cuts stay his own two-handed
+  combo (they were never Ezee's): my two-handed cuts still bent his wrists too far (his short arms and the two-metre sword),
+  so they are written but not used. He now holds the great sword 20 cm down its handle (both hands on it) instead of at the
+  guard with half a metre of handle in his chest: his clips' worst collision 118.5 -> 18.6 cm.
+* **Bots know the game** (`src/sim/bot_knowledge.gd`): every hero's danger, how to beat it, when it is strong and the
+  items that answer it; what each worth-naming item does; the rules players argue about; a live digest of the match
+  (levels, scores, the items that matter, ultimates up, who is dead, towers, night). Bots warn their team about enemy
+  heroes ("stay behind creeps, sludge hooks from the fog") and call real counters after a hero keeps killing them ("vs
+  jayla get moth blade"); they never name branches, tangos, circlets, recipes or plain boots ("focus X, he has boots" and
+  "buying circlet next" are gone). The online chat writer and the forum writer get the same knowledge instead of a bare
+  list of item names.
+* Evidence (`work/lemondev/2026-10-23-crash-anim-ai/`): full suite **365 passed, 0 failed** (`logs/tests_full2.txt`);
+  `sh tools/check.sh` every script parses, Names OK; storms with 0 script errors (`logs/storm2_*`, `storm3_mix.txt`);
+  release export exit 0 (`build/WarriorsOfAether.exe`, pack 866 MB, PCK SHA256 `AAFE6198...AC28F2D`) and the storm run
+  **inside the exported game** (Dracoxinia, Kaileh, Blackfire, Thyrandael, Ser Emelrich...: 2.5 minutes, 0 errors, "storm
+  done", `logs/exe_storm.txt`); clips: `logs/collide_fix13.txt`, `anim_audit8.txt`, `joins_hero_*_4.txt`; sheets
+  `anim/final/`; hits `fx/direct5/sheet.png`, `fx/shader_test.png`. Frame time (teamfight A, one run after the last fix):
+  21.2 ms; effects 0.39 ms a frame (was 0.47) and swing arcs 0.24 (trails were 0.17), draw calls the same (1678), while
+  even the unchanged simulation measured 12% slower than last run, so the PC ran slower that hour; teamfight B was not
+  re-run after the fix. A first version of the hit effects overflowed the engine's shader-parameter buffer in big fights
+  (thousands of errors in the bench log); fixed before the build (per-hit material copies), 0 such errors since.
+* Not done: Ser Emelrich's hand-made two-handed cuts (see above); Dracoxinia's cuts go up to 105 degrees of wrist bend for
+  a few frames; no blind critic, no commercial benchmark; the online chat writer's actual replies were not sampled (your
+  key was never read); the collision fixes for the hand-made clips live in the git-ignored `mocap/collide` folder like
+  the Mixamo ones.
+* New names for your veto: player-visible chat lines only (the warnings and counter calls above); code: `--storm`,
+  `StormProbe`, `--follow`, `HitFx`, `SwingArc`, `BotKnowledge`, `intel_tip`, `counter_call`, `ErrorCount`, `hand_rig`,
+  `clip_kit`, `hand_clips`, `clips_dracoxinia`, `clips_emelrich`, `glb_leg_weights`, `fx_probe`, `llm_prompt_probe`,
+  clips `drac_h_*` and `emel_h_*`, `R_xform` for Ser Emelrich.
+
 **2026-10-22 c: deep QA of heroes, rules and interface; faster frames; a new build (your request).** Run
 `work/lemondev/2026-10-22c-qa-perf/` (contract.md, logs, bench). Three fresh-context auditors read the hero kits, the
 core rules and the interface; every confirmed finding is fixed, nine with new tests (`test_qa_*`).
@@ -1982,6 +2039,17 @@ or open `A:\Python\woa\project.godot` in the editor and press F5.
   [--watch_cam=auto|follow|hero|free] [--watch_vision=-1|0|1|2|3]`; live checks: `godot --path . -s
   tests/tools/watch_probe.gd -- --watch --bots=5v5 --nolearn [--min=4] [--out=dir]`.
 * Bot duels: `godot --headless --path . -s tests/tools/bot_duel.gd -- --a=blood_ranger --b=ezee --min=12`.
+* Skill storm (run 2026-10-23; crashes and freezes from skills): `godot --path . res://src/game/main.tscn -- --storm
+  [--storm_min=3] --hero=dracoxinia --lineup=<ten heroes>`; in the exported game `build/WarriorsOfAether.exe -- --match
+  --storm ...`. Prints STALL lines, casts per skill, "storm done". `--follow` keeps the camera on your hero in captures.
+* Hit effects frame by frame: `godot --path . -s tests/tools/fx_probe.gd -- --hero=dracoxinia --bot_hero=ezee --out=dir
+  [--direct]` (slows the game so saved frames land inside the hits).
+* Hand-made clips (run 2026-10-23): `godot --headless --path . -s tools/anim/hand_clips.gd -- [--heroes=dracoxinia]`
+  (seconds; writes `assets/characters/hero/hand/`), then `body_collide.gd -- --heroes=<h> --fix`, then `anim_audit.gd`
+  and `anim_joins.gd`. Dracoxinia's skirt weights after any body rebuild: `python tools/glb_leg_weights.py
+  assets/characters/heroes17/dracoxinia.glb`.
+* The online chat writer's prompts, built offline (no key, nothing sent): `godot --headless --path . -s
+  tests/tools/llm_prompt_probe.gd -- --min=6 --out=x.txt`.
 * A game that stops advancing: `godot --headless --path . -s tests/tools/stall_probe.gd -- --a=roydo --b=ezee --min=10
   [--trace=348] [--seed=3]` prints a line per game minute with the real time, every step over 50 ms, and with
   `--trace` the heroes' state before each step from that second (the last line printed is the step that hangs).

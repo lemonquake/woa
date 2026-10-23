@@ -1,0 +1,43 @@
+natural bend forearm.L: (0.0, 0.0, -1.0)
+natural bend forearm.R: (0.0, 0.0, 1.0)
+natural bend shin.L: (-1.0, 0.0, 0.0)
+natural bend shin.R: (-1.0, 0.0, 0.0)
+== dracoxinia (R dracoxinia_sword_pink, L -)
+  drac_h_idle      ok
+  drac_h_run       ok
+  drac_h_cut_1     wrist bent R 13% of frames (worst 101 deg at 0.50 s); pop hand.R 10% of frames (worst 139 deg at 0.53 s); pop weapon.R 10% of frames (worst 139 deg at 0.53 s); elbow points the wrong way L 3% of frames (worst 125 deg at 0.53 s); pop forearm.R 3% of frames (worst 56 deg at 0.53 s)
+  drac_h_cut_2     wrist bent R 23% of frames (worst 94 deg at 0.40 s); pop hand.R 3% of frames (worst 51 deg at 0.43 s); pop weapon.R 3% of frames (worst 51 deg at 0.43 s)
+  drac_h_cut_3     wrist bent R 13% of frames (worst 77 deg at 0.97 s); pop upper_arm.L 3% of frames (worst 91 deg at 0.70 s); pop forearm.L 3% of frames (worst 96 deg at 0.70 s); pop hand.L 3% of frames (worst 96 deg at 0.70 s); pop weapon.L 3% of frames (worst 96 deg at 0.70 s)
+  drac_h_hit       ok
+  drac_h_swap      ok
+  drac_h_dash      wrist bent R 100% of frames (worst 88 deg at 0.00 s)
+  drac_h_stagger   wrist bent R 18% of frames (worst 80 deg at 0.07 s)
+  drac_h_recover   wrist bent R 32% of frames (worst 80 deg at 0.27 s)
+  emel_h_idle      ok
+  emel_h_run       ok
+  emel_h_cut_1     wrist bent R 12% of frames (worst 90 deg at 0.23 s); wrist bent L 41% of frames (worst 136 deg at 0.83 s); elbow points the wrong way R 12% of frames (worst 154 deg at 0.43 s); elbow points the wrong way L 6% of frames (worst 145 deg at 0.40 s); pop hand.L 6% of frames (worst 154 deg at 0.43 s); pop weapon.L 6% of frames (worst 154 deg at 0.43 s); pop upper_arm.R 3% of frames (worst 64 deg at 0.43 s); pop forearm.R 3% of frames (worst 66 deg at 0.43 s); pop hand.R 6% of frames (worst 154 deg at 0.43 s); pop weapon.R 6% of frames (worst 154 deg at 0.43 s); pop upper_arm.L 3% of frames (worst 60 deg at 0.50 s); pop forearm.L 3% of frames (worst 46 deg at 0.50 s); hand L in torso 29% of frames (worst at 0.50 s)
+  emel_h_cut_2     wrist bent R 15% of frames (worst 97 deg at 0.17 s); wrist bent L 47% of frames (worst 150 deg at 0.80 s); pop hand.L 9% of frames (worst 123 deg at 0.83 s); pop weapon.L 9% of frames (worst 123 deg at 0.83 s); pop hand.R 9% of frames (worst 123 deg at 0.83 s); pop weapon.R 9% of frames (worst 123 deg at 0.83 s); hand L in torso 3% of frames (worst at 0.47 s); pop forearm.L 3% of frames (worst 86 deg at 0.50 s); pop forearm.R 3% of frames (worst 52 deg at 0.83 s)
+  emel_h_cut_3     wrist bent R 41% of frames (worst 122 deg at 0.60 s); wrist bent L 9% of frames (worst 80 deg at 0.90 s); pop hand.L 12% of frames (worst 103 deg at 0.50 s); pop weapon.L 12% of frames (worst 103 deg at 0.50 s); pop hand.R 12% of frames (worst 103 deg at 0.50 s); pop weapon.R 12% of frames (worst 103 deg at 0.50 s); pop forearm.R 6% of frames (worst 56 deg at 0.50 s); pop forearm.L 3% of frames (worst 50 deg at 0.50 s)
+  emel_h_cast      wrist bent L 55% of frames (worst 89 deg at 0.17 s); wrist bent R 13% of frames (worst 76 deg at 0.20 s)
+  emel_h_hit       ok
+  -> 48 findings
+== emelrich (R heavy_greatsword, L -)
+  drac_h_idle      ok
+  drac_h_run       ok
+  drac_h_cut_1     wrist bent R 13% of frames (worst 105 deg at 0.50 s); pop hand.R 10% of frames (worst 142 deg at 0.53 s); pop weapon.R 10% of frames (worst 142 deg at 0.53 s); pop forearm.R 3% of frames (worst 56 deg at 0.53 s)
+  drac_h_cut_2     wrist bent R 13% of frames (worst 99 deg at 0.40 s); pop hand.R 3% of frames (worst 51 deg at 0.43 s); pop weapon.R 3% of frames (worst 51 deg at 0.43 s)
+  drac_h_cut_3     wrist bent R 6% of frames (worst 76 deg at 0.53 s); pop upper_arm.L 3% of frames (worst 91 deg at 0.70 s); pop forearm.L 3% of frames (worst 96 deg at 0.70 s); pop hand.L 3% of frames (worst 96 deg at 0.70 s); pop weapon.L 3% of frames (worst 96 deg at 0.70 s)
+  drac_h_hit       ok
+  drac_h_swap      ok
+  drac_h_dash      wrist bent R 100% of frames (worst 88 deg at 0.00 s); elbow points the wrong way R 58% of frames (worst 129 deg at 0.30 s)
+  drac_h_stagger   wrist bent R 18% of frames (worst 80 deg at 0.07 s)
+  drac_h_recover   wrist bent R 32% of frames (worst 80 deg at 0.27 s)
+  emel_h_idle      ok
+  emel_h_run       ok
+  emel_h_cut_1     wrist bent L 47% of frames (worst 148 deg at 0.43 s); wrist bent R 29% of frames (worst 117 deg at 0.43 s); pop hand.L 15% of frames (worst 133 deg at 0.43 s); pop weapon.L 15% of frames (worst 133 deg at 0.43 s); pop forearm.R 3% of frames (worst 68 deg at 0.43 s); pop hand.R 15% of frames (worst 133 deg at 0.43 s); pop weapon.R 15% of frames (worst 133 deg at 0.43 s); forearm twist L 24% of frames (worst 151 deg at 0.53 s); pop forearm.L 3% of frames (worst 93 deg at 0.50 s)
+  emel_h_cut_2     wrist bent R 32% of frames (worst 143 deg at 0.77 s); wrist bent L 44% of frames (worst 172 deg at 0.80 s); pop hand.L 9% of frames (worst 132 deg at 0.83 s); pop weapon.L 9% of frames (worst 132 deg at 0.83 s); pop hand.R 9% of frames (worst 132 deg at 0.83 s); pop weapon.R 9% of frames (worst 132 deg at 0.83 s); pop forearm.L 3% of frames (worst 108 deg at 0.50 s)
+  emel_h_cut_3     wrist bent L 21% of frames (worst 108 deg at 0.47 s); pop hand.L 9% of frames (worst 102 deg at 0.50 s); pop weapon.L 9% of frames (worst 102 deg at 0.50 s); pop hand.R 9% of frames (worst 102 deg at 0.50 s); pop weapon.R 9% of frames (worst 102 deg at 0.50 s); wrist bent R 26% of frames (worst 116 deg at 0.47 s); pop forearm.L 6% of frames (worst 54 deg at 0.47 s); pop forearm.R 6% of frames (worst 61 deg at 0.47 s)
+  emel_h_cast      wrist bent L 68% of frames (worst 100 deg at 0.17 s)
+  emel_h_hit       ok
+  -> 41 findings
+TOTAL findings 89

@@ -961,7 +961,8 @@ func update_motion(u: SimUnit) -> void:
 				_impact(u, k, "unit", o.id, vn, (u.pos + o.pos) * 0.5)
 				if v2n > 120.0:
 					start_push(o, n * v2n, int(k.src), int(k.team), String(k.ability), int(k.lv), int(k.seq))
-					if not o.knock.is_empty():
+					# only a push of its own takes the blow: a unit nothing moves (Cavalry Charge) keeps its charge
+					if bool(o.knock.get("phys", false)):
 						_impact(o, o.knock, "unit", u.id, vn, (u.pos + o.pos) * 0.5)
 			np = u.pos + v * C.DT
 			break
@@ -989,7 +990,7 @@ func _obstacle(p: Vector2) -> String:
 ## A pushed unit hits something: one impact per unit per push. Enemies of the caster take impact damage and will be
 ## stunned for the ability's impact stun once they stop; a tree that takes the blow is smashed.
 func _impact(u: SimUnit, k: Dictionary, what: String, other: int, speed: float, at: Vector2) -> void:
-	if k.impacted or speed < IMPACT_SPEED:
+	if bool(k.get("impacted", true)) or speed < IMPACT_SPEED:
 		return
 	k.impacted = true
 	w.events.append({"t": "impact", "u": u.id, "what": what, "other": other, "pos": at, "speed": speed})

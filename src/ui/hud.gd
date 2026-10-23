@@ -2351,7 +2351,7 @@ func item_tip(id: String, h: SimUnit, wrap := 320.0) -> Array:
 		if use == "ward" and float(v.get("true_sight", 0.0)) > 0.0:
 			utxt = "Plant an invisible ward that gives your team True Sight within %d for 7 minutes: invisible enemies there can be seen where you have vision. It has no sight of its own." % int(v.true_sight)
 		if use == "sneak" and float(v.get("break", 0.0)) > 0.0:
-			utxt = "Turn invisible after 0.3 seconds for 17 seconds and move 20% faster. Attacking breaks it: the attack deals %d extra damage and breaks the target for %d seconds (its own passive abilities stop working). Costs 75 mana, 23 second cooldown." % [int(v.bonus_damage), int(v["break"])]
+			utxt = "Turn invisible after 0.3 seconds for 17 seconds and move 20%% faster. Attacking breaks it: the attack deals %d extra damage and breaks the target for %d seconds (its own passive abilities stop working). Costs 75 mana, 23 second cooldown." % [int(v.bonus_damage), int(v["break"])]
 		for l in U.wrap(utxt, wrap, 14):
 			lines.append([l, 14, Color(0.75, 0.9, 0.75), "body"])
 	var pas := String(d.get("passive", ""))

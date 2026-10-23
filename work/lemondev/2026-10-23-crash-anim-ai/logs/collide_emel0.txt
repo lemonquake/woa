@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+== emelrich.glb (emelrich): 17 shapes, height 1.95 m
+   hips       -0.25--0.06 m along, 0.158 x 0.138
+   chest      0.05-0.44 m along, 0.269 x 0.141
+   head       0.00-0.25 m along, 0.099 x 0.084
+   forearm.L  0.02-0.32 m along, 0.081 x 0.063
+   thigh.L    0.00-0.29 m along, 0.088 x 0.083
+  emel_idle          before: worst  5.3 cm (weapon.R in chest f41), 43/111 frames over 1 cm
+  emel_run           before: worst  0.0 cm (-), 0/19 frames over 1 cm
+  worst 5.3 cm

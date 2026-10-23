@@ -14,9 +14,17 @@ const DIR := "res://assets/characters/hero/mocap/"
 const LIB := DIR + "hero_mocap.res"
 const META := DIR + "mocap_meta.json"
 
+## The hand-made clips (run 2026-10-23, tools/anim/hand_clips.gd): our own, so they are committed. They use the same
+## form (every bone's full local turn, the hips' offset) and are added beside the motion-capture ones.
+const HAND_DIR := "res://assets/characters/hero/hand/"
+const HAND_LIB := HAND_DIR + "hero_hand.res"
+const HAND_META := HAND_DIR + "hand_meta.json"
+
 static var disabled := false                 # tools only (--nomocap): the old clips
 static var _lib: AnimationLibrary = null
 static var _tried := false
+static var _hand: AnimationLibrary = null
+static var _hand_tried := false
 
 static func library() -> AnimationLibrary:
 	if not _tried:
@@ -24,6 +32,13 @@ static func library() -> AnimationLibrary:
 		if ResourceLoader.exists(LIB):
 			_lib = load(LIB) as AnimationLibrary
 	return _lib
+
+static func hand_library() -> AnimationLibrary:
+	if not _hand_tried:
+		_hand_tried = true
+		if ResourceLoader.exists(HAND_LIB):
+			_hand = load(HAND_LIB) as AnimationLibrary
+	return _hand
 
 static func available() -> bool:
 	return not disabled and library() != null
@@ -52,7 +67,9 @@ static func leg_scale(sk: Skeleton3D) -> float:
 static func add(model: Node) -> void:
 	if model == null or not available() or not fits(String(model.scene_file_path)):
 		return
-	var src := library()
+	var srcs: Array = [library()]
+	if hand_library() != null:
+		srcs.append(hand_library())
 	for ap: AnimationPlayer in model.find_children("*", "AnimationPlayer", true, false):
 		var sks := model.find_children("*", "Skeleton3D", true, false)
 		if sks.is_empty():
@@ -71,15 +88,16 @@ static func add(model: Node) -> void:
 			if lib == null or lib.has_meta("mocap_added"):
 				continue
 			lib.set_meta("mocap_added", true)
-			for clip in src.get_animation_list():
-				if lib.has_animation(clip):
-					continue
-				var a := (src.get_animation(clip) as Animation).duplicate(true) as Animation
-				for t in a.get_track_count():
-					var bone := String(a.track_get_path(t)).get_slice(":", 1)
-					a.track_set_path(t, NodePath(prefix + ":" + bone))
-					if a.track_get_type(t) == Animation.TYPE_POSITION_3D:
-						for i in a.track_get_key_count(t):
-							a.track_set_key_value(t, i, rest + (a.track_get_key_value(t, i) as Vector3) * k)
-				lib.add_animation(clip, a)
+			for src: AnimationLibrary in srcs:
+				for clip in src.get_animation_list():
+					if lib.has_animation(clip):
+						continue
+					var a := (src.get_animation(clip) as Animation).duplicate(true) as Animation
+					for t in a.get_track_count():
+						var bone := String(a.track_get_path(t)).get_slice(":", 1)
+						a.track_set_path(t, NodePath(prefix + ":" + bone))
+						if a.track_get_type(t) == Animation.TYPE_POSITION_3D:
+							for i in a.track_get_key_count(t):
+								a.track_set_key_value(t, i, rest + (a.track_get_key_value(t, i) as Vector3) * k)
+					lib.add_animation(clip, a)
 			return

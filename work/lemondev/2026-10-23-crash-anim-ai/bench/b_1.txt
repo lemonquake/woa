@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 4618 ms
+match ready in 24070 ms
+HITCH 138 ms at 10:03: proc 7.9 phys 2674.6 (97 ticks) flush 29.6 draw 15.7 ahead 15.6
+HITCH 159 ms at 10:03: proc 10.3 phys 49.0 (5 ticks) flush 11.9 draw 5.1 ahead 4.5
+HITCH 142 ms at 10:03: proc 6.9 phys 66.2 (4 ticks) flush 11.8 draw 4.7 ahead 4.5
+HITCH 133 ms at 10:03: proc 12.1 phys 30.8 (4 ticks) flush 18.2 draw 10.4 ahead 10.4
+HITCH 126 ms at 10:03: proc 9.3 phys 49.9 (3 ticks) flush 11.9 draw 8.3 ahead 8.2
+HITCH 120 ms at 10:04: proc 17.1 phys 146.2 (3 ticks) flush 22.7 draw 9.7 ahead 9.7
+HITCH 200 ms at 10:04: proc 10.3 phys 59.8 (6 ticks) flush 12.9 draw 11.6 ahead 11.5
+HITCH 123 ms at 10:04: proc 11.6 phys 169.7 (4 ticks) flush 30.4 draw 18.5 ahead 13.1
+HITCH 190 ms at 10:04: proc 8.2 phys 42.5 (5 ticks) flush 14.0 draw 6.1 ahead 6.0
+HITCH 108 ms at 10:04: proc 9.6 phys 45.8 (4 ticks) flush 17.7 draw 10.2 ahead 7.7
+HITCH 107 ms at 10:06: proc 17.0 phys 18.1 (3 ticks) flush 26.9 draw 18.1 ahead 18.1
+HITCH 111 ms at 10:20: proc 52.0 phys 83.8 (4 ticks) flush 31.3 draw 11.1 ahead 11.1
+HITCH 108 ms at 10:20: proc 7.8 phys 30.9 (3 ticks) flush 9.6 draw 5.8 ahead 5.8
+HITCH 285 ms at 10:21: proc 7.0 phys 65.8 (8 ticks) flush 2.8 draw 5.6 ahead 4.5
+HITCH 120 ms at 10:21: proc 6.7 phys 26.8 (3 ticks) flush 11.2 draw 6.1 ahead 6.0
+HITCH 122 ms at 10:21: proc 7.6 phys 21.6 (3 ticks) flush 6.0 draw 14.3 ahead 14.2
+HITCH 106 ms at 10:22: proc 8.5 phys 21.6 (3 ticks) flush 5.5 draw 10.3 ahead 10.3
+HITCH 142 ms at 10:22: proc 7.9 phys 38.7 (4 ticks) flush 26.4 draw 15.2 ahead 15.1
+HITCH 106 ms at 10:23: proc 7.1 phys 23.3 (3 ticks) flush 13.4 draw 13.6 ahead 13.5
+HITCH 123 ms at 10:23: proc 7.9 phys 23.4 (3 ticks) flush 7.3 draw 5.9 ahead 5.7
+HITCH 103 ms at 10:23: proc 7.5 phys 28.3 (3 ticks) flush 13.7 draw 10.5 ahead 10.4
+HITCH 109 ms at 10:23: proc 6.0 phys 24.7 (3 ticks) flush 10.7 draw 10.4 ahead 10.4
+HITCH 109 ms at 10:24: proc 10.9 phys 23.1 (3 ticks) flush 14.7 draw 9.0 ahead 6.6
+HITCH 110 ms at 10:40: proc 64.1 phys 38.7 (3 ticks) flush 31.0 draw 4.9 ahead 3.8
+HITCH 289 ms at 10:41: proc 7.4 phys 91.3 (8 ticks) flush 3.1 draw 4.5 ahead 19.1
+HITCH 151 ms at 10:41: proc 37.0 phys 41.6 (5 ticks) flush 13.5 draw 6.5 ahead 6.4
+HITCH 107 ms at 10:42: proc 6.9 phys 27.4 (3 ticks) flush 7.3 draw 7.2 ahead 7.1
+HITCH 108 ms at 10:42: proc 12.1 phys 19.0 (3 ticks) flush 18.2 draw 9.0 ahead 9.0
+BENCH frames 1472 avg 27.18 ms (37 fps) p50 22.22 p95 57.15 p99 119.74 max 288.55 over16.7 1380 units 212
+  frames with a tick 1035 avg 30.29 ms, without 437 avg 19.83 ms
+  per-frame means: views 4.96, fx 0.40, fx_azrin 0.31, fx_froster 0.16, fx_other 1.26, status 0.44, target 0.01, fog 0.11, sim_ahead 4.42, sim 1.56, events 2.37, sync 3.42, script_proc 8.67, script_phys 7.50, n_tick_frames 0.70, gpu 8.88, rcpu 2.39, setup 0.11, other 11.02, flush 6.45, draw 6.08, gap 0.13, draws 1631.88, prims 2379789.58, trails 0.24, bars 1.14, ui_hud 0.02, ui_BottomPanel 1.20, ui_Minimap 0.78, ui_TopBar 0.24, ui_Tip 0.01, ui_feed 0.47, ui_chat 0.20, ui_PortraitOverlay 0.10, ui_fro_call 0.15
+WARNING: 5953 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 29 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

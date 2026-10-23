@@ -1,0 +1,37 @@
+natural bend forearm.L: (0.0, 0.0, -1.0)
+natural bend forearm.R: (0.0, 0.0, 1.0)
+natural bend shin.L: (-1.0, 0.0, 0.0)
+natural bend shin.R: (-1.0, 0.0, 0.0)
+== dracoxinia (R dracoxinia_sword_pink, L -)
+  drac_h_idle      ok
+  drac_h_run       ok
+  drac_h_cut_1     wrist bent R 29% of frames (worst 105 deg at 0.53 s); pop hand.R 3% of frames (worst 46 deg at 0.33 s); pop weapon.R 3% of frames (worst 46 deg at 0.33 s); elbow points the wrong way L 3% of frames (worst 125 deg at 0.53 s)
+  drac_h_cut_2     wrist bent R 13% of frames (worst 84 deg at 0.40 s)
+  drac_h_cut_3     wrist bent R 23% of frames (worst 84 deg at 0.53 s)
+  drac_h_hit       ok
+  drac_h_swap      ok
+  drac_h_dash      ok
+  drac_h_stagger   ok
+  drac_h_recover   wrist bent R 5% of frames (worst 76 deg at 0.30 s)
+  emel_h_idle      ok
+  emel_h_run       ok
+  emel_h_cast      ok
+  emel_h_hit       ok
+  -> 7 findings
+== emelrich (R heavy_greatsword, L -)
+  drac_h_idle      ok
+  drac_h_run       ok
+  drac_h_cut_1     wrist bent R 29% of frames (worst 105 deg at 0.53 s); pop hand.R 3% of frames (worst 46 deg at 0.33 s); pop weapon.R 3% of frames (worst 46 deg at 0.33 s)
+  drac_h_cut_2     wrist bent R 10% of frames (worst 84 deg at 0.40 s)
+  drac_h_cut_3     wrist bent R 16% of frames (worst 84 deg at 0.53 s)
+  drac_h_hit       ok
+  drac_h_swap      ok
+  drac_h_dash      ok
+  drac_h_stagger   ok
+  drac_h_recover   wrist bent R 5% of frames (worst 76 deg at 0.30 s)
+  emel_h_idle      ok
+  emel_h_run       ok
+  emel_h_cast      ok
+  emel_h_hit       ok
+  -> 6 findings
+TOTAL findings 13

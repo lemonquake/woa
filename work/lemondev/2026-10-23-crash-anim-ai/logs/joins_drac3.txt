@@ -1,0 +1,16 @@
+== hero_dracoxinia (dracoxinia.glb; idle drac_h_idle, run drac_h_run)
+  FAIL join drac_h_idle            -> drac_h_run             blend 0.40s: snap 12.4 deg (hand.R at +0.40s), gap 144 deg (from 0.80s)
+  FAIL join drac_h_run             -> drac_h_idle            blend 0.40s: snap 12.6 deg (weapon.R at +0.05s), gap 143 deg (from 0.00s)
+  FAIL join drac_h_run             -> drac_h_cut_1           blend 0.30s: snap 30.9 deg (hand.R at +0.07s), gap 145 deg (from 0.46s)
+  FAIL join drac_h_cut_1           -> drac_h_run             blend 0.40s: snap 12.1 deg (hand.R at +0.40s), gap 143 deg
+  FAIL join drac_h_run             -> drac_h_cut_2           blend 0.16s: snap 21.1 deg (weapon.R at +0.02s), gap 149 deg (from 0.31s)
+  FAIL join drac_h_cut_2           -> drac_h_run             blend 0.40s: snap 12.2 deg (hand.R at +0.40s), gap 143 deg
+  FAIL join drac_h_run             -> drac_h_cut_3           blend 0.30s: snap 16.3 deg (hand.R at +0.02s), gap 144 deg (from 0.16s)
+  FAIL join drac_h_run             -> drac_swap              blend 0.25s: snap 15.9 deg (hand.R at +0.25s), gap 174 deg (from 0.00s)
+  FAIL join drac_h_idle            -> drac_hit               blend 0.30s: snap 13.1 deg (weapon.R at +0.05s), gap 172 deg (from 0.80s)
+  FAIL join drac_h_run             -> drac_hit               blend 0.25s: snap 14.8 deg (weapon.R at +0.25s), gap 176 deg (from 0.00s)
+  FAIL join drac_h_cut_1           -> drac_hit               blend 0.25s: snap 82.0 deg (weapon.L at +0.07s), gap 179 deg
+  FAIL join drac_h_run             -> stagger_back           blend 0.20s: snap 12.7 deg (hand.R at +0.03s), gap 165 deg (from 0.31s)
+  ok   slide drac_h_run: planted foot at 0.96x the ground speed (3.10 m/s)
+  -> 40 joins and 3 loops checked, worst snap 82.0 deg (drac_h_cut_1 -> drac_hit), 12 failures
+TOTAL failures 12

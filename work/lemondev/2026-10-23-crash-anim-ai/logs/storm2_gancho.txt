@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.329 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4060
+
+unit meshes prebuilt: 51 models in 4839 ms
+match ready in 21683 ms
+storm: you are gancho; heroes ["gancho", "kaileh", "gancho", "dracoxinia", "kaileh", "gancho", "blackfire", "thyrandael", "thyrandael", "blackfire"]
+casts ordered: { "root_snare": 233, "seed_bomb": 226, "angry_forest": 210 }
+casts fired:   { "angry_forest": 15, "seed_bomb": 15, "root_snare": 22 }
+slowest frame 0.932 s, game time 257.6, frames 6194
+storm done
+WARNING: 2670 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 29 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

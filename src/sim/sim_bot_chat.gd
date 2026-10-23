@@ -66,6 +66,10 @@ var _ult_said := [C.LONG_AGO, C.LONG_AGO]
 var _nw_said := [C.LONG_AGO, C.LONG_AGO]
 var _nw_prev := [0, 0]
 var _fed_said := [C.LONG_AGO, C.LONG_AGO]
+var _intel_said := {}                       # "team:hero" -> game time a bot warned its team about that enemy hero
+var _counter_said := [C.LONG_AGO, C.LONG_AGO]
+var _counter_heroes := {}                   # "team:hero" -> game time a counter was called against that enemy hero
+var _intel_rounds := [false, false]         # the two rounds of warnings about the enemy heroes
 var _push_said := [C.LONG_AGO, C.LONG_AGO]
 var _cheer_said := [C.LONG_AGO, C.LONG_AGO]
 var _close := {}                            # hero id -> [time it was nearly killed, enemy hero id]
@@ -497,6 +501,12 @@ func tick() -> void:
 	if not _memories_said and w.time >= -40.0:
 		_memories_said = true
 		_memories()
+	# what the enemy heroes do: once just after the horn, once when the ultimates come online
+	for k in 2:
+		if not bool(_intel_rounds[k]) and w.time >= [25.0, 370.0][k]:
+			_intel_rounds[k] = true
+			for team in [C.DAWN, C.DUSK]:
+				_warn(team, null, 0.7, _rng.randf_range(1.0, 12.0))
 	for e in w.events:
 		match String(e.t):
 			"damage":
@@ -791,6 +801,8 @@ func _on_kill(e: Dictionary) -> void:
 	if not vspoke:
 		say(victim, "own_death_excuses", _rng.randf() < 0.2, {}, 0.3)
 	_after_death(victim, killer)
+	if killer != null and killer.is_hero() and killer.team != victim.team:
+		_counter_call(victim, killer)
 	social.on_kill(e, killer, victim)
 	# a fed enemy, an enemy core down long enough to push
 	if killer.kills >= 7 and killer.kills >= killer.deaths * 2 and w.time - float(_fed_said[victim.team]) > 150.0:
@@ -923,14 +935,58 @@ func _on_level(e: Dictionary) -> void:
 	var nm := String(SimData.ability(ult).get("name", "")).to_lower() if ult != "" else ""
 	speak(h, "ult_ready", false, {"skill": nm} if nm != "" else {}, 0.15 + _trait(h, "focus") * 0.25)
 
+## Knowledge in chat (BotKnowledge): a bot warns its team about what an enemy hero does (at the start, or after it
+## killed one of them), at most once a game per enemy hero and team.
+func _warn(team: int, about: SimUnit, chance: float, delay := -1.0) -> bool:
+	var foes: Array = []
+	for h in w.heroes:
+		if h.team != team and (about == null or h == about) and BotKnowledge.tip(String(h.def.id)) != "" \
+				and not _intel_said.has("%d:%s" % [team, String(h.def.id)]):
+			foes.append(h)
+	if foes.is_empty():
+		return false
+	var foe: SimUnit = foes[_rng.randi_range(0, foes.size() - 1)]
+	var talker := _talker(_bots(team), "focus")
+	if talker == null:
+		return false
+	if speak(talker, "intel_tip", false, {"tip": BotKnowledge.tip(String(foe.def.id)), "hero": label(foe).to_lower()}, chance,
+			delay):
+		_intel_said["%d:%s" % [team, String(foe.def.id)]] = w.time
+		return true
+	return false
+
+## An enemy hero killed one of the team: a teammate (not the one who died) says what answers that hero, an item that
+## counters it (only if nobody on the team owns it yet), or warns about it; not more than once a minute and a half.
+func _counter_call(victim: SimUnit, killer: SimUnit) -> void:
+	var team := victim.team
+	if w.time - float(_counter_said[team]) < 150.0 or w.time < 120.0:
+		return
+	if w.time - float(_counter_heroes.get("%d:%s" % [team, String(killer.def.id)], C.LONG_AGO)) < 420.0:
+		return                                   # the same enemy hero again: the team already heard it
+	if killer.kills < 2 and _rng.randf() < 0.5:
+		return
+	var mates := _bots(team, victim)
+	if mates.is_empty():
+		return
+	var said := false
+	var c := BotKnowledge.counter(String(killer.def.id), _rng)
+	if not c.is_empty() and w.time > 420.0:
+		var owned := false
+		for h in w.heroes:
+			if h.team == team and w.shop.owns(h, String(c.id)):
+				owned = true
+		if not owned:
+			said = speak(_talker(mates, "focus"), "counter_call", false, {"hero": label(killer).to_lower(), "item": c.item,
+				"why": c.why}, 0.4)
+	if not said:
+		said = _warn(team, killer, 0.4)
+	if said:
+		_counter_said[team] = w.time
+		_counter_heroes["%d:%s" % [team, String(killer.def.id)]] = w.time
+
+## The item worth naming that `h` holds ("" when it has none: boots or a branch are not worth a word).
 func _best_item_name(h: SimUnit) -> String:
-	var best := ""
-	var cost := 0
-	for it in h.inventory:
-		if it != null and int(SimData.item(String(it.id)).get("cost", 0)) > cost:
-			cost = int(SimData.item(String(it.id)).cost)
-			best = String(SimData.item(String(it.id)).get("name", ""))
-	return best.to_lower()
+	return BotKnowledge.best_notable(h)
 
 func _on_death(e: Dictionary) -> void:
 	var u := w.get_unit(int(e.u))
@@ -1199,19 +1255,9 @@ func _home(h: SimUnit) -> Dictionary:
 	return {"city": String(cities[seed % cities.size()]), "country": Ranked.country_name(cc).to_lower() if cc != "" else "ph"}
 
 ## The next one or two items a bot means to buy, by name.
+## The next items worth naming in a bot's build (never its parts or starting items).
 func _next_items(b) -> Array:
-	var out: Array = []
-	var h: SimUnit = b.hero()
-	for i in range(int(b._build_i), (b.build as Array).size()):
-		var id := String(b.build[i])
-		if h != null and w.shop.owns(h, id):
-			continue
-		var nm := String(SimData.item(id).get("name", ""))
-		if nm != "":
-			out.append(nm.to_lower())
-		if out.size() >= 2:
-			break
-	return out
+	return BotKnowledge.next_notable(w, b)
 
 func _worst(team: int) -> SimUnit:
 	var worst: SimUnit = null

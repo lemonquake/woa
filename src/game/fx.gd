@@ -62,10 +62,12 @@ func _shard_mesh(variant: int) -> ArrayMesh:
 	st.generate_normals()
 	return st.commit()
 var _spark_budget := 0
+var hits: HitFx                               # flares, rings and slash cuts where blows land (run 2026-10-23)
 
 func _ready() -> void:
 	name = "Fx"
 	_arrow_scene = load(ARROW)
+	hits = HitFx.new(self)
 
 # ---- Materials and meshes --------------------------------------------------------------------------------------------
 
@@ -687,6 +689,7 @@ func projectile_end(e: Dictionary) -> void:
 			dir = -node.global_transform.basis.z
 		dir = dir.normalized()
 		if hit:
+			hits.flare(at, Color(1.0, 0.85, 0.6) if style != "blood_arrow" else Color(1.0, 0.3, 0.25), 0.2, 0.16)
 			_embed(node, int(e.get("target", p.target)), dir, p.trail)
 			if style == "blood_arrow":
 				blood_hit(int(e.get("target", p.target)), dir)
@@ -858,6 +861,7 @@ func frame(w: SimWorld, alpha: float, dt: float) -> void:
 	_update_bits(dt)
 	_update_flyers(dt)
 	_update_stuck(dt)
+	hits.update(dt)
 	_update_bolts(dt)
 	_update_homers(dt)
 	_update_spikes(dt)
@@ -968,31 +972,28 @@ func _light_spike(at: Vector3, col: Color, height: float) -> void:
 	tw.parallel().tween_property(m, "albedo_color:a", 0.0, 0.32)
 	tw.tween_callback(mi.queue_free)
 
-## A dark sphere that swells, then collapses to nothing, ringed by a crimson flash (the Black Sun tower's hit).
+## The Black Sun tower's hit: a crimson ring pulled in to the point, then a violet-crimson flash and a ring thrown out
+## (it used to swell an opaque black ball over the target, which hid the hero it struck).
 func _implode(at: Vector3, size: float) -> void:
-	var dark := _sphere(size, _solid(Color(0.02, 0.0, 0.03), 1.0))
-	add_child(dark)
-	dark.global_position = at
-	dark.scale = Vector3.ONE * 0.4
-	var tw := dark.create_tween()
-	tw.tween_property(dark, "scale", Vector3.ONE, 0.07)
-	tw.tween_property(dark, "scale", Vector3.ONE * 0.05, 0.16).set_ease(Tween.EASE_IN)
-	tw.tween_callback(impact.bind(at, Color(1.0, 0.25, 0.42), size * 0.8))
-	tw.tween_callback(dark.queue_free)
+	hits.flare(at, Color(0.55, 0.1, 0.65), size * 0.9, 0.12)
+	var tw := create_tween()
+	tw.tween_interval(0.09)
+	tw.tween_callback(func():
+		hits.flare(at, Color(1.0, 0.25, 0.42), size * 0.8, 0.22)
+		hits.ring(at, Color(1.0, 0.2, 0.45), size * 1.3, 0.24))
 
+## A flash where something struck (projectiles, spells, blows): a soft hot flare with thin rays, and for big ones a
+## ring thrown out (HitFx; it used to be a flat unshaded ball that read as a coloured hexagon from the camera).
 func impact(at: Vector3, col: Color, size := 0.4) -> void:
-	var s := _sphere(size, _glow(col, 6.0).duplicate())
-	add_child(s)
-	s.global_position = at
-	var tw := s.create_tween()
-	tw.tween_property(s, "scale", Vector3.ONE * 2.2, 0.16)
-	tw.parallel().tween_property(s.material_override, "albedo_color:a", 0.0, 0.16)
-	tw.tween_callback(s.queue_free)
+	hits.flare(at, col, size * 0.85, 0.16 + size * 0.15)
+	if size >= 0.45:
+		hits.ring(at, col, size * 1.4, 0.24)
 
 # ---- Melee blows -----------------------------------------------------------------------------------------------------
 
-## A melee attack landed: a few sparks where the weapon met the target (stone chips against buildings).
-func melee_hit(src: SimUnit, t: SimUnit, amount: float) -> void:
+## A melee attack landed: a cut in the weapon's colour across the target, a flash and sparks where the weapon met it
+## (stone chips against buildings); a critical strike crosses a second, red cut, rings out and shakes the view a little.
+func melee_hit(src: SimUnit, t: SimUnit, amount: float, crit := false) -> void:
 	if not _seen(t.pos):
 		return
 	var tv := _view_of(t.id)
@@ -1011,13 +1012,30 @@ func melee_hit(src: SimUnit, t: SimUnit, amount: float) -> void:
 	if t.is_building():
 		debris(at, 4, Color(0.42, 0.4, 0.38), 2.4, 0.4, "chip")
 		sparks(at, back, 3, Color(1.0, 0.8, 0.5), 3.5)
+		hits.flare(at, Color(1.0, 0.85, 0.6), 0.22, 0.16)
 		return
 	if model.begins_with("ashfang"):
 		return
-	var heavy := src.is_hero() or amount > 60.0
-	sparks(at, back, 7 if heavy else 4, Color(1.0, 0.8, 0.45), 5.5 if heavy else 4.0)
-	if heavy:
-		impact(at, Color(1.0, 0.9, 0.7), 0.12)
+	var hero := src.is_hero()
+	var heavy := hero or amount > 60.0
+	var col := _blow_color(src)
+	hits.melee(src, at, back.normalized(), col, hero, crit, amount > 0.12 * maxf(1.0, t.max_hp) or amount > 140.0)
+	sparks(at, back, (12 if crit else 7) if heavy else 4, col.lerp(Color(1.0, 0.85, 0.5), 0.5), (6.5 if crit else 5.5) if heavy else 4.0)
+	if crit:
+		_shake(t.pos, 0.07, 0.14)
+
+## The colour of a unit's blows: its weapon trail's, else its attack element's, else warm steel.
+func _blow_color(src: SimUnit) -> Color:
+	var sv := _view_of(src.id)
+	if sv and sv.swing_trail:
+		var c: Color = sv.swing_trail.color
+		return Color(c.r, c.g, c.b, 1.0)
+	if sv and sv.cfg.has("trail_color"):
+		var c2: Color = sv.cfg.trail_color
+		return Color(c2.r, c2.g, c2.b, 1.0)
+	if src.is_hero() and src.atk_element > 0 and src.atk_element < SimConst.ELEMENT_COLORS.size():
+		return SimConst.ELEMENT_COLORS[src.atk_element]
+	return Color(1.0, 0.86, 0.62)
 
 # ---- Blood Ranger -------------------------------------------------------------------------------------------------
 
